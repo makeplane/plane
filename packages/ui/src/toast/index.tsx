@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners";
 // helper
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export enum TOAST_TYPE {
   SUCCESS = "success",

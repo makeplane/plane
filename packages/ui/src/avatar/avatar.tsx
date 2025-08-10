@@ -2,7 +2,7 @@ import React from "react";
 // ui
 import { Tooltip } from "../tooltip";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 

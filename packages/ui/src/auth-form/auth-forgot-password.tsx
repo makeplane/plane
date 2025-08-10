@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export interface AuthForgotPasswordProps {
   onForgotPassword?: () => void;

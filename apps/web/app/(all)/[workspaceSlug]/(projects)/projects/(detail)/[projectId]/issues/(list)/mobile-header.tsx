@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
-import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   EIssuesStoreType,
@@ -15,7 +15,6 @@ import {
   IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";

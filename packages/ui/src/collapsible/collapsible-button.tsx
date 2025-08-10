@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 import { DropdownIcon, ISvgIcons } from "../icons";
 
 type Props = {

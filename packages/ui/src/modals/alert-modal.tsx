@@ -6,7 +6,7 @@ import { ModalCore } from "./modal-core";
 // constants
 import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TModalVariant = "danger" | "primary";
 
