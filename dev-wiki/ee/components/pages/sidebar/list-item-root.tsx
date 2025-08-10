@@ -353,7 +353,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
             type="button"
             className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-100 transition-all duration-200 ease-in-out z-10"
             onClick={handleCreatePage}
-            data-prevent-NProgress
+            data-prevent-progress
             disabled={isCreatingPage}
           >
             {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <Plus className="size-3" />}

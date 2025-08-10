@@ -58,7 +58,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
             {customer.website_url && (
               <Link
                 className="text-sm text-custom-text-300 cursor-pointer hover:underline"
-                data-prevent-nprogress
+                data-prevent-progress
                 href={customer.website_url}
                 onClick={(e) => {
                   e.stopPropagation();

@@ -87,7 +87,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
           }
         }}
-        data-prevent-nprogress={!isMemberOfProject || isArchived}
+        data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn("group/project-card flex flex-col justify-between w-full", {
           "bg-custom-background-80": isArchived,
         })}

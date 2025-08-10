@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, ReactNode } from "react";
+import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
@@ -10,8 +11,6 @@ import { TranslationProvider } from "@plane/i18n";
 import { Toast } from "@plane/ui";
 //helpers
 import { resolveGeneralTheme } from "@plane/utils";
-// nprogress
-import { AppProgressBar } from "@/lib/n-progress";
 // polyfills
 import "@/lib/polyfills";
 // mobx store provider
@@ -36,8 +35,12 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
   return (
-    <>
-      <AppProgressBar height="4px" options={{ showSpinner: false }} shallowRouting />
+    <ProgressProvider
+      height="4px"
+      color="rgb(var(--color-primary-100))"
+      options={{ showSpinner: false }}
+      shallowRouting
+    >
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
           <TranslationProvider>
@@ -54,6 +57,6 @@ export const AppProvider: FC<IAppProvider> = (props) => {
           </TranslationProvider>
         </ThemeProvider>
       </StoreProvider>
-    </>
+    </ProgressProvider>
   );
 };

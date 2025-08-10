@@ -157,7 +157,7 @@ const Details: React.FC<Props> = observer((props) => {
             )}
           />
         </div>
-        <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
+        <div className="flex gap-2 absolute top-2 right-2" data-prevent-progress>
           {(isOwner || !isArchived) && (
             <CustomMenu
               customButton={
@@ -198,7 +198,7 @@ const Details: React.FC<Props> = observer((props) => {
           )}
 
           {!!project.member_role && !isArchived && shouldRenderFavorite && (
-            <div data-prevent-nprogress>
+            <div data-prevent-progress>
               {" "}
               <FavoriteStar
                 buttonClassName={cn(

@@ -109,7 +109,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
                   handleSubPagesToggle();
                 }}
                 disabled={isFetchingSubPages}
-                data-prevent-NProgress
+                data-prevent-progress
               >
                 {isFetchingSubPages ? (
                   <Loader className="size-4 animate-spin" />

@@ -31,7 +31,7 @@ export const CyclePeekOverview: React.FC<Props> = observer((props) => {
 
   const handleClose = () => {
     const query = generateQueryParams(searchParams, ["peekCycle"]);
-    router.push(`${pathname}?${query}`, {}, { showProgressBar: false });
+    router.push(`${pathname}?${query}`, { showProgress: false });
   };
 
   useEffect(() => {

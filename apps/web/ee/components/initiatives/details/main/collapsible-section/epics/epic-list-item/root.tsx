@@ -142,7 +142,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       parentRef={parentRef}
       className="last:pb-0"
       onItemClick={() => setPeekIssue({ workspaceSlug, projectId: issue.project_id ?? "", issueId: issue.id })}
-      preventDefaultNProgress
+      preventDefaultProgress
     />
   );
 });

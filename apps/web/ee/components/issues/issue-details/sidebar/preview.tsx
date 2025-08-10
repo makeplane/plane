@@ -48,7 +48,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                 {customer.website_url && (
                   <Link
                     className="text-sm text-custom-text-300 truncate cursor-pointer hover:underline flex gap-1 items-center w-full"
-                    data-prevent-nprogress
+                    data-prevent-progress
                     href={customer.website_url}
                     onClick={(e) => {
                       e.stopPropagation();

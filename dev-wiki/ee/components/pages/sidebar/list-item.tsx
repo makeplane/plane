@@ -237,7 +237,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
                 type="button"
                 onClick={handleSubPagesToggle}
                 className="rounded hover:bg-custom-background-80 grid place-items-center"
-                data-prevent-NProgress
+                data-prevent-progress
               >
                 {isFetchingSubPages ? (
                   <Loader className="size-3.5 animate-spin" />

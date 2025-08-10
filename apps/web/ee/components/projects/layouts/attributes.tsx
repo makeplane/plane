@@ -59,7 +59,7 @@ const Attributes: React.FC<Props> = observer((props) => {
     e.preventDefault();
   };
   return (
-    <div className={cn("flex gap-2 flex-wrap p-4", containerClass)} data-prevent-nprogress>
+    <div className={cn("flex gap-2 flex-wrap p-4", containerClass)} data-prevent-progress>
       {displayProperties["state"] && (
         <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <StateDropdown

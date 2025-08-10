@@ -36,7 +36,7 @@ export const CloudEditionBadge = observer(() => {
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success" && currentSubscription === EProductSubscriptionEnum.PRO) {
-      router.replace(pathname, {}, { showProgressBar: false });
+      router.replace(pathname, { showProgress: false });
       handleSuccessModalToggle(true);
     }
   }, [pathname, router, searchParams, currentSubscription, handleSuccessModalToggle]);
