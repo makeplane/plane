@@ -18,7 +18,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export type TCommandGroups = {
   [key: string]: {
-    icon: JSX.Element | null;
+    icon: React.ReactNode | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any, projectId: string | undefined) => string;
     title: string;

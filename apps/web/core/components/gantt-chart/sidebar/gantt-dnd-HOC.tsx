@@ -13,7 +13,7 @@ type Props = {
   id: string;
   isLastChild: boolean;
   isDragEnabled: boolean;
-  children: (isDragging: boolean) => JSX.Element;
+  children: (isDragging: boolean) => React.ReactNode;
   onDrop: (draggingBlockId: string | undefined, droppedBlockId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 

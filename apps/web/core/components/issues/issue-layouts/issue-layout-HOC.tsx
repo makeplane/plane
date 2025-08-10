@@ -31,7 +31,7 @@ const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
 };
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   layout: EIssueLayoutTypes;
 }
 

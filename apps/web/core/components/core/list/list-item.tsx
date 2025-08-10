@@ -12,9 +12,9 @@ interface IListItemProps {
   title: string;
   itemLink: string;
   onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  prependTitleElement?: JSX.Element;
-  appendTitleElement?: JSX.Element;
-  actionableItems?: JSX.Element;
+  prependTitleElement?: React.ReactNode;
+  appendTitleElement?: React.ReactNode;
+  actionableItems?: React.ReactNode;
   isMobile?: boolean;
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
@@ -22,7 +22,7 @@ interface IListItemProps {
   itemClassName?: string;
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
-  quickActionElement?: JSX.Element;
+  quickActionElement?: React.ReactNode;
   preventDefaultNProgress?: boolean;
   leftElementClassName?: string;
   rightElementClassName?: string;

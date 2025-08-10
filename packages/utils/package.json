@@ -27,7 +27,7 @@
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
     "lodash": "^4.17.21",
-    "react": "^18.3.1",
+    "react": "19.1.0",
     "tailwind-merge": "^2.5.5",
     "uuid": "^10.0.0"
   },
@@ -35,7 +35,7 @@
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "@types/node": "^22.5.4",
-    "@types/react": "^18.3.11",
+    "@types/react": "^19.1.6",
     "@types/uuid": "^9.0.8",
     "tsup": "8.4.0",
     "typescript": "5.8.3"

@@ -1,15 +1,124 @@
-import React, { useRef, useState } from "react";
-import { usePopper } from "react-popper";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
-// hooks
-import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../../helpers";
+// hooks
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
+import { ICustomSelectItemProps, ICustomSelectProps, Placement } from "./helper";
+
+// Custom positioning hook to replace usePopper
+const useCustomPositioning = (
+  referenceElement: HTMLButtonElement | null,
+  popperElement: HTMLDivElement | null,
+  placement: Placement = "bottom-start",
+  isOpen: boolean
+) => {
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [actualPlacement, setActualPlacement] = useState(placement);
+
+  const calculatePosition = useCallback(() => {
+    if (!referenceElement || !popperElement) return;
+
+    const rect = referenceElement.getBoundingClientRect();
+    const popperRect = popperElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let top = 0;
+    let left = 0;
+    let newPlacement = placement;
+
+    // Calculate initial position based on placement
+    switch (placement) {
+      case "bottom-start":
+        top = rect.bottom + window.scrollY;
+        left = rect.left + window.scrollX;
+        break;
+      case "bottom-end":
+        top = rect.bottom + window.scrollY;
+        left = rect.right + window.scrollX - popperRect.width;
+        break;
+      case "top-left":
+        top = rect.top + window.scrollY - popperRect.height;
+        left = rect.left + window.scrollX;
+        break;
+      case "top-right":
+        top = rect.top + window.scrollY - popperRect.height;
+        left = rect.right + window.scrollX - popperRect.width;
+        break;
+      case "left-top":
+        top = rect.top + window.scrollY;
+        left = rect.left + window.scrollX - popperRect.width;
+        break;
+      case "left-bottom":
+        top = rect.bottom + window.scrollY - popperRect.height;
+        left = rect.left + window.scrollX - popperRect.width;
+        break;
+      case "right-top":
+        top = rect.top + window.scrollY;
+        left = rect.right + window.scrollX;
+        break;
+      case "right-bottom":
+        top = rect.bottom + window.scrollY - popperRect.height;
+        left = rect.right + window.scrollX;
+        break;
+      default:
+        top = rect.bottom + window.scrollY;
+        left = rect.left + window.scrollX;
+    }
+
+    // Adjust position if it goes outside viewport
+    const adjustedTop = Math.max(0, Math.min(top, viewportHeight - popperRect.height));
+    const adjustedLeft = Math.max(0, Math.min(left, viewportWidth - popperRect.width));
+
+    // Determine if we need to flip placement
+    if (placement.includes("bottom") && adjustedTop !== top) {
+      newPlacement = placement.includes("start") ? "top-left" : "top-right";
+    } else if (placement.includes("top") && adjustedTop !== top) {
+      newPlacement = placement.includes("start") ? "bottom-start" : "bottom-end";
+    } else if (placement.includes("left") && adjustedLeft !== left) {
+      newPlacement = placement.includes("top") ? "right-top" : "right-bottom";
+    } else if (placement.includes("right") && adjustedLeft !== left) {
+      newPlacement = placement.includes("top") ? "left-top" : "left-bottom";
+    }
+
+    setPosition({ top: adjustedTop, left: adjustedLeft });
+    setActualPlacement(newPlacement);
+  }, [referenceElement, popperElement, placement, isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      calculatePosition();
+      window.addEventListener("resize", calculatePosition);
+      window.addEventListener("scroll", calculatePosition);
+
+      return () => {
+        window.removeEventListener("resize", calculatePosition);
+        window.removeEventListener("scroll", calculatePosition);
+      };
+    }
+  }, [calculatePosition, isOpen]);
+
+  return {
+    styles: {
+      popper: {
+        position: "absolute" as const,
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        zIndex: 20,
+      },
+    },
+    attributes: {
+      popper: {
+        "data-placement": actualPlacement,
+      },
+    },
+  };
+};
 
 const CustomSelect = (props: ICustomSelectProps) => {
   const {
@@ -36,9 +145,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
-  });
+  const { styles, attributes } = useCustomPositioning(referenceElement, popperElement, placement, isOpen);
 
   const openDropdown = () => {
     setIsOpen(true);

@@ -54,7 +54,7 @@ export const JiraImportUsers: FC = () => {
     | {
         value: string;
         query: string;
-        content: JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 

@@ -42,7 +42,7 @@ type Props = {
     isDragging: boolean,
     isDroppingInLabel: boolean,
     dragHandleRef: MutableRefObject<HTMLButtonElement | null>
-  ) => JSX.Element;
+  ) => React.ReactNode;
   onDrop: (
     draggingLabelId: string,
     droppedParentId: string | null,

@@ -42,7 +42,7 @@ type TQuickAddIssueRoot = {
   layout: EIssueLayoutTypes;
   prePopulatedData?: Partial<TIssue>;
   QuickAddButton?: FC<TQuickAddIssueButton>;
-  customQuickAddButton?: JSX.Element;
+  customQuickAddButton?: React.ReactNode;
   containerClassName?: string;
   setIsQuickAddOpen?: (isOpen: boolean) => void;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;

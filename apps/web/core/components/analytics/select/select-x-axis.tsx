@@ -10,7 +10,7 @@ type Props = {
   placeholder?: string;
   hiddenOptions?: ChartXAxisProperty[];
   allowNoValue?: boolean;
-  label?: string | JSX.Element;
+  label?: string | React.ReactNode;
 };
 
 export const SelectXAxis: React.FC<Props> = (props) => {

@@ -23,7 +23,7 @@ type DropdownOptions =
   | {
       value: string | null;
       query: string;
-      content: JSX.Element;
+      content: React.ReactNode;
     }[]
   | undefined;
 

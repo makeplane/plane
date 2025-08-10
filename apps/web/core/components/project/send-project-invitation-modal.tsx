@@ -163,7 +163,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.React.ReactNode;
       }[]
     | undefined;
 

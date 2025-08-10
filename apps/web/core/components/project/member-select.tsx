@@ -50,7 +50,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.React.ReactNode;
       }[]
     | undefined;
   const selectedOption = projectId ? getProjectMemberDetails(value, projectId.toString()) : null;

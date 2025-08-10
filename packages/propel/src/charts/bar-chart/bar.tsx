@@ -158,7 +158,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
  */
 const createShapeVariant =
   (Component: React.ComponentType<TBarProps>, factoryProps?: Partial<TBarProps>) =>
-  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): JSX.Element => {
+  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): React.ReactNode => {
     const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
     const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
 
@@ -178,7 +178,7 @@ const createShapeVariant =
 
 export const barShapeVariants: Record<
   TBarChartShapeVariant,
-  (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => JSX.Element
+  (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => React.ReactNode
 > = {
   bar: createShapeVariant(CustomBar), // Standard bar with rounded corners
   lollipop: createShapeVariant(CustomBarLollipop), // Line with circle at top

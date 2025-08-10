@@ -37,7 +37,7 @@ const ProfileActivityPage = observer(() => {
 
   const handleLoadMore = () => setPageCount((prev) => prev + 1);
 
-  const activityPages: JSX.Element[] = [];
+  const activityPages: React.ReactNode[] = [];
   for (let i = 0; i < pageCount; i++)
     activityPages.push(
       <ProfileActivityListPage

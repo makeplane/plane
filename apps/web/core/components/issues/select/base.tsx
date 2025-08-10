@@ -21,7 +21,7 @@ export type TWorkItemLabelSelectBaseProps = {
   createLabelEnabled?: boolean;
   disabled?: boolean;
   getLabelById: (labelId: string) => IIssueLabel | null;
-  label?: JSX.Element;
+  label?: React.ReactNode;
   labelIds: string[];
   onChange: (value: string[]) => void;
   onDropdownOpen?: () => void;

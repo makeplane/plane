@@ -7,7 +7,7 @@ export type TStateOptionProps = {
   option: {
     value: string | undefined;
     query: string;
-    content: JSX.Element;
+    content: React.ReactNode;
   };
   selectedValue: string | null | undefined;
   className?: string;

@@ -46,7 +46,7 @@ type Props = {
     currentView: TGanttViews,
     targetDate?: Date
   ) => ChartDataType | undefined;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.React.ReactNode | undefined;
   isEpic?: boolean;
 };
 

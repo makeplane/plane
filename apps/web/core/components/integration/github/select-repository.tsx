@@ -15,7 +15,7 @@ import { ProjectService } from "@/services/project";
 type Props = {
   integration: IWorkspaceIntegration;
   value: any;
-  label: string | JSX.Element;
+  label: string | React.ReactNode;
   onChange: (repo: any) => void;
   characterLimit?: number;
 };

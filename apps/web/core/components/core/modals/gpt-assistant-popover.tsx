@@ -22,7 +22,7 @@ type Props = {
   onError?: (error: any) => void;
   placement?: Placement;
   prompt?: string;
-  button: JSX.Element;
+  button: React.ReactNode;
   className?: string;
   workspaceId: string;
   workspaceSlug: string;

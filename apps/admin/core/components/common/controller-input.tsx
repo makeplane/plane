@@ -13,7 +13,7 @@ type Props = {
   type: "text" | "password";
   name: string;
   label: string;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
   required: boolean;
@@ -23,7 +23,7 @@ export type TControllerInputFormField = {
   key: string;
   type: "text" | "password";
   label: string;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
   required: boolean;

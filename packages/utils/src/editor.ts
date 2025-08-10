@@ -37,7 +37,7 @@ export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefi
   return url;
 };
 
-export const getTextContent = (jsx: JSX.Element | React.ReactNode | null | undefined): string => {
+export const getTextContent = (jsx: React.ReactNode | null | undefined): string => {
   if (!jsx) return "";
 
   const div = document.createElement("div");

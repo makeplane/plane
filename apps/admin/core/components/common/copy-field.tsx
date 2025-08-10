@@ -9,14 +9,14 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 type Props = {
   label: string;
   url: string;
-  description: string | JSX.Element;
+  description: string | React.ReactNode;
 };
 
 export type TCopyField = {
   key: string;
   label: string;
   url: string;
-  description: string | JSX.Element;
+  description: string | React.ReactNode;
 };
 
 export const CopyField: React.FC<Props> = (props) => {

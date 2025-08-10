@@ -66,7 +66,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     | {
         value: string;
         query: string;
-        content: JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 

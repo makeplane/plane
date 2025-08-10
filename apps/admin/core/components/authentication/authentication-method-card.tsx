@@ -7,8 +7,8 @@ import { cn } from "@plane/utils";
 type Props = {
   name: string;
   description: string;
-  icon: JSX.Element;
-  config: JSX.Element;
+  icon: React.ReactNode;
+  config: React.ReactNode;
   disabled?: boolean;
   withBorder?: boolean;
   unavailable?: boolean;

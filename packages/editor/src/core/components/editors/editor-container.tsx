@@ -95,7 +95,7 @@ export const EditorContainer: FC<Props> = (props) => {
         )}
       >
         {children}
-        {!isTouchDevice && <LinkViewContainer editor={editor} containerRef={containerRef} />}
+        {!isTouchDevice && <LinkViewContainer editor={editor} containerRef={containerRef as any} />}
       </div>
     </>
   );

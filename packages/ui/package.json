@@ -25,15 +25,13 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
-    "@blueprintjs/core": "^4.16.3",
-    "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "2.2.7",
     "@plane/constants": "*",
     "@plane/hooks": "*",
     "@plane/utils": "*",
@@ -68,9 +66,9 @@
     "@storybook/test": "^8.1.1",
     "@types/lodash": "^4.17.6",
     "@types/node": "^20.5.2",
-    "@types/react": "^18.3.11",
+    "@types/react": "^19.1.6",
     "@types/react-color": "^3.0.9",
-    "@types/react-dom": "^18.2.18",
+    "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.19",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
