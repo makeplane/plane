@@ -35,28 +35,30 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
   return (
-    <ProgressProvider
-      height="4px"
-      color="rgb(var(--color-primary-100))"
-      options={{ showSpinner: false }}
-      shallowRouting
-    >
-      <StoreProvider>
-        <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
-          <TranslationProvider>
+    <>
+      <ProgressProvider
+        height="4px"
+        color="rgb(var(--color-primary-100))"
+        options={{ showSpinner: false }}
+        shallowRouting
+      >
+        <StoreProvider>
+          <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
             <ToastWithTheme />
-            <StoreWrapper>
-              <InstanceWrapper>
-                <IntercomProvider>
-                  <PostHogProvider>
-                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                  </PostHogProvider>
-                </IntercomProvider>
-              </InstanceWrapper>
-            </StoreWrapper>
-          </TranslationProvider>
-        </ThemeProvider>
-      </StoreProvider>
-    </ProgressProvider>
+            <TranslationProvider>
+              <StoreWrapper>
+                <InstanceWrapper>
+                  <IntercomProvider>
+                    <PostHogProvider>
+                      <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                    </PostHogProvider>
+                  </IntercomProvider>
+                </InstanceWrapper>
+              </StoreWrapper>
+            </TranslationProvider>
+          </ThemeProvider>
+        </StoreProvider>
+      </ProgressProvider>
+    </>
   );
 };
