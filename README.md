@@ -24,14 +24,7 @@
 <p>
     <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
       <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screen.webp"
-        alt="Plane Screens"
-        width="100%"
-      />
-    </a>
-    <a href="https://app.plane.so/#gh-dark-mode-only" target="_blank">
-      <img
-        src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_screens_dark_mode.webp"
+        src="https://media.docs.plane.so/GitHub-readme/github-top.webp"
         alt="Plane Screens"
         width="100%"
       />
@@ -93,19 +86,11 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
 
 ## 📸 Screenshots
 
-<p>
+  <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/w2okwbtu2/Issues_rNZjrGgFl.png?updatedAt=1709298765880"
+        src="https://media.docs.plane.so/GitHub-readme/github-work-items.webp"
         alt="Plane Views"
-        width="100%"
-      />
-    </a>
-  </p>
-<p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://ik.imagekit.io/w2okwbtu2/Cycles_jCDhqmTl9.png?updatedAt=1709298780697"
         width="100%"
       />
     </a>
@@ -113,7 +98,15 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/w2okwbtu2/Modules_PSCVsbSfI.png?updatedAt=1709298796783"
+        src="https://media.docs.plane.so/GitHub-readme/github-cycles.webp"
+        width="100%"
+      />
+    </a>
+  </p>
+  <p>
+    <a href="https://plane.so" target="_blank">
+      <img
+        src="https://media.docs.plane.so/GitHub-readme/github-modules.webp"
         alt="Plane Cycles and Modules"
         width="100%"
       />
@@ -122,7 +115,7 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
   <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/w2okwbtu2/Views_uxXsRatS4.png?updatedAt=1709298834522"
+        src="https://media.docs.plane.so/GitHub-readme/github-views.webp"
         alt="Plane Analytics"
         width="100%"
       />
@@ -131,18 +124,8 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
    <p>
     <a href="https://plane.so" target="_blank">
       <img
-        src="https://ik.imagekit.io/w2okwbtu2/Analytics_0o22gLRtp.png?updatedAt=1709298834389"
+        src="https://media.docs.plane.so/GitHub-readme/github-analytics.webp"
         alt="Plane Pages"
-        width="100%"
-      />
-    </a>
-  </p>
-</p>
-<p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://ik.imagekit.io/w2okwbtu2/Drive_LlfeY4xn3.png?updatedAt=1709298837917"
-        alt="Plane Command Menu"
         width="100%"
       />
     </a>

@@ -42,7 +42,7 @@ export const AdminSidebarDropdown = observer(() => {
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item
