@@ -211,7 +211,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   }));
 
   return (
-    <div className="relative" data-prevent-nprogress>
+    <div className="relative" data-prevent-progress>
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <Card>
           <div>

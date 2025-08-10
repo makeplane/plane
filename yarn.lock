@@ -256,6 +256,26 @@
     react-popper "^2.3.0"
     tslib "~2.5.0"
 
+"@bprogress/core@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@bprogress/core/-/core-1.3.4.tgz#4d4b90300d8a3b8d56a1a9876daa3fd4243aeabb"
+  integrity sha512-q/AqpurI/1uJzOrQROuZWixn/+ARekh+uvJGwLCP6HQ/EqAX4SkvNf618tSBxL4NysC0MwqAppb/mRw6Tzi61w==
+
+"@bprogress/next@^3.2.12":
+  version "3.2.12"
+  resolved "https://registry.yarnpkg.com/@bprogress/next/-/next-3.2.12.tgz#c9d4f4cfdf787b1cd481c96d24a9ac509e99db0c"
+  integrity sha512-/ZvNwbAd0ty9QiQwCfT2AfwWVdAaEyCPx5RUz3CfiiJS/OLBohhDz/IC/srhwK9GnXeXavvtiUrpKzN5GJDwlw==
+  dependencies:
+    "@bprogress/core" "^1.3.4"
+    "@bprogress/react" "^1.2.7"
+
+"@bprogress/react@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@bprogress/react/-/react-1.2.7.tgz#5f4ee30bf11019b0efdf3d8045b9fcb49c9fdb2d"
+  integrity sha512-MqJfHW+R5CQeWqyqrLxUjdBRHk24Xl63OkBLo5DMWqUqocUikRTfCIc/jtQQbPk7BRfdr5OP3Lx7YlfQ9QOZMQ==
+  dependencies:
+    "@bprogress/core" "^1.3.4"
+
 "@chromatic-com/storybook@^1.4.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@chromatic-com/storybook/-/storybook-1.9.0.tgz#d95eb3474783bcc17a830a7627c3f099c1f75ba5"

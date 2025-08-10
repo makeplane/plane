@@ -129,7 +129,7 @@ export const RecentIssue = observer((props: BlockProps) => {
       className="bg-transparent my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
-      preventDefaultNProgress
+      preventDefaultProgress
     />
   );
 });
