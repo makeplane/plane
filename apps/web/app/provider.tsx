@@ -44,8 +44,8 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       >
         <StoreProvider>
           <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
-            <ToastWithTheme />
             <TranslationProvider>
+              <ToastWithTheme />
               <StoreWrapper>
                 <InstanceWrapper>
                   <IntercomProvider>
