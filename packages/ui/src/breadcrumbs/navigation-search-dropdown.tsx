@@ -7,7 +7,7 @@ import { Tooltip } from "../tooltip";
 import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationSearchDropdownProps = {
-  icon?: React.JSX.Element;
+  icon?: React.ReactNode;
   title?: string;
   selectedItem: string;
   navigationItems: ICustomSearchSelectOption[];

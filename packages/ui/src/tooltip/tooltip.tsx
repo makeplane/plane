@@ -22,9 +22,9 @@ export type TPosition =
 
 interface ITooltipProps {
   tooltipHeading?: string;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent: string | any;
   position?: TPosition;
-  children: JSX.Element;
+  children: any;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
