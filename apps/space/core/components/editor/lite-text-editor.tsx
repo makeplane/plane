@@ -11,7 +11,7 @@ import { isCommentEmpty } from "@/helpers/string.helper";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -62,6 +62,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
+        isSmoothCursorEnabled={false}
         {...rest}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}

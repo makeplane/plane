@@ -134,3 +134,5 @@ export const allTimeIn30MinutesInterval12HoursFormat: Array<{
   { label: "11:00", value: "11:00" },
   { label: "11:30", value: "11:30" },
 ];
+
+export const ACTIVITY_HIGHLIGHT_TIMEOUT = 5000;

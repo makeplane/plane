@@ -18,8 +18,9 @@ import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/
 import {
   ITeamProjectWorkItemsFilter,
   TeamProjectWorkItemsFilter,
-} from "@/plane-web/store/issue/team-project/filter.store";
-import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
+  ITeamProjectWorkItems,
+  TeamProjectWorkItems,
+} from "@/plane-web/store/issue/team-project";
 import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,
@@ -30,6 +31,7 @@ import {
 import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
+import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";

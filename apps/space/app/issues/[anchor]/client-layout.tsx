@@ -7,6 +7,7 @@ import { LogoSpinner, PoweredBy } from "@/components/common";
 import { IssuesNavbarRoot } from "@/components/issues";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
+import { PageNotFound } from "@/components/ui/not-found";
 import { useIssueFilter, usePublish, usePublishList } from "@/hooks/store";
 
 type Props = {
@@ -46,6 +47,8 @@ export const IssuesClientLayout = observer((props: Props) => {
       </div>
     );
   }
+
+  if (error?.status === 404) return <PageNotFound />;
 
   if (error) return <SomethingWentWrongError />;
 

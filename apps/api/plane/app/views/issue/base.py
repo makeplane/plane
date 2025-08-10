@@ -35,6 +35,8 @@ from plane.app.serializers import (
     IssueSerializer,
     IssueListDetailSerializer,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -52,6 +54,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
 )
+from plane.ee.models import TeamspaceProject, TeamspaceMember, CustomerRequestIssue
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -67,6 +70,13 @@ from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.utils.host import base_host
+from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -176,6 +186,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -199,8 +210,57 @@ class IssueViewSet(BaseViewSet):
 
     filterset_fields = ["state__name", "assignees__id", "workspace__id"]
 
+    def _validate_order_by_field(self, order_by_param):
+        """
+        Validate if the order_by parameter is a valid sortable field.
+        Returns a tuple of (is_valid, sanitized_field)
+        """
+        # Remove the minus sign for validation
+        field_name = order_by_param.lstrip("-")
+
+        # Define valid sortable fields
+        valid_fields = {
+            # Direct fields
+            "name",
+            "priority",
+            "sequence_id",
+            "sort_order",
+            "start_date",
+            "target_date",
+            "completed_at",
+            "archived_at",
+            "is_draft",
+            "created_at",
+            "updated_at",
+            "point",
+            # Related fields
+            "state__name",
+            "state__group",
+            "type__name",
+            "parent__name",
+            "created_by__first_name",
+            "updated_by__first_name",
+            "estimate_point__name",
+            # Many-to-many fields (handled specially in order_issue_queryset)
+            "labels__name",
+            "assignees__first_name",
+            "issue_module__module__name",
+            # Computed fields (annotated in get_queryset)
+            "sub_issues_count",
+            "attachment_count",
+            "link_count",
+            # Special fields handled by order_issue_queryset
+            "priority",
+            "state__group",
+        }
+
+        if field_name in valid_fields:
+            return order_by_param
+        else:
+            return "-created_at"
+
     def get_queryset(self):
-        return (
+        issues = (
             Issue.issue_objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
@@ -233,7 +293,41 @@ class IssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        ).distinct()
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issues = issues.annotate(
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            ).annotate(
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+
+        return issues.distinct()
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -243,10 +337,23 @@ class IssueViewSet(BaseViewSet):
             extra_filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
 
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        filters = issue_filters(request.query_params, "GET")
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", None)
+        query_params.pop("sub_issue", None)
+
+        filters = issue_filters(query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
+        # Validate the order_by_param
+        order_by_param = self._validate_order_by_field(order_by_param)
+
         issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue_queryset = issue_queryset.filter(
+                Q(parent__isnull=True) | Q(parent__type__is_epic=True)
+            )
+
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -279,6 +386,9 @@ class IssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
@@ -297,7 +407,11 @@ class IssueViewSet(BaseViewSet):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                            slug=slug,
+                            user_id=request.user.id,
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -330,7 +444,11 @@ class IssueViewSet(BaseViewSet):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                        slug=slug,
+                        user_id=request.user.id,
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -355,7 +473,11 @@ class IssueViewSet(BaseViewSet):
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    group_by=group_by,
+                    issues=issues,
+                    sub_group_by=sub_group_by,
+                    slug=slug,
+                    user_id=request.user.id,
                 ),
             )
 
@@ -369,8 +491,21 @@ class IssueViewSet(BaseViewSet):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "user_id": request.user.id,
+                "slug": slug,
             },
         )
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"), user_id=request.user.id
+            ):
+                return Response(
+                    {"error": "You cannot create a work item in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         if serializer.is_valid():
             serializer.save()
@@ -420,6 +555,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "type_id",
                 )
                 .first()
             )
@@ -459,6 +595,7 @@ class IssueViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 pk=pk,
             )
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .select_related("state")
             .annotate(
                 cycle_id=Subquery(
@@ -551,7 +688,29 @@ class IssueViewSet(BaseViewSet):
                     )
                 )
             )
-        ).first()
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                customer_request_ids=Coalesce(
+                    Subquery(
+                        CustomerRequestIssue.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            customer_request__isnull=False,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("customer_request_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+        issue = issue.first()
+
         if not issue:
             return Response(
                 {"error": "The required object does not exist."},
@@ -573,6 +732,9 @@ class IssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -587,7 +749,11 @@ class IssueViewSet(BaseViewSet):
             project_id=project_id,
         )
 
-        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        serializer = IssueDetailSerializer(
+            issue,
+            expand=self.expand,
+            context={"slug": self.kwargs.get("slug"), "user_id": str(request.user.id)},
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
@@ -645,10 +811,37 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
-            issue, data=request.data, partial=True, context={"project_id": project_id}
+            issue,
+            data=request.data,
+            partial=True,
+            context={
+                "project_id": project_id,
+                "user_id": request.user.id,
+                "slug": slug,
+            },
         )
         if serializer.is_valid():
             serializer.save()
@@ -663,6 +856,19 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+
+            if issue.cycle_id and (
+                request.data.get("state_id") or request.data.get("estimate_point")
+            ):
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {"issue_id": str(issue.id), "cycle_id": str(issue.cycle_id)}
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
+
             model_activity.delay(
                 model_name="issue",
                 model_id=str(serializer.data.get("id", None)),
@@ -683,9 +889,25 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-
+        issue = Issue.objects.get(
+            Q(type__is_epic=False) | Q(type__isnull=True),
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
+        issue_cycle = CycleIssue.objects.filter(issue_id=pk).first()
+        if issue_cycle:
+            # added a entry to remove from the entity issue state activity
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {"issue_id": str(issue.id), "cycle_id": str(issue_cycle.cycle_id)}
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
         issue.delete()
+
         # delete the issue from recent visits
         UserRecentVisit.objects.filter(
             project_id=project_id,
@@ -751,8 +973,28 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # EE code
+        # fetch all the issues with their respective cycle ids
+        issues_with_cycle_ids = CycleIssue.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id__in=issue_ids
+        )
+
+        # then trigger the entity issue state activity task for each issue
+        for issue_id, cycle_id in issues_with_cycle_ids.values_list(
+            "issue_id", "cycle_id"
+        ):
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+        # EE code end here
+
         # First, delete all related cycle issues
-        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        issues_with_cycle_ids.delete()
 
         # Then, delete all related module issues
         ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
@@ -783,6 +1025,8 @@ class DeletedIssuesListViewSet(BaseAPIView):
 
 
 class IssuePaginatedViewSet(BaseViewSet):
+    use_read_replica = True
+
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
         project_id = self.kwargs.get("project_id")
@@ -795,9 +1039,9 @@ class IssuePaginatedViewSet(BaseViewSet):
             issue_queryset.select_related("state")
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
-                        :1
-                    ]
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"),
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -825,6 +1069,34 @@ class IssuePaginatedViewSet(BaseViewSet):
                     .values("parent")
                     .annotate(count=Count("id"))
                     .values("count")
+                )
+            )
+            .annotate(
+                customer_ids=Coalesce(
+                    Subquery(
+                        CustomerRequestIssue.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            customer_request__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("customer_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .annotate(
+                customer_request_ids=Coalesce(
+                    Subquery(
+                        CustomerRequestIssue.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            customer_request__isnull=False,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("customer_request_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
         )
@@ -874,6 +1146,9 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "customer_ids",
+            "customer_request_ids",
+            "type_id",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -896,7 +1171,13 @@ class IssuePaginatedViewSet(BaseViewSet):
             role=5,
             is_active=True,
         )
-        if project_member.exists() and not project.guest_view_all_features:
+        if (
+            project_member.exists()
+            and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
+        ):
             base_queryset = base_queryset.filter(created_by=request.user)
             queryset = queryset.filter(created_by=request.user)
 
@@ -954,12 +1235,61 @@ class IssuePaginatedViewSet(BaseViewSet):
 
 
 class IssueDetailEndpoint(BaseAPIView):
+    def _validate_order_by_field(self, order_by_param):
+        """
+        Validate if the order_by parameter is a valid sortable field.
+        Returns a tuple of (is_valid, sanitized_field)
+        """
+        # Remove the minus sign for validation
+        field_name = order_by_param.lstrip("-")
+
+        # Define valid sortable fields
+        valid_fields = {
+            # Direct fields
+            "name",
+            "priority",
+            "sequence_id",
+            "sort_order",
+            "start_date",
+            "target_date",
+            "completed_at",
+            "archived_at",
+            "is_draft",
+            "created_at",
+            "updated_at",
+            "point",
+            # Related fields
+            "state__name",
+            "state__group",
+            "type__name",
+            "parent__name",
+            "created_by__first_name",
+            "updated_by__first_name",
+            "estimate_point__name",
+            # Many-to-many fields (handled specially in order_issue_queryset)
+            "labels__name",
+            "assignees__first_name",
+            "issue_module__module__name",
+            # Computed fields (annotated in get_queryset)
+            "sub_issues_count",
+            "attachment_count",
+            "link_count",
+            # Special fields handled by order_issue_queryset
+            "priority",
+            "state__group",
+        }
+
+        if field_name in valid_fields:
+            return order_by_param
+        else:
+            return "-created_at"
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
 
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features
-        #  if it is true then show all the issues else show only the issues created by the user
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features  # noqa: E501
+        #  if it is true then show all the issues else show only the issues created by the user  # noqa: E501
         permission_subquery = (
             Issue.issue_objects.filter(
                 workspace__slug=slug, project_id=project_id, id=OuterRef("id")
@@ -1037,6 +1367,18 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            issue = issue.filter(created_by=request.user)
 
         # Add additional prefetch based on expand parameter
         if self.expand:
@@ -1057,6 +1399,10 @@ class IssueDetailEndpoint(BaseAPIView):
 
         issue = issue.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
+
+        # Validate the order_by_param
+        order_by_param = self._validate_order_by_field(order_by_param)
+
         # Issue queryset
         issue, order_by_param = order_issue_queryset(
             issue_queryset=issue, order_by_param=order_by_param
@@ -1195,24 +1541,21 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             identifier__iexact=project_identifier, workspace__slug=slug
         )
 
-        # Check if the user is a member of the project
-        if not ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project.id,
-            member=request.user,
-            is_active=True,
-        ).exists():
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         # Fetch the issue
         issue = (
-            Issue.issue_objects.filter(project_id=project.id)
+            Issue.objects.filter(
+                Q(issue_intake__status=1)
+                | Q(issue_intake__status=-1)
+                | Q(issue_intake__status=2)
+                | Q(issue_intake__isnull=True)
+            )
+            .filter(project_id=project.id)
             .filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
+            .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch("parent", queryset=Issue.objects.select_related("type"))
+            )
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
@@ -1220,6 +1563,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     ]
                 )
             )
+            .prefetch_related(Prefetch("customer_request_issues__customer"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1301,7 +1645,40 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             )
-        ).first()
+        ).annotate(is_epic=F("type__is_epic"))
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            ).annotate(
+                initiative_ids=Coalesce(
+                    ArrayAgg(
+                        "initiative_epics__initiative_id",
+                        distinct=True,
+                        filter=Q(
+                            initiative_epics__deleted_at__isnull=True,
+                            initiative_epics__initiative_id__isnull=False,
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+
+        issue = issue.first()
 
         # Check if the issue exists
         if not issue:
@@ -1310,26 +1687,61 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        has_issue_access = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists()
+
+        # Check if the user is a member of the team space
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            slug=slug,
+            user_id=request.user.id,
+        ):
+            teamspace_ids = TeamspaceProject.objects.filter(
+                workspace__slug=slug, project_id=project.id
+            ).values_list("team_space_id", flat=True)
+
+            if TeamspaceMember.objects.filter(
+                member=request.user, team_space_id__in=teamspace_ids
+            ).exists():
+                has_issue_access = True
+
+        # Check if the user has access to the issue if not return 403
+        if not has_issue_access:
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         """
         if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project.id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not issue.created_by == request.user
-        ):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
+            # If the user is guest and trying to access and epic do not show the epic
+            if issue.is_epic:
+                return Response(
+                    {"error": "You are not allowed to view this issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            elif (
+                not project.guest_view_all_features
+                and not issue.created_by_id == request.user.id
+            ):
+                return Response(
+                    {"error": "You are not allowed to view this issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         recent_visited_task.delay(
             slug=slug,
@@ -1340,5 +1752,10 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         )
 
         # Serialize the issue
-        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        serializer = IssueDetailSerializer(
+            issue,
+            expand=self.expand,
+            context={"slug": self.kwargs.get("slug"), "user_id": str(request.user.id)},
+        )
+
         return Response(serializer.data, status=status.HTTP_200_OK)

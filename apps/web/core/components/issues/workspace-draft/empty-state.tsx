@@ -23,7 +23,7 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/cycles" });
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/draft/draft-issues-empty" });
 
   return (
     <Fragment>

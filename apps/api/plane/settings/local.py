@@ -37,14 +37,14 @@ if not os.path.exists(LOG_DIR):
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
         "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "()": "pythonjsonlogger.json.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
         },
     },
@@ -69,6 +69,11 @@ LOGGING = {
             "propagate": False,
         },
         "plane.external": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.event_stream": {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,
