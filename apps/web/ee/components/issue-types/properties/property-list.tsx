@@ -19,6 +19,12 @@ type TIssuePropertyList = {
   containerRef: React.RefObject<HTMLDivElement>;
   lastElementRef: React.RefObject<HTMLDivElement>;
   isUpdateAllowed: boolean;
+  trackers?: {
+    [key in "create" | "update" | "delete" | "quickActions"]?: {
+      button?: string;
+      eventName?: string;
+    };
+  };
 };
 
 export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
@@ -29,6 +35,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
     containerRef,
     lastElementRef,
     isUpdateAllowed,
+    trackers,
   } = props;
 
   return (
@@ -45,6 +52,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
                 customPropertyId={property.id}
                 customPropertyOperations={customPropertyOperations}
                 isUpdateAllowed={isUpdateAllowed}
+                trackers={trackers}
               />
             </IssuePropertyOptionsProvider>
           ))}
@@ -60,6 +68,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
               issuePropertyCreateListData={issueProperty}
               customPropertyOperations={customPropertyOperations}
               isUpdateAllowed
+              trackers={trackers}
             />
           </IssuePropertyOptionsProvider>
         ))}

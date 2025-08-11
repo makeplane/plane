@@ -198,6 +198,44 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
+export const WORK_ITEM_TYPE_TRACKER_EVENTS = {
+  TYPES_ENABLED: "work_item_types_enabled",
+  CREATE: "work_item_type_created",
+  UPDATE: "work_item_type_updated",
+  DELETE: "work_item_type_deleted",
+  ENABLE: "work_item_type_enabled",
+  DISABLE: "work_item_type_disabled",
+  CREATE_PROPERTY: "work_item_type_create_property",
+};
+
+export const WORK_ITEM_TYPE_TRACKER_ELEMENTS = {
+  HEADER_CREATE_WORK_ITEM_TYPE_BUTTON: "work_item_type_header_create_button",
+  HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON: "work_item_type_header_enable_work_item_types_button",
+  HEADER_ENABLE_DISABLE_WORK_ITEM_TYPE_BUTTON: "work_item_type_header_enable_disable_button",
+  CREATE_PROPERTY_BUTTON: "work_item_type_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "work_item_type_property_quick_actions",
+};
+
+export const EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS = {
+  CREATE: "epic_custom_property_created",
+  UPDATE: "epic_custom_property_updated",
+  DELETE: "epic_custom_property_deleted",
+};
+export const EPIC_CUSTOM_PROPERTY_TRACKER_ELEMENTS = {
+  CREATE_PROPERTY_BUTTON: "epic_custom_property_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "epic_custom_property_property_quick_actions",
+};
+
+export const CUSTOMER_PROPERTY_TRACKER_EVENTS = {
+  CREATE: "customer_custom_property_created",
+  UPDATE: "customer_custom_property_updated",
+  DELETE: "customer_custom_property_deleted",
+};
+export const CUSTOMER_PROPERTY_TRACKER_ELEMENTS = {
+  CREATE_PROPERTY_BUTTON: "customer_custom_property_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "customer_custom_property_property_quick_actions",
+};
+// Project Template Tracker Start
 export const INTEGRATION_TRACKER_ELEMENTS = {
   INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON: "integrations_mapping_entity_item_button",
 };

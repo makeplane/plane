@@ -1,10 +1,11 @@
-import { useState } from "react";
+
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
+import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
-import { Collapsible, setToast, TOAST_TYPE, setPromiseToast } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components
@@ -125,6 +126,18 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
               issueTypeId={issueTypeId}
               propertiesLoader={propertiesLoader}
               getWorkItemTypeById={getWorkItemTypeById}
+              trackers={{
+                create: {
+                  button: WORK_ITEM_TYPE_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON,
+                  eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.CREATE_PROPERTY,
+                },
+                update: {
+                  eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.UPDATE,
+                },
+                delete: {
+                  eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.DELETE,
+                },
+              }}
             />
           </div>
         </Collapsible>

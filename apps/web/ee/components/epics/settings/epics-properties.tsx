@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
+import { EPIC_CUSTOM_PROPERTY_TRACKER_ELEMENTS, EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
@@ -85,6 +86,18 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
               issueTypeId={epicId}
               propertiesLoader={propertiesLoader}
               getWorkItemTypeById={getWorkItemTypeById}
+              trackers={{
+                create: {
+                  button: EPIC_CUSTOM_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON,
+                  eventName: EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS.CREATE,
+                },
+                update: {
+                  eventName: EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS.UPDATE,
+                },
+                delete: {
+                  eventName: EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS.DELETE,
+                },
+              }}
             />
           </div>
         </Collapsible>

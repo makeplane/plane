@@ -1,12 +1,14 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state";
 // hooks
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -43,12 +45,25 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
           title: "Success!",
           message: "Work item types and custom properties are now enabled for this project",
         });
+        captureSuccess({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.TYPES_ENABLED,
+          payload: {
+            project_id: projectId,
+          },
+        });
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Failed to enable work item types",
+        });
+        captureError({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.TYPES_ENABLED,
+          payload: {
+            project_id: projectId,
+          },
+          error: error as Error,
         });
       })
       .finally(() => {
@@ -66,7 +81,12 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
           assetPath={resolvedPath}
           primaryButton={{
             text: t("work_item_types.empty_state.enable.primary_button.text"),
-            onClick: () => setEnableIssueTypeConfirmation(true),
+            onClick: () => {
+              captureClick({
+                elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON,
+              });
+              setEnableIssueTypeConfirmation(true);
+            },
           }}
           size="md"
         />

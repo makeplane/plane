@@ -7,6 +7,7 @@ import { TOperationMode } from "@plane/types";
 import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { DeleteConfirmationModal } from "@/plane-web/components/issue-types";
 
 type TIssuePropertyQuickActions = {
@@ -14,10 +15,16 @@ type TIssuePropertyQuickActions = {
   onDisable: () => Promise<void>;
   onDelete: () => Promise<void>;
   onIssuePropertyOperationMode: (mode: TOperationMode) => void;
+  trackers?: {
+    [key in "create" | "update" | "delete" | "quickActions"]?: {
+      button?: string;
+      eventName?: string;
+    };
+  };
 };
 
 export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
-  const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode } = props;
+  const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode, trackers } = props;
   // plane hooks
   const { t } = useTranslation();
   // states
@@ -26,13 +33,23 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      action: () => onIssuePropertyOperationMode("update"),
+      action: () => {
+        captureClick({
+          elementName: trackers?.quickActions?.button || "",
+        });
+        onIssuePropertyOperationMode("update");
+      },
       title: t("common.actions.edit"),
       icon: Pencil,
     },
     {
       key: "delete",
-      action: () => setIsDeleteModalOpen(true),
+      action: () => {
+        captureClick({
+          elementName: trackers?.quickActions?.button || "",
+        });
+        setIsDeleteModalOpen(true);
+      },
       title: t("common.actions.delete"),
       icon: Trash2,
     },

@@ -4,10 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
+import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueType } from "@plane/types";
 import { CustomMenu, setPromiseToast, TContextMenuItem, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { captureClick } from "@/helpers/event-tracker.helper";
 
 type Props = {
   issueTypeId: string;
@@ -38,13 +40,23 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: (TContextMenuItem & { tooltipContent?: string })[] = [
     {
       key: "edit",
-      action: () => onEditIssueTypeIdChange(issueTypeId),
+      action: () => {
+        captureClick({
+          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
+        });
+        onEditIssueTypeIdChange(issueTypeId);
+      },
       title: t("common.actions.edit"),
       icon: Pencil,
     },
     {
       key: "delete",
-      action: () => onDeleteIssueTypeIdChange(issueTypeId),
+      action: () => {
+        captureClick({
+          elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.PROPERTY_QUICK_ACTIONS,
+        });
+        onDeleteIssueTypeIdChange(issueTypeId);
+      },
       title: t("common.actions.delete"),
       tooltipContent: issueTypeDetail?.is_default
         ? t("work_item_types.settings.cant_delete_default_message")

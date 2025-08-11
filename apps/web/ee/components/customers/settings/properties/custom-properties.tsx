@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 import { ChevronRight, Plus } from "lucide-react";
 // plane constants
 // plane i18n
+import { CUSTOMER_PROPERTY_TRACKER_ELEMENTS, CUSTOMER_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
@@ -121,6 +122,18 @@ export const CustomerCustomPropertiesRoot: FC = observer(() => {
                 lastElementRef={lastElementRef}
                 properties={properties}
                 isUpdateAllowed={false}
+                trackers={{
+                  create: {
+                    button: CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON,
+                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.CREATE,
+                  },
+                  update: {
+                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.UPDATE,
+                  },
+                  delete: {
+                    eventName: CUSTOMER_PROPERTY_TRACKER_EVENTS.DELETE,
+                  },
+                }}
               />
               <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
@@ -133,6 +146,7 @@ export const CustomerCustomPropertiesRoot: FC = observer(() => {
                       ...defaultCustomProperty,
                     });
                   }}
+                  data-ph-element={CUSTOMER_PROPERTY_TRACKER_ELEMENTS.CREATE_PROPERTY_BUTTON}
                 >
                   <Plus className="h-3.5 w-3.5" />
                   {t("customers.properties.add.primary_button")}
