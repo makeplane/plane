@@ -672,6 +672,11 @@
         "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu"
+      },
+      "plane-intelligence": { 
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
       }
     }
   },

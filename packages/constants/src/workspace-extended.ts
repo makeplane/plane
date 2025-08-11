@@ -65,6 +65,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/templates/`),
   },
+  "plane-intelligence": {
+    key: "plane-intelligence",
+    i18n_label: "workspace_settings.settings.plane-intelligence.title",
+    href: `/settings/plane-intelligence`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/plane-intelligence/`,
+  },
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {

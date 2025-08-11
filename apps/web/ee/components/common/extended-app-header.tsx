@@ -7,8 +7,9 @@ import { cn } from "@plane/utils";
 import { AppSidebarToggleButton } from "@/components/sidebar";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { isSidebarToggleVisible } from "../desktop/helper";
 
 export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
@@ -17,11 +18,13 @@ export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
   const { sidebarCollapsed } = useAppTheme();
   const shouldRenderPiChat =
     useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
-    isPiAllowed(pathname.replace(`/${workspaceSlug}`, ""));
+    isPiAllowed(pathname.replace(`/${workspaceSlug}`, "")) &&
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   return (
     <>

@@ -47,6 +47,10 @@ export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: strin
         isFeatureFlagEnabled &&
         store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED)
       );
+    case "pi_chat":
+      return (
+        isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)
+      );
     default:
       return isFeatureFlagEnabled;
   }

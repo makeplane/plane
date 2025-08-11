@@ -3,14 +3,18 @@ import type { TExtensions } from "@plane/editor";
 // ce imports
 import { TEditorFlaggingHookReturnType } from "@/ce/hooks/use-editor-flagging";
 // plane web hooks
+import { store } from "@/lib/store-context";
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "../types/workspace-feature";
 
 /**
  * @description extensions disabled in various editors
  */
 export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreType): TEditorFlaggingHookReturnType => {
   const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
-  const isEditorAIOpsEnabled = useFlag(workspaceSlug, "EDITOR_AI_OPS");
+  const isEditorAIOpsEnabled =
+    useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
+    store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");

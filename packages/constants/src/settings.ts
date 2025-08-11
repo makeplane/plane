@@ -46,6 +46,7 @@ export const GROUPED_WORKSPACE_SETTINGS = {
     WORKSPACE_SETTINGS["initiatives"],
     WORKSPACE_SETTINGS["customers"],
     WORKSPACE_SETTINGS["templates"],
+    WORKSPACE_SETTINGS["plane-intelligence"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
 };

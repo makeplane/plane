@@ -682,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "유효하지 않은 파일 또는 크기 제한 초과 ({size} MB)",
         "uploading": "업로드 중...",
         "upload_and_save": "업로드 및 저장"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요."
       }
     }
   },

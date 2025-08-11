@@ -262,6 +262,15 @@ export const INITIATIVE_TRACKER_EVENTS = {
   TOGGLE: "initiatives_toggled",
 };
 
+export const PLANE_INTELLIGENCE_TRACKER_EVENTS = {
+  TOGGLE: "plane_intelligence_toggled",
+};
+export const PLANE_INTELLIGENCE_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_TOGGLE_BUTTON: "plane_intelligence_settings_page_toggle_button",
+  HIGHER_SUBSCRIPTION_BUTTON: "plane_intelligence_higher_subscription_button",
+  UPGRADE_BUTTON: "plane_intelligence_upgrade_button",
+};
+
 export const IMPORTER_TRACKER_ELEMENTS = {
   IMPORTER_DASHBOARD_RE_RUN_BUTTON: "importer_dashboard_re_run_button",
   IMPORTER_DASHBOARD_CANCEL_BUTTON: "importer_dashboard_cancel_button",

@@ -1,6 +1,7 @@
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // store
 import { store } from "@/lib/store-context";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,
@@ -16,6 +17,10 @@ export const isAppRailFeatureEnabled = (featureKey: string) => {
   const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
 
   switch (featureKey) {
+    case "pi-chat":
+      return (
+        isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)
+      );
     default:
       return isFeatureFlagEnabled;
   }

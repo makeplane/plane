@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CommandPalette } from "@/components/command-palette";
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -9,12 +10,16 @@ import { EmptyPiChat } from "@/plane-web/components/pi-chat/empty";
 import { PiChatLayout } from "@/plane-web/components/pi-chat/layout";
 
 // plane web components
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { PiAppSidebar } from "./sidebar";
 
-export default function PiLayout({ children }: { children: React.ReactNode }) {
+function PiLayout({ children }: { children: React.ReactNode }) {
   // router
   const { workspaceSlug } = useParams();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+
   return (
     <AuthenticationWrapper>
       <CommandPalette />
@@ -23,11 +28,15 @@ export default function PiLayout({ children }: { children: React.ReactNode }) {
           <div className="relative flex size-full overflow-hidden">
             <PiAppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-              <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<EmptyPiChat />}>
-                <PiChatLayout shouldRenderSidebarToggle isFullScreen>
-                  {children}
-                </PiChatLayout>
-              </WithFeatureFlagHOC>
+              {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
+                <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<EmptyPiChat />}>
+                  <PiChatLayout shouldRenderSidebarToggle isFullScreen>
+                    {children}
+                  </PiChatLayout>
+                </WithFeatureFlagHOC>
+              ) : (
+                <EmptyPiChat />
+              )}
             </main>
           </div>
         </div>
@@ -35,3 +44,5 @@ export default function PiLayout({ children }: { children: React.ReactNode }) {
     </AuthenticationWrapper>
   );
 }
+
+export default observer(PiLayout);

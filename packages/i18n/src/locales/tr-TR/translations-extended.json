@@ -697,6 +697,11 @@
         "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
         "uploading": "Yükleniyor...",
         "upload_and_save": "Yükle ve kaydet"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın."
       }
     }
   },

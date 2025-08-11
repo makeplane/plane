@@ -682,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "Недійсний файл або перевищує ліміт розміру ({size} MB)",
         "uploading": "Завантаження...",
         "upload_and_save": "Завантажити та зберегти"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Переглядайте, як ваша робота стає розумнішою та швидшою завдяки штучному інтелекту, який напряму пов'язаний з вашою роботою та базою знань."
       }
     }
   },

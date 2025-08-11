@@ -682,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "Arquivo inválido ou excede o limite de tamanho ({size} MB)",
         "uploading": "Carregando...",
         "upload_and_save": "Carregar e salvar"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Veja seu trabalho se tornar mais inteligente e mais rápido com IA que está conectada de forma nativa ao seu trabalho e base de conhecimentos."
       }
     }
   },

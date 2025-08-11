@@ -672,6 +672,11 @@
         "invalid_file_or_exceeds_size_limit": "Неверный файл или превышен лимит размера ({size} MB)",
         "uploading": "Загрузка...",
         "upload_and_save": "Загрузить и сохранить"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Смотрите, как ваша работа становится более интеллектуальной и быстрой с помощью ИИ, которая напрямую связана с вашей работой и базой знаний."
       }
     }
   },

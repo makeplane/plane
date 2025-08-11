@@ -1,7 +1,9 @@
 // editor
 import { TExtensions } from "@plane/editor";
 // plane web hooks
+import { store } from "@/lib/store-context";
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "../types/workspace-feature";
 
 /**
  * @description extensions disabled in various editors
@@ -15,7 +17,9 @@ export const useEditorFlagging = (
   richTextEditor: TExtensions[];
 } => {
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
-  const isEditorAIOpsEnabled = useFlag(workspaceSlug, "EDITOR_AI_OPS");
+  const isEditorAIOpsEnabled =
+    useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
+    store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   // extensions disabled in the document editor
   const documentEditor: TExtensions[] = [];

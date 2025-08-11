@@ -681,6 +681,11 @@
         "invalid_file_or_exceeds_size_limit": "无效的文件或超过大小限制 ({size} MB)",
         "uploading": "上传中...",
         "upload_and_save": "上传并保存"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。"
       }
     }
   },

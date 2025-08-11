@@ -681,6 +681,11 @@
         "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune ({size} MB)",
         "uploading": "Încarcă...",
         "upload_and_save": "Încarcă și salvează"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe."
       }
     }
   },

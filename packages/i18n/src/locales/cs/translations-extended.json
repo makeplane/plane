@@ -682,7 +682,12 @@
         "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překračuje limit velikosti ({size} MB)",
         "uploading": "Nahrávání...",
         "upload_and_save": "Nahrát a uložit"
-      }
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Sledujte, jak se vaše práce stává chytřejší a rychlejší s AI, která je nativně propojena s vaší prací a znalostní základnou."
+      } 
     }
   },
   "bulk_operations": {

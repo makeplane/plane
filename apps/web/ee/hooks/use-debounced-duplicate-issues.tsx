@@ -7,7 +7,9 @@ import { getTextContent } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 // services
+import { store } from "@/lib/store-context";
 import { PIService } from "@/plane-web/services";
+import { EWorkspaceFeatures } from "../types/workspace-feature";
 import { useFlag } from "./store";
 
 const piService = new PIService();
@@ -21,7 +23,9 @@ export const useDebouncedDuplicateIssues = (
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
 
   // Check if the feature flag is enabled
-  const isFeatureEnabled = useFlag(workspaceSlug, "PI_DEDUPE");
+  const isFeatureEnabled =
+    useFlag(workspaceSlug, "PI_DEDUPE") &&
+    store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   // Debounce the name and description
   const debouncedName = useDebounce(formData?.name, 3000);

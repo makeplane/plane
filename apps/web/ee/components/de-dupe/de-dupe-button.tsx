@@ -1,6 +1,9 @@
 "use client";
 import React, { FC } from "react";
 // local components
+import { observer } from "mobx-react";
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { DeDupeIssueButtonLabel } from "./issue-block";
 
@@ -11,8 +14,10 @@ type TDeDupeButtonRoot = {
   label: string;
 };
 
-export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = (props) => {
+export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = observer((props) => {
   const { workspaceSlug, isDuplicateModalOpen, label, handleOnClick } = props;
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_DEDUPE" fallback={<></>}>
       <button
@@ -26,4 +31,4 @@ export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = (props) => {
       </button>
     </WithFeatureFlagHOC>
   );
-};
+});

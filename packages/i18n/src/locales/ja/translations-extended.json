@@ -681,6 +681,11 @@
         "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
         "uploading": "アップロード中...",
         "upload_and_save": "アップロードして保存"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
       }
     }
   },

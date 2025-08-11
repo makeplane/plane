@@ -682,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
         "uploading": "Mengunggah...",
         "upload_and_save": "Unggah dan Simpan"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda."
       }
     }
   },

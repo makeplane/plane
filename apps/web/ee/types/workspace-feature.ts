@@ -11,6 +11,7 @@ export enum EWorkspaceFeatures {
   IS_TEAMSPACES_ENABLED = "is_teams_enabled",
   IS_INITIATIVES_ENABLED = "is_initiative_enabled",
   IS_CUSTOMERS_ENABLED = "is_customer_enabled",
+  IS_PI_ENABLED = "is_pi_enabled",
 }
 
 export type TWorkspaceFeature = { [key in EWorkspaceFeatures]: boolean | undefined };
