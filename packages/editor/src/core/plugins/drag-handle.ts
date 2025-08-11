@@ -21,6 +21,9 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-attachment-component",
+  ".page-embed-component",
+  ".editor-mathematics-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -65,9 +68,7 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement | null): Element | null => {
-  if (!node) return null;
-
+export const getScrollParent = (node: HTMLElement | SVGElement) => {
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }
@@ -173,7 +174,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
-    scrollAnimationFrame = requestAnimationFrame(scroll);
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
   }
 
   const handleClick = (event: MouseEvent, view: EditorView) => {

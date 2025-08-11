@@ -1,0 +1,2504 @@
+{
+  "sidebar": {
+    "pi_chat": "Pi Chat",
+    "initiatives": "Inisiatif",
+    "teamspaces": "Teamspaces",
+    "epics": "Epics",
+    "upgrade_plan": "Tingkatkan paket",
+    "plane_pro": "Plane Pro",
+    "business": "Bisnis",
+    "customers": "Pelanggan"
+  },
+  "workspace_dashboards": "Dasbor",
+  "pi_chat": "Obrolan Pi",
+  "in_app": "Dalam Aplikasi",
+  "forms": "Formulir",
+  "choose_workspace_for_integration": "Pilih ruang kerja untuk menghubungkan aplikasi ini",
+  "integrations_description": "Aplikasi yang bekerja dengan Plane harus menghubungkan ke ruang kerja di mana Anda adalah admin.",
+  "create_a_new_workspace": "Buat ruang kerja baru",
+  "learn_more_about_workspaces": "Pelajari lebih lanjut tentang ruang kerja",
+  "no_workspaces_to_connect": "Tidak ada ruang kerja untuk menghubungkan",
+  "no_workspaces_to_connect_description": "Anda perlu membuat ruang kerja untuk dapat menghubungkan integrasi dan template",
+  "common": {
+    "worklogs": "Log Kerja",
+    "live": "Langsung",
+    "epics": "Epik",
+    "project_updates": "Pembaruan Proyek",
+    "overview": "Ikhtisar",
+    "workflows": "Alur Kerja",
+    "templates": "Templat",
+    "members_and_teamspaces": "Anggota & Teamspaces"
+  },
+  "updates": {
+    "add_update": "Tambahkan update",
+    "add_update_placeholder": "Tambahkan update Anda di sini",
+    "empty": {
+      "title": "Belum ada update",
+      "description": "Anda dapat melihat update di sini."
+    },
+    "delete": {
+      "title": "Hapus update",
+      "confirmation": "Apakah Anda yakin ingin menghapus update ini? Aksi ini tidak dapat dibatalkan.",
+      "success": {
+        "title": "Update berhasil dihapus",
+        "message": "Update berhasil dihapus."
+      },
+      "error": {
+        "title": "Update tidak berhasil dihapus",
+        "message": "Update tidak berhasil dihapus."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Update berhasil diperbarui",
+        "message": "Update berhasil diperbarui."
+      },
+      "error": {
+        "title": "Update tidak berhasil diperbarui",
+        "message": "Update tidak berhasil diperbarui."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksi berhasil dibuat",
+          "message": "Reaksi berhasil dibuat."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dibuat",
+          "message": "Reaksi tidak berhasil dibuat."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksi berhasil dihapus",
+          "message": "Reaksi berhasil dihapus."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dihapus",
+          "message": "Reaksi tidak berhasil dihapus."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "Sejak update terakhir",
+      "comments": "{count, plural, one{# komentar} other{# komentar}}"
+    },
+    "create": {
+      "success": {
+        "title": "Update berhasil dibuat",
+        "message": "Update berhasil dibuat."
+      },
+      "error": {
+        "title": "Update tidak berhasil dibuat",
+        "message": "Update tidak berhasil dibuat."
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Mulai Sebelum",
+      "start_after": "Mulai Setelah",
+      "finish_before": "Selesai Sebelum",
+      "finish_after": "Selesai Setelah"
+    }
+  },
+
+  "pages": {
+    "link_pages": "Menghubungkan halaman",
+    "show_wiki_pages": "Tampilkan halaman wiki",
+    "link_pages_to": "Menghubungkan halaman ke",
+    "linked_pages": "Halaman yang terhubung",
+    "no_description": "Halaman ini kosong. Tulis sesuatu di sini dan lihatnya di sini sebagai placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Halaman diperbarui",
+          "message": "Halaman berhasil diperbarui"
+        },
+        "error": {
+          "title": "Halaman tidak diperbarui",
+          "message": "Halaman tidak dapat diperbarui"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Halaman dihapus",
+          "message": "Halaman berhasil dihapus"
+        },
+        "error": {
+          "title": "Halaman tidak dihapus",
+          "message": "Halaman tidak dapat dihapus"
+        }
+      }
+    }
+  },
+
+  "profile": {
+    "actions": {
+      "connections": "Koneksi"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "Inisiatif",
+      "sub_heading": "Buka level organisasi tertinggi untuk semua pekerjaan Anda di Plane.",
+      "title": "Aktifkan Inisiatif",
+      "description": "Tetapkan tujuan yang lebih besar untuk memantau kemajuan",
+      "toast": {
+        "updating": "Memperbarui fitur inisiatif",
+        "enable_success": "Fitur inisiatif berhasil diaktifkan.",
+        "disable_success": "Fitur inisiatif berhasil dinonaktifkan.",
+        "error": "Gagal memperbarui fitur inisiatif!"
+      }
+    },
+    "customers": {
+      "heading": "Pelanggan",
+      "settings_heading": "Kelola pekerjaan berdasarkan apa yang penting bagi pelanggan Anda.",
+      "settings_sub_heading": "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "Tidak ada integrasi yang dikonfigurasi",
+        "description": "Konfigurasikan GitHub dan integrasi lainnya untuk menyinkronkan item kerja proyek Anda."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Edit sistem estimasi",
+        "add_or_update": {
+          "title": "Tambah, perbarui atau hapus estimasi",
+          "description": "Kelola sistem saat ini dengan menambah, memperbarui atau menghapus poin atau kategori."
+        },
+        "switch": {
+          "title": "Ubah tipe estimasi",
+          "description": "Konversi sistem poin Anda ke sistem kategori dan sebaliknya."
+        }
+      },
+      "switch": "Alihkan sistem estimasi",
+      "current": "Sistem estimasi saat ini",
+      "select": "Pilih sistem estimasi",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimasi diurutkan ulang",
+            "message": "Estimasi telah diurutkan ulang dalam proyek Anda."
+          },
+          "error": {
+            "title": "Pengurutan ulang estimasi gagal",
+            "message": "Kami tidak dapat mengurutkan ulang estimasi, silakan coba lagi"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Harap isi bidang estimasi ini",
+        "repeat": "Nilai estimasi tidak boleh diulang"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Properti",
+        "description": "Tambahkan properti kustom ke epic Anda."
+      },
+      "disabled": "Dinonaktifkan"
+    }
+  },
+  "teamspaces": {
+    "label": "Ruang Tim",
+    "empty_state": {
+      "general": {
+        "title": "Ruang Tim membuka organisasi dan pelacakan yang lebih baik di Plane.",
+        "description": "Buat permukaan khusus untuk setiap tim dunia nyata, terpisah dari semua permukaan kerja lain di Plane, dan sesuaikan dengan cara kerja tim Anda.",
+        "primary_button": {
+          "text": "Buat ruang tim baru"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Anda belum menautkan ruang tim apa pun.",
+          "description": "Pemilik ruang tim dan proyek dapat mengelola akses ke proyek."
+        }
+      },
+      "primary_button": {
+        "text": "Tautkan ruang tim"
+      },
+      "secondary_button": {
+        "text": "Pelajari lebih lanjut"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nama ruang tim",
+          "members": "Anggota",
+          "accountType": "Tipe akun"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Hapus ruang tim"
+            },
+            "confirm": {
+              "title": "Hapus {teamspaceName} dari {projectName}",
+              "description": "Saat Anda menghapus ruang tim ini dari proyek tertaut, anggota di sini akan kehilangan akses ke proyek tertaut."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Tidak ada ruang tim yang cocok ditemukan"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Anda menautkan ruang tim ke proyek ini.} other {Anda menautkan # ruang tim ke proyek ini.}}",
+            "description": "{additionalCount, plural, =0 {Ruang tim {firstTeamspaceName} sekarang tertaut ke proyek ini.} other {Ruang tim {firstTeamspaceName} dan {additionalCount} lainnya sekarang tertaut ke proyek ini.}}"
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Anda menghapus ruang tim itu dari proyek ini.",
+            "description": "Ruang tim {teamspaceName} telah dihapus dari {projectName}."
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Cari ruang tim",
+        "info": {
+          "title": "Menambahkan ruang tim memberikan akses ke proyek ini untuk semua anggota ruang tim.",
+          "link": "Pelajari lebih lanjut"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Anda tidak memiliki ruang tim untuk ditautkan.",
+            "description": "Anda tidak berada dalam ruang tim yang dapat Anda tautkan atau Anda telah menautkan semua ruang tim yang tersedia."
+          },
+          "no_results": {
+            "title": "Itu tidak cocok dengan ruang tim Anda.",
+            "description": "Coba istilah lain atau pastikan Anda memiliki ruang tim untuk ditautkan."
+          }
+        },
+        "primary_button": {
+          "text": "Tautkan ruang tim yang dipilih"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Buat item kerja khusus tim.",
+        "description": "Item kerja yang ditetapkan kepada anggota tim ini di proyek tertaut mana pun akan otomatis muncul di sini. Jika Anda berharap melihat beberapa item kerja di sini, pastikan proyek tertaut Anda memiliki item kerja yang ditetapkan ke anggota tim ini atau buat item kerja.",
+        "primary_button": {
+          "text": "Tambahkan item kerja ke proyek tertaut"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Tidak ada item kerja khusus tim untuk filter yang diterapkan",
+        "description": "Ubah beberapa filter tersebut atau hapus semuanya untuk melihat item kerja yang relevan dengan ruang ini.",
+        "secondary_button": {
+          "text": "Hapus semua filter"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus aktif.",
+        "description": "Siklus aktif dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus aktif, pastikan itu sedang berjalan di proyek tertaut saat ini."
+      },
+      "completed": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus selesai.",
+        "description": "Siklus selesai dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus selesai, pastikan itu juga selesai di proyek tertaut."
+      },
+      "upcoming": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki siklus mendatang.",
+        "description": "Siklus mendatang dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat siklus mendatang, pastikan itu ada di proyek tertaut juga."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Tampilan tim Anda tentang pekerjaan Anda tanpa mengganggu tampilan lain di workspace Anda",
+        "description": "Lihat pekerjaan tim Anda dalam tampilan yang disimpan hanya untuk tim Anda dan terpisah dari tampilan proyek.",
+        "primary_button": {
+          "text": "Buat tampilan"
+        }
+      },
+      "filter": {
+        "title": "Tidak ada tampilan yang cocok",
+        "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian. \n Buat tampilan baru sebagai gantinya."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Simpan pengetahuan tim Anda di Halaman Tim.",
+        "description": "Tidak seperti halaman dalam proyek, Anda dapat menyimpan pengetahuan khusus untuk tim dalam kumpulan halaman terpisah di sini. Dapatkan semua fitur Halaman, buat dokumen praktik terbaik, dan wiki tim dengan mudah.",
+        "primary_button": {
+          "text": "Buat halaman tim pertama Anda"
+        }
+      },
+      "filter": {
+        "title": "Tidak ada halaman yang cocok",
+        "description": "Hapus filter untuk melihat semua halaman"
+      },
+      "search": {
+        "title": "Tidak ada halaman yang cocok",
+        "description": "Hapus kriteria pencarian untuk melihat semua halaman"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Tidak ada proyek tertaut Anda yang memiliki item kerja yang dipublikasikan.",
+        "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat kemajuan berdasarkan tanggal, status, dan prioritas."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Anda tidak memiliki item kerja yang memblokir rekan tim.",
+          "description": "Kerja bagus! Anda telah membersihkan jalur untuk tim Anda. Anda adalah pemain tim yang baik."
+        },
+        "blocked": {
+          "title": "Anda tidak memiliki item kerja rekan tim yang memblokir Anda.",
+          "description": "Kabar baik! Anda dapat membuat kemajuan pada semua item kerja yang ditugaskan kepada Anda."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Tidak ada proyek tertaut Anda yang memiliki item kerja yang dipublikasikan.",
+          "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat distribusi pekerjaan berdasarkan proyek dan anggota tim."
+        },
+        "filter": {
+          "title": "Tidak ada statistik tim untuk filter yang diterapkan.",
+          "description": "Buat beberapa item kerja di satu atau lebih proyek tersebut untuk melihat distribusi pekerjaan berdasarkan proyek dan anggota tim."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "overview": "Ikhtisar",
+    "label": "Inisiatif",
+    "placeholder": "{count, plural, one{# inisiatif} other{# inisiatif}}",
+    "add_initiative": "Tambah Inisiatif",
+    "create_initiative": "Buat Inisiatif",
+    "update_initiative": "Perbarui Inisiatif",
+    "initiative_name": "Nama inisiatif",
+    "all_initiatives": "Semua Inisiatif",
+    "delete_initiative": "Hapus Inisiatif",
+    "fill_all_required_fields": "Harap isi semua bidang yang diperlukan.",
+    "toast": {
+      "create_success": "Inisiatif {name} berhasil dibuat.",
+      "create_error": "Gagal membuat inisiatif. Silakan coba lagi!",
+      "update_success": "Inisiatif {name} berhasil diperbarui.",
+      "update_error": "Gagal memperbarui inisiatif. Silakan coba lagi!",
+      "delete": {
+        "success": "Inisiatif berhasil dihapus.",
+        "error": "Gagal menghapus Inisiatif"
+      },
+      "link_copied": "Tautan inisiatif disalin ke clipboard.",
+      "project_update_success": "Proyek inisiatif berhasil diperbarui.",
+      "project_update_error": "Gagal memperbarui proyek inisiatif. Silakan coba lagi!",
+      "epic_update_success": "Epik{count, plural, one { berhasil ditambahkan ke Inisiatif.} other { berhasil ditambahkan ke Inisiatif.}}",
+      "epic_update_error": "Penambahan Epik ke Inisiatif gagal. Silakan coba lagi nanti."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Atur pekerjaan di level tertinggi dengan Inisiatif",
+        "description": "Ketika Anda perlu mengatur pekerjaan yang mencakup beberapa proyek dan tim, Inisiatif sangat berguna. Hubungkan proyek dan epik ke inisiatif, lihat pembaruan yang otomatis digabungkan, dan lihat hutan sebelum Anda sampai ke pohon.",
+        "primary_button": {
+          "text": "Buat inisiatif"
+        }
+      },
+      "search": {
+        "title": "Tidak ada inisiatif yang cocok",
+        "description": "Tidak ada inisiatif yang terdeteksi dengan kriteria yang cocok. \n Buat inisiatif baru sebagai gantinya."
+      },
+      "not_found": {
+        "title": "Inisiatif tidak ada",
+        "description": "Inisiatif yang Anda cari tidak ada atau telah dihapus.",
+        "primary_button": {
+          "text": "Lihat Inisiatif lain"
+        }
+      },
+      "epics": {
+        "title": "Anda tidak memiliki epik yang cocok dengan filter yang Anda terapkan.",
+        "subHeading": "Untuk melihat semua epik, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      }
+    },
+    "scope": {
+      "view_scope": "Lihat ruang lingkup",
+      "breakdown": "Pecahkan ruang lingkup",
+      "add_scope": "Tambah ruang lingkup",
+      "label": "Ruang lingkup",
+      "empty_state": {
+        "title": "Belum ada ruang lingkup yang ditambahkan ke inisiatif ini",
+        "description": "Hubungkan proyek dan epik ke inisiatif ini untuk memulai.",
+        "primary_button": {
+          "text": "Tambah ruang lingkup"
+        }
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
+        "description": "Halaman adalah ruang pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda. Untuk mempersingkat pekerjaan dokumen apa pun, panggil Galileo, AI Plane, dengan pintasan atau klik tombol.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "private": {
+        "title": "Belum ada halaman pribadi",
+        "description": "Simpan pikiran pribadi Anda di sini. Ketika Anda siap berbagi, tim hanya berjarak satu klik.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "public": {
+        "title": "Belum ada halaman publik",
+        "description": "Lihat halaman yang dibagikan dengan semua orang di workspace Anda di sini.",
+        "primary_button": {
+          "text": "Buat halaman pertama Anda"
+        }
+      },
+      "archived": {
+        "title": "Belum ada halaman yang diarsipkan",
+        "description": "Arsipkan halaman yang tidak di radar Anda. Akses di sini saat diperlukan."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epik",
+    "no_epics_selected": "Tidak ada epik yang dipilih",
+    "add_selected_epics": "Tambahkan epik yang dipilih",
+    "epic_link_copied_to_clipboard": "Tautan epik disalin ke clipboard.",
+    "project_link_copied_to_clipboard": "Tautan proyek disalin ke clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Buat epik dan tetapkan ke seseorang, bahkan diri Anda sendiri",
+        "description": "Untuk tubuh pekerjaan yang lebih besar yang mencakup beberapa siklus dan dapat hidup di berbagai modul, buat epik. Hubungkan item kerja dan sub-item kerja dalam proyek ke epik dan lompat ke item kerja dari ikhtisar.",
+        "primary_button": {
+          "text": "Buat Epik"
+        }
+      },
+      "section": {
+        "title": "Belum ada epik",
+        "description": "Mulai menambahkan epik untuk mengelola dan melacak kemajuan.",
+        "primary_button": {
+          "text": "Tambah epik"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ditemukan epik yang cocok"
+      },
+      "no_epics": {
+        "title": "Tidak ditemukan epik"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Tidak ada siklus aktif",
+        "description": "Siklus proyek Anda yang mencakup periode apa pun yang mencakup tanggal hari ini dalam rentangnya. Temukan kemajuan dan detail semua siklus aktif Anda di sini."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Tambahkan item kerja ke siklus untuk melihat \n kemajuannya"
+      },
+      "priority": {
+        "title": "Amati item kerja prioritas tinggi yang ditangani dalam \n siklus secara sekilas."
+      },
+      "assignee": {
+        "title": "Tambahkan penanggung jawab ke item kerja untuk melihat \n pembagian pekerjaan berdasarkan penanggung jawab."
+      },
+      "label": {
+        "title": "Tambahkan label ke item kerja untuk melihat \n pembagian pekerjaan berdasarkan label."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Integrasi"
+      },
+      "imports": {
+        "title": "Impor"
+      },
+      "worklogs": {
+        "title": "Log kerja"
+      },
+      "project_states": {
+        "title": "Status proyek"
+      },
+      "teamspaces": {
+        "title": "Ruang tim"
+      },
+      "initiatives": {
+        "title": "Inisiatif"
+      },
+      "customers": {
+        "title": "Pelanggan"
+      },
+      "cancel_trial": {
+        "title": "Batalkan uji coba Anda terlebih dahulu.",
+        "description": "Anda memiliki uji coba aktif untuk salah satu paket berbayar kami. Silakan batalkan terlebih dahulu untuk melanjutkan.",
+        "dismiss": "Tutup",
+        "cancel": "Batalkan uji coba",
+        "cancel_success_title": "Uji coba dibatalkan.",
+        "cancel_success_message": "Anda sekarang dapat menghapus workspace.",
+        "cancel_error_title": "Itu tidak berhasil.",
+        "cancel_error_message": "Silakan coba lagi."
+      },
+      "applications": {
+        "title": "Aplikasi",
+        "applicationId_copied": "ID aplikasi disalin ke clipboard",
+        "clientId_copied": "ID klien disalin ke clipboard",
+        "clientSecret_copied": "Kunci rahasia klien disalin ke clipboard",
+        "third_party_apps": "Aplikasi pihak ketiga",
+        "your_apps": "Aplikasi Anda",
+        "connect": "Koneksi",
+        "connected": "Terhubung",
+        "install": "Pasang",
+        "installed": "Terpasang",
+        "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
+        "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
+        "client_id_and_secret": "ID klien dan Rahasia",
+        "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
+        "client_id_and_secret_download": "Anda dapat mengunduh CSV dengan kunci dari sini.",
+        "application_id": "ID Aplikasi",
+        "client_id": "ID Klien",
+        "client_secret": "Rahasia Klien",
+        "export_as_csv": "Ekspor sebagai CSV",
+        "slug_already_exists": "Slug sudah ada",
+        "failed_to_create_application": "Gagal membuat aplikasi",
+        "upload_logo": "Unggah Logo",
+        "app_name_title": "Apa nama Anda untuk aplikasi ini",
+        "app_name_error": "Nama aplikasi diperlukan",
+        "app_short_description_title": "Berikan aplikasi ini deskripsi singkat",
+        "app_short_description_error": "Deskripsi aplikasi singkat diperlukan",
+        "app_description_title": "Tulis deskripsi yang lebih panjang untuk orang yang ingin mengetahui lebih lanjut. Tekan / untuk perintah",
+        "app_description_error": "Deskripsi aplikasi diperlukan",
+        "app_slug_title": "Slug aplikasi",
+        "app_slug_error": "Slug aplikasi diperlukan",
+        "app_maker_title": "Pembuat aplikasi",
+        "app_maker_error": "Pembuat aplikasi diperlukan",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook diperlukan",
+        "invalid_webhook_url_error": "URL Webhook tidak valid",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs diperlukan",
+        "invalid_redirect_uris_error": "Redirect URIs tidak valid",
+        "redirect_uris_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diarahkan setelah pengguna e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins diperlukan",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins tidak valid",
+        "authorized_javascript_origins_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diizinkan untuk membuat permintaan e.g app.com example.com",
+        "create_app": "Buat aplikasi",
+        "update_app": "Perbarui aplikasi",
+        "regenerate_client_secret_description": "Regenerate kunci rahasia klien. Jika Anda menghasilkan kunci rahasia, Anda dapat menyalin kunci atau mengunduhnya ke file CSV setelah itu.",
+        "regenerate_client_secret": "Regenerate kunci rahasia klien",
+        "regenerate_client_secret_confirm_title": "Apakah Anda yakin ingin menghasilkan kembali kunci rahasia klien?",
+        "regenerate_client_secret_confirm_description": "Aplikasi yang menggunakan kunci rahasia ini akan berhenti bekerja. Anda perlu memperbarui kunci rahasia di aplikasi.",
+        "regenerate_client_secret_confirm_cancel": "Batalkan",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Akses baca-saja ke workspace Anda",
+        "write_access_to_workspace": "Akses tulis ke workspace Anda",
+        "read_only_access_to_user_profile": "Akses baca-saja ke profil pengguna Anda",
+        "write_access_to_user_profile": "Akses tulis ke profil pengguna Anda",
+        "connect_app_to_workspace": "Koneksikan {app} ke workspace Anda {workspace}",
+        "user_permissions": "Izin pengguna",
+        "user_permissions_description": "Izin pengguna digunakan untuk memberikan akses ke profil pengguna.",
+        "workspace_permissions": "Izin workspace",
+        "workspace_permissions_description": "Izin workspace digunakan untuk memberikan akses ke workspace.",
+        "with_the_permissions": "dengan izin",
+        "app_consent_title": "{app} meminta akses ke workspace Anda dan profil Plane.",
+        "choose_workspace_to_connect_app_with": "Pilih workspace untuk menghubungkan aplikasi",
+        "app_consent_workspace_permissions_title": "{app} ingin",
+        "app_consent_user_permissions_title": "{app} juga dapat meminta izin pengguna untuk sumber daya berikut. Izin ini akan diminta dan diotorisasi hanya oleh pengguna.",
+        "app_consent_accept_title": "Dengan menerima, Anda",
+        "app_consent_accept_1": "Berikan akses ke data Plane Anda di mana pun Anda dapat menggunakan aplikasi di dalam atau di luar Plane",
+        "app_consent_accept_2": "Setuju dengan {app}'s Privacy Policy dan Terms Of Use",
+        "accepting": "Menerima...",
+        "accept": "Menerima",
+        "categories": "Kategori",
+        "select_app_categories": "Pilih kategori aplikasi",
+        "categories_title": "Kategori",
+        "categories_error": "Kategori diperlukan",
+        "invalid_categories_error": "Kategori tidak valid",
+        "categories_description": "Pilih kategori yang paling sesuai dengan aplikasi",
+        "privacy_policy_url_title": "URL Privacy Policy",
+        "privacy_policy_url_error": "URL Privacy Policy diperlukan",
+        "invalid_privacy_policy_url_error": "URL Privacy Policy tidak valid",
+        "terms_of_service_url_title": "URL Terms of Service",
+        "terms_of_service_url_error": "URL Terms of Service diperlukan",
+        "invalid_terms_of_service_url_error": "URL Terms of Service tidak valid",
+        "support_url_title": "URL Support",
+        "support_url_error": "URL Support diperlukan",
+        "invalid_support_url_error": "URL Support tidak valid",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video diperlukan",
+        "invalid_video_url_error": "URL Video tidak valid",
+        "setup_url_title": "URL Setup",
+        "setup_url_error": "URL Setup diperlukan",
+        "invalid_setup_url_error": "URL Setup tidak valid",
+        "configuration_url_title": "URL Konfigurasi",
+        "configuration_url_error": "URL Konfigurasi diperlukan",
+        "invalid_configuration_url_error": "URL Konfigurasi tidak valid",
+        "contact_email_title": "Email Kontak",
+        "contact_email_error": "Email Kontak diperlukan",
+        "invalid_contact_email_error": "Email Kontak tidak valid",
+        "upload_attachments": "Unggah Lampiran",
+        "uploading_images": "Mengunggah {count} Gambar{count, plural, one {s} other {s}}",
+        "drop_images_here": "Letakkan gambar di sini",
+        "click_to_upload_images": "Klik untuk mengunggah gambar",
+        "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
+        "uploading": "Mengunggah...",
+        "upload_and_save": "Unggah dan Simpan"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda."
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Tidak dapat mengarsipkan item kerja",
+        "message": "Hanya item kerja yang termasuk dalam kelompok status Selesai atau Dibatalkan yang dapat diarsipkan."
+      },
+      "invalid_issue_start_date": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Tanggal mulai yang dipilih melebihi tanggal jatuh tempo untuk beberapa item kerja. Pastikan tanggal mulai sebelum tanggal jatuh tempo."
+      },
+      "invalid_issue_target_date": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Tanggal jatuh tempo yang dipilih mendahului tanggal mulai untuk beberapa item kerja. Pastikan tanggal jatuh tempo setelah tanggal mulai."
+      },
+      "invalid_state_transition": {
+        "title": "Tidak dapat memperbarui item kerja",
+        "message": "Perubahan status tidak diizinkan untuk beberapa item kerja. Pastikan perubahan status diizinkan."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "Tipe Item Kerja",
+    "label_lowercase": "tipe item kerja",
+    "settings": {
+      "title": "Tipe Item Kerja",
+      "properties": {
+        "title": "Properti kustom",
+        "tooltip": "Setiap tipe item kerja dilengkapi dengan serangkaian properti default seperti Judul, Deskripsi, Penerima tugas, Status, Prioritas, Tanggal mulai, Tanggal jatuh tempo, Modul, Siklus, dll. Anda juga dapat menyesuaikan dan menambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
+        "add_button": "Tambah properti baru",
+        "dropdown": {
+          "label": "Tipe properti",
+          "placeholder": "Pilih tipe"
+        },
+        "property_type": {
+          "text": {
+            "label": "Teks"
+          },
+          "number": {
+            "label": "Angka"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Tanggal"
+          },
+          "member_picker": {
+            "label": "Pemilih anggota"
+          }
+        },
+        "attributes": {
+          "label": "Atribut",
+          "text": {
+            "single_line": {
+              "label": "Baris tunggal"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Hanya baca",
+              "header": "Data hanya baca"
+            },
+            "invalid_text_format": {
+              "label": "Format teks tidak valid"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Tambah angka"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Pilihan tunggal"
+            },
+            "multi_select": {
+              "label": "Pilihan ganda"
+            },
+            "no_default_value": {
+              "label": "Tidak ada nilai default"
+            }
+          },
+          "boolean": {
+            "label": "Benar | Salah",
+            "no_default": "Tidak ada nilai default"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opsi",
+              "form": {
+                "placeholder": "Tambah opsi",
+                "errors": {
+                  "name": {
+                    "required": "Nama opsi diperlukan.",
+                    "integrity": "Opsi dengan nama yang sama sudah ada."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Pilih opsi",
+                "multi": {
+                  "default": "Pilih opsi",
+                  "variable": "{count} opsi dipilih"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil dibuat."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal membuat properti. Silakan coba lagi!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil diperbarui."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal memperbarui properti. Silakan coba lagi!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil dihapus."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal menghapus properti. Silakan coba lagi!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} properti {name}",
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil {action}."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal {action} properti. Silakan coba lagi!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Judul"
+            },
+            "description": {
+              "placeholder": "Deskripsi"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Anda harus memberi nama properti Anda.",
+              "max_length": "Nama properti tidak boleh melebihi 255 karakter."
+            },
+            "property_type": {
+              "required": "Anda harus memilih tipe properti."
+            },
+            "options": {
+              "required": "Anda harus menambahkan setidaknya satu opsi."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Aktif",
+          "tooltip": {
+            "disabled": "Klik untuk menonaktifkan",
+            "enabled": "Klik untuk mengaktifkan"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Hapus properti ini",
+          "description": "Penghapusan properti dapat menyebabkan hilangnya data yang ada.",
+          "secondary_description": "Apakah Anda ingin menonaktifkan properti sebagai gantinya?",
+          "primary_button": "{action}, hapus itu",
+          "secondary_button": "Ya, nonaktifkan itu"
+        },
+        "mandate_confirmation": {
+          "label": "Properti wajib",
+          "content": "Sepertinya ada opsi default untuk properti ini. Membuat properti menjadi wajib akan menghapus nilai default dan pengguna harus menambahkan nilai pilihan mereka.",
+          "tooltip": {
+            "disabled": "Tipe properti ini tidak dapat dijadikan wajib",
+            "enabled": "Hapus centang untuk menandai kolom sebagai opsional",
+            "checked": "Centang untuk menandai kolom sebagai wajib"
+          }
+        },
+        "empty_state": {
+          "title": "Tambahkan properti kustom",
+          "description": "Properti baru yang Anda tambahkan untuk tipe item kerja ini akan ditampilkan di sini."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Hapus jenis ini",
+        "description": "Penghapusan tipe dapat menyebabkan hilangnya data yang ada.",
+        "primary_button": "Ya, hapus",
+        "toast": {
+          "success": {
+            "title": "Berhasil!",
+            "message": "Jenis item kerja berhasil dihapus."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Gagal menghapus jenis item kerja. Silakan coba lagi!"
+          }
+        },
+        "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?"
+      },
+      "cant_delete_default_message": "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini."
+    },
+    "create": {
+      "title": "Buat tipe item kerja",
+      "button": "Tambah tipe item kerja",
+      "toast": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja berhasil dibuat."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": {
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Perbarui tipe item kerja",
+      "button": "Perbarui tipe item kerja",
+      "toast": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja {name} berhasil diperbarui."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": {
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Berikan nama unik untuk tipe item kerja ini"
+        },
+        "description": {
+          "placeholder": "Jelaskan untuk apa tipe item kerja ini dimaksudkan dan kapan akan digunakan."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipe item kerja {name}",
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja {name} berhasil {action}."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": "Gagal {action} tipe item kerja. Silakan coba lagi!"
+        }
+      },
+      "tooltip": "Klik untuk {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Aktifkan Tipe Item Kerja",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Aktifkan"
+        },
+        "confirmation": {
+          "title": "Setelah diaktifkan, Tipe Item Kerja tidak dapat dinonaktifkan.",
+          "description": "Item Kerja Plane akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
+          "button": {
+            "default": "Aktifkan",
+            "loading": "Menyiapkan"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Dapatkan Pro untuk mengaktifkan Tipe item kerja.",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Dapatkan Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Tingkatkan untuk mengaktifkan Tipe item kerja.",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Tingkatkan"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "Impor",
+    "logo": "Logo",
+    "import_message": "Impor data {serviceName} Anda ke dalam projek plane.",
+    "deactivate": "Nonaktifkan",
+    "deactivating": "Menonaktifkan",
+    "migrating": "Bermigrasi",
+    "migrations": "Migrasi",
+    "refreshing": "Menyegarkan",
+    "import": "Impor",
+    "serial_number": "Sr No.",
+    "project": "Projek",
+    "workspace": "Workspace",
+    "status": "Status",
+    "total_batches": "Total Batch",
+    "imported_batches": "Batch Terimport",
+    "re_run": "Jalankan Ulang",
+    "cancel": "Batal",
+    "start_time": "Waktu Mulai",
+    "no_jobs_found": "Tidak ada pekerjaan ditemukan",
+    "no_project_imports": "Anda belum mengimpor projek {serviceName} apa pun.",
+    "cancel_import_job": "Batalkan pekerjaan impor",
+    "cancel_import_job_confirmation": "Apakah Anda yakin ingin membatalkan pekerjaan impor ini? Ini akan menghentikan proses impor untuk projek ini.",
+    "re_run_import_job": "Jalankan ulang pekerjaan impor",
+    "re_run_import_job_confirmation": "Apakah Anda yakin ingin menjalankan ulang pekerjaan impor ini? Ini akan memulai ulang proses impor untuk projek ini.",
+    "upload_csv_file": "Unggah file CSV untuk mengimpor data pengguna.",
+    "connect_importer": "Hubungkan {serviceName}",
+    "migration_assistant": "Asisten Migrasi",
+    "migration_assistant_description": "Migrasi projek {serviceName} Anda ke Plane dengan mudah menggunakan asisten kami yang canggih.",
+    "token_helper": "Anda akan mendapatkan ini dari",
+    "personal_access_token": "Token Akses Personal",
+    "source_token_expired": "Token Kedaluwarsa",
+    "source_token_expired_description": "Token yang diberikan telah kedaluwarsa. Silakan nonaktifkan dan hubungkan kembali dengan kredensial baru.",
+    "user_email": "Email Pengguna",
+    "select_state": "Pilih Status",
+    "select_service_project": "Pilih Projek {serviceName}",
+    "loading_service_projects": "Memuat projek {serviceName}",
+    "select_service_workspace": "Pilih Workspace {serviceName}",
+    "loading_service_workspaces": "Memuat Workspace {serviceName}",
+    "select_priority": "Pilih Prioritas",
+    "select_service_team": "Pilih Tim {serviceName}",
+    "add_seat_msg_free_trial": "Anda mencoba mengimpor {additionalUserCount} pengguna tidak terdaftar dan Anda hanya memiliki {currentWorkspaceSubscriptionAvailableSeats} kursi tersedia dalam paket saat ini. Untuk melanjutkan pengimporan, tingkatkan sekarang.",
+    "add_seat_msg_paid": "Anda mencoba mengimpor {additionalUserCount} pengguna tidak terdaftar dan Anda hanya memiliki {currentWorkspaceSubscriptionAvailableSeats} kursi tersedia dalam paket saat ini. Untuk melanjutkan pengimporan, beli setidaknya {extraSeatRequired} kursi tambahan.",
+    "skip_user_import_title": "Lewati pengimporan data Pengguna",
+    "skip_user_import_description": "Melewati impor pengguna akan mengakibatkan item kerja, komentar, dan data lain dari {serviceName} dibuat oleh pengguna yang melakukan migrasi di Plane. Anda masih dapat menambahkan pengguna secara manual nanti.",
+    "invalid_pat": "Token Akses Personal Tidak Valid"
+  },
+  "integrations": {
+    "integrations": "Integrasi",
+    "loading": "Memuat",
+    "unauthorized": "Anda tidak berwenang untuk melihat halaman ini.",
+    "configure": "Konfigurasi",
+    "not_enabled": "{name} tidak diaktifkan untuk workspace ini.",
+    "not_configured": "Tidak dikonfigurasi",
+    "disconnect_personal_account": "Putuskan akun personal {providerName}",
+    "not_configured_message_admin": "Integrasi {name} tidak dikonfigurasi. Silakan hubungi admin instansi Anda untuk mengonfigurasinya.",
+    "not_configured_message_support": "Integrasi {name} tidak dikonfigurasi. Silakan hubungi dukungan untuk mengonfigurasinya.",
+    "external_api_unreachable": "Tidak dapat mengakses API eksternal. Silakan coba lagi nanti.",
+    "error_fetching_supported_integrations": "Tidak dapat mengambil integrasi yang didukung. Silakan coba lagi nanti.",
+    "back_to_integrations": "Kembali ke integrasi",
+    "select_state": "Pilih Status"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Hubungkan dan sinkronkan Item kerja GitHub Anda dengan Plane.",
+    "connect_org": "Hubungkan Organisasi",
+    "connect_org_description": "Hubungkan organisasi GitHub Anda dengan Plane.",
+    "processing": "Memproses",
+    "org_added_desc": "Org GitHub ditambahkan oleh dan waktu",
+    "connection_fetch_error": "Kesalahan mengambil detail koneksi dari server",
+    "personal_account_connected": "Akun personal terhubung",
+    "personal_account_connected_description": "Akun GitHub personal Anda terhubung ke Plane.",
+    "connect_personal_account": "Hubungkan Akun Personal",
+    "connect_personal_account_description": "Hubungkan akun GitHub personal Anda dengan Plane.",
+    "repo_mapping": "Pemetaan Repositori",
+    "repo_mapping_description": "Petakan repositori GitHub Anda dengan projek Plane.",
+    "remove_entity": "Hapus entitas",
+    "remove_entity_confirmation": "Apakah Anda yakin ingin menghapus entitas ini?",
+    "issue_sync_message": "Item kerja disinkronkan ke {project}",
+    "link": "Hubungkan repositori GitHub ke projek Plane",
+    "pull_request_automation": "Otomatisasi Pull Request",
+    "pull_request_automation_description": "Konfigurasi pemetaan status pull request dari GitHub ke Plane",
+    "DRAFT_MR_OPENED": "Saat draft PR dibuka, atur status ke",
+    "MR_OPENED": "Saat PR dibuka, atur status ke",
+    "MR_READY_FOR_MERGE": "Saat PR siap untuk digabung, atur status ke",
+    "MR_REVIEW_REQUESTED": "Saat permintaan ulasan PR, atur status ke",
+    "MR_MERGED": "Saat PR digabung, atur status ke",
+    "MR_CLOSED": "Saat PR ditutup, atur status ke"
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Hubungkan dan sinkronkan Permintaan Gabungan Gitlab Anda dengan Plane.",
+    "connection_fetch_error": "Kesalahan mengambil detail koneksi dari server",
+    "connect_org": "Hubungkan Organisasi",
+    "connect_org_description": "Hubungkan organisasi Gitlab Anda dengan Plane.",
+    "project_connections": "Koneksi Projek Gitlab",
+    "project_connections_description": "Sinkronkan permintaan gabungan dari Gitlab ke projek Plane.",
+    "plane_project_connection": "Koneksi Projek Plane",
+    "plane_project_connection_description": "Konfigurasi pemetaan status permintaan tarik dari Gitlab ke projek Plane",
+    "remove_connection": "Hapus Koneksi",
+    "remove_connection_confirmation": "Apakah Anda yakin ingin menghapus koneksi ini?",
+    "link": "Hubungkan repositori Gitlab ke projek Plane",
+    "pull_request_automation": "Otomatisasi Pull Request",
+    "pull_request_automation_description": "Konfigurasi pemetaan status permintaan tarik dari Gitlab ke Plane",
+    "DRAFT_MR_OPENED": "Saat draft MR dibuka, atur status ke",
+    "MR_OPENED": "Saat MR dibuka, atur status ke",
+    "MR_REVIEW_REQUESTED": "Saat permintaan ulasan MR, atur status ke",
+    "MR_READY_FOR_MERGE": "Saat MR siap untuk digabung, atur status ke",
+    "MR_MERGED": "Saat MR digabung, atur status ke",
+    "MR_CLOSED": "Saat MR ditutup, atur status ke",
+    "integration_enabled_text": "Dengan integrasi Gitlab Diaktifkan, Anda dapat mengotomatisasi alur kerja item kerja",
+    "choose_entity": "Pilih Entitas",
+    "choose_project": "Pilih Projek",
+    "link_plane_project": "Hubungkan projek Plane"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Hubungkan workspace Slack Anda dengan Plane.",
+    "connect_personal_account": "Hubungkan akun Slack personal Anda dengan Plane.",
+    "personal_account_connected": "Akun {providerName} personal Anda sekarang terhubung ke Plane.",
+    "link_personal_account": "Hubungkan akun {providerName} personal Anda ke Plane.",
+    "connected_slack_workspaces": "Workspace Slack terhubung",
+    "connected_on": "Terhubung pada {date}",
+    "disconnect_workspace": "Putuskan workspace {name}",
+    "project_updates": {
+      "title": "Pembaruan Proyek",
+      "description": "Konfigurasikan notifikasi pembaruan proyek untuk proyek Anda",
+      "add_new_project_update": "Tambahkan notifikasi pembaruan proyek baru",
+      "project_updates_empty_state": "Proyek yang terhubung dengan Saluran Slack akan muncul di sini.",
+      "project_updates_form": {
+        "title": "Konfigurasikan Pembaruan Proyek",
+        "description": "Terima notifikasi pembaruan proyek di Slack saat item kerja dibuat",
+        "failed_to_load_channels": "Gagal memuat saluran dari Slack",
+        "project_dropdown": {
+          "placeholder": "Pilih proyek",
+          "label": "Proyek Plane",
+          "no_projects": "Tidak ada proyek tersedia"
+        },
+        "channel_dropdown": {
+          "label": "Saluran Slack",
+          "placeholder": "Pilih saluran",
+          "no_channels": "Tidak ada saluran tersedia"
+        },
+        "all_projects_connected": "Semua proyek sudah terhubung ke saluran Slack.",
+        "all_channels_connected": "Semua saluran Slack sudah terhubung ke proyek.",
+        "project_connection_success": "Koneksi proyek berhasil dibuat",
+        "project_connection_updated": "Koneksi proyek berhasil diperbarui",
+        "project_connection_deleted": "Koneksi proyek berhasil dihapus",
+        "failed_delete_project_connection": "Gagal menghapus koneksi proyek",
+        "failed_create_project_connection": "Gagal membuat koneksi proyek",
+        "failed_upserting_project_connection": "Gagal memperbarui koneksi proyek",
+        "failed_loading_project_connections": "Kami tidak dapat memuat koneksi proyek Anda. Ini mungkin karena masalah jaringan atau masalah dengan integrasi."
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Hubungkan ruang kerja Sentry Anda dengan Plane.",
+    "connected_sentry_workspaces": "Ruang kerja Sentry yang terhubung",
+    "connected_on": "Terhubung pada {date}",
+    "disconnect_workspace": "Putuskan ruang kerja {name}",
+    "state_mapping": {
+      "title": "Pemetaan status",
+      "description": "Petakan status insiden Sentry ke status proyek Anda. Konfigurasikan status mana yang digunakan ketika insiden Sentry diselesaikan atau tidak diselesaikan.",
+      "add_new_state_mapping": "Tambahkan pemetaan status baru",
+      "empty_state": "Tidak ada pemetaan status yang dikonfigurasi. Buat pemetaan pertama Anda untuk menyinkronkan status insiden Sentry dengan status proyek Anda.",
+      "failed_loading_state_mappings": "Kami tidak dapat memuat pemetaan status Anda. Ini mungkin disebabkan oleh masalah jaringan atau masalah dengan integrasi.",
+      "loading_project_states": "Memuat status proyek...",
+      "error_loading_states": "Kesalahan memuat status",
+      "no_states_available": "Tidak ada status yang tersedia",
+      "no_permission_states": "Anda tidak memiliki izin untuk mengakses status untuk proyek ini",
+      "states_not_found": "Status proyek tidak ditemukan",
+      "server_error_states": "Kesalahan server saat memuat status"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Hubungkan dan sinkronkan organisasi GitHub Enterprise Anda dengan Plane.",
+    "app_form_title": "Konfigurasi GitHub Enterprise",
+    "app_form_description": "Konfigurasikan GitHub Enterprise untuk terhubung dengan Plane.",
+    "app_id_title": "ID Aplikasi",
+    "app_id_description": "ID aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID diperlukan",
+    "app_name_title": "Slug Aplikasi",
+    "app_name_description": "Slug aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "app_name_error": "App slug diperlukan",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "URL Dasar",
+    "base_url_description": "URL dasar organisasi GitHub Enterprise Anda.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "URL dasar diperlukan",
+    "invalid_base_url_error": "URL dasar tidak valid",
+    "client_id_title": "ID Klien",
+    "client_id_description": "ID klien aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID klien diperlukan",
+    "client_secret_title": "Klien Rahasia",
+    "client_secret_description": "Rahasia klien aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Klien rahasia diperlukan",
+    "webhook_secret_title": "Rahasia Webhook",
+    "webhook_secret_description": "Rahasia webhook aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Rahasia webhook diperlukan",
+    "private_key_title": "Kunci Pribadi (Base64 encoded)",
+    "private_key_description": "Kunci pribadi aplikasi yang Anda buat di organisasi GitHub Enterprise Anda.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Kunci pribadi diperlukan",
+    "connect_app": "Hubungkan Aplikasi"
+  },
+  "file_upload": {
+    "upload_text": "Klik di sini untuk mengunggah file",
+    "drag_drop_text": "Tarik dan Lepas",
+    "processing": "Memproses",
+    "invalid": "Tipe file tidak valid",
+    "missing_fields": "Bidang yang hilang",
+    "success": "{fileName} Diunggah!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Parameter kueri yang diberikan tidak valid atau bidang yang diperlukan tidak ada",
+    "invalid_installation_account": "Akun instalasi yang diberikan tidak valid",
+    "generic_error": "Terjadi kesalahan tak terduga saat memproses permintaan Anda",
+    "connection_not_found": "Koneksi yang diminta tidak dapat ditemukan",
+    "multiple_connections_found": "Beberapa koneksi ditemukan saat hanya satu yang diharapkan",
+    "installation_not_found": "Instalasi yang diminta tidak dapat ditemukan",
+    "user_not_found": "Pengguna yang diminta tidak dapat ditemukan",
+    "error_fetching_token": "Gagal mengambil token autentikasi",
+    "invalid_app_credentials": "Informasi autentikasi aplikasi yang diberikan tidak valid",
+    "invalid_app_installation_id": "Gagal menginstal aplikasi"
+  },
+  "import_status": {
+    "created": "Dibuat",
+    "initiated": "Dimulai",
+    "pulling": "Menarik",
+    "pulled": "Ditarik",
+    "transforming": "Mentransformasi",
+    "transformed": "Ditransformasi",
+    "pushing": "Mendorong",
+    "finished": "Selesai",
+    "error": "Kesalahan",
+    "cancelled": "Dibatalkan"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Impor data Jira Anda ke dalam projek Plane.",
+    "personal_access_token": "Token Akses Personal",
+    "user_email": "Email Pengguna",
+    "atlassian_security_settings": "Pengaturan Keamanan Atlassian",
+    "email_description": "Ini adalah email yang terkait dengan token akses personal Anda",
+    "jira_domain": "Domain Jira",
+    "jira_domain_description": "Ini adalah domain instansi Jira Anda",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data Jira Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_jira": "Konfigurasi Jira",
+      "description_configure_jira": "Silakan pilih workspace Jira dari mana Anda ingin memigrasikan data Anda.",
+      "title_import_users": "Impor Pengguna",
+      "description_import_users": "Silakan tambahkan pengguna yang ingin Anda migrasikan dari Jira ke Plane. Atau, Anda dapat melewati langkah ini dan menambahkan pengguna secara manual nanti.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Kami telah secara otomatis mencocokkan status Jira ke status Plane semampu kami. Silakan petakan status yang tersisa sebelum melanjutkan, Anda juga dapat membuat status dan memetakannya secara manual.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Kami telah secara otomatis mencocokkan prioritas sebaik mungkin. Silakan petakan prioritas yang tersisa sebelum melanjutkan.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Impor data Asana Anda ke dalam projek Plane.",
+    "select_asana_priority_field": "Pilih Bidang Prioritas Asana",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data Asana Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_asana": "Konfigurasi Asana",
+      "description_configure_asana": "Silakan pilih workspace dan projek Asana dari mana Anda ingin memigrasikan data Anda.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Silakan pilih status Asana yang ingin Anda petakan ke status projek Plane.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Silakan pilih prioritas Asana yang ingin Anda petakan ke prioritas projek Plane.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Asana ke Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Impor data Linear Anda ke dalam projek Plane.",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data Linear Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_linear": "Konfigurasi Linear",
+      "description_configure_linear": "Silakan pilih tim Linear dari mana Anda ingin memigrasikan data Anda.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Kami telah secara otomatis mencocokkan status Linear ke status Plane semampu kami. Silakan petakan status yang tersisa sebelum melanjutkan, Anda juga dapat membuat status dan memetakannya secara manual.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Silakan pilih prioritas Linear yang ingin Anda petakan ke prioritas projek Plane.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Linear ke Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Impor data Jira Server Anda ke dalam projek Plane.",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data Jira Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_jira": "Konfigurasi Jira",
+      "description_configure_jira": "Silakan pilih workspace Jira dari mana Anda ingin memigrasikan data Anda.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Silakan pilih status Jira yang ingin Anda petakan ke status projek Plane.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Silakan pilih prioritas Jira yang ingin Anda petakan ke prioritas projek Plane.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
+    }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Impor data Notion Anda ke proyek Plane.",
+    "steps": {
+      "title_upload_zip": "Unggah ZIP yang Diekspor dari Notion",
+      "description_upload_zip": "Silakan unggah file ZIP yang berisi data Notion Anda."
+    },
+    "upload": {
+      "drop_file_here": "Jatuhkan file zip Notion Anda di sini",
+      "upload_title": "Unggah Ekspor Notion",
+      "drag_drop_description": "Seret dan jatuhkan file zip ekspor Notion Anda, atau klik untuk menelusuri",
+      "file_type_restriction": "Hanya file .zip yang diekspor dari Notion yang didukung",
+      "select_file": "Pilih File",
+      "uploading": "Mengunggah...",
+      "preparing_upload": "Mempersiapkan unggah...",
+      "confirming_upload": "Mengonfirmasi unggah...",
+      "confirming": "Mengonfirmasi...",
+      "upload_complete": "Unggah selesai",
+      "upload_failed": "Unggah gagal",
+      "start_import": "Mulai Impor",
+      "retry_upload": "Coba Unggah Lagi",
+      "upload": "Unggah",
+      "ready": "Siap",
+      "error": "Error",
+      "upload_complete_message": "Unggah selesai!",
+      "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Notion Anda.",
+      "upload_progress_message": "Harap jangan tutup jendela ini."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Impor data Confluence Anda ke wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Unggah ZIP yang Diekspor dari Confluence",
+      "description_upload_zip": "Silakan unggah file ZIP yang berisi data Confluence Anda."
+    },
+    "upload": {
+      "drop_file_here": "Jatuhkan file zip Confluence Anda di sini",
+      "upload_title": "Unggah Ekspor Confluence",
+      "drag_drop_description": "Seret dan jatuhkan file zip ekspor Confluence Anda, atau klik untuk menelusuri",
+      "file_type_restriction": "Hanya file .zip yang diekspor dari Confluence yang didukung",
+      "select_file": "Pilih File",
+      "uploading": "Mengunggah...",
+      "preparing_upload": "Mempersiapkan unggah...",
+      "confirming_upload": "Mengonfirmasi unggah...",
+      "confirming": "Mengonfirmasi...",
+      "upload_complete": "Unggah selesai",
+      "upload_failed": "Unggah gagal",
+      "start_import": "Mulai Impor",
+      "retry_upload": "Coba Unggah Lagi",
+      "upload": "Unggah",
+      "ready": "Siap",
+      "error": "Error",
+      "upload_complete_message": "Unggah selesai!",
+      "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Confluence Anda.",
+      "upload_progress_message": "Harap jangan tutup jendela ini."
+    }
+  },
+
+  "flatfile_importer": {
+    "flatfile_importer_description": "Impor data CSV Anda ke dalam projek Plane.",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data CSV Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_csv": "Konfigurasi CSV",
+      "description_configure_csv": "Silakan unggah file CSV Anda dan konfigurasikan bidang yang akan dipetakan ke bidang Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Impor data ClickUp Anda ke dalam projek Plane.",
+    "select_service_space": "Pilih {serviceName} Space",
+    "select_service_folder": "Pilih {serviceName} Folder",
+    "selected": "Terpilih",
+    "users": "Pengguna",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data ClickUp Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_clickup": "Konfigurasi ClickUp",
+      "description_configure_clickup": "Silakan pilih tim, ruang, dan folder ClickUp dari mana Anda ingin memigrasikan data Anda.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Kami telah secara otomatis mencocokkan status ClickUp ke status Plane semampu kami. Silakan petakan status yang tersisa sebelum melanjutkan, Anda juga dapat membuat status dan memetakannya secara manual.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Silakan pilih prioritas ClickUp yang ingin Anda petakan ke prioritas projek Plane.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari ClickUp ke Plane.",
+      "pull_additional_data_title": "Impor komentar dan lampiran"
+    }
+  },
+
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Grafik bar",
+          "chart_models": {
+            "basic": "Dasar",
+            "stacked": "Bertumpuk",
+            "grouped": "Dikelompokkan"
+          },
+          "orientation": {
+            "label": "Orientasi",
+            "horizontal": "Horizontal",
+            "vertical": "Vertikal",
+            "placeholder": "Tambah orientasi"
+          },
+          "bar_color": "Warna bar"
+        },
+        "line_chart": {
+          "short_label": "Garis",
+          "long_label": "Grafik garis",
+          "chart_models": {
+            "basic": "Dasar",
+            "multi_line": "Multi-garis"
+          },
+          "line_color": "Warna garis",
+          "line_type": {
+            "label": "Tipe garis",
+            "solid": "Solid",
+            "dashed": "Putus-putus",
+            "placeholder": "Tambah tipe garis"
+          }
+        },
+        "area_chart": {
+          "short_label": "Area",
+          "long_label": "Grafik area",
+          "chart_models": {
+            "basic": "Dasar",
+            "stacked": "Bertumpuk",
+            "comparison": "Perbandingan"
+          },
+          "fill_color": "Warna isi"
+        },
+        "donut_chart": {
+          "short_label": "Donat",
+          "long_label": "Grafik donat",
+          "chart_models": {
+            "basic": "Dasar",
+            "progress": "Progres"
+          },
+          "center_value": "Nilai tengah",
+          "completed_color": "Warna selesai"
+        },
+        "pie_chart": {
+          "short_label": "Pai",
+          "long_label": "Grafik pai",
+          "chart_models": {
+            "basic": "Dasar"
+          },
+          "group": {
+            "label": "Potongan dikelompokkan",
+            "group_thin_pieces": "Kelompokkan potongan tipis",
+            "minimum_threshold": {
+              "label": "Ambang batas minimum",
+              "placeholder": "Tambah ambang batas"
+            },
+            "name_group": {
+              "label": "Nama kelompok",
+              "placeholder": "\"Kurang dari 5%\""
+            }
+          },
+          "show_values": "Tampilkan nilai",
+          "value_type": {
+            "percentage": "Persentase",
+            "count": "Jumlah"
+          }
+        },
+        "text": {
+          "short_label": "Teks",
+          "long_label": "Teks",
+          "alignment": {
+            "label": "Perataan teks",
+            "left": "Kiri",
+            "center": "Tengah",
+            "right": "Kanan",
+            "placeholder": "Tambah perataan teks"
+          },
+          "text_color": "Warna teks"
+        }
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horizon",
+        "earthen": "Alam"
+      },
+      "common": {
+        "add_widget": "Tambah widget",
+        "widget_title": {
+          "label": "Beri nama widget ini",
+          "placeholder": "contoh, \"Tugas kemarin\", \"Semua Selesai\""
+        },
+        "chart_type": "Tipe grafik",
+        "visualization_type": {
+          "label": "Tipe visualisasi",
+          "placeholder": "Tambah tipe visualisasi"
+        },
+        "date_group": {
+          "label": "Kelompok tanggal",
+          "placeholder": "Tambah kelompok tanggal"
+        },
+        "group_by": "Kelompokkan berdasarkan",
+        "stack_by": "Tumpuk berdasarkan",
+        "daily": "Harian",
+        "weekly": "Mingguan",
+        "monthly": "Bulanan",
+        "yearly": "Tahunan",
+        "work_item_count": "Jumlah item kerja",
+        "estimate_point": "Poin estimasi",
+        "pending_work_item": "Item kerja tertunda",
+        "completed_work_item": "Item kerja selesai",
+        "in_progress_work_item": "Item kerja dalam proses",
+        "blocked_work_item": "Item kerja terblokir",
+        "work_item_due_this_week": "Item kerja jatuh tempo minggu ini",
+        "work_item_due_today": "Item kerja jatuh tempo hari ini",
+        "color_scheme": {
+          "label": "Skema warna",
+          "placeholder": "Tambah skema warna"
+        },
+        "smoothing": "Penghalusan",
+        "markers": "Penanda",
+        "legends": "Legenda",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opasitas",
+          "placeholder": "Tambah opasitas"
+        },
+        "border": "Batas",
+        "widget_configuration": "Konfigurasi widget",
+        "configure_widget": "Konfigurasi widget",
+        "guides": "Panduan",
+        "style": "Gaya",
+        "area_appearance": "Tampilan area",
+        "comparison_line_appearance": "Tampilan garis pembanding",
+        "add_property": "Tambah properti",
+        "add_metric": "Tambah metrik"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "stacked": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Tumpuk berdasarkan tidak memiliki nilai."
+          },
+          "grouped": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Kelompokkan berdasarkan tidak memiliki nilai."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "multi_line": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Kelompokkan berdasarkan tidak memiliki nilai."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "stacked": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai.",
+            "group_by": "Tumpuk berdasarkan tidak memiliki nilai."
+          },
+          "comparison": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          },
+          "progress": {
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Sumbu x tidak memiliki nilai.",
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrik tidak memiliki nilai."
+          }
+        },
+        "ask_admin": "Tanyakan admin Anda untuk mengonfigurasi widget ini."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Buat dashboard baru",
+        "update": "Perbarui dashboard"
+      },
+      "title": {
+        "label": "Beri nama dashboard Anda.",
+        "placeholder": "\"Kapasitas antar proyek\", \"Beban kerja berdasarkan tim\", \"Status di seluruh proyek\"",
+        "required_error": "Judul diperlukan"
+      },
+      "project": {
+        "label": "Pilih proyek",
+        "placeholder": "Data dari proyek ini akan menggerakkan dashboard ini.",
+        "required_error": "Proyek diperlukan"
+      },
+      "create_dashboard": "Buat dashboard",
+      "update_dashboard": "Perbarui dashboard"
+    },
+    "delete_modal": {
+      "heading": "Hapus dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Tampilkan kemajuan Anda dalam dashboard on-demand dan permanen.",
+        "description": "Buat dashboard apa pun yang Anda butuhkan dan sesuaikan bagaimana data Anda ditampilkan untuk presentasi sempurna dari kemajuan Anda.",
+        "coming_soon_to_mobile": "Segera hadir di aplikasi mobile",
+        "card_1": {
+          "title": "Untuk semua proyek Anda",
+          "description": "Dapatkan tampilan menyeluruh workspace Anda dengan semua proyek atau pilah data kerja Anda untuk tampilan sempurna dari kemajuan Anda."
+        },
+        "card_2": {
+          "title": "Untuk semua data di Plane",
+          "description": "Lampaui Analitik bawaan dan grafik Siklus yang sudah jadi untuk melihat tim, inisiatif, atau hal lain seperti yang belum pernah Anda lihat sebelumnya."
+        },
+        "card_3": {
+          "title": "Untuk semua kebutuhan visualisasi data Anda",
+          "description": "Pilih dari beberapa grafik yang dapat disesuaikan dengan kontrol detail untuk melihat dan menampilkan data kerja Anda persis seperti yang Anda inginkan."
+        },
+        "card_4": {
+          "title": "On-demand dan permanen",
+          "description": "Bangun sekali, simpan selamanya dengan penyegaran otomatis data Anda, penanda kontekstual untuk perubahan cakupan, dan tautan permanen yang dapat dibagikan."
+        },
+        "card_5": {
+          "title": "Ekspor dan komunikasi terjadwal",
+          "description": "Untuk saat-saat ketika tautan tidak berfungsi, keluarkan dashboard Anda ke PDF sekali pakai atau jadwalkan untuk dikirim ke pemangku kepentingan secara otomatis."
+        },
+        "card_6": {
+          "title": "Tata letak otomatis untuk semua perangkat",
+          "description": "Ubah ukuran widget Anda untuk tata letak yang Anda inginkan dan lihat sama persis di ponsel, tablet, dan browser lainnya."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualisasikan data dalam widget, buat dashboard Anda dengan widget, dan lihat yang terbaru sesuai permintaan.",
+        "description": "Buat dashboard Anda dengan Widget Kustom yang menampilkan data dalam cakupan yang Anda tentukan. Dapatkan dashboard untuk semua pekerjaan Anda di seluruh proyek dan tim dan bagikan tautan permanen dengan pemangku kepentingan untuk pelacakan sesuai permintaan."
+      },
+      "dashboards_search": {
+        "title": "Itu tidak cocok dengan nama dashboard.",
+        "description": "Pastikan kueri Anda benar atau coba kueri lain."
+      },
+      "widgets_list": {
+        "title": "Visualisasikan data Anda sesuai keinginan.",
+        "description": "Gunakan garis, bar, pai, dan format lainnya untuk melihat data Anda\nsesuai keinginan dari sumber yang Anda tentukan."
+      },
+      "widget_data": {
+        "title": "Tidak ada yang bisa dilihat di sini",
+        "description": "Segarkan atau tambahkan data untuk melihatnya di sini."
+      }
+    },
+    "common": {
+      "editing": "Mengedit"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Izinkan item kerja baru",
+      "work_item_creation_disable_tooltip": "Pembuatan item kerja dinonaktifkan untuk status ini",
+      "default_state": "Status default memungkinkan semua anggota membuat item kerja baru. Ini tidak dapat diubah",
+      "state_change_count": "{count, plural, one {1 perubahan status diizinkan} other {{count} perubahan status diizinkan}}",
+      "movers_count": "{count, plural, one {1 reviewer terdaftar} other {{count} reviewer terdaftar}}",
+      "state_changes": {
+        "label": {
+          "default": "Tambah perubahan status yang diizinkan",
+          "loading": "Menambahkan perubahan status yang diizinkan"
+        },
+        "move_to": "Ubah status ke",
+        "movers": {
+          "label": "Ketika ditinjau oleh",
+          "tooltip": "Reviewer adalah orang yang diizinkan untuk memindahkan item kerja dari satu status ke status lain.",
+          "add": "Tambah reviewer"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Anda tidak dapat memindahkan item kerja ini ke sini."
+    },
+    "workflow_enabled": {
+      "label": "Perubahan status"
+    },
+    "workflow_tree": {
+      "label": "Untuk item kerja di",
+      "state_change_label": "dapat memindahkannya ke"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kendalikan kekacauan perubahan dan tinjauan dengan Workflows.",
+        "description": "Tetapkan aturan untuk ke mana pekerjaan Anda bergerak, oleh siapa, dan kapan dengan Workflows di Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Lihat riwayat perubahan",
+      "reset_workflow": "Atur ulang workflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Apakah Anda yakin ingin mengatur ulang workflow ini?",
+        "description": "Jika Anda mengatur ulang workflow ini, semua aturan perubahan status Anda akan dihapus dan Anda harus membuatnya lagi untuk menjalankannya di proyek ini."
+      },
+      "delete_state_change": {
+        "title": "Apakah Anda yakin ingin menghapus aturan perubahan status ini?",
+        "description": "Setelah dihapus, Anda tidak dapat membatalkan perubahan ini dan Anda harus mengatur aturan lagi jika Anda ingin menjalankannya untuk proyek ini."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} workflow",
+        "success": {
+          "title": "Berhasil",
+          "message": "Workflow {action} berhasil"
+        },
+        "error": {
+          "title": "Error",
+          "message": "Workflow tidak dapat {action}. Silakan coba lagi."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Berhasil",
+          "message": "Workflow berhasil diatur ulang"
+        },
+        "error": {
+          "title": "Error mengatur ulang workflow",
+          "message": "Workflow tidak dapat diatur ulang. Silakan coba lagi."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error menambahkan aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat ditambahkan. Silakan coba lagi."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error memodifikasi aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat dimodifikasi. Silakan coba lagi."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error menghapus aturan perubahan status",
+          "message": "Aturan perubahan status tidak dapat dihapus. Silakan coba lagi."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error memodifikasi reviewer aturan perubahan status",
+          "message": "Reviewer aturan perubahan status tidak dapat dimodifikasi. Silakan coba lagi."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Pelanggan} other {Pelanggan}}",
+    "open": "Buka pelanggan",
+    "dropdown": {
+      "placeholder": "Pilih pelanggan",
+      "required": "Silakan pilih pelanggan",
+      "no_selection": "Tidak ada pelanggan"
+    },
+    "upgrade": {
+      "title": "Prioritaskan dan kelola pekerjaan dengan Pelanggan.",
+      "description": "Petakan pekerjaan Anda ke pelanggan dan prioritaskan berdasarkan atribut pelanggan."
+    },
+    "properties": {
+      "default": {
+        "title": "Properti default",
+        "customer_name": {
+          "name": "Nama pelanggan",
+          "placeholder": "Ini bisa nama orang atau bisnis",
+          "validation": {
+            "required": "Nama pelanggan diperlukan.",
+            "max_length": "Nama pelanggan tidak boleh lebih dari 255 karakter."
+          }
+        },
+        "description": {
+          "name": "Deskripsi",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Masukkan email",
+          "validation": {
+            "required": "Email diperlukan.",
+            "pattern": "Alamat email tidak valid."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "URL apa pun dengan https:// akan berfungsi.",
+          "placeholder_short": "Tambah website",
+          "validation": {
+            "pattern": "URL website tidak valid"
+          }
+        },
+        "employees": {
+          "name": "Karyawan",
+          "placeholder": "Jumlah karyawan jika pelanggan Anda adalah bisnis.",
+          "validation": {
+            "min_length": "Karyawan tidak boleh kurang dari 0."
+          }
+        },
+        "size": {
+          "name": "Ukuran",
+          "placeholder": "Tambah ukuran perusahaan",
+          "validation": {
+            "min_length": "Ukuran tidak valid"
+          }
+        },
+        "domain": {
+          "name": "Industri",
+          "placeholder": "Retail, e-Commerce, Fintech, Perbankan",
+          "placeholder_short": "Tambah industri",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Tahap",
+          "placeholder": "Pilih tahap",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Status Kontrak",
+          "placeholder": "Pilih status kontrak",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Pendapatan",
+          "placeholder": "Ini adalah pendapatan yang dihasilkan pelanggan Anda setiap tahun.",
+          "validation": {
+            "min_length": "Pendapatan tidak boleh kurang dari 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Properti kustom",
+        "info": "Tambahkan atribut unik pelanggan Anda ke Plane sehingga Anda dapat mengelola item kerja atau catatan pelanggan dengan lebih baik."
+      },
+      "empty_state": {
+        "title": "Anda belum memiliki properti kustom.",
+        "description": "Properti kustom yang ingin Anda lihat di item kerja, di tempat lain di Plane, atau di luar Plane di CRM atau alat lain, akan muncul di sini ketika Anda menambahkannya."
+      },
+      "add": {
+        "primary_button": "Tambah properti baru"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Lead yang berkualifikasi penjualan",
+      "contract_negotiation": "Negosiasi kontrak",
+      "closed_won": "Menang",
+      "closed_lost": "Kalah"
+    },
+    "contract_status": {
+      "active": "Aktif",
+      "pre_contract": "Pra-kontrak",
+      "signed": "Ditandatangani",
+      "inactive": "Tidak aktif"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Kami tidak dapat menemukan catatan pelanggan itu.",
+        "description": "Tautan ke catatan ini mungkin salah atau catatan ini mungkin telah dihapus.",
+        "primary_button": "Pergi ke pelanggan",
+        "secondary_button": "Tambah pelanggan"
+      },
+      "search": {
+        "title": "Sepertinya Anda tidak memiliki catatan pelanggan yang cocok dengan istilah itu.",
+        "description": "Coba dengan istilah pencarian lain atau hubungi kami jika Anda yakin seharusnya melihat hasil untuk istilah itu."
+      },
+      "list": {
+        "title": "Kelola volume, ritme, dan aliran pekerjaan Anda berdasarkan apa yang penting bagi pelanggan Anda.",
+        "description": "Dengan Pelanggan, fitur khusus Plane, Anda sekarang dapat membuat pelanggan baru dari awal dan menghubungkannya dengan pekerjaan Anda. Segera, Anda akan membawa mereka dari alat lain bersama dengan atribut kustom mereka yang penting bagi Anda.",
+        "primary_button": "Tambahkan pelanggan pertama Anda"
+      }
+    },
+    "settings": {
+      "unauthorized": "Anda tidak diizinkan untuk mengakses halaman ini.",
+      "description": "Lacak dan kelola hubungan pelanggan dalam alur kerja Anda.",
+      "enable": "Aktifkan Pelanggan",
+      "toasts": {
+        "enable": {
+          "loading": "Mengaktifkan fitur pelanggan...",
+          "success": {
+            "title": "Anda telah mengaktifkan Pelanggan untuk workspace ini.",
+            "message": "Anda tidak dapat mematikannya lagi."
+          },
+          "error": {
+            "title": "Kami tidak dapat mengaktifkan Pelanggan kali ini.",
+            "message": "Coba lagi atau kembali ke layar ini nanti. Jika masih tidak berfungsi.",
+            "action": "Bicara dengan dukungan"
+          }
+        },
+        "disable": {
+          "loading": "Menonaktifkan fitur pelanggan...",
+          "success": {
+            "title": "Pelanggan dinonaktifkan",
+            "message": "Fitur pelanggan berhasil dinonaktifkan!"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Gagal menonaktifkan fitur pelanggan!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Kami tidak bisa mendapatkan daftar pelanggan Anda.",
+          "message": "Coba lagi atau segarkan halaman ini."
+        }
+      },
+      "copy_link": {
+        "title": "Anda menyalin tautan langsung ke pelanggan ini.",
+        "message": "Tempel di mana saja dan itu akan langsung mengarah kembali ke sini."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} sekarang tersedia",
+          "message": "Anda dapat mereferensikan pelanggan ini dalam item kerja dan juga melacak permintaan dari mereka.",
+          "actions": {
+            "view": "Lihat",
+            "copy_link": "Salin tautan",
+            "copied": "Disalin!"
+          }
+        },
+        "error": {
+          "title": "Kami tidak dapat membuat catatan itu kali ini.",
+          "message": "Coba simpan lagi atau salin teks yang belum disimpan ke entri baru, sebaiknya di tab lain."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukses!",
+          "message": "Pelanggan berhasil diperbarui!"
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Tidak dapat memperbarui pelanggan. Coba lagi!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Kami tidak dapat mengunggah logo pelanggan.",
+          "message": "Coba simpan logo lagi atau mulai dari awal."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Anda telah menghapus item kerja dari catatan pelanggan ini.",
+            "message": "Kami juga telah secara otomatis menghapus pelanggan ini dari item kerja."
+          },
+          "error": {
+            "title": "Kami tidak dapat menghapus item kerja dari catatan pelanggan ini kali ini.",
+            "message": "Kami juga telah secara otomatis menghapus pelanggan ini dari item kerja."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Kami tidak dapat menambahkan item kerja ke catatan pelanggan ini kali ini.",
+            "message": "Coba tambahkan item kerja itu lagi atau kembali nanti. Jika masih tidak berfungsi, hubungi kami."
+          },
+          "success": {
+            "title": "Anda telah menambahkan item kerja ke catatan pelanggan ini.",
+            "message": "Kami juga telah secara otomatis menambahkan pelanggan ini ke item kerja."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Edit",
+      "copy_link": "Salin tautan ke pelanggan",
+      "delete": "Hapus"
+    },
+    "create": {
+      "label": "Buat catatan pelanggan",
+      "loading": "Membuat",
+      "cancel": "Batal"
+    },
+    "update": {
+      "label": "Perbarui pelanggan",
+      "loading": "Memperbarui"
+    },
+    "delete": {
+      "title": "Apakah Anda yakin ingin menghapus catatan pelanggan {customer_name}?",
+      "description": "Semua data terkait dengan catatan ini akan dihapus secara permanen. Anda tidak dapat memulihkan catatan ini nanti."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Belum ada permintaan untuk ditampilkan.",
+          "description": "Buat permintaan dari pelanggan Anda sehingga Anda dapat menautkannya ke item kerja.",
+          "button": "Tambah permintaan baru"
+        },
+        "search": {
+          "title": "Sepertinya Anda tidak memiliki permintaan yang cocok dengan istilah itu.",
+          "description": "Coba dengan istilah pencarian lain atau hubungi kami jika Anda yakin seharusnya melihat hasil untuk istilah itu."
+        }
+      },
+      "label": "{count, plural, one {Permintaan} other {Permintaan}}",
+      "add": "Tambah permintaan",
+      "create": "Buat permintaan",
+      "update": "Perbarui permintaan",
+      "form": {
+        "name": {
+          "placeholder": "Beri nama permintaan ini",
+          "validation": {
+            "required": "Nama diperlukan.",
+            "max_length": "Nama permintaan tidak boleh melebihi 255 karakter."
+          }
+        },
+        "description": {
+          "placeholder": "Jelaskan sifat permintaan atau tempel komentar pelanggan ini dari alat lain."
+        },
+        "source": {
+          "add": "Tambah sumber",
+          "update": "Perbarui sumber",
+          "url": {
+            "label": "URL",
+            "required": "Url diperlukan",
+            "invalid": "URL website tidak valid"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Tautan disalin",
+          "message": "Tautan permintaan pelanggan disalin ke clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Mengunggah lampiran...",
+            "success": {
+              "title": "Lampiran diunggah",
+              "message": "Lampiran telah berhasil diunggah."
+            },
+            "error": {
+              "title": "Lampiran tidak diunggah",
+              "message": "Lampiran tidak dapat diunggah."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Error!",
+              "message": "Hanya satu file yang dapat diunggah dalam satu waktu."
+            }
+          },
+          "length": {
+            "message": "File harus berukuran {size}MB atau kurang"
+          },
+          "remove": {
+            "success": {
+              "title": "Lampiran dihapus",
+              "message": "Lampiran telah berhasil dihapus"
+            },
+            "error": {
+              "title": "Lampiran tidak dihapus",
+              "message": "Lampiran tidak dapat dihapus"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Sukses!",
+              "message": "Sumber berhasil diperbarui!"
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Tidak dapat memperbarui sumber."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Error!",
+              "message": "Tidak dapat menambahkan item kerja ke permintaan. Coba lagi."
+            },
+            "success": {
+              "title": "Sukses!",
+              "message": "Item kerja ditambahkan ke permintaan."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Permintaan berhasil diperbarui!",
+            "title": "Sukses!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Tidak dapat memperbarui permintaan. Coba lagi!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Permintaan berhasil dibuat!",
+            "title": "Sukses!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Tidak dapat membuat permintaan. Coba lagi!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Item kerja tertaut",
+      "link": "Tautkan item kerja",
+      "empty_state": {
+        "list": {
+          "title": "Sepertinya Anda belum memiliki item kerja tertaut ke pelanggan ini.",
+          "description": "Tautkan item kerja yang ada dari proyek mana pun di sini sehingga Anda dapat melacaknya berdasarkan pelanggan ini.",
+          "button": "Tautkan item kerja"
+        }
+      },
+      "action": {
+        "remove_epic": "Hapus epic",
+        "remove": "Hapus item kerja"
+      }
+    },
+    "sidebar": {
+      "properties": "Properti"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Template",
+      "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman ketika Anda menggunakan template.",
+      "options": {
+        "project": {
+          "label": "Template proyek"
+        },
+        "work_item": {
+          "label": "Template item kerja"
+        },
+        "page": {
+          "label": "Template halaman"
+        }
+      },
+      "create_template": {
+        "label": "Buat template",
+        "no_permission": {
+          "project": "Hubungi admin proyek Anda untuk membuat template",
+          "workspace": "Hubungi admin workspace Anda untuk membuat template"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Gunakan template",
+          "loading": "Menggunakan"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Berasal dari workspace"
+        },
+        "project": {
+          "info": "Berasal dari proyek"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Beri nama template proyek Anda.",
+              "validation": {
+                "required": "Nama template diperlukan",
+                "maxLength": "Nama template harus kurang dari 255 karakter"
+              }
+            },
+            "description": {
+              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
+            }
+          },
+          "name": {
+            "placeholder": "Beri nama proyek Anda.",
+            "validation": {
+              "required": "Judul proyek diperlukan",
+              "maxLength": "Judul proyek harus kurang dari 255 karakter"
+            }
+          },
+          "description": {
+            "placeholder": "Jelaskan tujuan dan sasaran proyek ini."
+          },
+          "button": {
+            "create": "Buat template proyek",
+            "update": "Perbarui template proyek"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Beri nama template item kerja Anda.",
+              "validation": {
+                "required": "Nama template diperlukan",
+                "maxLength": "Nama template harus kurang dari 255 karakter"
+              }
+            },
+            "description": {
+              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
+            }
+          },
+          "name": {
+            "placeholder": "Beri judul untuk item kerja ini.",
+            "validation": {
+              "required": "Judul item kerja diperlukan",
+              "maxLength": "Judul item kerja harus kurang dari 255 karakter"
+            }
+          },
+          "description": {
+            "placeholder": "Jelaskan item kerja ini sehingga jelas apa yang akan Anda capai ketika Anda menyelesaikannya."
+          },
+          "button": {
+            "create": "Buat template item kerja",
+            "update": "Perbarui template item kerja"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Beri nama template halaman Anda.",
+              "validation": {
+                "required": "Nama template diperlukan",
+                "maxLength": "Nama template harus kurang dari 255 karakter"
+              }
+            },
+            "description": {
+              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
+            }
+          },
+          "name": {
+            "placeholder": "Halaman tidak berjudul",
+            "validation": {
+              "maxLength": "Nama halaman harus kurang dari 255 karakter"
+            }
+          },
+          "button": {
+            "create": "Buat template halaman",
+            "update": "Perbarui template halaman"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Pengaturan publikasi} other {Publikasikan ke Marketplace}}",
+          "unpublish_action": "Hapus dari Marketplace",
+          "title": "Buat template Anda dapat dikenali dan ditemukan.",
+          "name": {
+            "label": "Nama template",
+            "placeholder": "Beri nama template Anda",
+            "validation": {
+              "required": "Nama template diperlukan",
+              "maxLength": "Nama template harus kurang dari 255 karakter"
+            }
+          },
+          "short_description": {
+            "label": "Deskripsi singkat",
+            "placeholder": "Template ini cocok untuk Manajer Proyek yang mengelola beberapa proyek sekaligus.",
+            "validation": {
+              "required": "Deskripsi singkat diperlukan"
+            }
+          },
+          "description": {
+            "label": "Deskripsi",
+            "placeholder": "Perbaiki produktivitas dan sederhanakan komunikasi dengan integrasi Speech-To-Text kami.\n• Transkripsi real-time: Konversi kata yang diucapkan menjadi teks yang akurat secara instan.\n• Membuat tugas dan komentar: Tambahkan tugas, deskripsi, dan komentar melalui perintah suara.",
+            "validation": {
+              "required": "Deskripsi diperlukan"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "Pilih di mana Anda pikir ini cocok paling baik. Anda dapat memilih lebih dari satu.",
+            "validation": {
+              "required": "Setidaknya satu kategori diperlukan"
+            }
+          },
+          "keywords": {
+            "label": "Kata kunci",
+            "placeholder": "Gunakan istilah yang Anda pikir pengguna akan cari ketika mencari template ini.",
+            "helperText": "Masukkan kata kunci yang dipisahkan dengan koma yang akan membantu orang menemukan ini dari pencarian.",
+            "validation": {
+              "required": "Setidaknya satu kata kunci diperlukan"
+            }
+          },
+          "company_name": {
+            "label": "Nama perusahaan",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Nama perusahaan diperlukan",
+              "maxLength": "Nama perusahaan harus kurang dari 255 karakter"
+            }
+          },
+          "contact_email": {
+            "label": "Email dukungan",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Alamat email tidak valid",
+              "required": "Email dukungan diperlukan",
+              "maxLength": "Email dukungan harus kurang dari 255 karakter"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Tautan ke kebijakan privasi Anda",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL tidak valid",
+              "maxLength": "URL harus kurang dari 800 karakter"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Tautan ke kebijakan penggunaan Anda",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL tidak valid",
+              "maxLength": "URL harus kurang dari 800 karakter"
+            }
+          },
+          "cover_image": {
+            "label": "Tambahkan gambar cover yang akan ditampilkan di marketplace",
+            "upload_title": "Unggah gambar cover",
+            "upload_placeholder": "Klik untuk mengunggah atau seret dan lepas untuk mengunggah gambar cover",
+            "drop_here": "Letakkan di sini",
+            "click_to_upload": "Klik untuk mengunggah",
+            "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran. Silakan coba lagi.",
+            "upload_and_save": "Unggah dan simpan",
+            "uploading": "Mengunggah",
+            "remove": "Hapus",
+            "removing": "Menghapus",
+            "validation": {
+              "required": "Gambar cover diperlukan"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Sertakan dokumen dan gambar yang Anda pikir akan membuat pengguna template.",
+            "validation": {
+              "required": "Setidaknya satu screenshot diperlukan"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Template",
+        "description": "Dengan template proyek, item kerja, dan halaman di Plane, Anda tidak perlu membuat proyek dari awal atau mengatur properti item kerja secara manual.",
+        "sub_description": "Dapatkan kembali 80% waktu administrasi Anda saat menggunakan Template."
+      },
+      "no_templates": {
+        "button": "Buat template pertama Anda"
+      },
+      "no_labels": {
+        "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
+      },
+      "no_work_items": {
+        "description": "Belum ada item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."
+      },
+      "no_sub_work_items": {
+        "description": "Belum ada sub-item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Tidak ada template yang dapat Anda akses.",
+          "description": "Silakan buat template"
+        },
+        "no_results": {
+          "title": "Itu tidak cocok dengan template.",
+          "description": "Coba cari dengan istilah lain."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Template dibuat",
+          "message": "{templateName}, template {templateType}, sekarang tersedia untuk workspace Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat membuat template itu kali ini.",
+          "message": "Coba simpan detail Anda lagi atau salin ke template baru, sebaiknya di tab lain."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Template diubah",
+          "message": "{templateName}, template {templateType}, telah diubah."
+        },
+        "error": {
+          "title": "Kami tidak dapat menyimpan perubahan ke template ini.",
+          "message": "Coba simpan detail Anda lagi atau kembali ke template ini nanti. Jika masih ada masalah, hubungi kami."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Template dihapus",
+          "message": "{templateName}, template {templateType}, sekarang telah dihapus dari workspace Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus template itu.",
+          "message": "Coba hapus lagi atau kembali nanti. Jika Anda tidak dapat menghapusnya, hubungi kami."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Template dihapus dari publikasi",
+          "message": "{templateName}, template {templateType}, telah dihapus dari publikasi."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus template itu dari publikasi.",
+          "message": "Coba hapus dari publikasi lagi atau kembali nanti. Jika Anda tidak dapat menghapusnya dari publikasi, hubungi kami."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Hapus template",
+      "description": {
+        "prefix": "Apakah Anda yakin ingin menghapus template-",
+        "suffix": "? Semua data terkait template akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Hapus template dari publikasi",
+      "description": {
+        "prefix": "Apakah Anda yakin ingin menghapus template-",
+        "suffix": " dari publikasi? Template ini tidak akan lagi tersedia untuk pengguna di marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Tambah template baru",
+        "project": "Tambah template baru"
+      },
+      "label": {
+        "project": "Pilih template proyek",
+        "page": "Pilih template"
+      },
+      "tooltip": {
+        "work_item": "Pilih template item kerja"
+      },
+      "no_results": {
+        "work_item": "Tidak ada template ditemukan.",
+        "project": "Tidak ada template ditemukan."
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proyek berdasarkan status",
+    "active_users": "Pengguna aktif",
+    "intake_trends": "Tren Penerimaan",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan siklus akan muncul di sini. Tambahkan item kerja ke siklus untuk mulai melacak kemajuan."
+      },
+      "module_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan modul akan muncul di sini. Tambahkan item kerja ke modul untuk mulai melacak kemajuan."
+      },
+      "intake_trends": {
+        "title": "Belum ada data",
+        "description": "Analitik tren intake akan muncul di sini. Tambahkan item kerja ke intake untuk mulai melacak tren."
+      }
+    },
+    "upgrade_to_plan": "Tingkatkan ke {plan} untuk membuka {tab}"
+  }
+}

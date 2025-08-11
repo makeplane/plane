@@ -28,6 +28,7 @@ export const useEditor = (props: TEditorHookProps) => {
     id = "",
     initialValue,
     isTouchDevice,
+    isSmoothCursorEnabled = false,
     mentionHandler,
     onAssetChange,
     onChange,
@@ -54,6 +55,7 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
+          isSmoothCursorEnabled,
           editable,
           disabledExtensions,
           enableHistory,

@@ -13,7 +13,7 @@ import { cn } from "@plane/utils";
 import { ProIcon } from "@/components/common";
 // helper
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {
@@ -61,9 +61,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
 export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const { t } = useTranslation();
   // store hooks
-  const {
-    userProfile: { data: userProfile },
-  } = useUser();
+  const { data: userProfile } = useUserProfile();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
 
@@ -72,7 +70,8 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
+            userProfile?.theme.theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
