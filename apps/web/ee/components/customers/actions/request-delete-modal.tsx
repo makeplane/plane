@@ -5,10 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { mutate } from "swr";
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCustomers } from "@/plane-web/hooks/store";
-// plane web hooks
 
 type Props = {
   isModalOpen: boolean;
@@ -35,6 +36,13 @@ export const DeleteCustomerRequestsModal: React.FC<Props> = observer((props) => 
     await deleteCustomerRequest(workspaceSlug.toString(), customerId, requestId, workItemId)
       .then(() => {
         handleClose();
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.delete_request,
+          payload: {
+            id: customerId,
+            request_id: requestId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -42,7 +50,15 @@ export const DeleteCustomerRequestsModal: React.FC<Props> = observer((props) => 
         });
         mutate(`WORK_ITEM_CUSTOMERS${workspaceSlug}_${workItemId}`);
       })
-      .catch(() => {
+      .catch((error) => {
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.delete_request,
+          payload: {
+            id: customerId,
+            request_id: requestId,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

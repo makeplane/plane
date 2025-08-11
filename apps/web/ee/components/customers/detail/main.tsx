@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 // plane imports
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store";
 // plane web imports
 import { DescriptionInput, MainWrapper, TitleInput } from "@/plane-web/components/common";
@@ -108,13 +110,29 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
   };
 
   const handleUpdateCustomer = async (data: Partial<TCustomerPayload>) => {
-    await updateCustomer(workspaceSlug, customerId, data).catch((error) => {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("customers.toasts.update.error.title"),
-        message: error.error || t("customers.toasts.update.error.message"),
+    await updateCustomer(workspaceSlug, customerId, data)
+      .then(() => {
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
+          payload: {
+            id: customerId,
+          },
+        });
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("customers.toasts.update.error.title"),
+          message: error.error || t("customers.toasts.update.error.message"),
+        });
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.update_customer,
+          payload: {
+            id: customerId,
+          },
+          error: error as Error,
+        });
       });
-    });
   };
 
   if (!customer) return;

@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, EModalWidth, EModalPosition, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useCustomers } from "@/plane-web/hooks/store";
-// plane web hooks
 
 type Props = {
   isModalOpen: boolean;
@@ -41,13 +42,26 @@ export const DeleteCustomerModal: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/customers`);
         }
         handleClose();
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
+          payload: {
+            id: customerId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Customer deleted successfully.",
         });
       })
-      .catch(() => {
+      .catch((error) => {
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.delete_customer,
+          payload: {
+            id: customerId,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

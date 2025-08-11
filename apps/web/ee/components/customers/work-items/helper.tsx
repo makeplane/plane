@@ -1,12 +1,13 @@
 "use client";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store";
 import { useCustomers } from "@/plane-web/hooks/store";
 
@@ -23,7 +24,6 @@ export const useCustomerWorkItemOperations = (
   const {
     workItems: { removeWorkItemFromCustomer },
   } = useCustomers();
-  const pathname = usePathname();
   const { t } = useTranslation();
   // derived values
   const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Work item" : "Epic";
@@ -59,6 +59,12 @@ export const useCustomerWorkItemOperations = (
       removeRelation: async (workspaceSlug: string, customerId: string, workItemId: string, requestId?: string) => {
         try {
           return removeWorkItemFromCustomer(workspaceSlug, customerId, workItemId, requestId).then(() => {
+            captureSuccess({
+              eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
+              payload: {
+                id: customerId,
+              },
+            });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("customers.toasts.work_item.remove.success.title"),
@@ -66,6 +72,13 @@ export const useCustomerWorkItemOperations = (
             });
           });
         } catch (error) {
+          captureError({
+            eventName: CUSTOMER_TRACKER_EVENTS.remove_work_items_from_customer,
+            payload: {
+              id: customerId,
+            },
+            error: error as Error,
+          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("customers.toasts.work_item.remove.error.title"),
@@ -74,7 +87,7 @@ export const useCustomerWorkItemOperations = (
         }
       },
     }),
-    [pathname, removeWorkItemFromCustomer, updateIssue]
+    [entityName, removeWorkItemFromCustomer, updateIssue]
   );
 
   return issueOperations;

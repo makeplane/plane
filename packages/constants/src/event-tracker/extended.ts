@@ -8,6 +8,25 @@ export const EPIC_TRACKER_EVENTS = {
   enable: "epic_enabled",
   disable: "epic_disabled",
 };
+
+export const CUSTOMER_TRACKER_EVENTS = {
+  create_customer: "customer_created",
+  update_customer: "customer_updated",
+  delete_customer: "customer_deleted",
+  create_request: "customer_request_created",
+  update_request: "customer_request_updated",
+  delete_request: "customer_request_deleted",
+  create_attachment: "attachment_created",
+  delete_attachment: "attachment_deleted",
+  add_work_items_to_customer: "work_items_added_to_customer",
+  remove_work_items_from_customer: "work_items_removed_from_customer",
+};
+
+export const CUSTOMER_TRACKER_ELEMENTS = {
+  QUICK_ACTIONS: "customer_quick_actions",
+  CREATE_CUSTOMER: "create_customer",
+};
+
 export const EPIC_TRACKER_ELEMENTS = {
   QUICK_ACTIONS: "epic_quick_actions",
   TOGGLE_EPICS_BUTTON: "toggle_epics_button",

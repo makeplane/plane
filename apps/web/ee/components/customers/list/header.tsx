@@ -2,7 +2,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Button, CustomersIcon } from "@plane/ui";
@@ -48,6 +48,7 @@ export const CustomersListHeader = observer(() => {
                 size="sm"
                 onClick={() => toggleCreateCustomerModal({ isOpen: true, customerId: undefined })}
                 className="items-center gap-1"
+                data-ph-element={CUSTOMER_TRACKER_ELEMENTS.CREATE_CUSTOMER}
               >
                 <span className="hidden md:inline-block">{t("customers.create.label")}</span>
                 <span className="inline-block md:hidden">{t("customers.label", { count: 1 })}</span>

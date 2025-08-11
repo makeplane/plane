@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
@@ -11,9 +12,8 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
-// hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
-// plane web components
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // plane web services
@@ -115,7 +115,45 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
 
     const operation = data.id
       ? updateCustomerRequest(workspaceSlug, customerId, data.id, payload)
-      : createCustomerRequest(workspaceSlug, customerId, payload);
+          .then((response) => {
+            captureSuccess({
+              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
+              payload: {
+                id: customerId,
+                request_id: data.id,
+              },
+            });
+            return response;
+          })
+          .catch((error) => {
+            captureError({
+              eventName: CUSTOMER_TRACKER_EVENTS.update_request,
+              payload: {
+                id: customerId,
+                request_id: data.id,
+              },
+              error: error as Error,
+            });
+          })
+      : createCustomerRequest(workspaceSlug, customerId, payload)
+          .then((response) => {
+            captureSuccess({
+              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
+              payload: {
+                id: customerId,
+              },
+            });
+            return response;
+          })
+          .catch((error) => {
+            captureError({
+              eventName: CUSTOMER_TRACKER_EVENTS.create_request,
+              payload: {
+                id: customerId,
+              },
+              error: error as Error,
+            });
+          });
     setSubmitting(true);
     try {
       const response = await operation;
@@ -128,14 +166,33 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
           ? t("customers.requests.toasts.update.success.message")
           : t("customers.requests.toasts.create.success.message"),
       });
-      if (response.id && workItemIds.length) {
-        await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, response.id).catch((error: any) => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("customers.requests.toasts.work_item.add.error.title"),
-            message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
+      if (response?.id && workItemIds.length) {
+        await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, response.id)
+          .then(() => {
+            captureSuccess({
+              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+              payload: {
+                id: customerId,
+                request_id: response.id,
+                work_item_ids: workItemIds,
+              },
+            });
+          })
+          .catch((error: any) => {
+            captureError({
+              eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+              payload: {
+                id: customerId,
+                request_id: response.id,
+              },
+              error: error as Error,
+            });
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("customers.requests.toasts.work_item.add.error.title"),
+              message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
+            });
           });
-        });
       }
       resetData();
       handleClose();

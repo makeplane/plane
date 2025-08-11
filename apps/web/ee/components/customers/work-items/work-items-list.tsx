@@ -1,13 +1,14 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { CUSTOMER_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { EUserWorkspaceRoles, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store";
 import { CustomerWorkItem, WorkItemEmptyState } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -43,6 +44,13 @@ export const WorkItemsList: FC<TProps> = observer((props) => {
     const _workItemIds = data.map((item) => item.id);
     await addWorkItemsToCustomer(workspaceSlug, customerId, _workItemIds)
       .then(() => {
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+          payload: {
+            id: customerId,
+            work_item_ids: _workItemIds,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("customers.toasts.work_item.add.success.title"),
@@ -50,6 +58,14 @@ export const WorkItemsList: FC<TProps> = observer((props) => {
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+          payload: {
+            id: customerId,
+            work_item_ids: _workItemIds,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.toasts.work_item.add.error.title"),
