@@ -68,7 +68,8 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           shape={(shapeProps: any) => {
             const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
-            return shapeVariant(shapeProps, bar, stackKeys) as any;
+            const node = shapeVariant(shapeProps, bar, stackKeys);
+            return React.isValidElement(node) ? node : <>{node}</>;
           }}
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}
