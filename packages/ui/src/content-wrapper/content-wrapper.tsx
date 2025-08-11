@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 import { Row } from "../row";
 import { ERowVariant, TRowVariant } from "../row/helper";
 

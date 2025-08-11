@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
 import { ERowVariant, Row } from "../row";
 

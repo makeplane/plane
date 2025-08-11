@@ -4768,7 +4768,7 @@
   dependencies:
     "@types/reactcss" "*"
 
-"@types/react-dom@18.3.0", "@types/react-dom@18.3.5", "@types/react-dom@^18.2.18":
+"@types/react-dom@18.3.0", "@types/react-dom@18.3.1", "@types/react-dom@18.3.5", "@types/react-dom@^18.2.18":
   version "18.3.5"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.5.tgz#45f9f87398c5dcea085b715c58ddcf1faf65f716"
   integrity sha512-P4t6saawp+b/dFrUr2cvkVsfvPguwsxtH6dNIYRllMsefqFzkZk5UIjzyDOv5g1dXIPdG4Sp1yCR4Z6RCUsG/Q==
@@ -4785,7 +4785,7 @@
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.12.tgz#b5d76568485b02a307238270bfe96cb51ee2a044"
   integrity sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==
 
-"@types/react@*", "@types/react@18.3.1", "@types/react@18.3.18", "@types/react@^18.3.11":
+"@types/react@*", "@types/react@18.3.1", "@types/react@18.3.11", "@types/react@18.3.18", "@types/react@^18.3.11":
   version "18.3.18"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.18.tgz#9b382c4cd32e13e463f97df07c2ee3bbcd26904b"
   integrity sha512-t4yC+vtgnkYjNSKlFx1jkAhH8LgTo2N/7Qvi83kdEaUtMDiwpbLAktKDaAMlRcJ5eSxZkH74eEGt1ky31d7kfQ==

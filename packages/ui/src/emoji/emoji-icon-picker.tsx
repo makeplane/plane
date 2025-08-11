@@ -7,7 +7,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { IconsList } from "./icons-list";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 // hooks
 import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
 
