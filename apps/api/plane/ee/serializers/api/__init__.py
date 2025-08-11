@@ -6,3 +6,4 @@ from .issue_property import (
     IssuePropertyActivityAPISerializer,
 )
 from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
+from .page import PageAPISerializer, PageDetailAPISerializer

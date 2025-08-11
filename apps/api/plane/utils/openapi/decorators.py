@@ -11,6 +11,7 @@ from .parameters import (
     PROJECT_ID_PARAMETER,
     TYPE_ID_PARAMETER,
     PROPERTY_ID_PARAMETER,
+    PAGE_ID_PARAMETER,
 )
 from .responses import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE, NOT_FOUND_RESPONSE
 
@@ -364,6 +365,26 @@ def issue_property_value_docs(**kwargs):
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
             PROPERTY_ID_PARAMETER,
+        ],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def page_docs(**kwargs):
+    """Decorator for page endpoints"""
+    defaults = {
+        "tags": ["Pages"],
+        "summary": "Endpoints for page create/update/delete and fetch page details",
+        "parameters": [
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            PAGE_ID_PARAMETER,
         ],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,

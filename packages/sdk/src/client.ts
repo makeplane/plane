@@ -9,6 +9,7 @@ import {
 import { IssueService } from "@/services/issue.service";
 import { LabelService } from "@/services/label.service";
 import { ModuleService } from "@/services/module.service";
+import { PageService } from "@/services/page.service";
 import { ProjectService } from "@/services/project.service";
 import { StateService } from "@/services/state.service";
 import { UserService } from "@/services/user.service";
@@ -34,6 +35,7 @@ export class Client {
   issueProperty: IssuePropertyService;
   issuePropertyOption: IssuePropertyOptionService;
   issuePropertyValue: IssuePropertyValueService;
+  page: PageService;
 
   constructor(options: ClientOptions) {
     this.options = options;
@@ -52,5 +54,6 @@ export class Client {
     this.issueProperty = new IssuePropertyService(options);
     this.issuePropertyOption = new IssuePropertyOptionService(options);
     this.issuePropertyValue = new IssuePropertyValueService(options);
+    this.page = new PageService(options);
   }
 }

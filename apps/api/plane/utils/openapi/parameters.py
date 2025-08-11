@@ -274,6 +274,36 @@ ACTIVITY_ID_PARAMETER = OpenApiParameter(
     ],
 )
 
+PAGE_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Page ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page UUID",
+        )
+    ],
+)
+
+PAGE_ANCHOR_PARAMETER = OpenApiParameter(
+    name="anchor",
+    description="Page anchor",
+    required=True,
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page anchor",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page anchor",
+        )
+    ],
+)
+
 # Query Parameters
 CURSOR_PARAMETER = OpenApiParameter(
     name="cursor",

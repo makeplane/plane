@@ -2,8 +2,19 @@ import factory
 from uuid import uuid4
 from django.utils import timezone
 
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
-from plane.authentication.models import Application, ApplicationOwner, WorkspaceAppInstallation
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    Project,
+    ProjectMember,
+    Page,
+)
+from plane.authentication.models import (
+    Application,
+    ApplicationOwner,
+    WorkspaceAppInstallation,
+)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -128,3 +139,26 @@ class WorkspaceAppInstallationFactory(factory.django.DjangoModelFactory):
     application = factory.SubFactory(ApplicationFactory)
     installed_by = factory.SubFactory(UserFactory)
     status = WorkspaceAppInstallation.Status.INSTALLED
+
+
+class PageFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Page instances"""
+
+    class Meta:
+        model = Page
+
+    id = factory.LazyFunction(uuid4)
+    workspace = factory.SubFactory(WorkspaceFactory)
+    name = factory.Sequence(lambda n: f"Page {n}")
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+    access = Page.PUBLIC_ACCESS
+    color = "#000000"
+    logo_props = {}
+    is_global = False
+    external_id = None
+    external_source = None
+    description = {}
+    description_binary = None
+    description_html = "<p></p>"
+    description_stripped = None

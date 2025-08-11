@@ -4,7 +4,17 @@ from pytest_django.fixtures import django_db_setup
 
 from uuid import uuid4
 
-from plane.db.models import User, Workspace, FileAsset, Project, WorkspaceMember
+from plane.db.models import (
+    User,
+    Workspace,
+    FileAsset,
+    Project,
+    WorkspaceMember,
+    ProjectPage,
+    ProjectMember,
+    Page,
+    DeployBoard,
+)
 from plane.db.models.api import APIToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -257,3 +267,54 @@ def project(db, workspace, create_user):
         identifier="test123",
     )
     return project
+
+
+@pytest.fixture
+def workspace_page(db, workspace, create_user):
+    """Create and return a page instance"""
+    from plane.tests.factories import PageFactory
+
+    return PageFactory(
+        workspace=workspace,
+        name="Test Workspace Page",
+        owned_by=create_user,
+        is_global=True,
+    )
+
+
+@pytest.fixture
+def project_page(db, workspace, project, create_user):
+    """Create and return a project page instance"""
+    from plane.tests.factories import PageFactory
+
+    page = PageFactory(
+        workspace=workspace,
+        name="Test Project Page",
+        owned_by=create_user,
+    )
+    # add as a project member
+    ProjectMember.objects.create(
+        project=project,
+        member=create_user,
+        role=20,
+    )
+    ProjectPage.objects.create(
+        project=project,
+        page=page,
+        workspace=workspace,
+    )
+    return page
+
+
+@pytest.fixture
+def published_page(db, workspace, workspace_page) -> tuple[Page, str]:
+    """Publish a page"""
+    workspace_page.access = Page.PUBLIC_ACCESS
+    workspace_page.save()
+
+    deploy_board = DeployBoard.objects.create(
+        entity_name=DeployBoard.DeployBoardType.PAGE,
+        entity_identifier=workspace_page.id,
+        workspace=workspace,
+    )
+    return workspace_page, deploy_board.anchor
