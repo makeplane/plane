@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web hooks
@@ -42,9 +42,9 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
       setIsConnectionSetup(true);
       const response = await connectGithubUserCredential();
       captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_user,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
-          workspaceId,
+          type: "GITHUB_USER",
         },
       });
 
@@ -52,9 +52,9 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
     } catch (error) {
       console.error("connectGithubUserCredential", error);
       captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_user,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
-          workspaceId,
+          type: "GITHUB_USER",
         },
       });
     } finally {
@@ -67,16 +67,18 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
       setIsConnectionSetup(true);
       await disconnectGithubUserCredential();
       captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
         payload: {
+          type: "GITHUB_USER",
           workspaceId,
         },
       });
     } catch (error) {
       console.error("disconnectGithubUserCredential", error);
       captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
         payload: {
+          type: "GITHUB_USER",
           workspaceId,
         },
       });

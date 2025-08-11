@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { GITLAB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 // plane web hooks
@@ -39,8 +39,9 @@ export const ConnectOrganization: FC = observer(() => {
       const response = await connectWorkspaceConnection();
       if (response) window.open(response, "_self");
       captureSuccess({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.connect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
+          type: "GITLAB_ORGANIZATION",
           workspaceConnectionId,
         },
       });
@@ -56,8 +57,9 @@ export const ConnectOrganization: FC = observer(() => {
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
       captureSuccess({
-        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.disconnect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
         payload: {
+          type: "GITLAB_ORGANIZATION",
           workspaceConnectionId,
         },
       });

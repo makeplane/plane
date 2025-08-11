@@ -201,15 +201,15 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
 export const INTEGRATION_TRACKER_ELEMENTS = {
   INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON: "integrations_mapping_entity_item_button",
 };
+export const INTEGRATION_TRACKER_EVENTS = {
+  integration_started: "integration_started",
+  integration_disconnected: "integration_disconnected",
+};
 
 export const SLACK_INTEGRATION_TRACKER_EVENTS = {
-  disconnect_app: "slack_app_disconnected",
-  disconnect_user: "slack_user_disconnected",
   create_project_connection: "slack_project_connection_created",
   update_project_connection: "slack_project_connection_updated",
   delete_project_connection: "slack_project_connection_deleted",
-  connect_app: "slack_app_connected",
-  connect_user: "slack_user_connected",
 };
 export const SLACK_INTEGRATION_TRACKER_ELEMENTS = {
   CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU: "slack_connect_disconnect_personal_account_context_menu",
@@ -219,10 +219,6 @@ export const SLACK_INTEGRATION_TRACKER_ELEMENTS = {
 };
 
 export const GITHUB_INTEGRATION_TRACKER_EVENTS = {
-  disconnect_user: "github_user_disconnected",
-  connect_user: "github_user_connected",
-  disconnect_organization: "github_organization_disconnected",
-  connect_organization: "github_organization_connected",
   create_entity_connection: "github_entity_connection_created",
   update_entity_connection: "github_entity_connection_updated",
   delete_entity_connection: "github_entity_connection_deleted",
@@ -234,8 +230,6 @@ export const GITHUB_INTEGRATION_TRACKER_ELEMENTS = {
 };
 
 export const GITLAB_INTEGRATION_TRACKER_EVENTS = {
-  connect_organization: "gitlab_organization_connected",
-  disconnect_organization: "gitlab_organization_disconnected",
   create_entity_connection: "gitlab_entity_connection_created",
   update_entity_connection: "gitlab_entity_connection_updated",
   delete_entity_connection: "gitlab_entity_connection_deleted",
@@ -296,22 +290,9 @@ export const IMPORTER_TRACKER_EVENTS = {
   CANCEL: "importer_cancel_job",
   REFRESH: "importer_refresh_jobs",
   DEACTIVATE: "importer_auth_deactivated",
-  CREATE_ASANA_JOB: "importer_asana_job_created",
-  START_ASANA_JOB: "importer_asana_job_started",
-  CREATE_CLICKUP_JOB: "importer_clickup_job_created",
-  START_CLICKUP_JOB: "importer_clickup_job_started",
-  CREATE_CONFLUENCE_JOB: "importer_confluence_job_created",
-  START_CONFLUENCE_JOB: "importer_confluence_job_started",
-  CREATE_JIRA_JOB: "importer_jira_job_created",
-  START_JIRA_JOB: "importer_jira_job_started",
-  CREATE_JIRA_SERVER_JOB: "importer_jira_server_job_created",
-  START_JIRA_SERVER_JOB: "importer_jira_server_job_started",
-  CREATE_LINEAR_JOB: "importer_linear_job_created",
-  START_LINEAR_JOB: "importer_linear_job_started",
-  CREATE_START_NOTION_JOB: "importer_notion_job_created_started",
   UPLOAD_ZIP_FILE: "importer_upload_zip_file",
-  CREATE_FLATFILE_JOB: "importer_flatfile_job_created",
-  START_FLATFILE_JOB: "importer_flatfile_job_started",
+  START_IMPORTER_JOB: "importer_job_started",
+  CREATE_IMPORTER_JOB: "importer_job_created",
 };
 
 export const WORKFLOW_TRACKER_EVENTS = {

@@ -84,17 +84,19 @@ export const SummaryRoot: FC = observer(() => {
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
           captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.CREATE_ASANA_JOB,
+            eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
             payload: {
               jobId: importerCreateJob?.id,
+              type: E_IMPORTER_KEYS.ASANA,
             },
           });
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
             captureSuccess({
-              eventName: IMPORTER_TRACKER_EVENTS.START_ASANA_JOB,
+              eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
               payload: {
                 jobId: importerCreateJob?.id,
+                type: E_IMPORTER_KEYS.ASANA,
               },
             });
             handleDashboardView();
@@ -107,10 +109,10 @@ export const SummaryRoot: FC = observer(() => {
       } catch (error) {
         console.error("error", error);
         captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_ASANA_JOB,
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
           error: error as Error,
           payload: {
-            serviceName: "Asana",
+            type: E_IMPORTER_KEYS.ASANA,
           },
         });
       } finally {

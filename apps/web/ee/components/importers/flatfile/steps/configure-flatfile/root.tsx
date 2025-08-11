@@ -122,15 +122,19 @@ export const ConfigureFlatfileChild: FC = observer(() => {
     };
     const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
     captureSuccess({
-      eventName: IMPORTER_TRACKER_EVENTS.CREATE_FLATFILE_JOB,
+      eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
       payload: {
+        type: E_IMPORTER_KEYS.FLATFILE,
         jobId: importerCreateJob?.id,
       },
     });
 
     if (!importerCreateJob?.id) {
       captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.CREATE_FLATFILE_JOB,
+        eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
+        payload: {
+          type: E_IMPORTER_KEYS.FLATFILE,
+        },
       });
       throw new Error("Failed to create job");
     }
@@ -142,15 +146,19 @@ export const ConfigureFlatfileChild: FC = observer(() => {
     try {
       await startJob(jobId);
       captureSuccess({
-        eventName: IMPORTER_TRACKER_EVENTS.START_FLATFILE_JOB,
+        eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
         payload: {
+          type: E_IMPORTER_KEYS.FLATFILE,
           jobId: jobId,
         },
       });
     } catch (error) {
       captureError({
-        eventName: IMPORTER_TRACKER_EVENTS.START_FLATFILE_JOB,
+        eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
         error: error as Error,
+        payload: {
+          type: E_IMPORTER_KEYS.FLATFILE,
+        },
       });
     }
   };

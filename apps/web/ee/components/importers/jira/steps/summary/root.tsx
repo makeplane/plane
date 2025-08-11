@@ -76,18 +76,20 @@ export const SummaryRoot: FC = observer(() => {
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
           captureSuccess({
-            eventName: IMPORTER_TRACKER_EVENTS.CREATE_JIRA_JOB,
+            eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
             payload: {
               jobId: importerCreateJob?.id,
+              type: E_IMPORTER_KEYS.JIRA,
             },
           });
           console.log(importerCreateJob);
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
             captureSuccess({
-              eventName: IMPORTER_TRACKER_EVENTS.START_JIRA_JOB,
+              eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
               payload: {
                 jobId: importerCreateJob?.id,
+                type: E_IMPORTER_KEYS.JIRA,
               },
             });
             handleDashboardView();
@@ -100,8 +102,11 @@ export const SummaryRoot: FC = observer(() => {
       } catch (error) {
         console.error("error", error);
         captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_JIRA_JOB,
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
           error: error as Error,
+          payload: {
+            type: E_IMPORTER_KEYS.JIRA,
+          },
         });
       } finally {
         setCreateConfigLoader(false);

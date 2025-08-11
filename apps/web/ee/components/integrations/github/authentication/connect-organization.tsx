@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { GITHUB_INTEGRATION_TRACKER_EVENTS, GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, EModalWidth, ModalCore, Loader } from "@plane/ui";
 // plane web hooks
@@ -50,8 +50,9 @@ export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ is
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
       captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
+          type: "GITHUB_ORGANIZATION",
           workspaceId,
         },
       });
@@ -59,8 +60,9 @@ export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ is
     } catch (error) {
       console.error("connectWorkspaceConnection", error);
       captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
+          type: "GITHUB_ORGANIZATION",
           workspaceId,
         },
       });
@@ -74,16 +76,18 @@ export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ is
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
       captureSuccess({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
         payload: {
+          type: "GITHUB_ORGANIZATION",
           workspaceId,
         },
       });
     } catch (error) {
       console.error("disconnectWorkspaceConnection", error);
       captureError({
-        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_organization,
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
         payload: {
+          type: "GITHUB_ORGANIZATION",
           workspaceId,
         },
       });

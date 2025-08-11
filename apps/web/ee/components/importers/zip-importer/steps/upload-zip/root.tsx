@@ -10,6 +10,7 @@ import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-import
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
 import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 interface UploadedFile {
   file: File;
@@ -109,7 +110,16 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
           fileName: uploadedFile.file.name,
         });
         captureSuccess({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_START_NOTION_JOB,
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
+          payload: {
+            type: E_IMPORTER_KEYS.NOTION,
+          },
+        });
+        captureSuccess({
+          eventName: IMPORTER_TRACKER_EVENTS.START_IMPORTER_JOB,
+          payload: {
+            type: E_IMPORTER_KEYS.NOTION,
+          },
         });
         // Show success toast
         setToast({
@@ -123,8 +133,11 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
         console.error(`Failed to confirm upload: ${error}`);
         // Show error toast
         captureError({
-          eventName: IMPORTER_TRACKER_EVENTS.CREATE_START_NOTION_JOB,
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_IMPORTER_JOB,
           error: error as Error,
+          payload: {
+            type: E_IMPORTER_KEYS.NOTION,
+          },
         });
         setToast({
           type: TOAST_TYPE.ERROR,
