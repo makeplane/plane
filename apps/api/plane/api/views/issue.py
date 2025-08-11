@@ -212,6 +212,25 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
+        # ee start
+        # epics support
+        if request.GET.get("include_epics") == "true" and issue_identifier and project_identifier:
+            issue = Issue.issue_and_epics_objects.annotate(
+                sub_issues_count=Issue.issue_and_epics_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(
+                workspace__slug=slug,
+                project__identifier=project_identifier,
+                sequence_id=issue_identifier,
+            )
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+        # ee end
+
         if issue_identifier and project_identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))

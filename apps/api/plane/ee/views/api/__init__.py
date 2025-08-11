@@ -18,3 +18,5 @@ from plane.ee.views.api.worklog.issue_worklog import (
 )
 
 from plane.ee.views.api.page import WikiBulkOperationAPIView
+
+from .epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint

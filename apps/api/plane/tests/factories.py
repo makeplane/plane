@@ -9,6 +9,8 @@ from plane.db.models import (
     Project,
     ProjectMember,
     Page,
+    Issue,
+    IssueType,
 )
 from plane.authentication.models import (
     Application,
@@ -139,6 +141,40 @@ class WorkspaceAppInstallationFactory(factory.django.DjangoModelFactory):
     application = factory.SubFactory(ApplicationFactory)
     installed_by = factory.SubFactory(UserFactory)
     status = WorkspaceAppInstallation.Status.INSTALLED
+
+
+class IssueTypeFactory(factory.django.DjangoModelFactory):
+    """Factory for creating IssueType instances"""
+
+    class Meta:
+        model = IssueType
+
+    id = factory.LazyFunction(uuid4)
+    workspace = factory.SubFactory(WorkspaceFactory)
+    name = factory.Sequence(lambda n: f"Issue Type {n}")
+    description = factory.Sequence(lambda n: f"Issue type {n}")
+    is_epic = False
+    is_default = False
+    is_active = True
+    level = 0
+    external_source = None
+    external_id = None
+
+
+class EpicFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Epic instances"""
+
+    class Meta:
+        model = Issue
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"Epic {n}")
+    project = factory.SubFactory(ProjectFactory)
+    created_by = factory.SubFactory(UserFactory)
+    updated_by = factory.SubFactory(UserFactory)
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+    type = factory.SubFactory(IssueTypeFactory)
 
 
 class PageFactory(factory.django.DjangoModelFactory):

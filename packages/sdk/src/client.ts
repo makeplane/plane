@@ -1,4 +1,5 @@
 import { CycleService } from "@/services/cycle.service";
+import { EpicService } from "@/services/epic.service";
 import { IssueCommentService } from "@/services/issue-comment.service";
 import {
   IssueTypeService,
@@ -35,6 +36,7 @@ export class Client {
   issueProperty: IssuePropertyService;
   issuePropertyOption: IssuePropertyOptionService;
   issuePropertyValue: IssuePropertyValueService;
+  epic: EpicService;
   page: PageService;
 
   constructor(options: ClientOptions) {
@@ -54,6 +56,7 @@ export class Client {
     this.issueProperty = new IssuePropertyService(options);
     this.issuePropertyOption = new IssuePropertyOptionService(options);
     this.issuePropertyValue = new IssuePropertyValueService(options);
+    this.epic = new EpicService(options);
     this.page = new PageService(options);
   }
 }

@@ -66,7 +66,7 @@ def project_docs(**kwargs):
     """Decorator for project-related endpoints"""
     defaults = {
         "tags": ["Projects"],
-        "summary": "Endpoints for project create/update/delete and fetch project details",
+        "summary": "Endpoints for project create/update/delete and fetch project details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -145,7 +145,7 @@ def work_item_docs(**kwargs):
     """Decorator for work item endpoints (main issue operations)"""
     defaults = {
         "tags": ["Work Items"],
-        "summary": "Endpoints for work item create/update/delete and fetch work item details",
+        "summary": "Endpoints for work item create/update/delete and fetch work item details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -177,7 +177,7 @@ def issue_link_docs(**kwargs):
     """Decorator for issue link endpoints"""
     defaults = {
         "tags": ["Work Item Links"],
-        "summary": "Endpoints for issue link create/update/delete and fetch issue link details",
+        "summary": "Endpoints for issue link create/update/delete and fetch issue link details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -193,7 +193,7 @@ def issue_comment_docs(**kwargs):
     """Decorator for issue comment endpoints"""
     defaults = {
         "tags": ["Work Item Comments"],
-        "summary": "Endpoints for issue comment create/update/delete and fetch issue comment details",
+        "summary": "Endpoints for issue comment create/update/delete and fetch issue comment details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -209,7 +209,7 @@ def issue_activity_docs(**kwargs):
     """Decorator for issue activity/search endpoints"""
     defaults = {
         "tags": ["Work Item Activity"],
-        "summary": "Endpoints for issue activity/search and fetch issue activity details",
+        "summary": "Endpoints for issue activity/search and fetch issue activity details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -225,7 +225,7 @@ def issue_attachment_docs(**kwargs):
     """Decorator for issue attachment endpoints"""
     defaults = {
         "tags": ["Work Item Attachments"],
-        "summary": "Endpoints for issue attachment create/update/delete and fetch issue attachment details",
+        "summary": "Endpoints for issue attachment create/update/delete and fetch issue attachment details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -288,7 +288,7 @@ def issue_worklog_docs(**kwargs):
     """Decorator for issue worklog endpoints"""
     defaults = {
         "tags": ["Work Item Worklogs"],
-        "summary": "Endpoints for issue worklog create/update/delete and fetch issue worklog details",
+        "summary": "Endpoints for issue worklog create/update/delete and fetch issue worklog details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -304,7 +304,7 @@ def issue_type_docs(**kwargs):
     """Decorator for issue type management endpoints"""
     defaults = {
         "tags": ["Work Item Types"],
-        "summary": "Endpoints for issue type create/update/delete and fetch issue type details",
+        "summary": "Endpoints for issue type create/update/delete and fetch issue type details",  # noqa: E501
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -320,7 +320,7 @@ def issue_property_docs(**kwargs):
     """Decorator for issue property management endpoints"""
     defaults = {
         "tags": ["Work Item Properties"],
-        "summary": "Endpoints for issue property create/update/delete and fetch issue property details",
+        "summary": "Endpoints for issue property create/update/delete and fetch issue property details",  # noqa: E501
         "parameters": [
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -340,7 +340,7 @@ def issue_property_option_docs(**kwargs):
     """Decorator for issue property option management endpoints"""
     defaults = {
         "tags": ["Work Item Properties"],
-        "summary": "Endpoints for issue property option create/update/delete and fetch issue property option details",
+        "summary": "Endpoints for issue property option create/update/delete and fetch issue property option details",  # noqa: E501
         "parameters": [
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -360,12 +360,28 @@ def issue_property_value_docs(**kwargs):
     """Decorator for issue property value management endpoints"""
     defaults = {
         "tags": ["Work Item Properties"],
-        "summary": "Endpoints for issue property value create/update/delete and fetch issue property value details",
+        "summary": "Endpoints for issue property value create/update/delete and fetch issue property value details",  # noqa: E501
         "parameters": [
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
             PROPERTY_ID_PARAMETER,
         ],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def epic_docs(**kwargs):
+    """Decorator for epic management endpoints"""
+    defaults = {
+        "tags": ["Epics"],
+        "summary": "Endpoints for epic list/create/update/delete and fetch epic details",  # noqa: E501
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,

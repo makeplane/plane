@@ -129,14 +129,14 @@ def api_key_client(api_client, api_token):
 
 @pytest.fixture
 def session_client(api_client, create_user):
-    """Return a session authenticated API client for app API testing, which is what plane.app uses"""
+    """Return a session authenticated API client for app API testing, which is what plane.app uses"""  # noqa: E501
     api_client.force_authenticate(user=create_user)
     return api_client
 
 
 @pytest.fixture
 def jwt_client(api_client, create_user):
-    """Return a JWT authenticated API client for app API testing, which is what plane.graphql uses"""
+    """Return a JWT authenticated API client for app API testing, which is what plane.graphql uses"""  # noqa: E501
 
     # Get JWT tokens for the user
     refresh = RefreshToken.for_user(create_user)
@@ -238,35 +238,34 @@ def workspace_app_installation(db, workspace, oauth_application, create_user):
 
 
 @pytest.fixture
-def workspace(create_user):
-    """
-    Create a new workspace and return the
-    corresponding Workspace model instance.
-    """
-    # Create the workspace using the model
-    created_workspace = Workspace.objects.create(
-        name="Test Workspace",
-        owner=create_user,
-        slug="test-workspace",
+def epic(db, workspace, project, create_user):
+    """Create and return an epic instance"""
+    from plane.tests.factories import EpicFactory, IssueTypeFactory
+    from plane.db.models import State
+
+    # Create an epic issue type ignore duplicates
+    epic_issue_type = IssueTypeFactory(
+        workspace=workspace, name="Epic", description="Epic issue type", is_epic=True
     )
 
-    WorkspaceMember.objects.create(
-        workspace=created_workspace, member=create_user, role=20
-    )
-
-    return created_workspace
-
-
-@pytest.fixture
-def project(db, workspace, create_user):
-    """Create and return a project instance"""
-    project = Project.objects.create(
-        name="Test Project",
+    # Create a default state for the project
+    state = State.objects.create(
+        project=project,
         workspace=workspace,
+        name="Backlog",
+        group="backlog",
+        default=True,
         created_by=create_user,
-        identifier="test123",
     )
-    return project
+
+    return EpicFactory(
+        workspace=workspace,
+        project=project,
+        created_by=create_user,
+        updated_by=create_user,
+        type=epic_issue_type,
+        state=state,
+    )
 
 
 @pytest.fixture

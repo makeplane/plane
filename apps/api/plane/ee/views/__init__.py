@@ -135,3 +135,7 @@ from plane.ee.views.app.workspace.asset import WorkspaceBulkAssetEndpoint
 
 # mobile views and endpoints
 from plane.ee.views.app.mobile import MobileWorkspaceInvitationEndpoint
+
+
+# Epic views
+from plane.ee.views.api.epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint
