@@ -18,25 +18,9 @@ type TTabListProps = {
   tabClassName?: string;
   size?: "sm" | "md" | "lg";
   selectedTab?: string;
-  autoWrap?: boolean;
 };
 
-export const TabList: FC<TTabListProps> = ({ autoWrap = true, selectedTab, ...props }) =>
-  autoWrap ? (
-    <BaseTabs.Root defaultValue={selectedTab}>
-      <TabListInner {...props} />
-    </BaseTabs.Root>
-  ) : (
-    <TabListInner {...props} />
-  );
-
-const TabListInner: FC<TTabListProps> = ({
-  tabs,
-  tabListClassName,
-  tabClassName,
-  size = "md",
-  selectedTab,
-}) => (
+export const TabList: FC<TTabListProps> = ({ tabs, tabListClassName, tabClassName, size = "md", selectedTab }) => (
   <BaseTabs.List
     className={cn(
       "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative",
