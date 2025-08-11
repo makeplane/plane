@@ -10,7 +10,9 @@ import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
 // local components
+import { FormHeader } from "../../../core/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";
 
 // service initialization
@@ -101,78 +103,91 @@ export const InstanceSignInForm: FC = () => {
   }, [errorCode]);
 
   return (
-    <form
-      className="space-y-4"
-      method="POST"
-      action={`${API_BASE_URL}/api/instances/admins/sign-in/`}
-      onSubmit={() => setIsSubmitting(true)}
-      onError={() => setIsSubmitting(false)}
-    >
-      {errorData.type && errorData?.message ? (
-        <Banner type="error" message={errorData?.message} />
-      ) : (
-        <>{errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}</>
-      )}
-      <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-
-      <div className="w-full space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
-          Email <span className="text-red-500">*</span>
-        </label>
-        <Input
-          className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
-          id="email"
-          name="email"
-          type="email"
-          inputSize="md"
-          placeholder="name@company.com"
-          value={formData.email}
-          onChange={(e) => handleFormChange("email", e.target.value)}
-          autoComplete="on"
-          autoFocus
-        />
-      </div>
-
-      <div className="w-full space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-          Password <span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-          <Input
-            className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            inputSize="md"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={(e) => handleFormChange("password", e.target.value)}
-            autoComplete="on"
+    <>
+      <AuthHeader />
+      <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+        <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
+          <FormHeader
+            heading="Manage your Plane instance"
+            subHeading="Configure instance-wide settings to secure your instance"
           />
-          {showPassword ? (
-            <button
-              type="button"
-              className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-              onClick={() => setShowPassword(false)}
-            >
-              <EyeOff className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
-              onClick={() => setShowPassword(true)}
-            >
-              <Eye className="h-4 w-4" />
-            </button>
-          )}
+          <form
+            className="space-y-4"
+            method="POST"
+            action={`${API_BASE_URL}/api/instances/admins/sign-in/`}
+            onSubmit={() => setIsSubmitting(true)}
+            onError={() => setIsSubmitting(false)}
+          >
+            {errorData.type && errorData?.message ? (
+              <Banner type="error" message={errorData?.message} />
+            ) : (
+              <>
+                {errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
+              </>
+            )}
+            <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+
+            <div className="w-full space-y-1">
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <Input
+                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                id="email"
+                name="email"
+                type="email"
+                inputSize="md"
+                placeholder="name@company.com"
+                value={formData.email}
+                onChange={(e) => handleFormChange("email", e.target.value)}
+                autoComplete="on"
+                autoFocus
+              />
+            </div>
+
+            <div className="w-full space-y-1">
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+                Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Input
+                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  inputSize="md"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) => handleFormChange("password", e.target.value)}
+                  autoComplete="on"
+                />
+                {showPassword ? (
+                  <button
+                    type="button"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    onClick={() => setShowPassword(false)}
+                  >
+                    <EyeOff className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    onClick={() => setShowPassword(true)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="py-2">
+              <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
-      <div className="py-2">
-        <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
-        </Button>
-      </div>
-    </form>
+    </>
   );
 };
