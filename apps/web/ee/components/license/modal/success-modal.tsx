@@ -19,6 +19,7 @@ import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 import {
   BUSINESS_PLAN_FEATURES_MAP,
   ENTERPRISE_PLAN_FEATURES_MAP,
+  ONE_PLAN_FEATURES_MAP,
   PRO_PLAN_FEATURES_MAP,
 } from "@/plane-web/constants/license";
 // plane web hooks
@@ -64,7 +65,7 @@ export const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
     return PRO_PLAN_FEATURES_MAP;
   }
   if (variant === EProductSubscriptionEnum.ONE) {
-    return PRO_PLAN_FEATURES_MAP;
+    return ONE_PLAN_FEATURES_MAP;
   }
   return [];
 };

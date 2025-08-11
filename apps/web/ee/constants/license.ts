@@ -49,6 +49,29 @@ export const PRO_PLAN_FEATURES_MAP = [
   },
 ];
 
+export const ONE_PLAN_FEATURES_MAP = [
+  {
+    label: "Active Cycles",
+    comingSoon: false,
+  },
+  {
+    label: "Wikis",
+    comingSoon: false,
+  },
+  {
+    label: "Bulk Ops",
+    comingSoon: false,
+  },
+  {
+    label: "Importers",
+    comingSoon: false,
+  },
+  {
+    label: "Shared and Public Views",
+    comingSoon: false,
+  },
+];
+
 // blank labels are intentional
 export const ONE_TO_PRO_PLAN_FEATURES_MAP = [
   {
