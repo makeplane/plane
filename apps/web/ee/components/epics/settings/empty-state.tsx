@@ -38,7 +38,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   const resolvedEmptyStatePath = `/empty-state/epics/epics-${resolvedTheme === "light" ? "light" : "dark"}.webp`;
 
   // trackers
-  const trackers = epicsTrackers(workspaceSlug, projectId);
+  const trackers = epicsTrackers({ workspaceSlug, projectId });
 
   // handlers
   const handleEnableEpic = async () => {

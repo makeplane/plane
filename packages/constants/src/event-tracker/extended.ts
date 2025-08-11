@@ -13,6 +13,16 @@ export const EPIC_TRACKER_ELEMENTS = {
   TOGGLE_EPICS_BUTTON: "toggle_epics_button",
 };
 
+export const EPIC_PROPERTIES_TRACKER_EVENTS = {
+  create: "epic_properties_created",
+  update: "epic_properties_updated",
+  delete: "epic_properties_deleted",
+};
+
+export const EPIC_PROPERTIES_TRACKER_ELEMENTS = {
+  ACTION_BUTTON: "epic_properties_action_button",
+};
+
 export const LICENSE_TRACKER_EVENTS = {
   purchase_modal_opened: "purchase_modal_opened",
   success_modal_opened: "success_modal_opened",

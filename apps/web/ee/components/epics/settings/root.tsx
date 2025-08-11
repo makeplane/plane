@@ -34,7 +34,7 @@ export const EpicsRoot = observer(() => {
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   // trackers
-  const trackers = epicsTrackers(workspaceSlug?.toString(), projectId?.toString());
+  const trackers = epicsTrackers({ workspaceSlug: workspaceSlug?.toString(), projectId: projectId?.toString() });
 
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);
