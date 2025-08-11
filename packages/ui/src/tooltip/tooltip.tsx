@@ -22,7 +22,7 @@ export type TPosition =
 
 interface ITooltipProps {
   tooltipHeading?: string;
-  tooltipContent: string | React.ReactElement;
+  tooltipContent: string | React.ReactNode;
   position?: TPosition;
   children: React.ReactElement;
   disabled?: boolean;
