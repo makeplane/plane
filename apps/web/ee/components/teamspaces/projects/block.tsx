@@ -4,28 +4,32 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-// ui
+// plane imports
 import { Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import JoinButton from "@/plane-web/components/projects/common/join-button";
+import Attributes from "@/plane-web/components/projects/layouts/attributes";
+import QuickActions from "@/plane-web/components/projects/quick-actions";
+// plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
+// plane web types
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import JoinButton from "../../common/join-button";
-import QuickActions from "../../quick-actions";
-import Attributes from "../attributes";
 
-interface ProjectBlockProps {
+// types
+interface TeamspaceProjectBlockProps {
   projectId: string;
   isCurrentBlockDragging?: boolean;
   setIsCurrentBlockDragging?: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag?: boolean;
+  teamspaceId: string;
 }
 
-export const ProjectBlock = observer((props: ProjectBlockProps) => {
-  const { projectId, isCurrentBlockDragging, canDrag } = props;
+export const TeamspaceProjectBlock = observer((props: TeamspaceProjectBlockProps) => {
+  const { projectId, isCurrentBlockDragging, canDrag, teamspaceId } = props;
   // ref
   const projectRef = useRef<HTMLDivElement | null>(null);
   // router
@@ -74,11 +78,11 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
           {!!projectDetails.member_role ? (
             <Link
               id={`project-${projectDetails.id}`}
-              href={`/${workspaceSlug}/projects/${projectId}/issues`}
+              href={`/${workspaceSlug}/teamspaces/${teamspaceId}/projects/${projectId}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+                router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects/${projectId}`);
               }}
               className={cn("w-full truncate cursor-pointer text-sm text-custom-text-100", {})}
             >

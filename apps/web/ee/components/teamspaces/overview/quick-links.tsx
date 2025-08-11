@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronRightIcon, FileText, Layers } from "lucide-react";
+import { Briefcase, ChevronRightIcon, FileText, Layers } from "lucide-react";
 // ui
 import { LayersIcon, ContrastIcon } from "@plane/ui";
 
@@ -20,6 +20,12 @@ export const TeamsOverviewQuickLinks = observer(() => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
 
   const TEAM_QUICK_LINKS: TTeamQuickLink[] = [
+    {
+      key: "projects",
+      name: "Projects",
+      icon: <Briefcase className="size-4 text-custom-text-300" />,
+      href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
+    },
     {
       key: "issues",
       name: "Work items",
@@ -49,7 +55,7 @@ export const TeamsOverviewQuickLinks = observer(() => {
   return (
     <div className="w-full flex flex-col gap-y-3 pb-6">
       <div className="text-sm font-semibold text-custom-text-300">Jump into</div>
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 items-center gap-4">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-5 items-center gap-4">
         {TEAM_QUICK_LINKS.map((link) => (
           <Link
             key={link.key}

@@ -109,6 +109,70 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
   },
+  team_project_work_items: {
+    list: {
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "target_date"],
+      display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "assignees", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+    },
+    kanban: {
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "target_date"],
+      display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "assignees", null],
+        sub_group_by: ["state_detail.group", "priority", "assignees", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+    },
+    calendar: {
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "team_project"],
+      display_properties: ["key", "issue_type"],
+      display_filters: {
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+    spreadsheet: {
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "target_date"],
+      display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+      display_filters: {
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+    gantt_chart: {
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "target_date"],
+      display_properties: ["key", "issue_type"],
+      display_filters: {
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+  },
   epics: {
     list: {
       filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],

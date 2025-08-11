@@ -9,6 +9,7 @@ export enum ETeamspaceNavigationItem {
   CYCLES = "cycles",
   VIEWS = "views",
   PAGES = "pages",
+  PROJECTS = "projects",
 }
 
 export enum ETeamspaceEntityScope {

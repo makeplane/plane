@@ -2,8 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -11,22 +10,19 @@ import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/consta
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
-import { Logo, Tooltip } from "@plane/ui";
-// components
 // helpers
+import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
+import { TeamspaceSidebarListItem } from "./list-item";
 
 export const SidebarTeamsList = observer(() => {
   // router params
   const { workspaceSlug } = useParams();
   // pathname
-  const pathname = usePathname();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -34,7 +30,7 @@ export const SidebarTeamsList = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   const { hasPageAccess } = useUserPermissions();
-  const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled, getTeamspaceById } = useTeamspaces();
+  const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled } = useTeamspaces();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
@@ -105,24 +101,13 @@ export const SidebarTeamsList = observer(() => {
         >
           {isTeamspaceListItemOpen && (
             <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
-              {joinedTeamSpaceIds.map((teamspaceId) => {
-                const teamspace = getTeamspaceById(teamspaceId);
-                if (!teamspace) return null;
-                return (
-                  <Link
-                    key={teamspaceId}
-                    href={`/${workspaceSlug}/teamspaces/${teamspaceId}`}
-                    onClick={handleLinkClick}
-                  >
-                    <SidebarNavItem isActive={pathname.includes(`/${workspaceSlug}/teamspaces/${teamspaceId}`)}>
-                      <div className="flex items-center gap-1.5 py-[1px] truncate">
-                        <Logo logo={teamspace.logo_props} size={16} />
-                        <p className="text-sm leading-5 font-medium truncate">{teamspace.name}</p>
-                      </div>
-                    </SidebarNavItem>
-                  </Link>
-                );
-              })}
+              {joinedTeamSpaceIds.map((teamspaceId) => (
+                <TeamspaceSidebarListItem
+                  key={teamspaceId}
+                  teamspaceId={teamspaceId}
+                  handleLinkClick={handleLinkClick}
+                />
+              ))}
             </Disclosure.Panel>
           )}
         </Transition>

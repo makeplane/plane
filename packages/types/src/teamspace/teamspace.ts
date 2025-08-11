@@ -1,7 +1,7 @@
-import { TIssue } from "../issues/issue";
-import { TLogoProps } from "../common";
-import { TStateGroups } from "../state";
 import { TWorkspaceBaseActivity, TBaseActivityVerbs } from "../activity";
+import { TLogoProps } from "../common";
+import { TIssue } from "../issues/issue";
+import { TStateGroups } from "../state";
 import { IUserLite } from "../users";
 
 export type TTeamspace = {
@@ -43,6 +43,7 @@ export type TTeamspaceEntities = {
     issues: number;
     cycles: number;
     total: number;
+    projects: number;
   };
   team_entities: {
     pages: number;

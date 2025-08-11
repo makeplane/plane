@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Rss, FileText, Layers, Loader as Spinner } from "lucide-react";
+import { Rss, FileText, Layers, Loader as Spinner, Briefcase } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -66,6 +66,12 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
         title: "Overview",
         icon: Rss,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`),
+      },
+      {
+        key: ETeamspaceNavigationItem.PROJECTS,
+        title: "Projects",
+        icon: Briefcase,
+        action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`),
       },
       {
         key: ETeamspaceNavigationItem.ISSUES,

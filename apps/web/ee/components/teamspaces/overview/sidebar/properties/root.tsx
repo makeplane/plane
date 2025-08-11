@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { FileText, Layers, Loader as Spinner, Users } from "lucide-react";
+import { Briefcase, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
@@ -135,6 +135,13 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
 
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(
     () => [
+      {
+        key: "projects",
+        label: "Projects",
+        icon: Briefcase,
+        value: teamspaceEntities?.linked_entities.projects,
+        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
+      },
       {
         key: "issues",
         label: "Work items",

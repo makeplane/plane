@@ -62,12 +62,15 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
             archived_at__isnull=True,
         ).count()
 
+        project_count = len(project_ids)
+
         return Response(
             {
                 "linked_entities": {
                     "issues": issue_count,
                     "cycles": cycles_count,
-                    "total": issue_count + cycles_count,
+                    "projects": project_count,
+                    "total": issue_count + cycles_count + project_count,
                 },
                 "team_entities": {
                     "pages": team_page_count,

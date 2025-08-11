@@ -38,7 +38,7 @@ export const AppSearchRoot = observer(() => {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              e.target.value && setIsSearching(true);
+              if (e.target.value) setIsSearching(true);
             }}
             className={cn(
               "shadow-sm px-10 w-full rounded-lg border-custom-border-200 bg-custom-background-100 ring-0 transition-all duration-200 focus:ring-2 focus:ring-custom-primary/30 focus:border-custom-primary placeholder:text-custom-text-400 h-10"

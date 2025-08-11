@@ -14,8 +14,7 @@ import {
   TLoader,
   TProfileViews,
 } from "@plane/types";
-import { useTeamProjectWorkItemsActions } from "@/ce/helpers/issue-action-helper";
-import { useTeamIssueActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
+import { useTeamIssueActions, useTeamProjectWorkItemsActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
 import { useIssues } from "./store";
 
 export interface IssueActions {
