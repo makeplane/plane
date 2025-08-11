@@ -11,7 +11,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.models import CustomerRequest, Customer, CustomerRequestIssue
-from plane.db.models import Workspace, Issue, FileAsset, Issue
+from plane.db.models import Workspace, Issue, FileAsset
 from plane.ee.serializers import CustomerRequestSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.utils.issue_filters import issue_filters
@@ -37,21 +37,21 @@ class CustomerRequestEndpoint(BaseAPIView):
             )
             .annotate(
                 work_item_ids=Coalesce(
-                    ArrayAgg(
-                        "customer_request_issues__issue_id",
-                        filter=(
-                            Q(customer_request_issues__deleted_at__isnull=True)
-                            & Q(customer_request_issues__issue_id__isnull=False)
-                            & Q(
-                                customer_request_issues__issue__archived_at__isnull=True
-                            )
-                            & (
-                                Q(customer_request_issues__issue__type_id__isnull=True)
-                                | Q(
-                                    customer_request_issues__issue__project__project_projectfeature__is_epic_enabled=True
-                                )
-                            )
-                        ),
+                    Subquery(
+                        Issue.objects.filter(
+                            workspace__slug=slug,
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_id=customer_id,
+                            customer_request_issues__customer_request_id=OuterRef("pk"),
+                            archived_at__isnull=True,
+                        )
+                        .exclude(
+                            Q(type__is_epic=True)
+                            & Q(project__project_projectfeature__is_epic_enabled=False)
+                        )
+                        .values("customer_request_issues__customer_id")
+                        .annotate(arr=ArrayAgg("id", distinct=True))
+                        .values("arr")
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
