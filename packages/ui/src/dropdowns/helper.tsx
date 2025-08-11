@@ -7,10 +7,10 @@ export interface IDropdownProps {
   customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
-  customButton?: JSX.Element;
+  customButton?: React.ReactNode;
   disabled?: boolean;
   input?: boolean;
-  label?: string | JSX.Element;
+  label?: string | React.ReactNode;
   maxHeight?: "sm" | "rg" | "md" | "lg";
   noChevron?: boolean;
   chevronClassName?: string;
@@ -48,7 +48,7 @@ export interface ICustomSelectProps extends IDropdownProps {
 }
 
 interface CustomSearchSelectProps {
-  footerOption?: JSX.Element;
+  footerOption?: React.ReactNode;
   onChange: any;
   onClose?: () => void;
   noResultsMessage?: string;

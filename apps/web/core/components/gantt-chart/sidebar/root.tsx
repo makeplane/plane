@@ -22,7 +22,7 @@ type Props = {
   enableSelection: boolean | ((blockId: string) => boolean);
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.ReactNode | undefined;
   selectionHelpers: TSelectionHelper;
   isEpic?: boolean;
 };

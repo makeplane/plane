@@ -24,7 +24,7 @@ interface ITooltipProps {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
   position?: TPosition;
-  children: JSX.Element;
+  children: React.ReactElement;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
