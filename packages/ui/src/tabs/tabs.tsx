@@ -65,27 +65,27 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <BaseTabs.Root value={activeIndex} onValueChange={handleTabChange}>
-        <div className={cn("flex flex-col w-full h-full gap-2", containerClassName)}>
-          <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
-            <TabList
-              tabs={tabs}
-              tabListClassName={tabListClassName}
-              tabClassName={tabClassName}
-              size={size}
-              selectedTab={tabs[activeIndex]?.key}
-            />
-            {actions && <div className="flex-grow">{actions}</div>}
-          </div>
+    <BaseTabs.Root
+      value={activeIndex}
+      onValueChange={handleTabChange}
+      className={cn("flex flex-col w-full h-full overflow-hidden", containerClassName)}
+    >
+      <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
+        <TabList
+          tabs={tabs}
+          tabListClassName={tabListClassName}
+          tabClassName={tabClassName}
+          size={size}
+          selectedTab={tabs[activeIndex]?.key}
+        />
+        {actions && <div className="flex-grow">{actions}</div>}
+      </div>
 
-          {tabs.map((tab) => (
-            <BaseTabs.Panel key={tab.key} className={cn("relative outline-none", tabPanelClassName)}>
-              {tab.content}
-            </BaseTabs.Panel>
-          ))}
-        </div>
-      </BaseTabs.Root>
-    </div>
+      {tabs.map((tab) => (
+        <BaseTabs.Panel key={tab.key} className={cn("relative  h-full overflow-auto", tabPanelClassName)}>
+          {tab.content}
+        </BaseTabs.Panel>
+      ))}
+    </BaseTabs.Root>
   );
 };
