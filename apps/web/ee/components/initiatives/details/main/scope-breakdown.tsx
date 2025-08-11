@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { PlusIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { CircularProgressIndicator, Loader, ScopeIcon } from "@plane/ui";
 import { SectionEmptyState, SectionWrapper } from "@/plane-web/components/common";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
@@ -8,7 +9,6 @@ import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/upd
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
-import { useTranslation } from "@plane/i18n";
 
 type TDataCardProps = {
   workspaceSlug: string;
@@ -21,7 +21,6 @@ type TDataCardProps = {
 const DataCard = (props: TDataCardProps) => {
   const { type, data, workspaceSlug, initiativeId } = props;
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
-
   const total =
     (data?.backlog_issues ?? 0) +
     (data?.unstarted_issues ?? 0) +
@@ -31,7 +30,10 @@ const DataCard = (props: TDataCardProps) => {
   const completed = (data?.completed_issues ?? 0) + (data?.cancelled_issues ?? 0);
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
   return (
-    <div className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2">
+    <Link
+      href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
+      className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2 hover:cursor-pointer hover:bg-custom-background-80 transition-colors block"
+    >
       <div className="flex w-full justify-between text-custom-text-300 ">
         <div className="font-semibold text-base capitalize">{type}s</div>
       </div>
@@ -74,7 +76,7 @@ const DataCard = (props: TDataCardProps) => {
           <Loader.Item height="71px" width="100%" />
         </Loader>
       )}
-    </div>
+    </Link>
   );
 };
 

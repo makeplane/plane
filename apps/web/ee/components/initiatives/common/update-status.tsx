@@ -71,7 +71,11 @@ export const UpdateStatusPills = (props: TStatusPills) => {
         .filter(([_, count]) => count > 0)
         .map(([status, count]) => (
           <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
-            <Popover.Button ref={setReferenceElement} className={cn("my-auto outline-none text-custom-text-300")}>
+            <Popover.Button
+              ref={setReferenceElement}
+              className={cn("my-auto outline-none text-custom-text-300")}
+              onClick={(e) => e.stopPropagation()}
+            >
               <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
                 <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 bg-custom-background-100 hover:shadow-sm">
                   <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
