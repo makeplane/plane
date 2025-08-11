@@ -113,4 +113,5 @@ export type TIssuePage = Pick<TPage, "name" | "logo_props"> & {
   description_stripped: string;
   created_by?: string;
   updated_at?: string;
+  access: EPageAccess;
 };

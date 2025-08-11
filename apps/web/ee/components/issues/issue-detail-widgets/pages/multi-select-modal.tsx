@@ -4,11 +4,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
-import { FileText, Search, X } from "lucide-react";
+import { Earth, FileText, Lock, Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
-import { TIssuePage, TIssueServiceType } from "@plane/types";
+import { EPageAccess, TIssuePage, TIssueServiceType } from "@plane/types";
 import {
   setToast,
   TOAST_TYPE,
@@ -229,6 +229,15 @@ const PagesMultiSelectModal = observer(
                       </div>
                       <span className="truncate text-base">{getPageName(page.name)}</span>
                     </div>
+                    {page.access != null && (
+                      <div className="hidden flex-shrink-0 text-custom-text-350 group-hover:flex">
+                        {page.access === EPageAccess.PUBLIC ? (
+                          <Earth className="size-4" />
+                        ) : (
+                          <Lock className="size-4" />
+                        )}
+                      </div>
+                    )}
                   </Combobox.Option>
                 );
               })

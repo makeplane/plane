@@ -102,5 +102,5 @@ class PageSearchViewSet(BaseAPIView):
         if search:
             pages = pages.filter(name__icontains=search)
 
-        pages = pages.values("id", "name", "logo_props", "is_global")
+        pages = pages.values("id", "name", "logo_props", "is_global", "access")
         return Response(pages, status=status.HTTP_200_OK)
