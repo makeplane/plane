@@ -1,7 +1,8 @@
 import * as React from "react";
-import { ISvgIcons } from "./type";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
+// types
+import { ISvgIcons } from "./type";
 
 export const SubscribeIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg
