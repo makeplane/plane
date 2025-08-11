@@ -14,7 +14,7 @@ type Props = {
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
 };
@@ -25,7 +25,7 @@ export type TAuthFormInputFormField = {
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
 };

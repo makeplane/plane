@@ -68,7 +68,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     </>
   );
 
-  const CUSTOMER_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
+  const CUSTOMER_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (
       <>
         <TextValueInput

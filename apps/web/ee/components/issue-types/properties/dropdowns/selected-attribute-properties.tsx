@@ -29,7 +29,7 @@ type TSelectedPropertyAttributesProps = {
 export const SelectedAttributeProperties = observer((props: TSelectedPropertyAttributesProps) => {
   const { propertyDetail, currentOperationMode, onPropertyDetailChange, error, isUpdateAllowed } = props;
 
-  const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
+  const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (
       <TextAttributes
         textPropertyDetail={propertyDetail as Partial<TIssueProperty<EIssuePropertyType.TEXT>>}

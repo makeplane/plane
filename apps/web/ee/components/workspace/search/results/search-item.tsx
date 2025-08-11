@@ -19,7 +19,7 @@ import { ActorAvatar, CommentItem } from "./comment-item";
 
 export const SearchItems: {
   [key in ESearchFilterKeys]: {
-    icon: (item: any) => JSX.Element | null;
+    icon: (item: any) => React.ReactNode | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any) => string;
     title: string;

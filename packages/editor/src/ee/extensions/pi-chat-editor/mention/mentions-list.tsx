@@ -19,7 +19,7 @@ type IItem = {
   sequence_id?: string;
   title?: string;
   subTitle?: string;
-  icon?: JSX.Element;
+  icon?: React.ReactNode;
 };
 
 type MentionListProps = {

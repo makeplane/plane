@@ -14,7 +14,7 @@ type TProps = {
   chevronClassName?: string;
   maxHeight?: "sm" | "rg" | "md" | "lg" | undefined;
   disabled: boolean;
-  customButton?: JSX.Element;
+  customButton?: React.ReactNode;
   multiple?: boolean;
 };
 

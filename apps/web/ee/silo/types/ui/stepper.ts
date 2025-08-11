@@ -1,9 +1,9 @@
 export type TStepperBlock<T> = {
   key: T;
-  icon?: () => JSX.Element;
+  icon?: () => React.ReactNode;
   i18n_title: string;
   i18n_description: string;
-  component: () => JSX.Element;
+  component: () => React.ReactNode;
   prevStep: T | undefined;
   nextStep: T | undefined;
 };

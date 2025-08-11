@@ -52,7 +52,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
         Array<{
           value: string;
           query: string;
-          content: JSX.Element;
+          content: React.ReactNode;
           disabled: boolean;
           isEpicsEnabled: boolean;
         }>

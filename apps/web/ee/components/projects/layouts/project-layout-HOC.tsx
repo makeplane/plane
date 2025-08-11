@@ -34,7 +34,7 @@ const ActiveLoader = (props: { layout: EProjectLayouts }) => {
 };
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   layout: EProjectLayouts;
 }
 

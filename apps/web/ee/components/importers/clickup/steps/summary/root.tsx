@@ -189,7 +189,7 @@ export const SummaryRoot: FC = observer(() => {
   );
 });
 
-function StatsTile({ label, value }: { label: string; value: number }): JSX.Element {
+function StatsTile({ label, value }: { label: string; value: number }): React.ReactNode {
   return (
     <div className="relative grid grid-cols-2 items-center p-3 text-sm">
       <div className="text-custom-text-200">{label}</div>

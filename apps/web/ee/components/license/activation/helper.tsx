@@ -12,7 +12,7 @@ import { useInstance, useWorkspace } from "@/hooks/store";
 type Props = {
   label: string;
   value: string;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
 };
 
 const CopyField: React.FC<Props> = (props) => {

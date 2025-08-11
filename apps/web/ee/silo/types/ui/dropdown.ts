@@ -11,6 +11,6 @@ export type TDropdown<T> = {
   value: string | undefined;
   placeHolder?: string;
   disabled?: boolean;
-  iconExtractor?: (option: T) => JSX.Element;
+  iconExtractor?: (option: T) => React.ReactNode;
   queryExtractor?: (option: T) => string;
 };

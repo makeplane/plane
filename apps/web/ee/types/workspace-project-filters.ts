@@ -78,6 +78,6 @@ export type TProjectsLayoutStructure = {
 };
 export type GroupDetails = {
   title: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   prePopulatedPayload: any;
 };

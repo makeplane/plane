@@ -43,7 +43,7 @@ export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
     }
   }, [ganttContainerRef]);
 
-  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: JSX.Element }> = {
+  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: React.ReactNode }> = {
     [EGanttBlockType.EPIC]: {
       title: t("common.epics"),
       icon: <EpicIcon className="size-4" />,

@@ -30,7 +30,7 @@ type SetToastProps =
     };
 
 type PromiseToastCallback<ToastData> = (data: ToastData) => string;
-type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => JSX.Element;
+type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => React.ReactNode;
 
 type PromiseToastData<ToastData> = {
   title: string;
