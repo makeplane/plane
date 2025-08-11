@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import * as React from "react";
-import { cn } from "@/utils";
+import { cn } from "../utils";
 import { Tooltip } from "../tooltip";
 
 type BreadcrumbsProps = {

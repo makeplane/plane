@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 // icons
 import useFontFaceObserver from "use-font-face-observer";
 import { MATERIAL_ICONS_LIST } from "..";
-import { cn } from "@/utils";
+import { cn } from "../utils";
 import { Input } from "../form-fields";
 import { InfoIcon } from "../icons";
 // components

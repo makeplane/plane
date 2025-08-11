@@ -5,7 +5,7 @@ import EmojiPicker from "emoji-picker-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../utils";
 // hooks
 import { LucideIconsList } from "./lucide-icons-list";
 // helpers

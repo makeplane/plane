@@ -1,14 +1,12 @@
-import React from "react";
-// headless ui
 import { Combobox } from "@headlessui/react";
-// icons
 import { Check } from "lucide-react";
-// components
-import { DropdownOptionsLoader, InputSearch } from ".";
+import React from "react";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../../utils";
 // types
 import { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "../dropdown";
+// components
+import { DropdownOptionsLoader, InputSearch } from ".";
 
 export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSelectDropdownOptions> = (props) => {
   const {

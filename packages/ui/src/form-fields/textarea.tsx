@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../utils";
 // hooks
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Tooltip } from "../tooltip";
-import { cn } from "@/utils";
+import { cn } from "../utils";
 
 type Props = {
   data: any;

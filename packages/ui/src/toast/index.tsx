@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners";
 // helper
-import { cn } from "@/utils";
+import { cn } from "../utils";
 
 export enum TOAST_TYPE {
   SUCCESS = "success",
@@ -29,7 +29,7 @@ type SetToastProps =
     };
 
 type PromiseToastCallback<ToastData> = (data: ToastData) => string;
-type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => JSX.Element;
+type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => React.ReactNode;
 
 type PromiseToastData<ToastData> = {
   title: string;

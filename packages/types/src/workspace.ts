@@ -243,3 +243,18 @@ export interface IWorkspaceSidebarNavigationItem {
 export interface IWorkspaceSidebarNavigation {
   [key: string]: IWorkspaceSidebarNavigationItem;
 }
+
+export enum EOnboardingSteps {
+  PROFILE_SETUP = "PROFILE_SETUP",
+  ROLE_SETUP = "ROLE_SETUP",
+  USE_CASE_SETUP = "USE_CASE_SETUP",
+  WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
+  INVITE_MEMBERS = "INVITE_MEMBERS",
+}
+
+export type TOnboardingStep = EOnboardingSteps;
+
+export enum ECreateOrJoinWorkspaceViews {
+  WORKSPACE_CREATE = "WORKSPACE_CREATE",
+  WORKSPACE_JOIN = "WORKSPACE_JOIN",
+}

@@ -42,7 +42,13 @@ const IssuesLayout = observer((props: Props) => {
 
   if (error) return <SomethingWentWrongError />;
 
-  if (!publishSettings || !viewData) return <LogoSpinner />;
+  if (!publishSettings || !viewData) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <LogoSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">

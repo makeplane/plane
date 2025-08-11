@@ -1,13 +1,6 @@
 import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
 
-export const ORGANIZATION_SIZE = [
-  "Just myself", // TODO: translate
-  "2-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "500+",
-];
+export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
 export const RESTRICTED_URLS = [
   "404",
@@ -335,3 +328,11 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     page: [],
   },
 };
+
+export const USE_CASES = [
+  "Plan and track product roadmaps",
+  "Manage engineering sprints",
+  "Coordinate cross-functional projects",
+  "Replace our current tool",
+  "Just exploring",
+];

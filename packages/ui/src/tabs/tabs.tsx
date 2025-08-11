@@ -2,7 +2,7 @@ import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
 import React, { FC, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
-import { cn } from "@/utils";
+import { cn } from "../utils";
 // types
 import { TabList, TabListItem } from "./tab-list";
 

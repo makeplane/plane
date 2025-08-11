@@ -1,6 +1,6 @@
 import * as React from "react";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../utils";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   mode?: "primary" | "transparent" | "true-transparent";

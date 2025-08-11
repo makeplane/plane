@@ -1,6 +1,6 @@
 import * as React from "react";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../utils";
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;

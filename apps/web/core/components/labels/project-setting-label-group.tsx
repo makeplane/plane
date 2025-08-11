@@ -11,6 +11,8 @@ import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-upd
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 
 type Props = {
   label: IIssueLabel;
@@ -49,6 +51,9 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     {
       CustomIcon: Pencil,
       onClick: () => {
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
         setEditLabelForm(true);
         setIsUpdating(true);
       },
@@ -58,7 +63,12 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     },
     {
       CustomIcon: Trash2,
-      onClick: handleLabelDelete,
+      onClick: () => {
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
+        handleLabelDelete(label);
+      },
       isVisible: true,
       text: "Delete label",
       key: "delete_label",

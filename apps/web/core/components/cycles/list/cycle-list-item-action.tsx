@@ -189,9 +189,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`, {}, { showProgressBar: false });
+      router.push(`${pathname}?${query}`, { showProgress: false });
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, {}, { showProgressBar: false });
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, { showProgress: false });
     }
   };
 

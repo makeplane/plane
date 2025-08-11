@@ -39,7 +39,13 @@ export const IssuesClientLayout = observer((props: Props) => {
       : null
   );
 
-  if (!publishSettings && !error) return <LogoSpinner />;
+  if (!publishSettings && !error) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <LogoSpinner />
+      </div>
+    );
+  }
 
   if (error) return <SomethingWentWrongError />;
 

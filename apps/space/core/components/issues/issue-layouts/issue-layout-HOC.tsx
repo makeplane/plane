@@ -3,7 +3,7 @@ import { TLoader } from "@plane/types";
 import { LogoSpinner } from "@/components/common";
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,

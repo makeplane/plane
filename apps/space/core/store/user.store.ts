@@ -17,7 +17,7 @@ type TUserErrorStatus = {
 export interface IUserStore {
   // observables
   isAuthenticated: boolean;
-  isLoading: boolean;
+  isInitializing: boolean;
   error: TUserErrorStatus | undefined;
   data: IUser | undefined;
   // store observables
@@ -35,7 +35,7 @@ export interface IUserStore {
 export class UserStore implements IUserStore {
   // observables
   isAuthenticated: boolean = false;
-  isLoading: boolean = true;
+  isInitializing: boolean = true;
   error: TUserErrorStatus | undefined = undefined;
   data: IUser | undefined = undefined;
   // store observables
@@ -52,7 +52,7 @@ export class UserStore implements IUserStore {
     makeObservable(this, {
       // observables
       isAuthenticated: observable.ref,
-      isLoading: observable.ref,
+      isInitializing: observable.ref,
       error: observable,
       // model observables
       data: observable,
@@ -87,7 +87,7 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async (): Promise<IUser> => {
     try {
       runInAction(() => {
-        if (this.data === undefined) this.isLoading = true;
+        if (this.data === undefined && !this.error) this.isInitializing = true;
         this.error = undefined;
       });
       const user = await this.userService.me();
@@ -95,19 +95,19 @@ export class UserStore implements IUserStore {
         await this.profile.fetchUserProfile();
         runInAction(() => {
           this.data = user;
-          this.isLoading = false;
+          this.isInitializing = false;
           this.isAuthenticated = true;
         });
       } else
         runInAction(() => {
           this.data = user;
-          this.isLoading = false;
+          this.isInitializing = false;
           this.isAuthenticated = false;
         });
       return user;
     } catch (error) {
       runInAction(() => {
-        this.isLoading = false;
+        this.isInitializing = false;
         this.isAuthenticated = false;
         this.error = {
           status: "user-fetch-error",
@@ -166,7 +166,7 @@ export class UserStore implements IUserStore {
   reset = (): void => {
     runInAction(() => {
       this.isAuthenticated = false;
-      this.isLoading = false;
+      this.isInitializing = false;
       this.error = undefined;
       this.data = undefined;
       this.profile = new ProfileStore(this.store);

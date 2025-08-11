@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-// plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
-// helpers
-import { cn } from "@/utils";
 // hooks
 import { usePlatformOS } from "../../hooks/use-platform-os";
+// helpers
+import { cn } from "../../utils";
 // components
 import { ContextMenuItem } from "./item";
 

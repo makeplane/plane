@@ -1,10 +1,8 @@
-import React, { FC, useEffect, useRef } from "react";
-// headless ui
 import { Combobox } from "@headlessui/react";
-// icons
 import { Search } from "lucide-react";
+import React, { FC, useEffect, useRef } from "react";
 // helpers
-import { cn } from "@/utils";
+import { cn } from "../../utils";
 
 interface IInputSearch {
   isOpen: boolean;
@@ -32,9 +30,11 @@ export const InputSearch: FC<IInputSearch> = (props) => {
 
   useEffect(() => {
     if (isOpen && !isMobile) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       inputRef.current && inputRef.current.focus();
     }
   }, [isOpen, isMobile]);
+
   return (
     <div
       className={cn(
