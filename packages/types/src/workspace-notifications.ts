@@ -28,7 +28,7 @@ export type TNotificationData = {
     actor: string | undefined;
     field: string | undefined;
     issue_comment: string | undefined;
-    verb: "created" | "updated" | "deleted";
+    verb: "created" | "updated" | "deleted" | "added";
     new_value: string | undefined;
     old_value: string | undefined;
   };
