@@ -10,10 +10,10 @@ export const CommentItem = ({ comment }: { comment: IWorkspaceCommentEnhancedSea
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center truncate">
           <span className="text-custom-text-200 font-semibold">{userDetails?.display_name}</span>
           <span>commented on</span>
-          <div className="flex gap-2">
+          <div className="flex gap-2 truncate">
             <IssueIdentifier
               projectIdentifier={comment.project_identifier}
               projectId={comment.project_id}
@@ -22,7 +22,7 @@ export const CommentItem = ({ comment }: { comment: IWorkspaceCommentEnhancedSea
               size="xs"
               textContainerClassName="text-xs"
             />
-            <span className="text-custom-text-200">{comment.issue_name}</span>
+            <span className="text-custom-text-200 truncate">{comment.issue_name}</span>
           </div>
         </div>
       </div>

@@ -43,6 +43,7 @@ export const SEARCH_FILTERS: TSearchFilter[] = [
   { key: ESearchFilterKeys.PAGE, i18n_label: "common.pages" },
   { key: ESearchFilterKeys.EPIC, i18n_label: "common.epics" },
   { key: ESearchFilterKeys.TEAMSPACE, i18n_label: "teamspaces.label" },
+  { key: ESearchFilterKeys.WORK_ITEM_COMMENT, i18n_label: "common.comments" },
 ];
 
 export interface IWorkspaceDefaultEnhancedSearchResult {
