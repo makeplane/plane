@@ -42,3 +42,5 @@ export * from "./work-item";
 export * from "./workspace";
 export * from "./mobile";
 export * from "./recurring-work-items";
+export * from "./rich-filters";
+export * from "./work-item-filters";

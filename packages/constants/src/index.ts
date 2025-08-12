@@ -55,3 +55,4 @@ export * from "./analytics";
 export * from "./mobile";
 export * from "./initiatives";
 export * from "./sidebar";
+export * from "./rich-filters";
