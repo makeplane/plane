@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   due_date: string | undefined;

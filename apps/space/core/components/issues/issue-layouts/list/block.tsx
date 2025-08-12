@@ -13,7 +13,8 @@ import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 //
 import { IssueProperties } from "../properties/all-properties";
 

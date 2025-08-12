@@ -1,11 +1,11 @@
 import { action, makeObservable, runInAction } from "mobx";
 // plane imports
 import { SitesIssueService } from "@plane/services";
-import { IssuePaginationOptions, TLoader } from "@plane/types";
+import type { IssuePaginationOptions, TLoader } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "./helpers/base-issues.store";
+import { BaseIssuesStore, type IBaseIssuesStore } from "./helpers/base-issues.store";
 
 export interface IIssueStore extends IBaseIssuesStore {
   // actions
