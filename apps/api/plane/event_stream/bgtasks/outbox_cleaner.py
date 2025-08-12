@@ -95,7 +95,7 @@ def delete_outbox_records() -> None:
             mongo_available = False
 
     # Calculate cutoff time
-    cutoff_days = int(os.environ.get("OUTBOX_CLEANER_CUTOFF_DAYS", 2))
+    cutoff_days = int(os.environ.get("OUTBOX_CLEANER_CUTOFF_DAYS", 7))
     cutoff_time = timezone.now() - timedelta(days=cutoff_days)
     logger.info(
         f"Processing outbox records older than {cutoff_time} (cutoff: {cutoff_days} days)"

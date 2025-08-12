@@ -323,6 +323,8 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.recurring_work_item_task",
     # silo tasks
     "plane.silo.bgtasks.integration_apps_task",
+    # event stream tasks
+    "plane.event_stream.bgtasks.outbox_cleaner",
 )
 
 # Application Envs

@@ -157,7 +157,9 @@ def process_single_issue(slug, project, user_id, issue_data):
     try:
         with transaction.atomic():
             with connection.cursor() as cur:
-                cur.execute("SET LOCAL plane.initiator_type = 'SYSTEM.IMPORT'")
+                cur.execute(
+                    "SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)"
+                )
             # Process the main issue
             issue_data = sanitize_issue_data(issue_data)
             serializer = IssueSerializer(

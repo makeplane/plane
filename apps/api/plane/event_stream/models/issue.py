@@ -399,12 +399,7 @@ class IssueAssigneeProxy(IssueAssignee):
                             'label_ids', label_ids
                     );
                     
-                    -- Create previous attributes with assignee IDs that existed before the addition
-                    issue_data := issue_data || jsonb_build_object(
-                            'assignee_ids', previous_assignee_ids,
-                            'label_ids', label_ids
-                    );
-                    
+                    -- Create previous attributes with only the previous assignee IDs
                     BEGIN
                         INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
                         VALUES (
@@ -414,7 +409,7 @@ class IssueAssigneeProxy(IssueAssignee):
                             NEW.issue_id,
                             NEW.workspace_id,
                             NEW.project_id,
-                            jsonb_build_object('data', enriched_data, 'previous_attributes', issue_data),
+                            jsonb_build_object('data', enriched_data, 'previous_attributes', jsonb_build_object('assignee_ids', previous_assignee_ids)),
                             now(),
                             NEW.created_by_id,
                             COALESCE(current_setting('plane.initiator_type', true), 'USER')
@@ -430,11 +425,10 @@ class IssueAssigneeProxy(IssueAssignee):
                 """,
                 condition=None,
             ),
-            # Since we do a soft delete, we need to update the outbox when the assignee is removed
             pgtrigger.Trigger(
                 name="issue_assignee_outbox_update",
                 operation=pgtrigger.Update,
-                when=pgtrigger.After,
+                when=pgtrigger.Before,  # Changed from After to Before
                 func="""
                 DECLARE
                     event_type_name TEXT;
@@ -443,82 +437,79 @@ class IssueAssigneeProxy(IssueAssignee):
                     previous_assignee_ids JSONB;
                     label_ids JSONB;
                     issue_data JSONB;
-                    previous_issue_data JSONB;
                 BEGIN
-                    -- Determine event type based on issue type
-                    SELECT 
-                        CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.assignee.removed'
-                            WHEN it.is_epic = true THEN 'epic.assignee.removed'
-                            ELSE 'issue.assignee.removed'
-                        END
-                    INTO event_type_name
-                    FROM issues i
-                    LEFT JOIN issue_types it ON it.id = i.type_id
-                    WHERE i.id = OLD.issue_id;
-                    
-                    -- If no issue found, default to 'issue.assignee.removed'
-                    IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.assignee.removed';
+                    -- Only trigger on soft delete (deleted_at changing from NULL to NOT NULL)
+                    IF OLD.deleted_at IS NULL AND NEW.deleted_at IS NOT NULL THEN
+                        -- Determine event type based on issue type
+                        SELECT 
+                            CASE 
+                                WHEN i.type_id IS NULL THEN 'issue.assignee.removed'
+                                WHEN it.is_epic = true THEN 'epic.assignee.removed'
+                                ELSE 'issue.assignee.removed'
+                            END
+                        INTO event_type_name
+                        FROM issues i
+                        LEFT JOIN issue_types it ON it.id = i.type_id
+                        WHERE i.id = OLD.issue_id;
+                        
+                        -- If no issue found, default to 'issue.assignee.removed'
+                        IF event_type_name IS NULL THEN
+                            event_type_name := 'issue.assignee.removed';
+                        END IF;
+                        
+                        -- Get the complete issue data (excluding description fields)
+                        SELECT to_jsonb(i) - 'description_html' - 'description_binary' - 'description' - 'description_stripped'
+                        INTO issue_data
+                        FROM issues i
+                        WHERE i.id = OLD.issue_id;
+                        
+                        -- Fetch current assignee IDs (excluding the one being removed)
+                        SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
+                        INTO current_assignee_ids
+                        FROM issue_assignees ia
+                        WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL AND ia.id != OLD.id;
+                        
+                        -- Fetch ALL assignee IDs (including the one being removed) for previous_attributes
+                        SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
+                        INTO previous_assignee_ids
+                        FROM issue_assignees ia
+                        WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL;
+                        
+                        -- Fetch label IDs
+                        SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
+                        INTO label_ids
+                        FROM issue_labels il
+                        WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL;
+                        
+                        -- Create enriched data with complete issue and current assignee IDs (after removal)
+                        enriched_data := issue_data || jsonb_build_object(
+                                'assignee_ids', current_assignee_ids,
+                                'label_ids', label_ids
+                        );
+                        
+                        -- Create previous attributes with only the previous assignee IDs
+                        BEGIN
+                            INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
+                            VALUES (
+                                gen_random_uuid(),
+                                event_type_name,
+                                'issue_assignee',
+                                OLD.issue_id,
+                                OLD.workspace_id,
+                                OLD.project_id,
+                                jsonb_build_object('data', enriched_data, 'previous_attributes', jsonb_build_object('assignee_ids', previous_assignee_ids)),
+                                now(),
+                                NEW.updated_by_id,
+                                COALESCE(current_setting('plane.initiator_type', true), 'USER')
+                            )
+                            ON CONFLICT DO NOTHING;
+                        EXCEPTION
+                            WHEN others THEN
+                                RAISE WARNING 'Outbox delete-event failed for issue_assignee %, reason: %',
+                                             OLD.issue_id, SQLERRM;
+                        END;
                     END IF;
-                    
-                    -- Get the complete issue data (excluding description fields)
-                    SELECT to_jsonb(i) - 'description_html' - 'description_binary' - 'description' - 'description_stripped'
-                    INTO issue_data
-                    FROM issues i
-                    WHERE i.id = OLD.issue_id;
-                    
-                    -- Fetch current assignee IDs (excluding the one being removed)
-                    SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
-                    INTO current_assignee_ids
-                    FROM issue_assignees ia
-                    WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL AND ia.id != OLD.id;
-                    
-                    -- Fetch ALL assignee IDs (including the one being removed) for previous_attributes
-                    SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
-                    INTO previous_assignee_ids
-                    FROM issue_assignees ia
-                    WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL;
-                    
-                    -- Fetch label IDs
-                    SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
-                    INTO label_ids
-                    FROM issue_labels il
-                    WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL;
-                    
-                    -- Create enriched data with complete issue and current assignee IDs (after removal)
-                    enriched_data := issue_data || jsonb_build_object(
-                            'assignee_ids', current_assignee_ids,
-                            'label_ids', label_ids
-                    );
-                    
-                    -- Create previous attributes with complete issue and ALL assignee IDs (including the removed one)
-                    previous_issue_data := issue_data || jsonb_build_object(
-                            'assignee_ids', previous_assignee_ids,
-                            'label_ids', label_ids
-                    );
-                    
-                    BEGIN
-                        INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
-                        VALUES (
-                            gen_random_uuid(),
-                            event_type_name,
-                            'issue_assignee',
-                            OLD.issue_id,
-                            OLD.workspace_id,
-                            OLD.project_id,
-                            jsonb_build_object('data', enriched_data, 'previous_attributes', previous_issue_data),
-                            now(),
-                            NEW.updated_by_id,
-                            COALESCE(current_setting('plane.initiator_type', true), 'USER')
-                        )
-                        ON CONFLICT DO NOTHING;
-                    EXCEPTION
-                        WHEN others THEN
-                            RAISE WARNING 'Outbox delete-event failed for issue_assignee %, reason: %',
-                                         OLD.issue_id, SQLERRM;
-                    END;
-                    RETURN OLD;
+                    RETURN NEW;
                 END;
                 """,
                 condition=None,
@@ -590,12 +581,7 @@ class IssueLabelProxy(IssueLabel):
                             'label_ids', label_ids
                     );
                     
-                    -- Create previous attributes with label IDs that existed before the addition
-                    issue_data := issue_data || jsonb_build_object(
-                            'assignee_ids', assignee_ids,
-                            'label_ids', previous_label_ids
-                    );
-                    
+                    -- Create previous attributes with only the previous label IDs
                     BEGIN
                         INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
                         VALUES (
@@ -605,7 +591,7 @@ class IssueLabelProxy(IssueLabel):
                             NEW.issue_id,
                             NEW.workspace_id,
                             NEW.project_id,
-                            jsonb_build_object('data', enriched_data, 'previous_attributes', issue_data),
+                            jsonb_build_object('data', enriched_data, 'previous_attributes', jsonb_build_object('label_ids', previous_label_ids)),
                             now(),
                             NEW.created_by_id,
                             COALESCE(current_setting('plane.initiator_type', true), 'USER')
@@ -621,11 +607,10 @@ class IssueLabelProxy(IssueLabel):
                 """,
                 condition=None,
             ),
-            # Since we do a soft delete, we need to update the outbox when the label is removed
             pgtrigger.Trigger(
                 name="issue_label_outbox_update",
                 operation=pgtrigger.Update,
-                when=pgtrigger.After,
+                when=pgtrigger.Before,  # Changed from After to Before
                 func="""
                 DECLARE
                     event_type_name TEXT;
@@ -634,82 +619,79 @@ class IssueLabelProxy(IssueLabel):
                     current_label_ids JSONB;
                     previous_label_ids JSONB;
                     issue_data JSONB;
-                    previous_issue_data JSONB;
                 BEGIN
-                    -- Determine event type based on issue type
-                    SELECT 
-                        CASE 
-                            WHEN i.type_id IS NULL THEN 'issue.label.removed'
-                            WHEN it.is_epic = true THEN 'epic.label.removed'
-                            ELSE 'issue.label.removed'
-                        END
-                    INTO event_type_name
-                    FROM issues i
-                    LEFT JOIN issue_types it ON it.id = i.type_id
-                    WHERE i.id = OLD.issue_id;
-                    
-                    -- If no issue found, default to 'issue.label.removed'
-                    IF event_type_name IS NULL THEN
-                        event_type_name := 'issue.label.removed';
-                    END IF;
-                    
-                    -- Get the complete issue data (excluding description fields)
-                    SELECT to_jsonb(i) - 'description_html' - 'description_binary' - 'description' - 'description_stripped'
-                    INTO issue_data
-                    FROM issues i
-                    WHERE i.id = OLD.issue_id;
-                    
-                    -- Fetch assignee IDs
-                    SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
-                    INTO assignee_ids
-                    FROM issue_assignees ia
-                    WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL;
-                    
-                    -- Fetch current label IDs (excluding the one being removed)
-                    SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
-                    INTO current_label_ids
-                    FROM issue_labels il
-                    WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL AND il.id != OLD.id;
-                    
-                    -- Fetch ALL label IDs (including the one being removed) for previous_attributes
-                    SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
-                    INTO previous_label_ids
-                    FROM issue_labels il
-                    WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL;
-                    
-                    -- Create enriched data with complete issue, assignee IDs, and current label IDs (after removal)
-                    enriched_data := issue_data || jsonb_build_object(
-                        'assignee_ids', assignee_ids,
-                        'label_ids', current_label_ids
-                    );
-                    
-                    -- Create previous attributes with complete issue, assignee IDs, and ALL label IDs (including the removed one)
-                    previous_issue_data := issue_data || jsonb_build_object(
-                        'assignee_ids', assignee_ids,
-                        'label_ids', previous_label_ids
-                    );
-                    
-                    BEGIN
-                        INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
-                        VALUES (
-                            gen_random_uuid(),
-                            event_type_name,
-                            'issue_label',
-                            OLD.issue_id,
-                            OLD.workspace_id,
-                            OLD.project_id,
-                            jsonb_build_object('data', enriched_data, 'previous_attributes', previous_issue_data),
-                            now(),
-                            NEW.updated_by_id,
-                            COALESCE(current_setting('plane.initiator_type', true), 'USER')
-                        )
-                        ON CONFLICT DO NOTHING;
-                    EXCEPTION
-                        WHEN others THEN
-                            RAISE WARNING 'Outbox delete-event failed for issue_label %, reason: %',
+                    -- Only trigger on soft delete (deleted_at changing from NULL to NOT NULL)
+                    IF OLD.deleted_at IS NULL AND NEW.deleted_at IS NOT NULL THEN
+                        -- Determine event type based on issue type
+                        SELECT 
+                            CASE 
+                                WHEN i.type_id IS NULL THEN 'issue.label.removed'
+                                WHEN it.is_epic = true THEN 'epic.label.removed'
+                                ELSE 'issue.label.removed'
+                            END
+                        INTO event_type_name
+                        FROM issues i
+                        LEFT JOIN issue_types it ON it.id = i.type_id
+                        WHERE i.id = OLD.issue_id;
+                        
+                        -- If no issue found, default to 'issue.label.removed'
+                        IF event_type_name IS NULL THEN
+                            event_type_name := 'issue.label.removed';
+                        END IF;
+                        
+                        -- Get the complete issue data (excluding description fields)
+                        SELECT to_jsonb(i) - 'description_html' - 'description_binary' - 'description' - 'description_stripped'
+                        INTO issue_data
+                        FROM issues i
+                        WHERE i.id = OLD.issue_id;
+                        
+                        -- Fetch assignee IDs
+                        SELECT COALESCE(jsonb_agg(ia.assignee_id ORDER BY ia.created_at), '[]'::jsonb)
+                        INTO assignee_ids
+                        FROM issue_assignees ia
+                        WHERE ia.issue_id = OLD.issue_id AND ia.deleted_at IS NULL;
+                        
+                        -- Fetch current label IDs (excluding the one being removed)
+                        SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
+                        INTO current_label_ids
+                        FROM issue_labels il
+                        WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL AND il.id != OLD.id;
+                        
+                        -- Fetch ALL label IDs (including the one being removed) for previous_attributes
+                        SELECT COALESCE(jsonb_agg(il.label_id ORDER BY il.created_at), '[]'::jsonb)
+                        INTO previous_label_ids
+                        FROM issue_labels il
+                        WHERE il.issue_id = OLD.issue_id AND il.deleted_at IS NULL;
+                        
+                        -- Create enriched data with complete issue, assignee IDs, and current label IDs (after removal)
+                        enriched_data := issue_data || jsonb_build_object(
+                            'assignee_ids', assignee_ids,
+                            'label_ids', current_label_ids
+                        );
+                        
+                        -- Create previous attributes with only the previous label IDs (including the removed one)
+                        BEGIN
+                            INSERT INTO outbox (event_id, event_type, entity_type, entity_id, workspace_id, project_id, payload, created_at, initiator_id, initiator_type)
+                            VALUES (
+                                gen_random_uuid(),
+                                event_type_name,
+                                'issue_label',
+                                OLD.issue_id,
+                                OLD.workspace_id,
+                                OLD.project_id,
+                                jsonb_build_object('data', enriched_data, 'previous_attributes', jsonb_build_object('label_ids', previous_label_ids)),
+                                now(),
+                                NEW.updated_by_id,
+                                COALESCE(current_setting('plane.initiator_type', true), 'USER')
+                            )
+                            ON CONFLICT DO NOTHING;
+                        EXCEPTION
+                            WHEN others THEN
+                                RAISE WARNING 'Outbox delete-event failed for issue_label %, reason: %',
                                          OLD.issue_id, SQLERRM;
-                    END;
-                    RETURN OLD;
+                        END;
+                    END IF;
+                    RETURN NEW;
                 END;
                 """,
                 condition=None,
