@@ -2,14 +2,14 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { cn } from "@plane/utils";
+// components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
-// helpers
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // hooks
 import { useCycle, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -12,7 +12,6 @@ import { EIssueServiceType, IIssueDisplayProperties, TIssue, TIssueMap } from "@
 // components
 import { DropIndicator } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { IssueBlock } from "@/components/issues/issue-layouts/list";
 import { ListLoaderItemRow } from "@/components/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -21,6 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
+import { IssueBlock } from "./block";
 
 type Props = {
   issueId: string;

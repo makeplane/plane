@@ -1,14 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { CycleIssueQuickActions } from "@/components/issues";
-// constants
 // hooks
 import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
 // types
+import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
 export const CycleListLayout: React.FC = observer(() => {

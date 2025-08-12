@@ -9,7 +9,7 @@ import { TProjectFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
 // helpers
 // hooks

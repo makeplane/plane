@@ -15,7 +15,12 @@ import {
 } from "@plane/types";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";

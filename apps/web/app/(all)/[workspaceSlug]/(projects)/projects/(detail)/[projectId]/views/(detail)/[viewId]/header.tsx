@@ -28,7 +28,12 @@ import { Breadcrumbs, Button, Tooltip, Header, BreadcrumbNavigationSearchDropdow
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // constants
 import { ViewQuickActions } from "@/components/views";
 // hooks

@@ -8,10 +8,9 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/type
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
-import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
-// helpers
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;

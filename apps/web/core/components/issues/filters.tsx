@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
+import { ChartNoAxesColumn, ListFilter, SlidersHorizontal } from "lucide-react";
 // plane constants
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 // i18n
@@ -17,21 +18,19 @@ import {
 import { Button } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import {
-  DisplayFiltersSelection,
-  FiltersDropdown,
-  FilterSelection,
-  IssueLayoutIcon,
-  LayoutSelection,
-  MobileLayoutSelection,
-} from "@/components/issues";
 // helpers
 // hooks
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
 import { WorkItemsModal } from "../analytics/work-items/modal";
-import { ChartNoAxesColumn, ChevronDown, ListFilter, SlidersHorizontal } from "lucide-react";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+  MobileLayoutSelection,
+} from "./issue-layouts/filters";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -47,7 +46,8 @@ const LAYOUTS = [
   EIssueLayoutTypes.SPREADSHEET,
   EIssueLayoutTypes.GANTT,
 ];
-const HeaderFilters = observer((props: Props) => {
+
+export const HeaderFilters = observer((props: Props) => {
   const {
     currentProjectDetails,
     projectId,
@@ -193,5 +193,3 @@ const HeaderFilters = observer((props: Props) => {
     </>
   );
 });
-
-export default HeaderFilters;

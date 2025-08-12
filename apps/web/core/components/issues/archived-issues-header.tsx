@@ -15,7 +15,7 @@ import {
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { ArchiveTabsList } from "@/components/archives";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";

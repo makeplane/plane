@@ -20,7 +20,12 @@ import {
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import {
+  AppliedFiltersList,
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useLabel, useMember } from "@/hooks/store";

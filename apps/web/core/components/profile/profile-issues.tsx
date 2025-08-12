@@ -4,12 +4,13 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EIssuesStoreType } from "@plane/types";
 // components
-import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "@/components/issues";
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "../../hooks/use-issue-layout-store";
+import { ProfileIssuesAppliedFiltersRoot } from "../issues/issue-layouts/filters";
+import { IssuePeekOverview } from "../issues/peek-overview";
 // constants
 
 interface IProfileIssuesPage {

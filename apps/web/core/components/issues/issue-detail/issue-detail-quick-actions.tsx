@@ -3,20 +3,21 @@
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { LinkIcon } from "lucide-react";
+// plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
-// components
-import { IssueSubscription } from "@/components/issues";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { IssueSubscription } from "./subscription";
 
 type Props = {
   workspaceSlug: string;

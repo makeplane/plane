@@ -33,7 +33,7 @@ import {
   FilterSelection,
   LayoutSelection,
   MobileLayoutSelection,
-} from "@/components/issues";
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 import { ModuleQuickActions } from "@/components/modules";
 // hooks

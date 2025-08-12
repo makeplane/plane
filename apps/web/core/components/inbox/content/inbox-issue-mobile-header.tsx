@@ -20,8 +20,7 @@ import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
-import { NameDescriptionUpdateStatus } from "@/components/issues";
-// helpers
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

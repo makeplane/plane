@@ -7,7 +7,7 @@ import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { IssueDetailQuickActions } from "@/components/issues";
+import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

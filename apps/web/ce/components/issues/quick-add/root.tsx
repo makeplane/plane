@@ -14,7 +14,7 @@ import {
   ListQuickAddIssueForm,
   SpreadsheetQuickAddIssueForm,
   TQuickAddIssueForm,
-} from "@/components/issues/issue-layouts";
+} from "@/components/issues/issue-layouts/quick-add";
 // hooks
 import { useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";

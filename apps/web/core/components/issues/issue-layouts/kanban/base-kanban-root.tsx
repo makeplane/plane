@@ -8,7 +8,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { DeleteIssueModal } from "@/components/issues";
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -25,6 +24,7 @@ import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types"
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import { DeleteIssueModal } from "../../delete-issue-modal";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT

@@ -8,19 +8,17 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
-import {
-  CycleAppliedFiltersRoot,
-  CycleCalendarLayout,
-  BaseGanttRoot,
-  CycleKanBanLayout,
-  CycleListLayout,
-  CycleSpreadsheetLayout,
-  IssuePeekOverview,
-} from "@/components/issues";
-// constants
 // hooks
 import { useCycle, useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { CycleCalendarLayout } from "../calendar/roots/cycle-root";
+import { CycleAppliedFiltersRoot } from "../filters";
+import { BaseGanttRoot } from "../gantt";
+import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
+import { CycleListLayout } from "../list/roots/cycle-root";
+import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
 
 const CycleIssueLayout = (props: {
   activeLayout: EIssueLayoutTypes | undefined;

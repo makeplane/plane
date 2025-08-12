@@ -8,13 +8,14 @@ import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// components
-import { IssueView, TIssueOperations } from "@/components/issues";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
+// local imports
+import { TIssueOperations } from "../issue-detail";
+import { IssueView } from "./view";
 
 export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const {

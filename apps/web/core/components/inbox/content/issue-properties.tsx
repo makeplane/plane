@@ -8,8 +8,8 @@ import { ControlLink, DoubleCircleIcon, Tooltip } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
-import { IssueLabel, TIssueOperations } from "@/components/issues";
-// helper
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

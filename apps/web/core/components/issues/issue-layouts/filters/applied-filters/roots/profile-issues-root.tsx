@@ -1,13 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EIssueFilterType } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // hooks
-// components
-import { AppliedFiltersList } from "@/components/issues";
-// types
 import { useIssues, useLabel } from "@/hooks/store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+import { AppliedFiltersList } from "../filters-list";
 
 export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   // router

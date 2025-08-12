@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
-// components
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
+// components
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -17,9 +17,7 @@ import {
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
-} from "@/components/issues";
-// constants
-// helpers
+} from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components

@@ -19,7 +19,7 @@ import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // constants
-import HeaderFilters from "@/components/issues/filters";
+import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
 import { useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";

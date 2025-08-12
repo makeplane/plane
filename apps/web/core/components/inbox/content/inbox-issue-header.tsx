@@ -29,9 +29,8 @@ import {
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
-import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/components/issues";
-// helpers
-//
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
 import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

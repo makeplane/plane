@@ -6,7 +6,7 @@ import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import {
   PageAppliedFiltersList,
   PageFiltersSelection,

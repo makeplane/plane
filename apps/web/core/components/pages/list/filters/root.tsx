@@ -5,7 +5,7 @@ import { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
 import { FilterCreatedDate } from "@/components/common/filters/created-at";
 import { FilterCreatedBy } from "@/components/common/filters/created-by";
-import { FilterOption } from "@/components/issues";
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {

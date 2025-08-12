@@ -27,7 +27,12 @@ import {
 } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import {
+  AppliedFiltersList,
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";

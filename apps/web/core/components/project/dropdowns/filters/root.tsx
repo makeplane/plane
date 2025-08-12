@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
 // components
-import { FilterOption } from "@/components/issues";
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { FilterAccess, FilterCreatedDate, FilterLead, FilterMembers } from "@/components/project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types

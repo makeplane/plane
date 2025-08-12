@@ -7,8 +7,6 @@ import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { IssueParentDetail, TIssueOperations } from "@/components/issues";
-// helpers
 // hooks
 import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -21,6 +19,8 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import { IssueDescriptionInput } from "../description-input";
+import type { TIssueOperations } from "../issue-detail";
+import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 // services init

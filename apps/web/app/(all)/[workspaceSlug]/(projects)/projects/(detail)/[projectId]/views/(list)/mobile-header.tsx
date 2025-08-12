@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { ChevronDown, ListFilter } from "lucide-react";
 // components
 import { Row } from "@plane/ui";
-import { FiltersDropdown } from "@/components/issues/issue-layouts";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // hooks

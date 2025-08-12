@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { ProjectNetworkIcon } from "@/components/project";
 
 type Props = {

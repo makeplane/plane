@@ -36,7 +36,7 @@ import {
   FilterSelection,
   LayoutSelection,
   MobileLayoutSelection,
-} from "@/components/issues";
+} from "@/components/issues/issue-layouts/filters";
 // hooks
 import {
   useCommandPalette,

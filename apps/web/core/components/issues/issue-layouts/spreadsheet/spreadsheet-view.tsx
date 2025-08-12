@@ -7,15 +7,15 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayo
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
-import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
-// types
-import { TRenderQuickActions } from "../list/list-view-types";
+// local imports
+import type { TRenderQuickActions } from "../list/list-view-types";
+import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
 import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {

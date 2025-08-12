@@ -20,7 +20,12 @@ import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";

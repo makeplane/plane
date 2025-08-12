@@ -25,7 +25,7 @@ import { isIssueFilterActive } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues/issue-layouts/filters";
 import {
   CreateUpdateWorkspaceViewModal,
   WorkspaceViewQuickActions,

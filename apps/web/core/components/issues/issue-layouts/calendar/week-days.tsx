@@ -1,10 +1,7 @@
 import { observer } from "mobx-react";
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
+// plane imports
+import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
-// components
-import { CalendarDayTile } from "@/components/issues";
-// helpers
-//
 // hooks
 import { useUserProfile } from "@/hooks/store";
 // types
@@ -14,6 +11,7 @@ import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarDayTile } from "./day-tile";
 
 type Props = {
   issuesFilterStore:

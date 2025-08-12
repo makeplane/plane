@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import {
   EIssueFilterType,
   EUserPermissions,
@@ -8,15 +8,13 @@ import {
   PROJECT_VIEW_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
-// ui
 import { Header, EHeaderVariant } from "@plane/ui";
-// components
-import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
-// constants
 // hooks
 import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
-// plane web constants
+// local imports
+import { SaveFilterView } from "../../../save-filter-view";
+import { AppliedFiltersList } from "../filters-list";
 
 type TProjectAppliedFiltersRootProps = {
   storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;

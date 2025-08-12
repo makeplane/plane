@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import { IssueDetailRoot } from "@/components/issues";
+import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets

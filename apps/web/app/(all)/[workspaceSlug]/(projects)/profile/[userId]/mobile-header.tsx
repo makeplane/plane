@@ -22,9 +22,8 @@ import {
 import { CustomMenu } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
-
-// helpers
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 

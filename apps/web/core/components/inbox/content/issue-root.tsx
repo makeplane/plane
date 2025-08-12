@@ -11,14 +11,12 @@ import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { InboxIssueContentProperties } from "@/components/inbox/content";
-import {
-  IssueDescriptionInput,
-  IssueTitleInput,
-  IssueActivity,
-  IssueReaction,
-  TIssueOperations,
-  IssueAttachmentRoot,
-} from "@/components/issues";
+import { IssueAttachmentRoot } from "@/components/issues/attachment";
+import { IssueDescriptionInput } from "@/components/issues/description-input";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
+import { IssueReaction } from "@/components/issues/issue-detail/reactions";
+import { IssueTitleInput } from "@/components/issues/title-input";
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

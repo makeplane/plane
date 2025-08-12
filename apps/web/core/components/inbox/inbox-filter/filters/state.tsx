@@ -6,7 +6,7 @@ import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 

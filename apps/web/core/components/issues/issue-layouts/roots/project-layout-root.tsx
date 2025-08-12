@@ -9,18 +9,17 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { Spinner } from "@plane/ui";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import {
-  ListLayout,
-  CalendarLayout,
-  BaseGanttRoot,
-  KanBanLayout,
-  ProjectAppliedFiltersRoot,
-  ProjectSpreadsheetLayout,
-  IssuePeekOverview,
-} from "@/components/issues";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { CalendarLayout } from "../calendar/roots/project-root";
+import { ProjectAppliedFiltersRoot } from "../filters";
+import { BaseGanttRoot } from "../gantt";
+import { KanBanLayout } from "../kanban/roots/project-root";
+import { ListLayout } from "../list/roots/project-root";
+import { ProjectSpreadsheetLayout } from "../spreadsheet/roots/project-root";
 
 const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {

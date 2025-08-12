@@ -4,7 +4,6 @@ import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } fro
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports
@@ -12,6 +11,7 @@ import { WorkItemAdditionalWidgetModals } from "@/plane-web/components/issues/is
 // local imports
 import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-link-modal";
 // helpers
+import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { useLinkOperations } from "./links/helper";
 import { useSubIssueOperations } from "./sub-issues/helper";
 

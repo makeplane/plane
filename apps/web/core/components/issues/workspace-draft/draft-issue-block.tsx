@@ -13,11 +13,11 @@ import { cn } from "@plane/utils";
 import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components
 import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues";
-// local components
-import { WorkspaceDraftIssueQuickActions } from "../issue-layouts";
-import { CreateUpdateIssueModal } from "../issue-modal";
+// local imports
+import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 import { DraftIssueProperties } from "./draft-issue-properties";
+import { WorkspaceDraftIssueQuickActions } from "./quick-action";
 
 type Props = {
   workspaceSlug: string;

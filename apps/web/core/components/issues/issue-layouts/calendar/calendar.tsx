@@ -23,8 +23,6 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
-// components
-import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHeader } from "@/components/issues";
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
@@ -38,8 +36,13 @@ import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+// local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarHeader } from "./header";
+import { CalendarIssueBlocks } from "./issue-blocks";
+import { CalendarWeekDays } from "./week-days";
+import { CalendarWeekHeader } from "./week-header";
 
 type Props = {
   issuesFilterStore:

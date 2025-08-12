@@ -6,7 +6,7 @@ import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "@/components/inbox/inbox-filter";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import useSize from "@/hooks/use-window-size";
 
 const smallButton = <ListFilter className="size-3 " />;

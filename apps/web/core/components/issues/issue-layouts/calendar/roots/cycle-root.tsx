@@ -2,13 +2,11 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/types";
-//hooks
-import { CycleIssueQuickActions } from "@/components/issues";
+// hooks
 import { useCycle, useIssues } from "@/hooks/store";
 // components
+import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
-// types
-// constants
 
 export const CycleCalendarLayout: React.FC = observer(() => {
   const { currentProjectCompletedCycleIds } = useCycle();

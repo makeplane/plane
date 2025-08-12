@@ -23,7 +23,7 @@ import {
   FilterSelection,
   FiltersDropdown,
   MobileLayoutSelection,
-} from "@/components/issues/issue-layouts";
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";

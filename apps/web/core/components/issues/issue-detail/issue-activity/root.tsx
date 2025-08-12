@@ -11,13 +11,13 @@ import { useTranslation } from "@plane/i18n";
 import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
-import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/issue-detail";
-// constants
 // hooks
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 import { useCommentOperations } from "./helper";
+import { ActivitySortRoot } from "./sort-root";
+import { IssueActivityCommentRoot } from "./activity-comment-root";
 
 type TIssueActivity = {
   workspaceSlug: string;

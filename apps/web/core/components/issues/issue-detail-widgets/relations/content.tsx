@@ -6,9 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
-import { RelationIssueList } from "@/components/issues";
-import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
@@ -16,6 +14,8 @@ import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // helper
+import { DeleteIssueModal } from "../../delete-issue-modal";
+import { RelationIssueList } from "../../relations";
 import { useRelationOperations } from "./helper";
 
 type Props = {

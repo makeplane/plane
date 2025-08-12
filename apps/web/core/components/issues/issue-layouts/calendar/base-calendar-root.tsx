@@ -3,12 +3,10 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType, TGroupedIssues } from "@plane/types";
-// components
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { CalendarChart } from "@/components/issues";
-//constants
 // hooks
 import { useIssues, useCalendarView, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -16,6 +14,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
+import { CalendarChart } from "./calendar";
 
 export type CalendarStoreType =
   | EIssuesStoreType.PROJECT

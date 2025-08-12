@@ -12,13 +12,13 @@ import type { TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { isEmptyHtmlString } from "@plane/utils";
-import { ConfirmIssueDiscard } from "@/components/issues";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useWorkspaceDraftIssues } from "@/hooks/store";
-// local components
+// local imports
+import { ConfirmIssueDiscard } from "../confirm-issue-discard";
 import { IssueFormRoot, type IssueFormProps } from "./form";
 
 export interface DraftIssueProps extends IssueFormProps {

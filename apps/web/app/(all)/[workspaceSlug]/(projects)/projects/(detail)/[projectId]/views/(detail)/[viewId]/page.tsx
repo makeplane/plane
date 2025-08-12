@@ -6,7 +6,7 @@ import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import { ProjectViewLayoutRoot } from "@/components/issues";
+import { ProjectViewLayoutRoot } from "@/components/issues/issue-layouts/roots/project-view-layout-root";
 // hooks
 import { useProject, useProjectView } from "@/hooks/store";
 // assets

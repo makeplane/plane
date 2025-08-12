@@ -4,19 +4,17 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Tooltip } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { ParentIssuesListModal } from "@/components/issues";
-// helpers
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// types
+// local imports
+import { ParentIssuesListModal } from "../parent-issues-list-modal";
 
 type TIssueParentSelect = {
   className?: string;

@@ -17,12 +17,15 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueModuleSelect, IssueLabel, TIssueOperations } from "@/components/issues";
 // helpers
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import type { TIssueOperations } from "../issue-detail";
+import { IssueCycleSelect } from "../issue-detail/cycle-select";
+import { IssueLabel } from "../issue-detail/label";
+import { IssueModuleSelect } from "../issue-detail/module-select";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;

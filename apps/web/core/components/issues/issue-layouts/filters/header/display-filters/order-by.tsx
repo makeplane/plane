@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
 
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 

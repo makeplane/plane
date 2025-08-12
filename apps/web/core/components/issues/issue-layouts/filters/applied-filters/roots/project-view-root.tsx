@@ -15,13 +15,13 @@ import {
 import { EIssuesStoreType, EViewAccess, IIssueFilterOptions } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
-import { AppliedFiltersList } from "@/components/issues";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 // hooks
 import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";
+import { AppliedFiltersList } from "../filters-list";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router

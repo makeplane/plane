@@ -17,14 +17,15 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
-// helpers
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
 import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import { IssueCycleSelect } from "./cycle-select";
+import { IssueLabel } from "./label";
+import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
 type Props = {

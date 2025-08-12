@@ -9,7 +9,7 @@ import { TInboxIssueFilterMemberKeys } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useMember, useProjectInbox, useUser } from "@/hooks/store";

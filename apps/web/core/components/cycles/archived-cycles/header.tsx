@@ -11,7 +11,7 @@ import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
 import { CycleFiltersSelection } from "@/components/cycles";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
 import { useCycleFilter } from "@/hooks/store";

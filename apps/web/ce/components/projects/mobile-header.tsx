@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { TProjectFilters } from "@plane/types";
 // hooks
 import { calculateTotalFilters } from "@plane/utils";
-import { FiltersDropdown } from "@/components/issues/issue-layouts";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
 // helpers
 // hooks

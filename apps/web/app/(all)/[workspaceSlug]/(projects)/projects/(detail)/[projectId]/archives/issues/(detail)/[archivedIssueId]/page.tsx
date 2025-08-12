@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { IssueDetailRoot } from "@/components/issues";
+import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // constants
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";

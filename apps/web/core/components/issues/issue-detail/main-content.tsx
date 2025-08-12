@@ -5,20 +5,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
-// components
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import {
-  IssueActivity,
-  NameDescriptionUpdateStatus,
-  IssueReaction,
-  IssueParentDetail,
-  IssueTitleInput,
-  IssueDescriptionInput,
-  IssueDetailWidgets,
-  PeekOverviewProperties,
-} from "@/components/issues";
-// helpers
 // hooks
 import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -30,6 +19,14 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local imports
+import { IssueDescriptionInput } from "../description-input";
+import { IssueDetailWidgets } from "../issue-detail-widgets";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { PeekOverviewProperties } from "../peek-overview/properties";
+import { IssueTitleInput } from "../title-input";
+import { IssueActivity } from "./issue-activity";
+import { IssueParentDetail } from "./parent";
+import { IssueReaction } from "./reactions";
 import { TIssueOperations } from "./root";
 // services init
 const workItemVersionService = new WorkItemVersionService();

@@ -18,16 +18,16 @@ import {
   setToast,
 } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// components
-import { IssueSubscription, NameDescriptionUpdateStatus, WorkItemDetailQuickActions } from "@/components/issues";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
-// store hooks
-
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { IssueSubscription } from "../issue-detail/subscription";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [

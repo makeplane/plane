@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueDisplayFilterOptions, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
-import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { SpreadsheetLayoutLoader } from "@/components/ui";
 // hooks
@@ -16,6 +15,7 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 import { IssuePeekOverview } from "../../../peek-overview";
 import { IssueLayoutHOC } from "../../issue-layout-HOC";
 import { TRenderQuickActions } from "../../list/list-view-types";
+import { SpreadsheetView } from "../spreadsheet-view";
 
 type Props = {
   isDefaultView: boolean;

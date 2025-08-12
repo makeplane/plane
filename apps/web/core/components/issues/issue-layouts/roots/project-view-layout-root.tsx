@@ -6,17 +6,17 @@ import useSWR from "swr";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import {
-  IssuePeekOverview,
-  ProjectViewAppliedFiltersRoot,
-  ProjectViewCalendarLayout,
-  BaseGanttRoot,
-  ProjectViewKanBanLayout,
-  ProjectViewListLayout,
-  ProjectViewSpreadsheetLayout,
-} from "@/components/issues";
+// hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { ProjectViewCalendarLayout } from "../calendar/roots/project-view-root";
+import { ProjectViewAppliedFiltersRoot } from "../filters";
+import { BaseGanttRoot } from "../gantt";
+import { ProjectViewKanBanLayout } from "../kanban/roots/project-view-root";
+import { ProjectViewListLayout } from "../list/roots/project-view-root";
+import { ProjectViewSpreadsheetLayout } from "../spreadsheet/roots/project-view-root";
 // types
 
 const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {

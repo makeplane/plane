@@ -28,7 +28,7 @@ import {
   FilterCycle,
   FilterModule,
   FilterIssueGrouping,
-} from "@/components/issues";
+} from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

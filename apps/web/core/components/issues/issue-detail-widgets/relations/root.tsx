@@ -4,10 +4,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
-// components
-import { RelationsCollapsibleContent, RelationsCollapsibleTitle } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// local imports
+import { RelationsCollapsibleContent } from "./content";
+import { RelationsCollapsibleTitle } from "./title";
 
 type Props = {
   workspaceSlug: string;

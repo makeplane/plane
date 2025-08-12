@@ -22,8 +22,8 @@ import {
 // hooks
 import { useLabel, useProjectState, useProject, useProjectEstimates, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IssuePropertyLabels } from "../issue-layouts/properties";
 // local components
-import { IssuePropertyLabels } from "../issue-layouts";
 
 export interface IIssueProperties {
   issue: TWorkspaceDraftIssue;

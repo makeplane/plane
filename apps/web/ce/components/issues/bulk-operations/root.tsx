@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { BulkOperationsUpgradeBanner } from "@/components/issues";
+import { BulkOperationsUpgradeBanner } from "@/components/issues/bulk-operations";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

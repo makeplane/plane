@@ -22,7 +22,7 @@ import {
   MemberDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-import { ParentIssuesListModal } from "@/components/issues";
+import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks

@@ -3,18 +3,16 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// components
-import {
-  AttachmentsCollapsible,
-  LinksCollapsible,
-  RelationsCollapsible,
-  SubIssuesCollapsible,
-} from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
 import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// local imports
+import { AttachmentsCollapsible } from "./attachments";
+import { LinksCollapsible } from "./links";
+import { RelationsCollapsible } from "./relations";
+import { SubIssuesCollapsible } from "./sub-issues";
 
 type Props = {
   workspaceSlug: string;

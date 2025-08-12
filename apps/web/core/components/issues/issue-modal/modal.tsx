@@ -5,10 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EIssuesStoreType, TIssue } from "@plane/types";
-// components
-import { CreateUpdateIssueModalBase } from "@/components/issues";
 // plane web imports
 import { IssueModalProvider } from "@/plane-web/components/issues";
+import { CreateUpdateIssueModalBase } from "./base";
 
 export interface IssuesModalProps {
   data?: Partial<TIssue>;

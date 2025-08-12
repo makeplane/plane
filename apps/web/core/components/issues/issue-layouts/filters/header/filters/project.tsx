@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 import { Loader } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProject } from "@/hooks/store";
 

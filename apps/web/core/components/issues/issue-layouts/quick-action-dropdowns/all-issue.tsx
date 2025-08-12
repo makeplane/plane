@@ -9,15 +9,16 @@ import { ARCHIVABLE_STATE_GROUPS, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/cons
 import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useProject, useProjectState } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
-import { IQuickActionProps } from "../list/list-view-types";
 // helper
+import { ArchiveIssueModal } from "../../archive-issue-modal";
+import { DeleteIssueModal } from "../../delete-issue-modal";
+import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { IQuickActionProps } from "../list/list-view-types";
 import { useAllIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {

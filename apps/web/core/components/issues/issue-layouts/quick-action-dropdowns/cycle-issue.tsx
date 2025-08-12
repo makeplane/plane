@@ -14,16 +14,17 @@ import {
 import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 // types
-import { IQuickActionProps } from "../list/list-view-types";
 // helper
+import { ArchiveIssueModal } from "../../archive-issue-modal";
+import { DeleteIssueModal } from "../../delete-issue-modal";
+import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { IQuickActionProps } from "../list/list-view-types";
 import { useCycleIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {

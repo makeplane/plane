@@ -18,7 +18,7 @@ import {
 //
 import { getFileIcon } from "@/components/icons";
 // components
-import { IssueAttachmentDeleteModal } from "@/components/issues";
+import { IssueAttachmentDeleteModal } from "@/components/issues/attachment/delete-attachment-modal";
 // helpers
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
