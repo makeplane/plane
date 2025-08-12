@@ -84,6 +84,8 @@ class FeatureFlag(Enum):
     NOTION_IMPORTER = "NOTION_IMPORTER"
     # Link Pages
     LINK_PAGES = "LINK_PAGES"
+    # Automations
+    PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS"
     # Recurring Work Items
     RECURRING_WORKITEMS = "RECURRING_WORKITEMS"
 

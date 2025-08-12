@@ -1,9 +1,9 @@
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4, UUID
 import pytest
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from plane.event_stream.models.outbox import Outbox
 from plane.event_stream.management.commands.outbox_poller import (
@@ -104,7 +104,6 @@ class TestOutboxPoller:
             workspace.id,  # workspace_id
             project.id,
         )
-
         result = await outbox_poller._process_event(row)
 
         assert result is True

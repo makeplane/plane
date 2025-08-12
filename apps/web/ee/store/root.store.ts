@@ -40,8 +40,10 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
-// dashboards
 import { EZipDriverType } from "../types/importers/zip-importer";
+// automations
+import { AutomationsRootStore, IAutomationsRootStore } from "./automations/root.store";
+// dashboards
 import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
 import {
@@ -144,6 +146,8 @@ export class RootStore extends CoreRootStore {
   templatesRoot: ITemplatesRootStore;
   // recurring work items
   recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
+  // automations
+  automationsRoot: IAutomationsRootStore;
 
   constructor() {
     super();
@@ -197,6 +201,8 @@ export class RootStore extends CoreRootStore {
     this.templatesRoot = new TemplatesRootStore(this);
     // recurring work items
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
+    // automations
+    this.automationsRoot = new AutomationsRootStore(this);
   }
 
   resetOnSignOut() {
@@ -248,5 +254,7 @@ export class RootStore extends CoreRootStore {
     this.templatesRoot = new TemplatesRootStore(this);
     // recurring work items
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
+    // automations
+    this.automationsRoot = new AutomationsRootStore(this);
   }
 }

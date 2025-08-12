@@ -19,6 +19,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.utils.exception_logger import log_exception
+from plane.event_stream.publisher import get_publisher
 from plane.event_stream.models.outbox import OutboxEvent
 
 
@@ -686,10 +687,19 @@ class OutboxPoller:
             sys.exit(0)
 
 
-async def handle_row(event_data: OutboxEvent):
-    log.info("Publishing event", extra=event_data.to_dict())
-
-    # Let's add this to the test_outbox_events table using Django ORM
+async def handle_row(event: OutboxEvent):
+    """
+    Handle a row from the outbox table.
+    """
+    poller_id = f"poller-{os.getpid()}"
+    log.info(f"Publishing event for poller {poller_id}", extra=event.to_dict())
+    # Get a publisher instance for this poller
+    publisher = get_publisher(poller_id)
+    # Publish the event
+    success = publisher.publish_outbox_event(event)
+    if not success:
+        log.error("Failed to publish event", extra=event.to_dict())
+        return False
 
     return True
 

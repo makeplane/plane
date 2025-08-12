@@ -98,6 +98,18 @@ from .app.template import (
     ProjectTemplateSerializer,
 )
 
+from .app.automation import (
+    AutomationWriteSerializer,
+    AutomationReadSerializer,
+    AutomationNodeReadSerializer,
+    AutomationNodeWriteSerializer,
+    AutomationEdgeWriteSerializer,
+    AutomationEdgeReadSerializer,
+    AutomationRunReadSerializer,
+    AutomationDetailReadSerializer,
+    AutomationActivityReadSerializer,
+)
+
 from .app.recurring_work_item import (
     RecurringWorkItemSerializer,
     RecurringWorkItemTaskActivitySerializer,

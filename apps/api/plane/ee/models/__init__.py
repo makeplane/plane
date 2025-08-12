@@ -106,3 +106,18 @@ from .recurring import (
     RecurringWorkitemTaskLog,
     RecurringWorkItemTaskActivity,
 )
+
+from .automation import (
+    Automation,
+    AutomationVersion,
+    AutomationNode,
+    AutomationEdge,
+    AutomationRun,
+    NodeExecution,
+    AutomationStatusChoices,
+    NodeTypeChoices,
+    RunStatusChoices,
+    AutomationScopeChoices,
+    AutomationActivity,
+    ProcessedAutomationEvent,
+)

@@ -95,6 +95,11 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.automations.consumer": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }
 

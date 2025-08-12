@@ -1,5 +1,6 @@
 export * from "./ai";
 export * from "./auth";
+export * from "./automation";
 export * from "./chart";
 export * from "./dashboards";
 export * from "./endpoints";

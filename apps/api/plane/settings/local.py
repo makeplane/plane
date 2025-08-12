@@ -61,8 +61,16 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
-        "plane.api": {"level": "INFO", "handlers": ["console"], "propagate": False},
-        "plane.worker": {"level": "INFO", "handlers": ["console"], "propagate": False},
+        "plane.api": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.worker": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.exception": {
             "level": "ERROR",
             "handlers": ["console"],
@@ -74,6 +82,16 @@ LOGGING = {
             "propagate": False,
         },
         "plane.event_stream": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.automations": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.automations.consumer": {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,

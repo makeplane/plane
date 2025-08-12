@@ -5,6 +5,8 @@ from pytest_django.fixtures import django_db_setup
 
 from uuid import uuid4
 
+from plane.app.permissions import ROLE
+
 from plane.db.models import (
     User,
     Workspace,
@@ -57,7 +59,6 @@ def create_user(db, user_data):
     return user
 
 
-@pytest.fixture
 def workspace(db, create_user):
     """Create and return a workspace instance"""
     workspace = Workspace.objects.create(
@@ -263,6 +264,31 @@ def epic(db, workspace, project, create_user):
 
 
 @pytest.fixture
+def create_workspace_member_admin(db, workspace, create_user):
+    """Create and return a workspace member with admin role"""
+    workspace_member = WorkspaceMember.objects.create(
+        workspace=workspace,
+        member=create_user,
+        role=ROLE.ADMIN.value,  # 20
+        is_active=True,
+    )
+    return workspace_member
+
+
+@pytest.fixture
+def create_project_member_admin(db, workspace, project, create_user):
+    """Create and return a workspace member with member role"""
+    project_member = ProjectMember.objects.create(
+        workspace=workspace,
+        project=project,
+        member=create_user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    )
+    return project_member
+
+
+@pytest.fixture
 def mock_feature_flag():
     """Fixture to mock the feature flag check"""
 
@@ -279,6 +305,45 @@ def mock_feature_flag():
 
 
 @pytest.fixture
+def create_workspace_member_admin(db, workspace, create_user):
+    """Create and return a workspace member with admin role"""
+    workspace_member = WorkspaceMember.objects.create(
+        workspace=workspace,
+        member=create_user,
+        role=ROLE.ADMIN.value,  # 20
+        is_active=True,
+    )
+    return workspace_member
+
+
+@pytest.fixture
+def create_project_member_admin(db, workspace, project, create_user):
+    """Create and return a workspace member with member role"""
+    project_member = ProjectMember.objects.create(
+        workspace=workspace,
+        project=project,
+        member=create_user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    )
+    return project_member
+
+
+@pytest.fixture
+def mock_feature_flag():
+    """Fixture to mock the feature flag check"""
+
+    def mock_decorator(flag_name, default_value=False):
+        def wrapper(func):
+            return func  # Pass through the original function
+
+        return wrapper
+
+    with patch(
+        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
+    ) as mock:
+        yield mock
+
 def workspace_page(db, workspace, create_user):
     """Create and return a page instance"""
     from plane.tests.factories import PageFactory
@@ -327,3 +392,4 @@ def published_page(db, workspace, workspace_page) -> tuple[Page, str]:
         workspace=workspace,
     )
     return workspace_page, deploy_board.anchor
+

@@ -104,6 +104,8 @@ export enum E_FEATURE_FLAGS {
   APP_RAIL = "APP_RAIL",
   // recurring workitems
   RECURRING_WORKITEMS = "RECURRING_WORKITEMS",
+  // automations
+  PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS",
 }
 
 /**
@@ -122,6 +124,7 @@ export const FEATURE_TO_BASE_PLAN_MAP = {
   [E_FEATURE_FLAGS.EPICS]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.PROJECT_UPDATES]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.RECURRING_WORKITEMS]: EProductSubscriptionEnum.BUSINESS,
+  [E_FEATURE_FLAGS.PROJECT_AUTOMATIONS]: EProductSubscriptionEnum.BUSINESS,
 };
 
 export type TSupportedFlagsForUpgrade = keyof typeof FEATURE_TO_BASE_PLAN_MAP;

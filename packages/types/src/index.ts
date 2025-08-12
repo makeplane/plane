@@ -1,3 +1,4 @@
+export * from "./automations";
 export * from "./users";
 export * from "./workspace";
 export * from "./cycle";

@@ -2651,6 +2651,7 @@
       }
     }
   },
+
   "intake_forms": {
     "create": {
       "title": "Create a work item",
@@ -2694,6 +2695,7 @@
       }
     }
   },
+
   "recurring_work_items": {
     "settings": {
       "heading": "Recurring work items",
@@ -2770,6 +2772,155 @@
       "description": {
         "prefix": "Are you sure you want to delete recurring work item-",
         "suffix": "? All of the data related to the recurring work item will be permanently removed. This action cannot be undone."
+      }
+    }
+  },
+
+  "automations": {
+    "settings": {
+      "title": "Custom automations",
+      "create_automation": "Create automation"
+    },
+    "scope": {
+      "label": "Scope",
+      "run_on": "Run on"
+    },
+    "trigger": {
+      "label": "Trigger",
+      "add_trigger": "Add trigger",
+      "sidebar_header": "Trigger configuration",
+      "input_label": "What’s the trigger for this automation?",
+      "input_placeholder": "Select an option",
+      "button": {
+        "previous": "Back",
+        "next": {
+          "create": "Continue",
+          "update": "Add action"
+        }
+      }
+    },
+    "condition": {
+      "label": "Provided",
+      "add_condition": "Add condition",
+      "adding_condition": "Adding condition"
+    },
+    "action": {
+      "label": "Action",
+      "add_action": "Add action",
+      "sidebar_header": "Actions",
+      "input_label": "What does the automation do?",
+      "input_placeholder": "Select an option",
+      "handler_name": {
+        "add_comment": "Add comment",
+        "change_property": "Change property"
+      },
+      "configuration": {
+        "label": "Configuration",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Select a property",
+            "change_type": "Select",
+            "property_value_select": "{count, plural, one{Select value} other{Select values}}",
+            "property_value_select_date": "Select date"
+          },
+          "validation": {
+            "property_name_required": "Property name is required",
+            "change_type_required": "Change type is required",
+            "property_value_required": "Property value is required"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Add comment"
+      },
+      "change_property_block": {
+        "title": "Change property"
+      },
+      "validation": {
+        "delete_only_action": "Disable the automation before deleting its only action."
+      }
+    },
+    "conjunctions": {
+      "and": "And",
+      "or": "Or",
+      "if": "If",
+      "then": "Then"
+    },
+    "enable": {
+      "alert": "Hit 'Enable' whenever your automation is complete. Once enabled, the automation will be ready to run.",
+      "validation": {
+        "required": "Automation must have a trigger and at least one action to be enabled."
+      }
+    },
+    "table": {
+      "title": "Automation title",
+      "last_run_on": "Last run on",
+      "created_on": "Created on",
+      "last_updated_on": "Last updated on",
+      "last_run_status": "Last run status",
+      "average_duration": "Average duration",
+      "owner": "Owner",
+      "executions": "Executions"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Create automation",
+        "update": "Update automation"
+      },
+      "title": {
+        "placeholder": "Name your automation.",
+        "required_error": "Title is required"
+      },
+      "description": {
+        "placeholder": "Describe your automation."
+      },
+      "submit_button": {
+        "create": "Create automation",
+        "update": "Update automation"
+      }
+    },
+    "delete_modal": {
+      "heading": "Delete automation",
+      "success_message": "Automation deleted successfully."
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Show fails",
+        "all": "All",
+        "only_activity": "Only activity",
+        "only_run_history": "Only run history"
+      },
+      "run_history": {
+        "initiator": "Initiator"
+      }
+    },
+    "toasts": {
+      "enable": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation enabled successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation enable failed."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation disabled successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation disable failed."
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Automations",
+        "description": "Automations are a way to automate tasks in your project.",
+        "sub_description": "Get 80% of your admin time back when you use Automations."
       }
     }
   }

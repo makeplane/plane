@@ -23,6 +23,7 @@ from .template import urlpatterns as template_patterns
 from .search import urlpatterns as search_patterns
 from .customer import urlpatterns as customer_property_patterns
 from .mobile import urlpatterns as mobile_patterns
+from .automation import urlpatterns as automation_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -52,4 +53,5 @@ urlpatterns = [
     *search_patterns,
     *customer_property_patterns,
     *mobile_patterns,
+    *automation_patterns,
 ]
