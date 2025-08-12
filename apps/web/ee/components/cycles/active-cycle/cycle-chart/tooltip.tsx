@@ -1,5 +1,7 @@
 import { format, startOfToday } from "date-fns";
+import { TCycleEstimateSystemAdvanced } from "@plane/types";
 import { Card, DoneState, ECardSpacing, InProgressState, PlannedState, PendingState } from "@plane/ui";
+import { summaryDataFormatter } from "../formatter";
 
 type Props = {
   active: boolean;
@@ -7,13 +9,15 @@ type Props = {
   label: string;
   plotType: string;
   endDate: string;
+  estimateType: TCycleEstimateSystemAdvanced;
 };
-const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => {
+const CustomTooltip = ({ active, payload, label, plotType, endDate, estimateType }: Props) => {
   if (active && payload && payload.length && label) {
     payload = payload[0]?.payload;
     const [year, month, day] = label?.split("-");
     const monthName = new Date(label).toLocaleString("default", { month: "short" });
     const isToday = payload.date === format(startOfToday(), "yyyy-MM-dd");
+    const estimateTypeFormatter = summaryDataFormatter(estimateType);
     if (payload.date > endDate) return null;
     return (
       <Card className="flex flex-col" spacing={ECardSpacing.SM}>
@@ -31,12 +35,12 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => 
         <div className="flex flex-col space-y-2 pb-2 border-b">
           <span className="flex text-xs text-custom-text-300 gap-1">
             <PlannedState className="my-auto" width="14" height="14" />
-            <span className="font-semibold">{Math.round(payload.scope) || 0}</span>
+            <span className="font-semibold">{estimateTypeFormatter(payload.scope)}</span>
             <span>scope</span>
           </span>
           <span className="flex text-xs text-custom-text-300 gap-1 items-center">
             <InProgressState className="my-auto items-center" width="14" height="14" />
-            <span className="font-semibold">{payload.started || 0}</span>
+            <span className="font-semibold">{estimateTypeFormatter(payload.started)}</span>
             <span> in-progress</span>
           </span>
           <span className="flex text-xs text-custom-text-300 gap-1 items-center ml-0.5">
@@ -46,7 +50,9 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => 
               <DoneState className="my-auto" width="12" height="12" />
             )}
             <span className="font-semibold">
-              {plotType === "burndown" ? payload.scope - payload.completed || 0 : payload.completed || 0}
+              {plotType === "burndown"
+                ? estimateTypeFormatter(payload.scope - payload.completed)
+                : estimateTypeFormatter(payload.completed)}
             </span>
             <span> {plotType === "burndown" ? "pending" : "done"}</span>
           </span>
@@ -59,7 +65,9 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => 
               <DoneState className="my-auto" width="12" height="12" />
             )}
             <span className="font-semibold">
-              {plotType !== "burndown" ? payload.scope - payload.completed || 0 : payload.completed || 0}
+              {plotType !== "burndown"
+                ? estimateTypeFormatter(payload.scope - payload.completed)
+                : estimateTypeFormatter(payload.completed)}
             </span>
             <span> {plotType !== "burndown" ? "pending" : "done"}</span>
           </span>

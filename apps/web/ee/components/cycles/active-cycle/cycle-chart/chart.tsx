@@ -17,7 +17,7 @@ import {
   LabelList,
 } from "recharts";
 // plane imports
-import { ICycle, TProgressChartData } from "@plane/types";
+import { ICycle, TCycleEstimateSystemAdvanced, TProgressChartData } from "@plane/types";
 // helpers
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { chartHelper, getColors } from "./helper";
@@ -30,7 +30,7 @@ type Props = {
   cycle: ICycle;
   data?: TProgressChartData;
   isFullWidth?: boolean;
-  estimateType?: string;
+  estimateType: TCycleEstimateSystemAdvanced;
   plotType: string;
   showToday?: boolean;
   showAllTicks?: boolean;
@@ -43,7 +43,7 @@ export const ActiveCycleChart = observer((props: Props) => {
     cycle,
     isFullWidth = false,
     plotType,
-    estimateType = "ISSUES",
+    estimateType,
     showToday,
     showAllTicks = false,
   } = props;
@@ -126,7 +126,16 @@ export const ActiveCycleChart = observer((props: Props) => {
         </defs>
         <Tooltip
           isAnimationActive={false}
-          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} endDate={endDate} />}
+          content={
+            <CustomTooltip
+              active
+              payload={[]}
+              label={""}
+              plotType={plotType}
+              endDate={endDate}
+              estimateType={estimateType}
+            />
+          }
         />
         {/* Cartesian axis */}
         <XAxis
@@ -169,7 +178,7 @@ export const ActiveCycleChart = observer((props: Props) => {
               textTransform: "uppercase",
             }}
             position="insideBottomLeft"
-            value={`${ESTIMATE_TYPE[estimateType]}s`}
+            value={estimateType === "time" ? "Time (h)" : ESTIMATE_TYPE[estimateType]}
           />
         </YAxis>
         {/* Line charts */}

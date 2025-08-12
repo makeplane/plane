@@ -40,7 +40,8 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
                 issue.estimate_point.value
                 if issue.estimate_point
                 and issue.estimate_point.estimate
-                and getattr(issue.estimate_point.estimate, "type", None) == "points"
+                and getattr(issue.estimate_point.estimate, "type", None)
+                in ["points", "time"]
                 else None
             )
 

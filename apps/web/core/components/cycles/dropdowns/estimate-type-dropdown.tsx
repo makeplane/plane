@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { EEstimateSystem, TCycleEstimateType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { useCycle, useProjectEstimates } from "@/hooks/store";
-import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { cycleEstimateOptions } from "../analytics-sidebar";
 
 type TProps = {
@@ -37,6 +36,6 @@ export const EstimateTypeDropdown = observer((props: TProps) => {
       </CustomSelect>
     </div>
   ) : showDefault ? (
-    <span className="capitalize">{`${ESTIMATE_TYPE[value]}s`}</span>
+    <span className="capitalize">{value}</span>
   ) : null;
 });

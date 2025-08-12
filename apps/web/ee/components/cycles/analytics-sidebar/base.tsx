@@ -2,10 +2,10 @@
 
 import { observer } from "mobx-react";
 // helpers
-import { TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
+import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // local components
-import { useCycle } from "@/hooks/store";
+import { useCycle, useProjectEstimates } from "@/hooks/store";
 import ActiveCycleChart from "../active-cycle/cycle-chart/chart";
 import Selection from "../active-cycle/selection";
 import useCycleDetails from "../active-cycle/use-cycle-details";
@@ -38,26 +38,28 @@ const chartLegends = [
 export const SidebarChart = observer((props: TProps) => {
   const { workspaceSlug, projectId, cycleId } = props;
 
-  const { getEstimateTypeByCycleId, plotType, estimatedType } = useCycle();
+  const { plotType, estimatedType } = useCycle();
   const { cycle, cycleProgress, handlePlotChange, handleEstimateChange } = useCycleDetails({
     workspaceSlug: workspaceSlug.toString(),
     projectId: projectId.toString(),
     cycleId: cycleId.toString(),
   });
+  const { currentProjectEstimateType } = useProjectEstimates();
+  const cycleEstimateType: TCycleEstimateType = (cycle.id && estimatedType[cycle.id]) || "issues";
+  const projectEstimateType =
+    cycleEstimateType === "issues" ? "issues" : (currentProjectEstimateType as TCycleEstimateSystemAdvanced);
 
   if (!cycle) return null;
 
   // derived values
   const computedPlotType: TCyclePlotType = (cycle.id && plotType[cycle.id]) || "burndown";
-  const computedEstimateType: TCycleEstimateType = (cycle.id && estimatedType[cycle.id]) || "issues";
   const totalEstimatePoints = cycle?.total_estimate_points || 0;
   const totalIssues = cycle?.total_issues || 0;
-  const estimateType = getEstimateTypeByCycleId(cycleId);
   const completedIssues = cycle?.completed_issues || 0;
   const completedEstimatePoints = cycle?.completed_estimate_points || 0;
 
   const progressHeaderPercentage = cycle
-    ? estimateType === "points"
+    ? cycleEstimateType === "points"
       ? completedEstimatePoints != 0 && totalEstimatePoints != 0
         ? Math.round((completedEstimatePoints / totalEstimatePoints) * 100)
         : 0
@@ -71,7 +73,7 @@ export const SidebarChart = observer((props: TProps) => {
       <div className="relative flex items-center justify-between gap-2 pt-4">
         <Selection
           plotType={computedPlotType}
-          estimateType={computedEstimateType}
+          estimateType={cycleEstimateType}
           projectId={projectId}
           handlePlotChange={handlePlotChange}
           handleEstimateChange={handleEstimateChange}
@@ -93,6 +95,7 @@ export const SidebarChart = observer((props: TProps) => {
               data={(cycleProgress as TProgressChartData) || []}
               isFullWidth
               plotType={computedPlotType}
+              estimateType={projectEstimateType}
             />
           ) : (
             <Loader className="w-full h-full pb-2">

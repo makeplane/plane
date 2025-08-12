@@ -6,6 +6,7 @@ export enum CYCLE_ACTION {
 export const ESTIMATE_TYPE: {
   [key: string]: string;
 } = {
-  issues: "work item",
-  points: "point",
+  issues: "work items",
+  points: "points",
+  time: "time",
 };

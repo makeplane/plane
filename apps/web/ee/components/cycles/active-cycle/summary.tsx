@@ -2,25 +2,26 @@ import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
-import { IIssueFilterOptions, TCycleProgress } from "@plane/types";
+import { IIssueFilterOptions, TCycleEstimateSystemAdvanced, TCycleProgress } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useProjectState } from "@/hooks/store";
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { getColors } from "./cycle-chart/helper";
+import { summaryDataFormatter } from "./formatter";
 import ScopeDelta from "./scope-delta";
 
 type Props = {
-  setAreaToHighlight: (area: string) => void;
   data: Partial<TCycleProgress>[] | null;
   plotType: string;
-  estimateType: string;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  estimateType: TCycleEstimateSystemAdvanced | undefined;
   parentWidth?: number;
+  setAreaToHighlight: (area: string) => void;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
 const Summary = observer((props: Props) => {
-  const { setAreaToHighlight, data, plotType, estimateType, handleFiltersUpdate, parentWidth } = props;
+  const { setAreaToHighlight, data, plotType, estimateType = "issues", handleFiltersUpdate, parentWidth } = props;
 
   // store hooks
   const { groupedProjectStates } = useProjectState();
@@ -33,6 +34,7 @@ const Summary = observer((props: Props) => {
     dataToday &&
     (plotType === "burndown" ? dataToday.ideal! < dataToday.actual! : dataToday.ideal! > dataToday.actual!);
   const colors = getColors(resolvedTheme);
+  const estimateTypeFormatter = summaryDataFormatter(estimateType);
 
   const scopeChangeCount = data?.reduce((acc, curr, index, array) => {
     // Skip the first element as there's nothing to compare it with
@@ -94,7 +96,9 @@ const Summary = observer((props: Props) => {
         "md:w-[300px] md:border-r border-custom-border-200": parentWidth && parentWidth > 890,
       })}
     >
-      <div className="text-xs text-custom-text-350 font-medium">Breakdown of this cycle&rsquo;s work items</div>
+      <div className="text-xs text-custom-text-350 font-medium">
+        Breakdown of this cycle&rsquo;s {ESTIMATE_TYPE[estimateType]}
+      </div>
       <div
         className={cn("border-b border-custom-border-200 w-full flex text-red-500 py-2", {
           "text-green-500": !isBehind,
@@ -107,10 +111,8 @@ const Summary = observer((props: Props) => {
             {isBehind ? <TrendingDown className=" mr-2" /> : <TrendingUp className=" mr-2" />}
             <div className="text-md font-medium  flex-1">
               {isBehind ? "Trailing" : "Leading"} by{" "}
-              {Math.round(Math.abs((dataToday?.ideal || 0) - (dataToday?.actual || 0)))}{" "}
-              {Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)) > 1
-                ? `${ESTIMATE_TYPE[estimateType]}s`
-                : ESTIMATE_TYPE[estimateType]}
+              {estimateTypeFormatter(Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)))}{" "}
+              {estimateType !== "time" && ESTIMATE_TYPE[estimateType]}
             </div>
             <div className="text-[20px] self-end">🏃</div>
           </>
@@ -121,8 +123,8 @@ const Summary = observer((props: Props) => {
 
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
         <div className="flex text-xs text-custom-text-350 font-medium">
-          <span className="w-5/6 capitalize">
-            {ESTIMATE_TYPE[estimateType]}s <span className="lowercase">by stategroups on chart</span>
+          <span className="capitalize">
+            {ESTIMATE_TYPE[estimateType]} <span className="lowercase">by stategroups on chart</span>
           </span>
         </div>
         {stateGroups.primaryStates.map((group, index) => (
@@ -158,7 +160,7 @@ const Summary = observer((props: Props) => {
                     className={`py-0.5 rounded  ${group.showBg ? (resolvedTheme?.includes("dark") ? `px-1 text-black` : `px-1 text-white`) : `text-custom-text-350`}`}
                     style={{ backgroundColor: group.showBg ? group.color : "" }}
                   >
-                    {(dataToday && Math.round(dataToday[group.key as keyof TCycleProgress] as number)) || 0}
+                    {dataToday && estimateTypeFormatter(dataToday[group.key as keyof TCycleProgress] as number)}
                   </span>
                 )}
               </span>
@@ -168,11 +170,11 @@ const Summary = observer((props: Props) => {
       </div>
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
         <div className="flex text-xs text-custom-text-350 font-medium">
-          <span className="w-5/6">Other {ESTIMATE_TYPE[estimateType]} stategroups</span>
+          <span>Other stategroups</span>
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
-            className="flex text-sm cursor-pointer p-2 rounded hover:bg-custom-background-90"
+            className="flex text-sm cursor-pointer p-2 rounded hover:bg-custom-background-90 justify-between"
             key={index}
             onClick={() => {
               if (groupedProjectStates) {
@@ -184,12 +186,12 @@ const Summary = observer((props: Props) => {
               }
             }}
           >
-            <span className="w-5/6">{group.group}</span>
-            <span className="w-1/6 text-end font-bold text-custom-text-350 flex justify-end">
+            <span>{group.group}</span>
+            <span className="text-end font-bold text-custom-text-350 flex justify-end flex-shrink-0">
               {!data ? (
                 <Loader.Item width="20px" height="20px" />
               ) : (
-                (dataToday && dataToday[group.key as keyof TCycleProgress]) || 0
+                dataToday && estimateTypeFormatter(dataToday[group.key as keyof TCycleProgress] as number)
               )}
             </span>
           </div>
@@ -203,7 +205,8 @@ const Summary = observer((props: Props) => {
             <Loader.Item width="200px" height="20px" />
           ) : (
             <span>
-              Excluded {dataToday?.cancelled || 0} cancelled {ESTIMATE_TYPE[estimateType]}s
+              Excluded {estimateTypeFormatter(dataToday?.cancelled)} cancelled{" "}
+              {estimateType === "issues" && "work items"}
             </span>
           )}
           {!data ? (

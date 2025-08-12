@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { TProgressChartData } from "@plane/types";
+import { TCycleEstimateSystemAdvanced, TProgressChartData } from "@plane/types";
+import { useProjectEstimates } from "@/hooks/store";
 import useCycleDetails from "../use-cycle-details";
 import ActiveCycleChart from "./chart";
 
@@ -29,10 +30,15 @@ const chartLegends = [
 
 const SidebarChartPro = observer((props: TProps) => {
   const { workspaceSlug, projectId } = props;
-  const { cycle, cycleProgress, plotType } = useCycleDetails({
+  const { cycle, cycleProgress, plotType, estimateType } = useCycleDetails({
     workspaceSlug: workspaceSlug.toString(),
     projectId: projectId.toString(),
   });
+
+  const { currentProjectEstimateType } = useProjectEstimates();
+  const computedEstimateType =
+    estimateType === "issues" ? "issues" : (currentProjectEstimateType as TCycleEstimateSystemAdvanced);
+
   if (!cycle) return null;
   return (
     <div>
@@ -42,6 +48,7 @@ const SidebarChartPro = observer((props: TProps) => {
           data={(cycleProgress as TProgressChartData) || []}
           isFullWidth
           plotType={plotType}
+          estimateType={computedEstimateType}
         />
       </div>
       <div className="flex items-center justify-between">

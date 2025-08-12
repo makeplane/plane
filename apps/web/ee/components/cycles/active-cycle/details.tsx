@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
+import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle, useProjectEstimates } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import ActiveCycleChart from "./cycle-chart/chart";
@@ -29,6 +29,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   const { t } = useTranslation();
   // store hooks
   const { plotType, estimatedType, getCycleById, currentProjectActiveCycleId } = useCycle();
+  const { currentProjectEstimateType } = useProjectEstimates();
   const {
     handlePlotChange,
     handleEstimateChange,
@@ -39,8 +40,10 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   } = props;
   // derived values
   const computedPlotType: TCyclePlotType = (activeCycle.id && plotType[activeCycle.id]) || "burndown";
-  const computedEstimateType: TCycleEstimateType = (activeCycle.id && estimatedType[activeCycle.id]) || "issues";
+  const cycleEstimateType: TCycleEstimateType = (activeCycle.id && estimatedType[activeCycle.id]) || "issues";
   const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
+  const projectEstimateType =
+    cycleEstimateType === "issues" ? "issues" : (currentProjectEstimateType as TCycleEstimateSystemAdvanced);
 
   const storeCycle = activeCycle.id
     ? getCycleById(activeCycle.id)
@@ -51,8 +54,9 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   const cycleProgress =
     activeCycle &&
     formatActiveCycle({
-      isTypeIssue: computedEstimateType === "issues",
+      isTypeIssue: cycleEstimateType === "issues",
       isBurnDown: computedPlotType === "burndown",
+      estimateType: projectEstimateType,
       cycle: {
         ...storeCycle,
         ...activeCycle,
@@ -89,7 +93,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
             <div className="h-[430px]">
               <Selection
                 plotType={computedPlotType}
-                estimateType={computedEstimateType}
+                estimateType={cycleEstimateType}
                 projectId={projectId}
                 handlePlotChange={handlePlotChange}
                 handleEstimateChange={handleEstimateChange}
@@ -101,7 +105,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
                 data={cycleProgress as TProgressChartData}
                 cycle={activeCycle}
                 isFullWidth={containerWidth < 890}
-                estimateType={computedEstimateType}
+                estimateType={projectEstimateType}
                 plotType={computedPlotType}
                 showAllTicks={containerWidth > 890}
                 showToday
@@ -116,7 +120,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
         <Summary
           setAreaToHighlight={setAreaToHighlight}
           data={cycleProgress}
-          estimateType={computedEstimateType}
+          estimateType={projectEstimateType}
           plotType={computedPlotType}
           handleFiltersUpdate={handleFiltersUpdate}
           parentWidth={containerWidth}
