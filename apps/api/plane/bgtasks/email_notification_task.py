@@ -291,7 +291,7 @@ def send_email_notification(
                 "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",
                 "workspace": str(issue.project.workspace.slug),
                 "project": str(issue.project.name),
-                "user_preference": f"{base_api}/profile/preferences/email",
+                "user_preference": f"{base_api}/{str(issue.project.workspace.slug)}/settings/account/notifications/",
                 "comments": comments,
                 "entity_type": entity_type,
             }
