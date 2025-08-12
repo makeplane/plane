@@ -7,8 +7,8 @@ import { cn } from "@plane/utils";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
+import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // hooks
 import { useCycle, useProject } from "@/hooks/store";

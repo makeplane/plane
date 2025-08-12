@@ -29,7 +29,7 @@ import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { SwitcherLabel } from "@/components/common/switcher-label";
-import { CycleQuickActions } from "@/components/cycles";
+import { CycleQuickActions } from "@/components/cycles/quick-actions";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,

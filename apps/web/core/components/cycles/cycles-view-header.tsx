@@ -9,11 +9,11 @@ import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
-import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-// helpers
 // hooks
 import { useCycleFilter } from "@/hooks/store";
+// local imports
+import { CycleFiltersSelection } from "./dropdowns";
 
 type Props = {
   projectId: string;

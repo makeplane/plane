@@ -8,9 +8,6 @@ import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { CycleForm } from "@/components/cycles";
-// constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle, useProject } from "@/hooks/store";
@@ -19,6 +16,8 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { CycleService } from "@/services/cycle.service";
+// local imports
+import { CycleForm } from "./form";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -193,7 +192,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       <CycleForm
         handleFormSubmit={handleFormSubmit}
         handleClose={handleClose}
-        status={data ? true : false}
+        status={!!data}
         projectId={activeProject ?? ""}
         setActiveProject={setActiveProject}
         data={data}

@@ -5,15 +5,16 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
-// components
 import { calculateTotalFilters } from "@plane/utils";
-import { ArchivedCyclesView, CycleAppliedFiltersList } from "@/components/cycles";
+// components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CycleModuleListLayout } from "@/components/ui";
-// helpers
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { CycleAppliedFiltersList } from "../applied-filters";
+import { ArchivedCyclesView } from "./view";
 
 export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   // router

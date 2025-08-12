@@ -1,18 +1,16 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
-// hooks
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
+// hooks
 import { useUserPermissions } from "@/hooks/store";
-
-// components
-// helpers
-// types
-// constants
+// local imports
+import { AppliedDateFilters } from "./date";
+import { AppliedStatusFilters } from "./status";
 
 type Props = {
   appliedFilters: TCycleFilters;

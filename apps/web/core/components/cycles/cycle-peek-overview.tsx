@@ -6,7 +6,7 @@ import { generateQueryParams } from "@plane/utils";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
-import { CycleDetailsSidebar } from "./";
+import { CycleDetailsSidebar } from "./analytics-sidebar";
 
 type Props = {
   projectId?: string;

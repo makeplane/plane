@@ -7,7 +7,8 @@ import useSWR from "swr";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
+import { TransferIssues } from "@/components/cycles/transfer-issues";
+import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
 import { useCycle, useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";

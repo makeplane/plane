@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 // components
 import { useTranslation } from "@plane/i18n";
-import { CyclesList } from "@/components/cycles";
+import { CyclesList } from "@/components/cycles/list";
 // ui
 import { CycleModuleListLayout } from "@/components/ui";
 // hooks
