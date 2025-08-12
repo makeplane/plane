@@ -19,7 +19,7 @@ type Props = {
   };
 };
 
-const IssuesLayout = observer((props: Props) => {
+const ViewsLayout = observer((props: Props) => {
   const { children, params } = props;
   // params
   const { anchor } = params;
@@ -62,4 +62,4 @@ const IssuesLayout = observer((props: Props) => {
   );
 });
 
-export default IssuesLayout;
+export default ViewsLayout;
