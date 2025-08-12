@@ -191,7 +191,7 @@ def validate_html_content(html_content):
     try:
         # Count opening and closing tags for basic structure validation
         opening_tags = re.findall(r"<(\w+)[^>]*>", html_content)
-        closing_tags = re.findall(r"</(\w+)[^>]*>", html_content)
+        closing_tags = re.findall(r"</([\w-]+)>", html_content)
 
         # Filter out self-closing tags from opening tags
         opening_tags_filtered = [
