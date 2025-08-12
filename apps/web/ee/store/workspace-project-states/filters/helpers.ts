@@ -42,13 +42,15 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
    * @param { EProjectScope } scope
    * @returns { TProject[] }
    */
-  filterProjectsByScope = (projects: TProject[], scope: EProjectScope): TProject[] =>
+  filterProjectsByScope = (projects: TProject[], scope: EProjectScope, scopeProjectIds?: string[]): TProject[] =>
     projects.filter((project) => {
       switch (scope) {
         case EProjectScope.ALL_PROJECTS:
           return true;
         case EProjectScope.MY_PROJECTS:
           return !!project.member_role;
+        case EProjectScope.TEAMSPACE_PROJECTS:
+          return scopeProjectIds?.includes(project.id);
         default:
           return true;
       }

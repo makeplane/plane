@@ -17,15 +17,20 @@ export const TeamspaceProjectsWithGroupingRoot = observer((props: TTeamspaceProj
   const { workspaceSlug } = props;
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { updateScope, updateAttributes, updateLayout } = useProjectFilter();
+  const { updateScope, updateAttributes, updateLayout, filters } = useProjectFilter();
   // derived values
   const currentWorkspaceId = currentWorkspace?.id;
 
   useEffect(() => {
+    const currentLayout = filters?.layout ?? EProjectLayouts.TABLE;
+    const currentScope = filters?.scope ?? EProjectScope.ALL_PROJECTS;
     updateLayout(workspaceSlug.toString(), EProjectLayouts.TABLE, false, false);
+    updateScope(workspaceSlug.toString(), EProjectScope.TEAMSPACE_PROJECTS, false);
     return () => {
-      updateScope(workspaceSlug.toString(), EProjectScope.MY_PROJECTS, false);
+      updateScope(workspaceSlug.toString(), currentScope, false);
+      updateLayout(workspaceSlug.toString(), currentLayout, false, false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateScope, updateAttributes, updateLayout, workspaceSlug]);
 
   if (!currentWorkspaceId) return null;

@@ -46,7 +46,7 @@ export const TeamspaceSidebarListItem = observer((props: Props) => {
           onClick={() => handleLinkClick()}
         >
           <div
-            className="flex items-center gap-1.5 py-[1px] truncate"
+            className="flex flex-1 items-center gap-1.5 py-[1px] truncate"
             onClick={() => {
               router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`);
             }}

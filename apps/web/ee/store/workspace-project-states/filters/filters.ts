@@ -133,6 +133,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const defaultCounts = {
       [EProjectScope.ALL_PROJECTS]: 0,
       [EProjectScope.MY_PROJECTS]: 0,
+      [EProjectScope.TEAMSPACE_PROJECTS]: 0,
     };
     const workspaceDetails = this.store.workspaceRoot.currentWorkspace;
     const projectStore = this.store.projectRoot.project;
@@ -142,9 +143,19 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id && !p.archived_at);
     if (projects.length === 0) return defaultCounts;
 
+    // get teamspace details
+    const teamStore = this.store.teamspaceRoot.teamspaces;
+    const currentTeamSpaceId = this.store.router.teamspaceId;
+    const teamDetails = currentTeamSpaceId ? teamStore.getTeamspaceById(currentTeamSpaceId) : undefined;
+
     return {
       [EProjectScope.ALL_PROJECTS]: this.filterProjectsByScope(projects, EProjectScope.ALL_PROJECTS).length,
       [EProjectScope.MY_PROJECTS]: this.filterProjectsByScope(projects, EProjectScope.MY_PROJECTS).length,
+      [EProjectScope.TEAMSPACE_PROJECTS]: this.filterProjectsByScope(
+        projects,
+        EProjectScope.TEAMSPACE_PROJECTS,
+        teamDetails?.project_ids ?? []
+      ).length,
     };
   }
 
@@ -172,9 +183,17 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     const projectMap = projectStore.projectMap;
     this.loading = projectStore.loader === "init-loader";
     if (isEmpty(projectMap) || !this.filters || !workspaceDetails) return undefined;
+
+    // get teamspace details
+    const teamStore = this.store.teamspaceRoot.teamspaces;
+    const currentTeamSpaceId = this.store.router.teamspaceId;
+    const teamDetails = currentTeamSpaceId ? teamStore.getTeamspaceById(currentTeamSpaceId) : undefined;
+
     let projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id);
     // filter projects based on scope
-    projects = this.filters.scope ? this.filterProjectsByScope(projects, this.filters.scope) : projects;
+    projects = this.filters.scope
+      ? this.filterProjectsByScope(projects, this.filters.scope, teamDetails?.project_ids ?? [])
+      : projects;
     // filter projects based on attributes
     projects = this.filters.attributes ? this.filterProjectsByAttributes(projects, this.filters.attributes) : projects;
     // filter projects based on the display filters order_by and sort_order
@@ -187,6 +206,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
       : projects;
     // filter projects based on search query
     projects = this.filterProjectsBySearchQuery(projects, this.searchQuery);
+
     this.loading = false;
     return projects;
   }
