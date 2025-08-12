@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Input } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { GlobalDefaultViewListItem, GlobalViewsList } from "@/components/workspace";
 // constants
 // hooks

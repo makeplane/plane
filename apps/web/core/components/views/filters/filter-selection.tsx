@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { EViewAccess, TViewFilterProps, TViewFilters } from "@plane/types";
 // components
-import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
+import { FilterCreatedDate } from "@/components/common/filters/created-at";
+import { FilterCreatedBy } from "@/components/common/filters/created-by";
 import { FilterOption } from "@/components/issues";
 // constants
 // hooks

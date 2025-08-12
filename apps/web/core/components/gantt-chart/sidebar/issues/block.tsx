@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import type { IGanttBlock } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MultipleSelectEntityAction } from "@/components/core";
+import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueGanttSidebarBlock } from "@/components/issues";
 // helpers
 // hooks

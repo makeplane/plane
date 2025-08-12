@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";

@@ -6,11 +6,11 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ProfileActivityListPage } from "@/components/profile";
 // hooks
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const PER_PAGE = 100;

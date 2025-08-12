@@ -15,7 +15,7 @@ import {
   CyclesListItem,
 } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -6,7 +6,7 @@ import useSWR from "swr";
 // ui
 import { ArchiveIcon, Breadcrumbs, LayersIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { IssueDetailQuickActions } from "@/components/issues";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";

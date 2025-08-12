@@ -7,7 +7,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/type
 // components
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MultipleSelectGroupAction } from "@/components/core";
+import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
 // helpers
 // hooks

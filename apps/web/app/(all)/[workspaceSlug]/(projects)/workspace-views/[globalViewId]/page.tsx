@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { AllIssueLayoutRoot, GlobalViewsAppliedFiltersRoot } from "@/components/issues";
 // constants
 // hooks

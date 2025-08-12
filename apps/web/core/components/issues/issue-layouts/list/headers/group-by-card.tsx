@@ -11,7 +11,8 @@ import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";

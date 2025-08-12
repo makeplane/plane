@@ -6,10 +6,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const StatesSettingsPage = observer(() => {

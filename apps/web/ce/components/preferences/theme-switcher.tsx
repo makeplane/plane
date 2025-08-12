@@ -10,7 +10,8 @@ import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 // components
-import { CustomThemeSelector, ThemeSwitch } from "@/components/core";
+import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
+import { ThemeSwitch } from "@/components/core/theme/theme-switch";
 // helpers
 import { PreferencesSection } from "@/components/preferences/section";
 // hooks

@@ -3,7 +3,7 @@
 import useSWR from "swr";
 // components
 import { useTranslation } from "@plane/i18n";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 import { EmailNotificationForm } from "@/components/profile/notification";
 import { EmailSettingsLoader } from "@/components/ui";

@@ -11,7 +11,7 @@ import { EFileAssetType, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 // hooks

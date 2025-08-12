@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { NotificationsRoot } from "@/components/workspace-notifications";
 // hooks
 import { useWorkspace } from "@/hooks/store";

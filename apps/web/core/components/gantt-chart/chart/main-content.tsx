@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
 import { cn, getDate } from "@plane/utils";
 // components
-import { MultipleSelectGroup } from "@/components/core";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { GanttChartSidebar, MonthChartView, QuarterChartView, WeekChartView } from "@/components/gantt-chart";
 // helpers
 // hooks

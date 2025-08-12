@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { EProjectFeatureKey } from "@plane/constants";
 import { BreadcrumbNavigationDropdown, Breadcrumbs, ISvgIcons } from "@plane/ui";
 // components
-import { SwitcherLabel } from "@/components/common";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 import { TNavigationItem } from "@/components/workspace";
 // hooks
 import { useProject } from "@/hooks/store";

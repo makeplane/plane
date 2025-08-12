@@ -6,7 +6,7 @@ import { Briefcase } from "lucide-react";
 import { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Logo } from "@plane/ui";
 // components
-import { SwitcherLabel } from "@/components/common";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

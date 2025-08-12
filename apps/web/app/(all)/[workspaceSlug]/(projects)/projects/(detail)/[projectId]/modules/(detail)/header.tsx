@@ -26,7 +26,7 @@ import { Breadcrumbs, Button, DiceIcon, Header, BreadcrumbNavigationSearchDropdo
 import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
-import { SwitcherLabel } from "@/components/common";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,

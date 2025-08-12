@@ -5,13 +5,12 @@ import { observer } from "mobx-react";
 import { OctagonAlert } from "lucide-react";
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { Invitations, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
-// local components
-import { LogoSpinner } from "../common";
 
 export enum ECreateOrJoinWorkspaceViews {
   WORKSPACE_CREATE = "WORKSPACE_CREATE",

@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject, useUser } from "@/hooks/store";
 // plane web components

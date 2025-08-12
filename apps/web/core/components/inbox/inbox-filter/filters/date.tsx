@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { TInboxIssueFilterDateKeys } from "@plane/types";
 // components
-import { DateFilterModal } from "@/components/core";
+import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 // hooks

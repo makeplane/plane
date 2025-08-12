@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { Spinner } from "@plane/ui";
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import {
   ListLayout,
   CalendarLayout,

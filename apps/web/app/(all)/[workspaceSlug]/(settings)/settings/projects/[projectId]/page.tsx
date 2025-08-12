@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import {
   ArchiveRestoreProjectModal,
   ArchiveProjectSelection,
@@ -16,7 +16,7 @@ import {
   ProjectDetailsFormLoader,
 } from "@/components/project";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject, useUserPermissions } from "@/hooks/store";
 const ProjectSettingsPage = observer(() => {
   // states

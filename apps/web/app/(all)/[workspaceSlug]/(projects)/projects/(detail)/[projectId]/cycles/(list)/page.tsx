@@ -12,7 +12,8 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/components/cycles";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CycleModuleListLayout } from "@/components/ui";
 // helpers
 // hooks

@@ -11,8 +11,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useCycle, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

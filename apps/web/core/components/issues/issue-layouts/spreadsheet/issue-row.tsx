@@ -13,7 +13,7 @@ import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types
 import { ControlLink, Row, Tooltip } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
-import { MultipleSelectEntityAction } from "@/components/core";
+import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helper
 // hooks

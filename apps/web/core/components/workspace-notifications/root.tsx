@@ -8,8 +8,8 @@ import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constan
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxContentRoot } from "@/components/inbox";
 // hooks
 import { useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";

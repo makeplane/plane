@@ -8,7 +8,7 @@ import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/types";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
 import { InboxSidebarLoader } from "@/components/ui";
 // helpers

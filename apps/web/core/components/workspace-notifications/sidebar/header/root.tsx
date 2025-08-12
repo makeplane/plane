@@ -6,8 +6,8 @@ import { Inbox } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { SidebarHamburgerToggle } from "@/components/core";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme } from "@/hooks/store";

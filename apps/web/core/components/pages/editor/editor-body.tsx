@@ -15,7 +15,7 @@ import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryPa
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 // hooks

@@ -12,7 +12,7 @@ import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@
 import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
-import { MultipleSelectEntityAction } from "@/components/core";
+import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 // hooks

@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileForm } from "@/components/profile";
 // hooks
 import { useUser } from "@/hooks/store";

@@ -7,7 +7,7 @@ import { EProductSubscriptionEnum, TBillingFrequency, TProductBillingFrequency }
 import { getSubscriptionTextColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 // local imports
 import { PlansComparison } from "./comparison/root";
 

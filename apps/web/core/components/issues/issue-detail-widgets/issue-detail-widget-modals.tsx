@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

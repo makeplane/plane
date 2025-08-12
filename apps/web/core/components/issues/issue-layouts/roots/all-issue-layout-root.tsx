@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
 import { useGlobalView, useIssues } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

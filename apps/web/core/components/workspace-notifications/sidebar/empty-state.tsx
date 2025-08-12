@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { ENotificationTab } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // constants
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

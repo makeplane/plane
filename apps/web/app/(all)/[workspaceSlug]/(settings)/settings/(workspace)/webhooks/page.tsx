@@ -9,9 +9,10 @@ import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELE
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks

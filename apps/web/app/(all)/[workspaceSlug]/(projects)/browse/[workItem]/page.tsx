@@ -10,8 +10,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";

@@ -7,7 +7,7 @@ import { EInboxIssueCurrentTab } from "@plane/types";
 import { Intake } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // helpers

@@ -4,9 +4,11 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
-import { CountChip } from "@/components/common";
+// components
+import { CountChip } from "@/components/common/count-chip";
 import { MembersSettingsLoader } from "@/components/ui";
 import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/components/workspace";
 // hooks

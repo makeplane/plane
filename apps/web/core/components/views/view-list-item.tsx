@@ -7,7 +7,7 @@ import { Layers } from "lucide-react";
 // types
 import { IProjectView } from "@plane/types";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 import { ViewListItemAction, ViewQuickActions } from "@/components/views";
 // hooks

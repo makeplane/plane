@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
-import { CountChip } from "@/components/common";
+import { CountChip } from "@/components/common/count-chip";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers

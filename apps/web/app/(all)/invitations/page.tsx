@@ -15,7 +15,7 @@ import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Button, TOAST_TYPE, setToast, PlaneLogo } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers

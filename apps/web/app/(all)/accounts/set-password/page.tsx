@@ -3,7 +3,7 @@
 // plane imports
 import { EAuthModes } from "@plane/constants";
 // components
-import { ResetPasswordForm } from "@/components/account";
+import { ResetPasswordForm } from "@/components/account/auth-forms/reset-password";
 import { AuthHeader } from "@/components/auth-screens/header";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";

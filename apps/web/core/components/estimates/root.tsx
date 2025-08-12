@@ -15,7 +15,8 @@ import {
 import { useProject, useProjectEstimates } from "@/hooks/store";
 // plane web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";
-import { SettingsHeading } from "../settings";
+// local imports
+import { SettingsHeading } from "../settings/heading";
 
 type TEstimateRoot = {
   workspaceSlug: string;

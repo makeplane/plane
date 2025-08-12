@@ -7,7 +7,8 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState, ComicBoxButton } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // hooks

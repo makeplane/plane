@@ -5,8 +5,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, EInboxIssueCurrentTab } from "@plane/types";
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { InboxIssueRoot } from "@/components/inbox";
 // helpers
 // hooks

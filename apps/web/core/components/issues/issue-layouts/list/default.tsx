@@ -17,7 +17,7 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 // components
-import { MultipleSelectGroup } from "@/components/core";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components

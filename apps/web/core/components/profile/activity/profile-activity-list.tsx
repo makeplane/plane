@@ -6,8 +6,8 @@ import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
-import { ActivityIcon, ActivityMessage } from "@/components/core";
-import { RichTextEditor } from "@/components/editor";
+import { ActivityIcon, ActivityMessage } from "@/components/core/activity";
+import { RichTextEditor } from "@/components/editor/rich-text";
 import { ActivitySettingsLoader } from "@/components/ui";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";

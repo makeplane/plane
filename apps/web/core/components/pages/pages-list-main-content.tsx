@@ -5,7 +5,7 @@ import { EUserPermissionsLevel, EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageLoader } from "@/components/pages";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";

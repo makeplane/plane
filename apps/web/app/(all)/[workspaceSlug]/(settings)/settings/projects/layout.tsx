@@ -4,8 +4,8 @@ import { ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // components
-import { SettingsMobileNav } from "@/components/settings";
 import { getProjectActivePath } from "@/components/settings/helper";
+import { SettingsMobileNav } from "@/components/settings/mobile";
 import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

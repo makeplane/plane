@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 

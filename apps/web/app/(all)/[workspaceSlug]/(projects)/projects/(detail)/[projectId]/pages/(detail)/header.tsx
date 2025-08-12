@@ -9,7 +9,8 @@ import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPageName } from "@plane/utils";
-import { PageAccessIcon, SwitcherIcon, SwitcherLabel } from "@/components/common";
+import { PageAccessIcon } from "@/components/common/page-access-icon";
+import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 // hooks

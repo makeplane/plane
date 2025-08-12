@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { useTranslation } from "@plane/i18n";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // constants
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

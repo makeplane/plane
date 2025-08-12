@@ -9,15 +9,15 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// components
-import { getButtonStyling } from "@plane/ui/src/button";
+import { Button, Input, TOAST_TYPE, getButtonStyling, setPromiseToast, setToast } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
-import { DeactivateAccountModal } from "@/components/account";
-import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
+// components
+import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
-// hooks
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
+// hooks
 import { useUser, useUserProfile } from "@/hooks/store";
 
 type TUserProfileForm = {

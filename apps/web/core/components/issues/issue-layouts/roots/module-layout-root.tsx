@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { Row, ERowVariant } from "@plane/ui";
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,

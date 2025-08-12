@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile";
 // helpers
 import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";

@@ -4,7 +4,7 @@ import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, ty
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store";

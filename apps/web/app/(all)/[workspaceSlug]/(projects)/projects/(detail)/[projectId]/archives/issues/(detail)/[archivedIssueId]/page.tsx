@@ -6,7 +6,7 @@ import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues";
 // constants
 // hooks

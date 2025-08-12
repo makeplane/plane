@@ -10,7 +10,7 @@ import { EUserProjectRoles, EViewAccess, TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ProjectViewsList } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // constants

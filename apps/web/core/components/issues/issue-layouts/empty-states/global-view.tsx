@@ -5,7 +5,8 @@ import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/consta
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 // components
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";

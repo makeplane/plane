@@ -19,7 +19,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
 // local components
-import { AuthFormHeader, FormContainer } from "..";
+import { FormContainer } from "./common/container";
+import { AuthFormHeader } from "./common/header";
 
 type TResetPasswordFormValues = {
   email: string;

@@ -6,7 +6,8 @@ import { useTranslation } from "@plane/i18n";
 import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
+import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store";

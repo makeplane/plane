@@ -9,7 +9,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { CountChip } from "@/components/common/count-chip";
 import { CreateUpdateIssueModal } from "@/components/issues";
 
 // hooks

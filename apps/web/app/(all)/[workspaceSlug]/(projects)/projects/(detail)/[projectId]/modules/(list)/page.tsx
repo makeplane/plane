@@ -10,7 +10,7 @@ import { EUserProjectRoles, TModuleFilters } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // helpers
 // hooks

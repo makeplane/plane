@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import {
   ProfileActivity,
   ProfilePriorityDistribution,

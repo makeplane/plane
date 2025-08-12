@@ -12,8 +12,8 @@ import { EFileAssetType, TIssue } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
-import { GptAssistantPopover } from "@/components/core";
-import { RichTextEditor } from "@/components/editor";
+import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
 import { useEditorAsset, useInstance, useWorkspace } from "@/hooks/store";

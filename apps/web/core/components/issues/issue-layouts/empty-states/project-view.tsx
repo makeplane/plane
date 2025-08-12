@@ -3,7 +3,7 @@ import { PlusIcon } from "lucide-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";

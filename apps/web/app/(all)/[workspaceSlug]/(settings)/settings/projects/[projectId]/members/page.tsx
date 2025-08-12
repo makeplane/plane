@@ -7,10 +7,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";

@@ -4,7 +4,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, ContrastIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 

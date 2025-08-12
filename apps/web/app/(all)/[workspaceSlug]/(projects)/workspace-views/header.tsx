@@ -23,7 +23,8 @@ import {
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
 import {
   CreateUpdateWorkspaceViewModal,

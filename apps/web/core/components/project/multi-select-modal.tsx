@@ -8,8 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { Logo } from "@/components/common/logo";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store";

@@ -5,9 +5,9 @@ import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration";
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";

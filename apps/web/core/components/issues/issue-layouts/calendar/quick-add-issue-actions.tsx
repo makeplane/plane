@@ -13,7 +13,7 @@ import { ISearchIssueResponse, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu, setPromiseToast } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { ExistingIssuesListModal } from "@/components/core";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { QuickAddIssueRoot } from "@/components/issues";
 // helpers
 // hooks

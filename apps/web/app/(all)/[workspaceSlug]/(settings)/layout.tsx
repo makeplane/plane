@@ -1,8 +1,8 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { ContentWrapper } from "@/components/core";
-import { SettingsHeader } from "@/components/settings";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { SettingsHeader } from "@/components/settings/header";
 import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 

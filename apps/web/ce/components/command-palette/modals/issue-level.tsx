@@ -4,7 +4,7 @@ import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 // components
-import { BulkDeleteIssuesModal } from "@/components/core";
+import { BulkDeleteIssuesModal } from "@/components/core/modals/bulk-delete-issues-modal";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";

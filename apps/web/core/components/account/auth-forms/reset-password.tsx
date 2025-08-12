@@ -11,7 +11,6 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-import { AuthBanner, FormContainer, AuthFormHeader } from "@/components/account";
 // helpers
 import {
   EAuthenticationErrorCodes,
@@ -19,7 +18,12 @@ import {
   TAuthErrorInfo,
   authErrorHandler,
 } from "@/helpers/authentication.helper";
+// services
 import { AuthService } from "@/services/auth.service";
+// local imports
+import { AuthBanner } from "./auth-banner";
+import { FormContainer } from "./common/container";
+import { AuthFormHeader } from "./common/header";
 
 type TResetPasswordFormValues = {
   email: string;

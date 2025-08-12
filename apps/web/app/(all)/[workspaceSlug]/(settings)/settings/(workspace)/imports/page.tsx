@@ -4,10 +4,11 @@ import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 
 const ImportsPage = observer(() => {

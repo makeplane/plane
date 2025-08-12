@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectLayoutRoot } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";

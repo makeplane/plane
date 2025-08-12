@@ -26,7 +26,7 @@ import {
   getTabIndex,
 } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // helpers
 // hooks
@@ -171,7 +171,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   </>
                 </span>
               }
-              onChange={(val: any) => {
+              onChange={(val) => {
                 let logoValue = {};
 
                 if (val?.type === "emoji")

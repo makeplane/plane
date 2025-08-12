@@ -19,7 +19,7 @@ import {
 } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember, useWorkspace } from "@/hooks/store";
 

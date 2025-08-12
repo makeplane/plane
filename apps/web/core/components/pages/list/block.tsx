@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
 // components
 import { getPageName } from "@plane/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 import { BlockItemAction } from "@/components/pages/list";
 // helpers

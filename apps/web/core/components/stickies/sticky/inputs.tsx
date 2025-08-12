@@ -10,7 +10,7 @@ import { cn, isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // components
-import { StickyEditor } from "../../editor";
+import { StickyEditor } from "../../editor/sticky-editor";
 
 type TProps = {
   stickyData: Partial<TSticky> | undefined;

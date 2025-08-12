@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { useUserPermissions } from "@/hooks/store";

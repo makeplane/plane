@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectViewLayoutRoot } from "@/components/issues";
 // hooks
 import { useProject, useProjectView } from "@/hooks/store";

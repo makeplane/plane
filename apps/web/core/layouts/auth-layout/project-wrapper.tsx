@@ -9,8 +9,9 @@ import { useTranslation } from "@plane/i18n";
 import { EProjectNetwork } from "@plane/types";
 // components
 import { JoinProject } from "@/components/auth-screens";
-import { LogoSpinner } from "@/components/common";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks

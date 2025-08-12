@@ -16,7 +16,7 @@ import {
 import { Avatar, StateGroupIcon } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // helpers
 // hooks
 import { useProjectState } from "@/hooks/store";

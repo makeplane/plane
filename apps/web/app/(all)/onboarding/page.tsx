@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { OnboardingRoot } from "@/components/onboarding";
 // constants
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";

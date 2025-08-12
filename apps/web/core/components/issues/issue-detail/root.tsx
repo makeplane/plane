@@ -9,7 +9,7 @@ import { EIssuesStoreType, TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
 // constants
 // hooks

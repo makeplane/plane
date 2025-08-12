@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
 import { CycleModuleListLayout } from "@/components/ui";
 // helpers

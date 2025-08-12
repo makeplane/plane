@@ -9,9 +9,9 @@ import { useTranslation } from "@plane/i18n";
 // component
 import { APITokenService } from "@plane/services";
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { SettingsHeading } from "@/components/settings";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SettingsHeading } from "@/components/settings/heading";
 import { APITokenSettingsLoader } from "@/components/ui";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks

@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 // component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { BillingRoot } from "@/plane-web/components/workspace";

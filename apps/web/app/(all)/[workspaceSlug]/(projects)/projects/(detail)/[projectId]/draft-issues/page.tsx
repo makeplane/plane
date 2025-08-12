@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { X, PenSquare } from "lucide-react";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DraftIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/draft-issue-layout-root";
 // hooks
 import { useProject } from "@/hooks/store";

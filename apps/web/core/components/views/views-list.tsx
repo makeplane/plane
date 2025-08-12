@@ -6,7 +6,9 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
 // hooks

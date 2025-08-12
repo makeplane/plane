@@ -13,9 +13,9 @@ import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { useIssueDetail, useIssues } from "@/hooks/store";

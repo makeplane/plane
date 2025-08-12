@@ -13,7 +13,7 @@ import {
 } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
-import { SectionEmptyState } from "@/components/empty-state";
+import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store";
 

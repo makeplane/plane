@@ -4,7 +4,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";

@@ -10,8 +10,10 @@ import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
-import { LogoSpinner } from "@/components/common";
-import { ThemeSwitch, PageHead, CustomThemeSelector } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
+import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
+import { ThemeSwitch } from "@/components/core/theme/theme-switch";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 // hooks

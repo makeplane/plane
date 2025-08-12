@@ -9,8 +9,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web constants

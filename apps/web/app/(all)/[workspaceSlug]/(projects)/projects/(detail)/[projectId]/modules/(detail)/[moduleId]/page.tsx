@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { cn } from "@plane/utils";
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 import { ModuleLayoutRoot } from "@/components/issues";
 import { ModuleAnalyticsSidebar } from "@/components/modules";
 // helpers

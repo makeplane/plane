@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, getButtonStyling, Row } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ProjectFeaturesList } from "@/components/project/settings";
 // hooks
 import { useProject } from "@/hooks/store";

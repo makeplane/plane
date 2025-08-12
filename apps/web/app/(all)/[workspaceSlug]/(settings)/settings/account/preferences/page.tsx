@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
 import { PreferencesList } from "@/components/preferences/list";
 import { ProfileSettingContentHeader } from "@/components/profile";
 // hooks
 import { LanguageTimezone } from "@/components/profile/preferences/language-timezone";
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useUserProfile } from "@/hooks/store";
 
 const ProfileAppearancePage = observer(() => {

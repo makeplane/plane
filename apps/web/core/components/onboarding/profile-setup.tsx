@@ -17,7 +17,7 @@ import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 import { Button, Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
-import { UserImageUploadModal } from "@/components/core";
+import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // constants
 // helpers
 // hooks

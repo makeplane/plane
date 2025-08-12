@@ -31,7 +31,7 @@ import {
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

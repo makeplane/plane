@@ -10,7 +10,7 @@ import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";

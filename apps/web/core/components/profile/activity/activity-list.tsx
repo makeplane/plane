@@ -7,9 +7,9 @@ import { IUserActivityResponse } from "@plane/types";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 // components
-import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/activity";
 // editor
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers

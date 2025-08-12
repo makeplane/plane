@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { EIssuesStoreType } from "@plane/types";
 // mobx store
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
 // ui
 import { useIssues } from "@/hooks/store";

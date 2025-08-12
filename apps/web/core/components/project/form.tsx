@@ -21,8 +21,8 @@ import {
 } from "@plane/ui";
 import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { ImagePickerPopover } from "@/components/core";
+import { Logo } from "@/components/common/logo";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 import { ProjectNetworkIcon } from "@/components/project";
 // helpers

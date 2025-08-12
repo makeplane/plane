@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { Loader, Card } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
-import { ActivityMessage, IssueLink } from "@/components/core";
+import { ActivityMessage, IssueLink } from "@/components/core/activity";
 import { ProfileEmptyState } from "@/components/ui";
 // constants
 import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";

@@ -5,8 +5,8 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common";
-import { MultipleSelectGroup } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";
