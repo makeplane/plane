@@ -1,7 +1,3 @@
-# Python imports
-import uuid
-from datetime import datetime
-
 # Django imports
 from django.core.exceptions import ValidationError
 

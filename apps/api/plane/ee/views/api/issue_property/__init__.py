@@ -3,4 +3,4 @@ from .option import (
     IssuePropertyOptionListCreateAPIEndpoint,
     IssuePropertyOptionDetailAPIEndpoint,
 )
-from .value import IssuePropertyValueAPIEndpoint
+from .value import IssuePropertyValueAPIEndpoint, IssuePropertyValueListAPIEndpoint

@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
@@ -8,13 +9,14 @@ from plane.db.models import (
     User,
     Workspace,
     FileAsset,
-    Project,
     WorkspaceMember,
-    ProjectPage,
     ProjectMember,
+    ProjectPage,
     Page,
     DeployBoard,
 )
+from plane.app.permissions import ROLE
+
 from plane.db.models.api import APIToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -61,19 +63,12 @@ def workspace(db, create_user):
     workspace = Workspace.objects.create(
         name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
     )
-    return workspace
 
-
-@pytest.fixture
-def project(db, workspace, create_user):
-    """Create and return a project instance for OAuth testing"""
-    from plane.tests.factories import ProjectFactory
-
-    return ProjectFactory(
-        workspace=workspace,
-        created_by=create_user,
-        updated_by=create_user,
+    WorkspaceMember.objects.create(
+        workspace=workspace, member=create_user, role=ROLE.ADMIN.value
     )
+
+    return workspace
 
 
 @pytest.fixture
@@ -244,12 +239,12 @@ def epic(db, workspace, project, create_user):
     from plane.db.models import State
 
     # Create an epic issue type ignore duplicates
-    epic_issue_type = IssueTypeFactory(
+    _ = IssueTypeFactory(
         workspace=workspace, name="Epic", description="Epic issue type", is_epic=True
     )
 
     # Create a default state for the project
-    state = State.objects.create(
+    _ = State.objects.create(
         project=project,
         workspace=workspace,
         name="Backlog",
@@ -258,14 +253,29 @@ def epic(db, workspace, project, create_user):
         created_by=create_user,
     )
 
-    return EpicFactory(
-        workspace=workspace,
+    ProjectMember.objects.create(
         project=project,
-        created_by=create_user,
-        updated_by=create_user,
-        type=epic_issue_type,
-        state=state,
+        member=create_user,
+        role=ROLE.ADMIN.value,
     )
+
+    return project
+
+
+@pytest.fixture
+def mock_feature_flag():
+    """Fixture to mock the feature flag check"""
+
+    def mock_decorator(flag_name, default_value=False):
+        def wrapper(func):
+            return func  # Pass through the original function
+
+        return wrapper
+
+    with patch(
+        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
+    ) as mock:
+        yield mock
 
 
 @pytest.fixture

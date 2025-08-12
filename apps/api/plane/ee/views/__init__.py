@@ -5,6 +5,7 @@ from plane.ee.views.api import (
     IssuePropertyOptionListCreateAPIEndpoint,
     IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
+    IssuePropertyValueListAPIEndpoint,
 )
 
 # App imports

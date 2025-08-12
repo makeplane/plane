@@ -6,6 +6,7 @@ from plane.ee.views import (
     IssuePropertyOptionListCreateAPIEndpoint,
     IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
+    IssuePropertyValueListAPIEndpoint,
 )
 
 urlpatterns = [
@@ -44,6 +45,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/",
         IssuePropertyValueAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="external-issue-property-value",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/values/",
+        IssuePropertyValueListAPIEndpoint.as_view(http_method_names=["get"]),
+        name="external-issue-property-value-list",
     ),
     # ======================== issue property values end ========================
 ]
