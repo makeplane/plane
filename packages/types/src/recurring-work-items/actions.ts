@@ -1,6 +1,6 @@
 // local imports
-import { TRecurringWorkItem } from "./root";
 import { PartialDeep } from "../utils";
+import { TRecurringWorkItem } from "./root";
 
 export interface IRecurringWorkItemActionCallbacks {
   create: (recurringWorkItem: PartialDeep<TRecurringWorkItem>) => Promise<TRecurringWorkItem>;

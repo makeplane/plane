@@ -199,7 +199,7 @@ export const CreateUpdateRecurringWorkItem = observer((props: TCreateUpdateRecur
     if (operationToPerform === ERecurringWorkItemFormOperation.UPDATE && recurringWorkItemData.id) {
       const recurringWorkItem = getRecurringWorkItemById(recurringWorkItemData.id);
       if (recurringWorkItem) {
-        recurringWorkItem
+        await recurringWorkItem
           .update(payload)
           .then(() => {
             router.push(recurringWorkItemSettingsPagePath);

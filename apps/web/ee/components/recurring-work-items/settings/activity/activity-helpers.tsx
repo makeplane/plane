@@ -2,13 +2,28 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { ArrowRightLeft, CalendarIcon, ClockIcon, MessageSquare, Signal, Tag, Users } from "lucide-react";
 // plane imports
-import { TIssueType, TRecurringWorkItemActivity, TRecurringWorkItemActivityKeys } from "@plane/types";
-import { DiceIcon, DoubleCircleIcon, LayersIcon } from "@plane/ui";
-import { cn, joinUrlPath } from "@plane/utils";
+import {
+  ERecurringWorkItemRunLogStatus,
+  TBaseActivityVerbs,
+  TRecurringWorkItemActivity,
+  TRecurringWorkItemActivityKeys,
+  TRecurringWorkItemActivityVerbs,
+} from "@plane/types";
+import {
+  DiceIcon,
+  DoubleCircleIcon,
+  RecurringWorkItemFailureIcon,
+  RecurringWorkItemIcon,
+  RecurringWorkItemSuccessIcon,
+} from "@plane/ui";
+import { cn, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // root store
 import { store } from "@/lib/store-context";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
+import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
+import { useIssueType } from "@/plane-web/hooks/store";
 
 const commonIconClassName = "size-4 flex-shrink-0 text-custom-text-300";
 const commonTextClassName = "text-custom-text-100 font-medium";
@@ -24,29 +39,26 @@ export type TRecurringWorkItemActivityDetailsHelperMap = {
 };
 
 type TWorkItemTypeDetail = {
-  workItemType: string;
+  name: string;
+  id: string | undefined;
   className?: string;
 };
 
 const WorkItemTypeDetail: FC<TWorkItemTypeDetail> = observer((props) => {
-  const { workItemType, className = "" } = props;
-
-  let workItemTypeDetail: Partial<TIssueType> | undefined;
-
-  try {
-    workItemTypeDetail = JSON.parse(workItemType) as Partial<TIssueType> | undefined;
-  } catch {
-    workItemTypeDetail = undefined;
-  }
+  const { name, id, className = "" } = props;
+  // store hooks
+  const workItemTypeDetail = useIssueType(id);
 
   return (
     <span className={cn("inline-flex gap-1 items-center font-medium text-custom-text-100", className)}>
-      <IssueTypeLogo
-        icon_props={workItemTypeDetail?.logo_props?.icon}
-        size="xs"
-        isDefault={workItemTypeDetail?.is_default}
-      />
-      {workItemTypeDetail?.name}
+      {workItemTypeDetail?.logo_props?.in_use && (
+        <IssueTypeLogo
+          icon_props={workItemTypeDetail?.logo_props?.icon}
+          size="xs"
+          isDefault={workItemTypeDetail?.is_default}
+        />
+      )}
+      {workItemTypeDetail?.name || name}
     </span>
   );
 });
@@ -116,9 +128,78 @@ const getModuleActivityMessage = (activity: TRecurringWorkItemActivity, action: 
   );
 };
 
+const getCustomPropertyActivityDetails = (activity: TRecurringWorkItemActivity): TRecurringWorkItemActivityDetails => {
+  const propertyDetail = activity.property ? store.issueTypes.getIssuePropertyById(activity.property) : undefined;
+
+  if (!propertyDetail)
+    return {
+      icon: <RecurringWorkItemIcon className={commonIconClassName} />,
+      message: <>updated a deleted custom property</>,
+    };
+
+  const getActivityAction = (verb: TRecurringWorkItemActivityVerbs): TBaseActivityVerbs => {
+    switch (verb) {
+      case "created":
+        return "created";
+      case "added":
+        return "created";
+      case "updated":
+        return "updated";
+      case "removed":
+        return "deleted";
+      default:
+        return "updated";
+    }
+  };
+
+  return {
+    icon: propertyDetail?.logo_props?.in_use ? (
+      <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} size={14} colorClassName="text-custom-text-200" />
+    ) : (
+      <RecurringWorkItemIcon className={commonIconClassName} />
+    ),
+    message: getWorkItemCustomPropertyActivityMessage({
+      action: getActivityAction(activity.verb),
+      newValue: activity.new_value,
+      oldValue: activity.old_value,
+      propertyDetail,
+      workspaceId: activity.workspace,
+    }),
+  };
+};
+
+const getTaskExecutionActivityMessage = (activity: TRecurringWorkItemActivity) => {
+  const workspaceSlug = store.workspaceRoot.getWorkspaceById(activity.workspace)?.slug;
+  const projectIdentifier = store.projectRoot.project.getProjectById(activity.project)?.identifier;
+  const workItemSequenceId = activity.recurring_workitem_task_log?.workitem_sequence_id;
+
+  if (activity.recurring_workitem_task_log?.status === ERecurringWorkItemRunLogStatus.SUCCESS) {
+    return (
+      <>
+        successfully created a recurring work item
+        {workspaceSlug && projectIdentifier && workItemSequenceId && (
+          <>
+            {" "}
+            <a
+              href={joinUrlPath(workspaceSlug, "browse", `${projectIdentifier}-${workItemSequenceId}`)}
+              className={cn(commonTextClassName, "hover:underline")}
+            >
+              {`${projectIdentifier}-${workItemSequenceId}`}
+            </a>
+          </>
+        )}
+        .
+      </>
+    );
+  } else if (activity.recurring_workitem_task_log?.status === ERecurringWorkItemRunLogStatus.FAILED) {
+    return <>failed to create a recurring work item.</>;
+  }
+  return <>executed.</>;
+};
+
 export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItemActivityDetailsHelperMap> = {
   recurring_workitem_created: () => ({
-    icon: <LayersIcon className={commonIconClassName} />,
+    icon: <RecurringWorkItemIcon className={commonIconClassName} />,
     message: <>created the recurring work item.</>,
   }),
   name_updated: (activity) => ({
@@ -175,8 +256,9 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
       <>
         {activity.new_value && activity.old_value ? (
           <>
-            changed work item type to <WorkItemTypeDetail workItemType={activity.new_value} className="px-1" />
-            from <WorkItemTypeDetail workItemType={activity.old_value} className="pl-1" />
+            changed work item type to{" "}
+            <WorkItemTypeDetail name={activity.new_value} id={activity.new_identifier} className="px-1" />
+            from <WorkItemTypeDetail name={activity.old_value} id={activity.old_identifier} className="pl-1" />
           </>
         ) : (
           <>updated the work item type</>
@@ -184,10 +266,12 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
       </>
     ),
   }),
+  custom_property_created: (activity) => getCustomPropertyActivityDetails(activity),
+  custom_property_updated: (activity) => getCustomPropertyActivityDetails(activity),
   start_at_updated: (activity) => ({
     icon: <CalendarIcon className={commonIconClassName} />,
     message: activity.new_value ? (
-      createValueMessage("set the start date to", activity.new_value)
+      createValueMessage("set the start date to", renderFormattedDate(activity.new_value) || "")
     ) : (
       <>updated the start date</>
     ),
@@ -195,7 +279,7 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
   end_at_updated: (activity) => ({
     icon: <CalendarIcon className={commonIconClassName} />,
     message: activity.new_value ? (
-      createValueMessage("set the end date to", activity.new_value)
+      createValueMessage("set the end date to", renderFormattedDate(activity.new_value) || "")
     ) : (
       <>updated the end date</>
     ),
@@ -207,5 +291,13 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     ) : (
       <>updated the interval type</>
     ),
+  }),
+  task_execution_completed: (activity) => ({
+    icon: <RecurringWorkItemSuccessIcon className={commonIconClassName} />,
+    message: getTaskExecutionActivityMessage(activity),
+  }),
+  task_execution_failed: (activity) => ({
+    icon: <RecurringWorkItemFailureIcon className={commonIconClassName} />,
+    message: getTaskExecutionActivityMessage(activity),
   }),
 };

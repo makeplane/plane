@@ -7,7 +7,8 @@
     "upgrade_plan": "Nâng cấp gói",
     "plane_pro": "Plane Pro",
     "business": "Doanh nghiệp",
-    "customers": "Khách hàng"
+    "customers": "Khách hàng",
+    "recurring_work_items": "Công việc lặp lại"
   },
   "workspace_dashboards": "Bảng điều khiển",
   "pi_chat": "Pi Chat",
@@ -2486,5 +2487,84 @@
       }
     },
     "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Công việc lặp lại",
+      "description": "Thiết lập công việc lặp lại một lần, và chúng tôi sẽ chăm sóc các lặp lại. Bạn sẽ thấy tất cả ở đây khi đến lúc.",
+      "new_recurring_work_item": "Tạo mục công việc lặp lại mới",
+      "update_recurring_work_item": "Cập nhật mục công việc lặp lại",
+      "form": {
+        "interval": {
+          "title": "Lịch trình",
+          "start_date": {
+            "validation": {
+              "required": "Ngày bắt đầu là bắt buộc"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Loại khoảng thời gian là bắt buộc"
+            }
+          }
+        },
+        "button": {
+          "create": "Tạo mục công việc lặp lại",
+          "update": "Cập nhật mục công việc lặp lại"
+        }
+      },
+      "create_button": {
+        "label": "Tạo mục công việc lặp lại",
+        "no_permission": "Liên hệ quản trị viên dự án của bạn để tạo mục công việc lặp lại"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Công việc của bạn, tự động hóa",
+        "description": "Thiết lập một lần. Chúng tôi sẽ tự động lặp lại khi đến hạn. Nâng cấp lên Doanh nghiệp để công việc lặp lại trở nên dễ dàng."
+      },
+      "no_templates": {
+        "button": "Tạo mục công việc lặp lại đầu tiên của bạn"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Đã tạo mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, hiện đã có trong không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể tạo mục công việc lặp lại lần này.",
+          "message": "Hãy thử lưu lại thông tin của bạn hoặc sao chép sang một mục công việc lặp lại mới, tốt nhất ở tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Đã thay đổi mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã được thay đổi."
+        },
+        "error": {
+          "title": "Không thể lưu thay đổi cho mục công việc lặp lại này.",
+          "message": "Hãy thử lưu lại thông tin hoặc quay lại mục công việc lặp lại này sau. Nếu vẫn gặp sự cố, hãy liên hệ với chúng tôi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Đã xóa mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã bị xóa khỏi không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể xóa mục công việc lặp lại này.",
+          "message": "Hãy thử xóa lại hoặc quay lại sau. Nếu vẫn không thể xóa, hãy liên hệ với chúng tôi."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Xóa mục công việc lặp lại",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn xóa mục công việc lặp lại-",
+        "suffix": "? Tất cả dữ liệu liên quan đến mục công việc lặp lại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    }
   }
 }

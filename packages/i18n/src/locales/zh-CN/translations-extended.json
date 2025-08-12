@@ -7,7 +7,8 @@
     "upgrade_plan": "升级计划",
     "plane_pro": "Plane Pro",
     "business": "商业版",
-    "customers": "客户"
+    "customers": "客户",
+    "recurring_work_items": "重复工作项"
   },
   "workspace_dashboards": "仪表板",
   "pi_chat": "PI 聊天",
@@ -2502,5 +2503,84 @@
       }
     },
     "upgrade_to_plan": "升级到 {plan} 以解锁 {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "重复工作项",
+      "description": "设置一次重复工作，我们将处理重复。当需要时，您将在这里看到所有内容。",
+      "new_recurring_work_item": "创建新的重复工作项",
+      "update_recurring_work_item": "更新重复工作项",
+      "form": {
+        "interval": {
+          "title": "计划",
+          "start_date": {
+            "validation": {
+              "required": "开始日期为必填项"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "间隔类型为必填项"
+            }
+          }
+        },
+        "button": {
+          "create": "创建重复工作项",
+          "update": "更新重复工作项"
+        }
+      },
+      "create_button": {
+        "label": "创建重复工作项",
+        "no_permission": "请联系您的项目管理员以创建重复工作项"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "让您的工作自动化",
+        "description": "只需设置一次，到期时我们会自动为您生成。升级到商业版，让重复工作变得轻松无忧。"
+      },
+      "no_templates": {
+        "button": "创建您的第一个重复工作项"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "重复工作项已创建",
+          "message": "{name}，该重复工作项，现已在您的工作区中可用。"
+        },
+        "error": {
+          "title": "本次无法创建该重复工作项。",
+          "message": "请重试保存您的信息，或将其复制到新的重复工作项中，建议在其他标签页操作。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "重复工作项已更改",
+          "message": "{name}，该重复工作项，已被更改。"
+        },
+        "error": {
+          "title": "无法保存该重复工作项的更改。",
+          "message": "请重试保存您的信息，或稍后再回来更改该重复工作项。如果仍有问题，请联系我们。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "重复工作项已删除",
+          "message": "{name}，该重复工作项，已从您的工作区中删除。"
+        },
+        "error": {
+          "title": "无法删除该重复工作项。",
+          "message": "请重试删除，或稍后再试。如果仍无法删除，请联系我们。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "删除重复工作项",
+      "description": {
+        "prefix": "您确定要删除重复工作项-",
+        "suffix": "吗？与该重复工作项相关的所有数据将被永久删除。此操作无法撤销。"
+      }
+    }
   }
 }

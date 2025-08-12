@@ -7,7 +7,8 @@
     "upgrade_plan": "Actualizar plan",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clientes"
+    "customers": "Clientes",
+    "recurring_work_items": "Tareas recurrentes"
   },
   "workspace_dashboards": "Tableros",
   "pi_chat": "PI Chat",
@@ -2501,5 +2502,84 @@
       }
     },
     "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Tareas recurrentes",
+      "description": "Configura tu trabajo repetible una vez y nosotros nos encargaremos de las repeticiones. Verás todo aquí cuando sea necesario.",
+      "new_recurring_work_item": "Nueva tarea recurrente",
+      "update_recurring_work_item": "Actualizar tarea recurrente",
+      "form": {
+        "interval": {
+          "title": "Programación",
+          "start_date": {
+            "validation": {
+              "required": "La fecha de inicio es obligatoria"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "El tipo de intervalo es obligatorio"
+            }
+          }
+        },
+        "button": {
+          "create": "Crear tarea recurrente",
+          "update": "Actualizar tarea recurrente"
+        }
+      },
+      "create_button": {
+        "label": "Crear tarea recurrente",
+        "no_permission": "Contacta a tu administrador de proyecto para crear tareas recurrentes"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Tu trabajo, en piloto automático",
+        "description": "Configúralo una vez. Te lo recordaremos cuando sea necesario. Mejora a Business para que el trabajo recurrente sea sencillo."
+      },
+      "no_templates": {
+        "button": "Crea tu primera tarea recurrente"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Tarea recurrente creada",
+          "message": "{name}, la tarea recurrente, ya está disponible en tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos crear la tarea recurrente esta vez.",
+          "message": "Intenta guardar tus datos nuevamente o cópialos en una nueva tarea recurrente, preferiblemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Tarea recurrente modificada",
+          "message": "{name}, la tarea recurrente, ha sido modificada."
+        },
+        "error": {
+          "title": "No pudimos guardar los cambios en esta tarea recurrente.",
+          "message": "Intenta guardar tus datos nuevamente o vuelve a esta tarea recurrente más tarde. Si el problema persiste, contáctanos."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Tarea recurrente eliminada",
+          "message": "{name}, la tarea recurrente, ha sido eliminada de tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa tarea recurrente.",
+          "message": "Intenta eliminarla de nuevo o vuelve más tarde. Si no puedes eliminarla entonces, contáctanos."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Eliminar tarea recurrente",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres eliminar la tarea recurrente-",
+        "suffix": "? Todos los datos relacionados con la tarea recurrente se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    }
   }
 }

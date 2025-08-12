@@ -7,7 +7,8 @@
     "upgrade_plan": "업그레이드 플랜",
     "plane_pro": "플레인 프로",
     "business": "비즈니스",
-    "customers": "커스터머스"
+    "customers": "커스터머스",
+    "recurring_work_items": "반복 작업 항목"
   },
   "workspace_dashboards": "대시보드",
   "pi_chat": "파이 챗",
@@ -2503,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "{tab} 잠금 해제를 위해 {plan}(으)로 업그레이드하세요"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "반복 작업 항목",
+      "description": "반복 작업을 한 번 설정하고, 반복을 관리해 드립니다. 시간이 되면 여기에 모두 표시됩니다.",
+      "new_recurring_work_item": "새 반복 작업 항목",
+      "update_recurring_work_item": "반복 작업 항목 수정",
+      "form": {
+        "interval": {
+          "title": "일정",
+          "start_date": {
+            "validation": {
+              "required": "시작일은 필수입니다"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "반복 유형은 필수입니다"
+            }
+          }
+        },
+        "button": {
+          "create": "반복 작업 항목 생성",
+          "update": "반복 작업 항목 수정"
+        }
+      },
+      "create_button": {
+        "label": "반복 작업 항목 생성",
+        "no_permission": "반복 작업 항목을 생성하려면 프로젝트 관리자에게 문의하세요"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "자동으로 처리되는 작업",
+        "description": "한 번만 설정하세요. 기한이 되면 자동으로 다시 생성됩니다. 반복 작업을 더 쉽게 하려면 비즈니스 요금제로 업그레이드하세요."
+      },
+      "no_templates": {
+        "button": "첫 반복 작업 항목 생성"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "반복 작업 항목이 생성되었습니다",
+          "message": "{name} 반복 작업 항목이 워크스페이스에서 사용할 수 있습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목을 생성하지 못했습니다.",
+          "message": "다시 한 번 저장하거나, 새 반복 작업 항목에 복사해 보세요. 가능하다면 다른 탭에서 시도해 보세요."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "반복 작업 항목이 변경되었습니다",
+          "message": "{name} 반복 작업 항목이 변경되었습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목 변경을 저장하지 못했습니다.",
+          "message": "다시 한 번 저장하거나, 나중에 이 반복 작업 항목으로 돌아와 주세요. 문제가 계속되면 문의해 주세요."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "반복 작업 항목이 삭제되었습니다",
+          "message": "{name} 반복 작업 항목이 워크스페이스에서 삭제되었습니다."
+        },
+        "error": {
+          "title": "반복 작업 항목을 삭제하지 못했습니다.",
+          "message": "다시 삭제를 시도하거나 나중에 다시 시도해 보세요. 계속 삭제할 수 없다면 문의해 주세요."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "반복 작업 항목 삭제",
+      "description": {
+        "prefix": "반복 작업 항목-",
+        "suffix": "을(를) 삭제하시겠습니까? 반복 작업 항목과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
+      }
+    }
   }
 }

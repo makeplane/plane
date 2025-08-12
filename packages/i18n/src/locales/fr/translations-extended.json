@@ -7,7 +7,8 @@
     "upgrade_plan": "Mettre à niveau",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clients"
+    "customers": "Clients",
+    "recurring_work_items": "Tâches récurrentes"
   },
   "workspace_dashboards": "Tableaux de bord",
   "pi_chat": "PI Chat",
@@ -2502,5 +2503,84 @@
       }
     },
     "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Éléments de travail récurrents",
+      "description": "Configurez votre travail récurrent une fois, et nous nous occuperons des répétitions. Vous verrez tout ici lorsque c'est le moment.",
+      "new_recurring_work_item": "Nouvel élément de travail récurrent",
+      "update_recurring_work_item": "Mettre à jour l'élément de travail récurrent",
+      "form": {
+        "interval": {
+          "title": "Planification",
+          "start_date": {
+            "validation": {
+              "required": "La date de début est requise"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Le type d'intervalle est requis"
+            }
+          }
+        },
+        "button": {
+          "create": "Créer un élément de travail récurrent",
+          "update": "Mettre à jour l'élément de travail récurrent"
+        }
+      },
+      "create_button": {
+        "label": "Créer un élément de travail récurrent",
+        "no_permission": "Contactez votre administrateur de projet pour créer des éléments de travail récurrents"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Votre travail, en pilote automatique",
+        "description": "Configurez-le une fois. Nous vous le rappellerons quand il sera dû. Passez à Business pour rendre le travail récurrent sans effort."
+      },
+      "no_templates": {
+        "button": "Créez votre premier élément de travail récurrent"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Élément de travail récurrent créé",
+          "message": "{name}, l'élément de travail récurrent, est maintenant disponible dans votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu créer cet élément de travail récurrent cette fois.",
+          "message": "Essayez d'enregistrer vos informations à nouveau ou copiez-les dans un nouvel élément de travail récurrent, de préférence dans un autre onglet."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Élément de travail récurrent modifié",
+          "message": "{name}, l'élément de travail récurrent, a été modifié."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu enregistrer les modifications de cet élément de travail récurrent.",
+          "message": "Essayez d'enregistrer vos informations à nouveau ou revenez à cet élément de travail récurrent plus tard. Si le problème persiste, contactez-nous."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Élément de travail récurrent supprimé",
+          "message": "{name}, l'élément de travail récurrent, a été supprimé de votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu supprimer cet élément de travail récurrent.",
+          "message": "Essayez de le supprimer à nouveau ou revenez plus tard. Si vous ne pouvez toujours pas le supprimer, contactez-nous."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Supprimer l'élément de travail récurrent",
+      "description": {
+        "prefix": "Êtes-vous sûr de vouloir supprimer l'élément de travail récurrent-",
+        "suffix": "? Toutes les données liées à l'élément de travail récurrent seront définitivement supprimées. Cette action ne peut pas être annulée."
+      }
+    }
   }
 }

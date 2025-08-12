@@ -7,7 +7,8 @@
     "upgrade_plan": "Apgrejduj plan",
     "plane_pro": "Plejn Pro",
     "business": "Biznes",
-    "customers": "Kastomerzy"
+    "customers": "Kastomerzy",
+    "recurring_work_items": "Elementy pracy cykliczne"
   },
   "workspace_dashboards": "Daszbord",
   "pi_chat": "Pi Czat",
@@ -2503,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "Ulepsz do {plan}, aby odblokować {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elementy pracy cykliczne",
+      "description": "Ustaw swoją cykliczną pracę raz, a my zajmiemy się powtarzaniem. Wszystko będzie tutaj, gdy będzie to potrzebne.",
+      "new_recurring_work_item": "Nowy cykliczny element pracy",
+      "update_recurring_work_item": "Zaktualizuj cykliczny element pracy",
+      "form": {
+        "interval": {
+          "title": "Harmonogram",
+          "start_date": {
+            "validation": {
+              "required": "Data rozpoczęcia jest wymagana"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ interwału jest wymagany"
+            }
+          }
+        },
+        "button": {
+          "create": "Utwórz cykliczny element pracy",
+          "update": "Zaktualizuj cykliczny element pracy"
+        }
+      },
+      "create_button": {
+        "label": "Utwórz cykliczny element pracy",
+        "no_permission": "Skontaktuj się z administratorem projektu, aby utworzyć cykliczne elementy pracy"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Twoja praca na autopilocie",
+        "description": "Ustaw raz. Przywrócimy ją, gdy nadejdzie termin. Ulepsz do Business, aby cykliczna praca była bezwysiłkowa."
+      },
+      "no_templates": {
+        "button": "Utwórz swój pierwszy cykliczny element pracy"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Cykliczny element pracy utworzony",
+          "message": "{name}, cykliczny element pracy, jest już dostępny w Twojej przestrzeni roboczej."
+        },
+        "error": {
+          "title": "Nie udało się utworzyć cyklicznego elementu pracy.",
+          "message": "Spróbuj ponownie zapisać dane lub skopiuj je do nowego cyklicznego elementu pracy, najlepiej w innej karcie."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Cykliczny element pracy zaktualizowany",
+          "message": "{name}, cykliczny element pracy, został zaktualizowany."
+        },
+        "error": {
+          "title": "Nie udało się zapisać zmian w tym cyklicznym elemencie pracy.",
+          "message": "Spróbuj ponownie zapisać dane lub wróć do tego cyklicznego elementu pracy później. Jeśli problem będzie się powtarzał, skontaktuj się z nami."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Cykliczny element pracy usunięty",
+          "message": "{name}, cykliczny element pracy, został usunięty z Twojej przestrzeni roboczej."
+        },
+        "error": {
+          "title": "Nie udało się usunąć cyklicznego elementu pracy.",
+          "message": "Spróbuj usunąć go ponownie lub wróć do niego później. Jeśli nadal nie możesz go usunąć, skontaktuj się z nami."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Usuń cykliczny element pracy",
+      "description": {
+        "prefix": "Czy na pewno chcesz usunąć cykliczny element pracy-",
+        "suffix": "? Wszystkie dane powiązane z cyklicznym elementem pracy zostaną trwale usunięte. Tej operacji nie można cofnąć."
+      }
+    }
   }
 }

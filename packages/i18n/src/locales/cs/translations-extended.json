@@ -7,7 +7,8 @@
     "upgrade_plan": "Plán upgradu",
     "plane_pro": "Plane Pro",
     "business": "Byznys",
-    "customers": "Zákazníci"
+    "customers": "Zákazníci",
+    "recurring_work_items": "Opakující se pracovní položky"
   },
   "workspace_dashboards": "Dashboards",
   "pi_chat": "Pi Chat",
@@ -687,7 +688,7 @@
         "title": "Plane Intelligence",
         "heading": "Plane Intelligence",
         "description": "Sledujte, jak se vaše práce stává chytřejší a rychlejší s AI, která je nativně propojena s vaší prací a znalostní základnou."
-      } 
+      }
     }
   },
   "bulk_operations": {
@@ -2503,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "Přejděte na plán {plan}, abyste odemkli kartu {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Opakující se pracovní položky",
+      "description": "Nastavte to jednou. Připomeneme vám to, až bude čas. Upgradujte na Business a opakující se práce bude bez námahy.",
+      "new_recurring_work_item": "Nová opakující se pracovní položka",
+      "update_recurring_work_item": "Upravit opakující se pracovní položku",
+      "form": {
+        "interval": {
+          "title": "Plán",
+          "start_date": {
+            "validation": {
+              "required": "Počáteční datum je povinné"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ intervalu je povinný"
+            }
+          }
+        },
+        "button": {
+          "create": "Vytvořit opakující se pracovní položku",
+          "update": "Upravit opakující se pracovní položku"
+        }
+      },
+      "create_button": {
+        "label": "Vytvořit opakující se pracovní položku",
+        "no_permission": "Kontaktujte správce projektu pro vytvoření opakujících se pracovních položek"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vaše práce na autopilotu",
+        "description": "Nastavte to jednou. Připomeneme vám to, až bude čas. Upgradujte na Business a opakující se práce bude bez námahy."
+      },
+      "no_templates": {
+        "button": "Vytvořte svou první opakující se pracovní položku"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Opakující se pracovní položka vytvořena",
+          "message": "{name}, opakující se pracovní položka, je nyní dostupná pro váš pracovní prostor."
+        },
+        "error": {
+          "title": "Tuto opakující se pracovní položku se tentokrát nepodařilo vytvořit.",
+          "message": "Zkuste znovu uložit své údaje nebo je zkopírujte do nové opakující se pracovní položky, ideálně v jiném panelu."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Opakující se pracovní položka změněna",
+          "message": "{name}, opakující se pracovní položka, byla změněna."
+        },
+        "error": {
+          "title": "Změny této opakující se pracovní položky se nepodařilo uložit.",
+          "message": "Zkuste znovu uložit své údaje nebo se k této opakující se pracovní položce vraťte později. Pokud potíže přetrvávají, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Opakující se pracovní položka smazána",
+          "message": "{name}, opakující se pracovní položka, byla nyní odstraněna z vašeho pracovního prostoru."
+        },
+        "error": {
+          "title": "Tuto opakující se pracovní položku se nepodařilo smazat.",
+          "message": "Zkuste ji smazat znovu nebo se k ní vraťte později. Pokud ji stále nemůžete smazat, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Smazat opakující se pracovní položku",
+      "description": {
+        "prefix": "Opravdu chcete smazat opakující se pracovní položku-",
+        "suffix": "? Všechna data související s touto opakující se pracovní položkou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
+      }
+    }
   }
 }

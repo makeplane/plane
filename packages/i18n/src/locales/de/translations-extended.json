@@ -7,7 +7,8 @@
     "upgrade_plan": "Apgräde plän",
     "plane_pro": "Pläne Pro",
     "business": "Bisness",
-    "customers": "Kastomers"
+    "customers": "Kastomers",
+    "recurring_work_items": "Wiederkehrende Arbeitsaufgaben"
   },
   "workspace_dashboards": "Däschbords",
   "pi_chat": "Pi Tschät",
@@ -2498,5 +2499,84 @@
       }
     },
     "upgrade_to_plan": "Upgrade auf {plan}, um {tab} freizuschalten"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Wiederkehrende Arbeitsaufgaben",
+      "description": "Setzen Sie Ihre wiederkehrende Arbeit einmalig und wir kümmern uns um die Wiederholungen. Sie sehen alles hier, wenn es Zeit ist.",
+      "new_recurring_work_item": "Neue wiederkehrende Arbeitsaufgabe",
+      "update_recurring_work_item": "Wiederkehrende Arbeitsaufgabe aktualisieren",
+      "form": {
+        "interval": {
+          "title": "Zeitplan",
+          "start_date": {
+            "validation": {
+              "required": "Startdatum ist erforderlich"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Intervalltyp ist erforderlich"
+            }
+          }
+        },
+        "button": {
+          "create": "Wiederkehrende Arbeitsaufgabe erstellen",
+          "update": "Wiederkehrende Arbeitsaufgabe aktualisieren"
+        }
+      },
+      "create_button": {
+        "label": "Wiederkehrende Arbeitsaufgabe erstellen",
+        "no_permission": "Wenden Sie sich an Ihren Projektadministrator, um wiederkehrende Arbeitsaufgaben zu erstellen"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Ihre Arbeit, auf Autopilot",
+        "description": "Einmal einstellen. Wir erinnern Sie daran, wenn es fällig ist. Upgrade auf Business, um wiederkehrende Arbeit mühelos zu machen."
+      },
+      "no_templates": {
+        "button": "Erstellen Sie Ihre erste wiederkehrende Arbeitsaufgabe"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe erstellt",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, ist jetzt für Ihren Arbeitsbereich verfügbar."
+        },
+        "error": {
+          "title": "Wir konnten diese wiederkehrende Arbeitsaufgabe diesmal nicht erstellen.",
+          "message": "Versuchen Sie, Ihre Angaben erneut zu speichern oder kopieren Sie sie in eine neue wiederkehrende Arbeitsaufgabe, vorzugsweise in einem anderen Tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe geändert",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, wurde geändert."
+        },
+        "error": {
+          "title": "Wir konnten die Änderungen an dieser wiederkehrenden Arbeitsaufgabe nicht speichern.",
+          "message": "Versuchen Sie, Ihre Angaben erneut zu speichern oder kommen Sie später zu dieser wiederkehrenden Arbeitsaufgabe zurück. Wenn weiterhin Probleme auftreten, kontaktieren Sie uns."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Wiederkehrende Arbeitsaufgabe gelöscht",
+          "message": "{name}, die wiederkehrende Arbeitsaufgabe, wurde aus Ihrem Arbeitsbereich gelöscht."
+        },
+        "error": {
+          "title": "Wir konnten diese wiederkehrende Arbeitsaufgabe nicht löschen.",
+          "message": "Versuchen Sie es erneut oder kommen Sie später darauf zurück. Wenn Sie sie dann immer noch nicht löschen können, kontaktieren Sie uns."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Wiederkehrende Arbeitsaufgabe löschen",
+      "description": {
+        "prefix": "Sind Sie sicher, dass Sie die wiederkehrende Arbeitsaufgabe löschen möchten-",
+        "suffix": "? Alle mit der wiederkehrenden Arbeitsaufgabe verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    }
   }
 }

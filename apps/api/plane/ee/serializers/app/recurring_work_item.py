@@ -11,6 +11,8 @@ from plane.utils.timezone_converter import convert_to_utc
 
 
 class RecurringWorkItemTaskLogSerializer(BaseSerializer):
+    workitem_sequence_id = serializers.IntegerField(source="workitem.sequence_id")
+
     class Meta:
         model = RecurringWorkitemTaskLog
         fields = "__all__"

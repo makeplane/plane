@@ -6,7 +6,8 @@
     "epics": "Epiche",
     "upgrade_plan": "Piano di aggiornamento",
     "plane_pro": "Plane Pro",
-    "business": "Business"
+    "business": "Business",
+    "recurring_work_items": "Elementi di lavoro ricorrenti"
   },
   "workspace_dashboards": "Dashboard",
   "pi_chat": "Pi Chat",
@@ -2501,5 +2502,84 @@
       }
     },
     "upgrade_to_plan": "Passa a {plan} per sbloccare {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elementi di lavoro ricorrenti",
+      "description": "Imposta il tuo lavoro ricorrente una volta e noi ci occupiamo delle ripetizioni. Vedrai tutto qui quando sarà il momento.",
+      "new_recurring_work_item": "Nuovo elemento di lavoro ricorrente",
+      "update_recurring_work_item": "Aggiorna elemento di lavoro ricorrente",
+      "form": {
+        "interval": {
+          "title": "Pianificazione",
+          "start_date": {
+            "validation": {
+              "required": "La data di inizio è obbligatoria"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Il tipo di intervallo è obbligatorio"
+            }
+          }
+        },
+        "button": {
+          "create": "Crea elemento di lavoro ricorrente",
+          "update": "Aggiorna elemento di lavoro ricorrente"
+        }
+      },
+      "create_button": {
+        "label": "Crea elemento di lavoro ricorrente",
+        "no_permission": "Contatta l'amministratore del progetto per creare elementi di lavoro ricorrenti"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Il tuo lavoro, in automatico",
+        "description": "Impostalo una volta sola. Lo riproporremo quando sarà il momento. Passa a Business per rendere il lavoro ricorrente senza sforzo."
+      },
+      "no_templates": {
+        "button": "Crea il tuo primo elemento di lavoro ricorrente"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Elemento di lavoro ricorrente creato",
+          "message": "{name}, l'elemento di lavoro ricorrente, è ora disponibile nel tuo workspace."
+        },
+        "error": {
+          "title": "Non siamo riusciti a creare questo elemento di lavoro ricorrente.",
+          "message": "Prova a salvare di nuovo i tuoi dati o copiali in un nuovo elemento di lavoro ricorrente, preferibilmente in un'altra scheda."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Elemento di lavoro ricorrente aggiornato",
+          "message": "{name}, l'elemento di lavoro ricorrente, è stato aggiornato."
+        },
+        "error": {
+          "title": "Non siamo riusciti a salvare le modifiche a questo elemento di lavoro ricorrente.",
+          "message": "Prova a salvare di nuovo i tuoi dati o torna più tardi su questo elemento di lavoro ricorrente. Se il problema persiste, contattaci."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Elemento di lavoro ricorrente eliminato",
+          "message": "{name}, l'elemento di lavoro ricorrente, è stato eliminato dal tuo workspace."
+        },
+        "error": {
+          "title": "Non siamo riusciti a eliminare questo elemento di lavoro ricorrente.",
+          "message": "Prova a eliminarlo di nuovo o torna più tardi. Se non riesci ancora a eliminarlo, contattaci."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Elimina elemento di lavoro ricorrente",
+      "description": {
+        "prefix": "Sei sicuro di voler eliminare l'elemento di lavoro ricorrente-",
+        "suffix": "? Tutti i dati relativi all'elemento di lavoro ricorrente saranno rimossi definitivamente. Questa azione non può essere annullata."
+      }
+    }
   }
 }

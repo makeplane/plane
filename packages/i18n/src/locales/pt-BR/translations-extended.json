@@ -7,7 +7,8 @@
     "upgrade_plan": "Atualizar plano",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clientes"
+    "customers": "Clientes",
+    "recurring_work_items": "Itens de trabalho recorrentes"
   },
   "workspace_dashboards": "Dashboards",
   "pi_chat": "Chat Pi",
@@ -2496,5 +2497,84 @@
       }
     },
     "upgrade_to_plan": "Faça upgrade para {plan} para desbloquear {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Itens de trabalho recorrentes",
+      "description": "Configure seu trabalho recorrente uma vez e nós cuidaremos das repetições. Você verá tudo aqui quando for necessário.",
+      "new_recurring_work_item": "Novo item de trabalho recorrente",
+      "update_recurring_work_item": "Atualizar item de trabalho recorrente",
+      "form": {
+        "interval": {
+          "title": "Agendamento",
+          "start_date": {
+            "validation": {
+              "required": "A data de início é obrigatória"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "O tipo de intervalo é obrigatório"
+            }
+          }
+        },
+        "button": {
+          "create": "Criar item de trabalho recorrente",
+          "update": "Atualizar item de trabalho recorrente"
+        }
+      },
+      "create_button": {
+        "label": "Criar item de trabalho recorrente",
+        "no_permission": "Entre em contato com o administrador do projeto para criar itens de trabalho recorrentes"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Seu trabalho no piloto automático",
+        "description": "Configure uma vez. Nós o traremos de volta quando chegar a hora. Faça upgrade para o Business para tornar o trabalho recorrente mais fácil."
+      },
+      "no_templates": {
+        "button": "Crie seu primeiro item de trabalho recorrente"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Item de trabalho recorrente criado",
+          "message": "{name}, o item de trabalho recorrente, agora está disponível no seu espaço de trabalho."
+        },
+        "error": {
+          "title": "Não foi possível criar o item de trabalho recorrente desta vez.",
+          "message": "Tente salvar seus dados novamente ou copie-os para um novo item de trabalho recorrente, de preferência em outra aba."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Item de trabalho recorrente alterado",
+          "message": "{name}, o item de trabalho recorrente, foi alterado."
+        },
+        "error": {
+          "title": "Não foi possível salvar as alterações neste item de trabalho recorrente.",
+          "message": "Tente salvar seus dados novamente ou volte a este item de trabalho recorrente mais tarde. Se o problema persistir, entre em contato conosco."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Item de trabalho recorrente excluído",
+          "message": "{name}, o item de trabalho recorrente, foi excluído do seu espaço de trabalho."
+        },
+        "error": {
+          "title": "Não foi possível excluir o item de trabalho recorrente.",
+          "message": "Tente excluir novamente ou volte mais tarde. Se não conseguir excluir, entre em contato conosco."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Excluir item de trabalho recorrente",
+      "description": {
+        "prefix": "Tem certeza que deseja excluir o item de trabalho recorrente-",
+        "suffix": "? Todos os dados relacionados ao item de trabalho recorrente serão removidos permanentemente. Esta ação não pode ser desfeita."
+      }
+    }
   }
 }

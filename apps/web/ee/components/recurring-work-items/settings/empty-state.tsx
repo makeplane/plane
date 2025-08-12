@@ -10,7 +10,7 @@ type TRecurringWorkItemsEmptyStateProps = { workspaceSlug: string; projectId: st
 
 export const RecurringWorkItemsEmptyState = observer((props: TRecurringWorkItemsEmptyStateProps) => {
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/templates/no-templates" }); // TODO: change to recurring work items
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/recurring-work-items/no-recurring-work-items" });
 
   return (
     <div className="w-full py-2">

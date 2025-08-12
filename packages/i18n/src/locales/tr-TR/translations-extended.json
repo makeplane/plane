@@ -7,7 +7,8 @@
     "upgrade_plan": "Apgreyd plen",
     "plane_pro": "Pleyn Pro",
     "business": "Biznis",
-    "customers": "Kastımırs"
+    "customers": "Kastımırs",
+    "recurring_work_items": "Yinelenen iş öğeleri"
   },
   "workspace_dashboards": "Dashbordlar",
   "pi_chat": "Pi Chat",
@@ -2561,5 +2562,84 @@
       }
     },
     "upgrade_to_plan": "{tab} sekmesini açmak için {plan} planına geçin"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Yinelenen iş öğeleri",
+      "description": "Yinelenen iş öğelerini bir kere ayarlayın, ve biz onları yöneteceğiz. Zamanı geldiğinde burada göreceksin.",
+      "new_recurring_work_item": "Yeni yinelenen iş öğesi",
+      "update_recurring_work_item": "Yinelenen iş öğesini güncelle",
+      "form": {
+        "interval": {
+          "title": "Zamanlama",
+          "start_date": {
+            "validation": {
+              "required": "Başlangıç tarihi gereklidir"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Aralık türü gereklidir"
+            }
+          }
+        },
+        "button": {
+          "create": "Yinelenen iş öğesi oluştur",
+          "update": "Yinelenen iş öğesini güncelle"
+        }
+      },
+      "create_button": {
+        "label": "Yinelenen iş öğesi oluştur",
+        "no_permission": "Yinelenen iş öğeleri oluşturmak için proje yöneticinizle iletişime geçin"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "İşiniz, otomatik pilotta",
+        "description": "Bir kez ayarlayın. Zamanı geldiğinde geri getireceğiz. Yinelenen işleri zahmetsiz hale getirmek için Business'a yükseltin."
+      },
+      "no_templates": {
+        "button": "İlk yinelenen iş öğenizi oluşturun"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Yinelenen iş öğesi oluşturuldu",
+          "message": "{name} adlı yinelenen iş öğesi artık çalışma alanınızda kullanılabilir."
+        },
+        "error": {
+          "title": "Bu sefer yinelenen iş öğesini oluşturamadık.",
+          "message": "Bilgilerinizi tekrar kaydetmeyi deneyin veya bunları yeni bir yinelenen iş öğesine, tercihen başka bir sekmede, kopyalayın."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Yinelenen iş öğesi değiştirildi",
+          "message": "{name} adlı yinelenen iş öğesi değiştirildi."
+        },
+        "error": {
+          "title": "Bu yinelenen iş öğesindeki değişiklikleri kaydedemedik.",
+          "message": "Bilgilerinizi tekrar kaydetmeyi deneyin veya bu yinelenen iş öğesine daha sonra geri dönün. Hala sorun yaşarsanız, bizimle iletişime geçin."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Yinelenen iş öğesi silindi",
+          "message": "{name} adlı yinelenen iş öğesi çalışma alanınızdan silindi."
+        },
+        "error": {
+          "title": "Bu yinelenen iş öğesini silemedik.",
+          "message": "Tekrar silmeyi deneyin veya daha sonra tekrar deneyin. Hala silemiyorsanız, bizimle iletişime geçin."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Yinelenen iş öğesini sil",
+      "description": {
+        "prefix": "Yinelenen iş öğesini silmek istediğinizden emin misiniz-",
+        "suffix": "? Bu yinelenen iş öğesiyle ilgili tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz."
+      }
+    }
   }
 }

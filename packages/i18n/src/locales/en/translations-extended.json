@@ -241,10 +241,6 @@
     "templates": {
       "heading": "Templates",
       "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
-    },
-    "recurring_work_items": {
-      "heading": "Recurring work items",
-      "description": "Create recurring work items to save time and streamline your workflow."
     }
   },
   "teamspaces": {
@@ -2700,6 +2696,8 @@
   },
   "recurring_work_items": {
     "settings": {
+      "heading": "Recurring work items",
+      "description": "Set your repeatable work once, and we’ll take care of the repeats. You’ll see everything right here when it’s time.",
       "new_recurring_work_item": "New recurring work item",
       "update_recurring_work_item": "Update recurring work item",
       "form": {
@@ -2728,9 +2726,8 @@
     },
     "empty_state": {
       "upgrade": {
-        "title": "Recurring Work Items",
-        "description": "Recurring work items are a great way to save time and streamline your workflow.",
-        "sub_description": "Get 80% of your admin time back when you use Recurring Work Items."
+        "title": "Your work, on autopilot",
+        "description": "Set it once. We’ll bring it back when it’s due. Upgrade to Business to make recurring work feel effortless."
       },
       "no_templates": {
         "button": "Create your first recurring work item"

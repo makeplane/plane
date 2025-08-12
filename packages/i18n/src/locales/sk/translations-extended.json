@@ -7,7 +7,8 @@
     "upgrade_plan": "Apgrejd plán",
     "plane_pro": "Plejn Pro",
     "business": "Biznis",
-    "customers": "Kastomers"
+    "customers": "Kastomers",
+    "recurring_work_items": "Opakujúce sa pracovné položky"
   },
   "workspace_dashboards": "Dešbordy",
   "pi_chat": "Pi Čet",
@@ -2508,6 +2509,85 @@
       "upload_complete_message": "Nahrávanie dokončené!",
       "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Confluence dát.",
       "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Opakujúce sa pracovné položky",
+      "description": "Nastavte opakujúce sa pracovné položky raz a my sa postaráme o opakovanie. Všetko sa tu zobrazí, keď bude čas.",
+      "new_recurring_work_item": "Nová opakujúca sa úloha",
+      "update_recurring_work_item": "Upraviť opakujúcu sa úlohu",
+      "form": {
+        "interval": {
+          "title": "Plán",
+          "start_date": {
+            "validation": {
+              "required": "Dátum začiatku je povinný"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ intervalu je povinný"
+            }
+          }
+        },
+        "button": {
+          "create": "Vytvoriť opakujúcu sa úlohu",
+          "update": "Upraviť opakujúcu sa úlohu"
+        }
+      },
+      "create_button": {
+        "label": "Vytvoriť opakujúcu sa úlohu",
+        "no_permission": "Kontaktujte správcu projektu pre vytvorenie opakujúcich sa úloh"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vaša práca na autopilote",
+        "description": "Nastavte raz. Pripomenieme vám to, keď bude čas. Upgradujte na Business, aby bola opakovaná práca bez námahy."
+      },
+      "no_templates": {
+        "button": "Vytvorte svoju prvú opakujúcu sa úlohu"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Opakujúca sa úloha vytvorená",
+          "message": "{name}, opakujúca sa úloha, je teraz dostupná vo vašom pracovnom priestore."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa tentokrát nepodarilo vytvoriť.",
+          "message": "Skúste znova uložiť detaily alebo ich skopírujte do novej opakujúcej sa úlohy, ideálne v inom okne."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Opakujúca sa úloha upravená",
+          "message": "{name}, opakujúca sa úloha, bola upravená."
+        },
+        "error": {
+          "title": "Zmeny tejto opakujúcej sa úlohy sa nepodarilo uložiť.",
+          "message": "Skúste znova uložiť detaily alebo sa k tejto úlohe vráťte neskôr. Ak problém pretrváva, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Opakujúca sa úloha odstránená",
+          "message": "{name}, opakujúca sa úloha, bola odstránená z vášho pracovného priestoru."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa nepodarilo odstrániť.",
+          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak sa vám ju stále nedarí odstrániť, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Odstrániť opakujúcu sa úlohu",
+      "description": {
+        "prefix": "Naozaj chcete odstrániť opakujúcu sa úlohu-",
+        "suffix": "? Všetky údaje súvisiace s touto opakujúcou sa úlohou budú natrvalo odstránené. Táto akcia je nevratná."
+      }
     }
   }
 }

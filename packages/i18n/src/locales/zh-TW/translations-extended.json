@@ -7,7 +7,8 @@
     "upgrade_plan": "升級方案",
     "plane_pro": "平面專業版",
     "business": "商業",
-    "customers": "客戶"
+    "customers": "客戶",
+    "recurring_work_items": "重複工作項目"
   },
   "workspace_dashboards": "儀表板",
   "pi_chat": "Pi 聊天",
@@ -2503,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "重複工作項目",
+      "description": "設定一次重複工作，我們將處理重複。當需要時，您將在此處看到所有內容。",
+      "new_recurring_work_item": "新增重複工作項目",
+      "update_recurring_work_item": "更新重複工作項目",
+      "form": {
+        "interval": {
+          "title": "排程",
+          "start_date": {
+            "validation": {
+              "required": "開始日期為必填"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔類型為必填"
+            }
+          }
+        },
+        "button": {
+          "create": "建立重複工作項目",
+          "update": "更新重複工作項目"
+        }
+      },
+      "create_button": {
+        "label": "建立重複工作項目",
+        "no_permission": "請聯繫您的專案管理員以建立重複工作項目"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "自動化您的工作",
+        "description": "只需設定一次，到期時我們會自動為您建立。升級至商業版，讓重複工作變得輕鬆無憂。"
+      },
+      "no_templates": {
+        "button": "建立您的第一個重複工作項目"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "已建立重複工作項目",
+          "message": "{name}，該重複工作項目，現已在您的工作區中可用。"
+        },
+        "error": {
+          "title": "本次無法建立該重複工作項目。",
+          "message": "請再試一次儲存您的資訊，或將其複製到新的重複工作項目中，建議在其他分頁操作。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "重複工作項目已變更",
+          "message": "{name}，該重複工作項目，已被變更。"
+        },
+        "error": {
+          "title": "無法儲存該重複工作項目的變更。",
+          "message": "請再試一次儲存您的資訊，或稍後再回來變更該重複工作項目。如果仍有問題，請聯繫我們。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "已刪除重複工作項目",
+          "message": "{name}，該重複工作項目，已從您的工作區中刪除。"
+        },
+        "error": {
+          "title": "無法刪除該重複工作項目。",
+          "message": "請再試一次刪除，或稍後再試。如果仍無法刪除，請聯繫我們。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "刪除重複工作項目",
+      "description": {
+        "prefix": "您確定要刪除重複工作項目-",
+        "suffix": "嗎？與該重複工作項目相關的所有資料將被永久移除。此操作無法撤銷。"
+      }
+    }
   }
 }

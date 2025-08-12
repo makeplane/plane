@@ -7,7 +7,8 @@
     "upgrade_plan": "Tingkatkan paket",
     "plane_pro": "Plane Pro",
     "business": "Bisnis",
-    "customers": "Pelanggan"
+    "customers": "Pelanggan",
+    "recurring_work_items": "Tugas Berulang"
   },
   "workspace_dashboards": "Dasbor",
   "pi_chat": "Obrolan Pi",
@@ -2500,5 +2501,84 @@
       }
     },
     "upgrade_to_plan": "Tingkatkan ke {plan} untuk membuka {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Item kerja berulang",
+      "description": "Atur pekerjaan berulang sekali, dan kami akan mengurus ulangannya. Anda akan melihat semuanya di sini ketika waktunya tiba.",
+      "new_recurring_work_item": "Item kerja berulang baru",
+      "update_recurring_work_item": "Perbarui item kerja berulang",
+      "form": {
+        "interval": {
+          "title": "Jadwal",
+          "start_date": {
+            "validation": {
+              "required": "Tanggal mulai wajib diisi"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Jenis interval wajib diisi"
+            }
+          }
+        },
+        "button": {
+          "create": "Buat item kerja berulang",
+          "update": "Perbarui item kerja berulang"
+        }
+      },
+      "create_button": {
+        "label": "Buat item kerja berulang",
+        "no_permission": "Hubungi admin proyek Anda untuk membuat item kerja berulang"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Pekerjaan Anda, otomatis",
+        "description": "Atur sekali saja. Kami akan mengingatkannya saat waktunya tiba. Tingkatkan ke Bisnis untuk membuat pekerjaan berulang terasa mudah."
+      },
+      "no_templates": {
+        "button": "Buat item kerja berulang pertama Anda"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Item kerja berulang berhasil dibuat",
+          "message": "{name}, item kerja berulang, sekarang tersedia di ruang kerja Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat membuat item kerja berulang kali ini.",
+          "message": "Coba simpan detail Anda lagi atau salin ke item kerja berulang baru, sebaiknya di tab lain."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Item kerja berulang berhasil diubah",
+          "message": "{name}, item kerja berulang, telah diubah."
+        },
+        "error": {
+          "title": "Kami tidak dapat menyimpan perubahan pada item kerja berulang ini.",
+          "message": "Coba simpan detail Anda lagi atau kembali ke item kerja berulang ini nanti. Jika masih ada masalah, hubungi kami."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Item kerja berulang berhasil dihapus",
+          "message": "{name}, item kerja berulang, telah dihapus dari ruang kerja Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus item kerja berulang ini.",
+          "message": "Coba hapus lagi atau kembali nanti. Jika Anda masih tidak bisa menghapusnya, hubungi kami."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Hapus item kerja berulang",
+      "description": {
+        "prefix": "Apakah Anda yakin ingin menghapus item kerja berulang-",
+        "suffix": "? Semua data terkait item kerja berulang akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+      }
+    }
   }
 }

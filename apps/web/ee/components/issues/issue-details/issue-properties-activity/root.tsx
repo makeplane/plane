@@ -1,21 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { TIssuePropertyTypeKeys } from "@plane/types";
-import { getIssuePropertyTypeKey } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
-import {
-  IssueActivityBlockComponent,
-  IssueBooleanPropertyActivity,
-  IssueDatePropertyActivity,
-  IssueDropdownPropertyActivity,
-  IssueMemberPropertyActivity,
-  IssueNumberPropertyActivity,
-  IssueTextPropertyActivity,
-} from "@/plane-web/components/issues";
+import { IssueActivityBlockComponent } from "@/plane-web/components/issues";
 // plane web hooks
+import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane types
 
@@ -46,27 +36,20 @@ export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesAct
   // property details
   const propertyDetail = getIssuePropertyById(activityDetail?.property);
   if (!propertyDetail?.id) return <></>;
-  // property type key
-  const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
+  // activity message
+  const activityMessage = getWorkItemCustomPropertyActivityMessage({
+    action: activityDetail.action,
+    newValue: activityDetail.new_value,
+    oldValue: activityDetail.old_value,
+    propertyDetail,
+    workspaceId: activityDetail.workspace,
+  });
 
-  const ISSUE_PROPERTY_ACTIVITY_COMPONENTS: Partial<
-    Record<TIssuePropertyTypeKeys, FC<TIssueAdditionalPropertiesActivityItem>>
-  > = {
-    TEXT: IssueTextPropertyActivity,
-    DECIMAL: IssueNumberPropertyActivity,
-    OPTION: IssueDropdownPropertyActivity,
-    BOOLEAN: IssueBooleanPropertyActivity,
-    DATETIME: IssueDatePropertyActivity,
-    RELATION_USER: IssueMemberPropertyActivity,
-  };
-
-  const IssuePropertyActivityComponent = ISSUE_PROPERTY_ACTIVITY_COMPONENTS[propertyTypeKey];
-
-  if (!IssuePropertyActivityComponent) return <></>;
+  if (!activityMessage) return <></>;
 
   return (
     <IssueActivityBlockComponent activityId={activityId} propertyId={propertyDetail.id} ends={ends}>
-      <IssuePropertyActivityComponent activityId={activityId} customPropertyId={propertyDetail.id} />
+      {activityMessage}
     </IssueActivityBlockComponent>
   );
 });

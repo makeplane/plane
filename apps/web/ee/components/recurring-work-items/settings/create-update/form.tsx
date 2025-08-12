@@ -282,6 +282,7 @@ export const RecurringWorkItemFormRoot: React.FC<TRecurringWorkItemFormRootProps
                     size="sm"
                     className={cn(COMMON_BUTTON_CLASS_NAME)}
                     onClick={handleFormCancel}
+                    disabled={isSubmitting}
                   >
                     {t("common.cancel")}
                   </Button>

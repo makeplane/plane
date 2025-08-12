@@ -12,9 +12,9 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // plane web imports
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
-// assets // TODO: change to recurring work items
-import RecurringWorkItemsUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
-import RecurringWorkItemsUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
+// assets
+import RecurringWorkItemsUpgradeDark from "@/public/empty-state/recurring-work-items/upgrade-dark.webp";
+import RecurringWorkItemsUpgradeLight from "@/public/empty-state/recurring-work-items/upgrade-light.webp";
 
 export const RecurringWorkItemsUpgrade: FC = observer(() => {
   // router
@@ -29,7 +29,8 @@ export const RecurringWorkItemsUpgrade: FC = observer(() => {
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
+            !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
@@ -38,11 +39,11 @@ export const RecurringWorkItemsUpgrade: FC = observer(() => {
             <div className="font-medium text-custom-text-300 text-sm">
               {t("recurring_work_items.empty_state.upgrade.description")}
             </div>
-            <div className="font-medium text-custom-text-300 text-sm">
-              {t("recurring_work_items.empty_state.upgrade.sub_description")}
-            </div>
             <div className="flex mt-6 gap-4 flex-wrap">
-              <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.RECURRING_WORKITEMS} />
+              <UpgradeEmptyStateButton
+                workspaceSlug={workspaceSlug?.toString()}
+                flag={E_FEATURE_FLAGS.RECURRING_WORKITEMS}
+              />
               <Link
                 target="_blank"
                 href="https://plane.so/contact"

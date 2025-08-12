@@ -7,7 +7,8 @@
     "upgrade_plan": "Actualizare plan",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clienți"
+    "customers": "Clienți",
+    "recurring_work_items": "Elemente de lucru repetitive"
   },
   "workspace_dashboards": "Dashboarduri",
   "pi_chat": "Pi Chat",
@@ -2499,5 +2500,84 @@
       }
     },
     "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elemente de lucru recurente",
+      "description": "Setează munca recurentă o singură dată și noi vom face munca. Vei vedea totul aici când este momentul.",
+      "new_recurring_work_item": "Element de lucru recurent nou",
+      "update_recurring_work_item": "Actualizează elementul de lucru recurent",
+      "form": {
+        "interval": {
+          "title": "Programare",
+          "start_date": {
+            "validation": {
+              "required": "Data de început este obligatorie"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Tipul de interval este obligatoriu"
+            }
+          }
+        },
+        "button": {
+          "create": "Creează element de lucru recurent",
+          "update": "Actualizează elementul de lucru recurent"
+        }
+      },
+      "create_button": {
+        "label": "Creează element de lucru recurent",
+        "no_permission": "Contactează administratorul proiectului pentru a crea elemente de lucru recurente"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Munca ta, pe pilot automat",
+        "description": "Setează o dată. Îl readucem când este necesar. Fă upgrade la Business pentru ca munca recurentă să fie fără efort."
+      },
+      "no_templates": {
+        "button": "Creează primul tău element de lucru recurent"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Element de lucru recurent creat",
+          "message": "{name}, elementul de lucru recurent, este acum disponibil în spațiul tău de lucru."
+        },
+        "error": {
+          "title": "Nu am putut crea acest element de lucru recurent de data aceasta.",
+          "message": "Încearcă să salvezi din nou detaliile sau copiază-le într-un nou element de lucru recurent, de preferat într-un alt tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Element de lucru recurent modificat",
+          "message": "{name}, elementul de lucru recurent, a fost modificat."
+        },
+        "error": {
+          "title": "Nu am putut salva modificările la acest element de lucru recurent.",
+          "message": "Încearcă să salvezi din nou detaliile sau revino la acest element de lucru recurent mai târziu. Dacă problema persistă, contactează-ne."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Element de lucru recurent șters",
+          "message": "{name}, elementul de lucru recurent, a fost șters din spațiul tău de lucru."
+        },
+        "error": {
+          "title": "Nu am putut șterge acest element de lucru recurent.",
+          "message": "Încearcă să-l ștergi din nou sau revino mai târziu. Dacă nu poți să-l ștergi nici atunci, contactează-ne."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Șterge elementul de lucru recurent",
+      "description": {
+        "prefix": "Ești sigur că vrei să ștergi elementul de lucru recurent-",
+        "suffix": "? Toate datele legate de acest element de lucru recurent vor fi eliminate permanent. Această acțiune nu poate fi anulată."
+      }
+    }
   }
 }

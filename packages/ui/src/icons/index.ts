@@ -81,3 +81,4 @@ export * from "./brand";
 export * from "./scope-icon";
 export * from "./chat-icon";
 export * from "./pi";
+export * from "./recurring-work-item";

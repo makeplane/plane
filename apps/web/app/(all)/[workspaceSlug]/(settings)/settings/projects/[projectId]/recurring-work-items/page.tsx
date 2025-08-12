@@ -44,8 +44,8 @@ const RecurringWorkItemsProjectSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <SettingsHeading
-        title={t("project_settings.recurring_work_items.heading")}
-        description={t("project_settings.recurring_work_items.description")}
+        title={t("recurring_work_items.settings.heading")}
+        description={t("recurring_work_items.settings.description")}
         showButton={isRecurringWorkItemsEnabled && isRecurringWorkItemsAvailableForProject && hasAdminPermission}
         customButton={
           <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="sm" />
