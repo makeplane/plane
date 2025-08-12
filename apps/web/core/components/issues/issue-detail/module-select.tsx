@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { cn } from "@plane/utils";
-import { ModuleDropdown } from "@/components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // ui
 // helpers
 import { useIssueDetail } from "@/hooks/store";

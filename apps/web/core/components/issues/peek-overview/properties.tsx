@@ -9,14 +9,12 @@ import { useTranslation } from "@plane/i18n";
 import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components

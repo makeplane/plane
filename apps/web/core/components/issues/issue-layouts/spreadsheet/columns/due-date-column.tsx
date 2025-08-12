@@ -5,7 +5,7 @@ import { CalendarCheck2 } from "lucide-react";
 import { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 // hooks
 import { useProjectState } from "@/hooks/store";

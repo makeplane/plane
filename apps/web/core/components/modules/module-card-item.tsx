@@ -29,7 +29,7 @@ import {
 } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";

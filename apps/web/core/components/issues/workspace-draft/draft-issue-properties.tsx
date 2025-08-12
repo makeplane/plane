@@ -9,15 +9,13 @@ import { CalendarCheck2, CalendarClock } from "lucide-react";
 import { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  CycleDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 // hooks
 import { useLabel, useProjectState, useProject, useProjectEstimates, useWorkspaceDraftIssues } from "@/hooks/store";

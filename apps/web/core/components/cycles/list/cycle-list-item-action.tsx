@@ -19,7 +19,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks

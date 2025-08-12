@@ -21,16 +21,14 @@ import {
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
-import {
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  CycleDropdown,
-  StateDropdown,
-  DateRangeDropdown,
-  DateDropdown,
-} from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // constants
 // helpers
 // hooks

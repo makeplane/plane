@@ -4,7 +4,7 @@ import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { cn } from "@plane/utils";
-import { CycleDropdown } from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
 // ui
 // helpers
 import { useIssueDetail } from "@/hooks/store";

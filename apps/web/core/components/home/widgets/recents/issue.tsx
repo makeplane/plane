@@ -6,7 +6,7 @@ import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";

@@ -8,7 +8,7 @@ import { IProject } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // components
 import { getTabIndex } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectNetworkIcon } from "@/components/project";
 // helpers
 

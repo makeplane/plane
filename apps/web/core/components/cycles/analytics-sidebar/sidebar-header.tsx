@@ -17,7 +17,7 @@ import { ICycle } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useCycle, useUserPermissions } from "@/hooks/store";

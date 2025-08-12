@@ -14,7 +14,7 @@ import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
-import { StateDropdown } from "@/components/dropdowns";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
