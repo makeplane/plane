@@ -947,7 +947,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class LabelDetailAPIEndpoint(BaseAPIView):
+class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
     """Label Detail Endpoint"""
 
     serializer_class = LabelSerializer
