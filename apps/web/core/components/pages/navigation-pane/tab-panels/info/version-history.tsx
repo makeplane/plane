@@ -9,7 +9,7 @@ import { TPageVersion } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useQueryParams } from "@/hooks/use-query-params";

@@ -13,7 +13,7 @@ import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { TPageRootHandlers } from "../editor";
+import { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
 import {

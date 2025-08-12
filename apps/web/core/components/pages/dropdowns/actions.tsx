@@ -23,7 +23,7 @@ import { EditorRefApi } from "@plane/editor";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { DeletePageModal } from "@/components/pages";
+import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

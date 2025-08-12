@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { PageLoader } from "@/components/pages";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

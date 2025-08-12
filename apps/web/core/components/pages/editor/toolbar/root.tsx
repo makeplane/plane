@@ -5,8 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { PageToolbar } from "@/components/pages";
-// helpers
+import { PageToolbar } from "@/components/pages/editor/toolbar";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components

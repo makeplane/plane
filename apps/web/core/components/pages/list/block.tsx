@@ -3,12 +3,12 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
-// components
+// plane imports
 import { getPageName } from "@plane/utils";
+// components
 import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
-import { BlockItemAction } from "@/components/pages/list";
-// helpers
+import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks

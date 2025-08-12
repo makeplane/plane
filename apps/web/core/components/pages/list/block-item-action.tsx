@@ -3,13 +3,10 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
-// constants
+// plane imports
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-// ui
 import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
-// components
-import { PageActions } from "@/components/pages";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -19,6 +16,8 @@ import { usePageOperations } from "@/hooks/use-page-operations";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageActions } from "../dropdowns";
 
 type Props = {
   page: TPageInstance;

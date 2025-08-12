@@ -16,8 +16,6 @@ import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
-// helpers
 // hooks
 import { useEditorMention } from "@/hooks/editor";
 import { useUser, useWorkspace, useMember } from "@/hooks/store";
@@ -30,7 +28,10 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
+import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
+import { PageContentBrowser } from "./summary";
+import { PageEditorTitle } from "./title";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;

@@ -3,7 +3,7 @@ import { PageNavigationPaneOutlineTabEmptyState } from "@/plane-web/components/p
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageContentBrowser } from "../../editor";
+import { PageContentBrowser } from "../../editor/summary";
 
 type Props = {
   page: TPageInstance;

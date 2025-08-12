@@ -4,15 +4,6 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
-// components
-import {
-  PageEditorToolbarRoot,
-  PageEditorBody,
-  PageVersionsOverlay,
-  PagesVersionEditor,
-  TEditorBodyHandlers,
-  TEditorBodyConfig,
-} from "@/components/pages";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
@@ -28,6 +19,10 @@ import {
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PageNavigationPaneRoot,
 } from "../navigation-pane";
+import { PageVersionsOverlay } from "../version";
+import { PagesVersionEditor } from "../version/editor";
+import { PageEditorBody, TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
+import { PageEditorToolbarRoot } from "./toolbar";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;

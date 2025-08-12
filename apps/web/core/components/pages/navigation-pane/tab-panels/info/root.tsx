@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports

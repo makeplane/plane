@@ -6,8 +6,8 @@ import { TPageNavigationTabs } from "@plane/types";
 import { ListLayout } from "@/components/core/list";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// components
-import { PageListBlock } from "./";
+// local imports
+import { PageListBlock } from "./block";
 
 type TPagesListRoot = {
   pageType: TPageNavigationTabs;

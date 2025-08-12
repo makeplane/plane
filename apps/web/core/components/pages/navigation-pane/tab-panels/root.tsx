@@ -1,7 +1,7 @@
 import React from "react";
 import { Tab } from "@headlessui/react";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
 import { PageNavigationPaneAdditionalTabPanelsRoot } from "@/plane-web/components/pages/navigation-pane/tab-panels/root";

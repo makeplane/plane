@@ -15,7 +15,7 @@ import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
+import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";

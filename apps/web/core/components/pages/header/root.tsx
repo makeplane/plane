@@ -1,24 +1,23 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
-// components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
+// components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import {
-  PageAppliedFiltersList,
-  PageFiltersSelection,
-  PageOrderByDropdown,
-  PageSearchInput,
-  PageTabNavigation,
-} from "@/components/pages";
-// helpers
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// local imports
+import { PageAppliedFiltersList } from "../list/applied-filters";
+import { PageFiltersSelection } from "../list/filters";
+import { PageOrderByDropdown } from "../list/order-by";
+import { PageSearchInput } from "../list/search-input";
+import { PageTabNavigation } from "../list/tab-navigation";
 
 type Props = {
   pageType: TPageNavigationTabs;
