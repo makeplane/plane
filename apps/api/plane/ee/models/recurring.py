@@ -160,14 +160,34 @@ class RecurringWorkitemTask(ProjectBaseModel):
             )
 
         self.clean()
+
+        # Detect if we should skip syncing (e.g., during soft delete)
+        skip_sync = (
+            getattr(self, "_skip_periodic_sync", False)
+            or getattr(self, "deleted_at", None) is not None
+        )
+
         super().save(*args, **kwargs)
-        self._sync_periodic_task()
+
+        if not skip_sync:
+            self._sync_periodic_task()
 
     def delete(self, *args, **kwargs):
-        """Override delete to clean up associated PeriodicTask"""
-        if self.periodic_task:
-            self.periodic_task.delete()
-        super().delete(*args, **kwargs)
+        """Override delete to clean up associated PeriodicTask and avoid re-sync during soft delete"""
+        # Ensure save() doesn't attempt to re-sync during soft delete
+        self._skip_periodic_sync = True
+
+        # If there is an associated periodic task, delete it and null out the relation on this instance
+        if self.periodic_task_id is not None:
+            try:
+                self.periodic_task.delete()
+            except PeriodicTask.DoesNotExist:
+                pass
+            finally:
+                # Null local relation to avoid "unsaved related object" on save during soft delete
+                self.periodic_task = None
+
+        return super().delete(*args, **kwargs)
 
     def _sync_periodic_task(self):
         """Create or update the associated PeriodicTask for Beat scheduling"""

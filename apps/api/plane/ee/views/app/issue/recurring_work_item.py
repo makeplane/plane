@@ -158,8 +158,7 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
             workspace__slug=slug,
         )
         # check and delete the periodic task
-        if recurring_work_item.periodic_task:
-            recurring_work_item.periodic_task.delete()
+        recurring_work_item.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
