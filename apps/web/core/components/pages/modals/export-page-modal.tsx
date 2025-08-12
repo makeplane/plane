@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PageProps, pdf } from "@react-pdf/renderer";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Button, CustomSelect, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components

@@ -13,7 +13,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 import { ProjectPage, TProjectPage } from "./project-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;

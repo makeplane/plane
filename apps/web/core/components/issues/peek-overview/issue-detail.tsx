@@ -2,7 +2,7 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { getTextContent } from "@plane/utils";

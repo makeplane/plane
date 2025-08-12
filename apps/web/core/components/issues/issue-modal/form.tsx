@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";

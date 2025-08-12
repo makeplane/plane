@@ -18,7 +18,7 @@ import {
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components

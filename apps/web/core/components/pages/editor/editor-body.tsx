@@ -3,12 +3,12 @@ import { observer } from "mobx-react";
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  TAIMenuProps,
-  TDisplayConfig,
-  TFileHandler,
-  TRealtimeConfig,
-  TServerHandler,
+  type EditorRefApi,
+  type TAIMenuProps,
+  type TDisplayConfig,
+  type TFileHandler,
+  type TRealtimeConfig,
+  type TServerHandler,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";

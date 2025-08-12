@@ -4,7 +4,7 @@ import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
