@@ -58,7 +58,7 @@ export const InputBox = observer((props: TProps) => {
   const focusRef = useRef<TFocus>(focus);
   const editorCommands = useRef<TEditCommands | null>(null);
 
-  useSWR(`PI_MODELS`, () => fetchModels(), {
+  useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: true,
     revalidateIfStale: true,
     errorRetryCount: 0,
@@ -72,17 +72,24 @@ export const InputBox = observer((props: TProps) => {
     async (e?: React.FormEvent) => {
       e?.preventDefault();
       const query = editorCommands.current?.getHTML();
-      if (isLoadingRef.current || !query || isCommentEmpty(query)) return;
+      if (isLoadingRef.current || !query || isCommentEmpty(query) || !workspaceId) return;
       if (!activeChatIdRef.current) {
         isLoadingRef.current = true;
         setIsInitializing(true);
-        const newChatId = await createNewChat(focusRef.current, isProjectLevel, workspaceId || "");
+        const newChatId = await createNewChat(focusRef.current, isProjectLevel, workspaceId);
         activeChatIdRef.current = newChatId;
         setIsInitializing(false);
         // Don't redirect if we are in the floating chat window
         if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
       }
-      getAnswer(activeChatIdRef.current, query, focusRef.current, isProjectLevel);
+      getAnswer(
+        activeChatIdRef.current,
+        query,
+        focusRef.current,
+        isProjectLevel,
+        workspaceSlug?.toString(),
+        workspaceId
+      );
       editorCommands.current?.clear();
     },
     [editorCommands, getAnswer, activeChatId]

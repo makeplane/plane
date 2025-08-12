@@ -13,11 +13,12 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 type Props = {
   chatId: string;
   title: string;
+  workspaceId: string | undefined;
   handleModalClose: () => void;
 };
 
 export const EditForm: React.FC<Props> = (props) => {
-  const { chatId, title, handleModalClose } = props;
+  const { chatId, title, handleModalClose, workspaceId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   const { renameChat } = usePiChat();
@@ -31,7 +32,7 @@ export const EditForm: React.FC<Props> = (props) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      await renameChat(chatId, newTitle);
+      await renameChat(chatId, newTitle, workspaceId);
       setIsSubmitting(false);
       setToast({
         type: TOAST_TYPE.SUCCESS,

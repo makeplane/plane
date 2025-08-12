@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Loader, PiIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
@@ -21,9 +23,12 @@ type TProps = {
   isLatest?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
-  // store
   const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
+  // store
+  const { workspaceSlug } = useParams();
   const { sendFeedback, activeChatId } = usePiChat();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   // state
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
@@ -38,7 +43,7 @@ export const AiMessage = observer((props: TProps) => {
   };
   const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
     try {
-      await sendFeedback(activeChatId, parseInt(id), feedback, feedbackMessage);
+      await sendFeedback(activeChatId, parseInt(id), feedback, workspaceId, feedbackMessage);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Feedback sent!",
@@ -74,12 +79,12 @@ export const AiMessage = observer((props: TProps) => {
                   </a>
                 ),
                 table: ({ children }) => (
-                  <div className="overflow-x-auto w-full my-4">
+                  <div className="overflow-x-auto w-full my-4 border-custom-border-200">
                     <table className="min-w-full border-collapse">{children}</table>
                   </div>
                 ),
-                th: ({ children }) => <th className="px-2 py-3">{children}</th>,
-                td: ({ children }) => <td className="px-2 py-3">{children}</td>,
+                th: ({ children }) => <th className="px-2 py-3 border-custom-border-200">{children}</th>,
+                td: ({ children }) => <td className="px-2 py-3 border-custom-border-200">{children}</td>,
               }}
             >
               {message}

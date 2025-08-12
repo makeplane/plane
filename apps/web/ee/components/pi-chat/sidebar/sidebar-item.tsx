@@ -6,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomMenu, EModalWidth, EModalPosition, ModalCore, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, joinUrlPath } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { ChatDeleteModal } from "../modals/delete-modal";
 import { EditForm } from "../modals/edit-form";
@@ -30,12 +31,14 @@ export const SidebarItem = observer((props: TProps) => {
   const { t } = useTranslation();
   // hooks
   const { favoriteChat, unfavoriteChat } = usePiChat();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
 
   const handleFavorite = async () => {
     if (isFavorite) {
-      await unfavoriteChat(chatId);
+      await unfavoriteChat(chatId, workspaceId);
     } else {
-      await favoriteChat(chatId);
+      await favoriteChat(chatId, workspaceId);
     }
     setToast({
       title: isFavorite ? t("favorite_removed_successfully") : t("favorite_created_successfully"),
@@ -81,7 +84,12 @@ export const SidebarItem = observer((props: TProps) => {
         position={EModalPosition.TOP}
         width={EModalWidth.SM}
       >
-        <EditForm chatId={chatId} title={title || ""} handleModalClose={() => setIsEditModalOpen(false)} />
+        <EditForm
+          chatId={chatId}
+          title={title || ""}
+          handleModalClose={() => setIsEditModalOpen(false)}
+          workspaceId={workspaceId}
+        />
       </ModalCore>{" "}
       <div className="py-0.5 group/recent-chat">
         <SidebarNavItem isActive={isActive} className="gap-0">

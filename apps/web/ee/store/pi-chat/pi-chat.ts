@@ -41,26 +41,39 @@ export interface IPiChatStore {
   isPiChatDrawerOpen: boolean;
   // computed fn
   geUserThreads: () => TUserThreads[];
-  geUserThreadsByWorkspaceId: (workspaceId: string) => TUserThreads[];
+  geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
   // actions
   initPiChat: (chatId?: string) => void;
-  fetchChatById: (chatId: string) => void;
-  getAnswer: (chatId: string, query: string, focus: TFocus, isProjectChat: boolean) => Promise<string | undefined>;
-  getTemplates: () => Promise<TTemplate[]>;
-  fetchUserThreads: (workspaceId: string, isProjectChat: boolean) => void;
+  fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
+  getAnswer: (
+    chatId: string,
+    query: string,
+    focus: TFocus,
+    isProjectChat: boolean,
+    workspaceSlug: string,
+    workspaceId: string | undefined
+  ) => Promise<string | undefined>;
+  getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
+  fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
-  sendFeedback: (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
-  fetchModels: () => Promise<void>;
+  sendFeedback: (
+    chatId: string,
+    message_index: number,
+    feedback: EFeedback,
+    workspaceId?: string,
+    feedbackMessage?: string
+  ) => Promise<void>;
+  fetchModels: (workspaceId?: string) => Promise<void>;
   setActiveModel: (model: TAiModels) => void;
-  createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string) => Promise<string>;
-  renameChat: (chatId: string, title: string) => Promise<void>;
+  createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
+  renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
   deleteChat: (chatId: string, workspaceSlug: string) => Promise<void>;
-  favoriteChat: (chatId: string) => Promise<void>;
-  unfavoriteChat: (chatId: string) => Promise<void>;
-  fetchRecentChats: (isProjectChat: boolean) => Promise<void>;
-  fetchFavoriteChats: (workspaceId: string) => Promise<void>;
+  favoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
+  unfavoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
+  fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
+  fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
   togglePiChatDrawer: (value?: boolean) => void;
 }
 
@@ -158,7 +171,7 @@ export class PiChatStore implements IPiChatStore {
   // computed
   geUserThreads = computedFn(() => this.piThreads.map((chatId) => this.chatMap[chatId]) || []);
 
-  geUserThreadsByWorkspaceId = computedFn((workspaceId: string) => {
+  geUserThreadsByWorkspaceId = computedFn((workspaceId: string | undefined) => {
     if (!workspaceId) return [];
     return (
       this.projectThreads
@@ -186,7 +199,7 @@ export class PiChatStore implements IPiChatStore {
     this.isAuthorized = true;
   };
 
-  createNewChat = async (focus: TFocus, isProjectChat: boolean = false, workspaceId: string) => {
+  createNewChat = async (focus: TFocus, isProjectChat: boolean = false, workspaceId: string | undefined) => {
     this.isNewChat = true;
     let payload: TInitPayload = {
       workspace_in_context: focus.isInWorkspaceContext,
@@ -216,8 +229,8 @@ export class PiChatStore implements IPiChatStore {
     return newChatId;
   };
 
-  getTemplates = async () => {
-    const response = await this.piChatService.listTemplates();
+  getTemplates = async (workspaceId: string | undefined) => {
+    const response = await this.piChatService.listTemplates(workspaceId);
     return response?.templates;
   };
 
@@ -225,6 +238,7 @@ export class PiChatStore implements IPiChatStore {
     isNewChat: boolean,
     chatId: string,
     payload: TQuery,
+    workspaceId: string | undefined,
     callback: (property: "answer" | "reasoning", value: string) => void
   ) => {
     const token = await this.piChatService.retrieveToken(payload);
@@ -263,7 +277,7 @@ export class PiChatStore implements IPiChatStore {
       this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
       if (isNewChat) {
-        const title = await this.piChatService.retrieveTitle(chatId);
+        const title = await this.piChatService.retrieveTitle(chatId, workspaceId);
         runInAction(() => {
           this.isNewChat = false;
           update(this.chatMap, chatId, (chat) => ({
@@ -281,7 +295,14 @@ export class PiChatStore implements IPiChatStore {
     };
   };
 
-  getAnswer = async (chatId: string, query: string, focus: TFocus, isProjectChat: boolean = false) => {
+  getAnswer = async (
+    chatId: string,
+    query: string,
+    focus: TFocus,
+    isProjectChat: boolean = false,
+    workspaceSlug: string,
+    workspaceId: string | undefined
+  ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
     }
@@ -333,13 +354,15 @@ export class PiChatStore implements IPiChatStore {
             }
           : {},
         is_project_chat: isProjectChat,
+        workspace_slug: workspaceSlug,
+        workspace_id: workspaceId,
       };
       if (focus.isInWorkspaceContext) {
         payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
       }
 
       // Api call here
-      this.getStreamingAnswer(isNewChat, chatId, payload, (property, value) => {
+      this.getStreamingAnswer(isNewChat, chatId, payload, workspaceId, (property, value) => {
         newDialogue[property] += value;
         runInAction(() => {
           update(this.chatMap, chatId, (chat) => ({
@@ -364,14 +387,14 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchChatById = async (chatId: string) => {
+  fetchChatById = async (chatId: string, workspaceId: string | undefined) => {
     if (this.isNewChat) return;
     try {
       // Call api here
       runInAction(() => {
         this.isLoadingMap[chatId] = true;
       });
-      const response = await this.piChatService.retrieveChat(chatId);
+      const response = await this.piChatService.retrieveChat(chatId, workspaceId);
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
           ...chat,
@@ -391,7 +414,7 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchUserThreads = async (workspaceId: string, isProjectChat: boolean = false) => {
+  fetchUserThreads = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
     const threads = isProjectChat ? this.projectThreads : this.piThreads;
     try {
       runInAction(() => {
@@ -419,13 +442,13 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchRecentChats = async (isProjectChat: boolean = false) => {
+  fetchRecentChats = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
     try {
       const threads = isProjectChat ? this.projectThreads : this.piThreads;
       runInAction(() => {
         this.isLoadingThreads = true;
       });
-      const response = await this.piChatService.listRecentChats();
+      const response = await this.piChatService.listRecentChats(workspaceId);
       runInAction(() => {
         response.results.forEach((chat) => {
           update(this.chatMap, chat.chat_id, (prev) => ({
@@ -446,9 +469,9 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchModels = async () => {
+  fetchModels = async (workspaceId: string | undefined) => {
     try {
-      const response = await this.piChatService.listAiModels();
+      const response = await this.piChatService.listAiModels(workspaceId);
       runInAction(() => {
         this.models = response.models;
         response.models.forEach((model) => {
@@ -476,7 +499,13 @@ export class PiChatStore implements IPiChatStore {
     return response.results;
   };
 
-  sendFeedback = async (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => {
+  sendFeedback = async (
+    chatId: string,
+    message_index: number,
+    feedback: EFeedback,
+    workspaceId?: string,
+    feedbackMessage?: string
+  ) => {
     const initialState = this.chatMap[chatId]?.dialogue?.[message_index]?.feedback;
     runInAction(() => {
       runInAction(() => {
@@ -491,6 +520,7 @@ export class PiChatStore implements IPiChatStore {
         chat_id: chatId,
         feedback,
         feedback_message: feedbackMessage,
+        ...(workspaceId && { workspace_id: workspaceId }),
       });
       return response;
     } catch (e) {
@@ -503,7 +533,7 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchFavoriteChats = async (workspaceId: string) => {
+  fetchFavoriteChats = async (workspaceId: string | undefined) => {
     this.isLoadingFavoriteChats = true;
     const response = await this.piChatService.listFavoriteChats(workspaceId);
     runInAction(() => {
@@ -520,7 +550,7 @@ export class PiChatStore implements IPiChatStore {
     });
   };
 
-  favoriteChat = async (chatId: string) => {
+  favoriteChat = async (chatId: string, workspaceId: string | undefined) => {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
@@ -530,7 +560,7 @@ export class PiChatStore implements IPiChatStore {
         }));
         this.favoriteChats = [...this.favoriteChats, chatId];
       });
-      await this.piChatService.favoriteChat(chatId);
+      await this.piChatService.favoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
@@ -542,7 +572,7 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  unfavoriteChat = async (chatId: string) => {
+  unfavoriteChat = async (chatId: string, workspaceId: string | undefined) => {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
@@ -552,7 +582,7 @@ export class PiChatStore implements IPiChatStore {
         }));
         this.favoriteChats = favoriteChats.filter((id) => id !== chatId);
       });
-      await this.piChatService.unfavoriteChat(chatId);
+      await this.piChatService.unfavoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
@@ -564,7 +594,7 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  renameChat = async (chatId: string, title: string) => {
+  renameChat = async (chatId: string, title: string, workspaceId: string | undefined) => {
     const initialState = this.chatMap[chatId]?.title;
     try {
       runInAction(() => {
@@ -573,7 +603,7 @@ export class PiChatStore implements IPiChatStore {
           title,
         }));
       });
-      await this.piChatService.renameChat(chatId, title);
+      await this.piChatService.renameChat(chatId, title, workspaceId);
     } catch (e) {
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({

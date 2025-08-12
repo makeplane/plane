@@ -25,8 +25,12 @@ export type TQuery = {
     [key: string]: string;
   };
   is_project_chat?: boolean;
+  workspace_slug?: string;
 };
-export type TInitPayload = Pick<TQuery, "workspace_in_context" | "workspace_id" | "project_id" | "is_project_chat">;
+export type TInitPayload = Pick<
+  TQuery,
+  "workspace_in_context" | "workspace_id" | "project_id" | "is_project_chat" | "workspace_slug"
+>;
 export type TSearchQuery = {
   query: string;
 };
@@ -36,6 +40,7 @@ export type TFeedback = {
   message_index: number;
   feedback: EFeedback;
   feedback_message?: string;
+  workspace_id?: string;
 };
 
 export type TFocus = {

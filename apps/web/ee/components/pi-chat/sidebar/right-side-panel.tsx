@@ -26,7 +26,7 @@ export const RightSidePanel = observer((props: TProps) => {
   const { geUserThreadsByWorkspaceId, isLoadingThreads } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = workspaceSlug && getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
-  const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString() || "");
+  const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString());
 
   // filter user threads
   const filteredUserThread =

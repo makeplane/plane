@@ -34,12 +34,11 @@ export const PiChatLayout = observer((props: TProps) => {
   const pathName = usePathname();
   // derived states
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
 
   useSWR(
     workspaceSlug ? `PI_USER_THREADS_${workspaceSlug}_${isProjectLevel}` : null,
-    workspaceSlug
-      ? () => fetchUserThreads(getWorkspaceBySlug(workspaceSlug as string)?.id || "", isProjectLevel)
-      : null,
+    workspaceSlug ? () => fetchUserThreads(workspaceId, isProjectLevel) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -48,7 +47,7 @@ export const PiChatLayout = observer((props: TProps) => {
   );
   useSWR(
     activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
-    activeChatId ? () => fetchChatById(activeChatId) : null,
+    activeChatId ? () => fetchChatById(activeChatId, workspaceId) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,

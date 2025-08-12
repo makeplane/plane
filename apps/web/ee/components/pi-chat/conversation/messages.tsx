@@ -4,6 +4,7 @@ import { IUser } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TDialogue } from "@/plane-web/types";
+import { scrollIntoViewHelper } from "../helper";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
 import { NewConversation } from "./new-converstaion";
@@ -58,6 +59,7 @@ export const Messages = observer((props: TProps) => {
     //Always scroll to the latest message
     if (!activeChat?.dialogue) return;
     if (activeChat?.dialogue.length === 0) setHasMoreMessages(false);
+    scrollIntoViewHelper(`${activeChat?.dialogue?.length - 1}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IUser } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import SystemPrompts from "../system-prompts";
 
@@ -16,8 +18,11 @@ type TProps = {
 export const NewConversation = observer((props: TProps) => {
   const { currentUser, isFullScreen, shouldRedirect = true, isProjectLevel = false } = props;
   // store hooks
+  const { workspaceSlug } = useParams();
   const { getTemplates } = usePiChat();
-  const { data: templates, isLoading } = useSWR("PI_TEMPLATES", () => getTemplates(), {
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const { data: templates, isLoading } = useSWR("PI_TEMPLATES", () => getTemplates(workspaceId), {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     errorRetryCount: 0,

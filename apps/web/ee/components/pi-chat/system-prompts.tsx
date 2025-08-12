@@ -50,11 +50,11 @@ const SystemPrompts = (props: TSystemPrompt) => {
       entityType: projectId ? "project_id" : "workspace_id",
       entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
     };
-    const newChatId = await createNewChat(focus, isProjectLevel, workspaceId || "");
+    const newChatId = await createNewChat(focus, isProjectLevel, workspaceId);
     setIsInitializing("");
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
-    getAnswer(newChatId, prompt.text, focus, isProjectLevel);
+    getAnswer(newChatId, prompt.text, focus, isProjectLevel, workspaceSlug?.toString(), workspaceId?.toString());
   };
   const promptIcon = getIcon(prompt.type);
 

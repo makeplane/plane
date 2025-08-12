@@ -6,10 +6,11 @@ import { Pencil, Star, Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, EModalPosition, EModalWidth, ModalCore, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { calculateTimeAgo, cn } from "@plane/utils";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TUserThreads } from "@/plane-web/types";
 import { ChatDeleteModal } from "../modals/delete-modal";
 import { EditForm } from "../modals/edit-form";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
 type TProps = {
   thread: TUserThreads;
@@ -27,12 +28,15 @@ export const PiChatListItem = observer((props: TProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // hooks
   const { favoriteChat, unfavoriteChat } = usePiChat();
+  const { getWorkspaceBySlug } = useWorkspace();
+  // derived
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
 
   const handleFavorite = async () => {
     if (thread.is_favorite) {
-      await unfavoriteChat(thread.chat_id);
+      await unfavoriteChat(thread.chat_id, workspaceId);
     } else {
-      await favoriteChat(thread.chat_id);
+      await favoriteChat(thread.chat_id, workspaceId);
     }
     setToast({
       title: thread.is_favorite ? t("favorite_removed_successfully") : t("favorite_created_successfully"),
@@ -65,7 +69,7 @@ export const PiChatListItem = observer((props: TProps) => {
     <>
       <ChatDeleteModal
         chatId={thread.chat_id}
-        workspaceSlug={workspaceSlug?.toString() || ""}
+        workspaceSlug={workspaceSlug?.toString()}
         isOpen={isDeleteModalOpen}
         chatTitle={thread.title || ""}
         handleClose={() => setIsDeleteModalOpen(false)}
@@ -80,6 +84,7 @@ export const PiChatListItem = observer((props: TProps) => {
           chatId={thread.chat_id}
           title={thread.title || ""}
           handleModalClose={() => setIsEditModalOpen(false)}
+          workspaceId={workspaceId}
         />
       </ModalCore>
       <div className="flex justify-between items-end w-full" ref={parentRef}>
