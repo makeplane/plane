@@ -124,7 +124,6 @@ export const LanguageTimezone = observer(() => {
                 value={profile?.language}
                 label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
                 onChange={handleLanguageChange}
-                buttonClassName={"border-none"}
                 className="rounded-md border !border-custom-border-200"
                 optionsClassName="w-full"
                 input
