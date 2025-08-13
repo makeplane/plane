@@ -10,7 +10,9 @@ import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
-import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";

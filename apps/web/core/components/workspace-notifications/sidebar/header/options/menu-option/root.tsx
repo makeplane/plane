@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TNotificationFilter } from "@plane/types";
 import { ArchiveIcon, PopoverMenu } from "@plane/ui";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { NotificationMenuOptionItem } from "./menu-item";
 

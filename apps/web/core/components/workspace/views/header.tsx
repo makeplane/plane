@@ -15,7 +15,8 @@ import { Header, EHeaderVariant } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useGlobalView, useUserPermissions } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view"
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { DefaultWorkspaceViewQuickActions } from "./default-view-quick-action";
 import { CreateUpdateWorkspaceViewModal } from "./modal";

@@ -10,7 +10,7 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services

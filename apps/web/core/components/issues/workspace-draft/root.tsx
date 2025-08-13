@@ -16,7 +16,10 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 
 // helpers
 // hooks
-import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components

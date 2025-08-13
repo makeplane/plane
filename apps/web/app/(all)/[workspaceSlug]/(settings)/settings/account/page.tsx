@@ -7,7 +7,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileForm } from "@/components/profile/form";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 
 const ProfileSettingsPage = observer(() => {
   const { t } = useTranslation();

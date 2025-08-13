@@ -20,7 +20,9 @@ import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
-import { useAppTheme, useProject, useUser } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useProject } from "@/hooks/store/use-project"
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { ProfileSidebarTime } from "./time";

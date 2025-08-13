@@ -13,7 +13,8 @@ import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/inte
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // services
 import { IntegrationService } from "@/services/integrations";
 

@@ -19,7 +19,11 @@ import { IssueTitleInput } from "@/components/issues/title-input";
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox"
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";

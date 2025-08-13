@@ -11,7 +11,10 @@ import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/t
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useKanbanView } from "@/hooks/store/use-kanban-view"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";

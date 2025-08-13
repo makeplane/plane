@@ -8,7 +8,7 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const WorkspaceSettingsPage = observer(() => {
   // store hooks

@@ -11,7 +11,7 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 

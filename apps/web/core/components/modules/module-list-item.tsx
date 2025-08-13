@@ -13,7 +13,7 @@ import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

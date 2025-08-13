@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // store hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 

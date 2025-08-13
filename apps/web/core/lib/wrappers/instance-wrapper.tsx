@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 
 type TInstanceWrapper = {
   children: ReactNode;

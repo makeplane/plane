@@ -8,7 +8,7 @@ import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } 
 import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   issue: TIssue;

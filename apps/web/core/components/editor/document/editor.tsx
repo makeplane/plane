@@ -5,7 +5,7 @@ import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@pla
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";

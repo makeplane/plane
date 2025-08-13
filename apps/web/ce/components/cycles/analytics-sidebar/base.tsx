@@ -11,7 +11,7 @@ import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { validateCycleSnapshot } from "@/components/cycles/analytics-sidebar/issue-progress";
 import { EstimateTypeDropdown } from "@/components/cycles/dropdowns";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 
 type ProgressChartProps = {
   workspaceSlug: string;

@@ -6,7 +6,7 @@ import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useHome } from "@/hooks/store/use-home";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

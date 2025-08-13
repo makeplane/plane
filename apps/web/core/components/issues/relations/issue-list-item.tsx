@@ -9,7 +9,8 @@ import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports

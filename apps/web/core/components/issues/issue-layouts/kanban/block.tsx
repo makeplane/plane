@@ -18,7 +18,9 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 // helpers
 // hooks
-import { useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useKanbanView } from "@/hooks/store/use-kanban-view"
+import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

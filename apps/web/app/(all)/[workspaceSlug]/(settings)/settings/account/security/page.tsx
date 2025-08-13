@@ -15,7 +15,7 @@ import { ProfileSettingContentHeader } from "@/components/profile/profile-settin
 // helpers
 import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
 

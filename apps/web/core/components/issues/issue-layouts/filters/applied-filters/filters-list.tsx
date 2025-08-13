@@ -19,7 +19,7 @@ import {
   AppliedStateGroupFilters,
 } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { AppliedIssueTypeFilters } from "@/plane-web/components/issues";
 

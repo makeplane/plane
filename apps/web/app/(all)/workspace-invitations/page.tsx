@@ -13,7 +13,7 @@ import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";

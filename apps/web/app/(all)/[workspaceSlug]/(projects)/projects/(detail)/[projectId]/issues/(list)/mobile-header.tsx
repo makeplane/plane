@@ -24,7 +24,11 @@ import {
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const ProjectIssuesMobileHeader = observer(() => {
   // i18n

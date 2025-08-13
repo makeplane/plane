@@ -21,7 +21,7 @@ import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/impo
 // constants
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // assets
 import GithubLogo from "@/public/services/github.png";
 import JiraLogo from "@/public/services/jira.svg";

@@ -18,7 +18,10 @@ import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
-import { useCycle, useProject, useCycleFilter, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

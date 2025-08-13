@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

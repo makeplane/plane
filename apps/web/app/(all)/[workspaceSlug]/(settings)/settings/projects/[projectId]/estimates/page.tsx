@@ -9,7 +9,8 @@ import { PageHead } from "@/components/core/page-title";
 import { EstimateRoot } from "@/components/estimates";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 
 const EstimatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();

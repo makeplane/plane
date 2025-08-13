@@ -13,8 +13,9 @@ import { SidebarProjectsList } from "@/components/workspace/sidebar/projects-lis
 import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-actions";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 // hooks
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components

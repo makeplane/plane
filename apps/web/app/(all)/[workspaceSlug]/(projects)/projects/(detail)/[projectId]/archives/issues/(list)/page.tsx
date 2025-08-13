@@ -7,7 +7,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ArchivedIssuesHeader } from "@/components/issues/archived-issues-header";
 import { ArchivedIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/archived-issue-layout-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const ProjectArchivedIssuesPage = observer(() => {
   // router

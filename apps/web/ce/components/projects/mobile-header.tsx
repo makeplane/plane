@@ -12,7 +12,8 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ProjectFiltersSelection } from "@/components/project/dropdowns/filters";
 import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by";
 // hooks
-import { useMember, useProjectFilter } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
 export const ProjectsListMobileHeader = observer(() => {
   // i18n

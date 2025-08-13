@@ -21,7 +21,7 @@ import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";

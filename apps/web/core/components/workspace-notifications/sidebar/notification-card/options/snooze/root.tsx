@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
 import { INotification } from "@/store/notifications/notification";

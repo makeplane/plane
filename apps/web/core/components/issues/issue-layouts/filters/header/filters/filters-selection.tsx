@@ -30,7 +30,7 @@ import {
   FilterIssueGrouping,
 } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes, FilterTeamProjects } from "@/plane-web/components/issues";

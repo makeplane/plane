@@ -9,7 +9,7 @@ import { BreadcrumbNavigationDropdown, Breadcrumbs, ISvgIcons } from "@plane/ui"
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { getProjectFeatureNavigation } from "../projects/navigation";

@@ -10,7 +10,7 @@ import { renderFormattedDate, getFileURL } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";

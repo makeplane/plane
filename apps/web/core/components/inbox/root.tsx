@@ -12,7 +12,7 @@ import { InboxContentRoot } from "@/components/inbox/content";
 import { InboxSidebar } from "@/components/inbox/sidebar";
 import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TInboxIssueRoot = {

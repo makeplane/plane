@@ -7,7 +7,7 @@ import { Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

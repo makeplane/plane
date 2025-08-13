@@ -16,7 +16,11 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components

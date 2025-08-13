@@ -18,7 +18,9 @@ import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace, useMember } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace"
+import { useMember } from "@/hooks/store/use-member";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";

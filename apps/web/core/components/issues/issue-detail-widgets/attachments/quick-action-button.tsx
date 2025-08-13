@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // local imports

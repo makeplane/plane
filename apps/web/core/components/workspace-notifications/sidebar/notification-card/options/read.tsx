@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
 import { INotification } from "@/store/notifications/notification";
 // local imports

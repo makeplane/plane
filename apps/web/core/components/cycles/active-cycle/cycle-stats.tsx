@@ -18,7 +18,8 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components

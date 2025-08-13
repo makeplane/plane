@@ -12,7 +12,9 @@ import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
-import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 import { useCommentOperations } from "./helper";

@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { NotificationItem } from "@/components/workspace-notifications/sidebar/notification-card/item";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TNotificationCardListRoot = {
   workspaceSlug: string;

@@ -14,7 +14,7 @@ import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
 import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // assets
 import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 // services

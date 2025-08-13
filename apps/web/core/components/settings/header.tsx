@@ -9,7 +9,8 @@ import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/ui/src/button";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserSettings, useWorkspace } from "@/hooks/store";
+import { useUserSettings } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { WorkspaceLogo } from "../workspace/logo";
 import SettingsTabs from "./tabs";

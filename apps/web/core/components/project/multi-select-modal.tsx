@@ -12,7 +12,7 @@ import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {

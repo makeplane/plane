@@ -27,7 +27,7 @@ import { renderFormattedPayloadDate, cn } from "@plane/utils";
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";

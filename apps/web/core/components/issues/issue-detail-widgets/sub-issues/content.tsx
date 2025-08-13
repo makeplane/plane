@@ -5,7 +5,7 @@ import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType } from "
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import { useSubIssueOperations } from "./helper";

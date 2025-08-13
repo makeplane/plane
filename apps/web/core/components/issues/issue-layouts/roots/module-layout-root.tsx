@@ -8,7 +8,7 @@ import { Row, ERowVariant } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";

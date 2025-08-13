@@ -37,16 +37,14 @@ import {
 // helpers
 import { ModuleQuickActions } from "@/components/modules";
 // hooks
-import {
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectState,
-  useIssues,
-  useCommandPalette,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";

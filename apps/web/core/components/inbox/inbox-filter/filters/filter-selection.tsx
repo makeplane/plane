@@ -2,7 +2,9 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // hooks
-import { useMember, useLabel, useProjectState } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { FilterDate } from "./date";

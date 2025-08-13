@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // local imports
 import { InboxIssueAppliedFiltersDate } from "./date";
 import { InboxIssueAppliedFiltersLabel } from "./label";

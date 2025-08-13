@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { HIGHLIGHT_CLASS } from "../utils";
 import { CalendarIssueBlock } from "./issue-block";

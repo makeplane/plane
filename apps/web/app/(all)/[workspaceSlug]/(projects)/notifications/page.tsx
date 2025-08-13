@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
 import { NotificationsRoot } from "@/components/workspace-notifications";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const WorkspaceDashboardPage = observer(() => {
   const { workspaceSlug } = useParams();

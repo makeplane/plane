@@ -12,7 +12,8 @@ import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text/editor";
 // hooks
-import { useEditorAsset, useProjectInbox } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { WorkspaceService } from "@/plane-web/services";

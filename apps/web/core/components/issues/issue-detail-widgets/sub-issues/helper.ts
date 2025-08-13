@@ -10,7 +10,8 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web helpers
 import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 

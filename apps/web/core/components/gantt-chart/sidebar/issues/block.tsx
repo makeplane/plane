@@ -7,7 +7,7 @@ import { cn } from "@plane/utils";
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueGanttSidebarBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // local imports

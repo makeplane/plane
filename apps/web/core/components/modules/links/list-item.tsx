@@ -9,7 +9,7 @@ import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/ut
 // helpers
 //
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {

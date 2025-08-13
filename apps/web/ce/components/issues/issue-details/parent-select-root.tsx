@@ -9,7 +9,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueParentSelect } from "@/components/issues/issue-detail/parent-select";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TIssueParentSelect = {
   className?: string;

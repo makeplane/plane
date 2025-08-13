@@ -11,7 +11,7 @@ import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";

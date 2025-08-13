@@ -12,7 +12,7 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";

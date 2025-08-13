@@ -13,7 +13,7 @@ import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // services
 import { UserService } from "@/services/user.service";
 

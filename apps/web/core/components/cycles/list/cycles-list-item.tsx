@@ -11,7 +11,7 @@ import { CircularProgressIndicator } from "@plane/ui";
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports

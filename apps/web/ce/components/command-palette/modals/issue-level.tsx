@@ -8,7 +8,9 @@ import { BulkDeleteIssuesModal } from "@/components/core/modals/bulk-delete-issu
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 

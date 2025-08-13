@@ -11,7 +11,8 @@ import { ModuleLayoutRoot } from "@/components/issues/issue-layouts/roots/module
 import { ModuleAnalyticsSidebar } from "@/components/modules";
 // helpers
 // hooks
-import { useModule, useProject } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module"
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets

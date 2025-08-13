@@ -7,7 +7,7 @@ import { X, PenSquare } from "lucide-react";
 import { PageHead } from "@/components/core/page-title";
 import { DraftIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/draft-issue-layout-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 const ProjectDraftIssuesPage = observer(() => {

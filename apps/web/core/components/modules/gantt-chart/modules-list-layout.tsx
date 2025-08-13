@@ -7,7 +7,9 @@ import { GanttChartRoot, ModuleGanttSidebar } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { ModuleGanttBlock } from "@/components/modules";
 // hooks
-import { useModule, useModuleFilter, useProject } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module"
+import { useModuleFilter } from "@/hooks/store/use-module-filter"
+import { useProject } from "@/hooks/store/use-project";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
   // router

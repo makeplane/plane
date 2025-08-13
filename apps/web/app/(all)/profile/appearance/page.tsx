@@ -17,7 +17,7 @@ import { ThemeSwitch } from "@/components/core/theme/theme-switch";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();

@@ -10,7 +10,10 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectFilter } from "@/hooks/store/use-project-filter"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import { ProjectCard } from "./card";

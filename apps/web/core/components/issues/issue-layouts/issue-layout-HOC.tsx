@@ -8,7 +8,7 @@ import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssueLayoutEmptyState } from "./empty-states";

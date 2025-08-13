@@ -12,7 +12,8 @@ import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useUserPermissions } from "@/hooks/store/user";
 
 export interface SidebarUserMenuItemProps {
   item: {

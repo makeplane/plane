@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType } from "@plane/types";
 // computed
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueLinkItem } from "./link-item";
 import { TLinkOperations } from "./root";

@@ -21,7 +21,8 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 // hooks
 import { captureError, captureSuccess, joinEventGroup } from "@/helpers/event-tracker.helper";
-import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";

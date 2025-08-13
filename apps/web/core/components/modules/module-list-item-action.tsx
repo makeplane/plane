@@ -28,7 +28,9 @@ import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdow
 // helpers
 import { captureElementAndEvent, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useModule } from "@/hooks/store/use-module"
+import { useUserPermissions } from "@/hooks/store/user";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {

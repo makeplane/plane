@@ -10,7 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { WorkspaceViewForm } from "./form";

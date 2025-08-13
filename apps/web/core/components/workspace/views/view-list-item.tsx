@@ -12,7 +12,7 @@ import { calculateTotalFilters, truncateText } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";

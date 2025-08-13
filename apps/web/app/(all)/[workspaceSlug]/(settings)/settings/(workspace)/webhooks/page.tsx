@@ -17,7 +17,9 @@ import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook"
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const WebhooksListPage = observer(() => {

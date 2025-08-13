@@ -12,7 +12,8 @@ import { SettingsHeading } from "@/components/settings/heading";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";

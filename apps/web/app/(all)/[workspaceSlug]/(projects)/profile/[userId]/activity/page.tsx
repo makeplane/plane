@@ -11,7 +11,7 @@ import { PageHead } from "@/components/core/page-title";
 import { DownloadActivityButton } from "@/components/profile/activity/download-button";
 import { WorkspaceActivityListPage } from "@/components/profile/activity/workspace-activity-list";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 const PER_PAGE = 100;
 

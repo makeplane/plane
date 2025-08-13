@@ -12,7 +12,7 @@ import { cn } from "@plane/utils";
 // components
 import { ProIcon } from "@/components/common/pro-icon";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {

@@ -15,7 +15,9 @@ import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useUser, useUserProfile } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components

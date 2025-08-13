@@ -20,7 +20,8 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useCycle, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 // services
 import { CycleService } from "@/services/cycle.service";

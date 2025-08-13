@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { SettingIcon } from "@/components/icons";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane wev constants
 // plane web helpers

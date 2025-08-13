@@ -10,7 +10,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { TransferIssues } from "@/components/cycles/transfer-issues";
 import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
-import { useCycle, useIssues } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";

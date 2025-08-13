@@ -25,7 +25,9 @@ import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/
 // components
 import { Logo } from "@/components/common/logo";
 // hooks
-import { useMember, useProject, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports

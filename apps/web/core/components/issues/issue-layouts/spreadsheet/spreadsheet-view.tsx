@@ -8,7 +8,7 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayo
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 // plane web hooks

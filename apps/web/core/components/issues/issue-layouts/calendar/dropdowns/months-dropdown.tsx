@@ -8,7 +8,7 @@ import { Popover, Transition } from "@headlessui/react";
 // constants
 import { getDate } from "@plane/utils";
 import { MONTHS_LIST } from "@/constants/calendar";
-import { useCalendarView } from "@/hooks/store";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";

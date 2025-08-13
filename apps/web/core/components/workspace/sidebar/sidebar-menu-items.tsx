@@ -15,7 +15,8 @@ import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // store hooks
-import { useAppTheme, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane-web imports
 import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";

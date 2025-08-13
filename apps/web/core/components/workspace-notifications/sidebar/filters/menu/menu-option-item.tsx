@@ -8,7 +8,7 @@ import { ENotificationFilterType } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 export const NotificationFilterOptionItem: FC<{ label: string; value: ENotificationFilterType }> = observer((props) => {
   const { value, label } = props;

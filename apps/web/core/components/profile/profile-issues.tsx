@@ -10,7 +10,7 @@ import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kan
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 type Props = {

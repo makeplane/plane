@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 // components
 import { Loader, DiceIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 // ui
 
 type Props = {

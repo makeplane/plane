@@ -7,7 +7,7 @@ import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type BlockProps = {
   activity: TActivityEntityData;

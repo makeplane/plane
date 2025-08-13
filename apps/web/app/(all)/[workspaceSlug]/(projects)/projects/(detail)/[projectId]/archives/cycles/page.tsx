@@ -7,7 +7,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ArchivedCycleLayoutRoot } from "@/components/cycles/archived-cycles";
 import { ArchivedCyclesHeader } from "@/components/cycles/archived-cycles/header";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const ProjectArchivedCyclesPage = observer(() => {
   // router

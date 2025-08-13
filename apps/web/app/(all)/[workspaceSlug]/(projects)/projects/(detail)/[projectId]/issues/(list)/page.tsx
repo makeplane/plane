@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectLayoutRoot } from "@/components/issues/issue-layouts/roots/project-layout-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const ProjectIssuesPage = observer(() => {
   const { projectId } = useParams();

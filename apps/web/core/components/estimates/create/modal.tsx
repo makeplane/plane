@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 // local imports
 import { EstimatePointCreateRoot } from "../points";
 import { EstimateCreateStageOne } from "./stage-one";

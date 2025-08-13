@@ -8,7 +8,7 @@ import { TCycleGroups } from "@plane/types";
 // components
 import { Loader, CycleGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types
 

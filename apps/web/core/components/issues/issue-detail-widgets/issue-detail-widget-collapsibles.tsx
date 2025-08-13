@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";

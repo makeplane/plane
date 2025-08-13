@@ -8,7 +8,7 @@ import { Collapsible } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";

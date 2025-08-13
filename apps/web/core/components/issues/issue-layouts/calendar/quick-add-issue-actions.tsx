@@ -13,7 +13,7 @@ import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { QuickAddIssueRoot } from "../quick-add";
 
 type TCalendarQuickAddIssueActions = {

@@ -37,16 +37,14 @@ import {
 // constants
 import { ViewQuickActions } from "@/components/views/quick-actions";
 // hooks
-import {
-  useCommandPalette,
-  useIssues,
-  useLabel,
-  useMember,
-  useProject,
-  useProjectState,
-  useProjectView,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";

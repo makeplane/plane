@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssueServiceType, TIssue } from "@plane/types";
 // store hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { ChangeWorkItemStateList } from "@/plane-web/components/command-palette/actions/work-item-actions";
 

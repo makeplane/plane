@@ -17,7 +17,7 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useSticky } from "@/hooks/use-stickies";
 // local imports

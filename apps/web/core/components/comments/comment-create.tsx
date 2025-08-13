@@ -9,7 +9,7 @@ import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
 

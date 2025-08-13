@@ -11,7 +11,8 @@ import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-detail
 import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // hooks
-import { useCycle, useProject } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets

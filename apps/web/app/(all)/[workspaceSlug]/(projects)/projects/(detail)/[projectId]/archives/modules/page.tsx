@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { PageHead } from "@/components/core/page-title";
 import { ArchivedModuleLayoutRoot, ArchivedModulesHeader } from "@/components/modules";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const ProjectArchivedModulesPage = observer(() => {
   // router

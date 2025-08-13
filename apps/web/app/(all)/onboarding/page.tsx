@@ -11,7 +11,8 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // services

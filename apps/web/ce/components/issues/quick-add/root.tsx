@@ -16,7 +16,7 @@ import {
   TQuickAddIssueForm,
 } from "@/components/issues/issue-layouts/quick-add";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
 
 export type TQuickAddIssueFormRoot = {

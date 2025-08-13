@@ -11,7 +11,10 @@ import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useInstance } from "@/hooks/store/use-instance"
+import { useTransient } from "@/hooks/store/use-transient"
+import { useUserSettings } from "@/hooks/store/user";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 

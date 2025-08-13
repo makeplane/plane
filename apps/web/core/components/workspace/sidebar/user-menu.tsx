@@ -8,7 +8,7 @@ import { Home, Inbox, PenSquare } from "lucide-react";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { UserActivityIcon } from "@plane/ui";
 // hooks
-import { useUserPermissions, useUser } from "@/hooks/store";
+import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
 

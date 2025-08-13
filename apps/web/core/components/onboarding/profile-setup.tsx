@@ -22,7 +22,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 // hooks
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
 

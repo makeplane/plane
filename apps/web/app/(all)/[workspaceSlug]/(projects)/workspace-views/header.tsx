@@ -30,7 +30,10 @@ import { DefaultWorkspaceViewQuickActions } from "@/components/workspace/views/d
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-action";
 // hooks
-import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 

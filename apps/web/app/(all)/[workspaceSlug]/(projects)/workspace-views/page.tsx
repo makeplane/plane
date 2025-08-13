@@ -12,7 +12,7 @@ import { PageHead } from "@/components/core/page-title";
 import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
 import { GlobalViewsList } from "@/components/workspace/views/views-list";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const WorkspaceViewsPage = observer(() => {
   const [query, setQuery] = useState("");

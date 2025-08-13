@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // ui
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
 

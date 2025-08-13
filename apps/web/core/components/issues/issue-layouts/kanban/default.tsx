@@ -20,7 +20,7 @@ import { ContentWrapper } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
-import { useKanbanView } from "@/hooks/store";
+import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components

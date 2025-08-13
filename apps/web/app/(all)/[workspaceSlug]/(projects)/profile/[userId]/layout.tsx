@@ -12,7 +12,7 @@ import { ProfileSidebar } from "@/components/profile/sidebar";
 // constants
 import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import useSize from "@/hooks/use-window-size";
 // local components
 import { UserService } from "@/services/user.service";

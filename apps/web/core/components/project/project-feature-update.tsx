@@ -10,7 +10,7 @@ import { Button, getButtonStyling, Row } from "@plane/ui";
 import { Logo } from "@/components/common/logo";
 import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   workspaceSlug: string;

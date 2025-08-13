@@ -5,7 +5,7 @@ import { ChevronDown, X } from "lucide-react";
 import { DiceIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type ModuleButtonContentProps = {

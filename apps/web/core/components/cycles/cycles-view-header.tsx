@@ -11,7 +11,7 @@ import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useCycleFilter } from "@/hooks/store";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "./dropdowns";
 

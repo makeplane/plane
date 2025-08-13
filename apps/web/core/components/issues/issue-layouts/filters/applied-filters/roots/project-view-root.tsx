@@ -19,7 +19,11 @@ import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 // hooks
-import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useProjectView } from "@/hooks/store/use-project-view"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { getAreFiltersEqual } from "../../../utils";
 import { AppliedFiltersList } from "../filters-list";
 

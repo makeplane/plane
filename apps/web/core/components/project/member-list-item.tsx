@@ -7,7 +7,8 @@ import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";

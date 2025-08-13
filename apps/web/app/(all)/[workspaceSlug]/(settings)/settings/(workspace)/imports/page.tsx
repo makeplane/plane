@@ -9,7 +9,8 @@ import IntegrationGuide from "@/components/integration/guide";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 
 const ImportsPage = observer(() => {
   // router

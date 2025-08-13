@@ -28,7 +28,8 @@ import {
 } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useLabel, useMember } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member";
 import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {

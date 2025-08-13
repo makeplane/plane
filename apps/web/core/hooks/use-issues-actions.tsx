@@ -19,7 +19,7 @@ import {
   useTeamViewIssueActions,
   useTeamProjectWorkItemsActions,
 } from "@/plane-web/helpers/issue-action-helper";
-import { useIssues } from "./store";
+import { useIssues } from "./store/use-issues";
 
 export interface IssueActions {
   fetchIssues: (

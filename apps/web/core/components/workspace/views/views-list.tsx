@@ -4,7 +4,7 @@ import useSWR from "swr";
 // components
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
-import { useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
 import { GlobalViewListItem } from "./view-list-item";
 

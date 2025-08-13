@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueAttachmentsCollapsibleContent } from "./content";
 import { IssueAttachmentsCollapsibleTitle } from "./title";

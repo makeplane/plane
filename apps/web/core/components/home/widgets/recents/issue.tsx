@@ -9,7 +9,9 @@ import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 

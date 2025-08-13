@@ -12,7 +12,9 @@ import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useMember, useProjectInbox, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox"
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;

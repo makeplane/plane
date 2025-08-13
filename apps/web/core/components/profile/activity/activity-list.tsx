@@ -14,7 +14,8 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // helpers
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   activity: IUserActivityResponse | undefined;

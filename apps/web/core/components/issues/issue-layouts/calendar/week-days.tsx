@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 // types
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";

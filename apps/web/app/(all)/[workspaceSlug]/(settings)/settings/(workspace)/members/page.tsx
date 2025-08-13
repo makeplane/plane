@@ -25,7 +25,9 @@ import { WorkspaceMembersList } from "@/components/workspace/settings/members-li
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";

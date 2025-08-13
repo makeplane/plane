@@ -15,7 +15,7 @@ import { CycleListGroupHeader } from "@/components/cycles/list/cycle-list-group-
 import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 

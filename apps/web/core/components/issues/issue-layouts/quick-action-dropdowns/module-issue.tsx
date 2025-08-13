@@ -16,7 +16,10 @@ import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useProject } from "@/hooks/store/use-project";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 // helper

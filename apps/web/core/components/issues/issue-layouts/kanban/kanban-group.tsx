@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // Plane-web

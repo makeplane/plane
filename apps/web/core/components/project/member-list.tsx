@@ -10,7 +10,8 @@ import { Button } from "@plane/ui";
 // components
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectMemberListItem } from "./member-list-item";
 import { SendProjectInvitationModal } from "./send-project-invitation-modal";

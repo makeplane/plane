@@ -12,7 +12,8 @@ import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modu
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // helpers
 // hooks
-import { useModule, useModuleFilter } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module"
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ArchivedModuleLayoutRoot: React.FC = observer(() => {

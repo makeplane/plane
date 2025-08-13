@@ -6,7 +6,8 @@ import useSWR from "swr";
 // components
 import { ProjectRoot } from "@/components/project/root";
 // hooks
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export const ProjectPageRoot = observer(() => {
   // router

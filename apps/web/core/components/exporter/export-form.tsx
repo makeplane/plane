@@ -11,7 +11,8 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomSearchSelect, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
 
 type Props = {

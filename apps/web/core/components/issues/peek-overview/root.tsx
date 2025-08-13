@@ -10,7 +10,9 @@ import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } fr
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 // local imports

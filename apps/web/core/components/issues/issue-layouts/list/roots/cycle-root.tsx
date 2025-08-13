@@ -5,7 +5,9 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 // types
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";

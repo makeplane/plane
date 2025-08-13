@@ -9,7 +9,8 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";

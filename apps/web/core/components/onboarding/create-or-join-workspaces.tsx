@@ -6,7 +6,7 @@ import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // local imports

@@ -11,7 +11,7 @@ import { LanguageTimezone } from "@/components/profile/preferences/language-time
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();

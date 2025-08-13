@@ -13,7 +13,7 @@ import { Spinner, Tooltip } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilter } from "../../filters/menu";

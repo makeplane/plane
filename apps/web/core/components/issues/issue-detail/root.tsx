@@ -11,7 +11,10 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useAppTheme, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";

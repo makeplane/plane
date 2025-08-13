@@ -7,7 +7,7 @@ import { useLocalStorage } from "@plane/hooks";
 // components
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";

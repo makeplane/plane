@@ -14,7 +14,9 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // helpers
 // hooks
-import { useModuleFilter, useProject, useUserPermissions } from "@/hooks/store";
+import { useModuleFilter } from "@/hooks/store/use-module-filter"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

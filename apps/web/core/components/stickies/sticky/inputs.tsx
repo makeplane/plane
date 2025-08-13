@@ -8,7 +8,7 @@ import { TSticky } from "@plane/types";
 // plane utils
 import { cn, isCommentEmpty } from "@plane/utils";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // components
 import { StickyEditor } from "../../editor/sticky-editor";
 

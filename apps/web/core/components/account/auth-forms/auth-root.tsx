@@ -21,7 +21,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";

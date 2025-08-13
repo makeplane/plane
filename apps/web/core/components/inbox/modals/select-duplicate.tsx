@@ -11,7 +11,7 @@ import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services

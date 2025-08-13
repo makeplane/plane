@@ -15,7 +15,7 @@ import { ThemeSwitch } from "@/components/core/theme/theme-switch";
 // helpers
 import { PreferencesSection } from "@/components/preferences/section";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 export const ThemeSwitcher = observer(
   (props: {

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // local imports

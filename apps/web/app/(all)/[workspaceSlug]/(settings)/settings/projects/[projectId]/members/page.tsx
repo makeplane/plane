@@ -13,7 +13,8 @@ import { ProjectMemberList } from "@/components/project/member-list";
 import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";

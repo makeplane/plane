@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // components
 import { BulkOperationsUpgradeBanner } from "@/components/issues/bulk-operations/upgrade-banner";
 // hooks
-import { useMultipleSelectStore } from "@/hooks/store";
+import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {

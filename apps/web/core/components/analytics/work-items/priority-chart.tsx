@@ -20,7 +20,7 @@ import { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } f
 import { Button } from "@plane/ui";
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";

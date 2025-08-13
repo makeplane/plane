@@ -9,7 +9,10 @@ import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
 // hooks
-import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";

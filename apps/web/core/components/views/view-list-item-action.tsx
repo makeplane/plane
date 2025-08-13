@@ -9,7 +9,9 @@ import { EViewAccess, IProjectView } from "@plane/types";
 import { Tooltip, FavoriteStar } from "@plane/ui";
 import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
 // hooks
-import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectView } from "@/hooks/store/use-project-view"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { PublishViewModal } from "@/plane-web/components/views/publish";
 // local imports

@@ -12,7 +12,9 @@ import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

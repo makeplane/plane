@@ -10,7 +10,7 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
 import { NotificationSidebarHeaderOptions } from "./options";
 

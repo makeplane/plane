@@ -15,18 +15,16 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import {
-  useCommandPalette,
-  useCycle,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectEstimates,
-  useProjectState,
-  useProjectView,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local

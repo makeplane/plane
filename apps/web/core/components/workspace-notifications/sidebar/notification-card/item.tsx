@@ -7,7 +7,10 @@ import { Clock } from "lucide-react";
 import { Avatar, Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // hooks
-import { useIssueDetail, useNotification, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useNotification } from "@/hooks/store/notifications/use-notification";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
 import { NotificationContent } from "./content";
 import { NotificationOption } from "./options";

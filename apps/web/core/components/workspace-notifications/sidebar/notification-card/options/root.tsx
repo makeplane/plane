@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
 // hooks
-import { useNotification } from "@/hooks/store";
+import { useNotification } from "@/hooks/store/notifications/use-notification";
 // local imports
 import { NotificationItemArchiveOption } from "./archive";
 import { NotificationItemReadOption } from "./read";

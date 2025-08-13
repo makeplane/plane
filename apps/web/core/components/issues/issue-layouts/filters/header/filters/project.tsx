@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 import { Logo } from "@/components/common/logo";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   appliedFilters: string[] | null;

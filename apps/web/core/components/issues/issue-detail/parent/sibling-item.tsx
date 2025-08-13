@@ -8,7 +8,8 @@ import { CustomMenu } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 

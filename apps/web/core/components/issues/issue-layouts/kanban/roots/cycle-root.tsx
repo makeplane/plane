@@ -5,7 +5,9 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";

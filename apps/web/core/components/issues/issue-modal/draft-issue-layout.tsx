@@ -16,7 +16,7 @@ import { isEmptyHtmlString } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useWorkspaceDraftIssues } from "@/hooks/store";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // local imports
 import { ConfirmIssueDiscard } from "../confirm-issue-discard";
 import { IssueFormRoot, type IssueFormProps } from "./form";

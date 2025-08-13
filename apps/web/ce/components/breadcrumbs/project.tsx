@@ -8,7 +8,7 @@ import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Logo } from "@plane/ui
 // components
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types";
 

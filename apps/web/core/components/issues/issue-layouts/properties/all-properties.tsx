@@ -33,7 +33,11 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

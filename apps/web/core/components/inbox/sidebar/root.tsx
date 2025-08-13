@@ -11,7 +11,8 @@ import { cn } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -18,7 +18,7 @@ import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-mo
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueProperties = {

@@ -6,7 +6,7 @@ import { TDescriptionVersion } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { calculateTimeAgo } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { DescriptionVersionsDropdownItem } from "./dropdown-item";
 import { TDescriptionVersionEntityInformation } from "./root";

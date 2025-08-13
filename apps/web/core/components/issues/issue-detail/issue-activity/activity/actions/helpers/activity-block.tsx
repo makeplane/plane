@@ -5,7 +5,7 @@ import { Network } from "lucide-react";
 // hooks
 import { Tooltip } from "@plane/ui";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // components

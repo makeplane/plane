@@ -15,7 +15,8 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 
 const AutomationSettingsPage = observer(() => {
   // router

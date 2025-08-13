@@ -26,7 +26,9 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [

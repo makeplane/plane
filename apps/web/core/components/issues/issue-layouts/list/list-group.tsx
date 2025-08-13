@@ -22,7 +22,7 @@ import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

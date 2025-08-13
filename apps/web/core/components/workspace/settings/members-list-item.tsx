@@ -14,7 +14,9 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-wor
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useUser, useUserPermissions, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";

@@ -35,7 +35,10 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";

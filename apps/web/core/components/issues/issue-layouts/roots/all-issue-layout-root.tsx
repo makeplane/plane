@@ -9,7 +9,8 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
-import { useGlobalView, useIssues } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store

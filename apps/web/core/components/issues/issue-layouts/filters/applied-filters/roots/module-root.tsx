@@ -5,7 +5,9 @@ import { EIssueFilterType, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constant
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
-import { useIssues, useLabel, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { SaveFilterView } from "../../../save-filter-view";
 import { AppliedFiltersList } from "../filters-list";
 

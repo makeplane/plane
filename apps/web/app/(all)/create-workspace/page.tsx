@@ -11,7 +11,7 @@ import { Button, getButtonStyling, PlaneLogo } from "@plane/ui";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";

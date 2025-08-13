@@ -12,7 +12,8 @@ import ExportGuide from "@/components/exporter/guide";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import SettingsHeading from "@/components/settings/heading";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 
 const ExportsPage = observer(() => {
   // store hooks

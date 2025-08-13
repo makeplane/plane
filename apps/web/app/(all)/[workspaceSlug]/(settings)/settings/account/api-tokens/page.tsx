@@ -17,7 +17,7 @@ import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-toke
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const apiTokenService = new APITokenService();

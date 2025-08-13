@@ -10,7 +10,8 @@ import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 

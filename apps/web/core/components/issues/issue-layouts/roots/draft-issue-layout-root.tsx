@@ -8,7 +8,7 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // components
 import { DraftIssueAppliedFiltersRoot } from "../filters/applied-filters/roots/draft-issue";

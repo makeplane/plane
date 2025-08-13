@@ -7,7 +7,7 @@ import { TCycleFilters } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { AppliedDateFilters } from "./date";
 import { AppliedStatusFilters } from "./status";

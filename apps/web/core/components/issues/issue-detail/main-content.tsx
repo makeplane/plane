@@ -9,7 +9,10 @@ import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 // hooks
-import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components

@@ -18,7 +18,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 
 type TUserProfileForm = {
   avatar_url: string;

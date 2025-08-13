@@ -11,7 +11,7 @@ import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";

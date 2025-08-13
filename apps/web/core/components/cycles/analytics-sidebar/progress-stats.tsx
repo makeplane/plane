@@ -19,7 +19,7 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
 // public
 import emptyLabel from "@/public/empty-state/empty_label.svg";

@@ -25,7 +25,8 @@ import { isIssueFilterActive } from "@plane/utils";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
-import { useIssues, useLabel } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label";
 
 export const ProfileIssuesMobileHeader = observer(() => {
   // plane i18n

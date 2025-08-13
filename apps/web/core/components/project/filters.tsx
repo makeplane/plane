@@ -9,7 +9,8 @@ import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useMember, useProjectFilter } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectFilter } from "@/hooks/store/use-project-filter";
 // local imports
 import { ProjectOrderByDropdown } from "./dropdowns/order-by";
 import { ProjectFiltersSelection } from "./dropdowns/filters";

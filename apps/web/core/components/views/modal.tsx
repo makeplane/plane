@@ -9,7 +9,7 @@ import { IProjectView } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectView } from "@/hooks/store";
+import { useProjectView } from "@/hooks/store/use-project-view";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 // local imports
