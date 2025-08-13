@@ -19,6 +19,7 @@ export interface IDropdownProps {
   placement?: Placement;
   tabIndex?: number;
   useCaptureForOutsideClick?: boolean;
+  defaultOpen?: boolean;
 }
 
 export interface IPortalProps {
