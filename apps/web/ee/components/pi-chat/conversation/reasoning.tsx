@@ -2,15 +2,16 @@ import { useState } from "react";
 import Markdown from "react-markdown";
 import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@plane/utils";
+import { Thinking } from "./thinking";
 
 type TProps = {
   reasoning: string | undefined;
-  isLatest?: boolean;
+  isReasoning: boolean;
 };
 
 export const ReasoningBlock = (props: TProps) => {
-  const { reasoning, isLatest } = props;
-  const [isOpen, setIsOpen] = useState(isLatest);
+  const { reasoning, isReasoning } = props;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
@@ -20,7 +21,11 @@ export const ReasoningBlock = (props: TProps) => {
         className="w-fit hover:bg-custom-background-90 rounded-full px-4 py-2 transition-all duration-500 ease-in-out border border-custom-border-200 hover:border-transparent"
       >
         <div className="flex gap-2 items-center">
-          <div className="text-base text-custom-text-200 font-medium">Show thinking</div>
+          {isReasoning ? (
+            <Thinking />
+          ) : (
+            <div className="text-base text-custom-text-200 font-medium">{isOpen ? "Hide" : "Show"} thinking</div>
+          )}
           <ChevronDownIcon
             className={`w-4 h-4 transition-transform duration-500 ease-in-out ${isOpen ? "transform rotate-180" : ""}`}
           />

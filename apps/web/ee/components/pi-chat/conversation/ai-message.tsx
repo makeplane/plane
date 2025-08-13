@@ -20,13 +20,12 @@ type TProps = {
   isPiThinking?: boolean;
   isLoading?: boolean;
   feedback?: EFeedback;
-  isLatest?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
-  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
+  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback } = props;
   // store
   const { workspaceSlug } = useParams();
-  const { sendFeedback, activeChatId } = usePiChat();
+  const { sendFeedback, activeChatId, isPiTyping } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   // state
@@ -68,7 +67,7 @@ export const AiMessage = observer((props: TProps) => {
         {/* Message */}
         {!isPiThinking && !isLoading && (
           <div className="flex flex-col gap-4">
-            {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
+            {reasoning && <ReasoningBlock reasoning={reasoning} isReasoning={!message} />}
             <Markdown
               remarkPlugins={[remarkGfm]}
               className="pi-chat-root [&>*:first-child]:mt-0"
@@ -101,7 +100,7 @@ export const AiMessage = observer((props: TProps) => {
           </Loader>
         )}
         {/* Action bar */}
-        {!isPiThinking && !isLoading && (
+        {!isPiTyping && !isPiThinking && !isLoading && (
           <div className="flex gap-4 mt-6">
             {/* Copy */}
             <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">

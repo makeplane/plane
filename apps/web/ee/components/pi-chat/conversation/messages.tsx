@@ -87,7 +87,6 @@ export const Messages = observer((props: TProps) => {
               reasoning={message.reasoning}
               id={index.toString()}
               feedback={message.feedback}
-              isLatest={index === activeChat?.dialogue.length - 1}
             />
           )}
         </div>
