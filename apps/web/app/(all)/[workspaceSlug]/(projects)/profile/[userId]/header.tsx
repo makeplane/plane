@@ -13,7 +13,7 @@ import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { ProfileIssuesFilter } from "@/components/profile";
+import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
 

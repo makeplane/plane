@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { AppSidebarToggleButton } from "@/components/sidebar";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { HelpMenu } from "@/components/workspace/sidebar/help-menu";

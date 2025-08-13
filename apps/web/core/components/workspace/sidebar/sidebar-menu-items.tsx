@@ -13,7 +13,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // store hooks
 import { useAppTheme, useWorkspace } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

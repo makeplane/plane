@@ -8,7 +8,7 @@ import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { ProfileActivityListPage } from "@/components/profile";
+import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
 // hooks
 import { SettingsHeading } from "@/components/settings/heading";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

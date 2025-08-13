@@ -8,7 +8,7 @@ import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";

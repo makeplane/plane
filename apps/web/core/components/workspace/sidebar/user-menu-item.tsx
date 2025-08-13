@@ -8,7 +8,7 @@ import { EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constant
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

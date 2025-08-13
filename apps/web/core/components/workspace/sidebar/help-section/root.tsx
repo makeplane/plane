@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomMenu, ToggleSwitch } from "@plane/ui";
 // components
 import { ProductUpdatesModal } from "@/components/global";
-import { AppSidebarItem } from "@/components/sidebar";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 // plane web components

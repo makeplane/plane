@@ -11,7 +11,7 @@ import { EUserProjectRoles } from "@plane/types";
 // plane ui
 import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 

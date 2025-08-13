@@ -11,7 +11,7 @@ import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { ProfileSettingContentHeader } from "@/components/profile";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 // helpers
 import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks

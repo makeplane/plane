@@ -14,8 +14,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
-// helpers
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

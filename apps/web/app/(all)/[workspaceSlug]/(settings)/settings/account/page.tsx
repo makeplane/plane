@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
-import { ProfileForm } from "@/components/profile";
+import { ProfileForm } from "@/components/profile/form";
 // hooks
 import { useUser } from "@/hooks/store";
 

@@ -1,10 +1,11 @@
 "use client";
 
 import useSWR from "swr";
-// components
+// plane imports
 import { useTranslation } from "@plane/i18n";
+// components
 import { PageHead } from "@/components/core/page-title";
-import { EmailNotificationForm } from "@/components/profile/notification";
+import { EmailNotificationForm } from "@/components/profile/notification/email-notification-form";
 import { SettingsHeading } from "@/components/settings/heading";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 // services

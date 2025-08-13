@@ -2,26 +2,22 @@
 
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
+// plane imports
 import { GROUP_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
-// components
 import { ContentWrapper } from "@plane/ui";
+// components
 import { PageHead } from "@/components/core/page-title";
-import {
-  ProfileActivity,
-  ProfilePriorityDistribution,
-  ProfileStateDistribution,
-  ProfileStats,
-  ProfileWorkload,
-} from "@/components/profile";
+import { ProfileActivity } from "@/components/profile/overview/activity";
+import { ProfilePriorityDistribution } from "@/components/profile/overview/priority-distribution";
+import { ProfileStateDistribution } from "@/components/profile/overview/state-distribution";
+import { ProfileStats } from "@/components/profile/overview/stats";
+import { ProfileWorkload } from "@/components/profile/overview/workload";
 // constants
 import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
 // services
 import { UserService } from "@/services/user.service";
-
-// services
 const userService = new UserService();
 
 export default function ProfileOverviewPage() {

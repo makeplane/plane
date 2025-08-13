@@ -24,9 +24,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
-// constants
-// helpers
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
