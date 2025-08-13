@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Check, Settings, UserPlus } from "lucide-react";
 // plane imports
-import { Menu } from "@headlessui/react";
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
 // helpers
 // plane web imports
@@ -38,8 +38,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
       className="w-full"
       id={workspace.id}
     >
-      <Menu.Item
-        as="div"
+      <CustomMenu.MenuItem
         className={cn("px-4 py-2", {
           "bg-custom-sidebar-background-90": workspace.id === activeWorkspace?.id,
           "hover:bg-custom-sidebar-background-90": workspace.id !== activeWorkspace?.id,
@@ -111,7 +110,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
             </div>
           </>
         )}
-      </Menu.Item>
+      </CustomMenu.MenuItem>
     </Link>
   );
 });

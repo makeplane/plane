@@ -86,6 +86,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     closeOnSelect,
     openOnHover = false,
     useCaptureForOutsideClick = false,
+    handleOpenChange = () => {},
   } = props;
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -126,7 +127,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
   };
 
   return (
-    <Menu.Root openOnHover={openOnHover}>
+    <Menu.Root openOnHover={openOnHover} onOpenChange={handleOpenChange}>
       {customButton ? (
         <Menu.Trigger
           type="button"

@@ -2,10 +2,10 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { TIssuePublicComment } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor";
@@ -156,60 +156,20 @@ export const CommentCard: React.FC<Props> = observer((props) => {
       </div>
 
       {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
-        <Menu as="div" className="relative w-min text-left">
-          <Menu.Button
-            type="button"
-            onClick={() => {}}
-            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
+        <CustomMenu
+          className="relative w-min text-left"
+          customButtonClassName="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
+          customButton={<MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />}
+        >
+          <CustomMenu.MenuItem
+            onClick={() => {
+              setIsEditing(true);
+            }}
           >
-            <MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />
-          </Menu.Button>
-
-          <Transition
-            as={React.Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
-              <Menu.Item>
-                {({ active }) => (
-                  <div className="py-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditing(true);
-                      }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <div className="py-1">
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </Menu.Item>
-            </Menu.Items>
-          </Transition>
-        </Menu>
+            Edit
+          </CustomMenu.MenuItem>
+          <CustomMenu.MenuItem onClick={handleDelete}>Delete</CustomMenu.MenuItem>
+        </CustomMenu>
       )}
     </div>
   );

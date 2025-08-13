@@ -1,14 +1,13 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
 import { LogOut, UserCog2, Palette } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { AuthService } from "@plane/services";
-import { Avatar } from "@plane/ui";
+import { Avatar, CustomMenu } from "@plane/ui";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
 import { useTheme, useUser } from "@/hooks/store";
@@ -33,42 +32,32 @@ export const AdminSidebarDropdown = observer(() => {
   const handleSignOut = () => signOut();
 
   const getSidebarMenuItems = () => (
-    <Menu.Items
-      className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none",
-        {
-          "left-4": isSidebarCollapsed,
-        }
-      )}
-    >
+    <>
       <div className="flex flex-col gap-2.5 pb-2">
         <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
       </div>
       <div className="py-2">
-        <Menu.Item
-          as="button"
-          type="button"
+        <CustomMenu.MenuItem
           className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
           onClick={handleThemeSwitch}
         >
           <Palette className="h-4 w-4 stroke-[1.5]" />
           Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
-        </Menu.Item>
+        </CustomMenu.MenuItem>
       </div>
-      <div className="py-2">
+      <CustomMenu.MenuItem className="w-full">
         <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`} onSubmit={handleSignOut}>
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-          <Menu.Item
-            as="button"
+          <button
             type="submit"
-            className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+            className="flex w-full items-center gap-2 rounded px-2 hover:bg-custom-sidebar-background-80"
           >
             <LogOut className="h-4 w-4 stroke-[1.5]" />
             Sign out
-          </Menu.Item>
+          </button>
         </form>
-      </div>
-    </Menu.Items>
+      </CustomMenu.MenuItem>
+    </>
   );
 
   useEffect(() => {
@@ -84,30 +73,20 @@ export const AdminSidebarDropdown = observer(() => {
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <Menu as="div" className="flex-shrink-0">
-            <Menu.Button
-              className={cn("grid place-items-center outline-none", {
-                "cursor-default": !isSidebarCollapsed,
-              })}
-            >
+          <CustomMenu
+            optionsClassName="relative flex-shrink-0 overflow-auto"
+            customButtonClassName={cn("grid place-items-center outline-none", {
+              "cursor-default": !isSidebarCollapsed,
+            })}
+            disabled={!isSidebarCollapsed}
+            customButton={
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-custom-sidebar-background-80">
                 <UserCog2 className="h-5 w-5 text-custom-text-200" />
               </div>
-            </Menu.Button>
-            {isSidebarCollapsed && (
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                {getSidebarMenuItems()}
-              </Transition>
-            )}
-          </Menu>
+            }
+          >
+            {getSidebarMenuItems()}
+          </CustomMenu>
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
@@ -118,8 +97,9 @@ export const AdminSidebarDropdown = observer(() => {
       </div>
 
       {!isSidebarCollapsed && currentUser && (
-        <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none">
+        <CustomMenu
+          optionsClassName="relative flex-shrink-0 overflow-auto"
+          customButton={
             <Avatar
               name={currentUser.display_name}
               src={getFileURL(currentUser.avatar_url)}
@@ -127,20 +107,10 @@ export const AdminSidebarDropdown = observer(() => {
               shape="square"
               className="!text-base"
             />
-          </Menu.Button>
-
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            {getSidebarMenuItems()}
-          </Transition>
-        </Menu>
+          }
+        >
+          {getSidebarMenuItems()}
+        </CustomMenu>
       )}
     </div>
   );
