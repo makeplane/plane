@@ -2,7 +2,7 @@ import { LOGICAL_OPERATOR, TAllOperators, TFilterValues } from "../../../rich-fi
 
 export type TAutomationConditionFilterKeys =
   | "payload.data.assignee_ids"
-  | "payload.data.created_by"
+  | "payload.data.created_by_id"
   | "payload.data.label_ids"
   | "payload.data.priority"
   | "payload.data.state_id"

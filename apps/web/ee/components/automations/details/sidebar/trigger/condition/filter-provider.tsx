@@ -146,7 +146,7 @@ const AutomationConditionFilterRoot = observer((props: TAutomationConditionFilte
 
   const createdByFilterConfig = useMemo(
     () =>
-      getCreatedByFilterConfig<TAutomationConditionFilterKeys>("payload.data.created_by")({
+      getCreatedByFilterConfig<TAutomationConditionFilterKeys>("payload.data.created_by_id")({
         isEnabled: true,
         filterIcon: CircleUserRound,
         members: members ?? [],
