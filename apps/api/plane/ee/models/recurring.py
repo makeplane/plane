@@ -191,15 +191,27 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
     def _sync_periodic_task(self):
         """Create or update the associated PeriodicTask for Beat scheduling"""
+        # Defensive validation to avoid creating a PeriodicTask without a schedule
+        old_instance = None
+        if self.pk:
+            try:
+                old_instance = RecurringWorkitemTask.objects.get(pk=self.pk)
+            except RecurringWorkitemTask.DoesNotExist:
+                pass
+
         task_name = self._generate_task_name()
         task_args, task_kwargs = self._prepare_task_arguments()
 
         cron_schedule = self._get_or_create_cron_schedule()
 
+        old_start_at = getattr(old_instance, "start_at", None)
+        start_changed = old_start_at != self.start_at
+
         if self.periodic_task:
-            self._update_existing_periodic_task(
-                task_name, task_args, task_kwargs, cron_schedule
-            )
+            if start_changed:
+                self._update_existing_periodic_task(
+                    task_name, task_args, task_kwargs, cron_schedule
+                )
         else:
             self._create_new_periodic_task(
                 task_name, task_args, task_kwargs, cron_schedule
