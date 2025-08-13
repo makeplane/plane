@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast, Dialog, EModalWidth } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
@@ -120,69 +120,36 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     );
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <div className="flex flex-wrap items-start">
-        <div className="space-y-1 sm:basis-1/2">
-          <Dialog as="div" className="relative z-30" onClose={handleClose}>
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-            </Transition.Child>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog.Panel width={EModalWidth.XXL}>
+        <Combobox value={value} onChange={handleSubmit}>
+          <div className="relative m-1">
+            <Search
+              className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+              placeholder="Search..."
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
 
-            <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                  <Combobox value={value} onChange={handleSubmit}>
-                    <div className="relative m-1">
-                      <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <input
-                        type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
-                        placeholder="Search..."
-                        onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </div>
-
-                    <Combobox.Options
-                      static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
-                    >
-                      {isSearching ? (
-                        <Loader className="space-y-3 p-3">
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                        </Loader>
-                      ) : (
-                        <>{issueList}</>
-                      )}
-                    </Combobox.Options>
-                  </Combobox>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </div>
-      </div>
-    </Transition.Root>
+          <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto">
+            {isSearching ? (
+              <Loader className="space-y-3 p-3">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <>{issueList}</>
+            )}
+          </Combobox.Options>
+        </Combobox>
+      </Dialog.Panel>
+    </Dialog>
   );
 };
