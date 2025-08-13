@@ -1,9 +1,9 @@
 import React from "react";
 import { Check, ChevronDown } from "lucide-react";
 // helpers
-import { cn } from "@plane/ui";
+import { cn } from "../utils";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "@plane/ui";
+import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 import { Select } from "@base-ui-components/react/select";
 
 const CustomSelect = (props: ICustomSelectProps) => {
