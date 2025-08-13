@@ -41,7 +41,9 @@ function DialogPanel({
       <DialogOverlay />
       <BaseDialog.Popup
         data-slot="dialog-content"
-        className={cn("fixed flex justify-center top-0 left-0 w-full z-30 px-4 sm:py-20 overflow-y-auto overflow-hidden")}
+        className={cn(
+          "fixed flex justify-center top-0 left-0 w-full z-30 px-4 sm:py-20 overflow-y-auto overflow-hidden outline-none"
+        )}
         {...props}
       >
         <div
