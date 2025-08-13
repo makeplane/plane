@@ -5,12 +5,12 @@ import { PanelLeft } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EInboxIssueCurrentTab } from "@plane/types";
 import { Intake } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
+import { InboxContentRoot } from "@/components/inbox/content";
+import { InboxSidebar } from "@/components/inbox/sidebar";
 import { InboxLayoutLoader } from "@/components/ui";
-// helpers
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

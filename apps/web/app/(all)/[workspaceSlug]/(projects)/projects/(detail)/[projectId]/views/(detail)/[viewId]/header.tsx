@@ -49,7 +49,7 @@ import {
 } from "@/hooks/store";
 // plane web
 import { useAppRouter } from "@/hooks/use-app-router";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // refs

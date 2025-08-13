@@ -10,9 +10,11 @@ import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { MembersSettingsLoader } from "@/components/ui";
-import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/components/workspace";
 // hooks
 import { useMember } from "@/hooks/store";
+// local imports
+import { WorkspaceInvitationsListItem } from "./invitations-list-item";
+import { WorkspaceMembersListItem } from "./members-list-item";
 
 export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
   const { searchQuery, isAdmin } = props;

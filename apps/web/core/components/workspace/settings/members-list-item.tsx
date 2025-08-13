@@ -3,19 +3,20 @@
 import { FC } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMember } from "@plane/types";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
-import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
-// constants
-// hooks
+import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useMember, useUser, useUserPermissions, useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
 type Props = {

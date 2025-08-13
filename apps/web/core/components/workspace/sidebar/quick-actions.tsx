@@ -13,7 +13,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { AppSearch } from "@/plane-web/components/workspace";
+import { AppSearch } from "@/plane-web/components/workspace/sidebar/app-search";
 
 export const SidebarQuickActions = observer(() => {
   const { t } = useTranslation();

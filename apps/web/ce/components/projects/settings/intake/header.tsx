@@ -9,11 +9,11 @@ import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@pl
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { InboxIssueCreateModalRoot } from "@/components/inbox";
+import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states

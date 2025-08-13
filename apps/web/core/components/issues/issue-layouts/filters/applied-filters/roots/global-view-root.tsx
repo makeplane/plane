@@ -19,7 +19,7 @@ import { Header, EHeaderVariant, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { UpdateViewComponent } from "@/components/views/update-view-component";
-import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";

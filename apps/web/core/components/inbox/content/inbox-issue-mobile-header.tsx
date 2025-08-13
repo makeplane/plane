@@ -19,13 +19,14 @@ import { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
-import { InboxIssueStatus } from "@/components/inbox";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueStatus } from "../inbox-issue-status";
 
 type Props = {
   workspaceSlug: string;

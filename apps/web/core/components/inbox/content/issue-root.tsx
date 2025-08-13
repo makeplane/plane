@@ -7,10 +7,9 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
-// components
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { InboxIssueContentProperties } from "@/components/inbox/content";
 import { IssueAttachmentRoot } from "@/components/issues/attachment";
 import { IssueDescriptionInput } from "@/components/issues/description-input";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
@@ -28,7 +27,9 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueContentProperties } from "./issue-properties";
 // services init
 const intakeWorkItemVersionService = new IntakeWorkItemVersionService();
 

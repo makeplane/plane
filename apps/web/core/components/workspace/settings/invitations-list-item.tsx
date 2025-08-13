@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomSelect, TOAST_TYPE, setToast, TContextMenuItem, CustomMenu } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // components
-import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
+import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember, useUserPermissions } from "@/hooks/store";

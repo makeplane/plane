@@ -3,9 +3,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { ViewListLoader } from "@/components/ui";
-import { GlobalViewListItem } from "@/components/workspace";
-// store hooks
+// hooks
 import { useGlobalView } from "@/hooks/store";
+// local imports
+import { GlobalViewListItem } from "./view-list-item";
 
 type Props = {
   searchQuery: string;

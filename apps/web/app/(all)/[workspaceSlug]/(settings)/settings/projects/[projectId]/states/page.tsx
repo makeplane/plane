@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook

@@ -24,7 +24,7 @@ import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-im
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
-import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace/delete-workspace-section";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -66,7 +66,7 @@ export const WorkspaceDetails: FC = observer(() => {
     };
 
     await updateWorkspace(currentWorkspace.slug, payload)
-      .then((res) => {
+      .then(() => {
         captureSuccess({
           eventName: WORKSPACE_TRACKER_EVENTS.update,
           payload: { slug: currentWorkspace.slug },

@@ -9,7 +9,7 @@ import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@pl
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web constants
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store

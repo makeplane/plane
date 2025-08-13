@@ -6,7 +6,7 @@ import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-sc
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks

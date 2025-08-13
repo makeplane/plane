@@ -15,7 +15,7 @@ import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
-import { RelationIssueList } from "../../relations";
+import { RelationIssueList } from "../../relations/issue-list";
 import { useRelationOperations } from "./helper";
 
 type Props = {

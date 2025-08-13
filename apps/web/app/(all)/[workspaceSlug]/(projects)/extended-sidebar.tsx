@@ -9,7 +9,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useAppTheme, useWorkspace } from "@/hooks/store";
 // plane-web imports
-import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar";
+import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(() => {

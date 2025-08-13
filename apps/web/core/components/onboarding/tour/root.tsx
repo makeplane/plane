@@ -4,14 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
-// ui
+// plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, PlaneLockup } from "@plane/ui";
-// components
-import { TourSidebar } from "@/components/onboarding";
-// constants
-// hooks
+// helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCommandPalette, useUser } from "@/hooks/store";
 // assets
 import CyclesTour from "@/public/onboarding/cycles.webp";
@@ -19,8 +17,8 @@ import IssuesTour from "@/public/onboarding/issues.webp";
 import ModulesTour from "@/public/onboarding/modules.webp";
 import PagesTour from "@/public/onboarding/pages.webp";
 import ViewsTour from "@/public/onboarding/views.webp";
-
-// constants
+// local imports
+import { TourSidebar } from "./sidebar";
 
 type Props = {
   onComplete: () => void;

@@ -13,7 +13,7 @@ import { ModuleViewHeader } from "@/components/modules";
 import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // constants
 
 export const ModulesListHeader: React.FC = observer(() => {

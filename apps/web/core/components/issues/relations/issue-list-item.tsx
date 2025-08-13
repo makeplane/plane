@@ -3,23 +3,21 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
-// Plane
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
-// components
 import { generateWorkItemLink } from "@plane/utils";
-import { RelationIssueProperty } from "@/components/issues/relations";
-// helpers
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
+// plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
+import { RelationIssueProperty } from "./properties";
 
 type Props = {
   workspaceSlug: string;

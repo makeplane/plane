@@ -13,7 +13,7 @@ import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";

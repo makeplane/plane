@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { Plus } from "lucide-react";
 // plane imports
 import {
@@ -12,17 +11,15 @@ import {
   GLOBAL_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
 import { TStaticViewTypes } from "@plane/types";
-// components
 import { Header, EHeaderVariant } from "@plane/ui";
-import {
-  CreateUpdateWorkspaceViewModal,
-  DefaultWorkspaceViewQuickActions,
-  WorkspaceViewQuickActions,
-} from "@/components/workspace";
-// constants
-// store hooks
+// helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useGlobalView, useUserPermissions } from "@/hooks/store";
+// local imports
+import { DefaultWorkspaceViewQuickActions } from "./default-view-quick-action";
+import { CreateUpdateWorkspaceViewModal } from "./modal";
+import { WorkspaceViewQuickActions } from "./quick-action";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;

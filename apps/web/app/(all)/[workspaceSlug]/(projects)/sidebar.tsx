@@ -6,9 +6,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { AppSidebarToggleButton } from "@/components/sidebar";
-import { SidebarDropdown, SidebarProjectsList, SidebarQuickActions } from "@/components/workspace";
+import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
+import { SidebarProjectsList } from "@/components/workspace/sidebar/projects-list";
+import { SidebarQuickActions } from "@/components/workspace/sidebar/quick-actions";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";

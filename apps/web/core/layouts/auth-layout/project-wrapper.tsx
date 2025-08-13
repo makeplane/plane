@@ -8,7 +8,7 @@ import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EProjectNetwork } from "@plane/types";
 // components
-import { JoinProject } from "@/components/auth-screens";
+import { JoinProject } from "@/components/auth-screens/project/join-project";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";

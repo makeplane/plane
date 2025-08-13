@@ -52,7 +52,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
   // refs

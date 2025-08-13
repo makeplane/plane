@@ -11,7 +11,7 @@ import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { RadioInput } from "@/components/estimates";
 // plane web constants
 import { isEstimateSystemEnabled } from "@/plane-web/components/estimates/helper";
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;

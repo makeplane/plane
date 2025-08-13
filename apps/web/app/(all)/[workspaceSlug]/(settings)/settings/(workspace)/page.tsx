@@ -1,11 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { useTranslation } from "@plane/i18n";
+// components
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { WorkspaceDetails } from "@/components/workspace";
+import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 

@@ -1,17 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { Header, EHeaderVariant } from "@plane/ui";
-import {
-  InboxIssueAppliedFiltersStatus,
-  InboxIssueAppliedFiltersPriority,
-  InboxIssueAppliedFiltersMember,
-  InboxIssueAppliedFiltersLabel,
-  InboxIssueAppliedFiltersDate,
-  InboxIssueAppliedFiltersState,
-} from "@/components/inbox";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
+// local imports
+import { InboxIssueAppliedFiltersDate } from "./date";
+import { InboxIssueAppliedFiltersLabel } from "./label";
+import { InboxIssueAppliedFiltersMember } from "./member";
+import { InboxIssueAppliedFiltersPriority } from "./priority";
+import { InboxIssueAppliedFiltersState } from "./state";
+import { InboxIssueAppliedFiltersStatus } from "./status";
 
 export const InboxIssueAppliedFilters: FC = observer(() => {
   const { getAppliedFiltersCount } = useProjectInbox();

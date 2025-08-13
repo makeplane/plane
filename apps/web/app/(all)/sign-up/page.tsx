@@ -1,7 +1,7 @@
 "use client";
 
 // components
-import { AuthBase } from "@/components/auth-screens";
+import { AuthBase } from "@/components/auth-screens/auth-base";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // assets

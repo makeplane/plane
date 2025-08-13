@@ -9,7 +9,7 @@ import { IProject } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
 import { PageHead } from "@/components/core/page-title";
 // hooks

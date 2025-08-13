@@ -31,7 +31,7 @@ import {
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 
 // FIXME: Deprecated. Remove it
 export const ProjectDraftIssueHeader: FC = observer(() => {

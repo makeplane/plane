@@ -18,7 +18,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useWorkspace } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane-web imports
-import { SidebarItem } from "@/plane-web/components/workspace/sidebar";
+import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
 
 export const SidebarMenuItems = observer(() => {
   // routers

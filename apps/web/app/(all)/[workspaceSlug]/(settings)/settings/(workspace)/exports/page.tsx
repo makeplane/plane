@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import ExportGuide from "@/components/exporter/guide";
 // helpers

@@ -10,7 +10,7 @@ import { ViewListHeader } from "@/components/views";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewsHeader = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };

@@ -10,12 +10,14 @@ import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import { InboxContentRoot } from "@/components/inbox";
 // hooks
 import { useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+// plane web imports
 import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
+// local imports
+import { InboxContentRoot } from "../inbox/content";
 
 type NotificationsRootProps = {
   workspaceSlug?: string;

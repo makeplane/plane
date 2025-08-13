@@ -19,7 +19,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 

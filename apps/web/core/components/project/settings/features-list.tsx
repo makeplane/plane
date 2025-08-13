@@ -2,17 +2,19 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
-// hooks
+// components
 import { SettingsHeading } from "@/components/settings/heading";
+// helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useProject, useUser } from "@/hooks/store";
-// plane web components
-import { UpgradeBadge } from "@/plane-web/components/workspace";
-// plane web constants
+// plane web imports
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 
 type Props = {

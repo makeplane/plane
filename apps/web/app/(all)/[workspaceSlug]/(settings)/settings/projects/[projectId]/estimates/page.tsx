@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { EstimateRoot } from "@/components/estimates";
 // hooks

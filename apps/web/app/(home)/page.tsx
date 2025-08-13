@@ -1,16 +1,13 @@
 "use client";
 import React from "react";
 // components
-// constants
+import { AuthBase } from "@/components/auth-screens/auth-base";
 // helpers
-import { AuthBase } from "@/components/auth-screens";
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
-// hooks
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
-// assets
 
 const HomePage = () => (
   <DefaultLayout>

@@ -14,7 +14,6 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { useUser, useWorkspace } from "@/hooks/store";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
-import { WorkspaceContentWrapper } from "@/plane-web/components/workspace";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 

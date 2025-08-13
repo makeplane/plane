@@ -12,7 +12,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 // plane web imports
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {

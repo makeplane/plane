@@ -26,11 +26,9 @@ import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues/issue-layouts/filters";
-import {
-  CreateUpdateWorkspaceViewModal,
-  WorkspaceViewQuickActions,
-  DefaultWorkspaceViewQuickActions,
-} from "@/components/workspace";
+import { DefaultWorkspaceViewQuickActions } from "@/components/workspace/views/default-view-quick-action";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
+import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-action";
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

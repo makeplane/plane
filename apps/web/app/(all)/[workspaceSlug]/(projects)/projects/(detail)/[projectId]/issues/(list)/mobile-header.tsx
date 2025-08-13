@@ -3,8 +3,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -24,18 +23,12 @@ import {
   FiltersDropdown,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
-// helpers
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
 export const ProjectIssuesMobileHeader = observer(() => {
   // i18n
   const { t } = useTranslation();
-  const layouts = [
-    { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
-    { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
-    { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
-  ];
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { workspaceSlug, projectId } = useParams() as {
     workspaceSlug: string;

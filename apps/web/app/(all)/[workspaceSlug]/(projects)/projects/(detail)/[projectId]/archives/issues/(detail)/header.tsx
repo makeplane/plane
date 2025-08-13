@@ -13,7 +13,7 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 // services
 import { IssueService } from "@/services/issue";
 

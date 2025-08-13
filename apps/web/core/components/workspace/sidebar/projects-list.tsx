@@ -14,12 +14,13 @@ import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
-import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
 // hooks
 import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
+// local imports
+import { SidebarProjectsListItem } from "./projects-list-item";
 
 export const SidebarProjectsList: FC = observer(() => {
   // states

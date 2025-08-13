@@ -9,7 +9,7 @@ import { computedFn } from "mobx-utils";
 import { EUserPermissions } from "@plane/constants";
 import { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store

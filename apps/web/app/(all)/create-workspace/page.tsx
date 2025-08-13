@@ -4,11 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-// components
 import { Button, getButtonStyling, PlaneLogo } from "@plane/ui";
-import { CreateWorkspaceForm } from "@/components/workspace";
+// components
+import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

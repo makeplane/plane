@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
