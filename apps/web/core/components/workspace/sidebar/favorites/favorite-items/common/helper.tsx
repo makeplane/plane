@@ -6,7 +6,7 @@ import { IFavorite, TLogoProps } from "@plane/types";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web constants
-import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants";
+import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants/sidebar-favorites";
 
 export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined) => {
   const Icon = FAVORITE_ITEM_ICONS[type] || FileText;

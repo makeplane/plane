@@ -24,11 +24,14 @@ import {
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
-import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // hooks
 import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { DeleteProjectModal } from "./delete-project-modal";
+import { JoinProjectModal } from "./join-project-modal";
+import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
 
 type Props = {
   project: IProject;

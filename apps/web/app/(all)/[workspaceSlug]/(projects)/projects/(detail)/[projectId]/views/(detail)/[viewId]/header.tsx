@@ -35,7 +35,7 @@ import {
   LayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
 // constants
-import { ViewQuickActions } from "@/components/views";
+import { ViewQuickActions } from "@/components/views/quick-actions";
 // hooks
 import {
   useCommandPalette,

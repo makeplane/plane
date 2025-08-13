@@ -14,7 +14,7 @@ import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-for
 import { useUser, useUserProfile } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // images

@@ -13,7 +13,7 @@ import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { WebhookSettingsLoader } from "@/components/ui";
+import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

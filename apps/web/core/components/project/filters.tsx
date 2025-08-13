@@ -2,18 +2,17 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// plane types
 import { TProjectFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
-// plane utils
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
-// helpers
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
+// local imports
+import { ProjectOrderByDropdown } from "./dropdowns/order-by";
+import { ProjectFiltersSelection } from "./dropdowns/filters";
 
 type Props = {
   filterMenuButton?: React.ReactNode;

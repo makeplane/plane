@@ -9,7 +9,7 @@ import { Header, Loader, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import { InboxSidebarLoader } from "@/components/ui";
+import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

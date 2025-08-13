@@ -8,6 +8,7 @@ import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
@@ -15,7 +16,6 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { IntegrationService } from "@/services/integrations";
 // local imports
-import { ImportExportSettingsLoader } from "../ui";
 import { useExportColumns } from "./column";
 
 const integrationService = new IntegrationService();

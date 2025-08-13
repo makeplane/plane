@@ -8,7 +8,8 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
+import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
+import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks

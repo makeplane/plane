@@ -8,8 +8,9 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
+import { ProjectMemberList } from "@/components/project/member-list";
+import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject, useUserPermissions } from "@/hooks/store";

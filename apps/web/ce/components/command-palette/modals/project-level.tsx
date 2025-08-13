@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { CycleCreateUpdateModal } from "@/components/cycles/modal";
 import { CreateUpdateModuleModal } from "@/components/modules";
 import { CreatePageModal } from "@/components/pages/modals/create-page-modal";
-import { CreateUpdateProjectViewModal } from "@/components/views";
+import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web hooks

@@ -9,9 +9,11 @@ import { IProjectView } from "@plane/types";
 // components
 import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
-import { ViewListItemAction, ViewQuickActions } from "@/components/views";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { ViewQuickActions } from "./quick-actions";
+import { ViewListItemAction } from "./view-list-item-action";
 
 type Props = {
   view: IProjectView;

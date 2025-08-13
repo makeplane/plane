@@ -5,7 +5,8 @@ import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-import { ProjectNetworkIcon } from "@/components/project";
+// local imports
+import { ProjectNetworkIcon } from "../../project-network-icon";
 
 type Props = {
   appliedFilters: string[] | null;

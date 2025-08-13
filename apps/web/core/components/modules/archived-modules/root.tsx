@@ -9,7 +9,7 @@ import { TModuleFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
-import { CycleModuleListLayout } from "@/components/ui";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // helpers
 // hooks
 import { useModule, useModuleFilter } from "@/hooks/store";
@@ -53,7 +53,7 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (loader || !projectArchivedModuleIds) {
-    return <CycleModuleListLayout />;
+    return <CycleModuleListLayoutLoader />;
   }
 
   return (

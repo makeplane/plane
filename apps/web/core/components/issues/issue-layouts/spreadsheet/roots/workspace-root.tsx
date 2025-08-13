@@ -5,7 +5,7 @@ import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel }
 import { IIssueDisplayFilterOptions, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
-import { SpreadsheetLayoutLoader } from "@/components/ui";
+import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";

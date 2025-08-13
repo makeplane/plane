@@ -1,15 +1,16 @@
 import { observer } from "mobx-react";
-// plane constants
+// plane imports
 import { EIssueLayoutTypes } from "@plane/types";
-import {
-  CalendarLayoutLoader,
-  GanttLayoutLoader,
-  KanbanLayoutLoader,
-  ListLayoutLoader,
-  SpreadsheetLayoutLoader,
-} from "@/components/ui";
+// components
+import { CalendarLayoutLoader } from "@/components/ui/loader/layouts/calendar-layout-loader";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
+import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
+import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
+// hooks
 import { useIssues } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+// local imports
 import { IssueLayoutEmptyState } from "./empty-states";
 
 const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {

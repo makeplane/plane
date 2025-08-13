@@ -17,7 +17,7 @@ import { IImporterService } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
-import { ImportExportSettingsLoader } from "@/components/ui";
+import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks

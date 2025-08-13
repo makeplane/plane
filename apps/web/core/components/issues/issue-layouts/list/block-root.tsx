@@ -12,15 +12,15 @@ import { EIssueServiceType, IIssueDisplayProperties, TIssue, TIssueMap } from "@
 // components
 import { DropIndicator } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { ListLoaderItemRow } from "@/components/ui";
+import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
-import { TRenderQuickActions } from "./list-view-types";
 import { IssueBlock } from "./block";
+import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
   issueId: string;

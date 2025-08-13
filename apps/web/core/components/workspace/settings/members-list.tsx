@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
-import { MembersSettingsLoader } from "@/components/ui";
+import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
 import { useMember } from "@/hooks/store";
 // local imports

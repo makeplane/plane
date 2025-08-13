@@ -7,24 +7,22 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project";
-// helpers
+import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
 import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
-// plane web types
+// plane web imports
 import { TProject } from "@/plane-web/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
 
 export const SidebarProjectsList: FC = observer(() => {
   // states
-
   const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(true);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state

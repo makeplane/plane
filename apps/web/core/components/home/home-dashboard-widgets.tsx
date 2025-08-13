@@ -11,7 +11,8 @@ import { useHome } from "@/hooks/store/use-home";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { HomePageHeader } from "@/plane-web/components/home/header";
-import { StickiesWidget } from "../stickies";
+// local imports
+import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";

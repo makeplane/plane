@@ -6,20 +6,19 @@ import { useParams } from "next/navigation";
 // plane imports
 import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { cn, getNumberCount } from "@plane/utils";
+// components
 import { CountChip } from "@/components/common/count-chip";
-import {
-  NotificationsLoader,
-  NotificationEmptyState,
-  NotificationSidebarHeader,
-  AppliedFilters,
-} from "@/components/workspace-notifications";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
+// local imports
+import { NotificationEmptyState } from "./empty-state";
+import { AppliedFilters } from "./filters/applied-filter";
+import { NotificationSidebarHeader } from "./header";
+import { NotificationsLoader } from "./loader";
 
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();

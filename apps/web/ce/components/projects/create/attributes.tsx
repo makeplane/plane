@@ -1,16 +1,15 @@
 "use client";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+// plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
-// ui
 import { CustomSelect } from "@plane/ui";
-// components
 import { getTabIndex } from "@plane/utils";
+// components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ProjectNetworkIcon } from "@/components/project";
-// helpers
+import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 
 type Props = {
   isMobile?: boolean;

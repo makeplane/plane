@@ -3,14 +3,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+// local imports
+import { NotificationSidebarHeaderOptions } from "./options";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;

@@ -11,8 +11,8 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { ProjectViewsList } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
+import { ProjectViewsList } from "@/components/views/views-list";
 // constants
 // helpers
 // hooks

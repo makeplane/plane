@@ -13,7 +13,7 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 // wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 

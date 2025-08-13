@@ -7,12 +7,13 @@ import { ContentWrapper } from "@plane/ui";
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { ProjectCard } from "@/components/project";
-import { ProjectsLoader } from "@/components/ui";
+import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { ProjectCard } from "./card";
 
 type TProjectCardListProps = {
   totalProjectIds?: string[];

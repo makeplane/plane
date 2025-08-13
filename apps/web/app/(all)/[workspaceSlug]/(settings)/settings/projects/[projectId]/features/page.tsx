@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { ProjectFeaturesList } from "@/components/project";
-// hooks
+import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const FeaturesSettingsPage = observer(() => {

@@ -10,7 +10,7 @@ import { cn } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxContentRoot } from "@/components/inbox/content";
 import { InboxSidebar } from "@/components/inbox/sidebar";
-import { InboxLayoutLoader } from "@/components/ui";
+import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -9,7 +9,7 @@ import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/c
 import { useTranslation } from "@plane/i18n";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
-import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports

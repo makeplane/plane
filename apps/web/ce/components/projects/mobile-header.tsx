@@ -2,17 +2,15 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { ChevronDown, ListFilter } from "lucide-react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// types
 import { TProjectFilters } from "@plane/types";
-// hooks
 import { calculateTotalFilters } from "@plane/utils";
+// components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
-// helpers
+import { ProjectFiltersSelection } from "@/components/project/dropdowns/filters";
+import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
 

@@ -24,7 +24,7 @@ import { captureError, captureSuccess, joinEventGroup } from "@/helpers/event-tr
 import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images

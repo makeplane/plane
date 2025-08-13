@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
-import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme, useUserPermissions } from "@/hooks/store";

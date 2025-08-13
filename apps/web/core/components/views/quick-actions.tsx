@@ -9,13 +9,14 @@ import { IProjectView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-// components
-import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
+// local imports
+import { DeleteProjectViewModal } from "./delete-view-modal";
+import { CreateUpdateProjectViewModal } from "./modal";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

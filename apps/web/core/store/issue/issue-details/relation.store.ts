@@ -8,7 +8,7 @@ import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } from "
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
-import { REVERSE_RELATIONS } from "@/plane-web/constants";
+import { REVERSE_RELATIONS } from "@/plane-web/constants/gantt-chart";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // services
 import { IssueRelationService } from "@/services/issue";

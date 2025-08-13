@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import Root from "@/components/project/root";
+import { ProjectRoot } from "@/components/project/root";
 // hooks
 import { useProject, useWorkspace } from "@/hooks/store";
 
@@ -21,5 +21,5 @@ export const ProjectPageRoot = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  return <Root />;
+  return <ProjectRoot />;
 });

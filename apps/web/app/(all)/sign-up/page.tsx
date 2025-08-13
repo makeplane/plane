@@ -6,7 +6,7 @@ import { AuthBase } from "@/components/auth-screens/auth-base";
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // assets
 import DefaultLayout from "@/layouts/default-layout";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
 const SignUpPage = () => (
   <DefaultLayout>

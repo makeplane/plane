@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
 import { EmailNotificationForm } from "@/components/profile/notification";
 import { SettingsHeading } from "@/components/settings/heading";
-import { EmailSettingsLoader } from "@/components/ui";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 // services
 import { UserService } from "@/services/user.service";
 

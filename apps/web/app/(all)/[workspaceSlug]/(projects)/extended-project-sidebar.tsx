@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project";
+import { CreateProjectModal } from "@/components/project/create-project-modal";
 import { SidebarProjectsListItem } from "@/components/workspace/sidebar/projects-list-item";
 // hooks
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";

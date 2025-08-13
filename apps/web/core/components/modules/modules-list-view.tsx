@@ -10,7 +10,9 @@ import { ListLayout } from "@/components/core/list";
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { CycleModuleBoardLayoutLoader } from "@/components/ui/loader/cycle-module-board-loader";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 // hooks
 import { useCommandPalette, useModule, useModuleFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -43,8 +45,8 @@ export const ModulesListView: React.FC = observer(() => {
   if (loader || !projectModuleIds || !filteredModuleIds)
     return (
       <>
-        {displayFilters?.layout === "list" && <CycleModuleListLayout />}
-        {displayFilters?.layout === "board" && <CycleModuleBoardLayout />}
+        {displayFilters?.layout === "list" && <CycleModuleListLayoutLoader />}
+        {displayFilters?.layout === "board" && <CycleModuleBoardLayoutLoader />}
         {displayFilters?.layout === "gantt" && <GanttLayoutLoader />}
       </>
     );

@@ -2,16 +2,14 @@
 
 import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { cn } from "@plane/utils";
-import {
-  NotificationItemReadOption,
-  NotificationItemArchiveOption,
-  NotificationItemSnoozeOption,
-} from "@/components/workspace-notifications";
-// helpers
 // hooks
 import { useNotification } from "@/hooks/store";
+// local imports
+import { NotificationItemArchiveOption } from "./archive";
+import { NotificationItemReadOption } from "./read";
+import { NotificationItemSnoozeOption } from "./snooze";
 
 type TNotificationOption = {
   workspaceSlug: string;

@@ -4,11 +4,9 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-// plane constants
+// plane imports
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
-// plane i18n
 import { useTranslation } from "@plane/i18n";
-// plane ui
 import {
   IGroupByColumn,
   TIssueMap,
@@ -20,10 +18,9 @@ import {
   EIssueLayoutTypes,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
-// plane utils
 import { cn } from "@plane/utils";
 // components
-import { ListLoaderItemRow } from "@/components/ui";
+import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

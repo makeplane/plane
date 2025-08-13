@@ -1,7 +1,7 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { ProjectAppSidebar } from "./_sidebar";

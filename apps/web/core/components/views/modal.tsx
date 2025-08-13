@@ -7,13 +7,13 @@ import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { ProjectViewForm } from "@/components/views";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
+// local imports
+import { ProjectViewForm } from "./form";
 
 type Props = {
   data?: IProjectView | null;

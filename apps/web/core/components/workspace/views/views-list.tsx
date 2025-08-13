@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { ViewListLoader } from "@/components/ui";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { useGlobalView } from "@/hooks/store";
 // local imports

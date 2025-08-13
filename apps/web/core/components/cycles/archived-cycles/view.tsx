@@ -4,7 +4,7 @@ import Image from "next/image";
 // components
 import { CyclesList } from "@/components/cycles/list";
 // ui
-import { CycleModuleListLayout } from "@/components/ui";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
 // assets
@@ -24,7 +24,7 @@ export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
   // derived values
   const filteredArchivedCycleIds = getFilteredArchivedCycleIds(projectId);
 
-  if (loader || !filteredArchivedCycleIds) return <CycleModuleListLayout />;
+  if (loader || !filteredArchivedCycleIds) return <CycleModuleListLayoutLoader />;
 
   if (filteredArchivedCycleIds.length === 0)
     return (

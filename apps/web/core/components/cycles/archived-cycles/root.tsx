@@ -8,7 +8,7 @@ import { TCycleFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { CycleModuleListLayout } from "@/components/ui";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -52,7 +52,7 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (loader || !currentProjectArchivedCycleIds) {
-    return <CycleModuleListLayout />;
+    return <CycleModuleListLayoutLoader />;
   }
 
   return (

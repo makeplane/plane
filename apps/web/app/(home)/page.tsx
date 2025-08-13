@@ -7,7 +7,7 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
 const HomePage = () => (
   <DefaultLayout>

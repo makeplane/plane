@@ -11,7 +11,7 @@ import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/acti
 // editor
 import { RichTextEditor } from "@/components/editor/rich-text";
 // ui
-import { ActivitySettingsLoader } from "@/components/ui";
+import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // helpers
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";

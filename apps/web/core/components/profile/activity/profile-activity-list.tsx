@@ -8,7 +8,7 @@ import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 import { ActivityIcon, ActivityMessage } from "@/components/core/activity";
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { ActivitySettingsLoader } from "@/components/ui";
+import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers

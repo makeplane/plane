@@ -23,8 +23,7 @@ import {
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
-import { KanbanIssueBlockLoader } from "@/components/ui";
-// helpers
+import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

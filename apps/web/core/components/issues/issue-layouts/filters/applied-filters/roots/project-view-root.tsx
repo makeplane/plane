@@ -15,7 +15,7 @@ import {
 import { EIssuesStoreType, EViewAccess, IIssueFilterOptions } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
-import { CreateUpdateProjectViewModal } from "@/components/views";
+import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 // hooks

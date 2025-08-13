@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EProjectFeatureKey, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { ViewListHeader } from "@/components/views";
+import { ViewListHeader } from "@/components/views/view-list-header";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
 // plane web

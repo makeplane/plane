@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-// plane imports
 import { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { IssueLabelsList } from "@/components/ui";
+import { IssueLabelsList } from "@/components/ui/labels-list";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";

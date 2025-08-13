@@ -16,8 +16,7 @@ import { CyclesView } from "@/components/cycles/cycles-view";
 import { CycleCreateUpdateModal } from "@/components/cycles/modal";
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { CycleModuleListLayout } from "@/components/ui";
-// helpers
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle, useProject, useCycleFilter, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -79,7 +78,7 @@ const ProjectCyclesPage = observer(() => {
       </div>
     );
 
-  if (loader) return <CycleModuleListLayout />;
+  if (loader) return <CycleModuleListLayoutLoader />;
 
   return (
     <>
