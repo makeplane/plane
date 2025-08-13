@@ -76,7 +76,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   );
 
   const autoCloseStatus = useMemo(() => {
-    if (currentProjectDetails === undefined || currentProjectDetails.close_in === undefined) return false;
+    if (currentProjectDetails?.close_in === undefined) return false;
     return currentProjectDetails.close_in !== 0;
   }, [currentProjectDetails]);
 

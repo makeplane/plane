@@ -49,7 +49,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   );
 
   const autoArchiveStatus = useMemo(() => {
-    if (currentProjectDetails === undefined || currentProjectDetails.archive_in === undefined) return false;
+    if (currentProjectDetails?.archive_in === undefined) return false;
     return currentProjectDetails.archive_in !== 0;
   }, [currentProjectDetails]);
 
