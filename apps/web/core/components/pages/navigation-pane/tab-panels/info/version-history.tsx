@@ -14,7 +14,7 @@ import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 import { useMember } from "@/hooks/store";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM } from "../..";
 

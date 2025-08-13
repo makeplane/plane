@@ -8,7 +8,7 @@ import { PageShareControl } from "@/plane-web/components/pages/header/share-cont
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageOptionsDropdown } from "../editor/toolbar";
 import { PageArchivedBadge } from "./archived-badge";

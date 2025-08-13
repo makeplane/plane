@@ -14,7 +14,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageActions, TPageActions } from "../../dropdowns";
 import { ExportPageModal } from "../../modals/export-page-modal";

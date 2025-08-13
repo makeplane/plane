@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TDisplayConfig } from "@plane/editor";
+import type { TDisplayConfig } from "@plane/editor";
 import { TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components

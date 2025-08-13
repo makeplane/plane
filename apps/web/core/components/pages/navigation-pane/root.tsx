@@ -11,7 +11,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
 import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";

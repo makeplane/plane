@@ -34,7 +34,7 @@ import { MovePageModal } from "@/plane-web/components/pages";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageActions =
   | "full-screen"

@@ -8,7 +8,7 @@ import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/u
 // hooks
 import { useMember } from "@/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

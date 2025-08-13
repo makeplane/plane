@@ -6,7 +6,7 @@ import { cn } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   className?: string;

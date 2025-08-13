@@ -4,7 +4,7 @@ import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName 
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 // Better type naming and structure
 type CollaborativeAction = {

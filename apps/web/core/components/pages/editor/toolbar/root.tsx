@@ -11,7 +11,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   handleOpenNavigationPane: () => void;
