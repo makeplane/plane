@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -75,6 +75,11 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     currentProjectDetails?.id
   );
 
+  const autoCloseStatus = useMemo(() => {
+    if (currentProjectDetails?.close_in === undefined) return false;
+    return currentProjectDetails.close_in !== 0;
+  }, [currentProjectDetails]);
+
   return (
     <>
       <SelectMonthModal
@@ -98,7 +103,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.close_in !== 0}
+            value={autoCloseStatus}
             onChange={async () => {
               if (currentProjectDetails?.close_in === 0) {
                 await handleChange({ close_in: 1, default_state: defaultState });
@@ -121,7 +126,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
         </div>
 
         {currentProjectDetails ? (
-          currentProjectDetails.close_in !== 0 && (
+          autoCloseStatus && (
             <div className="mx-6">
               <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
