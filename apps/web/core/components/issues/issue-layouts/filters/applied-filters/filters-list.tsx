@@ -21,7 +21,7 @@ import {
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { AppliedIssueTypeFilters } from "@/plane-web/components/issues/filters/applied-filters";
+import { AppliedIssueTypeFilters } from "@/plane-web/components/issues/filters/applied-filters/issue-types";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
