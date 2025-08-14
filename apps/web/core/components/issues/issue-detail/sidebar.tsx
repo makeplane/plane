@@ -25,7 +25,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details";
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog";
+import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
