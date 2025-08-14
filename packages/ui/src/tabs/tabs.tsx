@@ -1,5 +1,5 @@
-import { Tab } from "@headlessui/react";
-import React, { FC, Fragment, useEffect, useState } from "react";
+import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
+import React, { FC, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "../utils";
@@ -40,49 +40,52 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
     size = "md",
     storeInLocalStorage = true,
   } = props;
-  // local storage
+
   const { storedValue, setValue } = useLocalStorage(
     storeInLocalStorage && storageKey ? `tab-${storageKey}` : `tab-${tabs[0]?.key}`,
     defaultTab
   );
-  // state
-  const [selectedTab, setSelectedTab] = useState(storedValue ?? defaultTab);
+
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const initialTab = storedValue ?? defaultTab;
+    return tabs.findIndex((tab) => tab.key === initialTab);
+  });
 
   useEffect(() => {
-    if (storeInLocalStorage) {
-      setValue(selectedTab);
+    if (storeInLocalStorage && tabs[activeIndex]) {
+      setValue(tabs[activeIndex].key);
     }
-  }, [selectedTab, setValue, storeInLocalStorage, storageKey]);
+  }, [activeIndex, setValue, storeInLocalStorage, tabs]);
 
-  const currentTabIndex = (tabKey: string): number => tabs.findIndex((tab) => tab.key === tabKey);
-
-  const handleTabChange = (key: string) => {
-    setSelectedTab(key);
+  const handleTabChange = (index: number) => {
+    setActiveIndex(index);
+    if (!tabs[index].disabled) {
+      tabs[index].onClick?.();
+    }
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <Tab.Group defaultIndex={currentTabIndex(selectedTab)}>
-        <div className={cn("flex flex-col w-full h-full gap-2", containerClassName)}>
-          <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
-            <TabList
-              tabs={tabs}
-              tabListClassName={tabListClassName}
-              tabClassName={tabClassName}
-              size={size}
-              onTabChange={handleTabChange}
-            />
-            {actions && <div className="flex-grow">{actions}</div>}
-          </div>
-          <Tab.Panels as={Fragment}>
-            {tabs.map((tab) => (
-              <Tab.Panel key={tab.key} as="div" className={cn("relative outline-none", tabPanelClassName)}>
-                {tab.content}
-              </Tab.Panel>
-            ))}
-          </Tab.Panels>
-        </div>
-      </Tab.Group>
-    </div>
+    <BaseTabs.Root
+      value={activeIndex}
+      onValueChange={handleTabChange}
+      className={cn("flex flex-col w-full h-full overflow-hidden", containerClassName)}
+    >
+      <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
+        <TabList
+          tabs={tabs}
+          tabListClassName={tabListClassName}
+          tabClassName={tabClassName}
+          size={size}
+          selectedTab={tabs[activeIndex]?.key}
+        />
+        {actions && <div className="flex-grow">{actions}</div>}
+      </div>
+
+      {tabs.map((tab) => (
+        <BaseTabs.Panel key={tab.key} className={cn("relative  h-full overflow-auto", tabPanelClassName)}>
+          {tab.content}
+        </BaseTabs.Panel>
+      ))}
+    </BaseTabs.Root>
   );
 };
