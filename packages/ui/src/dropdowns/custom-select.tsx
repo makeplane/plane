@@ -23,6 +23,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
     optionsClassName = "",
     value,
     tabIndex,
+    portalElement,
   } = props;
   // states
   return (
@@ -55,7 +56,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
         )}
       </>
 
-      <Select.Portal>
+      <Select.Portal container={portalElement?.current}>
         <Select.Backdrop />
         <Select.Positioner align="start">
           <Select.ScrollUpArrow />

@@ -15,15 +15,14 @@ import {
 } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
-import { Listbox } from "@headlessui/react";
+import { ChevronDown, Plus, XCircle } from "lucide-react";
 // plane imports
 import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
 // hooks
@@ -175,69 +174,49 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
             name={`emails.${index}.role`}
             rules={{ required: true }}
             render={({ field: { value, onChange } }) => (
-              <Listbox
-                as="div"
+              <CustomSelect
                 value={value}
-                onChange={(val) => {
+                onChange={(val: any) => {
                   onChange(val);
                   setValue(`emails.${index}.role_active`, true);
                 }}
                 className="w-full flex-shrink-0 text-left"
+                optionsClassName="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-sm focus:outline-none"
+                customButtonClassName="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-custom-border-300"
+                customButton={
+                  <>
+                    <span
+                      className={`text-sm ${
+                        !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
+                      } sm:text-sm`}
+                    >
+                      {ROLE[value]}
+                    </span>
+                    <ChevronDown
+                      className={`size-3 ${
+                        !getValues(`emails.${index}.role_active`)
+                          ? "stroke-onboarding-text-400"
+                          : "stroke-onboarding-text-100"
+                      }`}
+                    />
+                  </>
+                }
               >
-                <Listbox.Button
-                  type="button"
-                  ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-custom-border-300"
-                >
-                  <span
-                    className={`text-sm ${
-                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
-                    } sm:text-sm`}
+                {Object.entries(ROLE_DETAILS).map(([key, value]) => (
+                  <CustomSelect.Option
+                    key={key}
+                    value={parseInt(key)}
+                    className={"cursor-pointer select-none truncate rounded px-1 py-1.5"}
                   >
-                    {ROLE[value]}
-                  </span>
-
-                  <ChevronDown
-                    className={`size-3 ${
-                      !getValues(`emails.${index}.role_active`)
-                        ? "stroke-onboarding-text-400"
-                        : "stroke-onboarding-text-100"
-                    }`}
-                  />
-                </Listbox.Button>
-
-                <Listbox.Options as="div">
-                  <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-sm focus:outline-none"
-                    ref={setPopperElement}
-                    style={styles.popper}
-                    {...attributes.popper}
-                  >
-                    {Object.entries(ROLE_DETAILS).map(([key, value]) => (
-                      <Listbox.Option
-                        as="div"
-                        key={key}
-                        value={parseInt(key)}
-                        className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                            active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                        }
-                      >
-                        {({ selected }) => (
-                          <div className="flex items-center text-wrap gap-2 p-1">
-                            <div className="flex flex-col">
-                              <div className="text-sm font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-xs text-custom-text-300">{t(value.i18n_description)}</div>
-                            </div>
-                            {selected && <Check className="h-4 w-4 shrink-0" />}
-                          </div>
-                        )}
-                      </Listbox.Option>
-                    ))}
-                  </div>
-                </Listbox.Options>
-              </Listbox>
+                    <div className="flex items-center text-wrap gap-2 p-1">
+                      <div className="flex flex-col">
+                        <div className="text-sm font-medium">{t(value.i18n_title)}</div>
+                        <div className="flex text-xs text-custom-text-300">{t(value.i18n_description)}</div>
+                      </div>
+                    </div>
+                  </CustomSelect.Option>
+                ))}
+              </CustomSelect>
             )}
           />
         </div>

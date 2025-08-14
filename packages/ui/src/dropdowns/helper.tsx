@@ -46,6 +46,7 @@ export interface ICustomSelectProps extends IDropdownProps {
   children: React.ReactNode;
   value: any;
   onChange: any;
+  portalElement?: React.RefObject<HTMLElement>;
 }
 
 interface CustomSearchSelectProps {
