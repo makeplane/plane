@@ -563,24 +563,30 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
 def filter_custom_properties(params, issue_filter, method, prefix=""):
     if method == "GET":
         raw_props = params.get("custom_properties", "")
-        custom_properties = [
-            item for item in raw_props.split("|") if item and item != "null"
-        ]
+        
+        # Check if the format uses pipes (|) for separation
+        if "|" in raw_props:
+            # Handle new format with pipe separator
+            custom_properties = [
+                item for item in raw_props.split("|") if item and item != "null"
+            ]
+        else:
+            # Handle old format with comma separator
+            custom_properties = [
+                item for item in raw_props.split(",") if item and item != "null"
+            ]
+        
         groupedCustomProperties = {}
         for row in custom_properties:
-            key, value = row.split(":", 1)
-            if key not in groupedCustomProperties:
-                groupedCustomProperties[key] = []
-            groupedCustomProperties[key].append(value)
-
+            # Handle both simple key:value and key__operator:value formats
+            if ":" in row:
+                key, value = row.split(":", 1)
+                if key not in groupedCustomProperties:
+                    groupedCustomProperties[key] = []
+                groupedCustomProperties[key].append(value)
+        
         issue_filter['custom_properties'] = groupedCustomProperties
-    #     # query = Q()
-    #     # for row in custom_properties:
-    #     #     key, value = row.split(":")
-    #     #     query &= Q(
-    #     #         Q(custom_properties__project_custom_property_id=key) &
-    #     #         Q(custom_properties__value=value)
-    #     #     )
+    
     return issue_filter
 
 def filter_character_fields(params, issue_filter, method, prefix=""):
@@ -596,8 +602,7 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
         "worker_code",
         "worker_name",
         "business_type",
-        "source",
-
+        "source"
     ]
 
     for field in character_fields:
@@ -666,15 +671,16 @@ def build_custom_property_q_objects(custom_properties):
             q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
                 
         elif data_type in ["number", "date"]:
-            print("data_type",data_type)
             # Handle value conversion based on data type
             try:
                 if operator == "isbetween" and len(values) == 1:
-                    value_range = values[0].split(",")
+                    value_range = values[0].split("^")
                     if len(value_range) != 2:
                         continue
                     lower = int(value_range[0]) if data_type == "number" else value_range[0]
                     upper = int(value_range[1]) if data_type == "number" else value_range[1]
+                elif operator in ["isnull", "isnotnull"]:
+                    value_input = None
                 else:
                     value_input = int(values[0]) if data_type == "number" else values[0]
             except (ValueError, TypeError):
@@ -697,7 +703,6 @@ def build_custom_property_q_objects(custom_properties):
                 q_object = Q(id__in=exists_filter) & ~Q(id__in=not_equal_filter)
             else:
                 filter_kwargs = base_filters.copy()
-                
                 if operator in ["gte", "lte", "gt", "lt", "exact"]:
                     filter_kwargs[f"{base_field}__{operator}"] = value_input
                 elif operator in ["isnull", "isnotnull"]:
@@ -752,6 +757,14 @@ def build_custom_property_q_objects(custom_properties):
     return custom_filters
 
 
+def filter_sequence_id(params, issue_filter, method, prefix=""):
+    """
+    Filter issues by sequence_id
+    """
+    sequence_id = params.get(f"{prefix}sequence_id", None)
+    if sequence_id is not None:
+        issue_filter[f"{prefix}sequence_id"] = sequence_id
+    
 def filter_issue_type_id(params, issue_filter, method, prefix=""):
     """
     Filter issues by type_id
@@ -873,6 +886,7 @@ def issue_filters(query_params, method, prefix=""):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
+        "sequence_id" : filter_sequence_id,
         "custom_properties": filter_custom_properties,
         "created_at_ts": filter_created_at_ts,
         "updated_at_ts": filter_updated_at_ts,
