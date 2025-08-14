@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CircularProgressIndicator, Loader, ScopeIcon } from "@plane/ui";
+import { CircularProgressIndicator, ControlLink, Loader, ScopeIcon } from "@plane/ui";
 import { SectionEmptyState, SectionWrapper } from "@/plane-web/components/common";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
@@ -20,6 +21,7 @@ type TDataCardProps = {
 
 const DataCard = (props: TDataCardProps) => {
   const { type, data, workspaceSlug, initiativeId } = props;
+  const router = useRouter();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
   const total =
     (data?.backlog_issues ?? 0) +
@@ -29,10 +31,15 @@ const DataCard = (props: TDataCardProps) => {
     (data?.cancelled_issues ?? 0);
   const completed = (data?.completed_issues ?? 0) + (data?.cancelled_issues ?? 0);
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  const handleControlLinkClick = () => {
+    router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`);
+  };
   return (
-    <Link
+    <ControlLink
       href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
       className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2 hover:cursor-pointer hover:bg-custom-background-80 transition-colors block"
+      onClick={handleControlLinkClick}
     >
       <div className="flex w-full justify-between text-custom-text-300 ">
         <div className="font-semibold text-base capitalize">{type}s</div>
@@ -58,17 +65,19 @@ const DataCard = (props: TDataCardProps) => {
           </div>
           <div className="flex-1 flex flex-col gap-3">
             <div className="text-custom-text-350 font-medium text-sm">Updates</div>
-            <UpdateStatusPills
-              defaultTab={type}
-              handleUpdateOperations={handleUpdateOperations}
-              workspaceSlug={workspaceSlug.toString()}
-              initiativeId={initiativeId}
-              analytics={{
-                on_track_updates: data?.on_track_updates ?? 0,
-                at_risk_updates: data?.at_risk_updates ?? 0,
-                off_track_updates: data?.off_track_updates ?? 0,
-              }}
-            />
+            <div role="group" aria-label="update-status-pills">
+              <UpdateStatusPills
+                defaultTab={type}
+                handleUpdateOperations={handleUpdateOperations}
+                workspaceSlug={workspaceSlug.toString()}
+                initiativeId={initiativeId}
+                analytics={{
+                  on_track_updates: data?.on_track_updates ?? 0,
+                  at_risk_updates: data?.at_risk_updates ?? 0,
+                  off_track_updates: data?.off_track_updates ?? 0,
+                }}
+              />
+            </div>
           </div>
         </div>
       ) : (
@@ -76,7 +85,7 @@ const DataCard = (props: TDataCardProps) => {
           <Loader.Item height="71px" width="100%" />
         </Loader>
       )}
-    </Link>
+    </ControlLink>
   );
 };
 
