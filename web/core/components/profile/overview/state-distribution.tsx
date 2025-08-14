@@ -3,7 +3,6 @@ import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
-import { useTranslation } from "@plane/i18n";
 
 // image
 import { STATE_GROUPS } from "@/constants/state";

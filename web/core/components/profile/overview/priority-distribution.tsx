@@ -8,8 +8,6 @@ import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
-// helpers
-import { useTranslation } from "@plane/i18n";
 // types
 
 type Props = {

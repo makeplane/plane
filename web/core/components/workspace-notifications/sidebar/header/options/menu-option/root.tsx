@@ -6,7 +6,6 @@ import { Check, CheckCircle, Clock } from "lucide-react";
 import { TNotificationFilter } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, PopoverMenu } from "@plane/ui";
-import { useTranslation } from "@plane/i18n";
 // components
 import { NotificationMenuOptionItem } from "@/components/workspace-notifications";
 // constants
