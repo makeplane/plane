@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 // types
 import { TStaticViewTypes } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 import {
   CreateUpdateWorkspaceViewModal,
@@ -18,7 +19,6 @@ import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;

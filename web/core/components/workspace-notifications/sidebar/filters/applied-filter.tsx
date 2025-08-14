@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // constants
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
@@ -15,6 +16,7 @@ type TAppliedFilters = {
 
 export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
   const { workspaceSlug } = props;
+  const { t } = useTranslation();
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();
   // derived values

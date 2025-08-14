@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
-import { useTranslation } from "@plane/i18n";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
 

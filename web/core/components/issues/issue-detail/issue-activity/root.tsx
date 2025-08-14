@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { IssueCommentCreate } from "@/components/issues";
@@ -18,7 +19,6 @@ import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-we
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
-import { useTranslation } from "@plane/i18n";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 

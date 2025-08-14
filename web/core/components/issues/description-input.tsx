@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
@@ -18,7 +19,6 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
-import { useTranslation } from "@plane/i18n";
 const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {

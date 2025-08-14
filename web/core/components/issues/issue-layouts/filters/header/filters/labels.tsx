@@ -5,11 +5,11 @@ import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { IIssueLabel } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // ui
 // types
-import { useTranslation } from "@plane/i18n";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

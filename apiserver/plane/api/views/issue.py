@@ -61,7 +61,7 @@ from plane.db.models import (
     Workspace,
     User
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from .base import BaseAPIView
 from datetime import datetime
 
@@ -144,6 +144,8 @@ class IssueAPIEndpoint(BaseAPIView):
     def get_queryset(self):
         filters = issue_filters(self.request.query_params, "GET")
         base_filter = filters.pop('base', None)
+        custom_properties = filters.pop('custom_properties', None)
+        
         query = (Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -153,10 +155,16 @@ class IssueAPIEndpoint(BaseAPIView):
                 .values("count")
             ).filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug")))
+            
         if base_filter:
             query = query.filter(base_filter)
 
-        print(query)
+        # Apply custom property filters if they exist
+        if custom_properties:
+            custom_filters = build_custom_property_q_objects(custom_properties)
+            if custom_filters:
+                query = query.filter(*custom_filters)
+
         return (query
             .filter(**filters)
             .select_related("project")

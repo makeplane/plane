@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues";
 import {
@@ -16,7 +17,6 @@ import {
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectPages } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   pageType: TPageNavigationTabs;

@@ -8,6 +8,7 @@ import { IWorkspaceSearchResults } from "@plane/types";
 import { commandGroups } from "@/components/command-palette";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   closePalette: () => void;
@@ -19,6 +20,7 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
   // router
   const router = useAppRouter();
   const { projectId: routerProjectId } = useParams();
+  const { t } = useTranslation();
   // derived values
   const projectId = routerProjectId?.toString();
 
@@ -30,7 +32,10 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
 
         if (section.length > 0) {
           return (
-            <Command.Group key={key} heading={`${currentSection.title} search`}>
+            <Command.Group
+              key={key}
+              heading={`${key === "issue_view" ? t("views") : currentSection.title} search`}
+            >
               {section.map((item: any) => (
                 <Command.Item
                   key={item.id}
