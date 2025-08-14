@@ -47,6 +47,8 @@ export const DashboardWidgets = observer(() => {
         const WidgetComponent = widget.component;
         // if the widget doesn't exist, return null
         if (!doesWidgetExist(key as TWidgetKeys)) return null;
+        // Disable recent_collaborators widget. Currently query to fetch this is not optimised
+        if (key === "recent_collaborators") return null;
         // if the widget is full width, return it in a 2 column grid
         if (widget.fullWidth)
           return (
