@@ -6,8 +6,8 @@ import { useTranslation, TLanguage } from "@plane/i18n";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 // hooks
-import { useRouterParams } from "@/hooks/store/use-router-params"
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useRouterParams } from "@/hooks/store/use-router-params";
 import { useUserProfile } from "@/hooks/store/user";
 
 type TStoreWrapper = {

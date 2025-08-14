@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web import
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports

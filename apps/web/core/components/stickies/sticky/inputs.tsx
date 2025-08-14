@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
@@ -9,8 +10,10 @@ import { TSticky } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// components
-import { StickyEditor } from "../../editor/sticky-editor";
+
+const StickyEditor = dynamic(() => import("../../editor/sticky-editor").then((mod) => mod.StickyEditor), {
+  ssr: false,
+});
 
 type TProps = {
   stickyData: Partial<TSticky> | undefined;
