@@ -3,6 +3,7 @@
   "description": "UI components shared across multiple apps internally",
   "private": true,
   "version": "0.28.0",
+  "type": "module",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [

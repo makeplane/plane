@@ -1,6 +1,7 @@
 {
-  "name": "space",
+  "name": "plane-space",
   "version": "0.28.0",
+  "type": "module",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {

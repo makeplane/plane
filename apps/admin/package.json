@@ -1,7 +1,8 @@
 {
-  "name": "admin",
+  "name": "plane-admin",
   "description": "Admin UI for Plane",
   "version": "0.28.0",
+  "type": "module",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {

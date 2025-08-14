@@ -3,16 +3,18 @@
   "private": true,
   "version": "0.28.0",
   "license": "AGPL-3.0",
+  "type": "module",
   "files": [
     "library.js",
     "next.js",
-    "server.js"
+    "server.js",
+    "eslint.config.js"
   ],
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
-    "@typescript-eslint/parser": "^8.36.0",
-    "eslint": "8.57.1",
-    "eslint-config-next": "^14.1.0",
+    "@typescript-eslint/eslint-plugin": "^9.0.0",
+    "@typescript-eslint/parser": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-turbo": "^1.12.4",
     "eslint-plugin-import": "^2.29.1",

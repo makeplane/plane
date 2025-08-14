@@ -1,6 +1,7 @@
 {
   "name": "@plane/utils",
   "version": "0.28.0",
+  "type": "module",
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
