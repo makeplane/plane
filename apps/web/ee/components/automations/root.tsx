@@ -16,7 +16,7 @@ export const CustomAutomationsRoot: FC<TCustomAutomationsRootProps> = observer((
   const { projectId, workspaceSlug } = props;
   // store hooks
   const {
-    projectAutomations: { isAnyAutomationAvailable, canCurrentUserCreateAutomation },
+    projectAutomations: { isAnyAutomationAvailableForProject, canCurrentUserCreateAutomation },
   } = useAutomations();
   // translation
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export const CustomAutomationsRoot: FC<TCustomAutomationsRootProps> = observer((
         <div className="flex flex-col items-start gap-1">
           <h4 className="text-base font-medium">{t("automations.settings.title")}</h4>
         </div>
-        {isAnyAutomationAvailable && canCurrentUserCreateAutomation && <CreateAutomationButton />}
+        {isAnyAutomationAvailableForProject(projectId) && canCurrentUserCreateAutomation && <CreateAutomationButton />}
       </div>
       <AutomationsListRoot projectId={projectId} />
     </WithFeatureFlagHOC>

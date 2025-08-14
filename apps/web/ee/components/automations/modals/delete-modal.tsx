@@ -32,15 +32,17 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
       await handleDelete();
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: t("automations.delete_modal.success_message"),
+        title: t("automations.toasts.delete.success.title"),
+        message: t("automations.toasts.delete.success.message", {
+          name: automationDetails?.name,
+        }),
       });
       handleClose();
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Warning!",
-        message: t("common.errors.default.message"),
+        title: t("automations.toasts.delete.error.title"),
+        message: t("automations.toasts.delete.error.message"),
       });
     } finally {
       setLoader(false);

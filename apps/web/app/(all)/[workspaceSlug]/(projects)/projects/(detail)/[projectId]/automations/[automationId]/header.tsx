@@ -21,16 +21,18 @@ import { SwitcherLabel } from "@/components/common/switcher-label";
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
+import { AutomationQuickActions } from "@/plane-web/components/automations/details/quick-actions";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 type TProps = {
   automationId: string;
   projectId: string;
+  workspaceSlug: string;
 };
 
 export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
-  const { automationId, projectId } = props;
+  const { automationId, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
   // states
@@ -41,16 +43,15 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
   const { isInitializingProjects } = useProject();
   const {
     getAutomationById,
-    projectAutomations: { currentProjectAutomationIds, getIsInitializingAutomations },
+    projectAutomations: { getProjectAutomationIds, deleteAutomation },
   } = useAutomations();
   // derived values
-  const isInitializingAutomations = getIsInitializingAutomations(projectId);
   const automationDetails = getAutomationById(automationId);
   const { sidebarHelper } = automationDetails ?? {};
   if (!automationDetails) return null;
   const canEnableAutomation =
     !automationDetails.is_enabled && automationDetails.trigger && automationDetails.isAnyActionNodeAvailable;
-  const switcherOptions = currentProjectAutomationIds
+  const switcherOptions = getProjectAutomationIds(projectId)
     ?.map((id) => {
       const automation = id === automationId ? automationDetails : getAutomationById(id);
       if (!automation) return;
@@ -118,7 +119,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs onBack={() => router.back()} isLoading={isInitializingProjects || isInitializingAutomations}>
+        <Breadcrumbs onBack={() => router.back()} isLoading={isInitializingProjects || !automationDetails}>
           <CommonProjectBreadcrumbs
             workspaceSlug={automationDetails.workspaceSlug}
             projectId={automationDetails.project}
@@ -126,7 +127,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                href={`/${automationDetails.workspaceSlug}/settings/projects/${automationDetails.project}/automations`}
+                href={automationDetails.settingsLink}
                 label={t("automations.settings.title")}
                 icon={<Repeat className="size-4 text-custom-text-300 hover:text-custom-text-100" />}
               />
@@ -155,8 +156,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
           />
         </Breadcrumbs>
       </Header.LeftItem>
-      <Header.RightItem>
-        {" "}
+      <Header.RightItem className="items-center">
         <Button
           variant="neutral-primary"
           size="sm"
@@ -190,6 +190,10 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
             </Button>
           </span>
         </Tooltip>
+        <AutomationQuickActions
+          automationId={automationId}
+          deleteAutomation={deleteAutomation.bind(deleteAutomation, workspaceSlug, projectId)}
+        />
       </Header.RightItem>
     </Header>
   );

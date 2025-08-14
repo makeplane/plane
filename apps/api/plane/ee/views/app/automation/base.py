@@ -196,6 +196,12 @@ class AutomationEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
+        # Validation: Do not allow deletion if automation is enabled
+        if automation.is_enabled:
+            return Response(
+                {"error": "Cannot delete an enabled automation. Please disable it first."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         automation.delete()
         automation_activity.delay(
             type="automation.activity.deleted",

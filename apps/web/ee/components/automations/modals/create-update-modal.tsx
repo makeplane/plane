@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -26,6 +27,9 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
   const { data, isOpen, onClose } = props;
   // app router
   const router = useAppRouter();
+  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
+  const workspaceSlug = workspaceSlugParam?.toString();
+  const projectId = projectIdParam?.toString();
   // store hooks
   const {
     getAutomationById,
@@ -51,7 +55,7 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
 
   const handleCreate = async (payload: Partial<TAutomation>) => {
     if (!canCurrentUserCreateAutomation) return;
-    const res = await createAutomation(payload);
+    const res = await createAutomation(workspaceSlug, projectId, payload);
     if (res?.redirectionLink) {
       router.push(res?.redirectionLink);
     }

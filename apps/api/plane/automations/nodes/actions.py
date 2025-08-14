@@ -190,7 +190,7 @@ class AddCommentAction(ActionNode):
                 issue=issue,
                 project=issue.project,
                 workspace=issue.workspace,
-                comment_html=f"<p>{rendered_comment}</p>",
+                comment_html=rendered_comment,
                 comment_stripped=rendered_comment,
                 actor_id=automation_user_id,
                 created_by_id=automation_user_id,

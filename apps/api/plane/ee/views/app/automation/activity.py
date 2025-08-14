@@ -1,6 +1,10 @@
 # Standard library imports
 import uuid
 
+# Django imports
+from django.db.models import Prefetch
+
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,7 +15,7 @@ from plane.ee.views.app.automation.base import AutomationBaseEndpoint
 from plane.ee.serializers import (
     AutomationActivityReadSerializer,
 )
-from plane.ee.models import AutomationActivity
+from plane.ee.models import AutomationActivity, AutomationRun
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -51,12 +55,18 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
                     automation_id=automation_id,
                 )
             )
+
             serializer = AutomationActivityReadSerializer(activity)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         activities = (
             AutomationActivity.objects.select_related("automation")
-            .select_related("automation_run")
+            .prefetch_related(
+                Prefetch(
+                    "automation_run",
+                    queryset=AutomationRun.objects.select_related("work_item"),
+                )
+            )
             .filter(
                 project_id=project_id,
                 workspace__slug=slug,

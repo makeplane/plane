@@ -102,7 +102,7 @@ const AutomationConditionFilterRoot = observer((props: TAutomationConditionFilte
 
   const workItemTypeFilterConfig = useMemo(
     () =>
-      getWorkItemTypeFilterConfig<TAutomationConditionFilterKeys>("payload.data.type")({
+      getWorkItemTypeFilterConfig<TAutomationConditionFilterKeys>("payload.data.type_id")({
         isEnabled: isWorkItemTypeEnabled,
         filterIcon: LayersIcon,
         getOptionIcon: (workItemType) => (

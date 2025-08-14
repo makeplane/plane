@@ -5,7 +5,7 @@ import { useAutomations } from "@/plane-web/hooks/store/automations/use-automati
 import { AutomationDetailsMainContentActionsRoot } from "./actions/root";
 import { AutomationDetailsMainContentHeader } from "./header/root";
 import { AutomationDetailsMainContentLoader } from "./loader";
-import { AutomationDetailsMainContentScopeRoot } from "./scope/root";
+// import { AutomationDetailsMainContentScopeRoot } from "./scope/root";
 import { AutomationDetailsMainContentTriggerRoot } from "./trigger/root";
 
 type TProps = {
@@ -29,7 +29,7 @@ export const AutomationDetailsMainContentRoot: React.FC<TProps> = observer((prop
         {isAutomationLoaded ? (
           <>
             <AutomationDetailsMainContentHeader automationId={automationId} />
-            <AutomationDetailsMainContentScopeRoot automationId={automationId} />
+            {/* <AutomationDetailsMainContentScopeRoot automationId={automationId} /> */}
             {automation?.scope && <AutomationDetailsMainContentTriggerRoot automationId={automationId} />}
             {automation?.isTriggerNodeAvailable && (
               <AutomationDetailsMainContentActionsRoot automationId={automationId} />

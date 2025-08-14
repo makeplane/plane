@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import merge from "lodash/merge";
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -104,8 +105,12 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    */
   register = action((config: TFilterConfig<FilterPropertyKey>): void => {
     if (this.filterConfigs.has(config.id)) {
-      // Update existing config
-      this.filterConfigs.set(config.id, { ...this.filterConfigs.get(config.id), ...config });
+      // Update existing config if it has differences
+      const existingConfig = this.filterConfigs.get(config.id)!;
+      const mergedConfig = { ...existingConfig, ...config };
+      if (!isEqual(existingConfig, mergedConfig)) {
+        this.filterConfigs.set(config.id, mergedConfig);
+      }
     } else {
       // Create new config if it doesn't exist
       this.filterConfigs.set(config.id, config);

@@ -6,7 +6,7 @@ export type TAutomationConditionFilterKeys =
   | "payload.data.label_ids"
   | "payload.data.priority"
   | "payload.data.state_id"
-  | "payload.data.type";
+  | "payload.data.type_id";
 
 export type TAutomationConditionFilterConfig = {
   field: TAutomationConditionFilterKeys;

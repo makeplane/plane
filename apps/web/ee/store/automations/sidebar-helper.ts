@@ -7,7 +7,7 @@ type TSelectedSidebarConfig = {
   mode: "create" | "view" | null;
 };
 
-export interface IAutomationSidebarHelper {
+export interface IAutomationDetailSidebarHelper {
   // properties
   selectedSidebarConfig: TSelectedSidebarConfig;
   isPublishAlertOpen: boolean;
@@ -16,10 +16,10 @@ export interface IAutomationSidebarHelper {
   setIsPublishAlertOpen: (isOpen: boolean) => void;
 }
 
-export class AutomationSidebarHelper implements IAutomationSidebarHelper {
+export class AutomationDetailSidebarHelper implements IAutomationDetailSidebarHelper {
   // properties
-  selectedSidebarConfig: IAutomationSidebarHelper["selectedSidebarConfig"];
-  isPublishAlertOpen: IAutomationSidebarHelper["isPublishAlertOpen"];
+  selectedSidebarConfig: IAutomationDetailSidebarHelper["selectedSidebarConfig"];
+  isPublishAlertOpen: IAutomationDetailSidebarHelper["isPublishAlertOpen"];
 
   constructor() {
     this.selectedSidebarConfig = {
@@ -38,11 +38,11 @@ export class AutomationSidebarHelper implements IAutomationSidebarHelper {
   }
 
   // actions
-  setSelectedSidebarConfig: IAutomationSidebarHelper["setSelectedSidebarConfig"] = action((config) => {
+  setSelectedSidebarConfig: IAutomationDetailSidebarHelper["setSelectedSidebarConfig"] = action((config) => {
     this.selectedSidebarConfig = config;
   });
 
-  setIsPublishAlertOpen: IAutomationSidebarHelper["setIsPublishAlertOpen"] = action((isOpen) => {
+  setIsPublishAlertOpen: IAutomationDetailSidebarHelper["setIsPublishAlertOpen"] = action((isOpen) => {
     this.isPublishAlertOpen = isOpen;
   });
 }

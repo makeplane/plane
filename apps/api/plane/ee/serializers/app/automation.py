@@ -265,6 +265,7 @@ class NodeExecutionReadSerializer(BaseSerializer):
 
 class AutomationActivityReadSerializer(BaseSerializer):
     automation_scope = serializers.CharField(source="automation.scope", read_only=True)
+    work_item_sequence_id = serializers.SerializerMethodField()
 
     class Meta:
         model = AutomationActivity
@@ -291,5 +292,11 @@ class AutomationActivityReadSerializer(BaseSerializer):
             "new_identifier",
             "epoch",
             "automation_scope",
+            "work_item_sequence_id",
         ]
         read_only_fields = fields
+
+    def get_work_item_sequence_id(self, obj):
+        if obj.automation_run and obj.automation_run.work_item:
+            return obj.automation_run.work_item.sequence_id
+        return None

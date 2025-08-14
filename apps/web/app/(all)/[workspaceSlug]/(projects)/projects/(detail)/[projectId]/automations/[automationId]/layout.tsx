@@ -50,7 +50,15 @@ const AutomationDetailsLayout: React.FC<Props> = observer((props) => {
   return (
     <AutomationsListWrapper projectId={projectId} workspaceSlug={workspaceSlug}>
       <AutomationsDetailsWrapper automationId={automationId} projectId={projectId} workspaceSlug={workspaceSlug}>
-        <AppHeader header={<ProjectAutomationDetailsHeader automationId={automationId} projectId={projectId} />} />
+        <AppHeader
+          header={
+            <ProjectAutomationDetailsHeader
+              automationId={automationId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          }
+        />
         <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
       </AutomationsDetailsWrapper>
     </AutomationsListWrapper>

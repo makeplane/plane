@@ -6,7 +6,8 @@ import time
 
 # Third Party imports
 import pika
-from django.db import IntegrityError
+from django.db import IntegrityError, connection
+from django.db.utils import OperationalError
 from django.conf import settings
 
 # Module imports
@@ -123,6 +124,16 @@ class AutomationConsumer:
             f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'"
         )
 
+    def _ensure_db_connection(self):
+        """Ensure database connection is alive, reconnect if necessary."""
+        try:
+            # Test the connection
+            connection.ensure_connection()
+        except OperationalError:
+            logger.warning("Database connection lost, reconnecting...")
+            connection.close()
+            connection.ensure_connection()
+
     def _should_process(self, event_type: str) -> bool:
         """Check if event should be processed for automations."""
         automation_event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["issue."])
@@ -139,6 +150,9 @@ class AutomationConsumer:
         self._inflight_messages += 1
 
         try:
+            # Ensure database connection is alive before processing
+            self._ensure_db_connection()
+
             # Parse message
             event_data = json.loads(body.decode("utf-8"))
             event_id = event_data.get("event_id")
@@ -159,7 +173,7 @@ class AutomationConsumer:
                 logger.debug(f"Skipping event: {event_type}")
                 return True
 
-            # Ensure exactly-once processing
+            # Ensure exactly-once processing with retry on connection issues
             try:
                 ProcessedAutomationEvent.objects.create(
                     event_id=event_id, event_type=event_type, status="pending"
@@ -167,15 +181,38 @@ class AutomationConsumer:
             except IntegrityError:
                 logger.debug(f"Event {event_id} already processed")
                 return True
+            except OperationalError as e:
+                # Retry once on database connection issues
+                logger.warning(
+                    f"Database error creating ProcessedAutomationEvent, retrying: {e}"
+                )
+                self._ensure_db_connection()
+                try:
+                    ProcessedAutomationEvent.objects.create(
+                        event_id=event_id, event_type=event_type, status="pending"
+                    )
+                except IntegrityError:
+                    logger.debug(f"Event {event_id} already processed on retry")
+                    return True
 
             # Dispatch to Celery
             from plane.automations.tasks import execute_automation_task
 
             task_result = execute_automation_task.delay(event_data)
 
-            ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
-                task_id=task_result.id
-            )
+            # Update with task_id, also with retry logic
+            try:
+                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
+                    task_id=task_result.id
+                )
+            except OperationalError as e:
+                logger.warning(
+                    f"Database error updating ProcessedAutomationEvent, retrying: {e}"
+                )
+                self._ensure_db_connection()
+                ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
+                    task_id=task_result.id
+                )
 
             logger.info(f"Dispatched automation for {event_id} ({event_type})")
             return True
@@ -234,7 +271,7 @@ class AutomationConsumer:
             except KeyboardInterrupt:
                 self._should_stop = True
             except Exception as e:
-                logger.error(f"Connection error: {e}")
+                log_exception(e)
                 retry_count += 1
                 if retry_count < max_retries:
                     time.sleep(5 * retry_count)  # Exponential backoff

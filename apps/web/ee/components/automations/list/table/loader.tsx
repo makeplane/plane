@@ -7,12 +7,12 @@ const COMMON_TABLE_TITLE_HEADER_CLASSNAME =
   "h-14 sticky left-0 bg-custom-background-100 border-r border-custom-border-100 z-10 min-w-[200px]";
 const COMMON_TABLE_CELL_CLASSNAME = "text-custom-text-200 text-center";
 const COMMON_TABLE_TITLE_CELL_CLASSNAME =
-  "font-medium text-custom-text-100 max-w-72 truncate sticky left-0 bg-custom-background-100 group-hover:bg-custom-background-90 border-r border-custom-border-100 z-10 min-w-[200px] transition-colors duration-75 py-3";
+  "font-medium text-custom-text-100 max-w-72 truncate sticky left-0 bg-custom-background-100 border-r border-custom-border-100 z-10 min-w-[200px] transition-colors duration-75 py-3";
 
 export const AutomationsTableLoader = () => (
   <Loader className="space-y-4">
     {/* Table */}
-    <div className="overflow-x-auto">
+    <div>
       <Table className="min-w-[1000px]">
         <TableHeader className="bg-custom-background-100 border-t-0 border-custom-border-100 py-4">
           <TableRow>
@@ -44,10 +44,7 @@ export const AutomationsTableLoader = () => (
         </TableHeader>
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => (
-            <TableRow
-              key={index}
-              className="group hover:bg-custom-background-90 cursor-pointer border-b border-custom-border-100 transition-colors duration-75"
-            >
+            <TableRow key={index} className="border-b border-custom-border-100 transition-colors duration-75">
               {/* Automation title */}
               <TableCell className={COMMON_TABLE_TITLE_CELL_CLASSNAME}>
                 <div className="flex items-center gap-2.5 truncate">

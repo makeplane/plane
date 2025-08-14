@@ -20,7 +20,7 @@ export const AutomationsListRoot: FC<TProps> = observer((props) => {
   const router = useAppRouter();
   // store hooks
   const {
-    projectAutomations: { getProjectAutomations, getIsInitializingAutomations, isAnyAutomationAvailable },
+    projectAutomations: { getProjectAutomations, getIsInitializingAutomations, isAnyAutomationAvailableForProject },
   } = useAutomations();
 
   // derived values
@@ -41,7 +41,7 @@ export const AutomationsListRoot: FC<TProps> = observer((props) => {
   }
 
   // Show empty state when no automations are available
-  if (!isAnyAutomationAvailable) {
+  if (!isAnyAutomationAvailableForProject(projectId)) {
     return <NoAutomationsEmptyState />;
   }
 

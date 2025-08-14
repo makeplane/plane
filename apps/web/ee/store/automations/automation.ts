@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -22,7 +23,7 @@ import {
   TCreateTriggerPayload,
   TAutomationActivityFilters,
 } from "@plane/types";
-import { joinUrlPath } from "@plane/utils";
+import { getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
@@ -43,7 +44,7 @@ import {
   type IAutomationTriggerNodeInstance,
   type TAutomationTriggerNodeHelpers,
 } from "./node/trigger";
-import { AutomationSidebarHelper, IAutomationSidebarHelper } from "./sidebar-helper";
+import { AutomationDetailSidebarHelper, IAutomationDetailSidebarHelper } from "./sidebar-helper";
 
 type TAutomationNodeInstance =
   | IAutomationTriggerNodeInstance
@@ -59,12 +60,14 @@ export interface IAutomationInstance extends TAutomation {
   actions: Map<string, IAutomationActionNodeInstance>; // action node id => action node instance
   edges: Map<string, TAutomationNodeEdge>; // source node id => target node id
   // sidebar
-  sidebarHelper: IAutomationSidebarHelper;
+  sidebarHelper: IAutomationDetailSidebarHelper;
   // permissions
   canCurrentUserEdit: boolean;
   canCurrentUserDelete: boolean;
+  isDeleteDisabled: boolean;
   // helpers
   asJSON: TAutomation;
+  settingsLink: string;
   redirectionLink: string;
   allActions: IAutomationActionNodeInstance[];
   allConditions: IAutomationConditionNodeInstance[];
@@ -148,7 +151,7 @@ export class AutomationInstance implements IAutomationInstance {
   actions: IAutomationInstance["actions"];
   edges: IAutomationInstance["edges"];
   // actions
-  sidebarHelper: IAutomationSidebarHelper;
+  sidebarHelper: IAutomationDetailSidebarHelper;
   private helpers: TAutomationHelpers;
   // root store
   activity: AutomationActivityStore;
@@ -181,7 +184,7 @@ export class AutomationInstance implements IAutomationInstance {
     this.edges = new Map();
     // initialize helpers
     this.helpers = helpers;
-    this.sidebarHelper = new AutomationSidebarHelper();
+    this.sidebarHelper = new AutomationDetailSidebarHelper();
     // initialize root store
     this.activity = new AutomationActivityStore(helpers.activityHelpers);
     this.rootStore = store;
@@ -215,7 +218,9 @@ export class AutomationInstance implements IAutomationInstance {
       workspaceSlug: computed,
       canCurrentUserEdit: computed,
       canCurrentUserDelete: computed,
+      isDeleteDisabled: computed,
       asJSON: computed,
+      settingsLink: computed,
       redirectionLink: computed,
       allActions: computed,
       allConditions: computed,
@@ -250,6 +255,10 @@ export class AutomationInstance implements IAutomationInstance {
     return this.helpers.permissions.canCurrentUserDelete;
   }
 
+  get isDeleteDisabled() {
+    return this.is_enabled;
+  }
+
   // helpers
   get asJSON() {
     return {
@@ -274,20 +283,27 @@ export class AutomationInstance implements IAutomationInstance {
     };
   }
 
+  get settingsLink() {
+    return getAutomationSettingsPath({
+      workspaceSlug: this.workspaceSlug,
+      projectId: this.project,
+    });
+  }
+
   get redirectionLink() {
     return joinUrlPath(this.workspaceSlug, "projects", this.project, "automations", this.id);
   }
 
   get allActions() {
-    return Array.from(this.actions.values());
+    return orderBy(Array.from(this.actions.values()), "created_at");
   }
 
   get allConditions() {
-    return Array.from(this.conditions.values());
+    return orderBy(Array.from(this.conditions.values()), "created_at");
   }
 
   get allEdges() {
-    return Array.from(this.edges.values());
+    return orderBy(Array.from(this.edges.values()), "created_at");
   }
 
   get isTriggerNodeAvailable() {
@@ -365,14 +381,23 @@ export class AutomationInstance implements IAutomationInstance {
     }
   };
 
-  // TODO: Figure out a better way to handle this instead of type castings
   addOrUpdateNode: IAutomationInstance["addOrUpdateNode"] = (node, helpers) => {
-    if (node.node_type === EAutomationNodeType.TRIGGER) {
-      this.addOrUpdateTrigger(node as TAutomationTriggerNode, helpers as TAutomationTriggerNodeHelpers);
-    } else if (node.node_type === EAutomationNodeType.ACTION) {
-      this.addOrUpdateAction(node as TAutomationActionNode, helpers as TAutomationActionNodeHelpers);
-    } else if (node.node_type === EAutomationNodeType.CONDITION) {
-      this.addOrUpdateCondition(node as TAutomationConditionNode, helpers as TAutomationConditionNodeHelpers);
+    switch (node.node_type) {
+      case EAutomationNodeType.TRIGGER: {
+        this.addOrUpdateTrigger(node as TAutomationTriggerNode, helpers as TAutomationTriggerNodeHelpers);
+        break;
+      }
+      case EAutomationNodeType.ACTION: {
+        this.addOrUpdateAction(node as TAutomationActionNode, helpers as TAutomationActionNodeHelpers);
+        break;
+      }
+      case EAutomationNodeType.CONDITION: {
+        this.addOrUpdateCondition(node as TAutomationConditionNode, helpers as TAutomationConditionNodeHelpers);
+        break;
+      }
+      default: {
+        throw new Error(`Unhandled node type: ${node.node_type}`);
+      }
     }
   };
 
@@ -467,15 +492,19 @@ export class AutomationInstance implements IAutomationInstance {
       ...payload,
     });
 
-    const condition = await this._createNode<TAutomationConditionNode>(EAutomationNodeType.CONDITION, {
-      name: `Condition_${trigger.handler_name}_${new Date().toISOString()}`,
-      handler_name: EConditionNodeHandlerName.JSON_FILTER,
-      config: {
-        filter_expression: {
-          [LOGICAL_OPERATOR.AND]: [],
+    const condition = await this._createNode<TAutomationConditionNode>(
+      EAutomationNodeType.CONDITION,
+      {
+        name: `Condition_${trigger.handler_name}_${new Date().toISOString()}`,
+        handler_name: EConditionNodeHandlerName.JSON_FILTER,
+        config: {
+          filter_expression: {
+            [LOGICAL_OPERATOR.AND]: [],
+          },
         },
       },
-    });
+      trigger.id
+    );
 
     return {
       trigger,
@@ -484,13 +513,14 @@ export class AutomationInstance implements IAutomationInstance {
   };
 
   createAction: IAutomationInstance["createAction"] = async (payload) => {
-    // We need previous action node to trigger the next action node.
-    const previousActionNodeId = this.allActions[this.allActions.length - 1]?.id; // TODO: Need to verify the action node order.
+    // We need previous node to create the next node.
+    const previousActionNodeId = this.allActions[this.allActions.length - 1]?.id;
+    const previousConditionNodeId = this.allConditions[this.allConditions.length - 1]?.id;
     const previousTriggerNodeId = this.trigger?.id;
-    const previousNodeId = previousActionNodeId ?? previousTriggerNodeId;
+    const previousNodeId = previousActionNodeId ?? previousConditionNodeId ?? previousTriggerNodeId;
 
     if (!previousNodeId) {
-      throw new Error("No trigger or previous action node found to create the next action node.");
+      throw new Error("No previous node found to create the next action node.");
     }
 
     const res = await this._createNode(
@@ -509,6 +539,9 @@ export class AutomationInstance implements IAutomationInstance {
     const triggerNodeId = this.trigger?.id;
     if (!triggerNodeId) {
       throw new Error("No trigger node found to create the condition node.");
+    }
+    if (this.isAnyConditionNodeAvailable) {
+      throw new Error("Only one condition node is allowed per automation.");
     }
     const triggerToActionEdge = this.getEdgeBySourceNodeId(triggerNodeId);
 

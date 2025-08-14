@@ -35,6 +35,7 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
   const sidebarHelper = automation?.sidebarHelper;
   const triggerNode = automation?.trigger;
   const conditionNode = automation?.allConditions?.[0];
+  const actionNode = automation?.allActions?.[0];
   const filterExpression = conditionNode?.config?.filter_expression;
   const triggerNodeHandlerName = triggerNode?.handler_name;
   const selectedTriggerNodeHandlerOption = useMemo(
@@ -80,6 +81,13 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
       }
     }
     setIsCreatingUpdatingTriggerOrCondition(false);
+  };
+
+  const getNextButtonLabel = () => {
+    if (isCreatingUpdatingTriggerOrCondition) return t("common.confirming");
+    if (!triggerNode) return t("automations.trigger.button.next.continue"); // No trigger node yet: prompt to continue to add condition node
+    if (!actionNode) return t("automations.trigger.button.next.add_action"); // No action node yet: prompt to add an action
+    return t("automations.trigger.button.next.continue");
   };
 
   if (!automation) return null;
@@ -145,11 +153,7 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
           isDisabled: true,
         }}
         nextButton={{
-          label: isCreatingUpdatingTriggerOrCondition
-            ? t("common.confirming")
-            : triggerNode
-              ? t("automations.trigger.button.next.update")
-              : t("automations.trigger.button.next.create"),
+          label: getNextButtonLabel(),
           isDisabled: !selectedTriggerNodeHandlerName || isCreatingUpdatingTriggerOrCondition,
           onClick: handleNextButtonClick,
         }}

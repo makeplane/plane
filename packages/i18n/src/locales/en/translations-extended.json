@@ -2794,8 +2794,8 @@
       "button": {
         "previous": "Back",
         "next": {
-          "create": "Continue",
-          "update": "Add action"
+          "continue": "Continue",
+          "add_action": "Add action"
         }
       }
     },
@@ -2852,6 +2852,11 @@
         "required": "Automation must have a trigger and at least one action to be enabled."
       }
     },
+    "delete": {
+      "validation": {
+        "enabled": "Automation must be disabled before deleting it."
+      }
+    },
     "table": {
       "title": "Automation title",
       "last_run_on": "Last run on",
@@ -2880,8 +2885,7 @@
       }
     },
     "delete_modal": {
-      "heading": "Delete automation",
-      "success_message": "Automation deleted successfully."
+      "heading": "Delete automation"
     },
     "activity": {
       "filters": {
@@ -2913,6 +2917,16 @@
         "error": {
           "title": "Error!",
           "message": "Automation disable failed."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automation deleted",
+          "message": "{name}, the automation, has now been deleted from your project."
+        },
+        "error": {
+          "title": "We couldn't delete that automation this time.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
         }
       }
     },
