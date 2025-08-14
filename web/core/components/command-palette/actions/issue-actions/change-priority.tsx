@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { TIssue, TIssuePriorities } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
 import { EIssuesStoreType, ISSUE_PRIORITIES } from "@/constants/issue";
@@ -22,6 +23,7 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
+  const { t } = useTranslation();
   const {
     issues: { updateIssue },
   } = useIssues(EIssuesStoreType.PROJECT);
@@ -46,7 +48,7 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
         <Command.Item key={priority.key} onSelect={() => handleIssueState(priority.key)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <PriorityIcon priority={priority.key} />
-            <span className="capitalize">{priority.title ?? "None"}</span>
+            <span className="capitalize">{t(priority.title)}</span>
           </div>
           <div>{priority.key === issue.priority && <Check className="h-3 w-3" />}</div>
         </Command.Item>

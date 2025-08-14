@@ -5,9 +5,9 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";//ui
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
+import { TranslationProvider } from "@plane/i18n";
 import { Toast, setToast, TOAST_TYPE } from "@plane/ui";
 // Plane Imports
-import { TranslationProvider } from "@plane/i18n";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers

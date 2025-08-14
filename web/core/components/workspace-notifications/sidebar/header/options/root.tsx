@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Spinner, Tooltip } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
 // components

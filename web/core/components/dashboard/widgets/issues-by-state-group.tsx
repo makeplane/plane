@@ -4,6 +4,7 @@ import Link from "next/link";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
@@ -20,7 +21,6 @@ import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
 import { useDashboard } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "issues_by_state_groups";
 
@@ -130,7 +130,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           dominantBaseline="central"
           className="text-sm font-medium fill-custom-text-300 capitalize"
         >
-          {data?.id}
+          {data.id ? t(data.id) : ""}
         </text>
       </g>
     );
@@ -205,7 +205,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
                         backgroundColor: item.color,
                       }}
                     />
-                    <span className="text-custom-text-300 text-sm font-medium capitalize">{item.label}</span>
+                    <span className="text-custom-text-300 text-sm font-medium capitalize">{t(item.label)}</span>
                   </div>
                   <span className="text-custom-text-400 text-sm">{item.value.toFixed(0)}%</span>
                 </div>

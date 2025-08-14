@@ -5,11 +5,11 @@ import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Loader, DiceIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 import { useModule } from "@/hooks/store";
 // ui
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;

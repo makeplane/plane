@@ -8,6 +8,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
 // helpers
 import { isInDateFormat } from "@/helpers/date-time.helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -17,6 +18,7 @@ type Props = {
 
 export const FilterEndDate: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -62,7 +64,7 @@ export const FilterEndDate: React.FC<Props> = observer((props) => {
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={option.name}
+                  title={t(option.name)}
                   multiple
                 />
               ))}
