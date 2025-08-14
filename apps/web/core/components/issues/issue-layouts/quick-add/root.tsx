@@ -13,8 +13,9 @@ import { setPromiseToast } from "@plane/ui";
 import { cn, createIssuePayload } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-// plane web components
-import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
+// plane web imports
+import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
+// local imports
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {

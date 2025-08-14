@@ -2,10 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";
-// i18n
+// plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import {
   IIssueDisplayFilterOptions,
   IIssueFilterOptions,
@@ -32,8 +31,9 @@ import {
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { FilterIssueTypes, FilterTeamProjects } from "@/plane-web/components/issues";
+// plane web imports
+import { FilterIssueTypes } from "@/plane-web/components/issues/filters/issue-types";
+import { FilterTeamProjects } from "@/plane-web/components/issues/filters/team-project";
 
 type Props = {
   filters: IIssueFilterOptions;

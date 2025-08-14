@@ -3,18 +3,16 @@ import React, { FC, useRef, useState } from "react";
 import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
-// types
+// plane utils
 import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
-// constants
-// helper
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useProject } from "@/hooks/store/use-project"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
-// plane-web components
-import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues";
+// plane-web imports
+import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";

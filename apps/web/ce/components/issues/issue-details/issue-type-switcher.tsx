@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // store hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type TIssueTypeSwitcherProps = {
   issueId: string;

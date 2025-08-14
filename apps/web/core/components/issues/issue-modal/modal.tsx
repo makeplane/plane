@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssuesStoreType, TIssue } from "@plane/types";
 // plane web imports
-import { IssueModalProvider } from "@/plane-web/components/issues";
+import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateIssueModalBase } from "./base";
 
 export interface IssuesModalProps {
