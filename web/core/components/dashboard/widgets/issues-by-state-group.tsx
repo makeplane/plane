@@ -130,7 +130,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           dominantBaseline="central"
           className="text-sm font-medium fill-custom-text-300 capitalize"
         >
-          {data.id ? t(data.id) : ""}
+          {data?.id ? t(data.id) : ""}
         </text>
       </g>
     );
