@@ -134,6 +134,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
       if (!currentNode) {
         // Get the file tree and initialize counter
         currentNode = await zipDriver.buildFileTree();
+        logger.info(`After building file tree, current node: ${currentNode?.name}`);
         if (!currentNode) {
           throw new Error(`Current node not found for job ${jobId}`);
         }

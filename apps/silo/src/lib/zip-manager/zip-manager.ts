@@ -1,3 +1,4 @@
+import { logger } from "@/logger";
 import { Store } from "@/worker/base";
 import { extractZipTableOfContents, extractDirectoryFromZip, extractFileFromZip } from "./extractor";
 import { StorageProvider } from "./storage-provider";
@@ -35,7 +36,7 @@ export class ZipManager {
     this.zipStream = new ZipStream(this.storageProvider, fileId, contentLength);
 
     // Table of contents is a list of the file paths which are present in the zip file
-    this.toc = await this.getTableOfContents();
+    await this.getTableOfContents();
   }
 
   /**
@@ -51,6 +52,10 @@ export class ZipManager {
       throw new Error("Zip stream not initialized");
     }
 
+    if (this.toc.length > 0) {
+      return this.toc;
+    }
+
     // Let's check if our cache has the TOC
     const cachedTOC = await this.store.get(getKey(this.fileId, TOC_KEY));
     if (cachedTOC) {
@@ -59,6 +64,9 @@ export class ZipManager {
 
     // If not, let's fetch it from the zip stream
     this.toc = await extractZipTableOfContents(this.zipStream);
+
+    logger.info(`Fetched TOC for file ${this.fileId}`, { toc: this.toc });
+
     const ttl = 60 * 60 * 4; // 4 hours
     await this.store.set(getKey(this.fileId, TOC_KEY), JSON.stringify(this.toc), ttl);
 

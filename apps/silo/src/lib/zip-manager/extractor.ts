@@ -3,6 +3,15 @@ import { logger } from "@/logger";
 import { TZipFileNode, EZipNodeType } from "./types";
 import { ZipStream } from "./zip-stream";
 
+// ======================= CONSTANTS ======================= //
+/**
+ * The maximum file size for an attachment in bytes
+ * This is a temporary solution to avoid extracting too large files
+ * and causing the worker to crash
+ * Files more than 50MB will be skipped
+ */
+const ATTACHMENT_MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
 // ======================= PUBLIC API FUNCTIONS ======================= //
 
 /**
@@ -58,6 +67,8 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
  * @returns Promise resolving to a Buffer containing the file contents
  */
 export async function extractFileFromZip(zipStream: ZipStream, targetFileName: string): Promise<Buffer> {
+  logger.info(`Extracting file from zip: ${targetFileName}`);
+
   try {
     const fileSize = zipStream.size;
 
@@ -99,6 +110,7 @@ export async function extractDirectoryFromZip(
 ): Promise<Map<string, Buffer>> {
   // For each child node, we need to extract the content
   const extractedFiles = new Map<string, Buffer>();
+  logger.info(`Extracting directory from zip: ${directoryNode.path}`);
 
   if (!directoryNode.children) {
     return extractedFiles;
@@ -390,6 +402,7 @@ interface ZipFileEntry {
   localHeaderOffset: number;
   compressedSize: number;
   compressionMethod: number;
+  fileName: string;
 }
 
 /**
@@ -435,6 +448,7 @@ function findFileEntryInCentralDirectory(
         localHeaderOffset,
         compressedSize,
         compressionMethod,
+        fileName,
       };
     }
 
@@ -469,6 +483,17 @@ async function extractFileData(zipStream: ZipStream, fileEntry: ZipFileEntry): P
   // File data starts after the header, filename, and extra field
   const fileDataOffset = fileEntry.localHeaderOffset + 30 + localFileNameLength + localExtraFieldLength;
 
+  // Get the file size of the particular file
+  const fileSize = fileEntry.compressedSize;
+
+  if (fileSize > ATTACHMENT_MAX_FILE_SIZE) {
+    logger.info(`File size ${fileEntry.fileName} is greater than max allowed size, skipping extraction`, {
+      fileSize,
+      fileEntry,
+    });
+    return Buffer.alloc(0);
+  }
+
   // Read the file data
   await zipStream.seek(fileDataOffset);
   const compressedData = await zipStream.read(fileEntry.compressedSize);
@@ -485,6 +510,7 @@ async function extractFileData(zipStream: ZipStream, fileEntry: ZipFileEntry): P
  * @returns Promise resolving to the decompressed data
  */
 async function decompressData(compressedData: Buffer, compressionMethod: number): Promise<Buffer> {
+  logger.info(`Decompressing data with compression method: ${compressionMethod}`);
   // If not compressed, just return the data
   if (compressionMethod === 0) {
     return compressedData;

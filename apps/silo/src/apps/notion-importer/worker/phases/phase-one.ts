@@ -1,8 +1,13 @@
-import * as bluebird from "bluebird";
 import mimetics from "mimetics";
 import { Client, ExPage } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
-import { ENotionImporterKeyType, ENotionMigrationType, TAssetInfo, TNotionMigratorData } from "@/apps/notion-importer/types";
+import {
+  ENotionImporterKeyType,
+  ENotionMigrationType,
+  TAssetInfo,
+  TNotionMigratorData,
+} from "@/apps/notion-importer/types";
+import { protect } from "@/lib/errors";
 import { TZipFileNode } from "@/lib/zip-manager";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -163,49 +168,46 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
      */
     const parentPath = root.path.split("/").pop();
 
-    await bluebird.Promise.map(
-      attachmentNodes,
-      async (node) => {
-        // Check if the content is present in the content map
-        const content = contentMap.get(node.path);
-        if (!content) {
-          logger.error(`Content not found for attachment node ${node.path}`, {
-            jobId: job.id,
-          });
-          return;
-        }
+    for (const node of attachmentNodes) {
+      // Check if the content is present in the content map
+      const content = contentMap.get(node.path);
+      // skip processing if content is empty (Buffer.alloc(0)) or undefined
+      if (!content || content.length === 0) {
+        logger.error(`Content not found for attachment node ${node.path}`, {
+          jobId: job.id,
+        });
+        continue;
+      }
 
-        try {
-          // Parse the content to get the mime type
-          const parsed = mimetics.parse(content);
-          // Upload the asset and get the asset id
-          const assetId = await client.assets.uploadAsset(
-            job.workspace_slug,
-            new File([content], node.name, {
-              type: parsed?.mime,
-            }),
-            node.name,
-            content.length
-          );
+      try {
+        // Parse the content to get the mime type
+        const parsed = mimetics.parse(content);
+        // Upload the asset and get the asset id
+        const assetId = await protect(
+          client.assets.uploadAsset,
+          job.workspace_slug,
+          new File([content], node.name, {
+            type: parsed?.mime,
+          }),
+          node.name,
+          content.length
+        );
 
-          const assetInfo: TAssetInfo = {
-            id: assetId,
-            name: node.name,
-            type: parsed?.mime ?? "application/octet-stream",
-            size: content.length,
-          }
+        const assetInfo: TAssetInfo = {
+          id: assetId,
+          name: node.name,
+          type: parsed?.mime ?? "application/octet-stream",
+          size: content.length,
+        };
 
-          result.set(`${parentPath}/${node.name}`, JSON.stringify(assetInfo));
-
-        } catch (error) {
-          logger.error(`Error uploading asset for job ${job.id} and node ${node.name}`, {
-            jobId: job.id,
-            error,
-          }); // TODO: What do we do with this error?
-        }
-      },
-      { concurrency: 3 }
-    );
+        result.set(`${parentPath}/${node.name}`, JSON.stringify(assetInfo));
+      } catch (error) {
+        logger.error(`Error uploading asset for job ${job.id} and node ${node.name}`, {
+          jobId: job.id,
+          error,
+        }); // TODO: What do we do with this error?
+      }
+    }
 
     if (result.size > 0) await this.setCacheObjects(fileId, ENotionImporterKeyType.ASSET, result);
   }
