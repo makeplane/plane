@@ -6,9 +6,9 @@ import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
-import { cn } from "../utils";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { Tooltip } from "../tooltip";
+import { cn } from "../utils";
 import { ICustomSearchSelectProps } from "./helper";
 
 export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
@@ -34,12 +34,13 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     value,
     tabIndex,
     noResultsMessage = "No matches found",
+    defaultOpen = false,
   } = props;
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
