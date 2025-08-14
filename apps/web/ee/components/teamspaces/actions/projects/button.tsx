@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
@@ -20,12 +20,18 @@ type UpdateTeamspaceProjectsButtonProps = {
   teamspaceId: string;
   isEditingAllowed: boolean;
   trackerElement: string;
+  renderButton?: (args: {
+    open: () => void;
+    isEditingAllowed: boolean;
+    areProjectsPresent: boolean;
+    trackerElement: string;
+  }) => ReactNode;
 };
 
 const TOOLTIP_CONTENT = "Contact teamspace admin";
 
 const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsButtonProps) => {
-  const { variant = "default", teamspaceId, isEditingAllowed, trackerElement } = props;
+  const { variant = "default", teamspaceId, isEditingAllowed, trackerElement, renderButton } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -70,6 +76,12 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
   };
 
   if (!teamspace) return null;
+
+  const open = () => {
+    if (!isEditingAllowed) return;
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       <LinkProjectModal
@@ -80,50 +92,53 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
         selectedProjectIds={teamspace.project_ids ?? []}
         projectIds={workspaceProjectIds ?? []}
       />
-      {variant === "default" && (
-        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
-          <button
-            className={cn(
-              "group/projects flex flex-shrink-0 items-center gap-1 text-xs text-custom-text-200 py-1 px-2 border-[0.5px] border-custom-border-400 rounded transition-[width] ease-linear duration-700",
-              !isEditingAllowed && "cursor-not-allowed"
-            )}
-            onClick={() => {
-              if (!isEditingAllowed) return;
-              setIsModalOpen(true);
-            }}
-            data-ph-element={trackerElement}
-          >
-            <BriefcaseIcon className="size-3.5 text-custom-text-300" />
-            {!areProjectsPresent && "Link a project"}
-            {areProjectsPresent && (
-              <>
-                <span className={cn(isEditingAllowed && "group-hover/projects:hidden")}>
-                  {teamspace.project_ids?.length}
-                </span>
-                <span className={cn("hidden", isEditingAllowed && "group-hover/projects:block")}>Update projects</span>
-              </>
-            )}
-          </button>
-        </Tooltip>
-      )}
-      {variant === "empty-state" && (
-        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="right">
-          <div>
-            <Button
-              variant="primary"
-              size="sm"
-              className="flex-shrink-0 mt-2 text-xs"
-              onClick={() => {
-                if (!isEditingAllowed) return;
-                setIsModalOpen(true);
-              }}
-              disabled={!isEditingAllowed}
-              data-ph-element={trackerElement}
-            >
-              Link a project
-            </Button>
-          </div>
-        </Tooltip>
+
+      {renderButton ? (
+        <>{renderButton({ open, isEditingAllowed, areProjectsPresent: Boolean(areProjectsPresent), trackerElement })}</>
+      ) : (
+        <>
+          {variant === "default" && (
+            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
+              <button
+                className={cn(
+                  "group/projects flex flex-shrink-0 items-center gap-1 text-xs text-custom-text-200 py-1 px-2 border-[0.5px] border-custom-border-400 rounded transition-[width] ease-linear duration-700",
+                  !isEditingAllowed && "cursor-not-allowed"
+                )}
+                onClick={open}
+                data-ph-element={trackerElement}
+              >
+                <BriefcaseIcon className="size-3.5 text-custom-text-300" />
+                {!areProjectsPresent && "Link a project"}
+                {areProjectsPresent && (
+                  <>
+                    <span className={cn(isEditingAllowed && "group-hover/projects:hidden")}>
+                      {teamspace.project_ids?.length}
+                    </span>
+                    <span className={cn("hidden", isEditingAllowed && "group-hover/projects:block")}>
+                      Update projects
+                    </span>
+                  </>
+                )}
+              </button>
+            </Tooltip>
+          )}
+          {variant === "empty-state" && (
+            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="right">
+              <div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="flex-shrink-0 mt-2 text-xs"
+                  onClick={open}
+                  disabled={!isEditingAllowed}
+                  data-ph-element={trackerElement}
+                >
+                  Link a project
+                </Button>
+              </div>
+            </Tooltip>
+          )}
+        </>
       )}
     </>
   );

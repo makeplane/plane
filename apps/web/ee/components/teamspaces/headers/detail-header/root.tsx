@@ -30,6 +30,7 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 import { TeamspaceWorkItemListHeaderActions } from "./issues";
 import { TeamOverviewHeaderActions } from "./overview";
 import { TeamspacePagesListHeaderActions } from "./pages-list";
+import { TeamspaceProjectListHeaderActions } from "./projects-list";
 import { TeamspaceViewsListHeaderActions } from "./views-list";
 
 type TTeamspaceDetailHeaderProps = {
@@ -135,6 +136,14 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
             key={ETeamspaceNavigationItem.PAGES}
             teamspaceId={teamspaceId?.toString()}
             isEditingAllowed={hasMemberLevelPermissions}
+          />,
+        ],
+        [
+          ETeamspaceNavigationItem.PROJECTS,
+          <TeamspaceProjectListHeaderActions
+            key={ETeamspaceNavigationItem.PROJECTS}
+            teamspaceId={teamspaceId?.toString()}
+            isEditingAllowed={hasAdminLevelPermissions}
           />,
         ],
       ]),

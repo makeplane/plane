@@ -114,6 +114,7 @@ export const TEAMSPACE_TRACKER_ELEMENTS = {
   OVERVIEW_UPDATE_PROJECT_BUTTON: "teamspace_overview_update_project_button",
   EMPTY_STATE_UPDATE_PROJECT_BUTTON: "teamspace_empty_state_update_project_button",
   LIST_ITEM_UPDATE_PROJECT_BUTTON: "teamspace_list_item_update_project_button",
+  HEADER_UPDATE_PROJECT_BUTTON: "teamspace_header_update_project_button",
 };
 
 export const TEAMSPACE_UPGRADE_TRACKER_ELEMENTS = {

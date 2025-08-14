@@ -13,7 +13,7 @@ import { BreadcrumbLink, Logo, SwitcherLabel } from "@/components/common";
 import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TeamspaceProjectDetailHeaderActions } from "@/plane-web/components/teamspaces/headers/detail-header/projects";
+import { TeamspaceProjectDetailHeaderActions } from "@/plane-web/components/teamspaces/headers/detail-header/work-items";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 export const TeamspaceProjectDetailHeader: React.FC = observer(() => {
