@@ -9,7 +9,6 @@ import { Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
-// helpers
 // plane web constants
 import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
 // plane web services

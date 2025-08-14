@@ -21,7 +21,7 @@ import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/ut
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {

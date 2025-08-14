@@ -11,12 +11,10 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
-// helpers
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
 import { UserService } from "@/services/user.service";
-
 const userService = new UserService();
 
 type Props = {

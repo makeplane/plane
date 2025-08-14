@@ -16,8 +16,8 @@ import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
