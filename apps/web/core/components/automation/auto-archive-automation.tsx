@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
@@ -49,6 +49,11 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
     currentProjectDetails?.id
   );
 
+  const autoArchiveStatus = useMemo(() => {
+    if (currentProjectDetails?.archive_in === undefined) return false;
+    return currentProjectDetails.archive_in !== 0;
+  }, [currentProjectDetails]);
+
   return (
     <>
       <SelectMonthModal
@@ -72,7 +77,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.archive_in !== 0}
+            value={autoArchiveStatus}
             onChange={async () => {
               if (currentProjectDetails?.archive_in === 0) {
                 await handleChange({ archive_in: 1 });
@@ -95,7 +100,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
         </div>
 
         {currentProjectDetails ? (
-          currentProjectDetails.archive_in !== 0 && (
+          autoArchiveStatus && (
             <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">

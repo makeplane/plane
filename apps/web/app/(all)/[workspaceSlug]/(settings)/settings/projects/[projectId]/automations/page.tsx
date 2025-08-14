@@ -15,12 +15,16 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
 
 const AutomationSettingsPage = observer(() => {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
+  const workspaceSlug = workspaceSlugParam?.toString();
+  const projectId = projectIdParam?.toString();
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
@@ -50,7 +54,7 @@ const AutomationSettingsPage = observer(() => {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <SettingsHeading
@@ -60,6 +64,7 @@ const AutomationSettingsPage = observer(() => {
         <AutoArchiveAutomation handleChange={handleChange} />
         <AutoCloseAutomation handleChange={handleChange} />
       </section>
+      <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 });
