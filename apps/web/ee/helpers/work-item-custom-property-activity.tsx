@@ -231,6 +231,9 @@ export const getWorkItemCustomPropertyActivityMessage = (
     DATETIME: getWorkItemDatePropertyActivityMessage,
     RELATION_USER: getWorkItemMemberPropertyActivityMessage,
     RELATION_ISSUE: getWorkItemRelationIssuePropertyActivityMessage,
+    URL: function (props: TGetWorkItemAdditionalPropertiesActivityMessageParams): React.ReactNode {
+      throw new Error("Function not implemented.");
+    }
   };
 
   const getWorkItemCustomPropertyActivityMessageHelper =

@@ -21,15 +21,16 @@ export const TeamspaceProjectDetailHeader: React.FC = observer(() => {
   const { workspaceSlug, teamspaceId, projectId } = useParams();
   // store hooks
   const { loader, getTeamspaceById } = useTeamspaces();
-  const { filteredProjectIds, getPartialProjectById } = useProject();
+  const { getPartialProjectById } = useProject();
   const router = useAppRouter();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
   // derived values
-  const switcherOptions = filteredProjectIds?.length
-    ? (filteredProjectIds
+  const teamspaceProjectIds = teamspace?.project_ids;
+  const switcherOptions = teamspaceProjectIds?.length
+    ? (teamspaceProjectIds
         .map((projectId) => {
           const project = getPartialProjectById(projectId.toString());
           return {
