@@ -43,7 +43,7 @@ export const ProjectViewsHeader = observer(() => {
             />
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Views" icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label={t("Views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </Header.LeftItem>

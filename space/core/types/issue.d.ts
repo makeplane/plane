@@ -67,6 +67,7 @@ export interface IIssue
     | "vendor_code"
     | "worker_code"
     | "worker_name"
+    | "business_type"
   > {
   comments: Comment[];
   reaction_items: IIssueReaction[];

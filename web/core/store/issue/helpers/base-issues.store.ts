@@ -194,6 +194,8 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-worker_code": "worker_code",
   worker_name: "worker_name",
   "-worker_name": "worker_name",
+  business_type: "business_type",
+  "-business_type": "business_type",
 };
 
 export abstract class BaseIssuesStore implements IBaseIssuesStore {

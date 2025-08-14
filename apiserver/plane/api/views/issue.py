@@ -63,6 +63,7 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
+from datetime import datetime
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -325,6 +326,33 @@ class IssueAPIEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
+        data = request.data.get("custom_properties", [])
+        if data:
+            for item in data :
+                if item.get("data_type") == "number":
+                    int_value = int(item.get("value"))
+                    item["int_value"] = int_value
+                elif item.get("data_type") == "boolean":
+                    raw_value = item.get("value")
+                    if raw_value is None:
+                        bool_value = None
+                    elif isinstance(raw_value, bool):
+                        bool_value = raw_value
+                    else:
+                        value = str(raw_value).strip().lower()
+                        bool_value = value in ["true", "1", "yes"]
+                    item["bool_value"] = bool_value
+                elif item.get("data_type") == "date":
+                    raw_date = item.get("value")
+                    try:
+                        # Try to parse date in standard ISO format
+                        date_value = datetime.strptime(raw_date, "%Y-%m-%d").date()
+                    except (ValueError, TypeError):
+                        date_value = None  # Invalid or missing date
+                    item["date_value"] = date_value
+
+        request.data["custom_properties"]= data
+        
         serializer = IssueSerializer(
             data=request.data,
             context={

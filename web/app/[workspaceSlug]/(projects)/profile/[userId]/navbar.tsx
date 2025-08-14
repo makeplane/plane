@@ -33,7 +33,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
                   : "border-transparent"
               }`}
             >
-              {t(tab.label)}
+              {t(tab.key)}
             </span>
           </Link>
         ))}

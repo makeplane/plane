@@ -3,8 +3,8 @@ import uuid
 from datetime import timedelta, datetime
 
 from django.utils import timezone
-from django.db.models import Q
-
+from django.db.models import Q, OuterRef
+from plane.db.models import IssueCustomProperty
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -562,32 +562,25 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
 
 def filter_custom_properties(params, issue_filter, method, prefix=""):
     if method == "GET":
+        raw_props = params.get("custom_properties", "")
         custom_properties = [
-            item
-            for item in params.get("custom_properties").split(",")
-            if item != "null"
+            item for item in raw_props.split("|") if item and item != "null"
         ]
-
-        # query = Q()
-        # for row in custom_properties:
-        #     key, value = row.split(":")
-        #     query &= Q(
-        #         Q(custom_properties__project_custom_property_id=key) &
-        #         Q(custom_properties__value=value)
-        #     )
-        
-        # issue_filter['base'] = query
-        
         groupedCustomProperties = {}
         for row in custom_properties:
-            key, value = row.split(':')
+            key, value = row.split(":", 1)
             if key not in groupedCustomProperties:
                 groupedCustomProperties[key] = []
             groupedCustomProperties[key].append(value)
 
         issue_filter['custom_properties'] = groupedCustomProperties
-
-    print(issue_filter)
+    #     # query = Q()
+    #     # for row in custom_properties:
+    #     #     key, value = row.split(":")
+    #     #     query &= Q(
+    #     #         Q(custom_properties__project_custom_property_id=key) &
+    #     #         Q(custom_properties__value=value)
+    #     #     )
     return issue_filter
 
 def filter_character_fields(params, issue_filter, method, prefix=""):
@@ -602,6 +595,7 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
         "vendor_code",
         "worker_code",
         "worker_name",
+        "business_type",
         "source",
 
     ]
@@ -613,6 +607,150 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
             issue_filter[f"{prefix}{field}__in"] = values_list
 
     return issue_filter
+
+def build_custom_property_q_objects(custom_properties):
+    custom_filters = []
+
+    string_operator_map = {
+        "contains": ("icontains", False),
+        "not_contains": ("icontains", True),
+        "is_equal_to": ("exact", False),
+        "is_not_equal_to": ("exact", True),
+        "isnull": ("isnull", False),
+        "isnotnull": ("isnull", True),
+    }
+
+    for key, values in custom_properties.items():
+        key_parts = key.split('__')
+        actual_key = key_parts[0]
+        operator = key_parts[1] if len(key_parts) > 1 else 'in'
+
+        data_type_qs = IssueCustomProperty.objects.filter(
+            key=actual_key
+        ).values_list("data_type", flat=True).distinct()
+
+        if not data_type_qs:
+            continue
+
+        data_type = data_type_qs[0]
+
+        base_field = (
+            "int_value" if data_type == "number"
+            else "date_value" if data_type == "date"
+            else "bool_value" if data_type == "boolean"
+            else "value"
+        )
+
+        # Define base filters used across all data types
+        base_filters = {
+            "key": actual_key
+        }
+
+        # Boolean filters
+        if data_type == "boolean":
+            filter_kwargs = base_filters.copy()
+            
+            if operator == "is_true":
+                filter_kwargs[base_field] = True
+            elif operator == "is_false":
+                filter_kwargs[base_field] = False
+            elif operator in ["isnull", "isnotnull"]:
+                filter_kwargs[f"{base_field}__isnull"] = (operator == "isnull")
+            else:
+                bool_values = [
+                    str(v).strip().lower() in ["true", "1", "yes"]
+                    for v in values
+                ]
+                filter_kwargs[f"{base_field}__in"] = bool_values
+            
+            q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
+                
+        elif data_type in ["number", "date"]:
+            print("data_type",data_type)
+            # Handle value conversion based on data type
+            try:
+                if operator == "isbetween" and len(values) == 1:
+                    value_range = values[0].split(",")
+                    if len(value_range) != 2:
+                        continue
+                    lower = int(value_range[0]) if data_type == "number" else value_range[0]
+                    upper = int(value_range[1]) if data_type == "number" else value_range[1]
+                else:
+                    value_input = int(values[0]) if data_type == "number" else values[0]
+            except (ValueError, TypeError):
+                continue
+
+            if operator == "isbetween":
+                filter_kwargs = base_filters.copy()
+                filter_kwargs[f"{base_field}__gte"] = lower
+                filter_kwargs[f"{base_field}__lte"] = upper
+                q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
+            
+            elif operator == "ne":
+                # For not equal, we need (has property AND value != X)
+                exists_filter = IssueCustomProperty.objects.filter(**base_filters).values("issue_id")
+                not_equal_filter = IssueCustomProperty.objects.filter(
+                    **base_filters,
+                    **{f"{base_field}__exact": value_input}
+                ).values("issue_id")
+                
+                q_object = Q(id__in=exists_filter) & ~Q(id__in=not_equal_filter)
+            else:
+                filter_kwargs = base_filters.copy()
+                
+                if operator in ["gte", "lte", "gt", "lt", "exact"]:
+                    filter_kwargs[f"{base_field}__{operator}"] = value_input
+                elif operator in ["isnull", "isnotnull"]:
+                    filter_kwargs[f"{base_field}__isnull"] = (operator == "isnull")
+                else:
+                    try:
+                        if data_type == "number":
+                            # For numbers, convert to integers
+                            filter_kwargs[f"{base_field}__in"] = list(map(int, values))
+                        else:  # data_type == "date"
+                            # For dates, use the string values directly
+                            filter_kwargs[f"{base_field}__in"] = values
+                    except (ValueError, TypeError):
+                        # Handle case when values can't be converted
+                        continue
+                
+                q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
+        
+        
+        # String filters
+        else:
+            if operator == "ne":
+                # For string 'not equal'
+                exists_filter = IssueCustomProperty.objects.filter(**base_filters).values("issue_id")
+                not_equal_filter = IssueCustomProperty.objects.filter(
+                    **base_filters,
+                    **{f"{base_field}__exact": values[0] if values else ""}
+                ).values("issue_id")
+                
+                q_object = Q(id__in=exists_filter) & ~Q(id__in=not_equal_filter)
+            elif operator in string_operator_map:
+                lookup, negate = string_operator_map[operator]
+                filter_kwargs = base_filters.copy()
+                
+                if lookup == "isnull":
+                    filter_kwargs[f"{base_field}__isnull"] = not negate if operator == "isnull" else negate
+                else:
+                    filter_kwargs[f"{base_field}__{lookup}"] = values[0] if values else ""
+                
+                q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
+                
+                if negate:
+                    # For negated operations, ensure property exists but doesn't meet condition
+                    exists_filter = IssueCustomProperty.objects.filter(**base_filters).values("issue_id")
+                    q_object = Q(id__in=exists_filter) & ~q_object
+            else:
+                filter_kwargs = base_filters.copy()
+                filter_kwargs[f"{base_field}__in"] = values
+                q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
+        custom_filters.append(q_object)
+
+    return custom_filters
+
 
 def filter_issue_type_id(params, issue_filter, method, prefix=""):
     """

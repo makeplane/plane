@@ -191,7 +191,8 @@ export class IssueStore implements IIssueStore {
       vendor_code: issue?.vendor_code, 
       vendor_name: issue?.vendor_name,
       worker_code: issue?.worker_code,
-      worker_name: issue?.worker_name
+      worker_name: issue?.worker_name,
+      business_type: issue?.business_type,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
