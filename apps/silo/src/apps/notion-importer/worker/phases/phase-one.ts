@@ -184,7 +184,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
         const parsed = mimetics.parse(content);
         // Upload the asset and get the asset id
         const assetId = await protect(
-          client.assets.uploadAsset,
+          client.assets.uploadAsset.bind(client.assets),
           job.workspace_slug,
           new File([content], node.name, {
             type: parsed?.mime,
