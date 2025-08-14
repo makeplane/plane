@@ -10,7 +10,7 @@ import {
   IssuesByStateGroupWidget,
   OverviewStatsWidget,
   RecentActivityWidget,
-  // RecentCollaboratorsWidget,
+  RecentCollaboratorsWidget,
   RecentProjectsWidget,
   WidgetProps,
 } from "@/components/dashboard";
@@ -27,8 +27,7 @@ const WIDGETS_LIST: {
   issues_by_priority: { component: IssuesByPriorityWidget, fullWidth: false },
   recent_activity: { component: RecentActivityWidget, fullWidth: false },
   recent_projects: { component: RecentProjectsWidget, fullWidth: false },
-  // Not required for now, but can be added later
-  // recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
+  recent_collaborators: { component: RecentCollaboratorsWidget, fullWidth: true },
 };
 
 export const DashboardWidgets = observer(() => {
