@@ -19,7 +19,9 @@ export type TIssuePropertyTypeIconKey =
   | "CircleChevronDown"
   | "ToggleLeft"
   | "Calendar"
-  | "UsersRound";
+  | "UsersRound"
+  | "Link2";
+
 export type TIssuePropertyTypeDetails<T extends EIssuePropertyType> = {
   i18n_displayName: string;
   iconKey: TIssuePropertyTypeIconKey;
@@ -61,6 +63,7 @@ export type TIssuePropertySettingsMap = {
   [EIssuePropertyType.BOOLEAN]: undefined;
   [EIssuePropertyType.DATETIME]: TDateAttributeConfigurations;
   [EIssuePropertyType.RELATION]: undefined;
+  [EIssuePropertyType.URL]: undefined;
 };
 
 // Rendered component configurations

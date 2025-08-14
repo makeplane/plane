@@ -1,4 +1,4 @@
-import { Calendar, CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft, LucideIcon } from "lucide-react";
+import { Calendar, CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft, LucideIcon, Link2 } from "lucide-react";
 // plane imports
 import { TIssuePropertyTypeIconKey } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -10,6 +10,7 @@ const ISSUE_PROPERTY_ICON_MAP: Record<TIssuePropertyTypeIconKey, LucideIcon> = {
   ToggleLeft: ToggleLeft,
   Calendar: Calendar,
   UsersRound: UsersRound,
+  Link2: Link2,
 };
 
 type TPropertyTypeIconProps = {

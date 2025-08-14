@@ -128,6 +128,25 @@ export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
       settings: undefined,
     },
   },
+  URL: {
+    i18n_displayName: "common.url",
+    iconKey: "Link2",
+    dataToUpdate: {
+      logo_props: {
+        in_use: "icon",
+        icon: {
+          name: "Link2",
+          color: "#6d7b8a",
+        },
+      },
+      property_type: EIssuePropertyType.URL,
+      relation_type: null,
+      is_multi: false,
+      is_required: false,
+      default_value: [],
+      settings: undefined,
+    },
+  },
 };
 
 export const DROPDOWN_ATTRIBUTES: Partial<{

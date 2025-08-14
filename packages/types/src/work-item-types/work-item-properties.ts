@@ -1,6 +1,6 @@
 import { TLogoProps } from "../common";
-import { TIssuePropertyOption, IIssuePropertyOption } from "../work-item-types/work-item-property-option";
 import { TIssuePropertySettingsMap } from "../work-item-types/work-item-property-configurations";
+import { TIssuePropertyOption, IIssuePropertyOption } from "../work-item-types/work-item-property-option";
 
 export enum EIssuePropertyType {
   TEXT = "TEXT",
@@ -9,6 +9,7 @@ export enum EIssuePropertyType {
   BOOLEAN = "BOOLEAN",
   DATETIME = "DATETIME",
   RELATION = "RELATION",
+  URL = "URL",
 }
 
 export enum EIssuePropertyRelationType {
