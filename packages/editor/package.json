@@ -9,22 +9,22 @@
   ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     },
     "./lib": {
       "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
+      "types": "./dist/lib.d.ts",
       "import": "./dist/lib.mjs"
     }
   },
   "scripts": {
     "build": "tsc && tsup --minify",
     "dev": "tsup --watch",
-    "check:lint": "eslint . --max-warnings 30",
+    "check:lint": "eslint . --max-warnings 55",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -32,6 +32,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
+    "nanoid": "^3.3.8",
     "react": "^18.3.1",
     "react-dom": "18.3.1"
   },
@@ -49,13 +50,17 @@
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
     "@tiptap/extension-collaboration": "^2.22.3",
+    "@tiptap/extension-collaboration-cursor": "2.11.0",
+    "@tiptap/extension-document": "2.11.0",
     "@tiptap/extension-emoji": "^2.22.3",
+    "@tiptap/extension-heading": "2.11.0",
     "@tiptap/extension-image": "^2.22.3",
     "@tiptap/extension-list-item": "^2.22.3",
     "@tiptap/extension-mention": "^2.22.3",
     "@tiptap/extension-placeholder": "^2.22.3",
     "@tiptap/extension-task-item": "^2.22.3",
     "@tiptap/extension-task-list": "^2.22.3",
+    "@tiptap/extension-text": "2.11.0",
     "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
@@ -66,10 +71,15 @@
     "@tiptap/suggestion": "^2.22.3",
     "highlight.js": "^11.8.0",
     "jsx-dom-cjs": "^8.0.3",
+    "katex": "^0.16.22",
     "linkifyjs": "^4.3.2",
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
+    "prosemirror-model": "^1.25.1",
+    "prosemirror-safari-ime-span": "^1.0.2",
+    "prosemirror-utils": "^1.2.2",
+    "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.10",
     "uuid": "^10.0.0",

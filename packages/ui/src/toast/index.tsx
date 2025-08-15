@@ -13,6 +13,7 @@ export enum TOAST_TYPE {
   INFO = "info",
   WARNING = "warning",
   LOADING = "loading",
+  LOADING_TOAST = "loading-toast",
 }
 
 type SetToastProps =
@@ -152,6 +153,18 @@ export const setToast = (props: SetToastProps) => {
           }),
         props.id ? { id: props.id } : {}
       );
+    case TOAST_TYPE.LOADING_TOAST:
+      return toast.custom(
+        (toastId) =>
+          renderToastContent({
+            toastId,
+            icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
+            textColorClassName: "text-toast-text-loading",
+            backgroundColorClassName: "bg-toast-background-loading",
+            borderColorClassName: "border-toast-border-loading",
+          }),
+        props.id ? { id: props.id } : {}
+      );
     case TOAST_TYPE.WARNING:
       return toast.custom(
         (toastId) =>
@@ -215,3 +228,5 @@ export const setPromiseToast = <ToastData,>(
       });
     });
 };
+
+export const dismissToast = (tId: string) => toast.dismiss(tId);

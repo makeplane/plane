@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Deletion Notice</title>
+    <style type="text/css" emogrify="no">
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+        color: #333333;
+      }
+      .container {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      h2 {
+        margin-top: 0px;
+        padding-top: 0px;
+        color: #d9534f;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e9ecef;
+      }
+      td.label {
+        font-weight: bold;
+        width: 40%;
+        background-color: #f1f3f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🚨 Account Deletion Requested</h2>
+      <p>Hello,</p>
+      <p>
+        This is an automated notification. A user account has been deleted from
+        the platform via the mobile app. Please find the user details below for
+        your records.
+      </p>
+
+      <table>
+        <tr>
+          <td class="label">User ID</td>
+          <td>{{user.id}}</td>
+        </tr>
+        <tr>
+          <td class="label">Username</td>
+          <td>{{user.username}}</td>
+        </tr>
+        <tr>
+          <td class="label">First name</td>
+          <td>{{user.first_name}}</td>
+        </tr>
+        <tr>
+          <td class="label">Last name</td>
+          <td>{{user.last_name}}</td>
+        </tr>
+        <tr>
+          <td class="label">Display name</td>
+          <td>{{user.display_name}}</td>
+        </tr>
+        <tr>
+          <td class="label">Email</td>
+          <td>{{user.email}}</td>
+        </tr>
+        <tr>
+          <td class="label">Phone Number</td>
+          <td>{{user.phone_number}}</td>
+        </tr>
+        <tr>
+          <td class="label">Account Created At</td>
+          <td>{{user.date_joined}}</td>
+        </tr>
+        <tr>
+          <td class="label">Deletion Requested At</td>
+          <td>{{user.masked_time}}</td>
+        </tr>
+        <tr>
+          <td class="label">Reason</td>
+          <td>{{user.reason}}</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

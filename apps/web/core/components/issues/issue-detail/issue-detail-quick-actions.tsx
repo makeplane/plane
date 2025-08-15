@@ -6,18 +6,21 @@ import { LinkIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useIssues } from "@/hooks/store/use-issues"
-import { useProject } from "@/hooks/store/use-project"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
+import { ConvertWorkItemAction } from "@/plane-web/components/epics";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // local imports
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { IssueSubscription } from "./subscription";
@@ -153,6 +156,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction
+              workItemId={issue?.id}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={!!issue?.archived_at}
+            />
+          </WithFeatureFlagHOC>
           <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
               <button

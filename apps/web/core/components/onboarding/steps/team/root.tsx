@@ -289,7 +289,10 @@ export const InviteTeamStep: React.FC<Props> = observer((props) => {
   };
 
   const onSubmit = async (formData: FormValues) => {
+    console.log("formData", formData);
+    console.log("workspace", workspace);
     if (!workspace) return;
+    console.log("workspace", workspace);
 
     let payload = { ...formData };
     payload = { emails: payload.emails.filter((email) => email.email !== "") };
@@ -313,6 +316,7 @@ export const InviteTeamStep: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Invitations sent successfully.",
         });
+        console.log("nextStep");
 
         await nextStep();
       })
