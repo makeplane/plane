@@ -3,7 +3,7 @@
 import { MutableRefObject, forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 //types
-import {
+import type {
   TGroupedIssues,
   IIssueDisplayProperties,
   TSubGroupedIssues,
@@ -14,8 +14,8 @@ import {
 import { cn } from "@plane/utils";
 // hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-//
-import { KanbanIssueBlocksList } from ".";
+// local imports
+import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
   groupId: string;

@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // types
 // components
-import { IssueBlockState } from "@/components/issues";
+import { IssueBlockState } from "@/components/issues/issue-layouts/properties/state";
 import { IIssue } from "@/types/issue";
 
 type Props = {

@@ -8,7 +8,7 @@ import { EIconSize } from "@plane/constants";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   handleRemove: (val: string) => void;

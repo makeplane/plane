@@ -6,7 +6,7 @@ import { ALL_ISSUES } from "@plane/constants";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 //hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // helpers
 import { getIssueBlocksStructure } from "@/plane-web/helpers/gantt.helper";
 // plane web hooks

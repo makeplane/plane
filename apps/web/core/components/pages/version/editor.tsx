@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
-import { TPage, TPageVersion } from "@plane/types";
+import type { TPage, TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";

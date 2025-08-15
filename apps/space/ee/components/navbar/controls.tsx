@@ -3,7 +3,8 @@
 import { useEffect, FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { NavbarTheme, UserAvatar } from "@/components/issues";
+import { NavbarTheme } from "@/components/issues/navbar/theme";
+import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // plane-web

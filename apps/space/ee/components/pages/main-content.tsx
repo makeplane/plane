@@ -6,11 +6,11 @@ import { FileText } from "lucide-react";
 import { DocumentEditorWithRef, type EditorRefApi } from "@plane/editor";
 import { ERowVariant, Logo, Row } from "@plane/ui";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 // plane web components
 import { WorkItemEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues/filters";
+import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
+import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@/plane-web/constants/issue";
 

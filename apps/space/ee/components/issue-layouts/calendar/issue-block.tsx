@@ -11,7 +11,9 @@ import { Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish, useStates } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useStates } from "@/hooks/store/use-state";
 // types
 import { IIssue } from "@/types/issue";
 

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // constants
 import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/issue";
 // local components

@@ -1,14 +1,14 @@
 import React, { forwardRef } from "react";
 // plane imports
 import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
-import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
-// components
-import { EditorMentionsRoot } from "@/components/editor";
+import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// store hooks
-import { useMember } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+// local imports
+import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,

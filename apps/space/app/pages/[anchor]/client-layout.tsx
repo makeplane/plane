@@ -3,10 +3,10 @@
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
-import { usePublish, usePublishList } from "@/hooks/store";
+import { usePublish, usePublishList } from "@/hooks/store/publish";
 // plane web components
 import { PageDetailsError } from "@/plane-web/components/pages";
 

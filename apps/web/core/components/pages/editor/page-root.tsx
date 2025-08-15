@@ -10,15 +10,14 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-// plane web import
 import { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// plane web import
 // services
+import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspacePageVersionService } from "@/plane-web/services/page";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
-// local imports
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,

@@ -6,8 +6,7 @@ import { observer } from "mobx-react";
 // components
 import { Loader, StateGroupIcon } from "@plane/ui";
 // hooks
-import { useStates } from "@/hooks/store";
-//
+import { useStates } from "@/hooks/store/use-state";
 import { FilterHeader, FilterOption } from "../helpers";
 
 type Props = {

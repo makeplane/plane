@@ -5,12 +5,13 @@ import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // plane ui
 import { Button, Input } from "@plane/ui";
-// components
 import { getFileURL } from "@plane/utils";
-import { ProjectLogo } from "@/components/common";
+// components
+import { ProjectLogo } from "@/components/common/project-logo";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // local types
 import { TFormData } from "./create-issue-modal";
 

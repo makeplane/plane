@@ -10,7 +10,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { BillingRoot } from "@/plane-web/components/workspace/billing/root";
+import { BillingRoot } from "@/plane-web/components/workspace/billing";
 
 const BillingSettingsPage = observer(() => {
   // store hooks

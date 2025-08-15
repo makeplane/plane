@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 import CreateIssueModal from "@/plane-web/components/intake/create/create-issue-modal";
 
 type Props = {

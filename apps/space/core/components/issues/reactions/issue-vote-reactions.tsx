@@ -9,7 +9,8 @@ import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, useUser } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type TIssueVotes = {

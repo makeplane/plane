@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // components
-import { IssueBlockLabels } from "@/components/issues";
+import { IssueBlockLabels } from "@/components/issues/issue-layouts/properties/labels";
 // types
 import { IIssue } from "@/types/issue";
 

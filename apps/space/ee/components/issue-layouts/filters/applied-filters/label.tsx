@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // types
 
 type Props = {

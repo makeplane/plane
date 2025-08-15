@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // components
-import { IssueBlockPriority } from "@/components/issues";
+import { IssueBlockPriority } from "@/components/issues/issue-layouts/properties/priority";
 // types
 import { IIssue } from "@/types/issue";
 

@@ -7,7 +7,12 @@ import useSWR from "swr";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssueDetails, useLabel, useStates, useCycle, useModule, useMember } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useStates } from "@/hooks/store/use-state";
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store
 import { PublishStore } from "@/store/publish/publish.store";

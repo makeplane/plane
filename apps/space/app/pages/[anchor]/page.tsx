@@ -2,7 +2,8 @@
 
 import useSWR from "swr";
 // hooks
-import { useMember, useStates } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useStates } from "@/hooks/store/use-state";
 // components
 import { PageDetailsMainContent } from "@/plane-web/components/pages";
 

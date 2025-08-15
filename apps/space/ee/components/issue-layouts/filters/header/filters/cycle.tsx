@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 import { TCycleGroups } from "@plane/types";
 // components
 import { Loader, CycleGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues/filters";
+import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
+import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types

@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // constants
 import { BLOCK_HEIGHT } from "../constants";
 // components

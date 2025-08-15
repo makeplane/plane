@@ -7,7 +7,7 @@ import { ActorDetail, IUser } from "@plane/types";
 // store types
 import { ProfileStore, IProfileStore } from "@/store/profile.store";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TUserErrorStatus = {
   status: string;

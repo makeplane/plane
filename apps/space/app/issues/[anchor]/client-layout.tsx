@@ -3,12 +3,14 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner, PoweredBy } from "@/components/common";
-import { IssuesNavbarRoot } from "@/components/issues";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PoweredBy } from "@/components/common/powered-by";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
+import { IssuesNavbarRoot } from "@/components/issues/navbar";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
-import { useIssueFilter, usePublish, usePublishList } from "@/hooks/store";
+import { usePublish, usePublishList } from "@/hooks/store/publish";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 
 type Props = {
   children: React.ReactNode;

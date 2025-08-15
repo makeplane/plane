@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 // components
-import { UserLoggedIn } from "@/components/account";
-import { LogoSpinner } from "@/components/common";
+import { UserLoggedIn } from "@/components/account/user-logged-in";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { AuthView } from "@/components/views";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/use-user";
 
 const HomePage = observer(() => {
   const { data: currentUser, isAuthenticated, isInitializing } = useUser();

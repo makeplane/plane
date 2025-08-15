@@ -7,7 +7,8 @@ import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues/filters";
+import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
+import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 
 type Props = {
   appliedFilters: string[] | null;

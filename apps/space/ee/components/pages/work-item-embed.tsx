@@ -3,9 +3,11 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IssueBlockDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
+import { IssueBlockDate } from "@/components/issues/issue-layouts/properties/due-date";
+import { IssueBlockPriority } from "@/components/issues/issue-layouts/properties/priority";
+import { IssueBlockState } from "@/components/issues/issue-layouts/properties/state";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 // plane web hooks
 import { usePage } from "@/plane-web/hooks/store";
 

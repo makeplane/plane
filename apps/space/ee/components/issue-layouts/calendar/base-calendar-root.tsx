@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { EIssueGroupByToServerOptions } from "@plane/constants";
 import { TGroupedIssues } from "@plane/types";
 // hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useCalendarView } from "@/plane-web/hooks/store";
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 import { useViewIssues } from "@/plane-web/hooks/store/use-view-issues";

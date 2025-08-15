@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // components
 // helpers
 // hooks
-import { IssueBlockDate } from "@/components/issues";
+import { IssueBlockDate } from "@/components/issues/issue-layouts/properties/due-date";
 import { IIssue } from "@/types/issue";
 
 type Props = {

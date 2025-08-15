@@ -5,7 +5,8 @@ import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // components
 import { Loader, DiceIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues/filters";
+import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
+import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useModule } from "@/hooks/store/use-module";
 // ui
 
