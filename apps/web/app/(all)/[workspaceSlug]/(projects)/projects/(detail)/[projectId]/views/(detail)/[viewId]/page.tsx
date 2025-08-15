@@ -4,11 +4,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { ProjectViewLayoutRoot } from "@/components/issues";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { ProjectViewLayoutRoot } from "@/components/issues/issue-layouts/roots/project-view-layout-root";
 // hooks
-import { useProject, useProjectView } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectView } from "@/hooks/store/use-project-view";
 // assets
 import { useAppRouter } from "@/hooks/use-app-router";
 import emptyView from "@/public/empty-state/view.svg";

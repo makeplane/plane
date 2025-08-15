@@ -10,11 +10,12 @@ import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 // helpers
 // hooks
-import { useMember, useModuleFilter } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
 export const ArchivedModulesHeader: FC = observer(() => {
   // router

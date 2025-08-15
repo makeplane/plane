@@ -6,7 +6,7 @@ import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 

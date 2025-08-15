@@ -3,7 +3,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tooltip } from "@plane/ui";
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {

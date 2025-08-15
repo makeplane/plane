@@ -11,7 +11,7 @@ import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
 // hooks
-import { useEstimate } from "@/hooks/store";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 // plane web constants
 
 type TEstimatePointCreate = {

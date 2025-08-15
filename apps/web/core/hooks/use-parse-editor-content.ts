@@ -5,7 +5,7 @@ import { TSearchEntities } from "@plane/types";
 // helpers
 import { getBase64Image } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 

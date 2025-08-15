@@ -4,7 +4,8 @@ import Link from "next/link";
 // types
 import { TWorkspaceBaseActivity } from "@plane/types";
 // store hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type TUser = {
   activity: TWorkspaceBaseActivity;

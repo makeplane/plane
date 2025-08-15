@@ -7,7 +7,7 @@ import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

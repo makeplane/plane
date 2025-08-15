@@ -16,7 +16,7 @@ import "@/lib/polyfills";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
-import { InstanceWrapper } from "@/lib/wrappers";
+import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });

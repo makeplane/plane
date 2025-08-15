@@ -7,9 +7,10 @@ import { useParams } from "next/navigation";
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
-import { useAppTheme, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane-web imports
-import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar";
+import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(() => {

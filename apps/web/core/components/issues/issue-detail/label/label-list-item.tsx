@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 import { TLabelOperations } from "./root";
 
 type TLabelListItem = {

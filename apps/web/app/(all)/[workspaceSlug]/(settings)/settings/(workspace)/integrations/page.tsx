@@ -4,15 +4,17 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration";
-import { SettingsContentWrapper } from "@/components/settings";
-import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
+import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // services
 import { IntegrationService } from "@/services/integrations";
 

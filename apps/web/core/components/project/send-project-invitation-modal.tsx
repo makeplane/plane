@@ -13,7 +13,8 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast 
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   isOpen: boolean;

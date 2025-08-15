@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // components
-import { CycleDropdown } from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";

@@ -4,14 +4,15 @@ import { useParams, usePathname } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useHome } from "@/hooks/store/use-home";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { HomePageHeader } from "@/plane-web/components/home/header";
-import { StickiesWidget } from "../stickies";
+// local imports
+import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";

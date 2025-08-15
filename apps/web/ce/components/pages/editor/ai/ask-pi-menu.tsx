@@ -4,10 +4,10 @@ import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-rea
 import { Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   handleInsertText: (insertOnNextLine: boolean) => void;

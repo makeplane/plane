@@ -5,10 +5,11 @@ import { EUserPermissionsLevel, EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
-import { PageLoader } from "@/components/pages";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

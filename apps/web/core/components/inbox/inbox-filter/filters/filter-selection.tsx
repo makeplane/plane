@@ -1,18 +1,18 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
-// components
-import {
-  FilterStatus,
-  FilterPriority,
-  FilterMember,
-  FilterDate,
-  FilterLabels,
-  FilterState,
-} from "@/components/inbox/inbox-filter/filters";
 // hooks
-import { useMember, useLabel, useProjectState } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { FilterDate } from "./date";
+import { FilterLabels } from "./labels";
+import { FilterMember } from "./members";
+import { FilterPriority } from "./priority";
+import { FilterState } from "./state";
+import { FilterStatus } from "./status";
 
 export const InboxIssueFilterSelection: FC = observer(() => {
   // hooks

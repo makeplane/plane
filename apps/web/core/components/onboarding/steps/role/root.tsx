@@ -11,7 +11,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 // local components
 import { CommonOnboardingHeader } from "../common";
 import { TProfileSetupFormValues } from "../profile/root";

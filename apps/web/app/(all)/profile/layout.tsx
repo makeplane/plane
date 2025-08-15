@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 // components
 import { CommandPalette } from "@/components/command-palette";
 // wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // layout
 import { ProfileLayoutSidebar } from "./sidebar";
 

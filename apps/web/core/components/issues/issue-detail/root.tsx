@@ -2,24 +2,26 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-// ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/common";
-import { IssueDetailsSidebar, IssuePeekOverview } from "@/components/issues";
-// constants
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useAppTheme, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
+import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";
+import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;

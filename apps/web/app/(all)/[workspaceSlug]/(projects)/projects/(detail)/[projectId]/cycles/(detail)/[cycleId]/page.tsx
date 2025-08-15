@@ -2,16 +2,17 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { cn } from "@plane/utils";
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { CycleDetailsSidebar } from "@/components/cycles";
+// components
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
-// helpers
+import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar";
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // hooks
-import { useCycle, useProject } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets

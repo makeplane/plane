@@ -14,7 +14,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
 // local components

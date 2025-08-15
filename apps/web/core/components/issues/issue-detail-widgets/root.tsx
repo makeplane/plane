@@ -3,12 +3,10 @@
 import React, { FC } from "react";
 // plane imports
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// components
-import {
-  IssueDetailWidgetActionButtons,
-  IssueDetailWidgetCollapsibles,
-  IssueDetailWidgetModals,
-} from "@/components/issues/issue-detail-widgets";
+// local imports
+import { IssueDetailWidgetActionButtons } from "./action-buttons";
+import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";
+import { IssueDetailWidgetModals } from "./issue-detail-widget-modals";
 
 type Props = {
   workspaceSlug: string;

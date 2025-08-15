@@ -2,20 +2,23 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { EViewAccess, IProjectView } from "@plane/types";
-// ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
 import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
-// components
-import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
-// helpers
 // hooks
-import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectView } from "@/hooks/store/use-project-view"
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { PublishViewModal } from "@/plane-web/components/views/publish";
+// local imports
 import { ButtonAvatars } from "../dropdowns/member/avatar";
+import { DeleteProjectViewModal } from "./delete-view-modal";
+import { CreateUpdateProjectViewModal } from "./modal";
+import { ViewQuickActions } from "./quick-actions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;

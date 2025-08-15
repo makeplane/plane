@@ -16,7 +16,7 @@ import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IInboxIssueStore {
   isLoading: boolean;

@@ -21,7 +21,8 @@ import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;

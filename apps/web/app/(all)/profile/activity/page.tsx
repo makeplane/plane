@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Button } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import {
-  ProfileActivityListPage,
-  ProfileSettingContentHeader,
-  ProfileSettingContentWrapper,
-} from "@/components/profile";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

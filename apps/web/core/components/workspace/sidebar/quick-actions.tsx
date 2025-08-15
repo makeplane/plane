@@ -2,20 +2,20 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PenSquare } from "lucide-react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import { TIssue } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
-import { CreateUpdateIssueModal } from "@/components/issues";
-// constants
-// helpers
+// components
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { AppSearch } from "@/plane-web/components/workspace";
+import { AppSearch } from "@/plane-web/components/workspace/sidebar/app-search";
 
 export const SidebarQuickActions = observer(() => {
   const { t } = useTranslation();

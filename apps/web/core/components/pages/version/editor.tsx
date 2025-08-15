@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TDisplayConfig } from "@plane/editor";
+import type { TDisplayConfig } from "@plane/editor";
 import { TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 export type TVersionEditorProps = {

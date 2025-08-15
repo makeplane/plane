@@ -10,7 +10,7 @@ import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 
 type TCommentCard = {
   activityOperations: TCommentsOperations;

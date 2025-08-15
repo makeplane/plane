@@ -4,12 +4,12 @@ import { computedFn } from "mobx-utils";
 import { EPageAccess, EUserPermissions } from "@plane/constants";
 import { TPage } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 // store
-import { BasePage, TPageInstance } from "./base-page";
+import { BasePage, type TPageInstance } from "./base-page";
 
 export type TProjectPage = TPageInstance;
 

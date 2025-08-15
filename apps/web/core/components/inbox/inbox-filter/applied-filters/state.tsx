@@ -6,7 +6,8 @@ import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon, Tag } from "@plane/ui";
 // hooks
-import { useProjectInbox, useProjectState } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox"
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const InboxIssueAppliedFiltersState: FC = observer(() => {
   // hooks

@@ -4,12 +4,18 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { SidebarNavItem } from "@/components/sidebar";
-import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
-import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
-import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace";
+// components
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useUser, useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
+import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
@@ -35,7 +41,7 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
   const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", ...(additionalStaticItems || [])];
   const slug = workspaceSlug?.toString() || "";
 
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, slug)) return null;
+  if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;
 
   const sidebarPreference = getNavigationPreferences(slug);
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;

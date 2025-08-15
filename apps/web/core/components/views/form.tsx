@@ -26,11 +26,19 @@ import {
   getTabIndex,
 } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { Logo } from "@/components/common/logo";
+import {
+  AppliedFiltersList,
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 import { AccessController } from "@/plane-web/components/views/access-controller";
@@ -171,7 +179,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   </>
                 </span>
               }
-              onChange={(val: any) => {
+              onChange={(val) => {
                 let logoValue = {};
 
                 if (val?.type === "emoji")

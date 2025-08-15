@@ -1,7 +1,7 @@
-import { RootStore } from "@/plane-web/store/root.store";
-import { IIssuesTimeLineStore, IssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
-import { IModulesTimeLineStore, ModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
-import { BaseTimeLineStore, IBaseTimelineStore } from "./base-timeline.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import { type IIssuesTimeLineStore, IssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
+import { type IModulesTimeLineStore, ModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
+import { BaseTimeLineStore, type IBaseTimelineStore } from "./base-timeline.store";
 
 export interface ITimelineStore {
   issuesTimeLineStore: IIssuesTimeLineStore;

@@ -1,7 +1,7 @@
 // plane web components
 import { observer } from "mobx-react";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // components
 import DurationDropdown from "./select/duration";

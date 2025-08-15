@@ -4,11 +4,15 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { ChevronLeftIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/ui/src/button";
 import { cn } from "@plane/utils";
-import { useUserSettings, useWorkspace } from "@/hooks/store";
-import { WorkspaceLogo } from "../workspace";
+// hooks
+import { useUserSettings } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// local imports
+import { WorkspaceLogo } from "../workspace/logo";
 import SettingsTabs from "./tabs";
 
 export const SettingsHeader = observer(() => {

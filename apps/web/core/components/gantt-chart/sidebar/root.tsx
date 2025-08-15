@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import type { IBlockUpdateData } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MultipleSelectGroupAction } from "@/components/core";
+import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // helpers
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

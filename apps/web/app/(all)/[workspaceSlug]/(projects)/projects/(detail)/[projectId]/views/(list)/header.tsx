@@ -6,11 +6,12 @@ import { useParams } from "next/navigation";
 import { EProjectFeatureKey, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { ViewListHeader } from "@/components/views";
+import { ViewListHeader } from "@/components/views/view-list-header";
 // hooks
-import { useCommandPalette, useProject } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewsHeader = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };

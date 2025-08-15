@@ -9,7 +9,7 @@ import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } fr
 // services
 import { ViewService } from "@/plane-web/services";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IProjectViewStore {
   //Loaders

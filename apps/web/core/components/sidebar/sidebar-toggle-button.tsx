@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 
 export const AppSidebarToggleButton = observer(() => {
   // store hooks

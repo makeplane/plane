@@ -8,15 +8,13 @@ import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } f
 import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { DeleteIssueModal } from "@/components/issues";
-// helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useUserPermissions } from "@/hooks/store";
-// types
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IQuickActionProps } from "../list/list-view-types";
-// helper
 import { useArchivedIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {

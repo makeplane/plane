@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ChevronRight, Menu } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { useUserSettings } from "@/hooks/store";
+import { useUserSettings } from "@/hooks/store/user";
 
 type Props = {
   hamburgerContent: React.ComponentType<{ isMobile: boolean }>;

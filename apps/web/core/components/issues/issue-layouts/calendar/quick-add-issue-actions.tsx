@@ -5,19 +5,16 @@ import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// types
 import { ISearchIssueResponse, TIssue, EIssueLayoutTypes } from "@plane/types";
-// ui
 import { CustomMenu, setPromiseToast } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { ExistingIssuesListModal } from "@/components/core";
-import { QuickAddIssueRoot } from "@/components/issues";
-// helpers
+// components
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { QuickAddIssueRoot } from "../quick-add";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;
