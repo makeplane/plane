@@ -1,7 +1,8 @@
 "use client";
 
 // components
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectEpicDetailsHeader } from "./header";
 
 export default function ProjectEpicDetailsLayout({ children }: { children: React.ReactNode }) {

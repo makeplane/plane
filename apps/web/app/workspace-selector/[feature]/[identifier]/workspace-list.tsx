@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { WorkspaceLogo } from "@/components/workspace";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common";
 

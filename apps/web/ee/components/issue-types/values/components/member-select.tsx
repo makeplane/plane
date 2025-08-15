@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { MemberDropdownProps } from "@/components/dropdowns/member/types";
 
 type TMemberValueSelectProps = {

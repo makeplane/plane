@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  EditorTitleRefApi,
-  TAIMenuProps,
-  TDisplayConfig,
-  TFileHandler,
-  TRealtimeConfig,
-  TServerHandler,
+  type EditorRefApi,
+  type TAIMenuProps,
+  type TDisplayConfig,
+  type TFileHandler,
+  type TRealtimeConfig,
+  type TServerHandler,
+  type EditorTitleRefApi,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
@@ -18,12 +18,13 @@ import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryPa
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader } from "@/components/pages";
-
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useMember, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
@@ -35,8 +36,11 @@ import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
+import { PageContentBrowser } from "./summary";
 
 // Add a CSS keyframe animation
 export type TEditorBodyConfig = {

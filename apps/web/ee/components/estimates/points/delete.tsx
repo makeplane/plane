@@ -9,7 +9,7 @@ import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
 // hooks
-import { useEstimate, useEstimatePoint } from "@/hooks/store";
+import { useEstimate, useEstimatePoint } from "@/hooks/store/estimates";
 // plane web components
 import { EstimatePointDropdown } from "@/plane-web/components/estimates";
 // plane web constants
@@ -36,7 +36,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
 
   const handleClose = () => {
     setEstimateInputValue("");
-    handleEstimatePointError && handleEstimatePointError(estimateId, undefined, "delete");
+    handleEstimatePointError?.(estimateId, undefined, "delete");
     callback();
   };
 
@@ -52,7 +52,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
       return;
     }
 
-    handleEstimatePointError && handleEstimatePointError(estimateId, undefined, "delete");
+    handleEstimatePointError?.(estimateId, undefined, "delete");
 
     if (estimateInputValue)
       try {
@@ -82,7 +82,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
           message: "We are unable to process your request, please try again.",
         });
       }
-    else handleEstimatePointError && handleEstimatePointError(estimateId, "please select option");
+    else handleEstimatePointError?.(estimateId, "please select option");
   };
 
   // derived values
@@ -112,7 +112,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
           error={estimatePointError?.message ? "Continue or discard the estimate point delete operation." : undefined}
           callback={(estimateId: string) => {
             setEstimateInputValue(estimateId);
-            handleEstimatePointError && handleEstimatePointError(estimateId, undefined);
+            handleEstimatePointError?.(estimateId, undefined);
           }}
         />
       </div>

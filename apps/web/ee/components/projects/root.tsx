@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { usePathname, useSearchParams } from "next/navigation";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { ProjectLayoutRoot } from "@/plane-web/components/projects";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";

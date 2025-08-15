@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { TeamspacesList } from "@/plane-web/components/teamspaces/list/teamspaces-list";
 

@@ -6,7 +6,8 @@ import { TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useMember, useWorkspaceNotifications } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TCommentBlock = {
   comment: TIssueComment;

@@ -7,8 +7,10 @@ import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL
 import { EUserProjectRoles, TInboxForm } from "@plane/types";
 import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
-import { TProperties } from "@/ce/constants";
-import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { TProperties } from "@/ce/constants/project";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
 import { RenewModal } from "./renew-modal";

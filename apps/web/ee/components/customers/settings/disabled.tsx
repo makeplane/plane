@@ -2,7 +2,7 @@ import { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // assets
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TCustomerSettingsDisabled = {

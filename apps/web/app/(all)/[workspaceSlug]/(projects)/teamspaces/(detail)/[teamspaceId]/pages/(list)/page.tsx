@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TPageFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
-// constants
-import { PageAppliedFiltersList } from "@/components/pages";
+// components
+import { PageAppliedFiltersList } from "@/components/pages/list/applied-filters";
 // plane web imports
 import { TeamspacePagesList } from "@/plane-web/components/teamspaces/pages";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

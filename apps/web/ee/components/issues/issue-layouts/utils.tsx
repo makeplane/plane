@@ -9,7 +9,7 @@ import {
   getScopeMemberIds as getCeScopeMemberIds,
   TGetScopeMemberIdsResult,
 } from "@/ce/components/issues/issue-layouts/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // store
 import { store } from "@/lib/store-context";
 import {

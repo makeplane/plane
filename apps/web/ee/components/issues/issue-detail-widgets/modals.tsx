@@ -1,8 +1,11 @@
 import { FC } from "react";
-// plane types
+// plane imports
 import { observer } from "mobx-react";
-import { TWorkItemAdditionalWidgetModalsProps } from "@/ce/components/issues/issue-detail-widgets/modals";
-import { useIssueDetail } from "@/hooks/store";
+// ce imports
+import type { TWorkItemAdditionalWidgetModalsProps } from "@/ce/components/issues/issue-detail-widgets/modals";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// local imports
 import { PagesMultiSelectModal } from "./pages/multi-select-modal";
 
 export const WorkItemAdditionalWidgetModals: FC<TWorkItemAdditionalWidgetModalsProps> = observer((props) => {

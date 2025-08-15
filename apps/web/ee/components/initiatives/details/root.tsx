@@ -5,8 +5,12 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { ProjectMultiSelectModal } from "@/components/project";
-import { useProject, useUserPermissions } from "@/hooks/store";
+// components
+import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { LayoutRoot } from "../../common";

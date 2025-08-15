@@ -9,7 +9,7 @@ import { ComboDropDown, ContrastIcon } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useDropdown } from "@/hooks/use-dropdown";
 // local components and constants
 import { DropdownButton } from "../buttons";

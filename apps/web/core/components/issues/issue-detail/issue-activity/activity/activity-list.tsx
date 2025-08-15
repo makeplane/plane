@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 // helpers
 import { getValidKeysFromObject } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
-import { IssueTypeActivity, AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details";
+import { AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details/additional-activity-root";
+import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details/issue-type-activity";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // local components
 import {

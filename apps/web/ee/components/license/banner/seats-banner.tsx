@@ -6,7 +6,7 @@ import { Button } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

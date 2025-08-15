@@ -7,7 +7,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal";
+import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateRecurringWorkItem } from "@/plane-web/components/recurring-work-items/settings/create-update/root";
 import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
 

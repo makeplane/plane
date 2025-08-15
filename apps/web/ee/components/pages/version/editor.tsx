@@ -7,9 +7,9 @@ import type { TDisplayConfig } from "@plane/editor";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
-import { TVersionEditorProps } from "@/components/pages";
+import type { TVersionEditorProps } from "@/components/pages/version/editor";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";

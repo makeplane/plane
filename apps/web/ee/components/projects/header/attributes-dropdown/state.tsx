@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web components
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 // plane web hooks

@@ -12,9 +12,9 @@ import { ApproverIcon, getButtonStyling, LayersIcon, Loader, WorkflowIcon } from
 import { cn, getWorkflowChangeHistoryKey } from "@plane/utils";
 // helpers
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web hooks
 import { store } from "@/lib/store-context";
 

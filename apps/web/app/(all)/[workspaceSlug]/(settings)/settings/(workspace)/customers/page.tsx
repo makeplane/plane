@@ -10,11 +10,13 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // component
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/customers";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";

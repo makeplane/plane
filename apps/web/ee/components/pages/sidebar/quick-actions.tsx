@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { FilePlus2 } from "lucide-react";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { AppSearch } from "../../workspace/sidebar/app-search";
 // plane web components
-import { AppSearch } from "@/plane-web/components/workspace/sidebar";
 
 export const PagesAppSidebarQuickActions = observer(() => {
   // store hooks

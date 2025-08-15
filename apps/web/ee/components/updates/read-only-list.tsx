@@ -5,7 +5,7 @@ import { Tab } from "@headlessui/react";
 import { TUpdate, EUpdateEntityType, EUpdateStatus } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { StatusOptions } from "./status-icons";
 
 type TUpdateList = {

@@ -5,9 +5,10 @@ import { useTranslation } from "@plane/i18n";
 import { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
 import { Button, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EstimatePointItemPreview, EstimatePointCreate } from "@/components/estimates/points";
+import { EstimatePointCreate } from "@/components/estimates/points/create";
+import { EstimatePointItemPreview } from "@/components/estimates/points/preview";
 // hooks
-import { useEstimate } from "@/hooks/store";
+import { useEstimate } from "@/hooks/store/estimates";
 // plane web constants
 import { EEstimateUpdateStages, estimateCount } from "@/plane-web/constants/estimates";
 
@@ -101,7 +102,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
         key: currentKey,
         value: "",
       });
-      handleEstimatePointError && handleEstimatePointError(currentKey, "", "", undefined, "add");
+      handleEstimatePointError?.(currentKey, "", "", undefined, "add");
     }
   };
 

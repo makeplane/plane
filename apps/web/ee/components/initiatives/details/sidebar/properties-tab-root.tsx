@@ -6,13 +6,13 @@ import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2 } from 
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EpicIcon } from "@plane/ui";
-// components
-import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
-import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-// helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+// components
+import { DateDropdown } from "@/components/dropdowns/date";
+import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

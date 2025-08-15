@@ -5,16 +5,19 @@ import { useTranslation } from "@plane/i18n";
 import { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
 import { cn, TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
 // components
-import { PriorityDropdown, MemberDropdown, ModuleDropdown, StateDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdownBase } from "@/components/dropdowns/module/base";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { WorkItemStateDropdownBase } from "@/components/dropdowns/state/base";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { WorkItemLabelSelectBase } from "@/components/issues/select/base";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 
@@ -79,7 +82,9 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
     setValue,
   } = useFormContext<T>();
   // derived values
-  const projectDetails = usePropsForAdditionalData ? props.getProjectById(projectId) : getProjectByIdFromStore(projectId);
+  const projectDetails = usePropsForAdditionalData
+    ? props.getProjectById(projectId)
+    : getProjectByIdFromStore(projectId);
   const isModuleViewEnabled = projectDetails?.module_view;
   // Get errors for the specific fields
   const stateError = getNestedError(errors, fieldPaths.state);
@@ -210,7 +215,9 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
                   placeholder={t("assignees")}
                   multiple
                   disabled={!projectId}
-                  {...(usePropsForAdditionalData ? { getUserDetails: props.getUserDetails, memberIds: props.memberIds } : {})}
+                  {...(usePropsForAdditionalData
+                    ? { getUserDetails: props.getUserDetails, memberIds: props.memberIds }
+                    : {})}
                 />
               </div>
             )}

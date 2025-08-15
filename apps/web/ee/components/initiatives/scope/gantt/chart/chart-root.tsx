@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EGanttBlockType, EUserPermissions } from "@plane/types";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { getBlockToRender, useGanttOperations } from "../helper";
 import { GroupedGanttSidebar } from "../sidebar/root";

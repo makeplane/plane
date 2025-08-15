@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 export type TEpicOperations = {

@@ -9,7 +9,7 @@ import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
 // local imports

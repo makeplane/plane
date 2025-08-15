@@ -9,10 +9,11 @@ import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme, useProject } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectOverviewHeader = observer(() => {
   // router

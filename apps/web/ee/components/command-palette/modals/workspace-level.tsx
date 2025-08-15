@@ -5,7 +5,7 @@ import {
   TWorkspaceLevelModalsProps,
 } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { CreateUpdateCustomerModal } from "@/plane-web/components/customers/customer-modal";
 import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";

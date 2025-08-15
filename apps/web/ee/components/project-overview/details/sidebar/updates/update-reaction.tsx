@@ -7,10 +7,10 @@ import { IUser } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // components
-import { ReactionSelector } from "@/components/issues";
+import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 
 export type TUpdateReaction = {

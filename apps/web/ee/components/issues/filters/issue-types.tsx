@@ -4,12 +4,12 @@ import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks

@@ -12,7 +12,7 @@ import {
 } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useEstimate } from "@/hooks/store";
+import { useEstimate } from "@/hooks/store/estimates";
 // plane web components
 import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
 // plane web constants

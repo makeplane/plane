@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 
 export const InitiativeOverviewHeaderActions = observer(() => {
   const { initiativesSidebarCollapsed, toggleInitiativesSidebar } = useAppTheme();

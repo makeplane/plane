@@ -21,7 +21,7 @@ import {
 import { Loader, setToast, TOAST_TYPE, getBillingAndPlansCardVariantStyle } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 // plane web imports
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import {

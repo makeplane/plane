@@ -20,7 +20,9 @@ import {
 } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
-import { SettingsSidebar } from "@/components/settings";
+// components
+import { SettingsSidebar } from "@/components/settings/sidebar";
+// hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 

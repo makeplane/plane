@@ -9,9 +9,10 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Header, InitiativeIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
 import { HeaderFilters } from "@/plane-web/components/initiatives/header/filters";

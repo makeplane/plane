@@ -5,7 +5,7 @@ import useSWR from "swr";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components
 import { ProjectOverviewCollapsibleSectionRoot } from "./collapsible-section-root";

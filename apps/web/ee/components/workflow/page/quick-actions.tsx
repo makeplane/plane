@@ -12,7 +12,8 @@ import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } fr
 import { cn } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState, useUserPermissions } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useUserPermissions } from "@/hooks/store/user";
 import { WorkflowChangeHistory } from "./change-history";
 
 type Props = {

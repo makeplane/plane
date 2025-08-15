@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // types
 import { TBulkIssueProperties, TIssue } from "@plane/types";
 

@@ -6,10 +6,13 @@ import { EIssueFilterType, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } f
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions } from "@plane/types";
 // components
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ProjectEmptyState: React.FC = observer(() => {

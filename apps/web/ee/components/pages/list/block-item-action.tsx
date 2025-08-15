@@ -8,7 +8,7 @@ import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helpers
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { WorkspacePageQuickActions } from "@/plane-web/components/pages";
 // plane web hooks

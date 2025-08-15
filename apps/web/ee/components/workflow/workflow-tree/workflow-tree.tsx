@@ -3,7 +3,9 @@ import { observer } from "mobx-react";
 // hooks
 import { useTranslation } from "@plane/i18n";
 import { convertToStateTransitionTree } from "@plane/utils";
-import { useMember, useProjectState, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useUser } from "@/hooks/store/user";
 // local imports
 import { StatePill } from "./state-pill";
 

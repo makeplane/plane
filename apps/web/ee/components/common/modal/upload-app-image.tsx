@@ -10,7 +10,7 @@ import { EFileAssetType } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
 

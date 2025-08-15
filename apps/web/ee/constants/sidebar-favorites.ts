@@ -3,7 +3,7 @@ import { LayoutGrid } from "lucide-react";
 import {
   FAVORITE_ITEM_ICONS as CE_FAVORITE_ITEM_ICONS,
   FAVORITE_ITEM_LINKS as CE_FAVORITE_ITEM_LINKS,
-} from "@/ce/constants";
+} from "@/ce/constants/sidebar-favorites";
 
 export const FAVORITE_ITEM_ICONS: typeof CE_FAVORITE_ITEM_ICONS = {
   ...CE_FAVORITE_ITEM_ICONS,

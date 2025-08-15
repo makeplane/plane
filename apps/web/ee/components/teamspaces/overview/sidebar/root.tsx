@@ -11,7 +11,7 @@ import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";

@@ -17,14 +17,15 @@ import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { WorkspaceImageUploadModal } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
-import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace/delete-workspace-section";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -66,7 +67,7 @@ export const WorkspaceDetails: FC = observer(() => {
     };
 
     await updateWorkspace(currentWorkspace.slug, payload)
-      .then((res) => {
+      .then(() => {
         captureSuccess({
           eventName: WORKSPACE_TRACKER_EVENTS.update,
           payload: { slug: currentWorkspace.slug },

@@ -17,7 +17,8 @@ import {
   ScopeIcon,
 } from "@plane/ui";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useAppRouter } from "@/hooks/use-app-router";

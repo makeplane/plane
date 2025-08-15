@@ -7,7 +7,7 @@ import {
   IssueLink,
 } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 
 type TIssueEstimateTimeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };

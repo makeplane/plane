@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { IWorkspace, TUserApplication } from "@plane/types";
 import { Button, CustomMenu, PlaneLogo, setToast, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ApplicationService, OAuthService, TConsentParams } from "@/plane-web/services/marketplace";
 import ConnectSvg from "@/public/marketplace/connect.svg";
 import { AuthService } from "@/services/auth.service";

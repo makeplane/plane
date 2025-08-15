@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Link from "next/link";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useIssuePropertiesActivity } from "@/plane-web/hooks/store";
 

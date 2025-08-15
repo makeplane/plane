@@ -1,16 +1,17 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { DocumentEditorWithRef, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
+import { DocumentEditorWithRef, type EditorRefApi, type IDocumentEditorProps, type TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
-import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember, useUserProfile } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
+// local imports
+import { EditorMentionsRoot } from "../embeds/mentions";
 
 type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,

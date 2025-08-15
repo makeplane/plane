@@ -6,12 +6,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { EmailSettingsLoader } from "@/components/ui";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 import { APPLICATION_DETAILS } from "@/constants/fetch-keys";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { ApplicationInstallationDetails } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";

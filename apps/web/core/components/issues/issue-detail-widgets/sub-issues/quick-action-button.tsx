@@ -9,7 +9,7 @@ import { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
   issueId: string;

@@ -9,10 +9,10 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { BaseGanttRoot, ProjectAppliedFiltersRoot } from "@/components/issues";
-// constants
+import { ProjectAppliedFiltersRoot } from "@/components/issues/issue-layouts/filters";
+import { BaseGanttRoot } from "@/components/issues/issue-layouts/gantt";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 import { EpicPeekOverview } from "../../epics/peek-overview";

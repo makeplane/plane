@@ -9,9 +9,11 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
-import { WorkspaceLogo } from "@/components/workspace";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
-import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports

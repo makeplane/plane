@@ -10,10 +10,10 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { getRecurringWorkItemSettingsPath } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { SettingsContentWrapper } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type TRecurringWorkItemsDetailsLayout = {
   children: ReactNode;

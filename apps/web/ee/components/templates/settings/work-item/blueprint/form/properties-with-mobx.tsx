@@ -3,7 +3,7 @@ import { FieldValues, useFormContext } from "react-hook-form";
 // plane imports
 import { EWorkItemTypeEntity } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // plane web imports
 import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
 import { DefaultWorkItemBlueprintProperties } from "@/plane-web/components/templates/settings/work-item/blueprint/form/default-properties";

@@ -18,11 +18,11 @@ import {
 // hooks
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
 import { AutomationQuickActions } from "@/plane-web/components/automations/details/quick-actions";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 type TProps = {

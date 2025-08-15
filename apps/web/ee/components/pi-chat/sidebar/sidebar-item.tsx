@@ -5,7 +5,7 @@ import { Pencil, Star, Trash, MoreHorizontal } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, EModalWidth, EModalPosition, ModalCore, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, joinUrlPath } from "@plane/utils";
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { ChatDeleteModal } from "../modals/delete-modal";

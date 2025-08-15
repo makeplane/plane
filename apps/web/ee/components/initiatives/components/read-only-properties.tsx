@@ -7,7 +7,7 @@ import { getDate, getFileURL } from "@plane/utils";
 // core components
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane Web
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components

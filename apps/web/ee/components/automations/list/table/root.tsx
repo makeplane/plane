@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@
 import { Avatar } from "@plane/ui";
 import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/utils";
 // store hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { IAutomationInstance } from "@/plane-web/store/automations/automation";
 // local imports

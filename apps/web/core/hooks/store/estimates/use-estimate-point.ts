@@ -2,7 +2,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // mobx store
-import { IEstimatePoint } from "@/store/estimates/estimate-point";
+import type { IEstimatePoint } from "@/store/estimates/estimate-point";
 
 export const useEstimatePoint = (
   estimateId: string | undefined,

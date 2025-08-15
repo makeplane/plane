@@ -7,7 +7,7 @@ import { EUserProjectRoles } from "@plane/types";
 import { Button, TButtonSizes } from "@plane/ui";
 import { getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type TCreateRecurringWorkItemsButtonProps = {

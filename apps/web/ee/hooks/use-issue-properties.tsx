@@ -2,7 +2,7 @@ import useSWR from "swr";
 // plane web imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TIssueServiceType } from "@plane/types";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useFlag } from "./store/use-flag";
 export const useWorkItemProperties = (
   projectId: string | null | undefined,

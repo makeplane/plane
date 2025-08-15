@@ -1,7 +1,7 @@
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { useUserPermissions } from "@/hooks/store";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { useUserPermissions } from "@/hooks/store/user";
 interface IWorkspaceAuthWrapper {
   children: React.ReactNode;
   pageKey: string;

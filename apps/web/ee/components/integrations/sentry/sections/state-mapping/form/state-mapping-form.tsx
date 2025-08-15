@@ -4,7 +4,7 @@ import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
 import { CustomSearchSelect, Logo, Loader, StateGroupIcon } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";
 // types
 import { StateMappingFormContentProps } from "./types";

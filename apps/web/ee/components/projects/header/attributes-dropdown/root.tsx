@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 // components
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // plane web components
 import { FilterPriority, FilterState, FilterUser } from "@/plane-web/components/projects";
 // plane web hooks

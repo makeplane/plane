@@ -6,7 +6,7 @@ import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } fr
 import { useLocalStorage } from "@plane/hooks";
 // components
 import { useTranslation } from "@plane/i18n";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

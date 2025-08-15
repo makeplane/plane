@@ -8,7 +8,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 export type TCustomerWorkItemOperations = {

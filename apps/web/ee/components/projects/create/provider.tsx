@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { DEFAULT_PROJECT_FORM_VALUES } from "@plane/constants";
 import { extractAndSanitizeProjectCreationFormData } from "@plane/utils";
 // store hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import {
   ProjectCreationContext,

@@ -19,11 +19,17 @@ import {
 } from "@plane/types";
 import { isIssueFilterActive } from "@plane/utils";
 // components
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useLabel, useIssues } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useIssues } from "@/hooks/store/use-issues";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

@@ -14,7 +14,7 @@ import { ContrastIcon, DiceIcon } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type TCommandGroups = {
   [key: string]: {

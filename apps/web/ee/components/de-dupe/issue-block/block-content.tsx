@@ -7,7 +7,8 @@ import { TDeDupeIssue } from "@plane/types";
 // ui
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // hooks
-import { useMember, useProjectState } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TDeDupeIssueBlockContentProps = { issue: TDeDupeIssue };
 

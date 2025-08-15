@@ -6,9 +6,9 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics";

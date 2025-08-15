@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { TProjectLink } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectLinks } from "@/plane-web/hooks/store";
 
 export type TLinkOperations = {

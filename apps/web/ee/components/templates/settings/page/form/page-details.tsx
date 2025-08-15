@@ -8,7 +8,7 @@ import { TPageTemplateForm } from "@plane/types";
 import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // plane web imports
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 // local imports

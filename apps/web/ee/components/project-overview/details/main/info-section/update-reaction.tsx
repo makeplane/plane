@@ -3,15 +3,16 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane imports
 import { IUser } from "@plane/types";
-// components
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // components
-import { ReactionSelector } from "@/components/issues";
+import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
+// components
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectReactions } from "@/plane-web/hooks/store/projects/use-project-reactions";
 
 export type TProjectReaction = {

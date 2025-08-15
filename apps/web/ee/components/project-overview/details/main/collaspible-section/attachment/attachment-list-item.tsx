@@ -12,7 +12,7 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";

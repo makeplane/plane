@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { AuthRoot } from "@/components/account";
+import { AuthRoot } from "@/components/account/auth-forms/auth-root";
 import { EAuthModes } from "@/helpers/authentication.helper";
 import { AuthFooter } from "./footer";
 import { AuthHeader } from "./header";

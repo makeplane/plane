@@ -16,7 +16,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { TeamspaceViewQuickActions } from "@/plane-web/components/teamspaces/views/quick-actions";
 // plane web constants

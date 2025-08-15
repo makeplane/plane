@@ -4,7 +4,7 @@ import { ArrowRightLeft } from "lucide-react";
 // components
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TWorkItemConvertActivity = {
   activityId: string;

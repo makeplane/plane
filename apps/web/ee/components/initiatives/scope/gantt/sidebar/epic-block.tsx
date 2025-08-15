@@ -4,9 +4,9 @@ import type { IGanttBlock } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
-import { IssueGanttSidebarBlock } from "@/components/issues";
+import { IssueGanttSidebarBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 

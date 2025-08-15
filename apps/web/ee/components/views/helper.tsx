@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { TLayoutSelectionProps } from "@/ce/components/views/helper";
-import { LayoutSelection } from "@/components/issues";
+import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { TWorkspaceLayoutProps } from "@/components/views/helper";
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useFlag } from "@/plane-web/hooks/store";
 import { WorkspaceGanttRoot } from "../issues/issue-layouts/gantt/root";
 

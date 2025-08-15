@@ -7,10 +7,10 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // components
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { IntegrationCard } from "@/components/project";
-import { IntegrationsSettingsLoader } from "@/components/ui";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { IntegrationCard } from "@/components/project/integration-card";
+import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // services

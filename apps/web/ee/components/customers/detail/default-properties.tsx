@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { ContractStatusDropDown, StageDropDown } from "@/plane-web/components/customers/dropdowns";
 

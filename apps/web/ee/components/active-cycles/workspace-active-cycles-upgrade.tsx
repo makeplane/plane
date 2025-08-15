@@ -9,7 +9,7 @@ import { Button, ContentWrapper } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const WORKSPACE_ACTIVE_CYCLES_DETAILS = [

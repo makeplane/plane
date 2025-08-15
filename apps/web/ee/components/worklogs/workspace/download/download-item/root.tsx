@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { WorklogDownloadStatus } from "@/plane-web/components/worklogs";
 // plane web constants

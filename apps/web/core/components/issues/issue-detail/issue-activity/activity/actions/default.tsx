@@ -7,7 +7,7 @@ import { EInboxIssueSource } from "@plane/types";
 import { LayersIcon } from "@plane/ui";
 // hooks
 import { capitalizeFirstLetter } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueActivityBlockComponent } from "./";
 

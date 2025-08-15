@@ -4,18 +4,18 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// icons
 import { Pencil, Trash2 } from "lucide-react";
-// ui
+// plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { CustomMenu } from "@plane/ui";
 import { calculateTotalFilters, truncateText } from "@plane/utils";
-// components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // helpers
-// store hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useGlobalView } from "@/hooks/store";
+// hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
+// local imports
+import { DeleteGlobalViewModal } from "./delete-view-modal";
+import { CreateUpdateWorkspaceViewModal } from "./modal";
 
 type Props = { viewId: string };
 

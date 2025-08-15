@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components
-import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { PageHead } from "@/components/core/page-title";
 // plane web components
 import { TeamspaceDetailHeader } from "@/plane-web/components/teamspaces/headers/detail-header";
 // plane web hooks

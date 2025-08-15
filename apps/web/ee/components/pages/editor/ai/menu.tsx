@@ -7,7 +7,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
 import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services

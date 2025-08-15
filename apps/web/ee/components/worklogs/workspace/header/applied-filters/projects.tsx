@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { AppliedFilterGroup, AppliedFilterGroupItem } from "@/plane-web/components/worklogs";
 // plane web hooks

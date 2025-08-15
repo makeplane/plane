@@ -6,7 +6,7 @@ import { Avatar, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web store
 import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
 import { DashboardQuickActions } from "../quick-actions";

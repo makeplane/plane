@@ -3,14 +3,17 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
+// plane imports
 import { Avatar, Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
-// components
-import { NotificationOption } from "@/components/workspace-notifications";
-// helpers
 // hooks
-import { useIssueDetail, useNotification, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useNotification } from "@/hooks/store/notifications/use-notification";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+// local imports
 import { NotificationContent } from "./content";
+import { NotificationOption } from "./options";
 
 type TNotificationItem = {
   workspaceSlug: string;

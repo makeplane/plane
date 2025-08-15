@@ -5,10 +5,13 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { ListLayoutLoader } from "@/components/ui";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useCommandPalette, useMember, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useMember } from "@/hooks/store/use-member"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

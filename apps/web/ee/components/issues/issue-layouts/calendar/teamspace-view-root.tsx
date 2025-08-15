@@ -5,10 +5,10 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ProjectIssueQuickActions } from "@/components/issues";
 import { BaseCalendarRoot } from "@/components/issues/issue-layouts/calendar/base-calendar-root";
+import { ProjectIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export const TeamspaceViewCalendarLayout: React.FC = observer(() => {
   // router

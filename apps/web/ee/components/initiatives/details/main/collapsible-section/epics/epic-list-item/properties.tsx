@@ -9,17 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, EIssuesStoreType, IIssueDisplayProperties } from "@plane/types";
 // components
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-import {
-  DateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-  DateRangeDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

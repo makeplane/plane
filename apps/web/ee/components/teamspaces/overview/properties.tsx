@@ -7,7 +7,7 @@ import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIco
 // plane utils
 import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { JoinTeamspaceButton } from "@/plane-web/components/teamspaces/actions";
 import AddTeamspaceMembersButton from "@/plane-web/components/teamspaces/actions/members/button";

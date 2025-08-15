@@ -14,18 +14,21 @@ import {
 import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // plane web hooks
 import { useIssueType } from "@/plane-web/hooks/store";
-// types
+// local imports
+import { ArchiveIssueModal } from "../../archive-issue-modal";
+import { DeleteIssueModal } from "../../delete-issue-modal";
+import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import { IQuickActionProps } from "../list/list-view-types";
-// helper
 import { useCycleIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {

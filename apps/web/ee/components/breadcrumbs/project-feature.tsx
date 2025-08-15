@@ -7,9 +7,9 @@ import { EProjectFeatureKey } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 // components
-import { ProjectFeatureBreadcrumb as CEProjectFeatureBreadcrumb } from "@/ce/components/breadcrumbs";
+import { ProjectFeatureBreadcrumb as CEProjectFeatureBreadcrumb } from "@/ce/components/breadcrumbs/project-feature";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 

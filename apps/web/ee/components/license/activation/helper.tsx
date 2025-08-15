@@ -7,7 +7,8 @@ import { Copy } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // store hooks
-import { useInstance, useWorkspace } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   label: string;

@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -10,11 +10,11 @@ import {
   EActivityFilterTypeEE,
 } from "@plane/constants";
 // ce components
-import { TActivityFilterRoot } from "@/ce/components/issues";
+import type { TActivityFilterRoot } from "@/ce/components/issues/worklog/activity/filter-root";
 // components
-import { ActivityFilter } from "@/components/issues";
+import { ActivityFilter } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 

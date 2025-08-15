@@ -4,7 +4,7 @@ import { useParams, usePathname } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { Tooltip, PiIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { AppSidebarToggleButton } from "@/components/sidebar";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";

@@ -7,10 +7,11 @@ import { MessageSquare } from "lucide-react";
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { NotificationItemOptionButton } from "@/components/workspace-notifications";
-// hooks
+import { NotificationItemOptionButton } from "@/components/workspace-notifications/sidebar/notification-card/options";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspaceNotifications } from "@/hooks/store";
+// hooks
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
 import { INotification } from "@/store/notifications/notification";
 

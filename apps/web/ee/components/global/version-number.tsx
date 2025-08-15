@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import packageJson from "package.json";
 // hooks
 // eslint-disable-next-line import/order
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 
 export const PlaneVersionNumber = observer(() => {
   const { instance, config } = useInstance();

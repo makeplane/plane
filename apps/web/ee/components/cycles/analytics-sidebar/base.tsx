@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // local components
-import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import ActiveCycleChart from "../active-cycle/cycle-chart/chart";
 import Selection from "../active-cycle/selection";
 import useCycleDetails from "../active-cycle/use-cycle-details";

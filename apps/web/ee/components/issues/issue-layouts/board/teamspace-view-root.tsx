@@ -5,11 +5,10 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ProjectIssueQuickActions } from "@/components/issues";
 import { BaseKanBanRoot } from "@/components/issues/issue-layouts/kanban/base-kanban-root";
+import { ProjectIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
-// plane web constants
+import { useUserPermissions } from "@/hooks/store/user";
 
 export const TeamspaceViewBoardLayout: React.FC = observer(() => {
   // router

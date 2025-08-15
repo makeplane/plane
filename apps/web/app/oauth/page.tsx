@@ -3,17 +3,19 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-// ui
 import { useSearchParams } from "next/navigation";
-// components
 import useSWR from "swr";
+// plane imports
 import { PlaneLockup } from "@plane/ui";
-import { PageHead } from "@/components/core";
-import { EmailSettingsLoader } from "@/components/ui";
+// components
+import { PageHead } from "@/components/core/page-title";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
+// constants
 import { APPLICATION_BY_CLIENT_ID } from "@/constants/fetch-keys";
+// layouts
 import DefaultLayout from "@/layouts/default-layout";
 // wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // assets
 import { AppConsent } from "@/plane-web/components/marketplace";
 import { ApplicationService } from "@/plane-web/services/marketplace";
@@ -28,7 +30,6 @@ const OAuthPage = observer(() => {
     code_challenge,
     code_challenge_method,
     response_type,
-    scope,
     nonce,
     state,
     claims,

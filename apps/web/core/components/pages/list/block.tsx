@@ -4,14 +4,13 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FileText, Loader } from "lucide-react";
-import { TPageNavigationTabs } from "@plane/types";
 // plane imports
+import { TPageNavigationTabs } from "@plane/types";
 import { Logo, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { BlockItemAction } from "@/components/pages/list";
-// helpers
+import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

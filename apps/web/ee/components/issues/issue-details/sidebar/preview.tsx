@@ -7,7 +7,7 @@ import { TCustomer } from "@plane/types";
 import { Button, CustomersIcon, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
 type TProps = {
   customer: TCustomer;

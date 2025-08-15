@@ -8,8 +8,8 @@ import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUpdateEntityType, TUpdate, TUpdateOperations } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // components
-import { ActivitySortRoot } from "@/components/issues";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";

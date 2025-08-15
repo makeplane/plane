@@ -7,10 +7,10 @@ import { ChevronLeft } from "lucide-react";
 import { EOnboardingSteps, TOnboardingStep } from "@plane/types";
 import { PlaneLockup, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { SwitchAccountDropdown } from "@/components/onboarding";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
+// local imports
+import { SwitchAccountDropdown } from "./switch-account-dropdown";
 
 type OnboardingHeaderProps = {
   currentStep: EOnboardingSteps;

@@ -6,10 +6,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 // components
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import {

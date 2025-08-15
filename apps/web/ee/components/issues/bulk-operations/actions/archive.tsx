@@ -6,9 +6,10 @@ import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import { ArchiveIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { BulkArchiveConfirmationModal } from "@/plane-web/components/issues";
+import { BulkArchiveConfirmationModal } from "../modals";
 
 type Props = {
   handleClearSelection: () => void;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { AppSidebarToggleButton } from "@/components/sidebar";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRail } from "@/hooks/use-app-rail";

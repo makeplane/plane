@@ -3,10 +3,12 @@
 import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
-import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
-// hooks
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { PageHead } from "@/components/core/page-title";
 import { WorkspaceHomeView } from "@/components/home";
-import { useWorkspace } from "@/hooks/store";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // local components
 import { WorkspaceDashboardHeader } from "./header";
 

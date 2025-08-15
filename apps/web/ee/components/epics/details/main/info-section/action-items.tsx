@@ -7,9 +7,11 @@ import { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { IssueReaction } from "@/components/issues";
+import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 // hooks
-import { useIssueDetail, useMember, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMember } from "@/hooks/store/use-member"
+import { useUser } from "@/hooks/store/user";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 const workItemVersionService = new WorkItemVersionService(EIssueServiceType.EPICS);

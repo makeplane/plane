@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 

@@ -8,7 +8,9 @@ import { EAutomationChangePropertyType, EAutomationChangeType, ICustomSearchSele
 import { Avatar, PriorityIcon } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
-import { useLabel, useMember, useProjectState } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { TAutomationActionFormData } from "../../root";
 import { ChangeTypeSelect } from "./change-type-select";

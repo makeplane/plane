@@ -9,15 +9,18 @@ import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConver
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // helpers
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
 // hooks
-import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { ConvertWorkItemAction, ProjectEpicQuickActions } from "@/plane-web/components/epics";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 

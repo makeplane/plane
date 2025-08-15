@@ -18,10 +18,10 @@ import {
 } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
-// helpers
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
 import { InitiativeQuickActions } from "@/plane-web/components/initiatives/components/quick-actions";

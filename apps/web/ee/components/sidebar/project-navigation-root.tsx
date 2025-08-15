@@ -7,13 +7,13 @@ import { RssIcon } from "lucide-react";
 import { EUserProjectRoles } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 // components
-import { ProjectNavigation, TNavigationItem } from "@/components/workspace";
+import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
-import { useProject } from "@/hooks/store";
-// plane-web imports
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
-// local components
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// local imports
 import { WithFeatureFlagHOC } from "../feature-flags";
 
 type TProjectItemsRootProps = {

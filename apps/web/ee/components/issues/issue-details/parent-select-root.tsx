@@ -7,10 +7,11 @@ import { EIssueServiceType } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { IssueParentSelect, TIssueOperations } from "@/components/issues";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueParentSelect } from "@/components/issues/issue-detail/parent-select";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueParentSelect = {
@@ -57,7 +58,7 @@ export const IssueParentSelectRoot: React.FC<TIssueParentSelect> = observer((pro
       await issueOperations.fetch(workspaceSlug, projectId, issueId, false);
       if (_issueId) await fetchSubIssues(workspaceSlug, projectId, _issueId);
       toggleParentIssueModal(null);
-    } catch (error) {
+    } catch {
       console.error("something went wrong while fetching the issue");
     }
   };
@@ -78,7 +79,7 @@ export const IssueParentSelectRoot: React.FC<TIssueParentSelect> = observer((pro
 
       await fetchSubIssues(workspaceSlug, projectId, parentIssueId);
       setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("common.error.label"),

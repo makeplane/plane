@@ -9,12 +9,12 @@ import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMEN
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
-import { TWorkItemTemplateSelect } from "@/ce/components/issues";
+import type { TWorkItemTemplateSelect } from "@/ce/components/issues/issue-modal/template-select";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WorkItemTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
 import { useFlag } from "@/plane-web/hooks/store";

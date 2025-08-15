@@ -2,7 +2,7 @@ import { FC } from "react";
 // types
 import { IProject } from "@plane/types";
 // ui
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 
 export type ActiveCyclesProjectTitleProps = {
   project: Partial<IProject> | undefined;

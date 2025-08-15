@@ -7,11 +7,12 @@ import { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { cn, getDate, TProjectSanitizationResult, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown, PriorityDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
-// helpers
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { StateDropdown } from "@/plane-web/components/projects";
 import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";

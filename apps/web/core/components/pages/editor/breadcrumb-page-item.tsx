@@ -6,7 +6,8 @@ import { FileText } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks

@@ -4,7 +4,7 @@ import { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets

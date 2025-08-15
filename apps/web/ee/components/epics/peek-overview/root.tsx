@@ -7,10 +7,11 @@ import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { TIssueOperations } from "@/components/issues";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { EpicView } from "./view";

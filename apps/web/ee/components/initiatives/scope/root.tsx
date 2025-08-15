@@ -1,14 +1,20 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles, EIssueLayoutTypes } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { ProjectMultiSelectModal } from "@/components/project";
-import { useProject, useUserPermissions } from "@/hooks/store";
+// components
+import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+// hooks
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { WorkspaceEpicsListModal } from "@/plane-web/components/initiatives/details/main/collapsible-section/epics/workspace-epic-modal";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// local imports
 import { EpicPeekOverview } from "../../epics";
 import { InitiativeScopeGanttView } from "./gantt/root";
 import { InitiativeScopeListView } from "./list/root";

@@ -7,11 +7,11 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { ListLayoutLoader } from "@/components/ui";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { InitiativeScopeRoot } from "@/plane-web/components/initiatives/scope/root";
 // Plane-web

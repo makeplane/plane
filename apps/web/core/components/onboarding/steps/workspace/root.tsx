@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ECreateOrJoinWorkspaceViews, EOnboardingSteps, IWorkspaceMemberInvitation } from "@plane/types";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // local components
 import { WorkspaceCreateStep, WorkspaceJoinInvitesStep } from "./";
 

@@ -8,10 +8,12 @@ import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles, TPageNavigationTabs } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
-import { PageListBlockRoot, PageLoader } from "@/components/pages";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { PageListBlockRoot } from "@/components/pages/list";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks

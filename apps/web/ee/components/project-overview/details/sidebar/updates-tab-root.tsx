@@ -5,7 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { Loader } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useFlag } from "@/plane-web/hooks/store";
 // plane web
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

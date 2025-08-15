@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // constants
 import { PROJECT_SORT_ORDER_OPTIONS } from "@/plane-web/constants/project";
 // types

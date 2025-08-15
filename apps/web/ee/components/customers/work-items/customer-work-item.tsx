@@ -9,11 +9,13 @@ import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 // plane web imports
 import { CustomerWorkItemProperties } from "@/plane-web/components/customers";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useCustomerWorkItemOperations } from "./helper";
 
 type TProps = {

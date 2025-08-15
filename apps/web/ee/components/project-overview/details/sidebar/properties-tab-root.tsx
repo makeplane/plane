@@ -11,11 +11,14 @@ import { EUserProjectRoles } from "@plane/types";
 import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
-import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-// helpers
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";

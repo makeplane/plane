@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TIssueGroupByOptions } from "@plane/types";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined, subGroupBy?: TIssueGroupByOptions) => {
   // router

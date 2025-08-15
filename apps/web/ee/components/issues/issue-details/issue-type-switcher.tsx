@@ -2,19 +2,20 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRightLeft } from "lucide-react";
-// types
+// plane imports
 import { TIssue } from "@plane/types";
-// ce imports
-import { IssueTypeSwitcher as BaseIssueTypeSwitcher, TIssueTypeSwitcherProps } from "@/ce/components/issues";
-// components
-import { CreateUpdateIssueModal } from "@/components/issues";
-// helpers
 import { cn } from "@plane/utils";
-// store hooks
-import { useIssueDetail } from "@/hooks/store";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-// plane web hooks
+// ce imports
+import {
+  IssueTypeSwitcher as BaseIssueTypeSwitcher,
+  TIssueTypeSwitcherProps,
+} from "@/ce/components/issues/issue-details/issue-type-switcher";
+// components
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// plane web imports
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((props) => {

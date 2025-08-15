@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";

@@ -10,13 +10,15 @@ import { TPage, TPageNavigationTabs } from "@plane/types";
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { FiltersDropdown } from "@/components/issues";
-import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { PageFiltersSelection } from "@/components/pages/list/filters";
+import { PageOrderByDropdown } from "@/components/pages/list/order-by";
+import { PageSearchInput } from "@/components/pages/list/search-input";
 // event tracker
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 

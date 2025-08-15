@@ -5,10 +5,10 @@ import { useParams, usePathname } from "next/navigation";
 import { Briefcase } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { ProjectsBaseHeader } from "@/components/project/header";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import {
   ProjectAttributesDropdown,

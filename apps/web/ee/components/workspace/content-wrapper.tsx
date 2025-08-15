@@ -5,12 +5,14 @@ import { observer } from "mobx-react";
 // plane imports
 import { useParams, usePathname } from "next/navigation";
 import { cn } from "@plane/utils";
+// components
+import { StickyActionBar } from "@/components/stickies/action-bar";
 // hooks
-import { StickyActionBar } from "@/components/stickies";
 import { useAppRail } from "@/hooks/use-app-rail";
-// plane web components
+// plane web imports
 import { AppRailRoot } from "@/plane-web/components/app-rail";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+// local imports
 import { PiChatFloatingBot } from "../pi-chat";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {

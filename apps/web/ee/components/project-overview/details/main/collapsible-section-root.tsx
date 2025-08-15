@@ -3,7 +3,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
 import { useProjectLinks } from "@/plane-web/hooks/store";

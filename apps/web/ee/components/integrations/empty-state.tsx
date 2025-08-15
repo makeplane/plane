@@ -7,7 +7,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
 // components
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
+import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 export type IntegrationsEmptyStateProps = {
   theme: string;

@@ -9,7 +9,7 @@ import { Spinner } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // plane web services
 import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
 

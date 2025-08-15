@@ -5,7 +5,7 @@ import { Info, TrendingDown, TrendingUp } from "lucide-react";
 import { IIssueFilterOptions, TCycleEstimateSystemAdvanced, TCycleProgress } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { getColors } from "./cycle-chart/helper";
 import { summaryDataFormatter } from "./formatter";

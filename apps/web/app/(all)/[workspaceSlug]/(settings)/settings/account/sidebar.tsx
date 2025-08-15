@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
+import { CircleUser, Activity, Bell, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
 // plane imports
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { getFileURL } from "@plane/utils";
 // components
-import { SettingsSidebar } from "@/components/settings";
+import { SettingsSidebar } from "@/components/settings/sidebar";
 // hooks
 import { useUser } from "@/hooks/store/user";
 
@@ -49,8 +49,8 @@ export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
         <div className="flex items-center gap-2">
           <div className="flex-shrink-0">
             {!currentUser?.avatar_url || currentUser?.avatar_url === "" ? (
-                <span className="relative flex size-8 items-center justify-center rounded-full bg-[#028375] capitalize text-white text-sm">
-            {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
+              <span className="relative flex size-8 items-center justify-center rounded-full bg-[#028375] capitalize text-white text-sm">
+                {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
               </span>
             ) : (
               <div className="relative h-8 w-8 overflow-hidden">

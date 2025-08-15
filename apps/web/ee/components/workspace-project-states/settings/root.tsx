@@ -4,13 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { useTheme } from "next-themes";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { useAppTheme } from "@/hooks/store";
-import {
-  WorkspaceProjectStatesEmptyState,
-  WorkspaceProjectStatesLoader,
-  ProjectStateGroupList,
-} from "@/plane-web/components/workspace-project-states";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { WorkspaceProjectStatesLoader, ProjectStateGroupList } from "@/plane-web/components/workspace-project-states";
 // plane web hooks
 import { useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types

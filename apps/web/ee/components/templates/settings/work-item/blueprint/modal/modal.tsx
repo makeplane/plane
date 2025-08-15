@@ -7,7 +7,7 @@ import { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // plane web imports
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";

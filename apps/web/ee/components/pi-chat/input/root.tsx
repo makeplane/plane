@@ -1,17 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 import { ArrowUp, FileText } from "lucide-react";
+// plane imports
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn, isCommentEmpty } from "@plane/utils";
-import { useWorkspace } from "@/hooks/store";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+// plane web imports
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
+// local imports
 import { FocusFilter } from "./focus-filter";
-import useSWR from "swr";
 
 type TEditCommands = {
   getHTML: () => string;

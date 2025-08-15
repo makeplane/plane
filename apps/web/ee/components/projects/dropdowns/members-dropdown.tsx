@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
+// plane imports
 import { cn } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
 type Props = {
   value: string[];

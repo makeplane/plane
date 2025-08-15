@@ -2,20 +2,18 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
+// plane imports
 import { AlertModalCore, TContextMenuItem } from "@plane/ui";
-import { TPageActions } from "@/components/pages";
+// components
+import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TPageOperations } from "@/hooks/use-page-operations";
-
-// components
+// plane web imports
 import { LockPageModal } from "@/plane-web/components/pages";
-
-// hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-
-// store types
-import { TPageInstance } from "@/store/pages/base-page";
+// store
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export const usePageActionsMenu = (props: {
   page: TPageInstance;

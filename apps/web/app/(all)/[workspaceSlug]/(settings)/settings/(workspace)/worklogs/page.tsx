@@ -6,11 +6,12 @@ import { useParams } from "next/navigation";
 import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
 // component
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";

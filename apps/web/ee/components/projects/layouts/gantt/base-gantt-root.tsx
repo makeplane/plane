@@ -8,7 +8,8 @@ import { EUserProjectRoles, IBlockUpdateData, IBlockUpdateDependencyData } from 
 import { GanttChartRoot } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";

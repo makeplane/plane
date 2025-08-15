@@ -19,7 +19,7 @@ import {
   getPropertiesDefaultValues,
 } from "@plane/utils";
 // ce imports
-import { TIssueModalProviderProps } from "@/ce/components/issues";
+import type { TIssueModalProviderProps } from "@/ce/components/issues/issue-modal/provider";
 // components
 import {
   IssueModalContext,
@@ -29,7 +29,7 @@ import {
   THandleProjectEntitiesFetchProps,
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
-} from "@/components/issues";
+} from "@/components/issues/issue-modal/context";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";

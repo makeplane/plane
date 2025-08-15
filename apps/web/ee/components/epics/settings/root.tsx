@@ -8,8 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { EWorkItemTypeEntity } from "@plane/types";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // hooks
-import { SettingsHeading } from "@/components/settings";
-import { useProject } from "@/hooks/store";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
 // plane web hooks

@@ -1,17 +1,17 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { ContentWrapper } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
-import { AppHeader } from "@/components/core";
-import { RecentActivityWidget } from "@/components/home";
-import { StickiesWidget } from "@/components/stickies";
+import { AppHeader } from "@/components/core/app-header";
+import { RecentActivityWidget } from "@/components/home/widgets/recents/index";
+import { StickiesWidget } from "@/components/stickies/widget";
 import { UserGreetingsView } from "@/components/user";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user/user-user";
 // plane web components
 import { PagesAppDashboardHeader } from "./header";
-import { cn } from "@plane/utils";
-import { ContentWrapper } from "@plane/ui";
 
 export default function WorkspacePagesPage() {
   // navigation

@@ -3,8 +3,8 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { PageHead } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
+import { PageHead } from "@/components/core/page-title";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";

@@ -6,7 +6,7 @@ import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/c
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks

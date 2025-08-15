@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { StartCycleModal } from "@/plane-web/components/cycles";
 import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
 import { useFlag } from "@/plane-web/hooks/store";

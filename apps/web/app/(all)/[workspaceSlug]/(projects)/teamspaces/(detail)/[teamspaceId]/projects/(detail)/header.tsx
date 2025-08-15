@@ -8,9 +8,12 @@ import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constant
 import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, TeamsIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { Logo } from "@/components/common/logo";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TeamspaceProjectDetailHeaderActions } from "@/plane-web/components/teamspaces/headers/detail-header/work-items";

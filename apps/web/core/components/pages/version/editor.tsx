@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TDisplayConfig } from "@plane/editor";
+import type { TDisplayConfig } from "@plane/editor";
 import { TPage, TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";

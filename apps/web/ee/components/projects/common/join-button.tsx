@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { JoinProjectModal } from "@/components/project";
+import { JoinProjectModal } from "@/components/project/join-project-modal";
 // plane web imports
 import { TProject } from "@/plane-web/types/projects";
 

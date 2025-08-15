@@ -7,7 +7,7 @@ import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Header, EHeaderVariant } from "@plane/ui";
 // components
-import { AppliedFiltersList } from "@/components/issues";
+import { AppliedFiltersList } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 

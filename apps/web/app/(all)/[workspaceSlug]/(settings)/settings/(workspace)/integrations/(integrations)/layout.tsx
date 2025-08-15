@@ -7,8 +7,9 @@ import { useParams } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH, E_FEATURE_FLAGS } from "@plane/constants";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { useUser, useUserProfile } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IntegrationsEmptyState } from "@/plane-web/components/integrations";
 

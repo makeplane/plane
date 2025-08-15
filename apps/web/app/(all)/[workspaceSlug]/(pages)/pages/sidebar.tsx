@@ -5,11 +5,11 @@ import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { AppSidebarToggleButton } from "@/components/sidebar";
-import { SidebarDropdown } from "@/components/workspace";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
+import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
 import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components

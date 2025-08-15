@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CommandPalette } from "@/components/command-palette";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // components
 import { EmptyPiChat } from "@/plane-web/components/pi-chat/empty";

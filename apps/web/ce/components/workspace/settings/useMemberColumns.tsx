@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export const useMemberColumns = () => {
   // states

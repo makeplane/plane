@@ -2,10 +2,9 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ArrowLeft, Cloud } from "lucide-react";
+import { Cloud } from "lucide-react";
 // plane web components
 import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";

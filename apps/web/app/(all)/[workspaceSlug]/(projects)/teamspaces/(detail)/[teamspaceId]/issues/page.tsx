@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // plane web components
 import { TeamspaceLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-layout-root";
 // plane web hooks

@@ -11,9 +11,9 @@ import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
 import { CommandPaletteThemeActions, CommandPaletteHelpActions } from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import useDebounce from "@/hooks/use-debounce";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports

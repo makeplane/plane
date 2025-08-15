@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components

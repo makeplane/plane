@@ -17,17 +17,19 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { CountChip } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper } from "@/components/settings";
-import { WorkspaceMembersList } from "@/components/workspace";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { CountChip } from "@/components/common/count-chip";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
 
 const WorkspaceMembersSettingsPage = observer(() => {

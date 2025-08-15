@@ -2,9 +2,13 @@
 
 import { FC, useMemo, useState } from "react";
 import { EIssuesStoreType } from "@plane/types";
+// plane imports
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-import { CycleDropdown } from "@/components/dropdowns";
-import { useCycle, useIssues } from "@/hooks/store";
+// components
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+// hooks
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
 
 type EndCycleModalProps = {

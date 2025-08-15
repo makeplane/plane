@@ -8,17 +8,15 @@ import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles, ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
-import {
-  DateDropdown,
-  EstimateDropdown,
-  MemberDropdown,
-  PriorityDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
-// helpers
 // hooks
-import { useProjectEstimates, useUserPermissions } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueDefaultPropertiesProps = {

@@ -6,9 +6,9 @@ import useSWR from "swr";
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // layouts
-import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout";
+import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
 // plane web components
 import { WorkspaceDisabledPage } from "@/plane-web/components/license";
 // plane web hooks

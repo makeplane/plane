@@ -8,11 +8,13 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
+import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
+import { IssuesModalProps } from "@/components/issues/issue-modal/modal";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useUser } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";

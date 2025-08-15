@@ -8,7 +8,8 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { AlertModalCore, Button, PlaneLockup } from "@plane/ui";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";

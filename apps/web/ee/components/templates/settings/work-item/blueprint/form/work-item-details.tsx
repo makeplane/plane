@@ -7,10 +7,12 @@ import { EFileAssetType } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { getNestedError } from "@/helpers/react-hook-form.helper";
-import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";

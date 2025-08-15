@@ -12,9 +12,9 @@ import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
-import { generateWorkItemLink, getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@plane/utils";
 // components
-import { IssueSearchModalEmptyState } from "@/components/core";
+import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";

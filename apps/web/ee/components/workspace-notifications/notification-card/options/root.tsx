@@ -5,13 +5,10 @@ import { observer } from "mobx-react";
 // components
 // helpers
 import { cn } from "@plane/utils";
-// hooks
-import {
-  NotificationItemReadOption,
-  NotificationItemArchiveOption,
-  NotificationItemSnoozeOption,
-} from "@/plane-web/components/workspace-notifications";
 import { INotification } from "@/store/notifications/notification";
+import { NotificationItemArchiveOption } from "./archive";
+import { NotificationItemReadOption } from "./read";
+import { NotificationItemSnoozeOption } from "./snooze";
 
 type TNotificationOption = {
   workspaceSlug: string;

@@ -5,7 +5,7 @@ import { StateGroupIcon } from "@plane/ui";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   stateId: string;

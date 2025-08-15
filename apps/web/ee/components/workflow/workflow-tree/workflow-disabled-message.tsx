@@ -5,7 +5,7 @@ import { CircleStop } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { WorkflowTree } from "./workflow-tree";
 

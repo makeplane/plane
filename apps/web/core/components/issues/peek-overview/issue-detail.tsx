@@ -2,25 +2,28 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { IssueParentDetail, TIssueOperations } from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
-import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
 // plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import { IssueDescriptionInput } from "../description-input";
+import type { TIssueOperations } from "../issue-detail";
+import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 // services init

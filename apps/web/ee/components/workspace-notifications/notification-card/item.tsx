@@ -6,16 +6,20 @@ import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
 import { EIssueServiceType, TNotification } from "@plane/types";
 import { calculateTimeAgo, convertToEpoch, cn } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
-//helpers
+// components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 //store
-import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 //components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useIssueType } from "@/plane-web/hooks/store";
+// local imports
+import { NotificationOption } from "./options";
+import { NotificationCardPreview } from "./preview";
 
 export interface INotificationItem {
   issueId: string;
@@ -182,7 +186,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
         onMouseEnter={() => setShowPreview(true)}
         onMouseLeave={() => setShowPreview(false)}
       >
-        <Popover.Panel {...attributes.popper} className={""}>
+        <Popover.Panel {...attributes.popper}>
           <div ref={setPopperElement} className={"absolute z-10 max-w-[600px]"} style={styles.popper}>
             <NotificationCardPreview
               notificationList={notificationList}

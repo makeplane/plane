@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Avatar, Tooltip } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { TPageInstance } from "@/store/pages/base-page";
 
 interface CollaboratorsListProps {

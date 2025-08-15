@@ -9,9 +9,10 @@ import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TCustomerRequest } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 
 import {

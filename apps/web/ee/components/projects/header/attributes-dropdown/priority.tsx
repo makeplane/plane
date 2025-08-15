@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { PriorityIcon } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web constants
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
 // plane web types

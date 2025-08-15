@@ -3,8 +3,7 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import { SubscribeIcon, Tooltip } from "@plane/ui";
-// plane web components
-import { BulkSubscribeConfirmationModal } from "@/plane-web/components/issues";
+import { BulkSubscribeConfirmationModal } from "../modals";
 
 type Props = {
   handleClearSelection: () => void;

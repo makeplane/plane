@@ -10,7 +10,7 @@ import { EFileAssetType, TPageTemplate } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";

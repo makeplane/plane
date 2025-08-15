@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProjectState } from "@/plane-web/types/workspace-project-states";

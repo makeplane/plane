@@ -7,7 +7,7 @@ import { Rocket } from "lucide-react";
 import { ISearchIssueResponse } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 

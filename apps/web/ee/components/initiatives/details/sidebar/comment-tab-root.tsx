@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { TIssueComment } from "@plane/types";
 import { CommentsWrapper } from "@/components/comments";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

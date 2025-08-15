@@ -5,10 +5,10 @@ import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ProjectIssueQuickActions } from "@/components/issues";
+import { ProjectIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/base-spreadsheet-root";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export const TeamspaceViewTableLayout: React.FC = observer(() => {
   // router

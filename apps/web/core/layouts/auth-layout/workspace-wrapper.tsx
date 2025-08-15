@@ -13,9 +13,13 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, getButtonStyling, PlaneLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
-import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useUser, useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local

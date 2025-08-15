@@ -1,8 +1,12 @@
 "use client";
 import { ReactNode } from "react";
-import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
 // components
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { PageHead } from "@/components/core/page-title";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
 import { CustomersListHeader } from "@/plane-web/components/customers/list";
 
 export default function CustomersListLayout({ children }: { children: ReactNode }) {

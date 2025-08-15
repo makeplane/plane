@@ -1,11 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
 import { DROPDOWN_ATTRIBUTES } from "@plane/constants";
-// plane web components
 import { useTranslation } from "@plane/i18n";
 import { TIssuePropertyTypeKeys } from "@plane/types";
-import { RadioInput } from "@/components/estimates";
-// plane web types
+// components
+import { RadioInput } from "@/components/estimates/radio-select";
 
 type TPropertyMultiSelectProps = {
   value: boolean | undefined;

@@ -4,25 +4,29 @@ import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
-// types
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
-// components
-import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
-// constants
-// hooks
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
+// hooks
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// services
+// plane web imports
 import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// services
 import { FileService } from "@/services/file.service";
+// local imports
+import { InboxIssueDescription } from "./issue-description";
+import { InboxIssueProperties } from "./issue-properties";
+import { InboxIssueTitle } from "./issue-title";
 
 const fileService = new FileService();
 

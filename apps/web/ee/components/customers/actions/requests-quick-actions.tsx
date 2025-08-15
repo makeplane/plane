@@ -9,7 +9,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // plane web constants
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { DeleteCustomerRequestsModal } from "@/plane-web/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
 

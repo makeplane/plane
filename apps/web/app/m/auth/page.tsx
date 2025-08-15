@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { TInstanceConfig } from "@plane/types";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // components
 import { AuthRoot } from "@/plane-web/components/mobile";
 

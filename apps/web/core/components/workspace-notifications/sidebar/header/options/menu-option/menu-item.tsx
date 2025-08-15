@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
-import type { TPopoverMenuOptions } from "@/components/workspace-notifications";
-// helpers
+// local imports
+import type { TPopoverMenuOptions } from "./root";
 
 export const NotificationMenuOptionItem: FC<TPopoverMenuOptions> = observer((props) => {
   const { type, label = "", isActive, prependIcon, appendIcon, onClick } = props;

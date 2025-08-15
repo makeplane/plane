@@ -7,7 +7,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

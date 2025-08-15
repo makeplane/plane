@@ -9,7 +9,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type TEpicsTitleActionsProps = {

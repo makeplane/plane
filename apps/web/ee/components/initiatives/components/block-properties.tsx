@@ -5,9 +5,11 @@ import { Users } from "lucide-react";
 import { Avatar, Tooltip } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // Plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
@@ -30,18 +32,16 @@ export const BlockProperties = observer((props: Props) => {
   const lead = getUserDetails(initiative.lead ?? "");
 
   const handleDates = (startDate: string | null | undefined, endDate: string | null | undefined) => {
-    updateInitiative &&
-      updateInitiative(workspaceSlug.toString(), initiative.id, {
-        start_date: startDate ?? null,
-        end_date: endDate ?? null,
-      });
+    updateInitiative?.(workspaceSlug.toString(), initiative.id, {
+      start_date: startDate ?? null,
+      end_date: endDate ?? null,
+    });
   };
 
   const handleLead = (id: string | null) => {
-    updateInitiative &&
-      updateInitiative(workspaceSlug.toString(), initiative.id, {
-        lead: id,
-      });
+    updateInitiative?.(workspaceSlug.toString(), initiative.id, {
+      lead: id,
+    });
   };
 
   const handleChange = (updatedData: Partial<TInitiative>) => {

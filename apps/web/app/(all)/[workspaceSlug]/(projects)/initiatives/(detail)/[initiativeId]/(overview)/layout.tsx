@@ -3,7 +3,8 @@
 import { ReactNode } from "react";
 // layouts
 import { EInitiativeNavigationItem } from "@plane/types";
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 import { InitiativesDetailsHeader } from "@/plane-web/components/initiatives/header/root";
 
 const ProjectDetailLayout = ({ children }: { children: ReactNode }) => (

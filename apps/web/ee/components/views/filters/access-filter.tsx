@@ -6,7 +6,7 @@ import { EViewAccess } from "@plane/types";
 // plane imports
 import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 
 type Props = {
   appliedFilters: EViewAccess[] | undefined;

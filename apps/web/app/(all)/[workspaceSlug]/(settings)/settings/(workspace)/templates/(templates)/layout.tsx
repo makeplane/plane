@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 
 type TTemplatesLayout = {
   children: ReactNode;

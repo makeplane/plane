@@ -5,8 +5,13 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { CustomSelect, Loader, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { WorkspaceLogo } from "@/components/workspace";
-import { useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+// components
+import { WorkspaceLogo } from "@/components/workspace/logo";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { TFocus } from "@/plane-web/types";
 
 type TProps = {

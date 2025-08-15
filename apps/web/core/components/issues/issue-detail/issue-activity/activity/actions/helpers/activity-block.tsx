@@ -8,12 +8,13 @@ import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 import { cn, renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
-import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications/use-workspace-notifications";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-import { IssueCreatorDisplay } from "@/plane-web/components/issues";
+// plane web imports
+import { IssueCreatorDisplay } from "@/plane-web/components/issues/issue-details/issue-creator";
+// local imports
 import { IssueUser } from "../";
-// helpers
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;

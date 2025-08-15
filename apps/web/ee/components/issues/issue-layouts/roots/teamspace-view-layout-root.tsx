@@ -7,10 +7,10 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common";
-import { IssuePeekOverview } from "@/components/issues";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // plane web components

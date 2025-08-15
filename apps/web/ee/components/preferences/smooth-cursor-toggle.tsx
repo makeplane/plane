@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
 import { PreferencesSection } from "@/components/preferences/section";
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 export const SmoothCursorToggle = observer(
   (props: {

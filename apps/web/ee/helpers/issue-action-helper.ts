@@ -14,7 +14,7 @@ import {
   TLoader,
 } from "@plane/types";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssueActions } from "@/hooks/use-issues-actions";
 
 export const useTeamIssueActions: () => IssueActions = () => {

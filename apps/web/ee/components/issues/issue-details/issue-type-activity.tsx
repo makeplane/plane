@@ -5,20 +5,22 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ArrowRightLeft } from "lucide-react";
+// plane imports
+import { cn } from "@plane/utils";
 // ce imports
-import { IssueTypeActivity as BaseIssueTypeActivity, TIssueTypeActivity } from "@/ce/components/issues";
+import {
+  IssueTypeActivity as BaseIssueTypeActivity,
+  TIssueTypeActivity,
+} from "@/ce/components/issues/issue-details/issue-type-activity";
 // components
 import {
   IssueActivityBlockComponent,
   IssueLink,
 } from "@/components/issues/issue-detail/issue-activity/activity/actions";
-// helpers
-import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
-// plane web components
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
-// plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypeDetail = {

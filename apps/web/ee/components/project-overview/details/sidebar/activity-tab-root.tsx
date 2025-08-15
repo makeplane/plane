@@ -8,10 +8,10 @@ import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Loader } from "@plane/ui";
 // components
-import { ActivityItem } from "@/components/common";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivityItem } from "@/components/common/activity/activity-item";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // services

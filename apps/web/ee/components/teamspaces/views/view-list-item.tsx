@@ -7,7 +7,7 @@ import { Layers } from "lucide-react";
 // types
 import { TTeamspaceView } from "@plane/types";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

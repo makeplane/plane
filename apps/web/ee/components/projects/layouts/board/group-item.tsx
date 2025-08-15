@@ -7,7 +7,9 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useMember, useProject, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectBoardGroupItemHeader, ProjectBoardList } from "@/plane-web/components/projects/layouts/board";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";

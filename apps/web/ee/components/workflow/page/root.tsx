@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // components
 import { ProjectStateLoader } from "@/components/project-states";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { WorkflowStateList } from "./workflow-state-list";
 

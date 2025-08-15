@@ -8,9 +8,11 @@ import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, CYCLE_TRAC
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { CyclesViewHeader } from "@/components/cycles";
+import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 // hooks
-import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";

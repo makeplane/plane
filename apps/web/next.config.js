@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-require("@dotenvx/dotenvx").config({ path: ".env" });
+// require("@dotenvx/dotenvx").config({ path: ".env" });
 
 const nextConfig = {
   trailingSlash: true,

@@ -4,7 +4,7 @@ import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 export const UserAvatarName: FC<{ userId: string }> = observer(({ userId }) => {
   const { t } = useTranslation();

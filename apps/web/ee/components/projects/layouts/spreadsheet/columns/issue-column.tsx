@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { SpreadsheetStoreType } from "@/components/issues/issue-layouts/spreadsheet/base-spreadsheet-root";
 import { cn } from "@plane/utils";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TProject } from "@/plane-web/types/projects";

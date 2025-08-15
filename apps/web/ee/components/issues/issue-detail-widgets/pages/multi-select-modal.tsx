@@ -26,7 +26,7 @@ import {
 import { getPageName, getTabIndex } from "@plane/utils";
 import { IssueIdentifier } from "@/ce/components/issues/issue-details/issue-identifier";
 
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";

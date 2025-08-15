@@ -12,7 +12,7 @@ import { IProjectView, TPublishViewSettings } from "@plane/types";
 import { Button, EModalWidth, Loader, ModalCore, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { useProjectView } from "@/hooks/store";
+import { useProjectView } from "@/hooks/store/use-project-view";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 

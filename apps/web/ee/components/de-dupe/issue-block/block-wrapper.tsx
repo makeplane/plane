@@ -9,7 +9,7 @@ import { ControlLink } from "@plane/ui";
 // helpers
 import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type TDeDupeIssueBlockWrapperProps = {
   workspaceSlug: string;

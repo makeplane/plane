@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { PlaneLockup } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
 import { EAuthModes } from "@/helpers/authentication.helper";
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 
 const authContentMap = {
   [EAuthModes.SIGN_IN]: {

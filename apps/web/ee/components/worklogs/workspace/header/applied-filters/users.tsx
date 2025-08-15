@@ -7,7 +7,7 @@ import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { AppliedFilterGroup, AppliedFilterGroupItem } from "@/plane-web/components/worklogs";
 // plane web hooks

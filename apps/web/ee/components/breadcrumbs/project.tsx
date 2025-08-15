@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 // ui
 // components
-import { ProjectBreadcrumb as CEProjectBreadcrumb } from "@/ce/components/breadcrumbs";
+import { ProjectBreadcrumb as CEProjectBreadcrumb } from "@/ce/components/breadcrumbs/project";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local components
 import { WithFeatureFlagHOC } from "../feature-flags";

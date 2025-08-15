@@ -5,7 +5,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { TIssueActivity } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TEpicActivityProps = {
   activityId: string;

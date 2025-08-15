@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CustomerSidebarListitem } from "./customer-list-item";
 import { CustomerSelect } from "./customer-select";

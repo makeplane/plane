@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // hooks
 import { Tag } from "@plane/ui";
-import { useLabel, useProjectInbox } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

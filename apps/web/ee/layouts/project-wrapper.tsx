@@ -4,9 +4,9 @@ import useSWR from "swr";
 // ce imports
 import { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // layouts
-import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout";
+import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 

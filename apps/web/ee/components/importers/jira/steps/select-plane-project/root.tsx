@@ -11,7 +11,7 @@ import { ExProject } from "@plane/sdk";
 import { IProject } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // plane web components
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks

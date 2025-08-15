@@ -8,7 +8,7 @@ import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS 
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks

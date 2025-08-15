@@ -17,17 +17,19 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
 // components
-import { CountChip } from "@/components/common";
+import { CountChip } from "@/components/common/count-chip";
 // constants
-import HeaderFilters from "@/components/issues/filters";
+import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
-import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const AdvancedIssuesHeader = observer(() => {
   const { t } = useTranslation();

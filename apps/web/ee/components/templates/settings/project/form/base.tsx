@@ -30,7 +30,7 @@ import {
   TProjectSanitizationResult,
 } from "@plane/utils";
 // root store
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { rootStore } from "@/lib/store-context";
 // plane web imports

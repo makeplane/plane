@@ -5,12 +5,12 @@ import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { DeletePageModal } from "@/components/pages";
+import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -20,7 +20,7 @@ import { EPageStoreType } from "@/plane-web/hooks/store";
 // Import the custom menu hook
 import { usePageActionsMenu } from "@/plane-web/hooks/use-page-actions-menu";
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageActions =
   | "full-screen"

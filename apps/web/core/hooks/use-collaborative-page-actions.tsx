@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
-import { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
+import type { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type CollaborativeAction = {
   execute: (shouldSync?: boolean, recursive?: boolean) => Promise<void>;

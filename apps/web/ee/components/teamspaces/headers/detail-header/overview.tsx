@@ -6,11 +6,9 @@ import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
-import { NameDescriptionUpdateStatus } from "@/components/issues";
-// helpers
-// plane web components
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
+// plane web imports
 import { TeamQuickActions } from "@/plane-web/components/teamspaces/actions";
-// plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TeamOverviewHeaderActionsProps = {

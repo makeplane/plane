@@ -6,7 +6,7 @@ import { TPageEmbedConfig } from "@plane/editor";
 import { TPage } from "@plane/types";
 import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components

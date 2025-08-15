@@ -6,7 +6,7 @@ import { EIssuesStoreType } from "@plane/types";
 // components
 import { Button } from "@plane/ui";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web imports
 import { TeamHeaderFilters } from "@/plane-web/components/teamspaces/issues/filters";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";

@@ -11,10 +11,11 @@ import { EFileAssetType, TUserApplication } from "@plane/types";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
-import { SettingsHeading } from "@/components/settings";
+import { RichTextEditor } from "@/components/editor/rich-text";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useWorkspace, useEditorAsset } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web imports
 import { AppImageUploadModal } from "@/plane-web/components/common/modal";
 import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";

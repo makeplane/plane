@@ -22,7 +22,7 @@ import { CycleArchiveService } from "@/services/cycle_archive.service";
 import { IssueService } from "@/services/issue";
 import { ProjectService } from "@/services/project";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ICycleStore {
   // loaders

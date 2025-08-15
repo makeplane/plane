@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 
 type Props = {
   handleClose: () => void;

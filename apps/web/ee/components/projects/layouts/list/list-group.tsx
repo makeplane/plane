@@ -7,7 +7,8 @@ import { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
 //
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { groupDetails } from "../board/utils";
 import { ProjectBlocksList } from "./blocks-list";

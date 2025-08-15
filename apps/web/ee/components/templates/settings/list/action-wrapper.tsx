@@ -14,8 +14,8 @@ import { EFileAssetType, EIssuesStoreType, ETemplateType, TPage } from "@plane/t
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { extractPageFormData } from "@plane/utils";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues";
-import { CreateProjectModal } from "@/components/project";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";

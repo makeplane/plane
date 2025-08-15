@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@plane/utils";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
-import { CycleDetailsSidebar } from "./";
+import { CycleDetailsSidebar } from "./analytics-sidebar";
 
 type Props = {
   projectId?: string;

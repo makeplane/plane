@@ -10,11 +10,13 @@ import { EProjectFeatureKey, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@pla
 import { EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Button, Header, Popover, Loader } from "@plane/ui";
 // components
-import { InboxIssueCreateModalRoot } from "@/components/inbox";
+import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks
-import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // local components
 import { useFlag } from "@/plane-web/hooks/store";
 import IntakeTooltip from "../intake-tooltip";

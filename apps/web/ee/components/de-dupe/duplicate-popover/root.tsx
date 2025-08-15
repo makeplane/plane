@@ -12,11 +12,12 @@ import { TDeDupeIssue } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { MultipleSelectGroup } from "@/components/core";
-import { TIssueOperations } from "@/components/issues";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 // hooks
-import { useIssueDetail, useMultipleSelectStore } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 // plane-web
 import { DeDupeIssueButtonLabel } from "@/plane-web/components/de-dupe";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";

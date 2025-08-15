@@ -7,7 +7,7 @@ import { ListLayout } from "@/components/core/list";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // components
-import { PageListBlockRoot } from "./";
+import { PageListBlockRoot } from "./block-root";
 
 const storeType = EPageStoreType.PROJECT;
 

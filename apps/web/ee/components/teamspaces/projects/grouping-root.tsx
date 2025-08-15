@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 // plane web hooks

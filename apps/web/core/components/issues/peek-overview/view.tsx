@@ -1,28 +1,24 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-// types
+// plane imports
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
-import {
-  IssuePeekOverviewHeader,
-  TPeekModes,
-  PeekOverviewIssueDetails,
-  PeekOverviewProperties,
-  TIssueOperations,
-  IssuePeekOverviewLoader,
-  IssuePeekOverviewError,
-  IssueDetailWidgets,
-} from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
-// store hooks
+// plane web hooks
 import { useCustomers } from "@/plane-web/hooks/store";
+// local imports
+import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
+import { IssueDetailWidgets } from "../issue-detail-widgets";
+import { IssuePeekOverviewError } from "./error";
+import { IssuePeekOverviewHeader, TPeekModes } from "./header";
+import { PeekOverviewIssueDetails } from "./issue-detail";
+import { IssuePeekOverviewLoader } from "./loader";
+import { PeekOverviewProperties } from "./properties";
 
 interface IIssueView {
   workspaceSlug: string;

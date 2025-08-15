@@ -4,9 +4,9 @@ import { useTranslation } from "@plane/i18n";
 import { IStateTransition } from "@plane/types";
 import { InfoIcon, Tooltip } from "@plane/ui";
 // components
-import { AppliedMembersFilters } from "@/components/issues";
+import { AppliedMembersFilters } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   stateTransition: IStateTransition;

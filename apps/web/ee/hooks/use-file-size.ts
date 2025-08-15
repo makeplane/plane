@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { MAX_FILE_SIZE, MAX_PRO_FILE_SIZE } from "@plane/constants";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // local hooks
 import { useFlag, useWorkspaceSubscription } from "./store";
 

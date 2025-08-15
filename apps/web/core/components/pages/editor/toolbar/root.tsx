@@ -5,8 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { PageToolbar } from "@/components/pages";
-// helpers
+import { PageToolbar } from "@/components/pages/editor/toolbar";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
@@ -14,7 +13,7 @@ import { PageCollaboratorsList } from "@/plane-web/components/pages/header/colla
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   handleOpenNavigationPane: () => void;

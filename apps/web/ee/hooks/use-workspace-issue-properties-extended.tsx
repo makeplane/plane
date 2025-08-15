@@ -1,6 +1,6 @@
 import useSWR from "swr";
 // store
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 

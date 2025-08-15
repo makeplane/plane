@@ -8,7 +8,7 @@ import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";

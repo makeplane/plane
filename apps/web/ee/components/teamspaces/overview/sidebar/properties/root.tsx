@@ -1,22 +1,21 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import { Briefcase, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
 import { ContrastIcon, LayersIcon } from "@plane/ui";
-// components
-// hooks
 import { cn } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
+// components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { Props } from "@/components/icons/types";
-// plane web hooks
+// hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
-// local components
+// local imports
 import { TeamsPropertiesList } from "./list";
 import { TeamspaceEntitiesLoader } from "./loader";
 

@@ -1,22 +1,19 @@
 "use client";
 
 import { observer } from "mobx-react";
-
-// component
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ChevronLeft, ChevronLeftIcon } from "lucide-react";
+// component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TApplication } from "@plane/types";
-import { Breadcrumbs, setToast, TOAST_TYPE } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { BreadcrumbLink } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { EmailSettingsLoader } from "@/components/ui";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 import { APPLICATION_CATEGORIES_LIST, APPLICATION_DETAILS } from "@/constants/fetch-keys";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
@@ -25,7 +22,7 @@ const ApplicationEditPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { applicationId, workspaceSlug } = useParams();
+  const { applicationId } = useParams();
   const { updateApplication, getApplicationById, fetchApplication, fetchApplicationCategories } = useApplications();
 
   // derived values
@@ -39,7 +36,7 @@ const ApplicationEditPage = observer(() => {
     applicationId ? async () => fetchApplication(applicationId.toString()) : null
   );
 
-  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
+  useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TApplication>): Promise<TApplication | undefined> => {
     try {

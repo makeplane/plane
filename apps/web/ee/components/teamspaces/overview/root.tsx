@@ -8,7 +8,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { TeamsOverviewContent } from "@/plane-web/components/teamspaces/overview";
 // plane web hooks

@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Collapsible } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import {
   CustomerRequestsCollapsibleTitle,

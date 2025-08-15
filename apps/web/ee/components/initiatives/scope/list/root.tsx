@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button, Collapsible, EpicIcon } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { EpicListItem } from "@/plane-web/components/initiatives/details/main/collapsible-section/epics/epic-list-item/root";

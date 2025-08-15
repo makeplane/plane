@@ -10,11 +10,10 @@ import { useTheme } from "next-themes";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 // assets
 import WorkflowsUpgradeDark from "@/public/empty-state/workflows/upgrade-dark.webp";
 import WorkflowsUpgradeLight from "@/public/empty-state/workflows/upgrade-light.webp";
+import { UpgradeEmptyStateButton } from "../../workspace/upgrade-empty-state-button";
 
 export const WorkflowUpgrade: FC = observer(() => {
   // router

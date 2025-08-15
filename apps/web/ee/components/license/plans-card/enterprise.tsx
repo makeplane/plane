@@ -11,7 +11,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
 

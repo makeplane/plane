@@ -7,16 +7,14 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common";
-import {
-  CalendarLayout,
-  IssuePeekOverview,
-  KanBanLayout,
-  ListLayout,
-  ProjectSpreadsheetLayout,
-} from "@/components/issues";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { CalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/project-root";
+import { KanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/project-root";
+import { ListLayout } from "@/components/issues/issue-layouts/list/roots/project-root";
+import { ProjectSpreadsheetLayout } from "@/components/issues/issue-layouts/spreadsheet/roots/project-root";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // plane web components

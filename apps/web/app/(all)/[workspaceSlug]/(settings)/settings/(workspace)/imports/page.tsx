@@ -2,17 +2,19 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ImportersList } from "@/plane-web/components/importers";
-// plane web hooks
 
 const ImportsPage = observer(() => {
   // router

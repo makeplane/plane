@@ -5,8 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ArchiveIcon, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// types
-import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+// plane web imports
+import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/copy-menu-helper";
 
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters

@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 // plane imports
 import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage } from "@plane/types";
-// components
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { PageForm } from "@/components/pages";
+// components
+import { PageForm } from "@/components/pages/modals/page-form";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks

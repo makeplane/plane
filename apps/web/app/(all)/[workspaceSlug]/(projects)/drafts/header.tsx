@@ -9,11 +9,14 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip } from "@/components/common";
-import { CreateUpdateIssueModal } from "@/components/issues";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { CountChip } from "@/components/common/count-chip";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 
 // hooks
-import { useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 
 export const WorkspaceDraftHeader = observer(() => {
   // state

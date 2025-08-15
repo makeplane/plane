@@ -4,9 +4,9 @@ import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane types
 import { TIssue, EIssueLayoutTypes } from "@plane/types";
 // hooks
-import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add/";
+import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add";
 // components
-import { CreateUpdateIssueModal } from "@/components/issues";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // plane web imports
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";

@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { STATE_GROUPS } from "@plane/constants";
 import { StateGroupIcon } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   appliedFilters: string[] | null;

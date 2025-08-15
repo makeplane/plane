@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 // ui
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
 

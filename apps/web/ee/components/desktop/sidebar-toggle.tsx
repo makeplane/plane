@@ -9,7 +9,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 
 export const SidebarToggle = observer(() => {
   // router

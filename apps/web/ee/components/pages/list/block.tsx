@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 // plane imports
 import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { getPageName } from "@plane/utils";

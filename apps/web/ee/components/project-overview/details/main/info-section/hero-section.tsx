@@ -7,11 +7,11 @@ import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
-import { ImagePickerPopover } from "@/components/core";
-// helpers
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { TProject } from "@/plane-web/types";
 

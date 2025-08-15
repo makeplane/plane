@@ -19,16 +19,16 @@ import {
   TActiveAdditionalPropertiesProps,
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
-} from "@/components/issues";
+} from "@/components/issues/issue-modal/context";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web components
-import { ConversionToastActionItems } from "@/plane-web/components/issues";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local components
+import { ConversionToastActionItems } from "../../issues/conversion-toast-action-items";
 
 type TEpicModalProviderProps = {
   children: React.ReactNode;

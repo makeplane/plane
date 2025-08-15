@@ -17,7 +17,7 @@ import { Button, Loader, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 // plane web components
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { epicsPropertiesTrackers } from "@/plane-web/components/epics/trackers";
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 

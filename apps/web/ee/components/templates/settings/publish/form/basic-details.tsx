@@ -8,7 +8,7 @@ import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/type
 import { Input, TextArea } from "@plane/ui";
 // components
 import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // plane web imports
 import {

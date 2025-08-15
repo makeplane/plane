@@ -16,10 +16,11 @@ import {
 } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types/projects";
 

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { EIssueServiceType, TStateAnalytics } from "@plane/types";
 import { InfoIcon, Tooltip } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";

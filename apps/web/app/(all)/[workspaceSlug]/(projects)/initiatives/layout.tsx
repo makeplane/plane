@@ -3,9 +3,10 @@
 import { ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// components
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { PageHead } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";

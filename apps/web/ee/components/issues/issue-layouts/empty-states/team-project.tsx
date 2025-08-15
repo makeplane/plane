@@ -12,10 +12,13 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles, IIssueFilterOptions } from "@plane/types";
 // components
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";

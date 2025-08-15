@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import { getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useDashboards } from "@/plane-web/hooks/store";

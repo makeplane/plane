@@ -9,9 +9,10 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { CommentsWrapper } from "@/components/comments";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // local components

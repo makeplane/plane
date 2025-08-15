@@ -4,9 +4,9 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, ContrastIcon, Header, BetaBadge } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 export const WorkspaceActiveCycleHeader = observer(() => {
   const { t } = useTranslation();

@@ -3,7 +3,11 @@ import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, type TCommentsOperations } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
-import { useEditorAsset, useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useUser } from "@/hooks/store/user";
 
 export const useCommentOperations = (
   workspaceSlug: string | undefined,

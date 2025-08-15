@@ -2,32 +2,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
-import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
-// components
+import type { EditorRefApi } from "@plane/editor";
+import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import {
-  PageEditorToolbarRoot,
-  PageEditorBody,
-  PageVersionsOverlay,
-  PagesVersionEditor,
-  TEditorBodyHandlers,
-  TEditorBodyConfig,
-} from "@/components/pages";
+// components
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-// types
+// plane web import
 import { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
-// plane web hooks
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // services
 import { WorkspacePageVersionService } from "@/plane-web/services/page";
-// plane web import
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
@@ -35,6 +25,10 @@ import {
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PageNavigationPaneRoot,
 } from "../navigation-pane";
+import { PageVersionsOverlay } from "../version";
+import { PagesVersionEditor } from "../version/editor";
+import { PageEditorBody, TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
+import { PageEditorToolbarRoot } from "./toolbar";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;

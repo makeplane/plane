@@ -10,7 +10,7 @@ import { IProject } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // plane web components
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types

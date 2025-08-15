@@ -12,11 +12,13 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { PageListBlockRoot, PageLoader } from "@/components/pages";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { PageListBlockRoot } from "@/components/pages/list";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -20,7 +20,8 @@ import {
 import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
 // plane web imports
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";

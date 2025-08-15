@@ -8,9 +8,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

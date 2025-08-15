@@ -4,8 +4,8 @@ import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // components
-import { CycleListProjectGroupHeader } from "@/components/cycles";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { CycleListProjectGroupHeader } from "@/components/cycles/list/cycle-list-project-group-header";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles/active-cycle";

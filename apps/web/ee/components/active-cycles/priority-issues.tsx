@@ -3,21 +3,19 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
-// plane constants
-// types
+// plane imports
 import { EIssuesStoreType, IActiveCycle } from "@plane/types";
-// ui
 import { Loader, PriorityIcon, Tooltip } from "@plane/ui";
-// components
 import { generateWorkItemLink, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
-import { StateDropdown } from "@/components/dropdowns";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
-// helpers
 // hooks
-import { useIssues, useProject, useProjectState } from "@/hooks/store";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+// plane web imports
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type ActiveCyclePriorityIssuesProps = {
   workspaceSlug: string;

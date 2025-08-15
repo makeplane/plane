@@ -1,9 +1,10 @@
 import { FC } from "react";
 // components
 import { TAdditionalActivityRoot } from "@/ce/components/issues/issue-details/additional-activity-root";
-
-import { CustomerActivity, CustomerRequestActivity } from "@/plane-web/components/issues/issue-details";
+// local imports
 import { WorkItemConvertActivity } from "./convert";
+import { CustomerActivity } from "./customer-activity";
+import { CustomerRequestActivity } from "./customer-request-activity";
 import { EpicActivity } from "./epic-activity-root";
 import { IssueEstimateTimeActivity } from "./estimate-time-activity";
 

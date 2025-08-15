@@ -6,15 +6,16 @@ import { Button, Checkbox, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useMultipleSelectStore } from "@/hooks/store";
+import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
-import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@/plane-web/components/issues";
-import { UpgradeToast } from "@/plane-web/components/workspace";
 import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { UpgradeToast } from "../../workspace/upgrade-toast";
+import { BulkOperationsActionsRoot } from "./actions";
+import { IssueBulkOperationsProperties } from "./properties";
 
 type Props = {
   className?: string;

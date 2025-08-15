@@ -22,10 +22,13 @@ import {
 import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useLabel, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { IssueAdditionalProperties } from "../../issues";
+import { IssueAdditionalProperties } from "../../issues/issue-modal/additional-properties";
 import { EpicDefaultProperties } from "./components";
 
 const defaultValues: Partial<TIssue> = {

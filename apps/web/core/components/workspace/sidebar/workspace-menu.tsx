@@ -5,14 +5,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// Plane imports
+// plane imports
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
-// components
-import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
+// local imports
+import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
+import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // router params

@@ -7,11 +7,15 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { IntegrationsList, IntegrationsEmptyState } from "@/plane-web/components/integrations";
 import { useFlag } from "@/plane-web/hooks/store";

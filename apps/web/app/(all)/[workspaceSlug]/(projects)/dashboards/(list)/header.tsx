@@ -3,7 +3,7 @@ import { LayoutGrid } from "lucide-react";
 // plane ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
 import { DashboardsListSearch } from "@/plane-web/components/dashboards/list/search";
 // plane web hooks

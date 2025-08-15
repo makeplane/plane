@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 import { Button } from "@plane/ui";
 // plane web imports
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { IBaseTemplateStore } from "@/plane-web/store/templates";
 // local imports
 import { TemplateQuickActions } from "./quick-actions";

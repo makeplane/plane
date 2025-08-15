@@ -8,7 +8,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export const SIDEBAR_MENU_ITEMS: {
   key: string;

@@ -10,7 +10,7 @@ import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // types
 // helpers
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectLinks } from "@/plane-web/hooks/store";
 import { TLinkOperationsModal } from "./create-update-link-modal";

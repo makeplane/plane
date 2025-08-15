@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, InitiativeIcon, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

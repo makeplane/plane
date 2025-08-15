@@ -1,5 +1,5 @@
 // components
-import { CyclesListItem } from "@/components/cycles";
+import { CyclesListItem } from "./cycles-list-item";
 
 type Props = {
   cycleIds: string[];

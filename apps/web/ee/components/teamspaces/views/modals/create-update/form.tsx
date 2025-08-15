@@ -19,12 +19,17 @@ import {
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { convertHexEmojiToDecimal, getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { LayoutDropDown } from "@/components/dropdowns/layout";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// helpers
+import {
+  AppliedFiltersList,
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+} from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useLabel, useMember } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   data?: TTeamspaceView | null;

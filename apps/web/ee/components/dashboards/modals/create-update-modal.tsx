@@ -8,10 +8,10 @@ import { TDashboard } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { ProjectDropdown } from "@/components/dropdowns";
+import { Logo } from "@/components/common/logo";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";

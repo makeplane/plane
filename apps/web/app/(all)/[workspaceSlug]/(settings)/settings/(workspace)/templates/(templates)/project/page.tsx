@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal";
+import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdateProjectTemplate } from "@/plane-web/components/templates/settings/project";
 

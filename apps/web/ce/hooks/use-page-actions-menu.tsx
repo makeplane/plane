@@ -1,14 +1,15 @@
-// /ce/hooks/use-page-actions-menu.tsx
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen } from "lucide-react";
+// plane imports
 import { EditorRefApi } from "@plane/editor";
-
-// store types
 import { TContextMenuItem, ArchiveIcon } from "@plane/ui";
-import { TPageActions } from "@/components/pages";
+// components
+import type { TPageActions } from "@/components/pages/dropdowns";
+// hooks
 import { TPageOperations } from "@/hooks/use-page-operations";
-// plane web hooks
+// plane web imports
 import { EPageStoreType } from "@/plane-web/hooks/store";
+// store
 import { TPageInstance } from "@/store/pages/base-page";
 
 export const usePageActionsMenu = (props: {

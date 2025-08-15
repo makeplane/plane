@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // types
 import { TProject } from "@/plane-web/types";
 // local components

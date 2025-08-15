@@ -3,11 +3,11 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { ProjectEpicsLayoutRoot } from "@/plane-web/components/issues";
+import { ProjectEpicsLayoutRoot } from "@/plane-web/components/issues/issue-layouts/epic-layout-root";
 
 const ProjectEpicsPage = observer(() => {
   // router

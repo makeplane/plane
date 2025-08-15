@@ -1,6 +1,6 @@
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { TimeLineTypeContext, ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AddScopeButton } from "../../common/add-scope-button";

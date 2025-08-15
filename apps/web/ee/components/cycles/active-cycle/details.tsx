@@ -6,9 +6,10 @@ import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProg
 import { Loader, Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import ActiveCycleChart from "./cycle-chart/chart";

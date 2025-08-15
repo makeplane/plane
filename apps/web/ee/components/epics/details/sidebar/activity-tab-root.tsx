@@ -9,9 +9,9 @@ import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueActivityComment } from "@plane/types";
 // components
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // local components

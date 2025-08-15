@@ -10,16 +10,18 @@ import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType, TIssue } from "
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { DeleteIssueModal } from "@/components/issues";
+import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 // helpers
 import { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
 import { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useProject, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { useEpicMenuItems } from "./helper";
 

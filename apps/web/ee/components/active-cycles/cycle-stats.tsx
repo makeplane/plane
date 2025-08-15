@@ -20,14 +20,16 @@ import {
   renderFormattedDate,
   renderFormattedDateWithoutYear,
 } from "@plane/utils";
-import { SingleProgressStats } from "@/components/core";
-import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 // helpers
 // hooks
-import { useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

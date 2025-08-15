@@ -7,14 +7,14 @@ import { EIssueServiceType, EIssuesStoreType, TIssue, TSubIssueOperations } from
 import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
+import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Link from "next/link";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TIssueUser = {
   activityId: string;

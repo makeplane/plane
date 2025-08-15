@@ -6,7 +6,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks

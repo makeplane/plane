@@ -3,15 +3,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { SidebarHamburgerToggle } from "@/components/core";
-import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+// local imports
 import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
+import { NotificationSidebarHeaderOptions } from "./options";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;

@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TPageNavigationTabs } from "@plane/types";
 // components
-import { ProjectPagesListHeaderRoot, ProjectPagesListMainContent } from "@/components/pages";
+import { ProjectPagesListHeaderRoot } from "@/components/pages/header";
+import { ProjectPagesListMainContent } from "@/components/pages/pages-list-main-content";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 

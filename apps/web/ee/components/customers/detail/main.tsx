@@ -9,7 +9,7 @@ import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { DescriptionInput, MainWrapper, TitleInput } from "@/plane-web/components/common";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";

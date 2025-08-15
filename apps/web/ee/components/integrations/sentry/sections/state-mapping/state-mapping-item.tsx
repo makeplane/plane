@@ -3,7 +3,7 @@ import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { TSentryStateMapping } from "@plane/etl/sentry";
 import { Logo, StateGroupIcon } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 interface StateMappingItemProps {
   mapping: TSentryStateMapping;

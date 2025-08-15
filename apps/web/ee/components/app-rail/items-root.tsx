@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { AppSidebarItem, AppSidebarItemData } from "@/components/sidebar";
+import { AppSidebarItem, AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { withDockItems } from "./app-rail-hoc";
 
 type Props = {

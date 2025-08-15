@@ -17,11 +17,11 @@ import { IImporterService } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
-import { ImportExportSettingsLoader } from "@/components/ui";
+import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // assets
 import GithubLogo from "@/public/services/github.png";
 import JiraLogo from "@/public/services/jira.svg";

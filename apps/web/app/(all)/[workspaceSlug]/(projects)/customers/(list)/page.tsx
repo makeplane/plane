@@ -1,6 +1,8 @@
 "use client";
-import { PageHead } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
+// components
+import { PageHead } from "@/components/core/page-title";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { CustomersListRoot } from "@/plane-web/components/customers/list";
 

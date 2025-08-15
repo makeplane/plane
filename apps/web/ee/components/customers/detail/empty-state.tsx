@@ -5,9 +5,9 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets
 import DetailDark from "@/public/empty-state/customers/detail-dark.svg";

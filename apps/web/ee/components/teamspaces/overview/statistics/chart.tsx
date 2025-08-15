@@ -10,7 +10,8 @@ import { Avatar, Button, Loader, Logo, TreeMapIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useProject } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common";
 import {

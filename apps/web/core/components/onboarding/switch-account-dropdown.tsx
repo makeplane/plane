@@ -7,7 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // components
 import { SwitchAccountModal } from "./switch-account-modal";
 

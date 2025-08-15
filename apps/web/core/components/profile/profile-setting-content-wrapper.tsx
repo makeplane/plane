@@ -2,10 +2,10 @@
 import React, { FC } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// components
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 // plane web components
 import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
-// local components
-import { SidebarHamburgerToggle } from "../core";
 
 type Props = {
   children: React.ReactNode;

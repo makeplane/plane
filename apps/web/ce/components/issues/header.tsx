@@ -17,13 +17,15 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
-import { CountChip } from "@/components/common";
+import { CountChip } from "@/components/common/count-chip";
 // constants
-import HeaderFilters from "@/components/issues/filters";
+import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
-import { useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

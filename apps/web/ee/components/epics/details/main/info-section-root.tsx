@@ -6,10 +6,10 @@ import { observer } from "mobx-react";
 import type { EditorRefApi } from "@plane/editor";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
 import { useEpicOperations } from "../helper";
 import { EpicInfoActionItems } from "./info-section/action-items";

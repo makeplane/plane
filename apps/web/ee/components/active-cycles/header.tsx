@@ -7,7 +7,7 @@ import { Avatar, AvatarGroup, CycleGroupIcon, getButtonStyling, Tooltip } from "
 // helpers
 import { findHowManyDaysLeft, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 export type ActiveCycleHeaderProps = {
   cycle: ICycle;

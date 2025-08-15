@@ -2,19 +2,21 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
-// plane-web components
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+// plane-web imports
 import { EpicsRoot } from "@/plane-web/components/epics";
-// constants
 import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+
 const EpicsSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();

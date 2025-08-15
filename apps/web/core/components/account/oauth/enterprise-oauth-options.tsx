@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // components
 import { OIDCOAuthButton } from "./oidc-button";
 import { SAMLOAuthButton } from "./saml-button";

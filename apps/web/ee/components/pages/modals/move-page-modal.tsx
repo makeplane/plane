@@ -6,15 +6,14 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { cn } from "@plane/utils";
 // component types
 import { TMovePageModalProps } from "@/ce/components/pages";
 // components
-import { Logo } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
-// helpers
-import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

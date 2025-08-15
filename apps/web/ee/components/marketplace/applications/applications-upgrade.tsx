@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
 import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
 

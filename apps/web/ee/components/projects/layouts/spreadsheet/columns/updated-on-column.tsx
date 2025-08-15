@@ -1,8 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
-// helpers
-import { DateRangeDropdown } from "@/components/dropdowns";
+// plane imports
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+// components
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {

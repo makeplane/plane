@@ -5,7 +5,7 @@ import { usePlatformOS } from "@plane/hooks";
 import { Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import { AutomationDetailsSidebarActivityRunHistoryItem } from "./run-history-item";

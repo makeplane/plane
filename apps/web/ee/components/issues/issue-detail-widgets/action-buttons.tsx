@@ -2,8 +2,8 @@ import { FC } from "react";
 import { FileText } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemAdditionalWidgetActionButtonsProps } from "@/ce/components/issues/issue-detail-widgets/action-buttons";
-import { IssueDetailWidgetButton } from "@/components/issues";
+import type { TWorkItemAdditionalWidgetActionButtonsProps } from "@/ce/components/issues/issue-detail-widgets/action-buttons";
+import { IssueDetailWidgetButton } from "@/components/issues/issue-detail-widgets/widget-button";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { PagesActionButton } from "./pages";
 

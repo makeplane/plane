@@ -13,7 +13,7 @@ import { ContentWrapper, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
+import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 const CARDS_LIST = [
   {

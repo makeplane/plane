@@ -5,7 +5,8 @@ import { TIssueGroupByOptions } from "@plane/types";
 import { ApproverIcon, Tooltip, WorkflowIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useProjectState, useUser } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useUser } from "@/hooks/store/user";
 // local imports
 import { WorkFlowEnabledMessage } from "./workflow-enabled-message";
 

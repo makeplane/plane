@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 
 type TConversionToastActionItems = {
   workspaceSlug: string;

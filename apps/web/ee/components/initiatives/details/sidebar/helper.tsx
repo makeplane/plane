@@ -7,7 +7,9 @@ import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@pl
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 // hooks
-import { useEditorAsset, useMember, useUser } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useMember } from "@/hooks/store/use-member"
+import { useUser } from "@/hooks/store/user";
 // plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 

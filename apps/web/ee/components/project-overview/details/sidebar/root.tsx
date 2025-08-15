@@ -6,7 +6,7 @@ import { Activity } from "lucide-react";
 // ui
 import { InfoFillIcon, UpdatesIcon } from "@plane/ui";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
 import { SidebarRoot } from "@/plane-web/components/common";
 // local components

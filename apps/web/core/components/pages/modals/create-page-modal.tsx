@@ -4,13 +4,13 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
-import { PageForm } from "@/components/pages";
 // hooks
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// local imports
+import { PageForm } from "./page-form";
 
 type Props = {
   workspaceSlug: string;

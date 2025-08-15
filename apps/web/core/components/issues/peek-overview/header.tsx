@@ -18,18 +18,22 @@ import {
   setToast,
 } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// components
-import { IssueSubscription, NameDescriptionUpdateStatus, WorkItemDetailQuickActions } from "@/components/issues";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
-// store hooks
-
-import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
 import { ConvertWorkItemAction } from "@/plane-web/components/epics";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+// local imports
+import { IssueSubscription } from "../issue-detail/subscription";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [

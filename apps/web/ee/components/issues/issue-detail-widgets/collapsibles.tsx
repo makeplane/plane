@@ -1,14 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// ce imports
+// plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
+// ce imports
 import { TWorkItemAdditionalWidgetCollapsiblesProps } from "@/ce/components/issues/issue-detail-widgets/collapsibles";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { CustomerRequestsCollapsible } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useCustomers } from "@/plane-web/hooks/store";
+// local imports
 import { PagesCollapsible } from "./pages";
 
 export const WorkItemAdditionalWidgetCollapsibles: FC<TWorkItemAdditionalWidgetCollapsiblesProps> = observer(

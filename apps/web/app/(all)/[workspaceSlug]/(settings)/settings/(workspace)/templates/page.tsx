@@ -8,11 +8,13 @@ import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/c
 // component
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // store hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import {

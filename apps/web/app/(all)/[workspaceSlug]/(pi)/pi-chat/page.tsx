@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@plane/utils";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import AllChats from "@/plane-web/components/pi-chat/list/root";
 
 const PiChatPage = () => (

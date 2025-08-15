@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssuePriorities } from "@plane/types";
 import { PriorityIcon, Tag } from "@plane/ui";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   // hooks

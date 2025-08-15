@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import { TIssue } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // components
 import { IssuePropertyLabels } from "../../properties";
 

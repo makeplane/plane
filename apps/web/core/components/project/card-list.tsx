@@ -5,13 +5,18 @@ import { EUserPermissionsLevel, EUserPermissions, PROJECT_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-import { ProjectCard } from "@/components/project";
-import { ProjectsLoader } from "@/components/ui";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectFilter } from "@/hooks/store/use-project-filter"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { ProjectCard } from "./card";
 
 type TProjectCardListProps = {
   totalProjectIds?: string[];

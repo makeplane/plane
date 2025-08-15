@@ -8,10 +8,11 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { setPromiseToast, UpdatesIcon, ToggleSwitch } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 // store hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useUserPermissions } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web constants

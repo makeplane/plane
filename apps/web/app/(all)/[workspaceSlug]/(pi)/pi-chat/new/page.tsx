@@ -2,8 +2,8 @@
 
 import { observer } from "mobx-react";
 import { cn } from "@plane/utils";
-import { PageHead } from "@/components/core";
-import { useUser } from "@/hooks/store";
+import { PageHead } from "@/components/core/page-title";
+import { useUser } from "@/hooks/store/user/user-user";
 import { NewConversation } from "@/plane-web/components/pi-chat/conversation";
 import { InputBox } from "@/plane-web/components/pi-chat/input";
 

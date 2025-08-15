@@ -9,10 +9,10 @@ import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useUserPermissions } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export type TProjectLevelTemplatesLayout = {
   children: ReactNode;

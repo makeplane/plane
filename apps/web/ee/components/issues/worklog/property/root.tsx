@@ -7,11 +7,10 @@ import { Timer } from "lucide-react";
 // helpers
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
-// plane web components
-import { IssueWorklogPropertyButton } from "@/plane-web/components/issues/worklog";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+import { IssueWorklogPropertyButton } from "./button";
 
 type TIssueWorklogProperty = {
   workspaceSlug: string;

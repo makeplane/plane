@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // plane web types
 import { TProject } from "@/plane-web/types";

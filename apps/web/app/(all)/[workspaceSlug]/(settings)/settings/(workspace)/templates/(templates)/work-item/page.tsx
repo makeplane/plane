@@ -7,7 +7,7 @@ import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal";
+import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdateWorkItemTemplate } from "@/plane-web/components/templates/settings/work-item";
 

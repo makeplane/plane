@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { EIssueServiceType, EWorkItemTypeEntity, TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { TWorkItemModalAdditionalPropertiesProps } from "@/ce/components/issues/issue-modal/modal-additional-properties";
+import type { TWorkItemModalAdditionalPropertiesProps } from "@/ce/components/issues/issue-modal/modal-additional-properties";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // local imports
 import { IssueAdditionalProperties } from "./additional-properties";

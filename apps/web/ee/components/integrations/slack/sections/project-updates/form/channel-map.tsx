@@ -5,7 +5,7 @@ import { ArrowRight, Hash, Briefcase } from "lucide-react";
 
 // Plane components
 import { PlaneLogo } from "@plane/ui";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 
 // Hooks

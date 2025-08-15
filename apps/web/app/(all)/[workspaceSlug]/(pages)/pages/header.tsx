@@ -10,7 +10,7 @@ import githubWhiteImage from "/public/logos/github-white.png";
 import { GITHUB_REDIRECTED_TRACKER_EVENT, PAGE_HEADER_NAVBAR_TRACKER_ELEMENT } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 

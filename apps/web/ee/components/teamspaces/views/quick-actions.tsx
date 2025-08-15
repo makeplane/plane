@@ -10,7 +10,7 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { DeleteTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/delete";

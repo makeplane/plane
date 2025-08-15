@@ -3,18 +3,21 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
-// components
 import { calculateTotalFilters } from "@plane/utils";
+// components
 import { PageHead } from "@/components/core/page-title";
-import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
-// helpers
 // hooks
-import { useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectFilter } from "@/hooks/store/use-project-filter"
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// local imports
+import { ProjectAppliedFiltersList } from "./applied-filters";
+import { ProjectCardList } from "./card-list";
 
-const Root = observer(() => {
+export const ProjectRoot = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -94,5 +97,3 @@ const Root = observer(() => {
     </>
   );
 });
-
-export default Root;

@@ -5,7 +5,7 @@ import { PROJECT_OVERVIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // types
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 import { TAttachmentUploadStatus } from "@/plane-web/store/projects/project-details/attachment.store";

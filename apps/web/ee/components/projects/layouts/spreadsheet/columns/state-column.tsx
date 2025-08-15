@@ -1,7 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { StateDropdown } from "../../../dropdowns";

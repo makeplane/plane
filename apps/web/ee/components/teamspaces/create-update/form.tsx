@@ -9,10 +9,12 @@ import { EFileAssetType, EUserWorkspaceRoles, TTeamspace } from "@plane/types";
 import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
 import { cn, convertHexEmojiToDecimal, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
-import { MemberDropdown } from "@/components/dropdowns";
-import { RichTextEditor } from "@/components/editor";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // store hooks
-import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";

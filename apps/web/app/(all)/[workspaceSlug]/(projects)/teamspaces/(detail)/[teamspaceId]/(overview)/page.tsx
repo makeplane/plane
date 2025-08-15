@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // plane web components
 import { TeamsOverviewRoot } from "@/plane-web/components/teamspaces/overview/root";
 // plane web hooks

@@ -2,8 +2,8 @@ import { FC } from "react";
 import { useParams } from "next/navigation";
 import { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { SidebarItemBase } from "@/components/workspace/sidebar/sidebar-item";
-import { UpgradeBadge } from "@/plane-web/components/workspace";
 import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { UpgradeBadge } from "../upgrade-badge";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;

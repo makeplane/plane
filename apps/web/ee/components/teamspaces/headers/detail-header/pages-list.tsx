@@ -8,8 +8,10 @@ import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 // components
-import { FiltersDropdown } from "@/components/issues";
-import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { PageFiltersSelection } from "@/components/pages/list/filters";
+import { PageOrderByDropdown } from "@/components/pages/list/order-by";
+import { PageSearchInput } from "@/components/pages/list/search-input";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -11,10 +11,11 @@ import { ListItem } from "@/components/core/list";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { IdentifierText } from "@/plane-web/components/issues";
+import { IdentifierText } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components

@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local components
 import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";

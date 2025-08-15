@@ -8,7 +8,9 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { getButtonStyling, getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
-import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

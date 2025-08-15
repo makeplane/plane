@@ -12,7 +12,7 @@ import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 // local imports
 import { CommonOnboardingHeader } from "../common";
 import { TProfileSetupFormValues } from "../profile/root";

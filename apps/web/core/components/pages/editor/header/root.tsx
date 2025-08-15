@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 // plane web components
 import { PageTemplatePicker } from "@/plane-web/components/pages";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageEditorHeaderLogoPicker } from "./logo-picker";
 

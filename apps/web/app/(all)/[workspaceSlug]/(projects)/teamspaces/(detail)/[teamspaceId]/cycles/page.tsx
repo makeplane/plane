@@ -6,7 +6,7 @@ import useSWR from "swr";
 // ui
 import { Tabs, Loader } from "@plane/ui";
 // plane web components
-import { CyclePeekOverview } from "@/components/cycles";
+import { CyclePeekOverview } from "@/components/cycles/cycle-peek-overview";
 import {
   TeamCurrentCyclesRoot,
   TeamUpcomingCyclesRoot,

@@ -4,11 +4,14 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import { PreferencesList } from "@/components/appearance/list";
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper, StartOfWeekPreference } from "@/components/profile";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
+import { StartOfWeekPreference } from "@/components/profile/start-of-week-preference";
+
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();

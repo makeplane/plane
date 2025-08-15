@@ -7,7 +7,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { EIssueServiceType } from "@plane/types";
 import { Tabs } from "@plane/ui";
 // components
-import { RelationActionButton } from "@/components/issues";
+import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
 import { OverviewSection } from "@/plane-web/components/common/layout/main/sections/overview-root";
 // local components

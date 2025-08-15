@@ -6,7 +6,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { PlaneOneIcon, Tooltip } from "@plane/ui";
 import { getSubscriptionName } from "@plane/utils";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";

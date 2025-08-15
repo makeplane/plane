@@ -7,10 +7,11 @@ import { useTranslation } from "@plane/i18n";
 import { Collapsible, setToast, TOAST_TYPE, ApproverIcon, AlertModalCore, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 //
 import { StateTransitionApprovers } from "./state-transition-approvers";
 

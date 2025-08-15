@@ -4,8 +4,8 @@ import { FC } from "react";
 import orderBy from "lodash/orderBy";
 import { TNotification, TNotificationIssueLite } from "@plane/types";
 import { convertToEpoch } from "@plane/utils";
-import { IssueIdentifier } from "@/plane-web/components/issues";
-import { NotificationPreviewActivity } from "@/plane-web/components/workspace-notifications";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { NotificationPreviewActivity } from "./preview-activity";
 export type TNotificationCardPreview = {
   notificationList: TNotification[];
   workspaceId: string;

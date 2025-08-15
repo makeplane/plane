@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // components
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { ApplicationsUpgrade } from "@/plane-web/components/marketplace";
 

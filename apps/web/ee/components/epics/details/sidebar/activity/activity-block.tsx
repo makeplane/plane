@@ -6,7 +6,7 @@ import { LayersIcon } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { getEpicActivityKey, EPIC_UPDATES_HELPER_MAP, TEpicActivityFields } from "./helper";
 
 type TEpicActivityItemProps = {

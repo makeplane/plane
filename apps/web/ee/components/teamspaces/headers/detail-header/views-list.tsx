@@ -6,7 +6,7 @@ import { Button } from "@plane/ui";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web imports
 import { TeamspaceViewListHeader } from "@/plane-web/components/teamspaces/views/filters/list";
 

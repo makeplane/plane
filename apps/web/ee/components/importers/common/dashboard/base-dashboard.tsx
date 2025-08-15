@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { TImportJob, TLogoProps } from "@plane/types";
 import { Button, ModalCore, Tooltip } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";

@@ -5,7 +5,7 @@ import { Avatar, AvatarGroup, LeadIcon, Tooltip } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
 // plane web hooks

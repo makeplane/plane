@@ -11,7 +11,7 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useProjectView } from "@/hooks/store";
+import { useProjectView } from "@/hooks/store/use-project-view";
 
 type Props = {
   data: IProjectView;

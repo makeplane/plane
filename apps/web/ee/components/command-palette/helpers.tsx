@@ -11,7 +11,7 @@ import {
 import { InitiativeIcon, TeamsIcon } from "@plane/ui";
 import { commandGroups as commandGroupsCE, TCommandGroups } from "@/ce/components/command-palette/helpers";
 import { generateWorkItemLink } from "@plane/utils";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export const commandGroups: TCommandGroups = {
   ...commandGroupsCE,

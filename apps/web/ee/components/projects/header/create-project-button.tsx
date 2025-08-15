@@ -7,7 +7,8 @@ import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constant
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 
 export const ProjectCreateButton: FC = observer((props) => {
   const {} = props;

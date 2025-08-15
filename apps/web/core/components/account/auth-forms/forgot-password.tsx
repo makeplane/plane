@@ -18,7 +18,8 @@ import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
 // local components
-import { FormContainer, AuthFormHeader } from "./common";
+import { FormContainer } from "./common/container";
+import { AuthFormHeader } from "./common/header";
 
 type TForgotPasswordFormValues = {
   email: string;

@@ -10,13 +10,15 @@ import { EUserProjectRoles, EViewAccess, TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { ProjectViewsList } from "@/components/views";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
+import { ProjectViewsList } from "@/components/views/views-list";
 // constants
 // helpers
 // hooks
-import { useProject, useProjectView, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectView } from "@/hooks/store/use-project-view"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

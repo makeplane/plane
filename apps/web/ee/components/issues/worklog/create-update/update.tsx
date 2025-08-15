@@ -4,12 +4,11 @@ import { FC, useState } from "react";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { convertMinutesToHoursAndMinutes } from "@plane/utils";
-// plane web components
-import { WorklogFormRoot } from "@/plane-web/components/issues/worklog";
 // plane web hooks
 import { useWorklog } from "@/plane-web/hooks/store";
 // plane web types
 import { TWorklog } from "@/plane-web/types";
+import { WorklogFormRoot } from "./form";
 
 type TWorklogUpdate = {
   workspaceSlug: string;

@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 import type { EditorRefApi } from "@plane/editor";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // services
 import { AIService } from "@/services/ai.service";
 const aiService = new AIService();

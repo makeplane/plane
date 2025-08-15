@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // plane web components
 import { DisplayFilterGroupBy, DisplayFilterSortBy, DisplayFilterSortOrder } from "@/plane-web/components/projects";
 // plane web hooks

@@ -14,12 +14,12 @@ import {
   renderFormattedTime,
 } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { WorklogUpdate } from "@/plane-web/components/issues/worklog";
 // plane web hooks
 import { useWorklog, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+// local imports
+import { WorklogUpdate } from "../create-update";
 
 type TIssueActivityWorklog = {
   workspaceSlug: string;

@@ -1,12 +1,13 @@
 "use client";
 
 import { FC } from "react";
+// plane imports
 import { TNotification } from "@plane/types";
-// helpers
-import { NotificationContent } from "@/components/workspace-notifications";
 import { cn } from "@plane/utils";
 // components
-import { IssueActivityBlock } from "@/plane-web/components/workspace-notifications";
+import { NotificationContent } from "@/components/workspace-notifications/sidebar/notification-card/content";
+// local imports
+import { IssueActivityBlock } from "./acitvity-block";
 
 export type TNotificationPreviewActivity = {
   notification: TNotification;

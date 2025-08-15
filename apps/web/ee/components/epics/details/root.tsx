@@ -7,9 +7,10 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
-import { IssuePeekOverview } from "@/components/issues";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components

@@ -4,7 +4,7 @@ import { FC } from "react";
 // types
 import { TDeDupeIssue } from "@plane/types";
 // components
-import { TIssueOperations } from "@/components/issues";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local components

@@ -7,8 +7,8 @@ import { Button, Popover } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components
-import { WorklogCreate } from "@/plane-web/components/issues/worklog";
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
+import { WorklogCreate } from "../create-update";
 
 type TIssueActivityWorklogCreateButton = {
   workspaceSlug: string;

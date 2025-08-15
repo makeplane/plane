@@ -7,7 +7,8 @@ import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
 import { setToast, TContextMenuItem, TOAST_TYPE, CustomMenu, Logo } from "@plane/ui";
 import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project";
 
 type TProps = {
   issueServiceType: TIssueServiceType;

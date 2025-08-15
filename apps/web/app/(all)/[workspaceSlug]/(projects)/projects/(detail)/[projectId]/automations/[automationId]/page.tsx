@@ -5,10 +5,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
 import { AutomationDetailsMainContentRoot } from "@/plane-web/components/automations/details/main-content/root";
 import { AutomationDetailsSidebarRoot } from "@/plane-web/components/automations/details/sidebar/root";

@@ -14,11 +14,12 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
-import { IssueGanttBlock } from "@/components/issues";
+import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
-import { GanttLayoutLoader } from "@/components/ui";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 // hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useUserPermissions } from "@/hooks/store/user";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart, useTimeLineChartStore } from "@/hooks/use-timeline-chart";

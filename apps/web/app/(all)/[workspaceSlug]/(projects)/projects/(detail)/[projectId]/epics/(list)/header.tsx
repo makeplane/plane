@@ -9,15 +9,16 @@ import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
-import { CountChip } from "@/components/common";
-import HeaderFilters from "@/components/issues/filters";
+import { CountChip } from "@/components/common/count-chip";
+import { HeaderFilters } from "@/components/issues/filters";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 

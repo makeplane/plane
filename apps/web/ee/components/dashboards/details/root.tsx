@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // local components

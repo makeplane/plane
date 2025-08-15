@@ -9,10 +9,10 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
 import { InitiativeDetailRoot } from "@/plane-web/components/initiatives/details/root";

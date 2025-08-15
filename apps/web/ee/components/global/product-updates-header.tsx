@@ -6,7 +6,7 @@ import { Button, setToast, TOAST_TYPE, PlaneLogo } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // services

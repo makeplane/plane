@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
 // components
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ApplicationPublishModal, ApplicationTileMenuItem } from "@/plane-web/components/marketplace";
 // constants
 // hooks

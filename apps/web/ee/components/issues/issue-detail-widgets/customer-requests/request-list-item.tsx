@@ -6,10 +6,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/plane-web/components/customers";
 import { CustomerRequestQuickActions } from "@/plane-web/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";

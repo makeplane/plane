@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Settings } from "lucide-react";
 // components
-import { AppSidebarItem } from "@/components/sidebar";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
 import { UserMenuRoot } from "@/components/workspace/sidebar/user-menu-root";
 import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";

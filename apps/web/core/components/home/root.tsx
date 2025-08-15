@@ -6,11 +6,11 @@ import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { TourRoot } from "@/components/onboarding";
+import { TourRoot } from "@/components/onboarding/tour";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile, useUser } from "@/hooks/store";
+import { useUserProfile, useUser } from "@/hooks/store/user";
 import { useHome } from "@/hooks/store/use-home";
 // plane web components
 import { HomePeekOverviewsRoot } from "@/plane-web/components/home";

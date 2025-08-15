@@ -5,11 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
-import {
-  EIssueFilterType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EUserPermissionsLevel,
-} from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -26,10 +22,20 @@ import {
 import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
 // components
 import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
-import { BreadcrumbLink, Logo } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { Logo } from "@/components/common/logo";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useCommandPalette, useIssues, useLabel, useMember, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";

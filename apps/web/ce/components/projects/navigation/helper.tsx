@@ -1,7 +1,9 @@
 import { FileText, Layers } from "lucide-react";
+// plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { ContrastIcon, DiceIcon, Intake, LayersIcon } from "@plane/ui";
-import { TNavigationItem } from "@/components/workspace";
+// components
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
 export const getProjectFeatureNavigation = (
   workspaceSlug: string,

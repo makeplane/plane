@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
-// plane web components
-import { IssueActivityBlockComponent } from "@/plane-web/components/issues";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { getWorkItemCustomPropertyActivityMessage } from "@/plane-web/helpers/work-item-custom-property-activity";
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
-// plane types
+// local imports
+import { IssueActivityBlockComponent } from "./common";
 
 type TIssueAdditionalPropertiesActivity = {
   activityId: string;

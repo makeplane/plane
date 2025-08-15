@@ -3,7 +3,7 @@ import { useParams, usePathname } from "next/navigation";
 // icons
 import { ChevronDown } from "lucide-react";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { ProjectScopeDropdown } from "./dropdowns";
 import { ProjectAttributesDropdown, ProjectDisplayFiltersDropdown, ProjectLayoutSelection } from "./header";

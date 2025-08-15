@@ -25,11 +25,11 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
-// constants
-// helpers
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [

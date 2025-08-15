@@ -3,15 +3,15 @@ import { observer } from "mobx-react";
 // plane imports
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common";
-import { MultipleSelectGroup } from "@/components/core";
-// plane web components
-// plane web hooks
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
+// plane web imports
 import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/project/spreadsheet";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // types
-import { TProject } from "@/plane-web/types/projects";
-import { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TProject } from "@/plane-web/types/projects";
+import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+// local components
 import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {

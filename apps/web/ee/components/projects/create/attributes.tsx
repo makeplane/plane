@@ -4,11 +4,13 @@ import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-// components
-import { DateRangeDropdown, MemberDropdown, PriorityDropdown } from "@/components/dropdowns";
-import { ProjectNetworkIcon } from "@/components/project";
-// helpers
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
+// components
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
+// helpers
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";

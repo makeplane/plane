@@ -9,7 +9,8 @@ import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

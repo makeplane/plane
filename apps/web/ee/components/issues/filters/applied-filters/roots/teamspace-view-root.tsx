@@ -10,11 +10,13 @@ import { EIssueFilterType, EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENT
 import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
-import { AppliedFiltersList } from "@/components/issues";
+import { AppliedFiltersList } from "@/components/issues/issue-layouts/filters";
 import { getAreFiltersEqual } from "@/components/issues/issue-layouts/utils";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // hooks
-import { useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";

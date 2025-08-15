@@ -11,7 +11,7 @@ import { cn } from "@plane/utils";
 import { StateItemTitle } from "@/components/project-states/state-item-title";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { StateItemContent } from "./state-item-content";
 import { StateTransitionCount } from "./state-transition-count";

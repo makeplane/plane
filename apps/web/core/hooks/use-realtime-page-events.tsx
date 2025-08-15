@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
+// plane imports
 import { EventToPayloadMap } from "@plane/editor";
 import { IUserLite, TCollaborator } from "@plane/types";
 import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { TEditorBodyHandlers } from "@/components/pages";
+import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store

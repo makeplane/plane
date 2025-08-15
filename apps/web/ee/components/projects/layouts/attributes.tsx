@@ -8,9 +8,11 @@ import { EUserProjectRoles, IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUserPermissions } from "@/hooks/store/user";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 import { PriorityDropdown, StateDropdown } from "../dropdowns";

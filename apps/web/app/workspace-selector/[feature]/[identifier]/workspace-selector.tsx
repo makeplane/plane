@@ -7,7 +7,7 @@ import { EUserPermissions, IWorkspace } from "@plane/types";
 import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
 // local imports
@@ -50,7 +50,7 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { loader, workspaces, getWorkspaceBySlug } = useWorkspace();
+  const { loader, workspaces } = useWorkspace();
   // derived values
   const currentUserAdminWorkspaces = Object.values(workspaces ?? {})?.filter((w) => w.role === EUserPermissions.ADMIN);
   const isSubmissionButtonDisabled = isSubmitting || loader || !selectedWorkspaceSlug;

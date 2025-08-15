@@ -5,13 +5,14 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { cn } from "@plane/utils";
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { ModuleLayoutRoot } from "@/components/issues";
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { ModuleLayoutRoot } from "@/components/issues/issue-layouts/roots/module-layout-root";
 import { ModuleAnalyticsSidebar } from "@/components/modules";
 // helpers
 // hooks
-import { useModule, useProject } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module"
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets

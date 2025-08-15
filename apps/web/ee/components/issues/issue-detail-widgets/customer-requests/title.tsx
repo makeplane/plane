@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { CustomerRequestActionButton } from "@/plane-web/components/issues/issue-detail-widgets";
 

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectLayouts, TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";

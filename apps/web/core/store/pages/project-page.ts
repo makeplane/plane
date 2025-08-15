@@ -7,12 +7,12 @@ import { TPage } from "@plane/types";
 // utils
 import { getPageName } from "@plane/utils";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 // store
-import { BasePage, TPageInstance } from "./base-page";
+import { BasePage, type TPageInstance } from "./base-page";
 
 export type TProjectPage = TPageInstance;
 

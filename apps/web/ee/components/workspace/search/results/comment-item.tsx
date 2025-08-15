@@ -1,8 +1,8 @@
 import { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { getFileURL, sanitizeHTML } from "@plane/utils";
-import { useMember } from "@/hooks/store";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { useMember } from "@/hooks/store/use-member";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export const CommentItem = ({ comment }: { comment: IWorkspaceCommentEnhancedSearchResult }) => {
   const { getUserDetails } = useMember();

@@ -9,12 +9,13 @@ import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPageName } from "@plane/utils";
-import { PageAccessIcon, SwitcherIcon, SwitcherLabel } from "@/components/common";
+import { PageAccessIcon } from "@/components/common/page-access-icon";
+import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";

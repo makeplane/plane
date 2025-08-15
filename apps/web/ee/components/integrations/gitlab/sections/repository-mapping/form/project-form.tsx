@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { Briefcase } from "lucide-react";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks

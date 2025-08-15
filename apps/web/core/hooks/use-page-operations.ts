@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 // constants
 import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useLocalStorage } from "@plane/hooks";
 import { EPageAccess } from "@plane/types";
 // ui
@@ -12,7 +12,7 @@ import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageOperations = {
   toggleLock: ({ recursive }: { recursive?: boolean }) => void;

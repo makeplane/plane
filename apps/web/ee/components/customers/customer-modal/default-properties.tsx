@@ -10,8 +10,9 @@ import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // utils
 import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { RichTextEditor } from "@/components/editor/rich-text";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services

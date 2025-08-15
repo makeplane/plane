@@ -7,7 +7,7 @@ import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
 // hooks
-import { useEstimatePoint } from "@/hooks/store";
+import { useEstimatePoint } from "@/hooks/store/estimates";
 // plane web constants
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
 

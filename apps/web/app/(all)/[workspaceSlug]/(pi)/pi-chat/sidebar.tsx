@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // hooks
-import { AppSidebarToggleButton, ResizableSidebar } from "@/components/sidebar";
-import { useAppTheme } from "@/hooks/store";
+import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 import { PiSidebar } from "@/plane-web/components/pi-chat";
 

@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 // plane ui
 import { Avatar } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type TFilterUser = {
   filterTitle: string;

@@ -1,8 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { PageHead } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
+import { PageHead } from "@/components/core/page-title";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
 import { InitiativesPageRoot } from "@/plane-web/components/initiatives/layout/page";
 
 const InitiativesPage = observer(() => {

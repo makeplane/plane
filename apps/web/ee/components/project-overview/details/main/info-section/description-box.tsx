@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { TProject } from "@/plane-web/types";
 import { Actions } from "./actions";
 import { ProjectDescriptionInput } from "./description-input";

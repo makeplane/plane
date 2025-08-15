@@ -8,12 +8,6 @@ export * from "./forgot-password-popover";
 export * from "./password";
 export * from "./unique-code";
 
-export * from "./common";
 export * from "./forgot-password";
 export * from "./reset-password";
 export * from "./set-password";
-
-
-export * from "./common";
-export * from "./forgot-password";
-export * from "./reset-password";

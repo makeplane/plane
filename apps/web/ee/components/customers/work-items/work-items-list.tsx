@@ -6,10 +6,10 @@ import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { EUserWorkspaceRoles, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-import { ExistingIssuesListModal } from "@/components/core";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { CustomerWorkItem, WorkItemEmptyState } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 

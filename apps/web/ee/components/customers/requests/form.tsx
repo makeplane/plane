@@ -10,10 +10,11 @@ import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesS
 import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
-import { RichTextEditor } from "@/components/editor";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // plane web services

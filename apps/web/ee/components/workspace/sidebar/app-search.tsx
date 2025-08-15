@@ -7,7 +7,7 @@ import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/ap
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 

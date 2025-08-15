@@ -8,7 +8,7 @@ import type { IIssueLabel } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 

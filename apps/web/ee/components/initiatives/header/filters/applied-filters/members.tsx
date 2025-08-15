@@ -7,7 +7,8 @@ import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   handleRemove: (val: string) => void;

@@ -6,8 +6,10 @@ import { useSearchParams } from "next/navigation";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { PageHead } from "@/components/core";
-import { SettingsHeading } from "@/components/settings";
+// components
+import { PageHead } from "@/components/core/page-title";
+import { SettingsHeading } from "@/components/settings/heading";
+// plane web components
 import { UserConnectionsView } from "@/plane-web/components/profile/user-connections-view";
 
 export default function ProfileNotificationPage() {
@@ -28,7 +30,7 @@ export default function ProfileNotificationPage() {
         type: TOAST_TYPE.ERROR,
       });
     }
-  }, [errorCode]);
+  }, [errorCode, t]);
 
   return (
     <>

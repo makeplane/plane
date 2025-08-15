@@ -7,7 +7,7 @@ import { Loader as Spinner } from "lucide-react";
 // components
 import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS } from "@plane/constants";
 import { CommentsWrapper } from "@/components/comments";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web imports
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";

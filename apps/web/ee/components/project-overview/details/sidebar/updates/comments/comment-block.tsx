@@ -3,7 +3,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { TProjectUpdatesComment } from "@/plane-web/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";

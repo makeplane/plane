@@ -1,13 +1,16 @@
 import { FC, useMemo } from "react";
 import capitalize from "lodash/capitalize";
 import { Check, ChevronDown } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TEstimateSystemKeys } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
+// plane web imports
 import { isEstimateSystemEnabled } from "@/plane-web/components/estimates/helper";
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
+
 type TProps = {
   estimateType?: TEstimateSystemKeys;
   onChange?: (estimateType: TEstimateSystemKeys) => void;

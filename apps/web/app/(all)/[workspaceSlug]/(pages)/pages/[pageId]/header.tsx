@@ -10,8 +10,8 @@ import { TPage } from "@plane/types";
 // ui
 import { CustomMenu, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { PageBreadcrumbItem } from "@/components/pages";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // plane web components

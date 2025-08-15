@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon, BriefcaseIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomMenu, EpicIcon, setToast, TOAST_TYPE } from "@plane/ui";
-import { ProjectMultiSelectModal } from "@/components/project";
-import { useProject } from "@/hooks/store";
+// components
+import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// local imports
 import { WorkspaceEpicsListModal } from "../details/main/collapsible-section/epics/workspace-epic-modal";
 
 type Props = {

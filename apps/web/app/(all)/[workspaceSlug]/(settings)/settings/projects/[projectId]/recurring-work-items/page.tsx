@@ -8,10 +8,11 @@ import { EUserPermissionsLevel } from "@plane/constants";
 // component
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // store hooks
-import { SettingsHeading } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { CreateRecurringWorkItemsButton } from "@/plane-web/components/recurring-work-items/settings/create-button";

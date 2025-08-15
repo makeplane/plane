@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports

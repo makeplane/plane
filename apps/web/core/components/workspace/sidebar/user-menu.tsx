@@ -7,10 +7,10 @@ import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
 // plane imports
 import { EUserWorkspaceRoles } from "@plane/types";
 import { PiChatLogo, UserActivityIcon } from "@plane/ui";
-// components
-import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
 // hooks
-import { useUserPermissions, useUser } from "@/hooks/store";
+import { useUserPermissions, useUser } from "@/hooks/store/user";
+// local imports
+import { SidebarUserMenuItem } from "./user-menu-item";
 
 export const SidebarUserMenu = observer(() => {
   // navigation

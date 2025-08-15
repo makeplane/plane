@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // components
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TInitiativeFilters } from "@/plane-web/types/initiative";
 import { FilterLead, FilterStartDate, FilterTargetDate } from "./";

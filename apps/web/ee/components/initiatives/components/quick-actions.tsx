@@ -10,7 +10,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // Plane-web
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components

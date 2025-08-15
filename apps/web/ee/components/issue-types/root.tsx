@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane web components
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
 // plane web hooks

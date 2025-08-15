@@ -2,10 +2,10 @@
 
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// components
-import { DateRangeDropdown } from "@/components/dropdowns";
-// helpers
+// plane imports
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+// components
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 

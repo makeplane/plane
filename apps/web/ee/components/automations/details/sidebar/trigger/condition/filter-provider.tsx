@@ -14,7 +14,9 @@ import {
   getWorkItemTypeFilterConfig,
 } from "@plane/utils";
 // store hooks
-import { useLabel, useMember, useProjectState } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";

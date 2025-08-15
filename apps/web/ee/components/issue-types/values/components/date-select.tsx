@@ -10,7 +10,7 @@ import {
 } from "@plane/types";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 
 type TDateValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.DATETIME>>;

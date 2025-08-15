@@ -5,10 +5,11 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
+import { ProjectRoot } from "@/components/project/root";
 // hooks
-import Root from "@/components/project/root";
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { WorkspaceProjectsRoot } from "@/plane-web/components/projects";
 import { useProjectFilter, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -63,7 +64,7 @@ export const ProjectPageRoot = observer(() => {
           />
         </div>
       ) : (
-        <Root />
+        <ProjectRoot />
       )}
     </>
   );

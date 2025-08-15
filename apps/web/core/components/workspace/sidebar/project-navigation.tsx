@@ -11,9 +11,12 @@ import { EUserProjectRoles } from "@plane/types";
 // plane ui
 import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 
 export type TNavigationItem = {
   name: string;

@@ -6,13 +6,16 @@ import Link from "next/link";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-// hooks
-import { SettingsHeading } from "@/components/settings";
-import { EmailSettingsLoader } from "@/components/ui";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsHeading } from "@/components/settings/heading";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
+// constants
 import { APPLICATIONS_LIST } from "@/constants/fetch-keys";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
 import { AppListRoot } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";

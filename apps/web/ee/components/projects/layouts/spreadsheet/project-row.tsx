@@ -12,7 +12,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helper
 import { cn } from "@plane/utils";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components

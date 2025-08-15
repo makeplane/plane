@@ -6,10 +6,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button, setToast, Spinner, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { StateDropdown } from "@/components/dropdowns";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   workspaceSlug: string;

@@ -7,12 +7,14 @@ import { CustomerService } from "@plane/services";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
-import { RichTextEditor } from "@/components/editor";
-// plane web imports
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { RichTextEditor } from "@/components/editor/rich-text";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
 import {
   SourceItem,
   CustomerRequestForm,

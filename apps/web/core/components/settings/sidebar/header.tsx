@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { getUserRole } from "@plane/utils";
 // components
-import { WorkspaceLogo } from "@/components/workspace";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports

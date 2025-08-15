@@ -8,7 +8,10 @@ import { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, TeamsIcon } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
-import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { Logo } from "@/components/common/logo";
+import { PageAccessIcon } from "@/components/common/page-access-icon";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";

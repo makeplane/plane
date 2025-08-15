@@ -10,7 +10,7 @@ import { CircularProgressIndicator } from "@plane/ui";
 // helpers
 import { getProgress } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type TEpicInfoIndicatorItemProps = {

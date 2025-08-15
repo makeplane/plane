@@ -9,11 +9,11 @@ import { useTheme } from "next-themes";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 // assets
 import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
 import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
+// local imports
+import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 export const CustomerUpgrade: FC = observer(() => {
   const { workspaceSlug } = useParams();

@@ -9,11 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components

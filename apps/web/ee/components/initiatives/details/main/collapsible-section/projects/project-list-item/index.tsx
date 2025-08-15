@@ -6,7 +6,8 @@ import { CircularProgressIndicator, Logo } from "@plane/ui";
 import { cn, getProgress } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import Attributes from "@/plane-web/components/projects/layouts/attributes";

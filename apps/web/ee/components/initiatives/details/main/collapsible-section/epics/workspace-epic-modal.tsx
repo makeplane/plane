@@ -16,11 +16,9 @@ import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { getSelectedEpicDetails } from "@/plane-web/components/initiatives/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
+import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/plane-web/services";
 import { EpicSearchModalEmptyState } from "./issue-search-modal-empty-state";
-
-// services
 
 type Props = {
   workspaceSlug: string | undefined;

@@ -14,7 +14,7 @@ import {
 import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, Logo, TeamsIcon } from "@plane/ui";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
+import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { ActorAvatar, CommentItem } from "./comment-item";
 
 export const SearchItems: {

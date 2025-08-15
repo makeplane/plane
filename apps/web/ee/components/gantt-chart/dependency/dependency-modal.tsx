@@ -7,9 +7,9 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -18,7 +18,7 @@ import { EDependencyPosition } from "@/plane-web/constants";
 import { getRelationType } from "@/plane-web/store/timeline/utils";
 import { Relation } from "@/plane-web/types";
 //
-import { IssueIdentifier } from "../../issues/issue-details";
+import { IssueIdentifier } from "../../issues/issue-details/issue-identifier";
 import { useTimeLineRelationOptions } from "../../relations";
 import { DependencyLineSVG } from "./dependency-line-svg";
 

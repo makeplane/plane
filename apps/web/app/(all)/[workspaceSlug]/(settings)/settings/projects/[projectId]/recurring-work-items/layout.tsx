@@ -8,10 +8,11 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { SettingsContentWrapper } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // store hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

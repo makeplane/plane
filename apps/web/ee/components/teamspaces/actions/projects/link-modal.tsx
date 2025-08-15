@@ -9,10 +9,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore, TeamsIcon } from "@plane/ui";
 import { cn, truncateText } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { Logo } from "@/components/common/logo";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

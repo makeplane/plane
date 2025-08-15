@@ -8,12 +8,11 @@ import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } fro
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { ProIcon } from "@/components/common";
-// helper
+// components
+import { ProIcon } from "@/components/common/pro-icon";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {

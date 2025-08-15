@@ -7,12 +7,12 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { TViewFilters } from "@plane/types";
 import { cn } from "@plane/utils";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // helpers
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 

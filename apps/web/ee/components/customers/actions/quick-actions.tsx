@@ -11,7 +11,8 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { DeleteCustomerModal } from "@/plane-web/components/customers/actions";
 

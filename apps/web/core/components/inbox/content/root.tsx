@@ -5,10 +5,13 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 // hooks
-import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
+import { InboxIssueActionsHeader } from "./inbox-issue-header";
+import { InboxIssueMainContent } from "./issue-root";
 
 type TInboxContentRoot = {
   workspaceSlug: string;

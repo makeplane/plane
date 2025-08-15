@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import useSWR from "swr";
 // components
-import { WorkspaceActiveCycleLoader } from "@/components/ui";
+import { WorkspaceActiveCycleLoader } from "@/components/ui/loader/workspace-active-cycle";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 // plane web components

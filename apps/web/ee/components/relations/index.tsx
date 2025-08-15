@@ -4,7 +4,7 @@ import { CircleDot, CopyPlus, XCircle } from "lucide-react";
 import { RelatedIcon } from "@plane/ui";
 import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "@/ce/components/relations";
 // components
-import { TRelationObject } from "@/components/issues";
+import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
 import { useFlag } from "@/plane-web/hooks/store";
 import { TIssueRelationTypes } from "@/plane-web/types";

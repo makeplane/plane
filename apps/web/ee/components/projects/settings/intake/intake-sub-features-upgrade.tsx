@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
 import { ToggleSwitch, Tooltip, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
-import { TProperties } from "@/ce/constants";
-import { useUserPermissions } from "@/hooks/store";
+// ce imports
+import { TProperties } from "@/ce/constants/project";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 
 export type TIntakeFeatureList = {

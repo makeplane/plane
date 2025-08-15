@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { TPageFilterProps } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";
-import { PageAppliedFiltersList } from "@/components/pages";
+import { PageAppliedFiltersList } from "@/components/pages/list/applied-filters/index";
 // helpers
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

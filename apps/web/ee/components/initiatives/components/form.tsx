@@ -6,10 +6,14 @@ import { EFileAssetType } from "@plane/types";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
-import { RichTextEditor } from "@/components/editor";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useMember } from "@/hooks/store/use-member"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 // plane web components

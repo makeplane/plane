@@ -5,7 +5,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PiIcon, PlaneNewIcon, WikiIcon } from "@plane/ui";
-import type { AppSidebarItemData } from "@/components/sidebar";
+import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
 import { isAppRailFeatureEnabled } from "@/plane-web/helpers/app-rail.helper";
 

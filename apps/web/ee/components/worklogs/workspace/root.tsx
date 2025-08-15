@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import {
   WorkspaceWorklogHeaderRoot,
   WorklogsPaginatedTableRoot,

@@ -8,9 +8,9 @@ import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web hooks
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { epicsTrackers } from "../trackers";
 

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions } from "@plane/constants";
 // wrappers
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
 import { PagesAppCommandPalette } from "@/plane-web/components/command-palette";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";

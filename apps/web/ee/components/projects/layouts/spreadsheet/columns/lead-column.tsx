@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {

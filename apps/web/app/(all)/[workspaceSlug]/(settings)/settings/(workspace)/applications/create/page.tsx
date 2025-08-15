@@ -9,13 +9,13 @@ import useSWR from "swr";
 import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TUserApplication } from "@plane/types";
-import { Breadcrumbs, setToast, TOAST_TYPE } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { BreadcrumbLink } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";

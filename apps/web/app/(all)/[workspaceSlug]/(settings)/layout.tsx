@@ -1,9 +1,10 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { ContentWrapper } from "@/components/core";
-import { SettingsHeader } from "@/components/settings";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { SettingsHeader } from "@/components/settings/header";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+// plane web imports
 import { LicenseSeatsBanner } from "@/plane-web/components/license";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 

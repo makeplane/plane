@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import { IssuesHeader as CeIssueHeader } from "@/ce/components/issues";
+import { IssuesHeader as CeIssueHeader } from "@/ce/components/issues/header";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { AdvancedIssuesHeader } from "./advanced-header";
 

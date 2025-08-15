@@ -11,7 +11,8 @@ import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 import { useConnections } from "@/plane-web/hooks/store/integrations/use-connection";
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";

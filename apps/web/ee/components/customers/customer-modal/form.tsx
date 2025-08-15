@@ -10,7 +10,7 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // store
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { CustomerAdditionalProperties, DefaultProperties } from "@/plane-web/components/customers";
 import { getChangedCustomerFields } from "@/plane-web/helpers/customers.helper";

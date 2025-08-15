@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { CustomSearchSelect } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 
 type TWorkspaceWorklogFilterProjects = {

@@ -10,7 +10,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";
 

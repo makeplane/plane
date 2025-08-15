@@ -2,15 +2,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
-// ui
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web components
-import { useUserPermissions } from "@/hooks/store";
-import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
-// plane web constants
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { BulkDeleteConfirmationModal } from "../modals/bulk-delete-modal";
 
 type Props = {
   handleClearSelection: () => void;

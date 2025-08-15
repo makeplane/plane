@@ -9,7 +9,7 @@ import { CustomersIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CustomerPreview } from "./preview";
 

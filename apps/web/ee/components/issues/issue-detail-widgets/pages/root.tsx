@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
 import { PagesCollapsibleContent } from "./content";
 import { PagesCollapsibleTitle } from "./title";

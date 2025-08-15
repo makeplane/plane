@@ -8,9 +8,10 @@ import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, CustomersIcon, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CustomerQuickActions } from "@/plane-web/components/customers/actions";

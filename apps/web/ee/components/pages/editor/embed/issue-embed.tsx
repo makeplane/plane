@@ -10,9 +10,10 @@ import { Loader } from "@plane/ui";
 // components
 import { IssueProperties } from "@/components/issues/issue-layouts/properties/all-properties";
 // hooks
-import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type Props = {
   issueId: string;

@@ -9,7 +9,7 @@ import { TTeamspaceActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
-import { ActivitySortRoot } from "@/components/issues";
+import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web constants
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";

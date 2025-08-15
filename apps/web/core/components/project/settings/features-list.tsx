@@ -2,18 +2,21 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
-// hooks
-import { SettingsHeading } from "@/components/settings";
+// components
+import { SettingsHeading } from "@/components/settings/heading";
+// helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useUser } from "@/hooks/store";
-import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 // plane web imports
-// plane web components
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

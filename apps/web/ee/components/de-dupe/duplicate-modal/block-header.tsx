@@ -3,9 +3,9 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { TDeDupeIssue } from "@plane/types";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // types
 
 type DuplicateIssueReadOnlyHeaderRoot = {

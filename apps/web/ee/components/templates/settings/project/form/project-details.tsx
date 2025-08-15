@@ -5,9 +5,10 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { TProjectTemplateForm } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Input, Logo, TextArea } from "@plane/ui";
-// hooks
 import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
-import { ImagePickerPopover } from "@/components/core";
+// components
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+// plane web components
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 
 export const ProjectDetails = observer(() => {

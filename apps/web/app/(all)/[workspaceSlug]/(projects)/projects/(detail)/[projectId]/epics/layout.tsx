@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
 import { EpicsEmptyState } from "@/plane-web/components/epics";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

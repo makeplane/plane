@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { Globe2, Lock } from "lucide-react";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web hooks
 import { PROJECT_ACCESS } from "@/plane-web/constants/project";
 import { TProjectAccess } from "@/plane-web/types/workspace-project-filters";

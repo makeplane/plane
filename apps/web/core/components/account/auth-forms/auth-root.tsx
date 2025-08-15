@@ -11,8 +11,6 @@ import GithubLightLogo from "/public/logos/github-black.png";
 import GithubDarkLogo from "/public/logos/github-dark.svg";
 import GitlabLogo from "/public/logos/gitlab-logo.svg";
 import GoogleLogo from "/public/logos/google-logo.svg";
-// components
-import { AuthHeader, AuthBanner, TermsAndConditions } from "@/components/account";
 // helpers
 import {
   EAuthModes,
@@ -23,8 +21,11 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
-// services
+import { useInstance } from "@/hooks/store/use-instance";
+// local imports
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
 type TAuthRoot = {

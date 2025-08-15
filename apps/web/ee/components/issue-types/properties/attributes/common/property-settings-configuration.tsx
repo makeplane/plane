@@ -1,11 +1,10 @@
 import { get, set } from "lodash";
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
 import { cn } from "@plane/utils";
-import { RadioInput } from "@/components/estimates";
-// helpers
-// plane imports
+// components
+import { RadioInput } from "@/components/estimates/radio-select";
 
 type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {
   settings: TIssuePropertySettingsMap[T] | undefined;

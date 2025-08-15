@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";

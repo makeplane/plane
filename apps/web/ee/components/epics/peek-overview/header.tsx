@@ -16,19 +16,21 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-// helpers
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
-// store hooks
-import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
+import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-
-// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { CreateAutomationButton } from "./create-button";

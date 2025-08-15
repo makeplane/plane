@@ -12,7 +12,7 @@ import { cn } from "@plane/utils";
 // ce imports
 import { TProjectTeamspaceList } from "@/ce/components/projects/teamspaces";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports

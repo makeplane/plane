@@ -20,7 +20,9 @@ import {
 } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useProject, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

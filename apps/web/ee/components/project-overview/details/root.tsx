@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { LayoutRoot } from "../../common";
 import { ProjectOverviewMainContentRoot } from "./main/root";

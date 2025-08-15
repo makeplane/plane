@@ -10,9 +10,10 @@ import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 import { TProject } from "@/plane-web/types";

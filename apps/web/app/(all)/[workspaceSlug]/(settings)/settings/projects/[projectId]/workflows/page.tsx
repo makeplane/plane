@@ -9,12 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hook
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkflowSettingsQuickActions } from "@/plane-web/components/workflow/page/quick-actions";

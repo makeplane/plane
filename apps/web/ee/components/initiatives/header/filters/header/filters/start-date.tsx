@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 
 // components
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-import { DateFilterModal } from "@/components/core";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 
 type Props = {
   appliedFilters: string[] | null;

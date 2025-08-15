@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { EIssueServiceType, EIssuesStoreType, ISearchIssueResponse, TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useIssueTypes, useEpicAnalytics } from "@/plane-web/hooks/store";
 

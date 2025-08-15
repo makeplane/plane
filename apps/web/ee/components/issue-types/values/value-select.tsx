@@ -15,7 +15,7 @@ import {
 import { Loader, Tooltip } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
 import {
   TextValueInput,

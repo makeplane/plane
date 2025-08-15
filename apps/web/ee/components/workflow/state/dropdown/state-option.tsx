@@ -9,7 +9,7 @@ import { cn } from "@plane/utils";
 // CE
 import { StateOption as CEStateOption, TStateOptionProps } from "@/ce/components/workflow";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
 

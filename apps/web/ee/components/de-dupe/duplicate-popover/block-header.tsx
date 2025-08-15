@@ -5,18 +5,20 @@ import { Trash2 } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import { TDeDupeIssue } from "@plane/types";
-// ui
 import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
-// components
-import { ArchiveIssueModal, DeleteIssueModal, TIssueOperations } from "@/components/issues";
-// helpers
 import { cn } from "@plane/utils";
+// components
+import { ArchiveIssueModal } from "@/components/issues/archive-issue-modal";
+import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type TDeDupeIssueBlockHeaderProps = {
   workspaceSlug: string;

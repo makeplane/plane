@@ -10,7 +10,7 @@ import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFo
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiativeAttachments } from "@/plane-web/hooks/store";
 

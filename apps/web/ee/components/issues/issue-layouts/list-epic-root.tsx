@@ -7,7 +7,7 @@ import { EUserProjectRoles } from "@plane/types";
 // components
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
 

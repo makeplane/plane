@@ -7,7 +7,9 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user"
+import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
 import { WikiCreatePageModal } from "@/plane-web/components/pages";

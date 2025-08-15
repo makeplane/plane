@@ -2,7 +2,7 @@ import { useCallback } from "react";
 // plane types
 import { TSearchEntityRequestPayload, TUserSearchResponse } from "@plane/types";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type TArgs = {
   memberIds: string[];

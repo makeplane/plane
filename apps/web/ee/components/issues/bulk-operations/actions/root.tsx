@@ -1,6 +1,8 @@
 import { observer } from "mobx-react";
-// plane web components
-import { BulkArchiveIssues, BulkDeleteIssues, BulkSubscribeIssues } from "@/plane-web/components/issues/";
+// local imports
+import { BulkArchiveIssues } from "./archive";
+import { BulkDeleteIssues } from "./delete";
+import { BulkSubscribeIssues } from "./subscribe";
 
 type Props = {
   handleClearSelection: () => void;

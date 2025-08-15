@@ -7,7 +7,8 @@ import { EUpdateStatus, EUserProjectRoles } from "@plane/types";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import Progress from "@/plane-web/components/updates/progress";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";

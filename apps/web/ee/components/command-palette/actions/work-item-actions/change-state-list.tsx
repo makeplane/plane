@@ -11,7 +11,7 @@ import {
   ChangeWorkItemStateList as ChangeWorkItemStateListCE,
 } from "@/ce/components/command-palette/actions/work-item-actions";
 // store hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
 

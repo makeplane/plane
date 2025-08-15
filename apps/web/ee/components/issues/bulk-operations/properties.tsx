@@ -13,20 +13,19 @@ import { TBulkIssueProperties } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
-import {
-  CycleDropdown,
-  DateDropdown,
-  EstimateDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  PriorityDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
-// helpers
 // hooks
-import { useLabel, useProject, useProjectEstimates } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
@@ -278,18 +277,16 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 name="cycle_id"
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <>
-                    <CycleDropdown
-                      value={value as string | null}
-                      onChange={onChange}
-                      projectId={projectId.toString()}
-                      buttonVariant="border-with-text"
-                      buttonClassName="text-custom-text-300 py-1 rounded"
-                      disabled={isUpdateDisabled}
-                      placement="top-start"
-                      placeholder="Cycle"
-                    />
-                  </>
+                  <CycleDropdown
+                    value={value as string | null}
+                    onChange={onChange}
+                    projectId={projectId.toString()}
+                    buttonVariant="border-with-text"
+                    buttonClassName="text-custom-text-300 py-1 rounded"
+                    disabled={isUpdateDisabled}
+                    placement="top-start"
+                    placeholder="Cycle"
+                  />
                 )}
               />
             )}
@@ -316,21 +313,19 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 name="module_ids"
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <>
-                    <ModuleDropdown
-                      value={value}
-                      onChange={onChange}
-                      projectId={projectId.toString()}
-                      buttonVariant="border-with-text"
-                      buttonClassName="text-custom-text-300 border-none  px-2 py-1"
-                      buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
-                      disabled={isUpdateDisabled}
-                      placement="top-start"
-                      placeholder="Module"
-                      showCount
-                      multiple
-                    />
-                  </>
+                  <ModuleDropdown
+                    value={value}
+                    onChange={onChange}
+                    projectId={projectId.toString()}
+                    buttonVariant="border-with-text"
+                    buttonClassName="text-custom-text-300 border-none  px-2 py-1"
+                    buttonContainerClassName="border-[0.5px] border-custom-border-300 rounded"
+                    disabled={isUpdateDisabled}
+                    placement="top-start"
+                    placeholder="Module"
+                    showCount
+                    multiple
+                  />
                 )}
               />
             )}

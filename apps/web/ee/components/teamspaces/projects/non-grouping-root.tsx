@@ -1,12 +1,14 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters, TTeamspace } from "@plane/types";
-// components
 import { calculateTotalFilters } from "@plane/utils";
-import { ProjectAppliedFiltersList } from "@/components/project";
+// components
+import { ProjectAppliedFiltersList } from "@/components/project/applied-filters";
 // hooks
-import { useProject, useProjectFilter } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectFilter } from "@/hooks/store/use-project-filter";
+// local imports
 import { TeamspaceProjectBlocksList } from "./block-list";
 
 export type TTeamspaceProjectsWithoutGroupingRootProps = {

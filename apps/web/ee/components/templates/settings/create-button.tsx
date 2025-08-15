@@ -21,7 +21,7 @@ import {
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";

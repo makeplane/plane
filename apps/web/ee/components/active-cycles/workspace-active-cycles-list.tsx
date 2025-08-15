@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 import { Button, ContentWrapper, Loader } from "@plane/ui";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

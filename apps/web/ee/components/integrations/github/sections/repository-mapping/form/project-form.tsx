@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Briefcase } from "lucide-react";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
