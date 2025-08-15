@@ -1,8 +1,9 @@
 "use client";
 
 // components
-import { AuthRoot } from "@/components/account";
-import { PoweredBy } from "@/components/common";
+import { AuthRoot } from "@/components/account/auth-forms";
+import { PoweredBy } from "@/components/common/powered-by";
+// local imports
 import { AuthHeader } from "./header";
 
 export const AuthView = () => (

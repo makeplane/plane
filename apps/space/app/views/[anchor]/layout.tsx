@@ -3,10 +3,11 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner, PoweredBy } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PoweredBy } from "@/components/common/powered-by";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
-import { usePublish, usePublishList } from "@/hooks/store";
+import { usePublish, usePublishList } from "@/hooks/store/publish";
 // Plane web
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
 import { useView } from "@/plane-web/hooks/store";
@@ -18,7 +19,7 @@ type Props = {
   };
 };
 
-const IssuesLayout = observer((props: Props) => {
+const ViewsLayout = observer((props: Props) => {
   const { children, params } = props;
   // params
   const { anchor } = params;
@@ -61,4 +62,4 @@ const IssuesLayout = observer((props: Props) => {
   );
 });
 
-export default IssuesLayout;
+export default ViewsLayout;

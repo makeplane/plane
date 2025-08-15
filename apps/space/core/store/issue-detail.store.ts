@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from "uuid";
 import { SitesFileService, SitesIssueService } from "@plane/services";
 import { EFileAssetType, TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // types
-import { IIssue, IPeekMode, IVote } from "@/types/issue";
+import type { IIssue, IPeekMode, IVote } from "@/types/issue";
 
 export interface IIssueDetailStore {
   loader: boolean;

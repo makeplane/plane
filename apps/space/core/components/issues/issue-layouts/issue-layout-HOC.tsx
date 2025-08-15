@@ -1,6 +1,8 @@
 import { observer } from "mobx-react";
-import { TLoader } from "@plane/types";
-import { LogoSpinner } from "@/components/common";
+// plane imports
+import type { TLoader } from "@plane/types";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
 
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];

@@ -8,10 +8,11 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { SPACE_BASE_PATH } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common";
-import { InstanceFailureView } from "@/components/instance";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { InstanceFailureView } from "@/components/instance/instance-failure-view";
 // hooks
-import { useInstance, useUser } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useUser } from "@/hooks/store/use-user";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";

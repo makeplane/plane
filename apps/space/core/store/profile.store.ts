@@ -4,7 +4,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { UserService } from "@plane/services";
 import { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
