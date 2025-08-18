@@ -1,4 +1,4 @@
-import { useHead } from "@plane/ui";
+import { useEffect } from "react";
 
 type PageHeadTitleProps = {
   title?: string;
@@ -8,7 +8,11 @@ type PageHeadTitleProps = {
 export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
   const { title } = props;
 
-  useHead({ title });
+  useEffect(() => {
+    if (title) {
+      document.title = title ?? "Plane | Simple, extensible, open-source project management tool.";
+    }
+  }, [title]);
 
   return null;
 };
