@@ -37,4 +37,4 @@ export const logger = pinoHttp({
   },
 });
 
-export const manualLogger: Logger = logger.logger;
+export const manualLogger: Logger = logger.logger as unknown as Logger;

@@ -5,7 +5,8 @@
     "rootDir": "src",
     "sourceMap": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "react"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -38,14 +38,17 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint web apps
-        run: yarn check:lint
+        run: pnpm run check:lint
 
       - name: Check format
-        run: yarn check:format
+        run: pnpm run check:format
 
       - name: Build apps
-        run: yarn build
+        run: pnpm run build

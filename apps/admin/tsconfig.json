@@ -14,7 +14,8 @@
       "@/plane-admin/*": ["ce/*"],
       "@/styles/*": ["styles/*"]
     },
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["node", "react"]
   },
   "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

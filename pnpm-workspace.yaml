@@ -1,0 +1,9 @@
+# pnpm workspace configuration for the Plane monorepo
+# After adding this file, run `pnpm install` at the repo root to generate pnpm-lock.yaml
+
+packages:
+  - "apps/*"
+  - "packages/*"
+  # Exclude non-Node subprojects
+  - "!apps/api"
+  - "!apps/proxy"
