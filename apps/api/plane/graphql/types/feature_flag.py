@@ -70,6 +70,7 @@ class FeatureFlagsTypesEnum(Enum):
     WORKSPACE_PAGES = "WORKSPACE_PAGES"
     SHARED_PAGES = "SHARED_PAGES"
     EDITOR_ATTACHMENTS = "EDITOR_ATTACHMENTS"
+    EDITOR_MATHEMATICS = "EDITOR_MATHEMATICS"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -176,6 +177,7 @@ class FeatureFlagType:
     workspace_pages: bool
     shared_pages: bool
     editor_attachments: bool
+    editor_mathematics: bool
 
     # Silo importers and integrations
     silo: bool

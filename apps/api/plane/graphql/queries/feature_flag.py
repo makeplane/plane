@@ -170,6 +170,9 @@ class FeatureFlagQuery:
             editor_attachments=feature_flags.get(
                 FeatureFlagsTypesEnum.EDITOR_ATTACHMENTS.value, False
             ),
+            editor_mathematics=feature_flags.get(
+                FeatureFlagsTypesEnum.EDITOR_MATHEMATICS.value, False
+            ),
             # Silo importers and integrations
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(
