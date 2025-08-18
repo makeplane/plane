@@ -1,2 +1,2 @@
 export * from "./block";
-export * from "./truncated-link";
+export * from "./truncated-url";

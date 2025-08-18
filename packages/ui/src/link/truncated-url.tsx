@@ -22,7 +22,8 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
   const parsedUrl = parseURL(url);
   if (!parsedUrl) return null;
 
-  const { rootDomain, path } = parsedUrl;
+  const { full, path } = parsedUrl;
+  const displayDomain = full.domain;
   const isTruncated = path.length > maxPathLength;
   const truncatedPath = isTruncated ? path.slice(0, maxPathLength) : path;
 
@@ -40,7 +41,7 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
         onClick?.(e);
       }}
     >
-      <span className="text-sm">{rootDomain}</span>
+      <span className="text-sm">{displayDomain}</span>
       {path && (
         <span className="text-sm">
           /{truncatedPath}

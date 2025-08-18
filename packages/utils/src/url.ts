@@ -1,3 +1,15 @@
+/**
+ * Interface representing the parsed components of a URL.
+ * @interface ParsedURL
+ * @property {string} protocol - The URL protocol (e.g., 'http', 'https')
+ * @property {string} subdomain - The subdomain part of the URL (e.g., 'blog' in 'blog.example.com')
+ * @property {string} rootDomain - The root domain name (e.g., 'example' in 'blog.example.com')
+ * @property {string} tld - The top-level domain (e.g., 'com', 'org')
+ * @property {string} path - The URL path including search params and hash
+ * @property {Object} full - Complete domain information
+ * @property {string} full.domain - The root domain with TLD (e.g., 'example.com')
+ * @property {string} full.hostname - The complete hostname (e.g., 'blog.example.com')
+ */
 interface ParsedURL {
   protocol: string;
   subdomain: string;
@@ -9,6 +21,19 @@ interface ParsedURL {
     hostname: string;
   };
 }
+
+/**
+ * Parses a URL string into its constituent components.
+ *
+ * @param {string} urlString - The URL to parse
+ * @returns {ParsedURL | undefined} Parsed URL components or undefined if invalid
+ * @throws {Error} If the URL is malformed
+ *
+ * @example
+ * parseURL('https://blog.example.com/posts')
+ * // { protocol: 'https', subdomain: 'blog', rootDomain: 'example',
+ * //   tld: 'com', path: 'posts', full: { domain: 'example.com', hostname: 'blog.example.com' } }
+ */
 
 export function parseURL(urlString: string): ParsedURL | undefined {
   try {
@@ -27,7 +52,6 @@ export function parseURL(urlString: string): ParsedURL | undefined {
 
     if (hostnameParts.length >= 2) {
       tld = hostnameParts[hostnameParts.length - 1];
-
       rootDomain = hostnameParts[hostnameParts.length - 2];
 
       if (hostnameParts.length > 2) {
@@ -50,6 +74,24 @@ export function parseURL(urlString: string): ParsedURL | undefined {
     throw new Error(`Invalid URL: ${urlString}`);
   }
 }
+
+/**
+ * Validates if a given string is a valid URL.
+ * If the URL doesn't include a protocol, 'https://' is automatically prepended before validation.
+ *
+ * @param {string} urlString - The URL string to validate
+ * @returns {boolean} Returns true if the URL is valid, false otherwise
+ *
+ * @example
+ * // With protocol
+ * isUrlValid('https://example.com') // returns true
+ * isUrlValid('not-a-url') // returns false
+ *
+ * @example
+ * // Without protocol (automatically adds https://)
+ * isUrlValid('example.com') // returns true
+ * isUrlValid('invalid.') // returns false
+ */
 
 export function isUrlValid(urlString: string): boolean {
   try {
