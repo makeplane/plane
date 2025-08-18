@@ -675,6 +675,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+
+    // Remove sub issues
+    const subIssueIds = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
+
+    runInAction(() => {
+      if (subIssueIds) {
+        this.fetchParentStats(workspaceSlug, projectId);
+        subIssueIds.forEach((subIssueId) => {
+          this.removeIssueFromList(subIssueId);
+          this.rootIssueStore.issues.removeIssue(subIssueId);
+        });
+      }
+    });
+
     // Remove from Respective issue Id list
     runInAction(() => {
       this.removeIssueFromList(issueId);
