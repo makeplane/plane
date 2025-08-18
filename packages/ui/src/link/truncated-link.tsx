@@ -1,4 +1,4 @@
-import { Link2 } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import React from "react";
 import { cn, parseURL } from "@plane/utils";
 
@@ -49,7 +49,7 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
       )}
       {showLinkIcon && (
         <span className="ml-1 inline-block">
-          <Link2 className="h-3 w-3 flex-shrink-0" />
+          <ExternalLink className="h-3 w-3 flex-shrink-0" />
         </span>
       )}
     </a>
