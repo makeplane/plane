@@ -57,7 +57,7 @@ export const NotificationsRoot = observer(({ workspaceSlug }: NotificationsRootP
       ? ENotificationQueryParamType.CURRENT
       : ENotificationQueryParamType.INIT;
   useSWR(
-    currentWorkspace?.slug ? `WORKSPACE_NOTIFICATION_${currentWorkspace?.slug}` : null,
+    currentWorkspace?.slug ? `WORKSPACE_NOTIFICATION` : null,
     currentWorkspace?.slug
       ? () => getNotifications(currentWorkspace?.slug, notificationMutation, notificationLoader)
       : null

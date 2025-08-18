@@ -1,0 +1,27 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Arraste e solte para fazer upload de arquivos externos"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Arquivo muito grande.",
+        "description": "O tamanho máximo por arquivo é {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Tipo de arquivo não suportado.",
+        "description": "Ver formatos suportados"
+      },
+      "default": {
+        "title": "Falha no upload.",
+        "description": "Algo deu errado. Tente novamente."
+      }
+    },
+    "upgrade": {
+      "description": "Atualize seu plano para visualizar este anexo."
+    },
+    "aria": {
+      "click_to_upload": "Clique para fazer upload do anexo"
+    }
+  }
+}

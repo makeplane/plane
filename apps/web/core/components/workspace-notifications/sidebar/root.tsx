@@ -11,10 +11,10 @@ import { cn, getNumberCount } from "@plane/utils";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
-
-import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
+import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/root";
 // local imports
 import { NotificationEmptyState } from "./empty-state";
 import { AppliedFilters } from "./filters/applied-filter";

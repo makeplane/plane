@@ -1,0 +1,1 @@
+export { MathematicsExtension } from "./extension";
