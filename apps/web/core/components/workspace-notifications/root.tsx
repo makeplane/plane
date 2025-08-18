@@ -11,8 +11,8 @@ import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user"
-import { useWorkspace } from "@/hooks/store/use-workspace"
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";

@@ -10,7 +10,7 @@ import { EUserProjectRoles, IIssueLabel } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks
-import { useLabel } from "@/hooks/store/use-label"
+import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 //constants

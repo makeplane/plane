@@ -8,9 +8,9 @@ import {
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
 // hooks
-import { useProject } from "@/hooks/store/use-project"
-import { useProjectView } from "@/hooks/store/use-project-view"
-import { useCycle } from "@/hooks/store/use-cycle"
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useModule } from "@/hooks/store/use-module";
 // plane web hooks
 import { EPageStoreType, usePage } from "@/plane-web/hooks/store";

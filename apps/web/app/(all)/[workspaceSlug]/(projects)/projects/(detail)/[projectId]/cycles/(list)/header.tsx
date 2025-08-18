@@ -10,8 +10,8 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useProject } from "@/hooks/store/use-project"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web

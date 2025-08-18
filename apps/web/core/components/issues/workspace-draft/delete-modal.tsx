@@ -9,7 +9,7 @@ import { TWorkspaceDraftIssue } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type Props = {

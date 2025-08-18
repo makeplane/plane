@@ -8,8 +8,8 @@ import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel }
 import { EIssuesStoreType, TGroupedIssues } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useCalendarView } from "@/hooks/store/use-calendar-view"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

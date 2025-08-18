@@ -1,6 +1,6 @@
 "use client";
 
-import {FC} from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check } from "lucide-react";

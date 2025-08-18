@@ -12,8 +12,8 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useProjectView } from "@/hooks/store/use-project-view"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports

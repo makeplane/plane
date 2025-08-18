@@ -11,7 +11,7 @@ import { cn, getNumberCount } from "@plane/utils";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";

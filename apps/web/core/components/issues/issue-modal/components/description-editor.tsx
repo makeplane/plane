@@ -16,8 +16,8 @@ import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popo
 import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useInstance } from "@/hooks/store/use-instance"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";

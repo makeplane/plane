@@ -17,7 +17,7 @@ import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserProfile, useUserSettings } from "@/hooks/store/user"
+import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { WorkspaceService } from "@/plane-web/services";

@@ -21,7 +21,7 @@ import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
