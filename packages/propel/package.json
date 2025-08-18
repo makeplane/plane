@@ -12,13 +12,17 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "exports": {
-    "./ui/*": "./src/ui/*.tsx",
+    "./avatar": "./src/avatar/index.ts",
     "./charts/*": "./src/charts/*/index.ts",
+    "./dialog": "./src/dialog/index.ts",
+    "./menu": "./src/menu/index.ts",
     "./table": "./src/table/index.ts",
+    "./tabs": "./src/tabs/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.1",
+    "@base-ui-components/react": "^1.0.0-beta.2",
+    "@plane/utils": "*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
