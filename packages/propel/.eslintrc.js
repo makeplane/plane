@@ -19,10 +19,6 @@ module.exports = {
             group: "external",
             position: "after",
           },
-          {
-            pattern: "@/**",
-            group: "internal",
-          },
         ],
         pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
         alphabetize: {

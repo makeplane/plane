@@ -12,9 +12,12 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "exports": {
+    "./avatar": "./src/avatar/index.ts",
     "./charts/*": "./src/charts/*/index.ts",
-    "./avatar/*": "./src/avatar/*/index.ts",
+    "./dialog": "./src/dialog/index.ts",
+    "./menu": "./src/menu/index.ts",
     "./table": "./src/table/index.ts",
+    "./tabs": "./src/tabs/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
