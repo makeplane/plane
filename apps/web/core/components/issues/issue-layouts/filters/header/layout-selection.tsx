@@ -8,7 +8,7 @@ import { EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IssueLayoutIcon } from "@/components/issues";
+import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
 

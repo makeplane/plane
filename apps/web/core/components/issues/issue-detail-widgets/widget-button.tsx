@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { cn } from "@plane/utils";
 
 type Props = {
-  icon: JSX.Element;
+  icon: React.ReactNode;
   title: string;
   disabled?: boolean;
 };

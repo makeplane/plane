@@ -1,17 +1,23 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { ViewListLoader } from "@/components/ui";
-import { ProjectViewListItem } from "@/components/views";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
-import { useCommandPalette, useProjectView, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useProjectView } from "@/hooks/store/use-project-view"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { ProjectViewListItem } from "./view-list-item";
 
 export const ProjectViewsList = observer(() => {
   const { projectId } = useParams();
@@ -71,7 +77,10 @@ export const ProjectViewsList = observer(() => {
               label={t("project_views.empty_state.general.primary_button.text")}
               title={t("project_views.empty_state.general.primary_button.comic.title")}
               description={t("project_views.empty_state.general.primary_button.comic.description")}
-              onClick={() => toggleCreateViewModal(true)}
+              onClick={() => {
+                toggleCreateViewModal(true);
+                captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+              }}
               disabled={!canPerformEmptyStateActions}
             />
           }

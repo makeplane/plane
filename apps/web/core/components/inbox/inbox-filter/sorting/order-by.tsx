@@ -11,7 +11,7 @@ import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import useSize from "@/hooks/use-window-size";
 
 export const InboxIssueOrderByDropdown: FC = observer(() => {

@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
@@ -43,7 +43,7 @@ type ChartViewRootProps = {
   loadMoreBlocks?: () => void;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
   canLoadMoreBlocks?: boolean;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.ReactNode | undefined;
   showToday: boolean;
   isEpic?: boolean;
 };

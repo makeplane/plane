@@ -3,7 +3,7 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { EditorReadOnlyRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 // plane web imports
 import { CommentBlock } from "@/plane-web/components/comments";
@@ -34,9 +34,10 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
     disabled = false,
     projectId,
   } = props;
-  const readOnlyEditorRef = useRef<EditorReadOnlyRefApi>(null);
   // states
   const [isEditing, setIsEditing] = useState(false);
+  // refs
+  const readOnlyEditorRef = useRef<EditorRefApi>(null);
   // derived values
   const workspaceId = comment?.workspace;
 

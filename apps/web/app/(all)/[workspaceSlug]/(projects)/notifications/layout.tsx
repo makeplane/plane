@@ -1,7 +1,7 @@
 "use client";
 
 // components
-import { NotificationsSidebarRoot } from "@/components/workspace-notifications";
+import { NotificationsSidebarRoot } from "@/components/workspace-notifications/sidebar";
 
 export default function ProjectInboxIssuesLayout({ children }: { children: React.ReactNode }) {
   return (

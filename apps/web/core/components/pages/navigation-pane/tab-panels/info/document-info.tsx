@@ -5,7 +5,7 @@ import type { TDocumentInfo } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { getReadTimeFromWordsCount } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // local imports
 import { TDropdownProps } from "../types";
 import { ProjectDropdownBase } from "./base";

@@ -3,13 +3,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EIssuesStoreType } from "@plane/types";
-// mobx store
 // components
-import { LogoSpinner } from "@/components/common";
-import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
-// ui
-import { useIssues } from "@/hooks/store";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { ArchivedIssueAppliedFiltersRoot } from "../filters";
+import { ArchivedIssueListLayout } from "../list/roots/archived-issue-root";
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // router

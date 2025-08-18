@@ -38,6 +38,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     serializer_class = StateSerializer
     model = State
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -164,6 +165,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     serializer_class = StateSerializer
     model = State
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (

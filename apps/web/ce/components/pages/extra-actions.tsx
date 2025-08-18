@@ -1,6 +1,6 @@
 // store
 import { EPageStoreType } from "@/plane-web/hooks/store";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageHeaderExtraActionsProps = {
   page: TPageInstance;

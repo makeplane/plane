@@ -27,24 +27,27 @@ import {
 import { Breadcrumbs, Button, Tooltip, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { SwitcherIcon, SwitcherLabel } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// constants
-import { ViewQuickActions } from "@/components/views";
-// hooks
+import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import {
-  useCommandPalette,
-  useIssues,
-  useLabel,
-  useMember,
-  useProject,
-  useProjectState,
-  useProjectView,
-  useUserPermissions,
-} from "@/hooks/store";
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
+// constants
+import { ViewQuickActions } from "@/components/views/quick-actions";
+// hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { useAppRouter } from "@/hooks/use-app-router";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // refs

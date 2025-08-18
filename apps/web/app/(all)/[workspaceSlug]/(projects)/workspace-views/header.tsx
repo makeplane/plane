@@ -23,15 +23,17 @@ import {
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
-import {
-  CreateUpdateWorkspaceViewModal,
-  WorkspaceViewQuickActions,
-  DefaultWorkspaceViewQuickActions,
-} from "@/components/workspace";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues/issue-layouts/filters";
+import { DefaultWorkspaceViewQuickActions } from "@/components/workspace/views/default-view-quick-action";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
+import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-action";
 // hooks
-import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 

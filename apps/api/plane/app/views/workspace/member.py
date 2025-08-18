@@ -28,6 +28,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     model = WorkspaceMember
 
     search_fields = ["member__display_name", "member__first_name"]
+    use_read_replica = True
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -214,6 +215,8 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
 
 
 class WorkspaceMemberUserEndpoint(BaseAPIView):
+    use_read_replica = True
+
     def get(self, request, slug):
         draft_issue_count = (
             DraftIssue.objects.filter(

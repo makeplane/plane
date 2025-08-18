@@ -7,11 +7,17 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState, ComicBoxButton } from "@/components/empty-state";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
-import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
+import { CycleModuleBoardLayoutLoader } from "@/components/ui/loader/cycle-module-board-loader";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 // hooks
-import { useCommandPalette, useModule, useModuleFilter, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useModule } from "@/hooks/store/use-module"
+import { useModuleFilter } from "@/hooks/store/use-module-filter"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
@@ -42,8 +48,8 @@ export const ModulesListView: React.FC = observer(() => {
   if (loader || !projectModuleIds || !filteredModuleIds)
     return (
       <>
-        {displayFilters?.layout === "list" && <CycleModuleListLayout />}
-        {displayFilters?.layout === "board" && <CycleModuleBoardLayout />}
+        {displayFilters?.layout === "list" && <CycleModuleListLayoutLoader />}
+        {displayFilters?.layout === "board" && <CycleModuleBoardLayoutLoader />}
         {displayFilters?.layout === "gantt" && <GanttLayoutLoader />}
       </>
     );

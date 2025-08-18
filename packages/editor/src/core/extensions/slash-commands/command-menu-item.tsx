@@ -32,6 +32,7 @@ export const CommandMenuItem: React.FC<Props> = (props) => {
         {item.icon}
       </span>
       <p className="flex-grow truncate">{item.title}</p>
+      {item.badge}
     </button>
   );
 };

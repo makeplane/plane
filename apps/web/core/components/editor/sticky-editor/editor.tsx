@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
@@ -14,7 +14,10 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
-  extends Omit<ILiteTextEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler"> {
+  extends Omit<
+    ILiteTextEditorProps,
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -67,6 +70,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
         flaggedExtensions={liteTextEditorExtensions.flagged}
+        editable
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

@@ -18,10 +18,11 @@ import {
 //
 import { getFileIcon } from "@/components/icons";
 // components
-import { IssueAttachmentDeleteModal } from "@/components/issues";
+import { IssueAttachmentDeleteModal } from "@/components/issues/attachment/delete-attachment-modal";
 // helpers
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";

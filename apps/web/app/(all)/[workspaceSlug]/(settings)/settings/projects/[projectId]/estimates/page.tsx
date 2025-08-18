@@ -4,12 +4,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 import { EstimateRoot } from "@/components/estimates";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { useProject } from "@/hooks/store/use-project"
+import { useUserPermissions } from "@/hooks/store/user";
 
 const EstimatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();

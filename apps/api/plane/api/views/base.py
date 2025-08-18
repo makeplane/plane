@@ -20,6 +20,7 @@ from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 class TimezoneMixin:
@@ -36,10 +37,14 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, GenericAPIView, BasePaginator):
+class BaseAPIView(
+    TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator
+):
     authentication_classes = [APIKeyAuthentication]
 
     permission_classes = [IsAuthenticated]
+
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):

@@ -19,7 +19,7 @@ import {
 } from "@/components/gantt-chart/views/helpers";
 // helpers
 // store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 // types
 type BlockData = {

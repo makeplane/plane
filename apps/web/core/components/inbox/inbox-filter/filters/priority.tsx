@@ -8,7 +8,7 @@ import { TIssuePriorities } from "@plane/types";
 import { PriorityIcon } from "@plane/ui";
 // plane constants
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 

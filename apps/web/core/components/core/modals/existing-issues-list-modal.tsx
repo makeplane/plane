@@ -15,7 +15,7 @@ import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 // components

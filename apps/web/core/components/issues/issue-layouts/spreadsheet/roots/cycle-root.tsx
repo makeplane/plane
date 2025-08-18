@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useCycle, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useUserPermissions } from "@/hooks/store/user";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";

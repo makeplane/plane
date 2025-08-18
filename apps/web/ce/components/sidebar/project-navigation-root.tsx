@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 // components
-import { ProjectNavigation } from "@/components/workspace";
+import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 
 type TProjectItemsRootProps = {
   workspaceSlug: string;

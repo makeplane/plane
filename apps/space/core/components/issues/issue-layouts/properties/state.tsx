@@ -6,7 +6,7 @@ import { StateGroupIcon, Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 //hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   stateId: string | undefined;

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ArchiveIcon } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

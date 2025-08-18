@@ -4,7 +4,9 @@ import React, { FC, useEffect } from "react";
 import { Intercom, show, hide, onHide } from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 // store hooks
-import { useUser, useInstance, useTransient } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user"
+import { useInstance } from "@/hooks/store/use-instance"
+import { useTransient } from "@/hooks/store/use-transient";
 
 export type IntercomProviderProps = {
   children: React.ReactNode;

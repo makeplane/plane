@@ -3,10 +3,9 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 // plane imports
-import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   EIssuesStoreType,
@@ -15,7 +14,6 @@ import {
   IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { CustomMenu } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
@@ -23,21 +21,18 @@ import {
   DisplayFiltersSelection,
   FilterSelection,
   FiltersDropdown,
-  IssueLayoutIcon,
   MobileLayoutSelection,
-} from "@/components/issues/issue-layouts";
-// helpers
+} from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProject } from "@/hooks/store/use-project"
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const ProjectIssuesMobileHeader = observer(() => {
   // i18n
   const { t } = useTranslation();
-  const layouts = [
-    { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
-    { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
-    { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
-  ];
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { workspaceSlug, projectId } = useParams() as {
     workspaceSlug: string;

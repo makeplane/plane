@@ -1,13 +1,16 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType } from "@plane/constants";
+// plane imports
+import { EIssueFilterType, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
-// hooks
 import { Header, EHeaderVariant } from "@plane/ui";
-import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
-import { useIssues, useLabel, useProjectState } from "@/hooks/store";
-// components
-// types
+// hooks
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useProjectState } from "@/hooks/store/use-project-state";
+// local imports
+import { SaveFilterView } from "../../../save-filter-view";
+import { AppliedFiltersList } from "../filters-list";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -95,6 +98,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
           display_filters: issueFilters?.displayFilters,
           display_properties: issueFilters?.displayProperties,
         }}
+        trackerElement={PROJECT_VIEW_TRACKER_ELEMENTS.CYCLE_HEADER_SAVE_AS_VIEW_BUTTON}
       />
     </Header>
   );

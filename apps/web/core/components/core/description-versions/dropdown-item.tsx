@@ -5,7 +5,7 @@ import { TDescriptionVersion } from "@plane/types";
 import { Avatar, CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   onClick: (versionId: string) => void;

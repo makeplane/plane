@@ -1,12 +1,11 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ProjectIssueQuickActions } from "@/components/issues";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-// local components
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const KanBanLayout: React.FC = observer(() => {

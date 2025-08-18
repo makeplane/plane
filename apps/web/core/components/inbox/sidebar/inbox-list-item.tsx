@@ -4,16 +4,20 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+// plane imports
 import { Tooltip, PriorityIcon, Row, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { InboxIssueStatus } from "@/components/inbox";
-// helpers
 // hooks
-import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
 import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
+// local imports
+import { InboxIssueStatus } from "../inbox-issue-status";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;

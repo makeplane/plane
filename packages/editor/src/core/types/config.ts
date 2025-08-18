@@ -1,17 +1,14 @@
 // plane imports
 import { TWebhookConnectionQueryParams } from "@plane/types";
 
-export type TReadOnlyFileHandler = {
+export type TFileHandler = {
+  assetsUploadStatus: Record<string, number>; // blockId => progress percentage
+  cancel: () => void;
   checkIfAssetExists: (assetId: string) => Promise<boolean>;
+  delete: (assetSrc: string) => Promise<void>;
   getAssetDownloadSrc: (path: string) => Promise<string>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
-};
-
-export type TFileHandler = TReadOnlyFileHandler & {
-  assetsUploadStatus: Record<string, number>; // blockId => progress percentage
-  cancel: () => void;
-  delete: (assetSrc: string) => Promise<void>;
   upload: (blockId: string, file: File) => Promise<string>;
   validation: {
     /**
@@ -24,9 +21,9 @@ export type TFileHandler = TReadOnlyFileHandler & {
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
-export type TEditorFontSize = "small-font" | "large-font";
+export type TEditorFontSize = "small-font" | "large-font" | "mobile-font";
 
-export type TEditorLineSpacing = "regular" | "small";
+export type TEditorLineSpacing = "regular" | "small" | "mobile-regular";
 
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;

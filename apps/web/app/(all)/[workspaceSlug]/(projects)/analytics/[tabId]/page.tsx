@@ -9,11 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { type TabItem, Tabs } from "@plane/ui";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
-import { PageHead } from "@/components/core";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 

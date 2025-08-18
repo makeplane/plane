@@ -24,9 +24,8 @@ from plane.utils.openapi import (
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
+    use_read_replica = True
 
     @extend_schema(
         operation_id="get_workspace_members",
@@ -92,6 +91,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 # API endpoint to get and insert users inside the workspace
 class ProjectMemberAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectMemberPermission]
+    use_read_replica = True
 
     @extend_schema(
         operation_id="get_project_members",

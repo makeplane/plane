@@ -2,33 +2,25 @@
 
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
+import { PlaneLockup } from "@plane/ui";
 // components
-import { PoweredBy } from "@/components/common";
-import { UserAvatar } from "@/components/issues";
+import { PoweredBy } from "@/components/common/powered-by";
+import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/use-user";
 // assets
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import UserLoggedInImage from "@/public/user-logged-in.svg";
 
 export const UserLoggedIn = observer(() => {
   // store hooks
   const { data: user } = useUser();
-  // next-themes
-  const { resolvedTheme } = useTheme();
-
-  const logo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 
   if (!user) return null;
 
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
-        <div className="h-[30px] w-[133px]">
-          <Image src={logo} alt="Plane logo" />
-        </div>
+        <PlaneLockup className="h-6 w-auto text-custom-text-100" />
         <UserAvatar />
       </div>
 

@@ -1,14 +1,14 @@
-import { Editor, EditorContent } from "@tiptap/react";
+import { type Editor, EditorContent } from "@tiptap/react";
 import { FC, ReactNode } from "react";
 
-interface EditorContentProps {
+type Props = {
   children?: ReactNode;
   editor: Editor | null;
   id: string;
   tabIndex?: number;
-}
+};
 
-export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
+export const EditorContentWrapper: FC<Props> = (props) => {
   const { editor, children, tabIndex, id } = props;
 
   return (

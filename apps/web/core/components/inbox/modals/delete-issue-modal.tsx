@@ -8,7 +8,7 @@ import type { TIssue } from "@plane/types";
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // constants
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   data: Partial<TIssue>;

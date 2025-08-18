@@ -11,7 +11,8 @@ import { IUser, IImporterService } from "@plane/types";
 // ui
 import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project"
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { ProjectExportService } from "@/services/project";

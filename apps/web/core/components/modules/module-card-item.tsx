@@ -29,14 +29,16 @@ import {
 } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member"
+import { useModule } from "@/hooks/store/use-module"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
@@ -211,7 +213,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   }));
 
   return (
-    <div className="relative" data-prevent-nprogress>
+    <div className="relative" data-prevent-progress>
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <Card>
           <div>

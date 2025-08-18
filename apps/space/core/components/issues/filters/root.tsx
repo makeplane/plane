@@ -12,7 +12,7 @@ import { FilterSelection } from "@/components/issues/filters/selection";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // types
 import { TIssueQueryFilters } from "@/types/issue";
 

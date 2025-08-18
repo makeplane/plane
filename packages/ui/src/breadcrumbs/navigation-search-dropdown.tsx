@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useState } from "react";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 import { CustomSearchSelect } from "../dropdowns";
 import { Tooltip } from "../tooltip";
 import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationSearchDropdownProps = {
-  icon?: React.JSX.Element;
+  icon?: React.ReactNode;
   title?: string;
   selectedItem: string;
   navigationItems: ICustomSearchSelectOption[];

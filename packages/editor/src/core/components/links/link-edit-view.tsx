@@ -6,13 +6,13 @@ import { LinkViewProps, LinkViews } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 
-interface InputViewProps {
+type InputViewProps = {
   label: string;
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
   autoFocus?: boolean;
-}
+};
 
 const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputViewProps) => (
   <div className="flex flex-col gap-1">
@@ -28,10 +28,10 @@ const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputView
   </div>
 );
 
-interface LinkEditViewProps {
+type LinkEditViewProps = {
   viewProps: LinkViewProps;
   switchView: (view: LinkViews) => void;
-}
+};
 
 export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
   const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;

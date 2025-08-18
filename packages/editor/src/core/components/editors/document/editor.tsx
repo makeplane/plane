@@ -30,6 +30,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     flaggedExtensions,
     forwardedRef,
     id,
+    isTouchDevice,
     handleEditorReady,
     mentionHandler,
     onChange,
@@ -96,6 +97,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      isTouchDevice={!!isTouchDevice}
     />
   );
 };

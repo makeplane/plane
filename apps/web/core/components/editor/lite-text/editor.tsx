@@ -1,30 +1,26 @@
 import React, { useState } from "react";
-// plane constants
+// plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
-// plane editor
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
-// i18n
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-// components
-import { MakeOptional } from "@plane/types";
+import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
-import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
-// helpers
+// components
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
+import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-// store hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
-interface LiteTextEditorWrapperProps
-  extends MakeOptional<
-    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
-    "disabledExtensions" | "flaggedExtensions"
-  > {
+type LiteTextEditorWrapperProps = MakeOptional<
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
+> & {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -35,15 +31,23 @@ interface LiteTextEditorWrapperProps
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
-  uploadFile: TFileHandler["upload"];
   issue_id?: string;
   parentClassName?: string;
-}
+} & (
+    | {
+        editable: false;
+      }
+    | {
+        editable: true;
+        uploadFile: TFileHandler["upload"];
+      }
+  );
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const { t } = useTranslation();
   const {
     containerClassName,
+    editable,
     workspaceSlug,
     workspaceId,
     projectId,
@@ -57,7 +61,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showToolbar = true,
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
-    uploadFile,
     disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
@@ -70,10 +73,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+      await workspaceService.searchEntity(workspaceSlug, {
         ...payload,
-        project_id: projectId?.toString() ?? "",
-        issue_id: issue_id,
+        project_id: projectId,
+        issue_id,
       }),
   });
   // editor config
@@ -87,17 +90,24 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
+      className={cn(
+        "relative border border-custom-border-200 rounded",
+        {
+          "p-3": editable,
+        },
+        parentClassName
+      )}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+        editable={editable}
         flaggedExtensions={liteTextEditorExtensions.flagged}
         fileHandler={getEditorFileHandlers({
           projectId,
-          uploadFile,
+          uploadFile: editable ? props.uploadFile : async () => "",
           workspaceId,
           workspaceSlug,
         })}
@@ -107,14 +117,18 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             if (!res) throw new Error("Failed in fetching mentions");
             return res;
           },
-          renderComponent: (props) => <EditorMentionsRoot {...props} />,
-          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+          renderComponent: EditorMentionsRoot,
+          getMentionedEntityDetails: (id) => ({
+            display_name: getUserDetails(id)?.display_name ?? "",
+          }),
         }}
         placeholder={placeholder}
-        containerClassName={cn(containerClassName, "relative")}
+        containerClassName={cn(containerClassName, "relative", {
+          "p-2": !editable,
+        })}
         {...rest}
       />
-      {showToolbar && (
+      {showToolbar && editable && (
         <div
           className={cn(
             "transition-all duration-300 ease-out origin-top overflow-hidden",

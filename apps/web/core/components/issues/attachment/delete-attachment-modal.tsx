@@ -9,7 +9,7 @@ import { AlertModalCore } from "@plane/ui";
 // helper
 import { getFileName } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 

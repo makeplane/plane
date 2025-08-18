@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 // types
 import { TDropdownProps } from "../types";
 // local imports

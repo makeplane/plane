@@ -2,24 +2,22 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane constants
+// plane imports
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// components
 import { Row, ERowVariant } from "@plane/ui";
-import { LogoSpinner } from "@/components/common";
-import {
-  IssuePeekOverview,
-  ModuleAppliedFiltersRoot,
-  ModuleCalendarLayout,
-  BaseGanttRoot,
-  ModuleKanBanLayout,
-  ModuleListLayout,
-  ModuleSpreadsheetLayout,
-} from "@/components/issues";
-// constants
-import { useIssues } from "@/hooks/store";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-// types
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { ModuleCalendarLayout } from "../calendar/roots/module-root";
+import { ModuleAppliedFiltersRoot } from "../filters";
+import { BaseGanttRoot } from "../gantt";
+import { ModuleKanBanLayout } from "../kanban/roots/module-root";
+import { ModuleListLayout } from "../list/roots/module-root";
+import { ModuleSpreadsheetLayout } from "../spreadsheet/roots/module-root";
 
 const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) => {
   switch (props.activeLayout) {

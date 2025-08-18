@@ -2,20 +2,19 @@
 
 import React, { useState } from "react";
 import { mutate } from "swr";
-// types
+// plane imports
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
-// components
-import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
-// fetch-keys
+// constants
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
-// services
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// local imports
+import { CreateApiTokenForm } from "./form";
+import { GeneratedTokenDetails } from "./generated-token-details";
 
 type Props = {
   isOpen: boolean;

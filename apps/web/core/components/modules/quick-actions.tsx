@@ -21,7 +21,8 @@ import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule, useUserPermissions } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
