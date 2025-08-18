@@ -7,3 +7,16 @@ packages:
   # Exclude non-Node subprojects
   - "!apps/api"
   - "!apps/proxy"
+
+catalog:
+  sharp: "0.33.5"
+  turbo: "^2.5.6"
+  typescript: "5.6.3"
+
+# Allow selected dependency build scripts during install (pnpm v10)
+onlyBuiltDependencies:
+  - turbo
+  - sharp
+
+# Pin runtime Node.js version for workspace
+useNodeVersion: 22.18.0

@@ -15,12 +15,12 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/constants": "*",
+    "@plane/constants": "workspace:*",
     "axios": "1.11.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
   }
