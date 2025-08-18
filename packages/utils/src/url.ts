@@ -10,7 +10,7 @@
  * @property {string} full.domain - The root domain with TLD (e.g., 'example.com')
  * @property {string} full.hostname - The complete hostname (e.g., 'blog.example.com')
  */
-interface ParsedURL {
+export interface ParsedURL {
   protocol: string;
   subdomain: string;
   rootDomain: string;
