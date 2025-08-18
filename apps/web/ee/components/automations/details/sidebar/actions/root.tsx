@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -28,6 +28,8 @@ type Props = {
 
 export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((props) => {
   const { automationId } = props;
+  // refs
+  const actionFormRef = useRef<HTMLFormElement>(null);
   // states
   const [isActionFormOpen, setIsActionFormOpen] = useState(false);
   const [existingActionModeMap, setExistingActionModeMap] = useState<Map<string, EAutomationExistingActionMode>>(
@@ -47,13 +49,36 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
   const actionNodes = automation?.allActions;
   const actionNodesCount = actionNodes?.length ?? 0;
   const sidebarHelper = automation?.sidebarHelper;
-  const isCreateActionNodeSelected = sidebarHelper?.selectedSidebarConfig.mode === "create";
+  const isCreateActionButtonSelected = sidebarHelper?.selectedSidebarConfig.mode === "create";
+
+  const scrollToActionForm = useCallback((formElement: HTMLFormElement | null) => {
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        formElement?.scrollIntoView({
+          behavior: "smooth",
+        });
+      });
+    }, 100);
+  }, []);
+
+  const openActionForm = useCallback(
+    (formElement: HTMLFormElement | null) => {
+      setIsActionFormOpen(true);
+      scrollToActionForm(formElement);
+    },
+    [scrollToActionForm]
+  );
 
   useEffect(() => {
-    if (isCreateActionNodeSelected) {
+    if (isCreateActionButtonSelected) {
       setIsActionFormOpen(true);
+      requestAnimationFrame(() => {
+        actionFormRef.current?.scrollIntoView({
+          behavior: "smooth",
+        });
+      });
     }
-  }, [isCreateActionNodeSelected]);
+  }, [isCreateActionButtonSelected]);
 
   const getExistingActionMode = (actionNodeId: string) =>
     existingActionModeMap.get(actionNodeId) ?? EAutomationExistingActionMode.VIEW;
@@ -127,7 +152,6 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
             key={actionNode.id}
             automationId={automationId}
             currentIndex={index}
-            defaultOpen={isCreateActionNodeSelected === false}
             isSubmitting={isCreatingUpdatingAction}
             onCancel={() => setExistingActionMode(actionNode.id, EAutomationExistingActionMode.VIEW)}
             onDelete={() => setSelectedActionToDelete(actionNode.id)}
@@ -145,6 +169,7 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
         ))}
         {isActionFormOpen ? (
           <AutomationDetailsSidebarActionsFormRoot
+            ref={actionFormRef}
             automationId={automationId}
             currentIndex={actionNodesCount}
             isSubmitting={isCreatingUpdatingAction}
@@ -161,7 +186,9 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
             <Button
               size="sm"
               variant="neutral-primary"
-              onClick={() => setIsActionFormOpen(true)}
+              onClick={() => {
+                openActionForm(actionFormRef.current);
+              }}
               loading={isCreatingUpdatingAction}
               disabled={isCreatingUpdatingAction}
             >

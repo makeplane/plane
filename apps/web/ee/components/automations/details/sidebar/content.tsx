@@ -35,10 +35,16 @@ export const AutomationDetailsSidebarContent: React.FC<Props> = observer((props)
   };
 
   return (
-    <>
-      <AutomationDetailsSidebarHeader automationId={automationId} />
-      {renderSidebarContent()}
-      <AutomationDetailsSidebarFooter automationId={automationId} />
-    </>
+    <div className="flex h-full flex-col">
+      <div className="sticky top-0 z-10 mb-4">
+        <AutomationDetailsSidebarHeader automationId={automationId} />
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col justify-between overflow-y-auto vertical-scrollbar scrollbar-sm">
+        <div className="my-2 flex-1">{renderSidebarContent()}</div>
+        <div className="my-6">
+          <AutomationDetailsSidebarFooter automationId={automationId} />
+        </div>
+      </div>
+    </div>
   );
 });

@@ -37,6 +37,7 @@ export interface IProjectAutomationsStore {
   setCreateUpdateModalConfig: (config: TCreateUpdateModalConfig) => void;
   // permissions
   canCurrentUserCreateAutomation: boolean;
+  isProjectAutomationsEnabled: boolean;
   // actions
   fetchAutomations: (workspaceSlug: string, projectId: string) => Promise<TAutomation[]>;
   fetchAutomationDetails: (
@@ -74,6 +75,7 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
       createUpdateModalConfig: observable,
       // computed
       canCurrentUserCreateAutomation: computed,
+      isProjectAutomationsEnabled: computed,
       // actions
       fetchAutomations: action,
       fetchAutomationDetails: action,
@@ -89,13 +91,16 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
   }
 
   // helpers
-  private _addAutomationIdToProject = (projectId: string, automationId: string) => {
+  private _addAutomationIdToProject = (projectId: string, automationId: string, position: "start" | "end" = "end") => {
     const currentIds = this.projectAutomationIdsMap.get(projectId) ?? new Set<string>();
-    if (!currentIds.has(automationId)) {
-      const updatedIds = new Set(currentIds);
-      updatedIds.add(automationId);
-      this.projectAutomationIdsMap.set(projectId, updatedIds);
-    }
+
+    if (currentIds.has(automationId)) return;
+
+    const currentIdsArray = Array.from(currentIds);
+    const updatedIds =
+      position === "start" ? new Set([automationId, ...currentIdsArray]) : new Set([...currentIdsArray, automationId]);
+
+    this.projectAutomationIdsMap.set(projectId, updatedIds);
   };
 
   private _removeAutomationIdFromProject = (projectId: string, automationId: string) => {
@@ -167,7 +172,8 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
     automationId: string,
     automation: TAutomation,
     nodes?: TAutomationNode[],
-    edges?: TAutomationNodeEdge[]
+    edges?: TAutomationNodeEdge[],
+    addPosition: "start" | "end" = "end"
   ) => {
     // add or update automation to store
     const automationInstance = this.automationsRoot.addOrUpdateAutomation(automation, {
@@ -190,13 +196,13 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
       this._addOrUpdateAutomationEdgeToStore(automationId, edge);
     }
     // update project automation ids map
-    this._addAutomationIdToProject(projectId, automationId);
+    this._addAutomationIdToProject(projectId, automationId, addPosition);
     // return automation instance
     return automationInstance;
   };
 
   getIsInitializingAutomations: IProjectAutomationsStore["getIsInitializingAutomations"] = computedFn(
-    (projectId) => this.loaderMap.get(projectId) === "init-loader"
+    (projectId) => this.isProjectAutomationsEnabled && this.loaderMap.get(projectId) === "init-loader"
   );
 
   getFetchStatusById: IProjectAutomationsStore["getFetchStatusById"] = computedFn(
@@ -214,7 +220,7 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
   );
 
   isAnyAutomationAvailableForProject: IProjectAutomationsStore["isAnyAutomationAvailableForProject"] = computedFn(
-    (projectId) => this.getProjectAutomationIds(projectId).length > 0
+    (projectId) => this.isProjectAutomationsEnabled && this.getProjectAutomationIds(projectId).length > 0
   );
 
   // permissions
@@ -249,6 +255,10 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
 
   get canCurrentUserCreateAutomation() {
     return this._automationPermissions.canCurrentUserCreate;
+  }
+
+  get isProjectAutomationsEnabled() {
+    return this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("PROJECT_AUTOMATIONS", false);
   }
 
   // automation crud
@@ -303,7 +313,7 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
       const resId = res.id;
       // update observable
       const automationInstance = runInAction(() =>
-        this._addOrUpdateAutomationToStore(workspaceSlug, projectId, resId, res)
+        this._addOrUpdateAutomationToStore(workspaceSlug, projectId, resId, res, undefined, undefined, "start")
       );
       this.loaderMap.set(projectId, "loaded");
       return automationInstance;

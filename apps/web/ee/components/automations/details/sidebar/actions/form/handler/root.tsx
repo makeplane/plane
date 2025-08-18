@@ -35,7 +35,7 @@ export const AutomationActionHandlerDropdown: React.FC<TProps> = (props) => {
             className={cn(
               "w-full px-4 py-1.5 rounded-md border-[0.5px] border-custom-border-200 hover:bg-custom-background-80 text-left flex items-center gap-2 cursor-pointer transition-colors",
               {
-                "text-custom-text-400": !value,
+                "text-custom-text-400 border border-custom-primary-200": !value,
                 "cursor-not-allowed text-custom-text-300 bg-custom-background-80": isDisabled,
               }
             )}

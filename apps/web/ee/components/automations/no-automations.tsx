@@ -1,25 +1,26 @@
 import { observer } from "mobx-react";
-// components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { Zap } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+// local imports
 import { CreateAutomationButton } from "./create-button";
 
 export const NoAutomationsEmptyState = observer(() => {
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/templates/no-templates" }); // TODO: Update path to automations
+  // plane hooks
+  const { t } = useTranslation();
 
   return (
-    <div className="w-full py-2">
-      <div className="flex items-center justify-center h-full w-full">
-        <DetailedEmptyState
-          title={""}
-          assetPath={resolvedPath}
-          className="h-fit min-h-full items-start !p-0"
-          size="md"
-          customPrimaryButton={<CreateAutomationButton />}
-        />
-      </div>
+    <div className="flex flex-col items-center justify-center text-center gap-4 px-4 py-10 border-b border-custom-border-100">
+      <span className="flex flex-shrink-0 items-center justify-center size-8 rounded bg-custom-background-80/70">
+        <Zap className="size-4 text-custom-text-300" strokeWidth={1.5} />
+      </span>
+      <p className="flex flex-col gap-0.5">
+        <span className="text-sm font-medium text-custom-text-200">
+          {t("automations.empty_state.no_automations.title")}
+        </span>
+        <span className="text-xs text-custom-text-300">{t("automations.empty_state.no_automations.description")}</span>
+      </p>
+      <CreateAutomationButton variant="accent-primary" />
     </div>
   );
 });

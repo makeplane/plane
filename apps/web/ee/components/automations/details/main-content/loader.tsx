@@ -12,7 +12,7 @@ export const AutomationDetailsMainContentLoader = () => (
     </Loader>
 
     {/* Scope Section */}
-    <Loader className="space-y-5">
+    {/* <Loader className="space-y-5">
       <Loader className="flex items-center gap-4">
         <Loader.Item height="20px" width="50px" />
         <Loader className="flex-grow">
@@ -28,7 +28,7 @@ export const AutomationDetailsMainContentLoader = () => (
           <Loader.Item height="20px" width="80px" />
         </Loader>
       </Loader>
-    </Loader>
+    </Loader> */}
 
     {/* Trigger Section */}
     <Loader className="space-y-5">

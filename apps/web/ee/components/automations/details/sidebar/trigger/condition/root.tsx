@@ -1,15 +1,7 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import {
-  EConditionNodeHandlerName,
-  LOGICAL_OPERATOR,
-  TAutomationConditionFilterExpression,
-  TAutomationConditionNode,
-  TAutomationTriggerNode,
-} from "@plane/types";
-import { Button } from "@plane/ui";
+import { TAutomationConditionFilterExpression } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
 import { AddFilterButton } from "@/plane-web/components/rich-filters/add-filters-button";
@@ -20,18 +12,12 @@ import { AutomationConditionFilterHOC } from "./filter-provider";
 
 type Props = {
   automationId: string;
-  isLoading: boolean;
-  triggerNode: TAutomationTriggerNode | undefined;
-  conditionNode: TAutomationConditionNode | undefined;
-  filterExpression: TAutomationConditionFilterExpression | undefined;
+  initialFilterExpression: TAutomationConditionFilterExpression | undefined;
   updateFilterExpression: (updatedFilters: TAutomationConditionFilterExpression) => void;
 };
 
 export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = observer((props) => {
-  const { automationId, isLoading, triggerNode, conditionNode, filterExpression, updateFilterExpression } = props;
-  // states
-  const [isAddingCondition, setIsAddingCondition] = useState(false);
-  const [isConditionAdded, setIsConditionAdded] = useState(false);
+  const { automationId, initialFilterExpression, updateFilterExpression } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -39,47 +25,13 @@ export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = obs
   // derived values
   const automation = getAutomationById(automationId);
 
-  const handleAddCondition = async () => {
-    setIsAddingCondition(true);
-    await automation
-      ?.createCondition({
-        name: `Condition_${new Date().toISOString()}`,
-        handler_name: EConditionNodeHandlerName.JSON_FILTER,
-        config: {
-          filter_expression: {
-            [LOGICAL_OPERATOR.AND]: [],
-          },
-        },
-      })
-      .then(() => {
-        setIsConditionAdded(true);
-      });
-    setIsAddingCondition(false);
-    setIsConditionAdded(true);
-  };
-
   if (!automation) return null;
-  if (triggerNode && !conditionNode && !isLoading) {
-    return (
-      <div className="px-6">
-        <Button
-          variant="accent-primary"
-          size="sm"
-          onClick={handleAddCondition}
-          loading={isAddingCondition}
-          disabled={isAddingCondition}
-        >
-          {isAddingCondition ? t("automations.condition.adding_condition") : t("automations.condition.add_condition")}
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <AutomationConditionFilterHOC
       projectId={automation.project}
       workspaceSlug={automation.workspaceSlug}
-      initialFilterExpression={filterExpression}
+      initialFilterExpression={initialFilterExpression}
       updateFilterExpression={updateFilterExpression}
     >
       {({ filter }) => (
@@ -114,7 +66,6 @@ export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = obs
                     buttonConfig={{
                       label: t("automations.condition.add_condition"),
                       variant: "accent-primary",
-                      defaultOpen: isConditionAdded,
                       iconConfig: {
                         shouldShowIcon: false,
                       },

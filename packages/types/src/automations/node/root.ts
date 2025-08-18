@@ -69,7 +69,10 @@ export type TAutomationTriggerNode = TAutomationNode<
   TAutomationTriggerNodeConfig
 >;
 
-export type TCreateTriggerPayload = Pick<TAutomationTriggerNode, "handler_name"> & Partial<TAutomationTriggerNode>;
+export type TCreateTriggerPayload = Pick<TAutomationTriggerNode, "handler_name"> &
+  Partial<TAutomationTriggerNode> & {
+    conditionPayload?: Partial<TCreateConditionPayload>;
+  };
 
 export type TCreateTriggerResponse = {
   trigger: TAutomationTriggerNode;

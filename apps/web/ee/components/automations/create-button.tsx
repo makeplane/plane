@@ -1,10 +1,15 @@
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button, TButtonVariant } from "@plane/ui";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
-export const CreateAutomationButton = () => {
+type TProps = {
+  variant?: TButtonVariant;
+};
+
+export const CreateAutomationButton = (props: TProps) => {
+  const { variant = "primary" } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -14,7 +19,7 @@ export const CreateAutomationButton = () => {
 
   return (
     <Button
-      variant="primary"
+      variant={variant}
       size="sm"
       onClick={() => {
         setCreateUpdateModalConfig({ isOpen: true, payload: null });

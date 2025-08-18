@@ -2793,10 +2793,7 @@
       "input_placeholder": "Select an option",
       "button": {
         "previous": "Back",
-        "next": {
-          "continue": "Continue",
-          "add_action": "Add action"
-        }
+        "next": "Add action"
       }
     },
     "condition": {
@@ -2931,6 +2928,10 @@
       }
     },
     "empty_state": {
+      "no_automations": {
+        "title": "There’re no automations to show yet.",
+        "description": "Automations help you eliminate repetitive tasks by setting triggers, conditions, and actions. Create one to save time and keep work moving effortlessly."
+      },
       "upgrade": {
         "title": "Automations",
         "description": "Automations are a way to automate tasks in your project.",

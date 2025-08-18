@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { ChevronDown, Zap } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRIGGER_SELECT_OPTIONS } from "@plane/constants";
+import { AUTOMATION_TRIGGER_SELECT_OPTIONS, DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EAutomationSidebarTab, TAutomationConditionFilterExpression, TTriggerNodeHandlerName } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
-import { cn } from "@plane/utils";
+import {
+  EAutomationSidebarTab,
+  ICustomSearchSelectOption,
+  TAutomationConditionFilterExpression,
+  TTriggerNodeHandlerName,
+} from "@plane/types";
+import { CustomSearchSelect } from "@plane/ui";
+import { cn, generateConditionPayload } from "@plane/utils";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -19,13 +24,20 @@ type Props = {
   automationId: string;
 };
 
+const AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT: ICustomSearchSelectOption[] =
+  AUTOMATION_TRIGGER_SELECT_OPTIONS.map((option) => ({
+    value: option.value,
+    query: option.label,
+    content: (
+      <span className="flex items-center gap-2">
+        <AutomationTriggerIcon iconKey={option.iconKey} />
+        {option.label}
+      </span>
+    ),
+  }));
+
 export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((props) => {
   const { automationId } = props;
-  // states
-  const [selectedTriggerNodeHandlerName, setSelectedTriggerNodeHandlerName] = useState<TTriggerNodeHandlerName | null>(
-    null
-  );
-  const [isCreatingUpdatingTriggerOrCondition, setIsCreatingUpdatingTriggerOrCondition] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -35,59 +47,110 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
   const sidebarHelper = automation?.sidebarHelper;
   const triggerNode = automation?.trigger;
   const conditionNode = automation?.allConditions?.[0];
-  const actionNode = automation?.allActions?.[0];
   const filterExpression = conditionNode?.config?.filter_expression;
   const triggerNodeHandlerName = triggerNode?.handler_name;
+  // states
+  const [isCreatingUpdatingTrigger, setIsCreatingUpdatingTrigger] = useState(false);
+  const [isCreatingUpdatingCondition, setIsCreatingUpdatingCondition] = useState(false);
+  const [selectedTriggerNodeHandlerName, setSelectedTriggerNodeHandlerName] = useState<TTriggerNodeHandlerName | null>(
+    triggerNodeHandlerName ?? null
+  );
+  const [selectedFilterExpression, setSelectedFilterExpression] = useState<TAutomationConditionFilterExpression>(
+    filterExpression ?? DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION
+  );
+  // derived states
   const selectedTriggerNodeHandlerOption = useMemo(
     () => AUTOMATION_TRIGGER_SELECT_OPTIONS.find((option) => option.value === selectedTriggerNodeHandlerName),
     [selectedTriggerNodeHandlerName]
   );
-  // states
-  const [conditionFilterExpression, setConditionFilterExpression] = useState<
-    TAutomationConditionFilterExpression | undefined
-  >(filterExpression);
 
-  useEffect(() => {
-    if (triggerNodeHandlerName) {
-      setSelectedTriggerNodeHandlerName(triggerNodeHandlerName);
+  const createOrUpdateTrigger = async () => {
+    if (!automation || !selectedTriggerNodeHandlerName) return;
+
+    // If trigger node doesn't exist, create it with the selected handler and condition.
+    if (!triggerNode) {
+      try {
+        await automation.createTrigger({
+          handler_name: selectedTriggerNodeHandlerName,
+          conditionPayload: {
+            config: {
+              filter_expression: selectedFilterExpression,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("Failed to create trigger:", error);
+      }
+      return;
     }
-  }, [triggerNodeHandlerName]);
 
-  const handleNextButtonClick = async () => {
-    setIsCreatingUpdatingTriggerOrCondition(true);
-    if (automation && selectedTriggerNodeHandlerName) {
-      if (!triggerNode) {
-        const { condition } = await automation.createTrigger({
+    // If handler name changed, update the trigger node.
+    if (triggerNode.handler_name !== selectedTriggerNodeHandlerName) {
+      try {
+        await triggerNode.update({
           handler_name: selectedTriggerNodeHandlerName,
         });
-        setConditionFilterExpression(condition.config.filter_expression);
-      } else {
-        if (triggerNode.handler_name !== selectedTriggerNodeHandlerName) {
-          await triggerNode.update({
-            handler_name: selectedTriggerNodeHandlerName,
-          });
-        }
-        if (conditionNode && conditionFilterExpression && !isEqual(filterExpression, conditionFilterExpression)) {
-          await conditionNode.update({
-            config: {
-              filter_expression: conditionFilterExpression,
-            },
-          });
-        }
-        sidebarHelper?.setSelectedSidebarConfig({
-          tab: EAutomationSidebarTab.ACTION,
-          mode: automation.isAnyActionNodeAvailable ? "view" : "create",
-        });
+      } catch (error) {
+        console.error("Failed to update trigger handler:", error);
       }
     }
-    setIsCreatingUpdatingTriggerOrCondition(false);
   };
 
-  const getNextButtonLabel = () => {
-    if (isCreatingUpdatingTriggerOrCondition) return t("common.confirming");
-    if (!triggerNode) return t("automations.trigger.button.next.continue"); // No trigger node yet: prompt to continue to add condition node
-    if (!actionNode) return t("automations.trigger.button.next.add_action"); // No action node yet: prompt to add an action
-    return t("automations.trigger.button.next.continue");
+  const createOrUpdateCondition = async () => {
+    if (!automation || !selectedFilterExpression || !selectedTriggerNodeHandlerName) return;
+
+    // If condition node doesn't exist, create it.
+    if (!conditionNode) {
+      try {
+        const conditionPayload = generateConditionPayload({
+          triggerHandlerName: selectedTriggerNodeHandlerName,
+          conditionPayload: {
+            config: {
+              filter_expression: selectedFilterExpression,
+            },
+          },
+        });
+        await automation.createCondition(conditionPayload);
+      } catch (error) {
+        console.error("Failed to create condition:", error);
+      }
+      return;
+    }
+
+    // If filter expression changed, update the condition node.
+    if (!isEqual(conditionNode.config.filter_expression, selectedFilterExpression)) {
+      try {
+        await conditionNode.update({
+          config: {
+            filter_expression: selectedFilterExpression,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to update condition:", error);
+      }
+    }
+  };
+
+  const handleNextButtonClick = async () => {
+    setIsCreatingUpdatingTrigger(true);
+    setIsCreatingUpdatingCondition(true);
+
+    try {
+      await createOrUpdateTrigger();
+      setIsCreatingUpdatingTrigger(false);
+
+      await createOrUpdateCondition();
+      setIsCreatingUpdatingCondition(false);
+
+      sidebarHelper?.setSelectedSidebarConfig({
+        tab: EAutomationSidebarTab.ACTION,
+        mode: automation?.isAnyActionNodeAvailable ? "view" : "create",
+      });
+    } catch (error) {
+      console.error("Failed to proceed to next step:", error);
+      setIsCreatingUpdatingTrigger(false);
+      setIsCreatingUpdatingCondition(false);
+    }
   };
 
   if (!automation) return null;
@@ -100,13 +163,19 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
           </span>
           <p className="text-xs font-medium">{t("automations.trigger.input_label")}</p>
         </div>
-        <CustomSelect
+        <CustomSearchSelect
+          options={AUTOMATION_TRIGGER_SELECT_OPTIONS_WITH_CONTENT}
+          value={selectedTriggerNodeHandlerName}
+          onChange={(value: TTriggerNodeHandlerName) => {
+            setSelectedTriggerNodeHandlerName(value);
+          }}
+          customButtonClassName="w-full"
           customButton={
             <span
               className={cn(
                 "w-full px-4 py-1.5 rounded-md border-[0.5px] border-custom-border-200 hover:bg-custom-background-80 text-left flex items-center gap-2 cursor-pointer transition-colors",
                 {
-                  "text-custom-text-400": !selectedTriggerNodeHandlerName,
+                  "text-custom-text-400 border border-custom-primary-200": !selectedTriggerNodeHandlerName,
                 }
               )}
             >
@@ -123,29 +192,12 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
               <ChevronDown className="flex-shrink-0 size-3" />
             </span>
           }
-          customButtonClassName="w-full"
-          value={selectedTriggerNodeHandlerName}
-          onChange={(value: TTriggerNodeHandlerName) => {
-            setSelectedTriggerNodeHandlerName(value);
-          }}
-        >
-          {AUTOMATION_TRIGGER_SELECT_OPTIONS.map((option) => (
-            <CustomSelect.Option key={option.value} value={option.value}>
-              <span className="flex items-center gap-2">
-                <AutomationTriggerIcon iconKey={option.iconKey} />
-                {option.label}
-              </span>
-            </CustomSelect.Option>
-          ))}
-        </CustomSelect>
+        />
       </div>
       <AutomationDetailsSidebarTriggerConditionRoot
         automationId={automationId}
-        isLoading={isCreatingUpdatingTriggerOrCondition}
-        triggerNode={triggerNode}
-        conditionNode={conditionNode}
-        filterExpression={conditionFilterExpression}
-        updateFilterExpression={setConditionFilterExpression}
+        initialFilterExpression={selectedFilterExpression}
+        updateFilterExpression={setSelectedFilterExpression}
       />
       <AutomationDetailsSidebarActionButtons
         previousButton={{
@@ -153,8 +205,12 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
           isDisabled: true,
         }}
         nextButton={{
-          label: getNextButtonLabel(),
-          isDisabled: !selectedTriggerNodeHandlerName || isCreatingUpdatingTriggerOrCondition,
+          label: isCreatingUpdatingTrigger
+            ? t("common.confirming")
+            : triggerNode
+              ? t("common.continue")
+              : t("automations.trigger.button.next"),
+          isDisabled: !selectedTriggerNodeHandlerName || isCreatingUpdatingTrigger || isCreatingUpdatingCondition,
           onClick: handleNextButtonClick,
         }}
       />

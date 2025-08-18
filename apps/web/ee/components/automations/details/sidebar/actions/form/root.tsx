@@ -77,7 +77,7 @@ type TProps = {
   workspaceSlug: string;
 } & (TNewAutomationAction | TExistingAutomationAction);
 
-export const AutomationDetailsSidebarActionsFormRoot: React.FC<TProps> = observer((props) => {
+const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFormElement, TProps>((props, ref) => {
   const {
     automationId,
     currentIndex,
@@ -143,7 +143,7 @@ export const AutomationDetailsSidebarActionsFormRoot: React.FC<TProps> = observe
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
+      <form ref={ref} onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
         <AutomationDetailsSidebarSectionWrapper
           defaultOpen={defaultOpen}
           title={`${t("automations.action.label")} #${currentIndex + 1}`}
@@ -216,3 +216,6 @@ export const AutomationDetailsSidebarActionsFormRoot: React.FC<TProps> = observe
     </FormProvider>
   );
 });
+AutomationDetailsSidebarActionsFormRootComponent.displayName = "AutomationDetailsSidebarActionsFormRoot";
+
+export const AutomationDetailsSidebarActionsFormRoot = observer(AutomationDetailsSidebarActionsFormRootComponent);

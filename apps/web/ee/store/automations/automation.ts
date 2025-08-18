@@ -6,8 +6,6 @@ import { computedFn } from "mobx-utils";
 import {
   EAutomationNodeType,
   EAutomationStatus,
-  EConditionNodeHandlerName,
-  LOGICAL_OPERATOR,
   TAutomation,
   TAutomationActionNode,
   TAutomationActivity,
@@ -23,7 +21,7 @@ import {
   TCreateTriggerPayload,
   TAutomationActivityFilters,
 } from "@plane/types";
-import { getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
+import { generateConditionPayload, getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
@@ -488,21 +486,17 @@ export class AutomationInstance implements IAutomationInstance {
 
   createTrigger: IAutomationInstance["createTrigger"] = async (payload) => {
     const trigger = await this._createNode<TAutomationTriggerNode>(EAutomationNodeType.TRIGGER, {
-      name: `Trigger_${payload.handler_name}_${new Date().toISOString()}`,
+      name: payload.name ?? `Trigger_${payload.handler_name}_${new Date().toISOString()}`,
       ...payload,
     });
 
+    const conditionPayload = generateConditionPayload({
+      triggerHandlerName: payload.handler_name,
+      conditionPayload: payload.conditionPayload,
+    });
     const condition = await this._createNode<TAutomationConditionNode>(
       EAutomationNodeType.CONDITION,
-      {
-        name: `Condition_${trigger.handler_name}_${new Date().toISOString()}`,
-        handler_name: EConditionNodeHandlerName.JSON_FILTER,
-        config: {
-          filter_expression: {
-            [LOGICAL_OPERATOR.AND]: [],
-          },
-        },
-      },
+      conditionPayload,
       trigger.id
     );
 
