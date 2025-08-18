@@ -44,8 +44,8 @@ jobs:
       - name: Lint web apps
         run: yarn check:lint
 
-      - name: Check types
-        run: yarn check:types
+      - name: Check format
+        run: yarn check:format
 
       - name: Build apps
         run: yarn build
