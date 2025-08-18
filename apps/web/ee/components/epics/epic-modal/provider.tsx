@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";

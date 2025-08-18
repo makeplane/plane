@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
 // plane imports

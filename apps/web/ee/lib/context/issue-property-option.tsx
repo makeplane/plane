@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect, useCallback } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { v4 } from "uuid";
 // plane imports
 import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";

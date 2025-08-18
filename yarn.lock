@@ -1377,7 +1377,7 @@
     "@flatfile/cross-env-config" "^0.0.6"
     cross-fetch "^4.0.0"
 
-"@floating-ui/core@^1.7.3":
+"@floating-ui/core@^1.7.2", "@floating-ui/core@^1.7.3":
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.7.3.tgz#462d722f001e23e46d86fd2bd0d21b7693ccb8b7"
   integrity sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==
