@@ -12,7 +12,7 @@ import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // constants
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { MemberSelect } from "./member-select";

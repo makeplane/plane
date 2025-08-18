@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { useCycle } from "@/hooks/store/use-cycle"
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";

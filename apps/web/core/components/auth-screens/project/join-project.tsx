@@ -6,7 +6,7 @@ import { ClipboardList } from "lucide-react";
 // plane imports
 import { Button } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // assets
 import Unauthorized from "@/public/auth/unauthorized.svg";

@@ -32,10 +32,10 @@ import { CreateLabelModal } from "@/components/labels";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useLabel } from "@/hooks/store/use-label"
-import { useProject } from "@/hooks/store/use-project"
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";

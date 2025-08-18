@@ -10,8 +10,8 @@ import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
 
 type Props = {

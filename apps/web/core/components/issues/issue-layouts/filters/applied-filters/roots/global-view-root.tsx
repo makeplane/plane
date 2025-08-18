@@ -22,9 +22,9 @@ import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useGlobalView } from "@/hooks/store/use-global-view"
-import { useIssues } from "@/hooks/store/use-issues"
-import { useLabel } from "@/hooks/store/use-label"
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { getAreFiltersEqual } from "../../../utils";
 import { AppliedFiltersList } from "../filters-list";

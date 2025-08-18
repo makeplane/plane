@@ -10,7 +10,7 @@ import { Button, PlaneLockup } from "@plane/ui";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
 // assets
 import CyclesTour from "@/public/onboarding/cycles.webp";

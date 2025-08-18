@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useCallback, useMemo } from "react";
 import { Lock, ChevronDown } from "lucide-react";

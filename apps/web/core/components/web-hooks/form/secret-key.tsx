@@ -13,7 +13,7 @@ import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
-import { useWebhook } from "@/hooks/store/use-webhook"
+import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";

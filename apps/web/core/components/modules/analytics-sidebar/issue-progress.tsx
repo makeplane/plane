@@ -17,8 +17,8 @@ import { getDate } from "@plane/utils";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useModule } from "@/hooks/store/use-module"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useModule } from "@/hooks/store/use-module";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants
 type TModuleAnalyticsProgress = {

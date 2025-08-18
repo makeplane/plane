@@ -12,9 +12,9 @@ import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useIssues } from "@/hooks/store/use-issues"
-import { useProject } from "@/hooks/store/use-project"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -14,8 +14,8 @@ import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // assets
 import { useAppRouter } from "@/hooks/use-app-router";

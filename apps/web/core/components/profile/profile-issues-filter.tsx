@@ -23,7 +23,7 @@ import {
 } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 
 export const ProfileIssuesFilter = observer(() => {

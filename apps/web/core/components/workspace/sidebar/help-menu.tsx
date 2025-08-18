@@ -12,9 +12,9 @@ import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useInstance } from "@/hooks/store/use-instance"
-import { useTransient } from "@/hooks/store/use-transient"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useTransient } from "@/hooks/store/use-transient";
 import { useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

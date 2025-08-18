@@ -15,7 +15,7 @@ import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type TUserProfileHeader = {

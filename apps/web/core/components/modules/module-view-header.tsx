@@ -20,7 +20,7 @@ import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modu
 // constants
 // helpers
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";

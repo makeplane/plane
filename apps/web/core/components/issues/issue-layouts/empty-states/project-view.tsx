@@ -6,7 +6,7 @@ import { EIssuesStoreType } from "@plane/types";
 import { EmptyState } from "@/components/common/empty-state";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // assets
 import emptyIssue from "@/public/empty-state/issue.svg";

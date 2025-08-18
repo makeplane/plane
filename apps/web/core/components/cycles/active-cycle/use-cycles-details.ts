@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { EIssueFilterType } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
-import { useCycle } from "@/hooks/store/use-cycle"
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 
 interface IActiveCycleDetails {

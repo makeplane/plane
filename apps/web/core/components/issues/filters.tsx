@@ -20,9 +20,9 @@ import { Button } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // helpers
 // hooks
-import { useLabel } from "@/hooks/store/use-label"
-import { useProjectState } from "@/hooks/store/use-project-state"
-import { useMember } from "@/hooks/store/use-member"
+import { useLabel } from "@/hooks/store/use-label";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useMember } from "@/hooks/store/use-member";
 import { useIssues } from "@/hooks/store/use-issues";
 // plane web types
 import { TProject } from "@/plane-web/types";
