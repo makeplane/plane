@@ -20,6 +20,24 @@ from plane.graphql.utils.issue_activity import issue_activity_comment_string
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
+@strawberry.type
+class NotificationCountBaseType:
+    unread: Optional[int]
+    mentioned: Optional[int]
+
+
+@strawberry.type
+class NotificationCountWorkspaceType(NotificationCountBaseType):
+    id: str
+    slug: str
+    name: str
+
+
+@strawberry.type
+class NotificationCountType(NotificationCountBaseType):
+    workspaces: Optional[list[NotificationCountWorkspaceType]]
+
+
 @strawberry_django.type(Notification)
 class NotificationType:
     id: strawberry.ID

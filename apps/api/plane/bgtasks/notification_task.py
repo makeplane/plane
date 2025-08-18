@@ -20,9 +20,9 @@ from plane.db.models import (
     UserNotificationPreference,
     ProjectMember,
 )
-from django.db.models import Subquery, Q
+from django.db.models import Subquery
 from plane.app.serializers import NotificationSerializer
-from plane.graphql.bgtasks.push_notification import issue_push_notifications
+from plane.graphql.bgtasks.push_notifications import issue_push_notifications
 
 # Third Party imports
 from celery import shared_task

@@ -86,7 +86,7 @@ class DeviceInformationMutation:
             user_device_info.push_token = push_token
             await sync_to_async(user_device_info.save)()
         else:
-            user_device_info.is_active = False
+            user_device_info.is_active = True
             user_device_info.push_token = push_token
             await sync_to_async(user_device_info.save)()
 

@@ -138,7 +138,7 @@ from .queries.module import (
     ModuleIssueUserPropertyQuery,
     ModuleQuery,
 )
-from .queries.notification import NotificationQuery
+from .queries.notification import NotificationQuery, NotificationCountQuery
 from .queries.page import (
     NestedChildPagesQuery,
     NestedParentPagesQuery,
@@ -205,6 +205,7 @@ class Query(
     UserProjectRolesQuery,
     # notification
     NotificationQuery,
+    NotificationCountQuery,
     # search
     GlobalSearchQuery,
     # workspace
