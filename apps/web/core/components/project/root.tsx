@@ -10,8 +10,8 @@ import { calculateTotalFilters } from "@plane/utils";
 // components
 import { PageHead } from "@/components/core/page-title";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
-import { useProjectFilter } from "@/hooks/store/use-project-filter"
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectFilter } from "@/hooks/store/use-project-filter";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { ProjectAppliedFiltersList } from "./applied-filters";

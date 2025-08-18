@@ -14,7 +14,7 @@ import { ModuleForm } from "@/components/modules";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule } from "@/hooks/store/use-module"
+import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";

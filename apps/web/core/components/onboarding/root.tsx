@@ -15,7 +15,7 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store/user"
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // local components
 import { OnboardingHeader } from "./header";

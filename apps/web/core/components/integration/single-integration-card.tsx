@@ -13,7 +13,7 @@ import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance"
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUserPermissions } from "@/hooks/store/user";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";

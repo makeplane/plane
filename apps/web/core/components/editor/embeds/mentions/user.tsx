@@ -11,7 +11,7 @@ import { cn, getFileURL } from "@plane/utils";
 // constants
 // helpers
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 
 type Props = {

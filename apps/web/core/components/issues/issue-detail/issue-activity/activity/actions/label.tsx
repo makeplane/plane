@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Tag } from "lucide-react";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useLabel } from "@/hooks/store/use-label";
 // components
 import { IssueActivityBlockComponent, IssueLink, LabelActivityChip } from "./";

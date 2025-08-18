@@ -13,7 +13,7 @@ import { cn, copyTextToClipboard } from "@plane/utils";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {

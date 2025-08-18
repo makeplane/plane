@@ -8,7 +8,7 @@ import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions } from "@plane
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

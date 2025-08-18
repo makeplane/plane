@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // hooks
 import { Tag } from "@plane/ui";
-import { useLabel } from "@/hooks/store/use-label"
+import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 const LabelIcons = ({ color }: { color: string }) => (

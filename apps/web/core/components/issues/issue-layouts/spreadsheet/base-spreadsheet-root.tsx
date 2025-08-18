@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType, IIssueDisplayFilterOptions, EIssueLayoutTypes } from "@plane/types";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

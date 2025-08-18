@@ -8,7 +8,7 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { ViewListHeader } from "@/components/views/view-list-header";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";

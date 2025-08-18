@@ -15,7 +15,7 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";

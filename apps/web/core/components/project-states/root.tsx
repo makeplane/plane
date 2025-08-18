@@ -8,7 +8,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles, IState, TStateOperationsCallbacks } from "@plane/types";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 
 type TProjectState = {

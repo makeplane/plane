@@ -21,7 +21,7 @@ import { getFileIcon } from "@/components/icons";
 import { IssueAttachmentDeleteModal } from "@/components/issues/attachment/delete-attachment-modal";
 // helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types

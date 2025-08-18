@@ -18,7 +18,7 @@ import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile, useUserSettings } from "@/hooks/store/user"
+import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane-web imports
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";

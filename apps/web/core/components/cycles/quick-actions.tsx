@@ -18,7 +18,7 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCycle } from "@/hooks/store/use-cycle"
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";

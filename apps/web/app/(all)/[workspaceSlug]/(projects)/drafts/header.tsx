@@ -14,8 +14,8 @@ import { CountChip } from "@/components/common/count-chip";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 
 // hooks
-import { useProject } from "@/hooks/store/use-project"
-import { useUserPermissions } from "@/hooks/store/user"
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 
 export const WorkspaceDraftHeader = observer(() => {

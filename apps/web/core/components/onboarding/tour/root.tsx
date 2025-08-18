@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 // plane imports
-// import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Avatar, Button, PlaneLockup } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";

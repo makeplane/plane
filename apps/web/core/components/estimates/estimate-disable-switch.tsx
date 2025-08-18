@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // i18n
 type TEstimateDisableSwitch = {

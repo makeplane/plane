@@ -8,7 +8,7 @@ import type { IProject } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 

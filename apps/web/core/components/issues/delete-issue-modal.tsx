@@ -11,8 +11,8 @@ import { TDeDupeIssue, TIssue } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useProject } from "@/hooks/store/use-project"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane-web
 
