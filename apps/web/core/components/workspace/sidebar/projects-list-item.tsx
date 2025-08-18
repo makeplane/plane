@@ -22,9 +22,9 @@ import { Logo } from "@/components/common/logo";
 import { LeaveProjectModal } from "@/components/project/leave-project-modal";
 import { PublishProjectModal } from "@/components/project/publish-project/modal";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useProject } from "@/hooks/store/use-project"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports

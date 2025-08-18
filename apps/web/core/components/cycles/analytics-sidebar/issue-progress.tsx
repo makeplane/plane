@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { getDate } from "@plane/utils";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useCycle } from "@/hooks/store/use-cycle";
 // plane web components
 import { SidebarChartRoot } from "@/plane-web/components/cycles";

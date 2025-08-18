@@ -15,8 +15,8 @@ import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useProject } from "@/hooks/store/use-project"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { TProject } from "@/plane-web/types";

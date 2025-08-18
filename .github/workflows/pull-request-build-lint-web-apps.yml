@@ -4,7 +4,14 @@ on:
   workflow_dispatch:
   pull_request:
     branches: ["preview"]
-    types: ["opened", "synchronize", "ready_for_review", "review_requested", "reopened"]
+    types:
+      [
+        "opened",
+        "synchronize",
+        "ready_for_review",
+        "review_requested",
+        "reopened",
+      ]
     paths:
       - "**.tsx?"
       - "**.jsx?"
@@ -35,9 +42,10 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Lint web apps
-        run: yarn run ci:lint
+        run: yarn check:lint
+
+      - name: Check types
+        run: yarn check:types
 
       - name: Build apps
-        run: yarn run ci:build
-
-
+        run: yarn build

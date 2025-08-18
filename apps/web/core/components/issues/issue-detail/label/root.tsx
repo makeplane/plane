@@ -7,8 +7,8 @@ import { EIssueServiceType, IIssueLabel, TIssue, TIssueServiceType } from "@plan
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useLabel } from "@/hooks/store/use-label"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // ui
 // types

@@ -6,7 +6,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";

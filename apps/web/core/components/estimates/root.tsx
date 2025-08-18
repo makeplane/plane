@@ -4,7 +4,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";

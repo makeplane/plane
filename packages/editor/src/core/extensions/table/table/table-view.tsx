@@ -146,7 +146,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -174,7 +174,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",

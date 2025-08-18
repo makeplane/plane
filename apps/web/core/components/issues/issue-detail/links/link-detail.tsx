@@ -10,7 +10,7 @@ import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/ut
 // types
 // helpers
 //
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";

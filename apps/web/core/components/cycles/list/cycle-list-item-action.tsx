@@ -24,8 +24,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCycle } from "@/hooks/store/use-cycle"
-import { useMember } from "@/hooks/store/use-member"
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -10,8 +10,8 @@ import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useProject } from "@/hooks/store/use-project"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components

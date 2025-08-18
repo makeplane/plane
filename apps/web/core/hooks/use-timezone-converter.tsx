@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { format } from "date-fns";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 export const useTimeZoneConverter = (projectId: string) => {

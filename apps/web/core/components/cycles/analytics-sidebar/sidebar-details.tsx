@@ -12,7 +12,7 @@ import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants
 

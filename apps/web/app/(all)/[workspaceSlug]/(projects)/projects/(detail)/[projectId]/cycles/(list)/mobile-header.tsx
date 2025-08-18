@@ -7,7 +7,7 @@ import { GanttChartSquare, LayoutGrid, List, type LucideIcon } from "lucide-reac
 import { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { useCycleFilter } from "@/hooks/store/use-cycle-filter"
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 
 const CYCLE_VIEW_LAYOUTS: {

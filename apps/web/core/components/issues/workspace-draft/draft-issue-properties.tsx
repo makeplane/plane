@@ -18,10 +18,10 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 // hooks
-import { useLabel } from "@/hooks/store/use-label"
-import { useProjectState } from "@/hooks/store/use-project-state"
-import { useProject } from "@/hooks/store/use-project"
-import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useLabel } from "@/hooks/store/use-label";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssuePropertyLabels } from "../issue-layouts/properties";
