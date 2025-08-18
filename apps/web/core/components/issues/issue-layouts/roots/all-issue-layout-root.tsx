@@ -32,7 +32,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
 
   // Store hooks
   const {
-    issuesFilter: { fetchFilters, updateFilters },
+    issuesFilter: { filters, fetchFilters, updateFilters },
     issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
@@ -42,7 +42,8 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
 
   // Derived values
   const viewDetails = getViewDetailsById(globalViewId?.toString());
-  const activeLayout: EIssueLayoutTypes | undefined = EIssueLayoutTypes.SPREADSHEET;
+  const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
+  const activeLayout: EIssueLayoutTypes | undefined = issueFilters?.displayFilters?.layout;
 
   // Route filters
   const routeFilters: { [key: string]: string } = {};

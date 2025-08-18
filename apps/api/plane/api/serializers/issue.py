@@ -69,7 +69,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        exclude = ["description"]
 
     def validate(self, data):
         if (
@@ -255,7 +255,22 @@ class IssueSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            # Get the current assignees
+            current_assignees = IssueAssignee.objects.filter(
+                issue=instance
+            ).values_list("assignee_id", flat=True)
+
+            # Get the assignees to add
+            assignees_to_add = list(set(assignees) - set(current_assignees))
+
+            # Get the assignees to remove
+            assignees_to_remove = list(set(current_assignees) - set(assignees))
+
+            # Delete the assignees to remove
+            IssueAssignee.objects.filter(
+                issue=instance, assignee_id__in=assignees_to_remove
+            ).delete()
+
             try:
                 IssueAssignee.objects.bulk_create(
                     [
@@ -267,7 +282,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for assignee_id in assignees
+                        for assignee_id in assignees_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -276,7 +291,23 @@ class IssueSerializer(BaseSerializer):
                 pass
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            # Get the current labels
+            current_labels = IssueLabel.objects.filter(issue=instance).values_list(
+                "label_id", flat=True
+            )
+
+            # Get the labels to add
+            labels_to_add = list(set(labels) - set(current_labels))
+
+            # Get the labels to remove
+            labels_to_remove = list(set(current_labels) - set(labels))
+
+            # Delete the labels to remove
+            IssueLabel.objects.filter(
+                issue=instance, label_id__in=labels_to_remove
+            ).delete()
+
+            # Create the labels to add
             try:
                 IssueLabel.objects.bulk_create(
                     [
@@ -288,7 +319,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label_id in labels
+                        for label_id in labels_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -586,7 +617,7 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-        exclude = ["comment_stripped", "comment_json"]
+        exclude = ["comment_json"]
 
     def validate(self, data):
         try:
@@ -720,9 +751,9 @@ class IssueAttachmentUploadSerializer(serializers.Serializer):
     )
 
 
-class IssueSearchSerializer(serializers.Serializer):
+class IssueSearchItemSerializer(serializers.Serializer):
     """
-    Serializer for work item search result data formatting.
+    Individual issue component for search results.
 
     Provides standardized search result structure including work item identifiers,
     project context, and workspace information for search API responses.
@@ -736,3 +767,34 @@ class IssueSearchSerializer(serializers.Serializer):
     )
     project_id = serializers.CharField(required=True, help_text="Project ID")
     workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
+
+
+class IssueSearchSerializer(serializers.Serializer):
+    """
+    Search results for work items.
+
+    Provides list of issues with their identifiers, names, and project context.
+    """
+
+    issues = IssueSearchItemSerializer(many=True)
+
+class IssueDetailSerializer(IssueSerializer):
+    """
+    Comprehensive work item serializer with full relationship management.
+
+    Handles complete work item lifecycle including assignees, labels, validation,
+    and related model updates. Supports dynamic field expansion and HTML content processing.
+    """
+
+    assignees = UserLiteSerializer(many=True)
+
+    labels = LabelSerializer(many=True)
+
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Issue
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        exclude = ["description"]

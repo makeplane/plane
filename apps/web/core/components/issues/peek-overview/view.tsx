@@ -8,6 +8,8 @@ import { cn } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
+// plane web hooks
+import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
@@ -60,6 +62,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
+  const { isAnyModalOpen: isAnyCustomerModalOpen } = useCustomers();
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
@@ -81,7 +84,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen && !isAnyCustomerModalOpen) {
           removeRoutePeekId();
         }
       }

@@ -5,8 +5,8 @@ from .configuration import (
     EmailCredentialCheckEndpoint,
     InstanceConfigurationEndpoint,
     DisableEmailFeatureEndpoint,
+    AdminFeatureFlagEndpoint,
 )
-
 
 from .admin import (
     InstanceAdminEndpoint,
@@ -22,3 +22,5 @@ from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
 )
+
+from .changelog import CheckUpdateEndpoint

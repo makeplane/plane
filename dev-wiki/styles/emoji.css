@@ -1,0 +1,52 @@
+.EmojiPickerReact {
+  --epr-category-navigation-button-size: 1.25rem !important;
+  --epr-category-label-height: 1.5rem !important;
+  --epr-emoji-size: 1.25rem !important;
+  --epr-picker-border-radius: 0.25rem !important;
+  --epr-horizontal-padding: 0.5rem !important;
+  --epr-emoji-padding: 0.5rem !important;
+  background-color: rgba(var(--color-background-100)) !important;
+}
+
+.epr-main {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.epr-emoji-category-label {
+  font-size: 0.7875rem !important;
+  color: rgba(var(--color-text-300)) !important;
+  background-color: rgba(var(--color-background-100), 0.8) !important;
+}
+
+.epr-category-nav,
+.epr-header-overlay {
+  padding: 0.5rem !important;
+}
+
+button.epr-emoji:hover > *,
+button.epr-emoji:focus > * {
+  background-color: rgba(var(--color-background-80)) !important;
+}
+
+input.epr-search {
+  font-size: 0.7875rem !important;
+  height: 2rem !important;
+  background: transparent !important;
+  border-color: rgba(var(--color-border-200)) !important;
+  border-radius: 0.25rem !important;
+}
+
+input.epr-search::placeholder {
+  color: rgba(var(--color-text-400)) !important;
+}
+
+button.epr-btn-clear-search:hover {
+  background-color: rgba(var(--color-background-80)) !important;
+  color: rgba(var(--color-text-300)) !important;
+}
+
+.epr-emoji-variation-picker {
+  background-color: rgba(var(--color-background-100)) !important;
+  border-color: rgba(var(--color-border-200)) !important;
+}
