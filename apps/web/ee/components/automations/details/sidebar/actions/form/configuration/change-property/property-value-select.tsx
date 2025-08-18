@@ -3,46 +3,26 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EAutomationChangeType, EAutomationChangePropertyType, ICustomSearchSelectOption } from "@plane/types";
+import { EAutomationChangeType, EAutomationChangePropertyType } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
+import {
+  EConfigurationComponentType,
+  TChangePropertyConfiguration,
+} from "@/plane-web/hooks/automations/use-automation-action-config";
 // local imports
 import { TAutomationActionFormData } from "../../root";
 import { getPropertyChangeDropdownClassNames } from "./common";
-
-enum EConfigurationComponentType {
-  SINGLE_SELECT = "single_select",
-  MULTI_SELECT = "multi_select",
-  DATE_PICKER = "date_picker",
-}
-
-type TSingleSelectConfiguration = {
-  component_type: EConfigurationComponentType.SINGLE_SELECT;
-  options: ICustomSearchSelectOption[];
-};
-
-type TMultiSelectConfiguration = {
-  component_type: EConfigurationComponentType.MULTI_SELECT;
-  options: ICustomSearchSelectOption[];
-};
-
-type TDatePickerConfiguration = {
-  component_type: EConfigurationComponentType.DATE_PICKER;
-  minDate?: Date;
-  maxDate?: Date;
-};
-
-type TComponentConfiguration = TSingleSelectConfiguration | TMultiSelectConfiguration | TDatePickerConfiguration;
 
 type TProps = {
   isDisabled?: boolean;
   propertyName?: EAutomationChangePropertyType;
   changeType?: EAutomationChangeType;
-  configuration?: TComponentConfiguration;
+  configuration?: TChangePropertyConfiguration;
 };
 
 export const PropertyValueSelect: React.FC<TProps> = observer((props) => {
@@ -87,11 +67,8 @@ export const PropertyValueSelect: React.FC<TProps> = observer((props) => {
                 value={value?.[0] || ""}
                 onChange={(property_value: string) => onChange([property_value])}
                 label={
-                  value?.[0]
-                    ? configuration.options.find((opt) => opt.value === value[0])?.query ||
-                      t("automations.action.configuration.change_property.placeholders.property_value_select", {
-                        count: 1,
-                      })
+                  value && value.length > 0
+                    ? configuration.getPreviewContent(value)
                     : t("automations.action.configuration.change_property.placeholders.property_value_select", {
                         count: 1,
                       })
@@ -108,9 +85,13 @@ export const PropertyValueSelect: React.FC<TProps> = observer((props) => {
                 options={configuration.options}
                 value={value || []}
                 onChange={(property_value: string[]) => onChange(property_value)}
-                label={t("automations.action.configuration.change_property.placeholders.property_value_select", {
-                  count: 2,
-                })}
+                label={
+                  value && value.length > 0
+                    ? configuration.getPreviewContent(value)
+                    : t("automations.action.configuration.change_property.placeholders.property_value_select", {
+                        count: 2,
+                      })
+                }
                 disabled={isDisabled}
                 multiple
               />
@@ -118,8 +99,8 @@ export const PropertyValueSelect: React.FC<TProps> = observer((props) => {
             {configuration.component_type === EConfigurationComponentType.DATE_PICKER && (
               <DateDropdown
                 value={value?.[0] ? new Date(value[0]) : null}
-                onChange={(property_value: Date | null) => {
-                  const formattedDate = property_value ? renderFormattedPayloadDate(property_value) : null;
+                onChange={(updatedValue) => {
+                  const formattedDate = updatedValue ? renderFormattedPayloadDate(updatedValue) : null;
                   onChange(formattedDate ? [formattedDate] : []);
                 }}
                 buttonContainerClassName="w-full text-left"
