@@ -676,19 +676,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
-    // Remove sub issues
-    const subIssueIds = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
-
-    runInAction(() => {
-      if (subIssueIds) {
-        this.fetchParentStats(workspaceSlug, projectId);
-        subIssueIds.forEach((subIssueId) => {
-          this.removeIssueFromList(subIssueId);
-          this.rootIssueStore.issues.removeIssue(subIssueId);
-        });
-      }
-    });
-
     // Remove from Respective issue Id list
     runInAction(() => {
       this.removeIssueFromList(issueId);
@@ -696,7 +683,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // call fetch Parent stats
     this.fetchParentStats(workspaceSlug, projectId);
     // Remove issue from main issue Map store
-    this.rootIssueStore.issues.removeIssue(issueId);
+    this.removeIssuesRecursively(issueId);
   }
 
   /**
@@ -737,7 +724,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const response = await this.createIssue(workspaceSlug, projectId, data);
     runInAction(() => {
       this.removeIssueFromList(data.id);
-      this.rootIssueStore.issues.removeIssue(data.id);
+      this.removeIssuesRecursively(data.id);
     });
     const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
     const currentModuleIds =
@@ -771,7 +758,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     runInAction(() => {
       issueIds.forEach((issueId) => {
         this.removeIssueFromList(issueId);
-        this.rootIssueStore.issues.removeIssue(issueId);
+        this.removeIssuesRecursively(issueId);
       });
     });
     return response;
@@ -1273,6 +1260,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   removeIssueFromList(issueId: string) {
     const issue = this.rootIssueStore.issues.getIssueById(issueId);
+    const subIssueIds = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
+    if (subIssueIds) {
+      subIssueIds.forEach((subIssueId) => {
+        this.removeIssueFromList(subIssueId);
+        this.removeIssuesRecursively(subIssueId);
+      });
+    }
     this.updateIssueList(undefined, issue, EIssueGroupedAction.DELETE);
   }
 
@@ -2050,4 +2044,18 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       subGroupId
     );
   };
+
+  /**
+   * This method is called to remove the issue and all its sub issues from the list
+   * @param issueId
+   */
+  removeIssuesRecursively(issueId: string) {
+    const subIssueIds = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
+    if (subIssueIds) {
+      subIssueIds.forEach((subIssueId) => {
+        this.rootIssueStore.issues.removeIssue(subIssueId);
+        this.removeIssuesRecursively(subIssueId);
+      });
+    }
+  }
 }
