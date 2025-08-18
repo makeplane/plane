@@ -43,7 +43,8 @@ export function parseURL(urlString: string): ParsedURL | undefined {
 
     const url = new URL(urlString);
     const protocol = url.protocol.slice(0, -1);
-    const path = (url.pathname + url.search + url.hash).replace(/^\/+/, "").replace(/\/+/g, "/");
+    const pathname = url.pathname.replace(/^\/+/, "").replace(/\/{2,}/g, "/");
+    const path = pathname + url.search + url.hash;
     const hostnameParts = url.hostname.split(".");
 
     let subdomain = "";
