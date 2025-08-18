@@ -4,7 +4,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TModuleDisplayFilters, TModuleFilters, TModuleFiltersByState } from "@plane/types";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IModuleFilterStore {
   // observables

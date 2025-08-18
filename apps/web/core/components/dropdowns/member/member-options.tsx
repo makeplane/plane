@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IUserLite } from "@plane/types";
 

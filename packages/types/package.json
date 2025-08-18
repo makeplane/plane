@@ -26,10 +26,15 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
   "devDependencies": {
-    "@types/react": "^18.3.11",
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.1",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
   }

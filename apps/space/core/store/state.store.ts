@@ -6,7 +6,7 @@ import { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@/helpers/state.helper";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IStateStore {
   // observables

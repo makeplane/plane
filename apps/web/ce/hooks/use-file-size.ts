@@ -1,7 +1,7 @@
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 
 type TReturnProps = {
   maxFileSize: number;

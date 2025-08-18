@@ -5,7 +5,7 @@ import { IUserAccount } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IAccountStore {
   // observables

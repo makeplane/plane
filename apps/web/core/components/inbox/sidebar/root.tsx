@@ -6,17 +6,20 @@ import { useTranslation } from "@plane/i18n";
 import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { SimpleEmptyState } from "@/components/empty-state";
-import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
-import { InboxSidebarLoader } from "@/components/ui";
-// helpers
+// components
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { FiltersRoot } from "../inbox-filter";
+import { InboxIssueAppliedFilters } from "../inbox-filter/applied-filters/root";
+import { InboxIssueList } from "./inbox-list";
 
 type IInboxSidebarProps = {
   workspaceSlug: string;

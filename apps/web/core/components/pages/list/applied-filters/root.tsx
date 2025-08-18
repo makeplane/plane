@@ -1,12 +1,12 @@
 import { X } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps } from "@plane/types";
-// components
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
-// helpers
-// types
+// components
+import { AppliedDateFilters } from "@/components/common/applied-filters/date";
+import { AppliedMembersFilters } from "@/components/common/applied-filters/members";
 
 type Props = {
   appliedFilters: TPageFilterProps;

@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TPageNavigationTabs } from "@plane/types";
-// components
-import { PagesListHeaderRoot, PagesListMainContent } from "@/components/pages";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// local imports
+import { PagesListHeaderRoot } from "./header";
+import { PagesListMainContent } from "./pages-list-main-content";
 
 type TPageView = {
   children: React.ReactNode;

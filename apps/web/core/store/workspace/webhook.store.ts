@@ -6,7 +6,7 @@ import { IWebhook } from "@plane/types";
 // services
 import { WebhookService } from "@/services/webhook.service";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IWebhookStore {
   // observables

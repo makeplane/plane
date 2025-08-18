@@ -14,7 +14,8 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // hooks
-import { usePublish, useStates } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useStates } from "@/hooks/store/use-state";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";
 

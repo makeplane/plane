@@ -8,14 +8,18 @@ import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constan
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
-import { InboxContentRoot } from "@/components/inbox";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+// plane web imports
 import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
+// local imports
+import { InboxContentRoot } from "../inbox/content";
 
 type NotificationsRootProps = {
   workspaceSlug?: string;

@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // components
-import { PoweredBy } from "@/components/common";
+import { PoweredBy } from "@/components/common/powered-by";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 // plane-web
 import { ViewLayoutsRoot } from "@/plane-web/components/issue-layouts/root";
 
@@ -15,7 +15,7 @@ type Props = {
   };
 };
 
-const IssuesPage = observer((props: Props) => {
+const ViewsPage = observer((props: Props) => {
   const { params } = props;
   const { anchor } = params;
   // params
@@ -34,4 +34,4 @@ const IssuesPage = observer((props: Props) => {
   );
 });
 
-export default IssuesPage;
+export default ViewsPage;

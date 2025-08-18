@@ -17,7 +17,8 @@ import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 
@@ -135,20 +136,20 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             </span>
           </Button>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
-            <hr className="w-full border-onboarding-border-100" />
-            <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">or</p>
-            <hr className="w-full border-onboarding-border-100" />
+            <hr className="w-full border-custom-border-300" />
+            <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+            <hr className="w-full border-custom-border-300" />
           </div>
         </>
       )}
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">{t("workspace_creation.heading")}</h3>
-        <p className="font-medium text-onboarding-text-400">{t("workspace_creation.subheading")}</p>
+        <h3 className="text-3xl font-bold text-custom-text-100">{t("workspace_creation.heading")}</h3>
+        <p className="font-medium text-custom-text-400">{t("workspace_creation.subheading")}</p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
           <label
-            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -182,7 +183,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   placeholder={t("workspace_creation.form.name.placeholder")}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  className="w-full border-onboarding-border-100 placeholder:text-custom-text-400"
+                  className="w-full border-custom-border-300 placeholder:text-custom-text-400"
                   autoFocus
                 />
               </div>
@@ -192,7 +193,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
         </div>
         <div className="space-y-1">
           <label
-            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -210,7 +211,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
-                  invalidSlug ? "border-red-500" : "border-onboarding-border-100"
+                  invalidSlug ? "border-red-500" : "border-custom-border-300"
                 }`}
               >
                 <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
@@ -232,7 +233,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
               </div>
             )}
           />
-          <p className="text-sm text-onboarding-text-300">{t("workspace_creation.form.url.edit_slug")}</p>
+          <p className="text-sm text-custom-text-300">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
             <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
           )}
@@ -241,10 +242,10 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
           )}
           {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
-        <hr className="w-full border-onboarding-border-100" />
+        <hr className="w-full border-custom-border-300" />
         <div className="space-y-1">
           <label
-            className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -265,7 +266,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-onboarding-border-100 !shadow-none !rounded-md"
+                  buttonClassName="!border-[0.5px] !border-custom-border-300 !shadow-none !rounded-md"
                   input
                   optionsClassName="w-full"
                 >

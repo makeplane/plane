@@ -5,7 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 // types
 import { IProject } from "@plane/types";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const ARCHIVES_TAB_LIST: {
   key: string;

@@ -4,7 +4,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { InstanceService } from "@plane/services";
 import { IInstance, IInstanceConfig } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;

@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ProjectIssueQuickActions } from "@/components/issues";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-// components
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
 export const ListLayout: FC = observer(() => {

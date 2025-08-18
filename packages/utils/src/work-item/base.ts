@@ -102,7 +102,14 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 
 export const handleIssueQueryParamsByLayout = (
   layout: EIssueLayoutTypes | undefined,
-  viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues" | "team_issues"
+  viewType:
+    | "my_issues"
+    | "issues"
+    | "profile_issues"
+    | "archived_issues"
+    | "draft_issues"
+    | "team_issues"
+    | "team_project_work_items"
 ): TIssueParams[] | null => {
   const queryParams: TIssueParams[] = [];
 

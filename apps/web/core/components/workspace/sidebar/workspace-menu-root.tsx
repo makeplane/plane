@@ -13,9 +13,11 @@ import { IWorkspace } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
-import { AppSidebarItem } from "@/components/sidebar";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUser, useUserProfile } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -66,9 +68,6 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
     if (isWorkspaceMenuOpen) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
   }, [isWorkspaceMenuOpen]);
-
-  const logo = activeWorkspace?.logo_url;
-  const name = activeWorkspace?.name;
 
   return (
     <Menu

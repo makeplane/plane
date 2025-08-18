@@ -13,7 +13,10 @@ import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUser, useAppTheme, useCommandPalette, useUserPermissions, useIssueDetail } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import {

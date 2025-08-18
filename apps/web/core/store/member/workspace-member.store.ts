@@ -4,16 +4,16 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { EUserPermissions } from "@plane/constants";
-import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // plane-web constants
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // types
-import { IRouterStore } from "@/store/router.store";
-import { IUserStore } from "@/store/user";
+import type { IRouterStore } from "@/store/router.store";
+import type { IUserStore } from "@/store/user";
 // store
-import { CoreRootStore } from "../root.store";
-import { IMemberRootStore } from ".";
+import type { CoreRootStore } from "../root.store";
+import type { IMemberRootStore } from ".";
 
 export interface IWorkspaceMembership {
   id: string;

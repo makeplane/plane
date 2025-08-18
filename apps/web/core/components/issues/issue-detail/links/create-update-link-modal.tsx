@@ -9,7 +9,7 @@ import type { TIssueLinkEditableFields, TIssueServiceType } from "@plane/types";
 // plane ui
 import { Button, Input, ModalCore } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import { TLinkOperations } from "./root";
 

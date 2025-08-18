@@ -4,7 +4,8 @@ import { EEstimateSystem } from "@plane/constants";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // helpers
 // hooks
-import { useEstimate, useProjectEstimates } from "@/hooks/store";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web components
 import { EstimateListItemButtons } from "@/plane-web/components/estimates";
 

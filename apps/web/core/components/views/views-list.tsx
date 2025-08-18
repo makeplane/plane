@@ -6,13 +6,18 @@ import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { ViewListLoader } from "@/components/ui";
-import { ProjectViewListItem } from "@/components/views";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProjectView, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// local imports
+import { ProjectViewListItem } from "./view-list-item";
 
 export const ProjectViewsList = observer(() => {
   const { projectId } = useParams();

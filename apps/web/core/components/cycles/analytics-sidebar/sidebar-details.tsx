@@ -12,7 +12,8 @@ import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useProjectEstimates } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants
 
 type Props = {

@@ -2,16 +2,18 @@
 
 import { FC } from "react";
 import { Info } from "lucide-react";
+// plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TEstimateSystemKeys } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // components
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-import { RadioInput } from "@/components/estimates";
-// plane web constants
+// plane web imports
 import { isEstimateSystemEnabled } from "@/plane-web/components/estimates/helper";
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
+import { RadioInput } from "../radio-select";
+// local imports
 
 type TEstimateCreateStageOne = {
   estimateSystem: TEstimateSystemKeys;

@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 // plane editor
-import { TMentionSection } from "@plane/editor";
+import type { TMentionSection } from "@plane/editor";
 // plane types
-import { TSearchEntities, TSearchResponse } from "@plane/types";
+import type { TSearchEntities, TSearchResponse } from "@plane/types";
 
 export type TAdditionalEditorMentionHandlerArgs = {
   response: TSearchResponse;

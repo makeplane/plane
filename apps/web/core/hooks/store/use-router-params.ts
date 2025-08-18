@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // store
 import { StoreContext } from "@/lib/store-context";
-import { IRouterStore } from "@/store/router.store";
+import type { IRouterStore } from "@/store/router.store";
 
 export const useRouterParams = (): IRouterStore => {
   const context = useContext(StoreContext);

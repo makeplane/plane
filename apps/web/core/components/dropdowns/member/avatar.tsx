@@ -8,7 +8,7 @@ import { cn, getFileURL } from "@plane/utils";
 // plane utils
 // helpers
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type AvatarProps = {
   showTooltip: boolean;

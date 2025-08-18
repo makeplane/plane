@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { PriorityIcon } from "@plane/ui";
-// components
-import { FilterHeader, FilterOption } from "./helpers";
-// constants
+// local imports
+import { FilterHeader } from "./helpers/filter-header";
+import { FilterOption } from "./helpers/filter-option";
 
 type Props = {
   appliedFilters: string[] | null;

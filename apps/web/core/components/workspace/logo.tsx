@@ -17,7 +17,7 @@ export const WorkspaceLogo = observer((props: Props) => {
     <div
       className={cn(
         `relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-          !props.logo && "rounded bg-custom-primary-500 text-white"
+          !props.logo && "rounded bg-[#026292] text-white"
         } ${props.classNames ? props.classNames : ""}`
       )}
     >

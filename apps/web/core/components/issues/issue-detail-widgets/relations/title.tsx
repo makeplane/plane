@@ -4,12 +4,12 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
-// components
-import { RelationActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// local imports
+import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;

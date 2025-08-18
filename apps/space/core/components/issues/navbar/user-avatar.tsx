@@ -15,7 +15,7 @@ import { getFileURL } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/use-user";
 
 const authService = new AuthService();
 

@@ -22,11 +22,14 @@ import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToas
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
 import { captureElementAndEvent, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule, useProjectEstimates, useUserPermissions } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 const defaultValues: Partial<IModule> = {
   lead_id: "",

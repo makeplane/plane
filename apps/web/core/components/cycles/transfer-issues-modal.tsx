@@ -10,7 +10,8 @@ import { EIssuesStoreType } from "@plane/types";
 // ui
 //icons
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
-import { useCycle, useIssues } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 //icons
 // constants
 

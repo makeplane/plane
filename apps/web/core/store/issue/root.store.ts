@@ -16,6 +16,11 @@ import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } 
 import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import {
+  ITeamProjectWorkItemsFilter,
+  TeamProjectWorkItemsFilter,
+} from "@/plane-web/store/issue/team-project/filter.store";
+import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
+import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,
   TeamViewIssues,
@@ -23,7 +28,7 @@ import {
 } from "@/plane-web/store/issue/team-views";
 // root store
 import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
@@ -101,6 +106,9 @@ export interface IIssueRootStore {
   teamViewIssuesFilter: ITeamViewIssuesFilter;
   teamViewIssues: ITeamViewIssues;
 
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
+
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
 
@@ -171,6 +179,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
+
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
 
   archivedIssuesFilter: IArchivedIssuesFilter;
   archivedIssues: IArchivedIssues;
@@ -262,6 +273,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
     this.projectViewIssues = new ProjectViewIssues(this, this.projectViewIssuesFilter);
+
+    this.teamProjectWorkItemsFilter = new TeamProjectWorkItemsFilter(this);
+    this.teamProjectWorkItems = new TeamProjectWorkItems(this, this.teamProjectWorkItemsFilter);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);

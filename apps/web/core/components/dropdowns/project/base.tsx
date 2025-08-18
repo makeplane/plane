@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports

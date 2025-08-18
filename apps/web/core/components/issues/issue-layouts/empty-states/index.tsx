@@ -1,6 +1,7 @@
 // plane web components
 import { EIssuesStoreType } from "@plane/types";
 import { TeamEmptyState, TeamViewEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states";
+import { TeamProjectWorkItemEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-project";
 // components
 import { ProjectArchivedEmptyState } from "./archived-issues";
 import { CycleEmptyState } from "./cycle";
@@ -40,6 +41,8 @@ export const IssueLayoutEmptyState = (props: Props) => {
       return <TeamEmptyState />;
     case EIssuesStoreType.TEAM_VIEW:
       return <TeamViewEmptyState />;
+    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
+      return <TeamProjectWorkItemEmptyState />;
     default:
       return null;
   }
