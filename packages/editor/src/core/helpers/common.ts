@@ -1,6 +1,5 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { EditorState, Selection } from "@tiptap/pm/state";
-import { Node as ProsemirrorNode } from "prosemirror-model";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
