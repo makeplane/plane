@@ -1,6 +1,6 @@
 /**
  * Interface representing the parsed components of a URL.
- * @interface ParsedURL
+ * @interface IParsedURL
  * @property {string} protocol - The URL protocol (e.g., 'http', 'https')
  * @property {string} subdomain - The subdomain part of the URL (e.g., 'blog' in 'blog.example.com')
  * @property {string} rootDomain - The root domain name (e.g., 'example' in 'blog.example.com')
@@ -10,7 +10,7 @@
  * @property {string} full.domain - The root domain with TLD (e.g., 'example.com')
  * @property {string} full.hostname - The complete hostname (e.g., 'blog.example.com')
  */
-export interface ParsedURL {
+export interface IParsedURL {
   protocol: string;
   subdomain: string;
   rootDomain: string;
@@ -26,7 +26,7 @@ export interface ParsedURL {
  * Parses a URL string into its constituent components.
  *
  * @param {string} urlString - The URL to parse
- * @returns {ParsedURL | undefined} Parsed URL components or undefined if invalid
+ * @returns {IParsedURL | undefined} Parsed URL components or undefined if invalid
  * @throws {Error} If the URL is malformed
  *
  * @example
@@ -35,7 +35,7 @@ export interface ParsedURL {
  * //   tld: 'com', path: 'posts', full: { domain: 'example.com', hostname: 'blog.example.com' } }
  */
 
-export function parseURL(urlString: string): ParsedURL | undefined {
+export function parseURL(urlString: string): IParsedURL | undefined {
   try {
     if (!urlString.includes("://")) {
       return undefined;
