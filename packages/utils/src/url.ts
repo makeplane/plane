@@ -67,12 +67,12 @@ export function parseURL(urlString: string): ParsedURL | undefined {
       tld,
       path,
       full: {
-        domain: `${rootDomain}.${tld}`,
+        domain: rootDomain && tld ? `${rootDomain}.${tld}` : url.hostname,
         hostname: url.hostname,
       },
     };
-  } catch (error) {
-    throw new Error(`Invalid URL: ${urlString}`);
+  } catch {
+    return undefined;
   }
 }
 
