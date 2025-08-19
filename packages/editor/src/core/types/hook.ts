@@ -30,7 +30,6 @@ export type TEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
     | "value"
-    | "embedHandler"
   > & {
     editable: boolean;
     enableHistory: boolean;

@@ -82,6 +82,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     initialValue: value,
     mentionHandler,
     onChange,
+    embedHandler,
   });
 
   const editorContainerClassName = getEditorClassNames({
