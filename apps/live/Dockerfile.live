@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1.7
 FROM node:22-alpine AS base
 
+# Setup pnpm package manager with corepack and configure global bin directory for caching
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 # *****************************************************************************
 # STAGE 1: Prune the project
 # *****************************************************************************
