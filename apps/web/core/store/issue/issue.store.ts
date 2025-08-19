@@ -124,9 +124,8 @@ export class IssueStore implements IIssueStore {
    * @returns {void}
    */
   removeIssue = (issueId: string) => {
-    if (!issueId || !this.issuesMap[issueId]) return;
     runInAction(() => {
-      delete this.issuesMap[issueId];
+      if (this.issuesMap[issueId]) delete this.issuesMap[issueId];
     });
     deleteIssueFromLocal(issueId);
   };

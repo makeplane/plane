@@ -561,7 +561,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     this.addIssue(response, shouldUpdateList);
 
     // If shouldUpdateList is true, call fetchParentStats
-    shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
+    if (shouldUpdateList) await this.fetchParentStats(workspaceSlug, projectId);
 
     updatePersistentLayer(response.id);
 
@@ -724,7 +724,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const response = await this.createIssue(workspaceSlug, projectId, data);
     runInAction(() => {
       this.removeIssueFromList(data.id);
-      this.removeIssuesRecursively(data.id);
+      this.rootIssueStore.issues.removeIssue(data.id);
     });
     const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
     const currentModuleIds =
@@ -933,7 +933,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     runInAction(() => {
       // If cycle Id is the current cycle Id, then, remove issue from list of issueIds
-      this.cycleId === cycleId && this.removeIssueFromList(issueId);
+      if (this.cycleId === cycleId) this.removeIssueFromList(issueId);
     });
 
     // update Issue cycle Id to null by calling current store's update Issue, without making an API call
@@ -1063,7 +1063,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     runInAction(() => {
       // if module Id is the current Module Id, then, add issue to list of issueIds
-      this.moduleId === moduleId && issueIds.forEach((issueId) => this.addIssueToList(issueId));
+      if (this.moduleId === moduleId) issueIds.forEach((issueId) => this.addIssueToList(issueId));
     });
 
     // For Each issue update module Ids by calling current store's update Issue, without making an API call
@@ -1091,7 +1091,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     runInAction(() => {
       // if module Id is the current Module Id, then remove issue from list of issueIds
-      this.moduleId === moduleId && issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
+      if (this.moduleId === moduleId) issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
     });
 
     // For Each issue update module Ids by calling current store's update Issue, without making an API call
@@ -1164,7 +1164,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         // remove the new issue id to the module issues
         removeModuleIds.forEach((moduleId) => {
           // If module Id is equal to current module Id, them remove Issue from List
-          this.moduleId === moduleId && this.removeIssueFromList(issueId);
+          if (this.moduleId === moduleId) this.removeIssueFromList(issueId);
           currentModuleIds = pull(currentModuleIds, moduleId);
         });
 
@@ -1264,7 +1264,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (subIssueIds) {
       subIssueIds.forEach((subIssueId) => {
         this.removeIssueFromList(subIssueId);
-        this.removeIssuesRecursively(subIssueId);
       });
     }
     this.updateIssueList(undefined, issue, EIssueGroupedAction.DELETE);
@@ -2045,17 +2044,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     );
   };
 
-  /**
-   * This method is called to remove the issue and all its sub issues from the list
-   * @param issueId
-   */
-  removeIssuesRecursively(issueId: string) {
-    const subIssueIds = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
-    if (subIssueIds) {
-      subIssueIds.forEach((subIssueId) => {
-        this.rootIssueStore.issues.removeIssue(subIssueId);
-        this.removeIssuesRecursively(subIssueId);
-      });
+  removeIssuesRecursively = (issueId: string) => {
+    // get sub issues by issue id
+    const subIssues = this.rootIssueStore.rootStore.issue.issueDetail.subIssues.subIssuesByIssueId(issueId);
+    if (subIssues) {
+      subIssues.forEach((subIssueId) => this.removeIssuesRecursively(subIssueId));
     }
-  }
+    // remove issue
+    this.rootIssueStore.issues.removeIssue(issueId);
+  };
 }
