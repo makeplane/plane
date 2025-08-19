@@ -32,8 +32,7 @@
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recharts": "^2.15.1",
-    "tailwindcss-animate": "^1.0.7"
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

@@ -52,6 +52,7 @@
     "pino-pretty": "^11.2.2",
     "reflect-metadata": "^0.2.2",
     "uuid": "^10.0.0",
+    "ws": "^8.18.3",
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.20",
@@ -68,11 +69,11 @@
     "@types/node": "^20.14.9",
     "@types/pino-http": "^5.8.4",
     "@types/uuid": "^9.0.1",
+    "@types/ws": "^8.5.10",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
-    "typescript": "5.8.3",
-    "ws": "^8.18.3"
+    "typescript": "5.8.3"
   }
 }

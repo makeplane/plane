@@ -61,9 +61,6 @@ importers:
       '@plane/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      '@tailwindcss/typography':
-        specifier: ^0.5.9
-        version: 0.5.16(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.13.3(@swc/helpers@0.5.17))(@types/node@22.17.2)(typescript@5.8.3)))
       autoprefixer:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.5.6)
@@ -230,6 +227,9 @@ importers:
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       y-prosemirror:
         specifier: ^1.2.15
         version: 1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
@@ -273,6 +273,9 @@ importers:
       '@types/uuid':
         specifier: ^9.0.1
         version: 9.0.8
+      '@types/ws':
+        specifier: ^8.5.10
+        version: 8.18.1
       concurrently:
         specifier: ^9.0.1
         version: 9.2.0
@@ -288,9 +291,6 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
-      ws:
-        specifier: ^8.18.3
-        version: 8.18.3
 
   apps/silo:
     dependencies:
@@ -318,8 +318,14 @@ importers:
       '@octokit/openapi-webhooks-types':
         specifier: ^8.3.0
         version: 8.5.1
+      '@plane/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
+      '@plane/decorators':
+        specifier: workspace:*
+        version: link:../../packages/decorators
       '@plane/sdk':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/sdk
       '@types/bluebird':
         specifier: ^3.5.42
@@ -360,6 +366,12 @@ importers:
       express-winston:
         specifier: ^4.2.0
         version: 4.2.0(winston@3.17.0)
+      jira.js:
+        specifier: ^4.0.1
+        version: 4.1.3
+      marked:
+        specifier: ^15.0.4
+        version: 15.0.12
       mimetics:
         specifier: ^1.0.4
         version: 1.0.5
@@ -401,16 +413,16 @@ importers:
         version: 3.25.76
     devDependencies:
       '@plane/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/eslint-config
       '@plane/etl':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/etl
       '@plane/types':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/types
       '@plane/typescript-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/typescript-config
       '@slack/types':
         specifier: ^2.14.0
@@ -433,6 +445,9 @@ importers:
       '@types/express-winston':
         specifier: ^4.0.2
         version: 4.0.2(winston@3.17.0)
+      '@types/marked':
+        specifier: ^6.0.0
+        version: 6.0.0
       '@types/react':
         specifier: 18.3.18
         version: 18.3.18
@@ -472,9 +487,6 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-auto-scroll':
         specifier: ^1.4.0
         version: 1.4.0
-      '@blueprintjs/core':
-        specifier: ^4.16.3
-        version: 4.20.2(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@blueprintjs/popover2':
         specifier: ^1.13.3
         version: 1.14.11(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1168,13 +1180,13 @@ importers:
         specifier: ^21.0.2
         version: 21.1.1
       '@plane/constants':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../constants
       '@plane/sdk':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../sdk
       '@plane/types':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../types
       asana:
         specifier: ^3.0.11
@@ -1211,10 +1223,10 @@ importers:
         specifier: ^8.3.0
         version: 8.5.1
       '@plane/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config
       '@plane/typescript-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../typescript-config
       '@types/marked':
         specifier: ^6.0.0
@@ -1325,7 +1337,7 @@ importers:
   packages/mobile-editor:
     dependencies:
       '@plane/editor':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../editor
       lucide-react:
         specifier: ^0.454.0
@@ -1341,13 +1353,13 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@plane/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config
       '@plane/tailwind-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../tailwind-config
       '@plane/types':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../types
       '@types/react':
         specifier: 18.3.18
@@ -1406,9 +1418,6 @@ importers:
       recharts:
         specifier: ^2.15.1
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.13.3(@swc/helpers@0.5.17))(@types/node@22.17.2)(typescript@5.8.3)))
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1436,13 +1445,13 @@ importers:
         version: 1.11.0
     devDependencies:
       '@plane/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config
       '@plane/types':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../types
       '@plane/typescript-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../typescript-config
       tsup:
         specifier: 8.4.0
@@ -1522,7 +1531,7 @@ importers:
         specifier: ^3.4.17
         version: 3.4.17(ts-node@10.9.2(@swc/core@1.13.3(@swc/helpers@0.5.17))(@types/node@22.17.2)(typescript@5.8.3))
       tailwindcss-animate:
-        specifier: ^1.0.6
+        specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.13.3(@swc/helpers@0.5.17))(@types/node@22.17.2)(typescript@5.8.3)))
 
   packages/types:
@@ -1563,9 +1572,6 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: ^1.0.3
         version: 1.1.0
-      '@blueprintjs/core':
-        specifier: ^4.16.3
-        version: 4.20.2(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@blueprintjs/popover2':
         specifier: ^1.13.3
         version: 1.14.11(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -12663,7 +12669,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -15046,7 +15052,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
 
   '@types/cookie-parser@1.4.9(@types/express@4.17.23)':
     dependencies:
@@ -15211,7 +15217,7 @@ snapshots:
 
   '@types/mysql@2.15.26':
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
 
   '@types/node@18.14.1': {}
 
@@ -15253,7 +15259,7 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
@@ -15319,7 +15325,7 @@ snapshots:
   '@types/send@0.17.5':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
 
   '@types/serve-static@1.15.8':
     dependencies:
@@ -15333,7 +15339,7 @@ snapshots:
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
 
   '@types/triple-beam@1.3.5': {}
 
@@ -18635,7 +18641,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -18672,7 +18678,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
