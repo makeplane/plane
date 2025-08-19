@@ -42,9 +42,6 @@ export class ModuleFilterStore implements IModuleFilterStore {
   archivedModulesSearchQuery: string = "";
   // root store
   rootStore: CoreRootStore;
-  // debounce timers
-  private saveDisplayFiltersTimer: number | null = null;
-  private saveFiltersTimer: number | null = null;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -117,26 +114,14 @@ export class ModuleFilterStore implements IModuleFilterStore {
    * @description Save display filters to localStorage (debounced)
    */
   saveDisplayFiltersToLocalStorage = () => {
-    if (this.saveDisplayFiltersTimer) {
-      clearTimeout(this.saveDisplayFiltersTimer);
-    }
-    this.saveDisplayFiltersTimer = window.setTimeout(() => {
-      storage.set(MODULE_DISPLAY_FILTERS_KEY, this.displayFilters);
-      this.saveDisplayFiltersTimer = null;
-    }, 300);
+    storage.set(MODULE_DISPLAY_FILTERS_KEY, this.displayFilters);
   };
 
   /**
    * @description Save filters to localStorage (debounced)
    */
   saveFiltersToLocalStorage = () => {
-    if (this.saveFiltersTimer) {
-      clearTimeout(this.saveFiltersTimer);
-    }
-    this.saveFiltersTimer = window.setTimeout(() => {
-      storage.set(MODULE_FILTERS_KEY, this.filters);
-      this.saveFiltersTimer = null;
-    }, 300);
+    storage.set(MODULE_FILTERS_KEY, this.filters);
   };
 
   /**
