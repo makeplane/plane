@@ -74,24 +74,23 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
  * Checks if a string is a valid URL.
  *
  * @param {string} urlString - The string to validate as URL
- * @returns {boolean} True if string is a valid URL, false otherwise
+ * @returns {URL | undefined} URL object if valid, undefined if invalid
  *
  * @example
  * // Valid URLs
- * isUrlValid('https://example.com')     // returns true
- * isUrlValid('http://example.com')      // returns true
- * isUrlValid('https://sub.example.com') // returns true
+ * getValidURL('https://example.com')     // returns URL object
+ * getValidURL('http://example.com')      // returns URL object
+ * getValidURL('https://sub.example.com') // returns URL object
  *
  * // Invalid URLs
- * isUrlValid('not-a-url')              // returns false
- * isUrlValid('example.com')            // returns false (no protocol)
- * isUrlValid('https://invalid.')       // returns false
+ * getValidURL('not-a-url')              // returns undefined
+ * getValidURL('example.com')            // returns undefined (no protocol)
+ * getValidURL('https://invalid.')       // returns undefined
  */
-export function isUrlValid(urlString: string): boolean {
+export function getValidURL(urlString: string): URL | undefined {
   try {
-    new URL(urlString);
-    return true;
+    return new URL(urlString);
   } catch {
-    return false;
+    return undefined;
   }
 }
