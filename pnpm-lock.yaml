@@ -148,9 +148,15 @@ importers:
       '@hocuspocus/server':
         specifier: ^2.15.0
         version: 2.15.3(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
+      '@plane/decorators':
+        specifier: workspace:*
+        version: link:../../packages/decorators
       '@plane/editor':
         specifier: workspace:*
         version: link:../../packages/editor
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@plane/types':
         specifier: workspace:*
         version: link:../../packages/types
