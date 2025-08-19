@@ -12,9 +12,6 @@ class Description(WorkspaceBaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_binary = models.BinaryField(null=True)
     description_stripped = models.TextField(blank=True, null=True)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="descriptions"
-    )
 
     class Meta:
         verbose_name = "Description"
@@ -37,9 +34,6 @@ class DescriptionVersion(WorkspaceBaseModel):
     DescriptionVersion is a model that stores the description of an issue.
     """
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="description_versions"
-    )
     description = models.ForeignKey(
         "db.Description", on_delete=models.CASCADE, related_name="versions"
     )
