@@ -121,6 +121,7 @@ export class TaskManager {
   private store: Store | undefined;
   private config: JobWorkerConfig;
   private workers: Map<string, TaskHandler> = new Map();
+  private queueName: string | undefined;
 
   /**
    * Creates an instance of TaskManager
@@ -149,6 +150,7 @@ export class TaskManager {
   private initQueue = async (options: TMQEntityOptions) => {
     this.mq = new MQ(options);
     await this.mq.connect();
+    this.queueName = options.queueName;
     logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
   };
 
@@ -295,18 +297,21 @@ export class TaskManager {
    * @public
    * @param {TMQEntityOptions} options - Queue configuration options
    */
-  public start = async (options: TMQEntityOptions) => {
+  public initialize = async (options: TMQEntityOptions) => {
     try {
       await this.initQueue(options);
       await this.initStore();
-      await this.startConsumer();
-
-      for (const [jobType, workerType] of Object.entries(this.config.workerTypes)) {
-        this.workers.set(jobType, WorkerFactory.createWorker(workerType, this.mq!, this.store!));
-      }
     } catch (error) {
       logger.error(`Something went wrong while initiating job worker 🧨, ${error}`);
       captureException(error as Error);
+    }
+  };
+
+  public start = async () => {
+    logger.info(`Starting consumer for ${this.queueName} 🐇🐇🐰`);
+    await this.startConsumer();
+    for (const [jobType, workerType] of Object.entries(this.config.workerTypes)) {
+      this.workers.set(jobType, WorkerFactory.createWorker(workerType, this.mq!, this.store!));
     }
   };
 

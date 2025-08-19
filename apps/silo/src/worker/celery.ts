@@ -1,7 +1,7 @@
 import { env } from "@/env";
+import { logger } from "@/logger";
 import { MQ } from "./base";
 import { TMQEntityOptions } from "./base/types";
-import { logger } from "@/logger";
 
 export class CeleryProducer {
   private mq: MQ | undefined;
@@ -12,7 +12,7 @@ export class CeleryProducer {
     logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
   };
 
-  public start = async (options: TMQEntityOptions) => {
+  public initialize = async (options: TMQEntityOptions) => {
     logger.info("Initializing Celery Producer.. ♨️");
     try {
       await this.initQueue(options);
