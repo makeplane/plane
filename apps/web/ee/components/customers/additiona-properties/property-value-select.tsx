@@ -22,8 +22,8 @@ import {
   MemberValueSelect,
   DateValueSelect,
   OptionValueSelect,
-  IssuePropertyLogo,
 } from "@/plane-web/components/issue-types";
+import { UrlValueInput } from "@/plane-web/components/issue-types/values/components/url-input";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -150,6 +150,19 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
         />
       </>
     ),
+    URL: (
+      <>
+        <UrlValueInput
+          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.URL>}
+          value={propertyValue}
+          error={propertyValueError}
+          variant={variant}
+          className="min-h-8"
+          isDisabled={isDisabled}
+          onTextValueChange={onPropertyValueChange}
+        />
+      </>
+    ),
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
@@ -179,7 +192,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           <div className={cn("gap-1 flex-shrink-0 text-sm text-custom-text-300 w-2/5")}>
             <CustomerPropertyDetail />
           </div>
-          <div className={cn("relative h-full flex flex-col gap-0.5 w-3/5", {})}>{CurrentPropertyAttribute}</div>
+          <div className={cn("relative h-full flex flex-col gap-0.5 w-3/5")}>{CurrentPropertyAttribute}</div>
         </div>
       )}
     </>

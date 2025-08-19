@@ -26,6 +26,7 @@ import {
   OptionValueSelect,
   IssuePropertyLogo,
 } from "@/plane-web/components/issue-types";
+import { UrlValueInput } from "./components/url-input";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -160,6 +161,19 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           buttonClassName="h-8"
           isDisabled={isDisabled}
           onMemberValueChange={onPropertyValueChange}
+        />
+      </>
+    ),
+    URL: (
+      <>
+        <UrlValueInput
+          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.URL>}
+          value={propertyValue}
+          error={propertyValueError}
+          variant={variant}
+          className="min-h-8"
+          isDisabled={isDisabled}
+          onTextValueChange={onPropertyValueChange}
         />
       </>
     ),
