@@ -1,6 +1,6 @@
 /**
  * Interface representing the parsed components of a URL.
- * @interface IParsedURL
+ * @interface IURLComponents
  * @property {string} protocol - The URL protocol (e.g., 'http', 'https')
  * @property {string} subdomain - The subdomain part of the URL (e.g., 'blog' in 'blog.example.com')
  * @property {string} rootDomain - The root domain name (e.g., 'example' in 'blog.example.com')
@@ -10,15 +10,15 @@
  * @property {string} full.domain - The root domain with TLD (e.g., 'example.com')
  * @property {string} full.hostname - The complete hostname (e.g., 'blog.example.com')
  */
-export interface IParsedURL {
+export interface IURLComponents {
   protocol: string;
   subdomain: string;
   rootDomain: string;
   tld: string;
   path: string;
   full: {
-    domain: string;
     hostname: string;
+    href: string;
   };
 }
 
@@ -26,22 +26,16 @@ export interface IParsedURL {
  * Parses a URL string into its constituent components.
  *
  * @param {string} urlString - The URL to parse
- * @returns {IParsedURL | undefined} Parsed URL components or undefined if invalid
- * @throws {Error} If the URL is malformed
+ * @returns {IURLComponents | undefined} Parsed URL components or undefined if invalid
  *
  * @example
- * parseURL('https://blog.example.com/posts')
+ * extractURLComponents('https://blog.example.com/posts')
  * // { protocol: 'https', subdomain: 'blog', rootDomain: 'example',
  * //   tld: 'com', path: 'posts', full: { domain: 'example.com', hostname: 'blog.example.com' } }
  */
 
-export function parseURL(urlString: string): IParsedURL | undefined {
+export function extractURLComponents(url: URL): IURLComponents | undefined {
   try {
-    if (!urlString.includes("://")) {
-      return undefined;
-    }
-
-    const url = new URL(urlString);
     const protocol = url.protocol.slice(0, -1);
     const pathname = url.pathname.replace(/^\/+/, "").replace(/\/{2,}/g, "/");
     const path = pathname + url.search + url.hash;
@@ -67,11 +61,12 @@ export function parseURL(urlString: string): IParsedURL | undefined {
       tld,
       path,
       full: {
-        domain: rootDomain && tld ? `${rootDomain}.${tld}` : url.hostname,
         hostname: url.hostname,
+        href: url.href,
       },
     };
-  } catch {
+  } catch (error) {
+    console.error(`Error parsing URL: ${url.href}`, error);
     return undefined;
   }
 }
@@ -94,14 +89,15 @@ export function parseURL(urlString: string): IParsedURL | undefined {
  * isUrlValid('invalid.') // returns false
  */
 
-export function isUrlValid(urlString: string): boolean {
+export function isUrlValid(urlString: string): URL | undefined {
   try {
     if (!urlString.includes("://")) {
       urlString = "https://" + urlString;
     }
     new URL(urlString);
-    return true;
+    return new URL(urlString);
   } catch (error) {
-    return false;
+    console.error(`Error parsing URL: ${urlString}`, error);
+    return undefined;
   }
 }
