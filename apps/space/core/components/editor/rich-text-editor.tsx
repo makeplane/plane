@@ -6,7 +6,8 @@ import type { MakeOptional } from "@plane/types";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
+// plane web imports
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
 

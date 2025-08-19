@@ -19,7 +19,6 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     "sourceRoot": "/"
   },
   "include": ["src/**/*.ts", "tsup.config.ts"],
