@@ -11,7 +11,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
 const LabelsSettingsPage = observer(() => {

@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 import { EIssueFilterType } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useLabel } from "@/hooks/store/use-label"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { AppliedFiltersList } from "../filters-list";

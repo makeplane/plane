@@ -18,7 +18,7 @@ import {
 } from "@/components/labels";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useLabel } from "@/hooks/store/use-label"
+import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports

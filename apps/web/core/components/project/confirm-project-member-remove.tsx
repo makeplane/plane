@@ -11,7 +11,7 @@ import { IUserLite } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 type Props = {

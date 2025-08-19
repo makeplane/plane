@@ -14,7 +14,7 @@ export const Spinner: React.FC<ISpinner> = ({ height = "32px", width = "32px", c
       aria-hidden="true"
       height={height}
       width={width}
-      className={cn("animate-spin fill-blue-600 text-custom-text-200", className)}
+      className={cn("animate-spin fill-custom-primary-100 text-custom-text-200", className)}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -14,8 +14,8 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useIssues } from "@/hooks/store/use-issues"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 

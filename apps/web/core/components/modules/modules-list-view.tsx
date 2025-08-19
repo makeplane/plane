@@ -14,9 +14,9 @@ import { CycleModuleBoardLayoutLoader } from "@/components/ui/loader/cycle-modul
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useModule } from "@/hooks/store/use-module"
-import { useModuleFilter } from "@/hooks/store/use-module-filter"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useModule } from "@/hooks/store/use-module";
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";

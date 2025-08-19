@@ -16,7 +16,7 @@ import { ArchiveProjectSelection } from "@/components/project/settings/archive-p
 import { DeleteProjectSection } from "@/components/project/settings/delete-project-section";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
 const ProjectSettingsPage = observer(() => {

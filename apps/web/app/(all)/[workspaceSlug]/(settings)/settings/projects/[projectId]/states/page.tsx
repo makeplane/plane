@@ -11,7 +11,7 @@ import { ProjectStateRoot } from "@/components/project-states";
 // hook
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
 const StatesSettingsPage = observer(() => {

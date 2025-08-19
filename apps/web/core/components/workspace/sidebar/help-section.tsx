@@ -11,10 +11,10 @@ import { cn } from "@plane/utils";
 // components
 import { ProductUpdatesModal } from "@/components/global";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useInstance } from "@/hooks/store/use-instance"
-import { useTransient } from "@/hooks/store/use-transient"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useTransient } from "@/hooks/store/use-transient";
 import { useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
