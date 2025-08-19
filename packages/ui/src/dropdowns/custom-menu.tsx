@@ -6,9 +6,9 @@ import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 // hooks
-import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // types
 import {
   ICustomMenuDropdownProps,

@@ -1,7 +1,7 @@
 import * as React from "react";
-import { cn } from "../utils";
 import { Row } from "../row";
 import { ERowVariant, TRowVariant } from "../row/helper";
+import { cn } from "../utils";
 
 export interface ContentWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TRowVariant;

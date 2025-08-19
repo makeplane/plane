@@ -25,9 +25,9 @@ import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";

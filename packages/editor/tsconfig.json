@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "ESNext",
-    "types": ["node"],
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/core/*"],

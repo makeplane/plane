@@ -1,12 +1,12 @@
-import React from "react";
 import { AlertTriangle, Info, LucideIcon } from "lucide-react";
+import React from "react";
 // components
 import { Button, TButtonVariant } from "../button";
+import { cn } from "../utils";
+import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";
 // constants
-import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "../utils";
 
 export type TModalVariant = "danger" | "primary";
 

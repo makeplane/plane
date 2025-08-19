@@ -10,10 +10,10 @@ import {
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { SaveFilterView } from "../../../save-filter-view";
 import { AppliedFiltersList } from "../filters-list";

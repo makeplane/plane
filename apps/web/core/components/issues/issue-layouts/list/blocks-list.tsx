@@ -4,8 +4,8 @@ import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@pla
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
-import { TRenderQuickActions } from "./list-view-types";
 import { IssueBlockRoot } from "./block-root";
+import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: TGroupedIssues | any;

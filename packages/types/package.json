@@ -31,8 +31,8 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/react": "18.3.11",
     "@types/react-dom": "18.3.1",
     "tsup": "8.4.0",

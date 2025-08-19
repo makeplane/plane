@@ -79,10 +79,10 @@ else
     success=false
 fi
 
-# Activate Yarn (version set in package.json)
-corepack enable yarn || success=false
+# Activate pnpm (version set in package.json)
+corepack enable pnpm || success=false
 # Install Node dependencies
-yarn install || success=false
+pnpm install || success=false
 
 # Silo service env variables setup warning
 if [ "$service" == "silo" ] && [ -f "./silo/.env" ]; then        

@@ -1,5 +1,5 @@
-import * as React from "react";
 import { AlertCircle, Ban, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
+import * as React from "react";
 import { cn } from "../utils";
 
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";

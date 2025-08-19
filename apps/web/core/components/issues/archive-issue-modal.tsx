@@ -9,10 +9,8 @@ import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store/use-project";
 import { useIssues } from "@/hooks/store/use-issues";
-// ui
-// types
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   data?: TIssue | TDeDupeIssue;

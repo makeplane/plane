@@ -1,7 +1,7 @@
 import * as React from "react";
 // helpers
-import { getIconStyling, getBadgeStyling, TBadgeVariant, TBadgeSizes } from "./helper";
 import { cn } from "../utils";
+import { getIconStyling, getBadgeStyling, TBadgeVariant, TBadgeSizes } from "./helper";
 
 export interface BadgeProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: TBadgeVariant;

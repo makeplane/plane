@@ -21,13 +21,13 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
 // types
+import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { DeleteIssueModal } from "../../delete-issue-modal";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT

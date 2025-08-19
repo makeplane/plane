@@ -15,12 +15,12 @@ import { Button, getButtonStyling, PlaneLogo, setToast, TOAST_TYPE, Tooltip } fr
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useFavorite } from "@/hooks/store/use-favorite";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";

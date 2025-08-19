@@ -19,7 +19,7 @@ const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
 const SubMenu: React.FC<TSubMenuProps> = (props) => {
-  const { children, trigger, disabled = false, className = "", contentClassName = "" } = props;
+  const { children, trigger, disabled = false, className = "" } = props;
 
   return (
     <BaseMenu.SubmenuRoot disabled={disabled}>
@@ -67,9 +67,7 @@ function Menu(props: TMenuProps) {
     buttonClassName = "",
     customButtonClassName = "",
     customButtonTabIndex = 0,
-    placement,
     children,
-    className = "",
     customButton,
     disabled = false,
     ellipsis = false,
@@ -80,13 +78,10 @@ function Menu(props: TMenuProps) {
     optionsClassName = "",
     menuItemsClassName = "",
     verticalEllipsis = false,
-    portalElement,
     menuButtonOnClick,
     onMenuClose,
     tabIndex,
-    closeOnSelect,
     openOnHover = false,
-    useCaptureForOutsideClick = false,
     handleOpenChange = () => {},
   } = props;
 

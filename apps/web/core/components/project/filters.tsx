@@ -12,8 +12,8 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 // local imports
-import { ProjectOrderByDropdown } from "./dropdowns/order-by";
 import { ProjectFiltersSelection } from "./dropdowns/filters";
+import { ProjectOrderByDropdown } from "./dropdowns/order-by";
 
 type Props = {
   filterMenuButton?: React.ReactNode;

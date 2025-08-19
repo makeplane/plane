@@ -1,8 +1,8 @@
+import { CircleDotDashed, Circle } from "lucide-react";
 import * as React from "react";
 
-import { ContrastIcon } from "./contrast-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
-import { CircleDotDashed, Circle } from "lucide-react";
+import { ContrastIcon } from "./contrast-icon";
 
 import { CYCLE_GROUP_COLORS, ICycleGroupIcon } from "./helper";
 

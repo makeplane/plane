@@ -1,7 +1,7 @@
+import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 import * as React from "react";
 import { Toaster, toast } from "sonner";
 // icons
-import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners";
 // helper
