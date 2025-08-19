@@ -390,6 +390,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
+            total_count_queryset=issue_queryset,
             on_results=lambda issues: IssueSerializer(
                 issues, many=True, fields=self.fields, expand=self.expand
             ).data,
