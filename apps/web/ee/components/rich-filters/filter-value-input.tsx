@@ -9,8 +9,10 @@ import { cn } from "@plane/utils";
 interface FilterValueInputProps<FilterPropertyKey extends string> {
   config: TFilterConfig<FilterPropertyKey>;
   filter: TFilterConditionNode<FilterPropertyKey>;
-  onChange: (values: TFilterValue[]) => void;
+  onChange: (values: TFilterValue) => void;
 }
+
+const EMPTY_VALUE = "--";
 
 export const FilterValueInput = observer(
   <FilterPropertyKey extends string>(props: FilterValueInputProps<FilterPropertyKey>) => {
@@ -53,7 +55,7 @@ export const FilterValueInput = observer(
       tooltip: option.description,
     }));
 
-    const handleSelectChange = (selected: TFilterValue | TFilterValue[]) => {
+    const handleSelectChange = (selected: TFilterValue) => {
       if (Array.isArray(selected)) {
         onChange(selected);
       } else if (selected !== undefined) {
@@ -65,7 +67,7 @@ export const FilterValueInput = observer(
 
     const getDisplayContent = (): ReactNode => {
       if (!filter.value || (Array.isArray(filter.value) && filter.value.length === 0)) {
-        return "--";
+        return EMPTY_VALUE;
       }
 
       const selectedOptions = (Array.isArray(filter.value) ? filter.value : [filter.value])
@@ -140,7 +142,6 @@ export const FilterValueInput = observer(
             defaultOpen={!filter.value || (Array.isArray(filter.value) && filter.value.length === 0)}
           />
         );
-
       // TODO: Add date picker
       case FILTER_TYPE.DATE:
         return null;

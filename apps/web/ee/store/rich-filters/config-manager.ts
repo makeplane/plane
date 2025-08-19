@@ -18,7 +18,7 @@ export interface IFilterConfigManager<FilterPropertyKey extends string> {
   // computed functions
   getConfigById: (id: FilterPropertyKey) => TFilterConfig<FilterPropertyKey> | undefined;
   // helpers
-  register: (config: TFilterConfig<FilterPropertyKey>) => void;
+  register: <T extends TFilterConfig<FilterPropertyKey>>(config: T) => void;
   registerAll: (configs: TFilterConfig<FilterPropertyKey>[]) => void;
   updateConfigById: (id: FilterPropertyKey, configUpdates: Partial<TFilterConfig<FilterPropertyKey>>) => void;
 }
@@ -103,7 +103,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Otherwise, a new config will be created.
    * @param config - The config to register.
    */
-  register = action((config: TFilterConfig<FilterPropertyKey>): void => {
+  register = action(<T extends TFilterConfig<FilterPropertyKey>>(config: T): void => {
     if (this.filterConfigs.has(config.id)) {
       // Update existing config if it has differences
       const existingConfig = this.filterConfigs.get(config.id)!;

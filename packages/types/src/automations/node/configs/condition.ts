@@ -1,4 +1,4 @@
-import { LOGICAL_OPERATOR, TAllOperators, TFilterValues } from "../../../rich-filters";
+import { LOGICAL_OPERATOR, TAllOperators, TFilterValue } from "../../../rich-filters";
 
 export type TAutomationConditionFilterKeys =
   | "payload.data.assignee_ids"
@@ -11,7 +11,7 @@ export type TAutomationConditionFilterKeys =
 export type TAutomationConditionFilterConfig = {
   field: TAutomationConditionFilterKeys;
   operator: TAllOperators;
-  value: TFilterValues;
+  value: TFilterValue;
 };
 
 export type TAutomationConditionFilterExpression =

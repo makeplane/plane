@@ -74,7 +74,7 @@ export const FilterItem = observer(
       }
     };
 
-    const handleValueChange = (values: TFilterValue[]) => {
+    const handleValueChange = (values: TFilterValue) => {
       filter.updateCondition(condition.id, { value: values });
     };
 

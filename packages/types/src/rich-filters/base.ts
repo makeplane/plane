@@ -1,4 +1,4 @@
-import { TFilterValues } from "./config";
+import { TFilterValue } from "./config";
 import { TAllOperators, TLogicalOperator } from "./operator";
 
 /**
@@ -47,7 +47,7 @@ export type TFilterConditionNode<FilterPropertyKey extends string> = TFilterNode
   type: typeof FILTER_NODE_TYPE.CONDITION;
   property: FilterPropertyKey;
   operator: TAllOperators;
-  value: TFilterValues;
+  value: TFilterValue;
 };
 
 /**

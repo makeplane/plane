@@ -11,15 +11,15 @@ import {
 
 /**
  * Filter value.
- * @template T - The type of the filter value.
+ * @template T - The base type for filter value.
  */
-export type TFilterValue = string | number | Date | boolean | null;
+export type TFilterValueBase = string | number | Date | boolean | null;
 
 /**
  * Filter values.
  * @template T - The type of the filter value.
  */
-export type TFilterValues = TFilterValue | TFilterValue[];
+export type TFilterValue<T extends TFilterValueBase = TFilterValueBase> = T | T[];
 
 /**
  * Filter option.
@@ -52,14 +52,14 @@ export interface TFilterOption<T extends TFilterValue = TFilterValue> {
  * - isEnabled: Whether the filter is enabled.
  * - allowMultiple?: Whether the filter allows multiple values.
  */
-export interface TBaseFilterConfig<K extends string = string> {
+export interface TBaseFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue> {
   id: K;
   label: string;
   type: TFilterType;
   icon?: React.FC<React.SVGAttributes<SVGElement>>;
   placeholder?: string;
   isEnabled: boolean;
-  defaultValue: TFilterValues;
+  defaultValue: TValue;
   customOperators?: TAllOperators[];
 }
 
@@ -69,7 +69,8 @@ export interface TBaseFilterConfig<K extends string = string> {
  * - type: Always set to EFilterType.TEXT for text filters.
  * - defaultOperator: The default text operator to use when the filter is applied.
  */
-export interface TTextFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TTextFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
+  extends TBaseFilterConfig<K, TValue> {
   type: typeof FILTER_TYPE.TEXT;
   defaultOperator: TTextOperators;
 }
@@ -82,7 +83,8 @@ export interface TTextFilterConfig<K extends string = string> extends TBaseFilte
  * - min?: The minimum value of the filter.
  * - max?: The maximum value of the filter.
  */
-export interface TNumberFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TNumberFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
+  extends TBaseFilterConfig<K, TValue> {
   type: typeof FILTER_TYPE.NUMBER;
   defaultOperator: TNumberOperators;
   min?: number;
@@ -95,7 +97,7 @@ export interface TNumberFilterConfig<K extends string = string> extends TBaseFil
  * - type: Always set to EFilterType.BOOLEAN for boolean filters.
  * - defaultOperator: The default boolean operator to use when the filter is applied.
  */
-export interface TBooleanFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TBooleanFilterConfig<K extends string = string> extends TBaseFilterConfig<K, boolean> {
   type: typeof FILTER_TYPE.BOOLEAN;
   defaultOperator: TBooleanOperators;
 }
@@ -107,7 +109,8 @@ export interface TBooleanFilterConfig<K extends string = string> extends TBaseFi
  * - defaultOperator: The default select operator to use when the filter is applied.
  * - getOptions: A function that returns the options for the select filter.
  */
-export interface TSelectFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TSelectFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
+  extends TBaseFilterConfig<K, TValue> {
   type: typeof FILTER_TYPE.SELECT;
   defaultOperator: TSelectOperators;
   getOptions: TFilterOption<string>[] | (() => TFilterOption<string>[] | Promise<TFilterOption<string>[]>);
@@ -120,7 +123,8 @@ export interface TSelectFilterConfig<K extends string = string> extends TBaseFil
  * - defaultOperator: The default multi-select operator to use when the filter is applied.
  * - getOptions: A function that returns the options for the multi-select filter.
  */
-export interface TMultiSelectFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TMultiSelectFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
+  extends TBaseFilterConfig<K, TValue> {
   type: typeof FILTER_TYPE.MULTI_SELECT;
   defaultOperator: TMultiSelectOperators;
   getOptions: TFilterOption<string>[] | (() => TFilterOption<string>[] | Promise<TFilterOption<string>[]>);
@@ -132,7 +136,8 @@ export interface TMultiSelectFilterConfig<K extends string = string> extends TBa
  * - type: Always set to EFilterType.DATE for date filters.
  * - defaultOperator: The default date operator to use when the filter is applied.
  */
-export interface TDateFilterConfig<K extends string = string> extends TBaseFilterConfig<K> {
+export interface TDateFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
+  extends TBaseFilterConfig<K, TValue> {
   type: typeof FILTER_TYPE.DATE;
   defaultOperator: TDateOperators;
 }
@@ -142,13 +147,13 @@ export interface TDateFilterConfig<K extends string = string> extends TBaseFilte
  * Combines all filter configurations into a single type.
  * @template K - The type of the filter id.
  */
-export type TFilterConfig<K extends string = string> =
-  | TTextFilterConfig<K>
-  | TNumberFilterConfig<K>
+export type TFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue> =
+  | TTextFilterConfig<K, TValue>
+  | TNumberFilterConfig<K, TValue>
   | TBooleanFilterConfig<K>
-  | TSelectFilterConfig<K>
-  | TMultiSelectFilterConfig<K>
-  | TDateFilterConfig<K>;
+  | TSelectFilterConfig<K, TValue>
+  | TMultiSelectFilterConfig<K, TValue>
+  | TDateFilterConfig<K, TValue>;
 
 /**
  * Base parameters for all filter config creators

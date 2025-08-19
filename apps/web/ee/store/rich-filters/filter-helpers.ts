@@ -16,7 +16,7 @@ import {
   TFilterConditionPayload,
   TFilterExpression,
   TFilterGroupNode,
-  TFilterValues,
+  TFilterValue,
   TLogicalOperator,
 } from "@plane/types";
 
@@ -50,11 +50,11 @@ export interface IFilterInstanceHelper<FilterPropertyKey extends string, TExtern
   downgradeOperator: (operator: TAllOperators) => TAllOperators;
   getOptimalOperatorForValue: (
     currentOperator: TAllOperators,
-    value: TFilterValues,
+    value: TFilterValue,
     expression?: TFilterExpression<FilterPropertyKey>,
     conditionId?: string
   ) => TAllOperators;
-  getValidOperatorsForValue: (allOperators: readonly TAllOperators[], value: TFilterValues) => TAllOperators[];
+  getValidOperatorsForValue: (allOperators: readonly TAllOperators[], value: TFilterValue) => TAllOperators[];
   getValidOperatorsForCondition: (
     condition: TFilterConditionNode<FilterPropertyKey>,
     allOperators: readonly TAllOperators[]
@@ -127,7 +127,7 @@ export interface IFilterInstanceHelper<FilterPropertyKey extends string, TExtern
 
   // notification utilities
   shouldNotifyChangeForExpression: (expression: TFilterExpression<FilterPropertyKey> | null) => boolean;
-  shouldNotifyChangeForValue: (value: TFilterValues) => boolean;
+  shouldNotifyChangeForValue: (value: TFilterValue) => boolean;
 }
 
 export class FilterInstanceHelper<FilterPropertyKey extends string, TExternalFilterType>
@@ -308,7 +308,7 @@ export class FilterInstanceHelper<FilterPropertyKey extends string, TExternalFil
    */
   getOptimalOperatorForValue = (
     currentOperator: TAllOperators,
-    value: TFilterValues,
+    value: TFilterValue,
     expression?: TFilterExpression<FilterPropertyKey>,
     conditionId?: string
   ): TAllOperators => {
@@ -344,7 +344,7 @@ export class FilterInstanceHelper<FilterPropertyKey extends string, TExternalFil
    * @param value - The filter value.
    * @returns An array of operators that are valid for the given value.
    */
-  getValidOperatorsForValue = (allOperators: readonly TAllOperators[], value: TFilterValues): TAllOperators[] => {
+  getValidOperatorsForValue = (allOperators: readonly TAllOperators[], value: TFilterValue): TAllOperators[] => {
     const valueCount = Array.isArray(value) ? value.length : value !== null && value !== undefined ? 1 : 0;
 
     return allOperators.filter((operator) => {
@@ -861,7 +861,7 @@ export class FilterInstanceHelper<FilterPropertyKey extends string, TExternalFil
    * @param value - The filter value to check.
    * @returns True if we should notify, false otherwise.
    */
-  shouldNotifyChangeForValue = (value: TFilterValues): boolean => {
+  shouldNotifyChangeForValue = (value: TFilterValue): boolean => {
     if (value === null || value === undefined) {
       return false;
     }

@@ -34,7 +34,7 @@ export type TCreateStateGroupFilterParams = TCreateFilterConfigParams & TFilterI
 export const getStateGroupFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateStateGroupFilterParams> =>
   (params: TCreateStateGroupFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, TStateGroups[]>({
       id: key,
       label: "State Group",
       icon: params.filterIcon,
@@ -70,7 +70,7 @@ export type TCreateStateFilterParams = TCreateFilterConfigParams &
 export const getStateFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateStateFilterParams> =>
   (params: TCreateStateFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "State",
       icon: params.filterIcon,
@@ -103,7 +103,7 @@ export type TCreatePriorityFilterParams = TCreateFilterConfigParams & TFilterIco
 export const getPriorityFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreatePriorityFilterParams> =>
   (params: TCreatePriorityFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, TIssuePriorities[]>({
       id: key,
       label: "Priority",
       icon: params.filterIcon,
@@ -139,7 +139,7 @@ export type TCreateWorkItemTypeFilterParams = TCreateFilterConfigParams &
 export const getWorkItemTypeFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateWorkItemTypeFilterParams> =>
   (params: TCreateWorkItemTypeFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Type",
       icon: params.filterIcon,
@@ -177,7 +177,7 @@ export type TCreateCycleFilterParams = TCreateFilterConfigParams &
 export const getCycleFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateCycleFilterParams> =>
   (params: TCreateCycleFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Cycle",
       icon: params.filterIcon,
@@ -213,7 +213,7 @@ export type TCreateModuleFilterParams = TCreateFilterConfigParams &
 export const getModuleFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateModuleFilterParams> =>
   (params: TCreateModuleFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Module",
       icon: params.filterIcon,
@@ -249,7 +249,7 @@ export type TCreateLabelFilterParams = TCreateFilterConfigParams &
 export const getLabelFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateLabelFilterParams> =>
   (params: TCreateLabelFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Label",
       icon: params.filterIcon,
@@ -306,7 +306,7 @@ export type TCreateAssigneeFilterParams = TCreateUserFilterParams;
 export const getAssigneeFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateAssigneeFilterParams> =>
   (params: TCreateAssigneeFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Assignees",
       icon: params.filterIcon,
@@ -333,7 +333,7 @@ export type TCreateMentionFilterParams = TCreateUserFilterParams;
 export const getMentionFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateMentionFilterParams> =>
   (params: TCreateMentionFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Mentions",
       icon: params.filterIcon,
@@ -360,7 +360,7 @@ export type TCreateCreatedByFilterParams = TCreateUserFilterParams;
 export const getCreatedByFilterConfig =
   <K extends string>(key: K): TCreateFilterConfig<K, TCreateCreatedByFilterParams> =>
   (params: TCreateCreatedByFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT>({
+    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
       id: key,
       label: "Created by",
       icon: params.filterIcon,

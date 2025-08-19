@@ -4,6 +4,7 @@ import {
   TDateFilterConfig,
   TFilterConfig,
   TFilterType,
+  TFilterValue,
   TMultiSelectFilterConfig,
   TNumberFilterConfig,
   TSelectFilterConfig,
@@ -15,20 +16,20 @@ import {
  * @param config - The filter config to create
  * @returns The created filter config
  */
-export function createFilterConfig<K extends string, T extends TFilterType>(
+export function createFilterConfig<K extends string, T extends TFilterType, TValue extends TFilterValue = TFilterValue>(
   config: T extends typeof FILTER_TYPE.TEXT
-    ? TTextFilterConfig<K>
+    ? TTextFilterConfig<K, TValue>
     : T extends typeof FILTER_TYPE.NUMBER
-      ? TNumberFilterConfig<K>
+      ? TNumberFilterConfig<K, TValue>
       : T extends typeof FILTER_TYPE.BOOLEAN
         ? TBooleanFilterConfig<K>
         : T extends typeof FILTER_TYPE.SELECT
-          ? TSelectFilterConfig<K>
+          ? TSelectFilterConfig<K, TValue>
           : T extends typeof FILTER_TYPE.MULTI_SELECT
-            ? TMultiSelectFilterConfig<K>
+            ? TMultiSelectFilterConfig<K, TValue>
             : T extends typeof FILTER_TYPE.DATE
-              ? TDateFilterConfig<K>
+              ? TDateFilterConfig<K, TValue>
               : never
-): TFilterConfig<K> {
-  return config as TFilterConfig<K>;
+): TFilterConfig<K, TValue> {
+  return config as TFilterConfig<K, TValue>;
 }
