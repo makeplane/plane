@@ -107,6 +107,19 @@ class IssueArchiveViewSet(BaseViewSet):
 
         issue_queryset = self.get_queryset().filter(**filters)
 
+        total_issue_queryset = Issue.objects.filter(
+            deleted_at__isnull=True,
+            archived_at__isnull=False,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).filter(**filters)
+
+        total_issue_queryset = (
+            total_issue_queryset
+            if show_sub_issues == "true"
+            else total_issue_queryset.filter(parent__isnull=True)
+        )
+
         issue_queryset = (
             issue_queryset
             if show_sub_issues == "true"
@@ -142,7 +155,7 @@ class IssueArchiveViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
-                        total_count_queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -177,7 +190,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
-                    total_count_queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -204,7 +217,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                total_count_queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
