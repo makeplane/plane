@@ -5,6 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
+import pytz
+from typing import Optional
 
 # Module imports
 from plane.db.models import ProjectBaseModel
@@ -99,13 +101,16 @@ class RecurringWorkitemTask(ProjectBaseModel):
             raise ValidationError("start_at is required")
 
     @classmethod
-    def generate_cron_expression(cls, start_at, interval_type):
+    def generate_cron_expression(
+        cls, start_at, interval_type, project_timezone: Optional[str] = None
+    ):
         """
         Generate cron expression based on start_at datetime and interval_type.
 
         Args:
             start_at (datetime): The datetime when the task should start
             interval_type (str): One of 'second', 'daily', 'week', 'month', 'year'
+            project_timezone (Optional[str]): IANA timezone for the project; used to compute the correct local day boundaries
 
         Returns:
             str: Cron expression in format "minute hour day month day_of_week"
@@ -123,14 +128,26 @@ class RecurringWorkitemTask(ProjectBaseModel):
                 f"Invalid interval_type: {interval_type}. Must be one of {valid_intervals}"
             )
 
-        # Extract datetime components for cron-based intervals
-        minute = start_at.minute
-        hour = start_at.hour
-        day = start_at.day
-        month = start_at.month
+        if not start_at:
+            return None
 
-        # Convert Python weekday to cron format
-        cron_day_of_week = cls._convert_python_weekday_to_cron(start_at.weekday())
+        # Ensure aware datetime
+        aware_start = start_at if start_at.tzinfo else pytz.UTC.localize(start_at)
+
+        # Resolve project tz (fallback to UTC if invalid/missing)
+        try:
+            tz = pytz.timezone(project_timezone) if project_timezone else pytz.UTC
+        except Exception:
+            tz = pytz.UTC
+
+        # Normalize to project-local midnight, then convert back to UTC
+        local_midnight = aware_start.astimezone(tz).replace(hour=0, minute=0, second=0, microsecond=0)
+        utc_dt = local_midnight.astimezone(pytz.UTC)
+
+        # Extract cron fields
+        minute, hour, day, month = utc_dt.minute, utc_dt.hour, utc_dt.day, utc_dt.month
+        cron_day_of_week = cls._convert_python_weekday_to_cron(local_midnight.weekday())
+
 
         # Generate cron expression based on interval type
         if interval_type == cls.INTERVAL_DAILY:
@@ -155,8 +172,9 @@ class RecurringWorkitemTask(ProjectBaseModel):
         """Override save to generate cron expression and manage PeriodicTask synchronization"""
         # Auto-generate cron expression from interval_type and start_at
         if self.interval_type and self.start_at:
+            project_tz = getattr(self.project, "timezone", None)
             self.cron_expression = self.generate_cron_expression(
-                self.start_at, self.interval_type
+                self.start_at, self.interval_type, project_timezone=project_tz
             )
 
         self.clean()
@@ -376,28 +394,36 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
         interval_type = self._detect_interval_type_from_cron()
 
+        # Represent the description in the project's local timezone
+        local_dt = None
+        try:
+            tz = pytz.timezone(self.project.timezone)
+            if self.start_at:
+                if self.start_at.tzinfo is None:
+                    local_dt = pytz.UTC.localize(self.start_at).astimezone(tz)
+                else:
+                    local_dt = self.start_at.astimezone(tz)
+        except Exception:
+            local_dt = self.start_at
+
         if interval_type == self.INTERVAL_DAILY:
-            return (
-                f"Every day at {self.start_at.strftime('%H:%M')}"
-                if self.start_at
-                else "Every day"
-            )
+            return "Every day at 00:00"
         elif interval_type == self.INTERVAL_WEEKLY:
             return (
-                f"Every week on {self.start_at.strftime('%A')} at {self.start_at.strftime('%H:%M')}"
-                if self.start_at
+                f"Every week on {local_dt.strftime('%A')} at 00:00"
+                if local_dt
                 else f"Cron: {self.cron_expression}"
             )
         elif interval_type == self.INTERVAL_MONTHLY:
             return (
-                f"Every month on day {self.start_at.day} at {self.start_at.strftime('%H:%M')}"
-                if self.start_at
+                f"Every month on day {local_dt.day} at 00:00"
+                if local_dt
                 else f"Cron: {self.cron_expression}"
             )
         elif interval_type == self.INTERVAL_YEARLY:
             return (
-                f"Every year on {self.start_at.strftime('%B %d')} at {self.start_at.strftime('%H:%M')}"
-                if self.start_at
+                f"Every year on {local_dt.strftime('%B %d')} at 00:00"
+                if local_dt
                 else f"Cron: {self.cron_expression}"
             )
         else:
