@@ -5,8 +5,7 @@
     "lib": ["esnext", "dom"],
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "types": ["node"]
+    }
   },
   "include": ["./src"],
   "exclude": ["dist", "build", "node_modules"]

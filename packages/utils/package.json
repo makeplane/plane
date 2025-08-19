@@ -38,6 +38,7 @@
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/uuid": "^9.0.8",
+    "@types/lodash": "^4.17.6",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
   }

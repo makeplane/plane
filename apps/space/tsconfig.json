@@ -22,7 +22,7 @@
         "name": "next"
       }
     ],
-    "types": ["node", "react"],
+
     "strictNullChecks": true
   }
 }

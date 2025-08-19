@@ -23,8 +23,8 @@ export const CustomActiveShape = React.memo((props: PieSectorDataItem) => {
         startAngle={startAngle}
         endAngle={endAngle}
         cornerRadius={cornerRadius}
-        innerRadius={outerRadius ?? 0 + 6}
-        outerRadius={outerRadius ?? 0 + 10}
+        innerRadius={(outerRadius ?? 0) + 6}
+        outerRadius={(outerRadius ?? 0) + 10}
         fill={fill}
       />
     </g>

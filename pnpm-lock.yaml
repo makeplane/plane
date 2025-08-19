@@ -61,9 +61,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.9
         version: 0.5.16(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.13.3(@swc/helpers@0.5.17))(@types/node@22.17.2)(typescript@5.8.3)))
-      '@types/lodash':
-        specifier: ^4.17.0
-        version: 4.17.20
       autoprefixer:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.5.6)
@@ -119,6 +116,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/lodash':
+        specifier: ^4.17.6
+        version: 4.17.20
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -222,9 +222,6 @@ importers:
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.19
-      '@types/dotenv':
-        specifier: ^8.2.0
-        version: 8.2.3
       '@types/express':
         specifier: 4.17.23
         version: 4.17.23
@@ -234,9 +231,6 @@ importers:
       '@types/node':
         specifier: ^20.14.9
         version: 20.19.11
-      '@types/pino-http':
-        specifier: ^5.8.4
-        version: 5.8.4
       concurrently:
         specifier: ^9.0.1
         version: 9.2.0
@@ -382,11 +376,8 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.2.0
       '@types/lodash':
-        specifier: ^4.17.1
+        specifier: ^4.17.6
         version: 4.17.20
       '@types/node':
         specifier: 18.14.1
@@ -578,11 +569,8 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.2.0
       '@types/lodash':
-        specifier: ^4.14.202
+        specifier: ^4.17.6
         version: 4.17.20
       '@types/node':
         specifier: 18.16.1
@@ -618,6 +606,12 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.5.4
+        version: 22.17.2
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.11
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.13.3(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.6.3)(yaml@2.8.1)
@@ -649,9 +643,6 @@ importers:
       '@types/node':
         specifier: ^20.14.9
         version: 20.19.11
-      '@types/reflect-metadata':
-        specifier: ^0.1.0
-        version: 0.1.0
       '@types/ws':
         specifier: ^8.5.10
         version: 8.18.1
@@ -916,9 +907,6 @@ importers:
 
   packages/logger:
     dependencies:
-      '@types/express':
-        specifier: 4.17.23
-        version: 4.17.23
       express:
         specifier: ^4.21.2
         version: 4.21.2
@@ -935,6 +923,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/express':
+        specifier: 4.17.23
+        version: 4.17.23
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -1297,6 +1288,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/lodash':
+        specifier: ^4.17.6
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -3135,14 +3129,6 @@ packages:
   '@types/dom4@2.0.4':
     resolution: {integrity: sha512-PD+wqNhrjWFjAlSVd18jvChZvOXB2SOwAILBmuYev5zswBats5qmzs/QFoooLKd2omj9BT05a8MeSeRmXLGY+Q==}
 
-  '@types/dompurify@3.2.0':
-    resolution: {integrity: sha512-Fgg31wv9QbLDA0SpTOXO3MaxySc4DKGLi8sna4/Utjo4r3ZRPdCt4UQee8BWr+Q5z21yifghREPJGYaEOEIACg==}
-    deprecated: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
-
-  '@types/dotenv@8.2.3':
-    resolution: {integrity: sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw==}
-    deprecated: This is a stub types definition. dotenv provides its own type definitions, so you do not need this installed.
-
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
 
@@ -3236,20 +3222,6 @@ packages:
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
-  '@types/pino-http@5.8.4':
-    resolution: {integrity: sha512-UTYBQ2acmJ2eK0w58vVtgZ9RAicFFndfrnWC1w5cBTf8zwn/HEy8O+H7psc03UZgTzHmlcuX8VkPRnRDEj+FUQ==}
-
-  '@types/pino-pretty@5.0.0':
-    resolution: {integrity: sha512-N1uzqSzioqz8R3AkDbSJwcfDWeI3YMPNapSQQhnB2ISU4NYgUIcAh+hYT5ygqBM+klX4htpEhXMmoJv3J7GrdA==}
-    deprecated: This is a stub types definition. pino-pretty provides its own type definitions, so you do not need this installed.
-
-  '@types/pino-std-serializers@4.0.0':
-    resolution: {integrity: sha512-gXfUZx2xIBbFYozGms53fT0nvkacx/+62c8iTxrEqH5PkIGAQvDbXg2774VWOycMPbqn5YJBQ3BMsg4Li3dWbg==}
-    deprecated: This is a stub types definition. pino-std-serializers provides its own type definitions, so you do not need this installed.
-
-  '@types/pino@6.3.12':
-    resolution: {integrity: sha512-dsLRTq8/4UtVSpJgl9aeqHvbh6pzdmjYD3C092SYgLD2TyoCqHpTJk6vp8DvCTGGc7iowZ2MoiYiVUUCcu7muw==}
-
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
 
@@ -3285,10 +3257,6 @@ packages:
     resolution: {integrity: sha512-gi3S+aUi6kpkF5vdhUsnkwbiSEIU/BEJyD7kBy2SudWBUuKmJk8AQKE0OVcQQeEy40Azh0lV6uynxlikYIJuwg==}
     peerDependencies:
       '@types/react': '*'
-
-  '@types/reflect-metadata@0.1.0':
-    resolution: {integrity: sha512-bXltFLY3qhzCnVYP5iUpeSICagQ8rc9K2liS+8M0lBcz54BHs3O6W5UvqespVSuebo1BXLi+/y9ioELAW9SC2A==}
-    deprecated: This is a stub types definition for reflect-metadata (https://github.com/rbuckton/ReflectDecorators). reflect-metadata provides its own type definitions, so you don't need @types/reflect-metadata installed!
 
   '@types/resolve@1.20.6':
     resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
@@ -6916,9 +6884,6 @@ packages:
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
 
-  sonic-boom@2.8.0:
-    resolution: {integrity: sha512-kuonw1YOYYNOve5iHdSahXPOK49GqwA+LZhI6Wz/l0rP57iKyXXIHaRagOBHAPmGwJC6od2Z9zgvZ5loSgMlVg==}
-
   sonic-boom@4.2.0:
     resolution: {integrity: sha512-INb7TM37/mAcsGmc9hyyI6+QR3rR1zVRu36B0NeGXKnOOLiZOfER5SA+N7X7k3yUYRzLWafduTDvJAfDswwEww==}
 
@@ -9739,14 +9704,6 @@ snapshots:
 
   '@types/dom4@2.0.4': {}
 
-  '@types/dompurify@3.2.0':
-    dependencies:
-      dompurify: 3.2.6
-
-  '@types/dotenv@8.2.3':
-    dependencies:
-      dotenv: 16.6.1
-
   '@types/eslint-scope@3.7.7':
     dependencies:
       '@types/eslint': 9.6.1
@@ -9850,25 +9807,6 @@ snapshots:
 
   '@types/parse-json@4.0.2': {}
 
-  '@types/pino-http@5.8.4':
-    dependencies:
-      '@types/pino': 6.3.12
-
-  '@types/pino-pretty@5.0.0':
-    dependencies:
-      pino-pretty: 11.3.0
-
-  '@types/pino-std-serializers@4.0.0':
-    dependencies:
-      pino-std-serializers: 7.0.0
-
-  '@types/pino@6.3.12':
-    dependencies:
-      '@types/node': 20.19.11
-      '@types/pino-pretty': 5.0.0
-      '@types/pino-std-serializers': 4.0.0
-      sonic-boom: 2.8.0
-
   '@types/prop-types@15.7.15': {}
 
   '@types/qs@6.14.0': {}
@@ -9905,10 +9843,6 @@ snapshots:
   '@types/reactcss@1.2.13(@types/react@18.3.11)':
     dependencies:
       '@types/react': 18.3.11
-
-  '@types/reflect-metadata@0.1.0':
-    dependencies:
-      reflect-metadata: 0.2.2
 
   '@types/resolve@1.20.6': {}
 
@@ -13961,10 +13895,6 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
-
-  sonic-boom@2.8.0:
-    dependencies:
-      atomic-sleep: 1.0.0
 
   sonic-boom@4.2.0:
     dependencies:
