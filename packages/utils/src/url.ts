@@ -6,6 +6,7 @@
  * @property {string} rootDomain - The root domain name (e.g., 'example' in 'blog.example.com')
  * @property {string} tld - The top-level domain (e.g., 'com', 'org')
  * @property {string} path - The URL path including search params and hash
+ * @property {URL}  full - The complete URL object
  */
 export interface IURLComponents {
   protocol: string;
@@ -13,6 +14,7 @@ export interface IURLComponents {
   rootDomain: string;
   tld: string;
   path: string;
+  full: URL;
 }
 
 /**
@@ -58,6 +60,7 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
       rootDomain,
       tld,
       path,
+      full: url,
     };
   } catch (error) {
     console.error(`Error extracting URL components: ${url.href}`, error);
