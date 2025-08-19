@@ -1,0 +1,202 @@
+networks:
+  plane-nw:
+    driver: bridge
+
+services:
+  admin:
+    image: artifacts.plane.so/makeplane/admin-commercial:v1.13.0
+    restart: unless-stopped
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - api
+    - web
+
+  web:
+    image: artifacts.plane.so/makeplane/web-commercial:v1.13.0
+    restart: unless-stopped
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - api
+    - worker
+
+  space:
+    image: artifacts.plane.so/makeplane/space-commercial:v1.13.0
+    restart: unless-stopped
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - api
+    - web
+
+  live:
+    image: artifacts.plane.so/makeplane/live-commercial:v1.13.0
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - api
+    - web
+
+  monitor:
+    image: artifacts.plane.so/makeplane/monitor-commercial:v1.13.0
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    volumes:
+    - /opt/plane/data/monitor:/app
+    networks:
+    - systemd-plane-nw
+
+  api:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    command: ./bin/docker-entrypoint-api-ee.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    volumes:
+    - /opt/plane/logs/api:/code/plane/logs
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-redis
+
+  worker:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    command: ./bin/docker-entrypoint-worker.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    volumes:
+    - /opt/plane/logs/worker:/code/plane/logs
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - api
+    - plane-db
+    - plane-redis
+
+  beat-worker:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    command: ./bin/docker-entrypoint-beat.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/logs/beat_worker:/code/plane/logs
+    depends_on:
+    - api
+    - plane-db
+    - plane-redis
+
+  migrator:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    command: ./bin/docker-entrypoint-migrator.sh
+    restart: "no"
+    env_file:
+    - /opt/plane/plane.env
+    environment:
+      DEPLOY_PLATFORM: docker_compose
+      PRIME_HOST: https://prime.plane.so
+
+    volumes:
+    - /opt/plane/logs/migrator:/code/plane/logs
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-redis
+
+  plane-db:
+    image: postgres:15.7-alpine
+    command: postgres -c 'max_connections=1000'
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/data/postgres:/var/lib/postgresql/data
+
+  plane-redis:
+    image: valkey/valkey:7.2.5-alpine
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/data/redis:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/data/rabbitmq:/var/lib/rabbitmq
+
+  plane-minio:
+    image: minio/minio:latest
+    command: server /export --console-address ":9090"
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    volumes:
+    - /opt/plane/data/minio:/export
+    
+
+  silo:
+    image: artifacts.plane.so/makeplane/silo-commercial:v1.13.0  
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-redis
+    - plane-mq
+
+  # Comment this if you already have a reverse proxy running
+  proxy:
+    image: artifacts.plane.so/makeplane/proxy-commercial:v1.13.0
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    ports:
+    - 8080:80
+    - 8443:443
+    volumes:
+    - /opt/plane/proxy/config:/config
+    - /opt/plane/proxy/data:/data
+    - /opt/plane/proxy/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - web
+    - api
+    - space
+    - admin
+    - live

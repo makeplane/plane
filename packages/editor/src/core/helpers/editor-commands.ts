@@ -184,3 +184,16 @@ export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();
 };
+
+export const insertPageEmbed = (
+  data: {
+    pageId: string;
+    position?: number;
+    workspaceSlug: string;
+  },
+  editor: Editor,
+  range?: Range
+) => {
+  if (range) editor.chain().focus().deleteRange(range).insertPageEmbed(data).run();
+  else editor.chain().focus().insertPageEmbed(data).run();
+};
