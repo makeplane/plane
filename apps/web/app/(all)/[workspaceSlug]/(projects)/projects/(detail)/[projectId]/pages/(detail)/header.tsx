@@ -12,13 +12,14 @@ import { getPageName } from "@plane/utils";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
+import { CollaboratorsList, PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
@@ -59,7 +60,7 @@ export const PageDetailsHeader = observer(() => {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!page) return null;
+  if (!page || !page.canCurrentUserAccessPage) return null;
 
   return (
     <Header>
@@ -94,6 +95,8 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
+        <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+        <CollaboratorsList page={page} className="bottom-1" />
         <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>

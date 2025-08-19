@@ -6,16 +6,17 @@ import { TPageNavigationTabs } from "@plane/types";
 import { ListLayout } from "@/components/core/list";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// local imports
-import { PageListBlock } from "./block";
+// components
+import { PageListBlockRoot } from "./block-root";
+
+const storeType = EPageStoreType.PROJECT;
 
 type TPagesListRoot = {
   pageType: TPageNavigationTabs;
-  storeType: EPageStoreType;
 };
 
-export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
-  const { pageType, storeType } = props;
+export const ProjectPagesListRoot: FC<TPagesListRoot> = observer((props) => {
+  const { pageType } = props;
   // store hooks
   const { getCurrentProjectFilteredPageIdsByTab } = usePageStore(storeType);
   // derived values
@@ -25,7 +26,7 @@ export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   return (
     <ListLayout>
       {filteredPageIds.map((pageId) => (
-        <PageListBlock key={pageId} pageId={pageId} storeType={storeType} />
+        <PageListBlockRoot key={pageId} paddingLeft={0} pageId={pageId} storeType={storeType} pageType={pageType} />
       ))}
     </ListLayout>
   );

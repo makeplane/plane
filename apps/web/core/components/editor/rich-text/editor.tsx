@@ -8,12 +8,13 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -41,6 +42,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
@@ -62,6 +66,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
         workspaceSlug,
       })}
+      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);

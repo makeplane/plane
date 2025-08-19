@@ -27,6 +27,10 @@
   "pnpm": {
     "overrides": {
       "brace-expansion": "2.0.2",
+      "amqplib": "0.10.5",
+      "@types/amqplib": "0.10.5",
+      "@types/react": "18.3.18",
+      "@types/react-dom": "18.3.5",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
       "@babel/helpers": "7.26.10",
@@ -35,8 +39,8 @@
       "tar-fs": "3.0.9",
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
-      "typescript": "5.8.3",
-      "sharp": "0.33.5"
+      "@octokit/types": "13.8.0",
+      "pbkdf2": "3.1.3"
     }
   },
   "packageManager": "pnpm@10.12.1"

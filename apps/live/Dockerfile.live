@@ -60,4 +60,4 @@ ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
 
-CMD ["node", "live/server.js"]
+CMD ["node", "live/start.js"]
