@@ -58,7 +58,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
           <PlaneLockup className="h-6 w-auto" /> <span className="font-bold text-2xl mt-2">Business</span>
         </div>
         <div className="space-y-1">
-          <p className="text-white text-center font-medium">Your trail is active now!</p>
+          <p className="text-white text-center font-medium">Your trial is active now!</p>
           <p className="text-white/60 text-sm text-center">Unlock your team&apos;s full potential for 14 days</p>
         </div>
         <div>
