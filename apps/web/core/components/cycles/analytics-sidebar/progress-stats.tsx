@@ -3,7 +3,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import {
   IIssueFilterOptions,
@@ -13,7 +12,7 @@ import {
   TCyclePlotType,
   TStateGroups,
 } from "@plane/types";
-import { Avatar, StateGroupIcon } from "@plane/ui";
+import { Avatar, StateGroupIcon, TabItem, Tabs } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core";
@@ -250,6 +249,9 @@ type TCycleProgressStats = {
   noBackground?: boolean;
 };
 
+type TCycleProgressStatsTabKey = "stat-states" | "stat-assignees" | "stat-labels";
+type TCycleProgressStatsTabs = TabItem<TCycleProgressStatsTabKey>[];
+
 export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
   const {
     cycleId,
@@ -265,13 +267,12 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
     noBackground = false,
   } = props;
   // hooks
-  const { storedValue: currentTab, setValue: setCycleTab } = useLocalStorage(
+  const { storedValue: currentTab, setValue: setCycleTab } = useLocalStorage<TCycleProgressStatsTabKey>(
     `cycle-analytics-tab-${cycleId}`,
     "stat-assignees"
   );
   const { t } = useTranslation();
   // derived values
-  const currentTabIndex = (tab: string): number => progressStats.findIndex((stat) => stat.key === tab);
 
   const currentDistribution = distribution as TCycleDistribution;
   const currentEstimateDistribution = distribution as TCycleEstimateDistribution;
@@ -316,9 +317,48 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
     total: totalIssuesCount || 0,
   }));
 
+  const cycleProgressStatsTabs: TCycleProgressStatsTabs = [
+    {
+      key: "stat-states",
+      label: t("common.states"),
+      content: (
+        <StateStatComponent
+          distribution={distributionStateData}
+          totalIssuesCount={totalIssuesCount}
+          isEditable={isEditable}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+    {
+      key: "stat-assignees",
+      label: t("common.assignees"),
+      content: (
+        <AssigneeStatComponent
+          distribution={distributionAssigneeData}
+          isEditable={isEditable}
+          filters={filters}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+    {
+      key: "stat-labels",
+      label: t("common.labels"),
+      content: (
+        <LabelStatComponent
+          distribution={distributionLabelData}
+          isEditable={isEditable}
+          filters={filters}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+  ];
+
   return (
     <div>
-      <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
+      {/* <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
         <Tab.List
           as="div"
           className={cn(
@@ -370,7 +410,8 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
             />
           </Tab.Panel>
         </Tab.Panels>
-      </Tab.Group>
+      </Tab.Group> */}
+      <Tabs tabs={cycleProgressStatsTabs} defaultTab={currentTab ? currentTab : "stat-assignees"} />
     </div>
   );
 });
