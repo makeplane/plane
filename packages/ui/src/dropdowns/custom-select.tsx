@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { usePopper } from "react-popper";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // hooks

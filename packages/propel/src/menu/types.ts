@@ -21,8 +21,7 @@ export type TMenuProps = {
   ellipsis?: boolean;
   noBorder?: boolean;
   verticalEllipsis?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  menuButtonOnClick?: (...args: any) => void;
+  menuButtonOnClick?: (..._args: unknown[]) => void;
   menuItemsClassName?: string;
   onMenuClose?: () => void;
   closeOnSelect?: boolean;
@@ -44,6 +43,6 @@ export type TSubMenuProps = {
 export type TMenuItemProps = {
   children: React.ReactNode;
   disabled?: boolean;
-  onClick?: (args?: any) => void;
+  onClick?: (_args?: unknown) => void;
   className?: string;
 };

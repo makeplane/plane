@@ -78,7 +78,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
  * @param value The value to check
  * @returns Whether the value is a valid number or not
  */
-export const isAValidNumber = (value: any) => typeof value === "number" && !isNaN(value);
+export const isAValidNumber = (value: unknown): value is number => typeof value === "number" && !Number.isNaN(value);
 
 export const Avatar: React.FC<Props> = (props) => {
   const {
@@ -86,7 +86,6 @@ export const Avatar: React.FC<Props> = (props) => {
     fallbackBackgroundColor,
     fallbackText,
     fallbackTextColor,
-    showTooltip = true,
     size = "md",
     shape = "circle",
     src,

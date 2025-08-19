@@ -23,6 +23,10 @@
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
     "@plane/utils": "workspace:*",
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/ui": "workspace:*",
+    "@plane/hooks": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",

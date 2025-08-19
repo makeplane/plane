@@ -1,7 +1,8 @@
 import React from "react";
 import { Sector } from "recharts";
+import { PieSectorDataItem } from "recharts/types/polar/Pie";
 
-export const CustomActiveShape = React.memo((props: any) => {
+export const CustomActiveShape = React.memo((props: PieSectorDataItem) => {
   const { cx, cy, cornerRadius, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
 
   return (
@@ -22,8 +23,8 @@ export const CustomActiveShape = React.memo((props: any) => {
         startAngle={startAngle}
         endAngle={endAngle}
         cornerRadius={cornerRadius}
-        innerRadius={outerRadius + 6}
-        outerRadius={outerRadius + 10}
+        innerRadius={outerRadius ?? 0 + 6}
+        outerRadius={outerRadius ?? 0 + 10}
         fill={fill}
       />
     </g>

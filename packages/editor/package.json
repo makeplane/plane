@@ -67,6 +67,8 @@
     "highlight.js": "^11.8.0",
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.3.2",
+    "emoji-regex": "^10.3.0",
+    "is-emoji-supported": "^0.0.5",
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",

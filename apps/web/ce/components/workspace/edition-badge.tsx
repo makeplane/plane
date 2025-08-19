@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import packageJson from "package.json";
 import { useTranslation } from "@plane/i18n";
 import { Button, Tooltip } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import packageJson from "package.json";
 // local components
 import { PaidPlanUpgradeModal } from "../license";
 

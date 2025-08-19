@@ -9,8 +9,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useUserProfile, useUserSettings } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserProfile, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type TPageType = EPageTypes;

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 // plane imports
 // components
 import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";

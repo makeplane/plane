@@ -21,8 +21,8 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { IssueGanttBlock } from "./blocks";
 import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
+import { IssueGanttBlock } from "./blocks";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;

@@ -297,6 +297,12 @@ importers:
       '@plane/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@plane/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@popperjs/core':
+        specifier: ^2.11.8
+        version: 2.11.8
       axios:
         specifier: 1.11.0
         version: 1.11.0
@@ -742,9 +748,15 @@ importers:
       '@tiptap/suggestion':
         specifier: ^2.22.3
         version: 2.26.1(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
+      emoji-regex:
+        specifier: ^10.3.0
+        version: 10.4.0
       highlight.js:
         specifier: ^11.8.0
         version: 11.11.1
+      is-emoji-supported:
+        specifier: ^0.0.5
+        version: 0.0.5
       jsx-dom-cjs:
         specifier: ^8.0.3
         version: 8.1.6
@@ -858,6 +870,9 @@ importers:
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -879,10 +894,19 @@ importers:
       intl-messageformat:
         specifier: ^10.7.11
         version: 10.7.16
+      mobx:
+        specifier: ^6.13.5
+        version: 6.13.7
+      mobx-react:
+        specifier: ^9.1.0
+        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -926,6 +950,18 @@ importers:
       '@base-ui-components/react':
         specifier: ^1.0.0-beta.2
         version: 1.0.0-beta.2(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@plane/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@plane/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../types
+      '@plane/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@plane/utils':
         specifier: workspace:*
         version: link:../utils
@@ -975,6 +1011,9 @@ importers:
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../types
       axios:
         specifier: 1.11.0
         version: 1.11.0
@@ -994,6 +1033,9 @@ importers:
 
   packages/shared-state:
     dependencies:
+      mobx:
+        specifier: ^6.13.5
+        version: 6.13.7
       zod:
         specifier: ^3.22.2
         version: 3.25.76
@@ -1001,6 +1043,9 @@ importers:
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -1233,6 +1278,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      lucide-react:
+        specifier: ^0.469.0
+        version: 0.469.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1

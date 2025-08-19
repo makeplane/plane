@@ -2,9 +2,9 @@ import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 // local imports
 import { LUCIDE_ICONS_LIST } from "..";
-import { cn } from "../utils";
 import { Input } from "../form-fields";
 import { InfoIcon } from "../icons";
+import { cn } from "../utils";
 import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
 
 export const LucideIconsList: React.FC<TIconsListProps> = (props) => {

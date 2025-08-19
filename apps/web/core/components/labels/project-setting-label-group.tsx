@@ -5,14 +5,14 @@ import { Disclosure, Transition } from "@headlessui/react";
 // store
 // icons
 // types
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
 // components
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
-import { captureClick } from "@/helpers/event-tracker.helper";
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 
 type Props = {
   label: IIssueLabel;
