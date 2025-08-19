@@ -4,9 +4,7 @@ from .workspace import WorkspaceBaseModel
 
 
 class Description(WorkspaceBaseModel):
-    """
-    Description is a model that stores the description of an issue.
-    """
+
 
     description_json = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")
@@ -31,7 +29,7 @@ class Description(WorkspaceBaseModel):
 
 class DescriptionVersion(WorkspaceBaseModel):
     """
-    DescriptionVersion is a model that stores the description of an issue.
+    DescriptionVersion is a model used to store historical versions of a Description.
     """
 
     description = models.ForeignKey(
