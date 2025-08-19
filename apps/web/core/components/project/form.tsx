@@ -5,9 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane types
+// plane imports
 import { IProject, IWorkspace } from "@plane/types";
-// plane ui
 import {
   Button,
   CustomSelect,
@@ -21,17 +20,18 @@ import {
 } from "@plane/ui";
 import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { ImagePickerPopover } from "@/components/core";
+import { Logo } from "@/components/common/logo";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
-import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+// local imports
+import { ProjectNetworkIcon } from "./project-network-icon";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -91,7 +91,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
-      .then((res) => {
+      .then(() => {
         captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {

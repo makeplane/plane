@@ -6,10 +6,11 @@ import { useTranslation } from "@plane/i18n";
 import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
+import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
@@ -89,7 +90,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
+      className={cn(
+        "relative border border-custom-border-200 rounded",
+        {
+          "p-3": editable,
+        },
+        parentClassName
+      )}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -116,7 +123,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           }),
         }}
         placeholder={placeholder}
-        containerClassName={cn(containerClassName, "relative")}
+        containerClassName={cn(containerClassName, "relative", {
+          "p-2": !editable,
+        })}
         {...rest}
       />
       {showToolbar && editable && (

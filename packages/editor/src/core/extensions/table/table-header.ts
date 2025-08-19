@@ -4,9 +4,9 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
 import { DEFAULT_COLUMN_WIDTH } from "./table";
 
-export interface TableHeaderOptions {
-  HTMLAttributes: Record<string, any>;
-}
+type TableHeaderOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 export const TableHeader = Node.create<TableHeaderOptions>({
   name: CORE_EXTENSIONS.TABLE_HEADER,

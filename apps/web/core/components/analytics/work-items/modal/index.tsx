@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { ICycle, IModule, IProject } from "@plane/types";
 import { cn } from "@plane/utils";
-import { useAnalytics } from "@/hooks/store";
+import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components
 import { WorkItemsModalMainContent } from "./content";
 import { WorkItemsModalHeader } from "./header";

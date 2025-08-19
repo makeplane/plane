@@ -7,9 +7,9 @@ import { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // constants
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 // plane web constants
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";

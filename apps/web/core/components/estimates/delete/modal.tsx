@@ -7,7 +7,9 @@ import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEstimate, useProject, useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
+import { useProject } from "@/hooks/store/use-project";
 
 type TDeleteEstimateModal = {
   workspaceSlug: string;

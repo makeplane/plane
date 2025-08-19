@@ -2,14 +2,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
-// plane types
+// plane imports
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { TVersionEditorProps } from "@/components/pages";
-// helpers
+// local imports
+import { TVersionEditorProps } from "./editor";
 
 type Props = {
   activeVersion: string | null;

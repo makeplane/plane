@@ -10,7 +10,7 @@ import estimateService from "@/plane-web/services/project/estimate.service";
 // plane web store
 import { IEstimate, Estimate } from "@/plane-web/store/estimates/estimate";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 type TEstimateLoader = "init-loader" | "mutation-loader" | undefined;
 type TErrorCodes = {

@@ -10,7 +10,7 @@ import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useSticky } from "@/hooks/use-stickies";
 // components
 import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";

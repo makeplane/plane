@@ -9,12 +9,12 @@ import { TPageVersion } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM } from "../..";
 

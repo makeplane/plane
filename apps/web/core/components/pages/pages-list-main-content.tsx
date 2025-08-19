@@ -5,16 +5,14 @@ import { EUserPermissionsLevel, EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state";
-import { PageLoader } from "@/components/pages";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// assets
-import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 
 type Props = {
   children: React.ReactNode;
@@ -49,6 +47,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   });
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
+  });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/name-filter",
+    extension: "svg",
   });
 
   if (loader === "init-loader") return <PageLoader />;
@@ -118,7 +121,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
           <Image
-            src={filters.searchQuery.length > 0 ? NameFilterImage : AllFiltersImage}
+            src={filters.searchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching modules"
           />

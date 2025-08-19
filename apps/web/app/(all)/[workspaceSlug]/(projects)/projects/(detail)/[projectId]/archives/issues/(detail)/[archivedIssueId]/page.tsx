@@ -6,11 +6,12 @@ import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
-import { IssueDetailRoot } from "@/components/issues";
+import { PageHead } from "@/components/core/page-title";
+import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // constants
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 
 const ArchivedIssueDetailsPage = observer(() => {
   // router

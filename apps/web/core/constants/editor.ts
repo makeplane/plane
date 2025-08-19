@@ -24,7 +24,7 @@ import {
   Underline,
 } from "lucide-react";
 // plane imports
-import { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
+import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
 import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
 import { convertRemToPixel } from "@plane/utils";
 

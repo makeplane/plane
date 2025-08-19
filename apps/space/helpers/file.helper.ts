@@ -45,5 +45,5 @@ export const getFileMetaDataForUpload = (file: File): TFileMetaDataLite => ({
 export const getAssetIdFromUrl = (src: string): string => {
   const sourcePaths = src.split("/");
   const assetUrl = sourcePaths[sourcePaths.length - 1];
-  return assetUrl;
+  return assetUrl ?? "";
 };

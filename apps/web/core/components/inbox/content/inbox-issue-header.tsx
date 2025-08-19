@@ -15,28 +15,29 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EInboxIssueStatus, TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
-import {
-  DeclineIssueModal,
-  DeleteInboxIssueModal,
-  InboxIssueActionsMobileHeader,
-  InboxIssueSnoozeModal,
-  InboxIssueStatus,
-  SelectDuplicateInboxIssueModal,
-} from "@/components/inbox";
-import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/components/issues";
-// helpers
-//
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
-import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// store types
+// store
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueStatus } from "../inbox-issue-status";
+import { DeclineIssueModal } from "../modals/decline-issue-modal";
+import { DeleteInboxIssueModal } from "../modals/delete-issue-modal";
+import { SelectDuplicateInboxIssueModal } from "../modals/select-duplicate";
+import { InboxIssueSnoozeModal } from "../modals/snooze-issue-modal";
+import { InboxIssueActionsMobileHeader } from "./inbox-issue-mobile-header";
 
 type TInboxIssueActionsHeader = {
   workspaceSlug: string;

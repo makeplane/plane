@@ -3,9 +3,9 @@ import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
-export interface HorizontalRuleOptions {
-  HTMLAttributes: Record<string, any>;
-}
+type HorizontalRuleOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

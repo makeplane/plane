@@ -5,7 +5,8 @@ import { EIssuesStoreType, TIssue, TIssueGroupByOptions, TIssueOrderByOptions } 
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { GroupDropLocation, handleGroupDragDrop } from "@/components/issues/issue-layouts/utils";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
-import { useIssueDetail, useIssues } from "./store";
+import { useIssueDetail } from "./store/use-issue-detail";
+import { useIssues } from "./store/use-issues";
 import { useIssuesActions } from "./use-issues-actions";
 
 type DNDStoreType =
@@ -19,7 +20,8 @@ type DNDStoreType =
   | EIssuesStoreType.WORKSPACE_DRAFT
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | EIssuesStoreType.EPIC
+  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
 
 export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,

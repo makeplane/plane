@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -23,7 +23,9 @@ import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -75,6 +77,11 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     currentProjectDetails?.id
   );
 
+  const autoCloseStatus = useMemo(() => {
+    if (currentProjectDetails?.close_in === undefined) return false;
+    return currentProjectDetails.close_in !== 0;
+  }, [currentProjectDetails]);
+
   return (
     <>
       <SelectMonthModal
@@ -84,7 +91,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-200 py-6">
+      <div className="flex flex-col gap-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
@@ -98,7 +105,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.close_in !== 0}
+            value={autoCloseStatus}
             onChange={async () => {
               if (currentProjectDetails?.close_in === 0) {
                 await handleChange({ close_in: 1, default_state: defaultState });
@@ -121,7 +128,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
         </div>
 
         {currentProjectDetails ? (
-          currentProjectDetails.close_in !== 0 && (
+          autoCloseStatus && (
             <div className="mx-6">
               <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">

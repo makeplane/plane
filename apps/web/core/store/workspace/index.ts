@@ -7,7 +7,7 @@ import { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigatio
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 import { HomeStore, IHomeStore } from "./home";

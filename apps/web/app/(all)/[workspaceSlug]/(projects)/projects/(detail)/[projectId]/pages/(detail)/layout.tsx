@@ -3,7 +3,8 @@
 // component
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local components

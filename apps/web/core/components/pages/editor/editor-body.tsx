@@ -3,24 +3,24 @@ import { observer } from "mobx-react";
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  TAIMenuProps,
-  TDisplayConfig,
-  TFileHandler,
-  TRealtimeConfig,
-  TServerHandler,
+  type EditorRefApi,
+  type TAIMenuProps,
+  type TDisplayConfig,
+  type TFileHandler,
+  type TRealtimeConfig,
+  type TServerHandler,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
-// helpers
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace, useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -28,9 +28,12 @@ import { EditorAIMenu } from "@/plane-web/components/pages";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
+import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
+import { PageContentBrowser } from "./summary";
+import { PageEditorTitle } from "./title";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;

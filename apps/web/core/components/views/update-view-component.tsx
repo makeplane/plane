@@ -1,5 +1,4 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 import { LockedComponent } from "../icons/locked-component";
 
@@ -11,6 +10,7 @@ type Props = {
   setIsModalOpen: (value: SetStateAction<boolean>) => void;
   handleUpdateView: () => void;
   lockedTooltipContent?: string;
+  trackerElement: string;
 };
 
 export const UpdateViewComponent = (props: Props) => {
@@ -22,6 +22,7 @@ export const UpdateViewComponent = (props: Props) => {
     setIsModalOpen,
     handleUpdateView,
     lockedTooltipContent,
+    trackerElement,
   } = props;
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -63,7 +64,7 @@ export const UpdateViewComponent = (props: Props) => {
               variant="outline-primary"
               size="md"
               className="flex-shrink-0"
-              data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON}
+              data-ph-element={trackerElement}
               onClick={() => setIsModalOpen(true)}
             >
               Save as

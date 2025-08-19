@@ -947,7 +947,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class LabelDetailAPIEndpoint(BaseAPIView):
+class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
     """Label Detail Endpoint"""
 
     serializer_class = LabelSerializer
@@ -1012,14 +1012,16 @@ class LabelDetailAPIEndpoint(BaseAPIView):
             if (
                 str(request.data.get("external_id"))
                 and (label.external_id != str(request.data.get("external_id")))
-                and Issue.objects.filter(
+                and Label.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
                     external_source=request.data.get(
                         "external_source", label.external_source
                     ),
                     external_id=request.data.get("external_id"),
-                ).exists()
+                )
+                .exclude(id=pk)
+                .exists()
             ):
                 return Response(
                     {
@@ -1465,7 +1467,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=None,
                 actor_id=request.user.id,

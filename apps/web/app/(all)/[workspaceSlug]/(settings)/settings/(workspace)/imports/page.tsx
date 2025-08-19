@@ -3,12 +3,14 @@
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 
 const ImportsPage = observer(() => {
   // router

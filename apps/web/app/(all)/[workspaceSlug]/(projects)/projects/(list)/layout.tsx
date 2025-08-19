@@ -2,7 +2,8 @@
 
 import { ReactNode } from "react";
 // components
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { ProjectsListHeader } from "@/plane-web/components/projects/header";
 import { ProjectsListMobileHeader } from "@/plane-web/components/projects/mobile-header";

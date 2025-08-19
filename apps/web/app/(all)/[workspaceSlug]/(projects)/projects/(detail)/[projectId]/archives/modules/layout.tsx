@@ -1,7 +1,8 @@
 "use client";
 
 // components
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectArchivesHeader } from "../header";
 
 export default function ProjectArchiveModulesLayout({ children }: { children: React.ReactNode }) {

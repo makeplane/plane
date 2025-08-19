@@ -1,18 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useTranslation } from "@plane/i18n";
-import { IEmailCheckData } from "@plane/types";
-// components
-import {
-  AuthHeader,
-  AuthBanner,
-  AuthEmailForm,
-  AuthPasswordForm,
-  OAuthOptions,
-  TermsAndConditions,
-  AuthUniqueCodeForm,
-} from "@/components/account";
+import { useTheme } from "next-themes";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
+import { OAuthOptions } from "@plane/ui";
+// assets
+import GithubLightLogo from "/public/logos/github-black.png";
+import GithubDarkLogo from "/public/logos/github-dark.svg";
+import GitlabLogo from "/public/logos/gitlab-logo.svg";
+import GoogleLogo from "/public/logos/google-logo.svg";
 // helpers
 import {
   EAuthModes,
@@ -23,12 +21,12 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
-// services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import { useInstance } from "@/hooks/store/use-instance";
+// local imports
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
+import { AuthFormRoot } from "./form-root";
 
 type TAuthRoot = {
   authMode: EAuthModes;
@@ -36,14 +34,14 @@ type TAuthRoot = {
 
 export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   //router
-  const router = useAppRouter();
   const searchParams = useSearchParams();
   // query params
   const emailParam = searchParams.get("email");
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
-  const nextPath = searchParams.get("next_path");
+  const next_path = searchParams.get("next_path");
+  const { resolvedTheme } = useTheme();
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -51,11 +49,13 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-  const [isExistingEmail, setIsExistingEmail] = useState(false);
-  // plane hooks
-  const { t } = useTranslation();
+
   // hooks
   const { config } = useInstance();
+
+  // derived values
+  const isOAuthEnabled =
+    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -103,102 +103,75 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     }
   }, [error_code, authMode]);
 
-  const isSMTPConfigured = config?.is_smtp_configured || false;
-
-  // submit handler- email verification
-  const handleEmailVerification = async (data: IEmailCheckData) => {
-    setEmail(data.email);
-    setErrorInfo(undefined);
-    await authService
-      .emailCheck(data)
-      .then(async (response) => {
-        if (response.existing) {
-          if (currentAuthMode === EAuthModes.SIGN_UP) setAuthMode(EAuthModes.SIGN_IN);
-          if (response.status === "MAGIC_CODE") {
-            setAuthStep(EAuthSteps.UNIQUE_CODE);
-            generateEmailUniqueCode(data.email);
-          } else if (response.status === "CREDENTIAL") {
-            setAuthStep(EAuthSteps.PASSWORD);
-          }
-        } else {
-          if (currentAuthMode === EAuthModes.SIGN_IN) setAuthMode(EAuthModes.SIGN_UP);
-          if (response.status === "MAGIC_CODE") {
-            setAuthStep(EAuthSteps.UNIQUE_CODE);
-            generateEmailUniqueCode(data.email);
-          } else if (response.status === "CREDENTIAL") {
-            setAuthStep(EAuthSteps.PASSWORD);
-          }
-        }
-        setIsExistingEmail(response.existing);
-      })
-      .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code?.toString(), data?.email || undefined);
-        if (errorhandler?.type) setErrorInfo(errorhandler);
-      });
-  };
-
-  const handleEmailClear = () => {
-    setAuthMode(currentAuthMode);
-    setErrorInfo(undefined);
-    setEmail("");
-    setAuthStep(EAuthSteps.EMAIL);
-    router.push(currentAuthMode === EAuthModes.SIGN_IN ? `/` : "/sign-up");
-  };
-
-  // generating the unique code
-  const generateEmailUniqueCode = async (email: string): Promise<{ code: string } | undefined> => {
-    if (!isSMTPConfigured) return;
-    const payload = { email: email };
-    return await authService
-      .generateUniqueCode(payload)
-      .then(() => ({ code: "" }))
-      .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
-        if (errorhandler?.type) setErrorInfo(errorhandler);
-        throw error;
-      });
-  };
-
   if (!authMode) return <></>;
+
+  const OauthButtonContent = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+
+  const OAuthConfig = [
+    {
+      id: "google",
+      text: `${OauthButtonContent} with Google`,
+      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_google_enabled,
+    },
+    {
+      id: "github",
+      text: `${OauthButtonContent} with GitHub`,
+      icon: (
+        <Image
+          src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
+          height={18}
+          width={18}
+          alt="GitHub Logo"
+        />
+      ),
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_github_enabled,
+    },
+    {
+      id: "gitlab",
+      text: `${OauthButtonContent} with GitLab`,
+      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitlab_enabled,
+    },
+  ];
+
   return (
-    <div className="relative flex flex-col space-y-6">
-      <AuthHeader
-        workspaceSlug={workspaceSlug?.toString() || undefined}
-        invitationId={invitation_id?.toString() || undefined}
-        invitationEmail={email || undefined}
-        authMode={authMode}
-        currentAuthStep={authStep}
-      >
+    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
           <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
         )}
-        {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
-        {authStep === EAuthSteps.UNIQUE_CODE && (
-          <AuthUniqueCodeForm
-            mode={authMode}
-            email={email}
-            isExistingEmail={isExistingEmail}
-            handleEmailClear={handleEmailClear}
-            generateEmailUniqueCode={generateEmailUniqueCode}
-            nextPath={nextPath || undefined}
-          />
-        )}
-        {authStep === EAuthSteps.PASSWORD && (
-          <AuthPasswordForm
-            mode={authMode}
-            isSMTPConfigured={isSMTPConfigured}
-            email={email}
-            handleEmailClear={handleEmailClear}
-            handleAuthStep={(step: EAuthSteps) => {
-              if (step === EAuthSteps.UNIQUE_CODE) generateEmailUniqueCode(email);
-              setAuthStep(step);
-            }}
-            nextPath={nextPath || undefined}
-          />
-        )}
-        <OAuthOptions isSignUp={authMode === EAuthModes.SIGN_UP} />
-        <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP} />
-      </AuthHeader>
+        <AuthHeader
+          workspaceSlug={workspaceSlug?.toString() || undefined}
+          invitationId={invitation_id?.toString() || undefined}
+          invitationEmail={email || undefined}
+          authMode={authMode}
+          currentAuthStep={authStep}
+        />
+
+        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
+
+        <AuthFormRoot
+          authStep={authStep}
+          authMode={authMode}
+          email={email}
+          setEmail={(email) => setEmail(email)}
+          setAuthMode={(authMode) => setAuthMode(authMode)}
+          setAuthStep={(authStep) => setAuthStep(authStep)}
+          setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
+          currentAuthMode={currentAuthMode}
+        />
+        <TermsAndConditions authType={authMode} />
+      </div>
     </div>
   );
 });

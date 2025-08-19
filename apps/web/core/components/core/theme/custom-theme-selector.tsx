@@ -11,7 +11,7 @@ import { IUserTheme } from "@plane/types";
 import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 type TCustomThemeSelector = {
   applyThemeChange: (theme: Partial<IUserTheme>) => void;

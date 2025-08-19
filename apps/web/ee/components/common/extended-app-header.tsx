@@ -1,1 +1,1 @@
-export * from "./extended-app-header";
+export * from "ce/components/common/extended-app-header";

@@ -10,7 +10,7 @@ import { buildTree } from "@plane/utils";
 import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ILabelStore {
   //Loaders

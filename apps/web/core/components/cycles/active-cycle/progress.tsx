@@ -8,9 +8,9 @@ import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {

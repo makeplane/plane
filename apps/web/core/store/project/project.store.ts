@@ -13,7 +13,7 @@ import { TProject, TPartialProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 type ProjectOverviewCollapsible = "links" | "attachments";
 
@@ -25,6 +25,7 @@ export interface IProjectStore {
   projectMap: Record<string, TProject>; // projectId: project info
   projectAnalyticsCountMap: Record<string, TProjectAnalyticsCount>; // projectId: project analytics count
   // computed
+  isInitializingProjects: boolean;
   filteredProjectIds: string[] | undefined;
   workspaceProjectIds: string[] | undefined;
   archivedProjectIds: string[] | undefined;
@@ -101,6 +102,7 @@ export class ProjectStore implements IProjectStore {
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
       // computed
+      isInitializingProjects: computed,
       filteredProjectIds: computed,
       workspaceProjectIds: computed,
       archivedProjectIds: computed,
@@ -136,6 +138,13 @@ export class ProjectStore implements IProjectStore {
     this.issueService = new IssueService();
     this.issueLabelService = new IssueLabelService();
     this.stateService = new ProjectStateService();
+  }
+
+  /**
+   * @description returns true if projects are still initializing
+   */
+  get isInitializingProjects() {
+    return this.loader === "init-loader";
   }
 
   /**

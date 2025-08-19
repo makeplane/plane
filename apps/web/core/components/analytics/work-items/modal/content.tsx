@@ -5,7 +5,7 @@ import { Tab } from "@headlessui/react";
 import { ICycle, IModule, IProject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
-import { useAnalytics } from "@/hooks/store";
+import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components
 import TotalInsights from "../../total-insights";
 import CreatedVsResolved from "../created-vs-resolved";

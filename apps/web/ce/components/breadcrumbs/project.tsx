@@ -6,9 +6,9 @@ import { Briefcase } from "lucide-react";
 import { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Logo } from "@plane/ui";
 // components
-import { SwitcherLabel } from "@/components/common";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types";
 
@@ -37,7 +37,9 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
       return {
         value: projectId,
         query: project?.name,
-        content: <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} />,
+        content: (
+          <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} type="material" />
+        ),
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];

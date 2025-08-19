@@ -38,7 +38,13 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isTouchDevice"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
 > & {
   enableHistory: boolean;
   editable: boolean;
@@ -50,6 +56,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    isTouchDevice = false,
     mentionHandler,
     placeholder,
     tabIndex,
@@ -102,6 +109,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: editable,
+      isTouchDevice,
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,

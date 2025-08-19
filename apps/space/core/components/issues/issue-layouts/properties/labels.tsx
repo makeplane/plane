@@ -2,8 +2,10 @@
 
 import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
+// plane imports
 import { Tooltip } from "@plane/ui";
-import { useLabel } from "@/hooks/store";
+// hooks
+import { useLabel } from "@/hooks/store/use-label";
 
 type Props = {
   labelIds: string[];

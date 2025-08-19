@@ -4,10 +4,11 @@ import { FC, Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
-// components
-import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
 // hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+// local imports
+import { FullScreenPeekView } from "./full-screen-peek-view";
+import { SidePeekView } from "./side-peek-view";
 
 type TIssuePeekOverview = {
   anchor: string;

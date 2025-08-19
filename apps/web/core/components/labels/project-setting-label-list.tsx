@@ -8,7 +8,7 @@ import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEME
 import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
@@ -18,10 +18,11 @@ import {
 } from "@/components/labels";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useLabel, useUserPermissions } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { SettingsHeading } from "../settings";
-// plane web imports
+// local imports
+import { SettingsHeading } from "../settings/heading";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router

@@ -1,4 +1,10 @@
+# syntax=docker/dockerfile:1.7
 FROM node:22-alpine AS base
+
+# Setup pnpm package manager with corepack and configure global bin directory for caching
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 # *****************************************************************************
 # STAGE 1: Build the project
@@ -8,7 +14,8 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-RUN yarn global add turbo
+ARG TURBO_VERSION=2.5.6
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
 RUN turbo prune --scope=web --docker
@@ -25,12 +32,14 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock
-RUN yarn install --network-timeout 500000
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN corepack enable pnpm
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -59,7 +68,7 @@ ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN yarn turbo run build --filter=web
+RUN pnpm turbo run build --filter=web
 
 # *****************************************************************************
 # STAGE 3: Copy the project and start it

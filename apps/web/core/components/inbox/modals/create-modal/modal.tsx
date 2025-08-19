@@ -1,12 +1,12 @@
 "use-client";
 
 import { FC, useState } from "react";
-// ui
+// plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
-import { InboxIssueCreateRoot } from "@/components/inbox/modals/create-modal";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
+// local imports
+import { InboxIssueCreateRoot } from "./create-root";
 
 type TInboxIssueCreateModalRoot = {
   workspaceSlug: string;

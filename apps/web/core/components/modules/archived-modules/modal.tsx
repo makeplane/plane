@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

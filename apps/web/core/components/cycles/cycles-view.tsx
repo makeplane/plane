@@ -3,11 +3,12 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 // components
 import { useTranslation } from "@plane/i18n";
-import { CyclesList } from "@/components/cycles";
+import { CyclesList } from "@/components/cycles/list";
 // ui
-import { CycleModuleListLayout } from "@/components/ui";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
-import { useCycle, useCycleFilter } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // assets
 import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
@@ -30,7 +31,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     (cycleId) => cycleId !== currentProjectActiveCycleId
   );
 
-  if (loader || !filteredCycleIds) return <CycleModuleListLayout />;
+  if (loader || !filteredCycleIds) return <CycleModuleListLayoutLoader />;
 
   if (filteredCycleIds.length === 0 && filteredCompletedCycleIds?.length === 0)
     return (

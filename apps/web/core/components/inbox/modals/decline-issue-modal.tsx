@@ -5,7 +5,7 @@ import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   data: Partial<TIssue>;

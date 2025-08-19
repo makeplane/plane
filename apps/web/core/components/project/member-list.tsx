@@ -8,10 +8,13 @@ import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
-import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
-import { MembersSettingsLoader } from "@/components/ui";
+import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectMemberListItem } from "./member-list-item";
+import { SendProjectInvitationModal } from "./send-project-invitation-modal";
 
 type TProjectMemberListProps = {
   projectId: string;
