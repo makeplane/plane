@@ -3,8 +3,14 @@ import { action, computed, observable, makeObservable, runInAction, reaction } f
 import { computedFn } from "mobx-utils";
 // types
 import { TModuleDisplayFilters, TModuleFilters, TModuleFiltersByState } from "@plane/types";
+// helpers
+import { storage } from "@/lib/local-storage";
 // store
 import type { CoreRootStore } from "./root.store";
+
+// localStorage keys
+const MODULE_DISPLAY_FILTERS_KEY = "module_display_filters";
+const MODULE_FILTERS_KEY = "module_filters";
 
 export interface IModuleFilterStore {
   // observables
@@ -36,6 +42,9 @@ export class ModuleFilterStore implements IModuleFilterStore {
   archivedModulesSearchQuery: string = "";
   // root store
   rootStore: CoreRootStore;
+  // debounce timers
+  private saveDisplayFiltersTimer: number | null = null;
+  private saveFiltersTimer: number | null = null;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -57,6 +66,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
     });
     // root store
     this.rootStore = _rootStore;
+
     // initialize display filters of the current project
     reaction(
       () => this.rootStore.router.projectId,
@@ -66,7 +76,68 @@ export class ModuleFilterStore implements IModuleFilterStore {
         this.searchQuery = "";
       }
     );
+
+    // Load initial data from localStorage after reactions are set up
+    this.loadFromLocalStorage();
   }
+
+  /**
+   * @description Load filters from localStorage
+   */
+  loadFromLocalStorage = () => {
+    try {
+      const displayFiltersData = storage.get(MODULE_DISPLAY_FILTERS_KEY);
+      const filtersData = storage.get(MODULE_FILTERS_KEY);
+
+      runInAction(() => {
+        if (displayFiltersData) {
+          const parsed = JSON.parse(displayFiltersData);
+          if (typeof parsed === "object" && parsed !== null) {
+            this.displayFilters = parsed;
+          }
+        }
+        if (filtersData) {
+          const parsed = JSON.parse(filtersData);
+          if (typeof parsed === "object" && parsed !== null) {
+            this.filters = parsed;
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Failed to load module filters from localStorage:", error);
+      // Reset to defaults on error
+      runInAction(() => {
+        this.displayFilters = {};
+        this.filters = {};
+      });
+    }
+  };
+
+  /**
+   * @description Save display filters to localStorage (debounced)
+   */
+  saveDisplayFiltersToLocalStorage = () => {
+    if (this.saveDisplayFiltersTimer) {
+      clearTimeout(this.saveDisplayFiltersTimer);
+    }
+    this.saveDisplayFiltersTimer = window.setTimeout(() => {
+      storage.set(MODULE_DISPLAY_FILTERS_KEY, this.displayFilters);
+      this.saveDisplayFiltersTimer = null;
+    }, 300);
+  };
+
+  /**
+   * @description Save filters to localStorage (debounced)
+   */
+  saveFiltersToLocalStorage = () => {
+    if (this.saveFiltersTimer) {
+      clearTimeout(this.saveFiltersTimer);
+    }
+    this.saveFiltersTimer = window.setTimeout(() => {
+      storage.set(MODULE_FILTERS_KEY, this.filters);
+      this.saveFiltersTimer = null;
+    }, 300);
+  };
 
   /**
    * @description get display filters of the current project
@@ -130,6 +201,8 @@ export class ModuleFilterStore implements IModuleFilterStore {
         archived: {},
       };
     });
+    this.saveDisplayFiltersToLocalStorage();
+    this.saveFiltersToLocalStorage();
   };
 
   /**
@@ -143,6 +216,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
         set(this.displayFilters, [projectId, key], displayFilters[key as keyof TModuleDisplayFilters]);
       });
     });
+    this.saveDisplayFiltersToLocalStorage();
   };
 
   /**
@@ -156,19 +230,24 @@ export class ModuleFilterStore implements IModuleFilterStore {
         set(this.filters, [projectId, state, key], filters[key as keyof TModuleFilters]);
       });
     });
+    this.saveFiltersToLocalStorage();
   };
 
   /**
    * @description update search query
    * @param {string} query
    */
-  updateSearchQuery = (query: string) => (this.searchQuery = query);
+  updateSearchQuery = (query: string) => {
+    this.searchQuery = query;
+  };
 
   /**
    * @description update archived search query
    * @param {string} query
    */
-  updateArchivedModulesSearchQuery = (query: string) => (this.archivedModulesSearchQuery = query);
+  updateArchivedModulesSearchQuery = (query: string) => {
+    this.archivedModulesSearchQuery = query;
+  };
 
   /**
    * @description clear all filters of a project
@@ -179,5 +258,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
       this.filters[projectId][state] = {};
       this.displayFilters[projectId].favorites = false;
     });
+    this.saveFiltersToLocalStorage();
+    this.saveDisplayFiltersToLocalStorage();
   };
 }
