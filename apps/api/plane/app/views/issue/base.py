@@ -291,6 +291,7 @@ class IssueViewSet(BaseViewSet):
             and not project.guest_view_all_features
         ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
+            total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
 
         if group_by:
             if sub_group_by:
