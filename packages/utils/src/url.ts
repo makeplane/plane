@@ -6,7 +6,7 @@
  * @property {string} rootDomain - The root domain name (e.g., 'example' in 'blog.example.com')
  * @property {string} tld - The top-level domain (e.g., 'com', 'org')
  * @property {string} path - The URL path including search params and hash
- * @property {URL}  full - The complete URL object
+ * @property {URL} full - The original URL object with all native URL properties
  */
 export interface IURLComponents {
   protocol: string;
@@ -32,6 +32,8 @@ export interface IURLComponents {
  * //   rootDomain: 'example',
  * //   tld: 'com',
  * //   path: 'posts',
+ * //   full: URL {} // The original URL object
+ * // }
  */
 
 export function extractURLComponents(url: URL): IURLComponents | undefined {
@@ -69,29 +71,27 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
 }
 
 /**
- * Creates a URL object from a string, automatically adding https:// if protocol is missing.
+ * Checks if a string is a valid URL.
  *
- * @param {string} urlString - The URL string to parse
- * @returns {URL | undefined} URL object if valid, undefined if invalid
- *
- * @example
- * // With protocol
- * createURL('https://example.com') // returns URL object
- * createURL('not-a-url') // returns undefined
+ * @param {string} urlString - The string to validate as URL
+ * @returns {boolean} True if string is a valid URL, false otherwise
  *
  * @example
- * // Without protocol (automatically adds https://)
- * createURL('example.com') // returns URL object with https://
- * createURL('invalid.') // returns undefined
+ * // Valid URLs
+ * isUrlValid('https://example.com')     // returns true
+ * isUrlValid('http://example.com')      // returns true
+ * isUrlValid('https://sub.example.com') // returns true
+ *
+ * // Invalid URLs
+ * isUrlValid('not-a-url')              // returns false
+ * isUrlValid('example.com')            // returns false (no protocol)
+ * isUrlValid('https://invalid.')       // returns false
  */
-export function createURL(urlString: string): URL | undefined {
+export function isUrlValid(urlString: string): boolean {
   try {
-    if (!urlString.includes("://")) {
-      urlString = "https://" + urlString;
-    }
-    return new URL(urlString);
-  } catch (error) {
-    console.error(`Invalid URL: ${urlString}`, error);
-    return undefined;
+    new URL(urlString);
+    return true;
+  } catch {
+    return false;
   }
 }
