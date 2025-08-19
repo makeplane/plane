@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TAnalyticsTabsBase } from "@plane/types";
 import { type TabItem, Tabs } from "@plane/ui";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
@@ -59,7 +60,7 @@ const AnalyticsPage = observer((props: Props) => {
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
   const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
-  const tabs: TabItem[] = useMemo(
+  const tabs: TabItem<TAnalyticsTabsBase>[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
         key: tab.key,
@@ -72,7 +73,7 @@ const AnalyticsPage = observer((props: Props) => {
       })),
     [ANALYTICS_TABS, router, currentWorkspace?.slug]
   );
-  const defaultTab = tabId || ANALYTICS_TABS[0].key;
+  const defaultTab = (tabId as TAnalyticsTabsBase) || ANALYTICS_TABS[0].key;
 
   return (
     <>
