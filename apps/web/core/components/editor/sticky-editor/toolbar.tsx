@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Palette, Trash2 } from "lucide-react";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
 import { TSticky } from "@plane/types";

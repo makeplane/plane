@@ -15,7 +15,8 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useAppTheme, useUser } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUser } from "@/hooks/store/user";
 import { useAppRail } from "@/hooks/use-app-rail";
 
 type Props = {

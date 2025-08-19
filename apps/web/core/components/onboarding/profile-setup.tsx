@@ -17,12 +17,12 @@ import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 import { Button, Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
-import { UserImageUploadModal } from "@/components/core";
+import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // constants
 // helpers
 // hooks
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
 

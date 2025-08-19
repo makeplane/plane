@@ -11,7 +11,7 @@ import { truncateText } from "@plane/utils";
 import { SelectRepository, TFormValues, TIntegrationSteps } from "@/components/integration";
 // ui
 // helpers
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // types
 
 type Props = {

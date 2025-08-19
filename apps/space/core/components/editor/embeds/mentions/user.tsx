@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser } from "@/hooks/store/use-user";
 
 type Props = {
   id: string;

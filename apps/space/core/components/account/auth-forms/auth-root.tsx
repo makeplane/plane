@@ -11,14 +11,6 @@ import { SitesAuthService } from "@plane/services";
 import { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
 // components
-import {
-  AuthHeader,
-  AuthBanner,
-  AuthEmailForm,
-  AuthUniqueCodeForm,
-  AuthPasswordForm,
-  TermsAndConditions,
-} from "@/components/account";
 // helpers
 import {
   EAuthenticationErrorCodes,
@@ -27,7 +19,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
 // assets
@@ -35,6 +27,13 @@ import GithubLightLogo from "/public/logos/github-black.png";
 import GithubDarkLogo from "/public/logos/github-dark.svg";
 import GitlabLogo from "/public/logos/gitlab-logo.svg";
 import GoogleLogo from "/public/logos/google-logo.svg";
+// local imports
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
+import { AuthEmailForm } from "./email";
+import { AuthPasswordForm } from "./password";
+import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 

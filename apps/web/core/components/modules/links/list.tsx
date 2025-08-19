@@ -6,7 +6,7 @@ import { ILinkDetails } from "@plane/types";
 // components
 import { ModulesLinksListItem } from "@/components/modules";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 
 type Props = {
   disabled?: boolean;

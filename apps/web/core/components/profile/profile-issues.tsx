@@ -2,21 +2,22 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane imports
 import { EIssuesStoreType } from "@plane/types";
 // components
-import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "@/components/issues";
+import { ProfileIssuesAppliedFiltersRoot } from "@/components/issues/issue-layouts/filters";
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssues } from "@/hooks/store";
-import { IssuesStoreContext } from "../../hooks/use-issue-layout-store";
-// constants
+import { useIssues } from "@/hooks/store/use-issues";
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
-interface IProfileIssuesPage {
+type Props = {
   type: "assigned" | "subscribed" | "created";
-}
+};
 
-export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
+export const ProfileIssuesPage = observer((props: Props) => {
   const { type } = props;
 
   const { workspaceSlug, userId } = useParams() as {

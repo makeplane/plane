@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { TModuleStatus } from "@plane/types";
 // components
 import { ModuleStatusIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   appliedFilters: TModuleStatus[] | null;

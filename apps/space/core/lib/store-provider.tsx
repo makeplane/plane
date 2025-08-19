@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode, createContext } from "react";
-import { ThemeProvider } from "next-themes";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -32,9 +31,5 @@ export const StoreProvider = ({ children, initialState = undefined }: StoreProvi
     store.hydrate(initialState);
   }
 
-  return (
-    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-      <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
-    </ThemeProvider>
-  );
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

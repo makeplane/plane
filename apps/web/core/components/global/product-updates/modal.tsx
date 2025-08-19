@@ -9,7 +9,7 @@ import { ProductUpdatesFooter } from "@/components/global";
 // helpers
 import { captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // plane web components
 import { ProductUpdatesHeader } from "@/plane-web/components/global";
 

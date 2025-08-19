@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { XCircle } from "lucide-react";
+// plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IApiToken } from "@plane/types";
-// components
 import { Tooltip } from "@plane/ui";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
-import { DeleteApiTokenModal } from "@/components/api-token";
+// components
+import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
-// helpers
-// types
 
 type Props = {
   token: IApiToken;

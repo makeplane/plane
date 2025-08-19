@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // components
-import { ModuleDropdown } from "@/components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // constants
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";

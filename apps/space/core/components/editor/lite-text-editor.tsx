@@ -9,13 +9,14 @@ import {
 } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
-import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
+import { EditorMentionsRoot } from "./embeds/mentions";
+import { IssueCommentToolbar } from "./toolbar";
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,

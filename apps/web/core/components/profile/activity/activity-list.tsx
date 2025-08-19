@@ -1,20 +1,17 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// icons
 import { History, MessageSquare } from "lucide-react";
+// plane imports
 import { IUserActivityResponse } from "@plane/types";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
-// hooks
 // components
-import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
-// editor
-import { RichTextEditor } from "@/components/editor";
-// ui
-import { ActivitySettingsLoader } from "@/components/ui";
-// helpers
+import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/activity";
+import { RichTextEditor } from "@/components/editor/rich-text";
+import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   activity: IUserActivityResponse | undefined;

@@ -4,11 +4,11 @@ import { useParams } from "next/navigation";
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
 import { getUserRole } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
-import { SettingsSidebar } from "../..";
+import { SettingsSidebar } from "../../sidebar";
 import { NavItemChildren } from "./nav-item-children";
 
 type TProjectSettingsSidebarProps = {

@@ -22,12 +22,10 @@ import {
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
-import { KanbanIssueBlockLoader } from "@/components/ui";
-// helpers
+import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // Plane-web
@@ -35,8 +33,9 @@ import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
-import { KanbanIssueBlocksList } from ".";
+import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
   groupId: string;
@@ -153,13 +152,12 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
           if (!source || !destination) return;
 
-          if (isWorkflowDropDisabled || isDropDisabled) {
-            dropErrorMessage &&
-              setToast({
-                type: TOAST_TYPE.WARNING,
-                title: t("common.warning"),
-                message: dropErrorMessage,
-              });
+          if ((isWorkflowDropDisabled || isDropDisabled) && dropErrorMessage) {
+            setToast({
+              type: TOAST_TYPE.WARNING,
+              title: t("common.warning"),
+              message: dropErrorMessage,
+            });
             return;
           }
 

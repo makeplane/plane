@@ -12,13 +12,21 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "exports": {
-    "./ui/*": "./src/ui/*.tsx",
+    "./avatar": "./src/avatar/index.ts",
     "./charts/*": "./src/charts/*/index.ts",
+    "./dialog": "./src/dialog/index.ts",
+    "./menu": "./src/menu/index.ts",
     "./table": "./src/table/index.ts",
+    "./tabs": "./src/tabs/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.1",
+    "@base-ui-components/react": "^1.0.0-beta.2",
+    "@plane/constants": "workspace:*",
+    "@plane/hooks": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/ui": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
@@ -28,9 +36,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/tailwind-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/tailwind-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "typescript": "5.8.3"

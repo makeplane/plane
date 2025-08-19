@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { ForgotPasswordPopover } from "@/components/account";
+import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
 // constants
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";

@@ -7,8 +7,9 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useMember, useProjectView } from "@/hooks/store";
-import { FiltersDropdown } from "../issues";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
 

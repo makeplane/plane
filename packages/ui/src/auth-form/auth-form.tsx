@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
-import { cn } from "../../helpers";
 import { Button } from "../button/button";
 import { Spinner } from "../spinners/circular-spinner";
+import { cn } from "../utils";
 import { AuthConfirmPasswordInput } from "./auth-confirm-password-input";
 import { AuthForgotPassword } from "./auth-forgot-password";
 import { AuthInput } from "./auth-input";

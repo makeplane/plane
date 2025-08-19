@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;

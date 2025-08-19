@@ -10,7 +10,7 @@ import { EViewAccess, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IGlobalViewStore {
   // observables

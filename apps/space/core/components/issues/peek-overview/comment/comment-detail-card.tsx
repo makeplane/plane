@@ -8,12 +8,14 @@ import { EditorRefApi } from "@plane/editor";
 import { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
-import { LiteTextEditor } from "@/components/editor";
-import { CommentReactions } from "@/components/issues/peek-overview";
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
+import { CommentReactions } from "@/components/issues/peek-overview/comment/comment-reactions";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type Props = {

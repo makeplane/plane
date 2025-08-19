@@ -2,7 +2,7 @@ import { useContext } from "react";
 // lib
 import { StoreContext } from "@/lib/store-provider";
 // store
-import { IInstanceStore } from "@/store/instance.store";
+import type { IInstanceStore } from "@/store/instance.store";
 
 export const useInstance = (): IInstanceStore => {
   const context = useContext(StoreContext);

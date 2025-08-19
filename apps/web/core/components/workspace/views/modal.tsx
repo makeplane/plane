@@ -3,18 +3,17 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { WorkspaceViewForm } from "@/components/workspace";
-// constants
-// store hooks
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useGlobalView } from "@/hooks/store";
+// hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
+import { WorkspaceViewForm } from "./form";
 
 type Props = {
   data?: IWorkspaceView;

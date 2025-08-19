@@ -3,7 +3,7 @@
 import { FC } from "react";
 import range from "lodash/range";
 // components
-import { ListLoaderItemRow } from "@/components/ui";
+import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 
 type TWorkspaceDraftIssuesLoader = {
   items?: number;

@@ -8,7 +8,7 @@ import { IWebhook } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useWebhook } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
 // ui
 // types
 

@@ -5,17 +5,17 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common";
-import { MultipleSelectGroup } from "@/components/core";
-import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
+import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
-// types
-import { TRenderQuickActions } from "../list/list-view-types";
+// local imports
+import type { TRenderQuickActions } from "../list/list-view-types";
+import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
 import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {

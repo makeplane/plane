@@ -11,7 +11,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // mobx
 import { TIssueLayout } from "@/types/issue";
 import { IssueLayoutIcon } from "./layout-icon";

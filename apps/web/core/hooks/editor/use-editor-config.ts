@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { TFileHandler } from "@plane/editor";
 import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
-import { useEditorAsset } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // services

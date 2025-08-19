@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { EIconSize } from "@plane/constants";
 import { Spinner, StateGroupIcon } from "@plane/ui";
 // store hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export type TChangeWorkItemStateListProps = {
   projectId: string | null;

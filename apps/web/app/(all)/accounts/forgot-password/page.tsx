@@ -8,7 +8,7 @@ import { AuthHeader } from "@/components/auth-screens/header";
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
 const ForgotPasswordPage = observer(() => (
   <DefaultLayout>

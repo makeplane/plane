@@ -11,7 +11,7 @@ import { IEstimate as IEstimateType, IEstimatePoint as IEstimatePointType, TEsti
 import estimateService from "@/plane-web/services/project/estimate.service";
 // store
 import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TErrorCodes = {
   status: string;

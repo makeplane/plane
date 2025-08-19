@@ -11,7 +11,8 @@ import { ICycle } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
-import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 

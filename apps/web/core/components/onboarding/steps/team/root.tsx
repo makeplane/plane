@@ -29,7 +29,8 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // components

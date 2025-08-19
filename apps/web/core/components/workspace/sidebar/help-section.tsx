@@ -4,19 +4,22 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// components
 import { ProductUpdatesModal } from "@/components/global";
-// helpers
 // hooks
-import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useTransient } from "@/hooks/store/use-transient";
+import { useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
-import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
+import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;

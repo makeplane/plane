@@ -15,7 +15,7 @@ import { TCycleGroups } from "@plane/types";
 // ui
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
@@ -23,7 +23,7 @@ type DropdownOptions =
   | {
       value: string | null;
       query: string;
-      content: JSX.Element;
+      content: React.ReactNode;
     }[]
   | undefined;
 

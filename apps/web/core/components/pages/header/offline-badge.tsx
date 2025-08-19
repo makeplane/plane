@@ -4,7 +4,7 @@ import { Tooltip } from "@plane/ui";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

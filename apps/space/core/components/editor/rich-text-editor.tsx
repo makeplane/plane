@@ -1,21 +1,15 @@
 import React, { forwardRef } from "react";
 // plane imports
-import {
-  EditorRefApi,
-  IRichTextEditorProps,
-  RichTextEditorWithRef,
-  TFileHandler,
-  type NodeViewProps,
-} from "@plane/editor";
-import { MakeOptional } from "@plane/types";
-// components
-import { EditorMentionsRoot } from "@/components/editor";
+import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// store hooks
-import { useMember } from "@/hooks/store";
-import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
-import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+// plane web imports
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
+import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "embedHandler">,
