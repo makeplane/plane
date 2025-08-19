@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.html import strip_tags
-from .base import BaseModel
+from .workspace import WorkspaceBaseModel
 
 
-class Description(BaseModel):
+class Description(WorkspaceBaseModel):
     """
     Description is a model that stores the description of an issue.
     """
@@ -32,7 +32,7 @@ class Description(BaseModel):
         super(Description, self).save(*args, **kwargs)
 
 
-class DescriptionVersion(BaseModel):
+class DescriptionVersion(WorkspaceBaseModel):
     """
     DescriptionVersion is a model that stores the description of an issue.
     """
@@ -53,7 +53,7 @@ class DescriptionVersion(BaseModel):
         verbose_name_plural = "Description Versions"
         db_table = "description_versions"
         ordering = ("-created_at",)
-    
+
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser
         self.description_stripped = (
