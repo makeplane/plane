@@ -21,19 +21,23 @@
   },
   "devDependencies": {
     "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.5.5"
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "turbo": "^2.5.6"
   },
-  "resolutions": {
-    "brace-expansion": "2.0.2",
-    "nanoid": "3.3.8",
-    "esbuild": "0.25.0",
-    "@babel/helpers": "7.26.10",
-    "@babel/runtime": "7.26.10",
-    "chokidar": "3.6.0",
-    "tar-fs": "3.0.9",
-    "prosemirror-view": "1.40.0",
-    "@types/express": "4.17.23"
+  "pnpm": {
+    "overrides": {
+      "brace-expansion": "2.0.2",
+      "nanoid": "3.3.8",
+      "esbuild": "0.25.0",
+      "@babel/helpers": "7.26.10",
+      "@babel/runtime": "7.26.10",
+      "chokidar": "3.6.0",
+      "tar-fs": "3.0.9",
+      "prosemirror-view": "1.40.0",
+      "@types/express": "4.17.23",
+      "typescript": "5.8.3",
+      "sharp": "0.33.5"
+    }
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.12.1"
 }

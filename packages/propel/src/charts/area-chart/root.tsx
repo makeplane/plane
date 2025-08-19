@@ -98,7 +98,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
         comparisonLine: interpolatedValue,
       };
     });
-  }, [data, xAxis.key]);
+  }, [data, xAxis.key, yAxis.key]);
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">

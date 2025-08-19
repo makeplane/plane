@@ -22,7 +22,11 @@
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
-    "@plane/utils": "*",
+    "@plane/constants": "workspace:*",
+    "@plane/hooks": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/ui": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
@@ -32,9 +36,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/tailwind-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/tailwind-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "typescript": "5.8.3"

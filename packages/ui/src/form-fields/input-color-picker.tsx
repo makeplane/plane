@@ -3,9 +3,9 @@ import * as React from "react";
 import { ColorResult, SketchPicker } from "react-color";
 import { usePopper } from "react-popper";
 // helpers
+import { Button } from "../button";
 import { cn } from "../utils";
 // components
-import { Button } from "../button";
 import { Input } from "./input";
 
 export interface InputColorPickerProps {

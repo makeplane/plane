@@ -14,8 +14,8 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserSettings } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

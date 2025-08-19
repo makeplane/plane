@@ -8,15 +8,15 @@ import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel }
 import { EIssuesStoreType, TGroupedIssues } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
-import { handleDragDrop } from "./utils";
 import { CalendarChart } from "./calendar";
+import { handleDragDrop } from "./utils";
 
 export type CalendarStoreType =
   | EIssuesStoreType.PROJECT

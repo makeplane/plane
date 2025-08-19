@@ -13,8 +13,8 @@ import { truncateText } from "@plane/utils";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserSettings } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserSettings } from "@/hooks/store/user";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 

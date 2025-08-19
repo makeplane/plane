@@ -1,15 +1,15 @@
+import { Popover, Tab } from "@headlessui/react";
+import EmojiPicker from "emoji-picker-react";
 import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import EmojiPicker from "emoji-picker-react";
-import { Popover, Tab } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
+import { cn } from "../utils";
+import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
 import { IconsList } from "./icons-list";
 // helpers
-import { cn } from "../utils";
 // hooks
-import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
 
 export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   const {

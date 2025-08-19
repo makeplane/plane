@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
-import { cn } from "../utils";
 import { Input } from "../form-fields/input";
+import { cn } from "../utils";
 
 export interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
   label?: string;
