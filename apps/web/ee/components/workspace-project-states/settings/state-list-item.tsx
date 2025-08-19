@@ -27,6 +27,7 @@ import {
   TProjectStateGroupKey,
   TProjectStateIdsByGroup,
 } from "@/plane-web/types/workspace-project-states";
+import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 
 type TProjectStateListItem = {
   workspaceSlug: string;
@@ -189,6 +190,7 @@ export const ProjectStateListItem: FC<TProjectStateListItem> = observer((props) 
             <button
               className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
               onClick={() => setUpdateStateModal(true)}
+              data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
               <Pencil className="w-3 h-3" />
             </button>

@@ -4,6 +4,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // helpers
+import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { cn } from "@plane/utils";
 // components
 import {
@@ -72,6 +73,7 @@ export const ProjectStateGroupListItem: FC<TGroupItem> = observer((props) => {
         <div
           className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100"
           onClick={() => !createState && setCreateState(true)}
+          data-ph-element={PROJECT_STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
         >
           <Plus className="w-4 h-4" />
         </div>

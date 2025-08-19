@@ -218,6 +218,20 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
+export const PROJECT_STATE_TRACKER_EVENTS = {
+  create: "project_state_created",
+  update: "project_state_updated",
+  delete: "project_state_deleted",
+  mark_as_default: "project_state_mark_as_default",
+  toggle: "project_state_toggled",
+};
+export const PROJECT_STATE_TRACKER_ELEMENTS = {
+  STATE_GROUP_ADD_BUTTON: "project_state_group_add_button",
+  STATE_LIST_DELETE_BUTTON: "project_state_list_delete_button",
+  STATE_LIST_EDIT_BUTTON: "project_state_list_edit_button",
+  STATE_MARK_AS_DEFAULT_BUTTON: "project_state_mark_as_default_button",
+  STATE_TOGGLE_BUTTON: "project_state_toggle_button",
+};
 export const WORK_ITEM_TYPE_TRACKER_EVENTS = {
   TYPES_ENABLED: "work_item_types_enabled",
   CREATE: "work_item_type_created",

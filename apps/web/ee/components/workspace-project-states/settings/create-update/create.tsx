@@ -2,8 +2,10 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectStateForm } from "@/plane-web/components/workspace-project-states";
 // plane web constants
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
@@ -41,9 +43,21 @@ export const ProjectStateCreate: FC<TProjectStateCreate> = observer((props) => {
         message: "State created successfully.",
       });
       handleClose();
+      captureSuccess({
+        eventName: PROJECT_STATE_TRACKER_EVENTS.create,
+        payload: {
+          groupKey,
+        },
+      });
       return { status: "success" };
     } catch (error) {
       const errorStatus = error as unknown as { status: number; data: { error: string } };
+      captureError({
+        eventName: PROJECT_STATE_TRACKER_EVENTS.create,
+        payload: {
+          groupKey,
+        },
+      });
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,
