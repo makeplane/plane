@@ -1,0 +1,27 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Trageți și plasați pentru a încărca fișiere externe"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Fișier prea mare.",
+        "description": "Dimensiunea maximă per fișier este {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Tip de fișier neacceptat.",
+        "description": "Vezi formatele acceptate"
+      },
+      "default": {
+        "title": "Încărcarea a eșuat.",
+        "description": "Ceva a mers prost. Vă rugăm să încercați din nou."
+      }
+    },
+    "upgrade": {
+      "description": "Actualizați planul pentru a vizualiza această atașare."
+    },
+    "aria": {
+      "click_to_upload": "Faceți clic pentru a încărca atașamentul"
+    }
+  }
+}

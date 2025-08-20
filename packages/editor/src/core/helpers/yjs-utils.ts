@@ -8,10 +8,12 @@ import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,
 } from "@/extensions/core-without-props";
+import { TitleExtensions } from "@/extensions/title-extension";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
+export const TITLE_EDITOR_EXTENSIONS = TitleExtensions;
 // editor schemas
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
@@ -118,11 +120,15 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
+  titleHTML: string;
 } => {
   // encode binary description data
   const base64Data = convertBinaryDataToBase64String(description);
   const yDoc = new Y.Doc();
   Y.applyUpdate(yDoc, description);
+  const title = yDoc.getXmlFragment("title");
+  const titleJSON = yXmlFragmentToProseMirrorRootNode(title, documentEditorSchema).toJSON();
+  const titleHTML = extractTextFromHTML(generateHTML(titleJSON, DOCUMENT_EDITOR_EXTENSIONS));
   // convert to JSON
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, documentEditorSchema).toJSON();
@@ -133,6 +139,7 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
     contentBinaryEncoded: base64Data,
     contentJSON,
     contentHTML,
+    titleHTML,
   };
 };
 
@@ -181,4 +188,10 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
   }
 
   return allFormats;
+};
+
+export const extractTextFromHTML = (html: string): string => {
+  // Use a regex to extract text between tags
+  const textMatch = html.replace(/<[^>]*>/g, "");
+  return textMatch || "";
 };

@@ -93,6 +93,10 @@ export interface IIssueDetail
   isRelationModalOpen: TIssueRelationModal | null;
   isSubIssuesModalOpen: string | null;
   attachmentDeleteModalId: string | null;
+  isWorkItemToEpicModalOpen: string | null;
+  isEpicToWorkItemModalOpen: string | null;
+  isConversionWarningModalOpen: string | null;
+  isPagesModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -113,6 +117,10 @@ export interface IIssueDetail
   toggleOpenWidget: (state: TWorkItemWidgets) => void;
   setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
+  toggleWorkItemToEpicModal: (value: string | null) => void;
+  toggleEpicToWorkItemModal: (value: string | null) => void;
+  toggleConversionWarningModal: (value: string | null) => void;
+  togglePagesModal: (value: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -154,6 +162,10 @@ export abstract class IssueDetail implements IIssueDetail {
   isRelationModalOpen: TIssueRelationModal | null = null;
   isSubIssuesModalOpen: string | null = null;
   attachmentDeleteModalId: string | null = null;
+  isWorkItemToEpicModalOpen: string | null = null;
+  isEpicToWorkItemModalOpen: string | null = null;
+  isConversionWarningModalOpen: string | null = null;
+  isPagesModalOpen: string | null = null;
   // service type
   serviceType: TIssueServiceType;
   // store
@@ -186,6 +198,10 @@ export abstract class IssueDetail implements IIssueDetail {
       attachmentDeleteModalId: observable.ref,
       openWidgets: observable.ref,
       lastWidgetAction: observable.ref,
+      isWorkItemToEpicModalOpen: observable.ref,
+      isEpicToWorkItemModalOpen: observable.ref,
+      isConversionWarningModalOpen: observable.ref,
+      isPagesModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -199,11 +215,15 @@ export abstract class IssueDetail implements IIssueDetail {
       toggleRelationModal: action,
       toggleSubIssuesModal: action,
       toggleDeleteAttachmentModal: action,
+      toggleWorkItemToEpicModal: action,
+      toggleEpicToWorkItemModal: action,
       setOpenWidgets: action,
       setLastWidgetAction: action,
       toggleOpenWidget: action,
       setRelationKey: action,
       setIssueCrudOperationState: action,
+      toggleConversionWarningModal: action,
+      togglePagesModal: action,
     });
 
     // store
@@ -231,7 +251,11 @@ export abstract class IssueDetail implements IIssueDetail {
       !!this.isArchiveIssueModalOpen ||
       !!this.isRelationModalOpen?.issueId ||
       !!this.isSubIssuesModalOpen ||
-      !!this.attachmentDeleteModalId
+      !!this.attachmentDeleteModalId ||
+      !!this.isWorkItemToEpicModalOpen ||
+      !!this.isEpicToWorkItemModalOpen ||
+      !!this.isConversionWarningModalOpen ||
+      !!this.isPagesModalOpen
     );
   }
 
@@ -264,7 +288,10 @@ export abstract class IssueDetail implements IIssueDetail {
     else this.openWidgets = [state, ...this.openWidgets];
   };
   setIssueLinkData = (issueLinkData: TIssueLink | null) => (this.issueLinkData = issueLinkData);
-
+  toggleWorkItemToEpicModal = (value: string | null) => (this.isWorkItemToEpicModalOpen = value);
+  toggleEpicToWorkItemModal = (value: string | null) => (this.isEpicToWorkItemModalOpen = value);
+  toggleConversionWarningModal = (value: string | null) => (this.isConversionWarningModalOpen = value);
+  togglePagesModal = (value: string | null) => (this.isPagesModalOpen = value);
   // issue
   fetchIssue = async (
     workspaceSlug: string,

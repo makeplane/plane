@@ -1,5 +1,4 @@
 import set from "lodash/set";
-import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -7,8 +6,8 @@ import { EUserPermissions } from "@plane/constants";
 import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
-// plane web constants
 // plane web store
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
@@ -41,6 +40,7 @@ export interface IProjectPageStore {
   getCurrentProjectPageIds: (projectId: string) => string[];
   getCurrentProjectFilteredPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TProjectPage | undefined;
+  isNestedPagesEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
@@ -49,10 +49,27 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchPageDetails: (projectId: string, pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  removePage: (pageId: string) => Promise<void>;
-  movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  movePage: (params: {
+    workspaceSlug: string;
+    newProjectId: string;
+    pageId: string;
+    projectId: string;
+    shouldSync?: boolean;
+  }) => Promise<void>;
+  getOrFetchPageInstance: ({
+    pageId,
+    projectId,
+  }: {
+    pageId: string;
+    projectId?: string;
+  }) => Promise<TProjectPage | undefined>;
+  removePageInstance: (pageId: string) => void;
+  // page sharing actions
+  fetchPageSharedUsers: (pageId: string) => Promise<void>;
+  bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
 }
 
 export class ProjectPageStore implements IProjectPageStore {
@@ -67,6 +84,7 @@ export class ProjectPageStore implements IProjectPageStore {
   };
   // service
   service: ProjectPageService;
+  shareService: PageShareService;
   rootStore: CoreRootStore;
 
   constructor(private store: RootStore) {
@@ -88,10 +106,14 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       removePage: action,
       movePage: action,
+      // page sharing actions
+      fetchPageSharedUsers: action,
+      bulkUpdatePageSharedUsers: action,
     });
     this.rootStore = store;
     // service
     this.service = new ProjectPageService();
+    this.shareService = new PageShareService();
     // initialize display filters of the current project
     reaction(
       () => this.store.router.projectId,
@@ -164,6 +186,11 @@ export class ProjectPageStore implements IProjectPageStore {
         getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
         shouldFilterPage(p, this.filters.filters)
     );
+
+    if (pageType === "public") {
+      filteredPages = filteredPages.filter((p) => !p.parent_id);
+    }
+
     filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
 
     const pages = (filteredPages.map((page) => page.id) as string[]) || undefined;
@@ -176,6 +203,12 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {string} pageId
    */
   getPageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
+
+  /**
+   * Returns true if nested pages feature is enabled
+   * @returns boolean
+   */
+  isNestedPagesEnabled = computedFn(() => false);
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
@@ -239,16 +272,18 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageDetails = async (projectId: string, pageId: string) => {
     try {
+      const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       const currentPageId = this.getPageById(pageId);
       runInAction(() => {
-        this.loader = currentPageId ? `mutation-loader` : `init-loader`;
+        this.loader = currentPageId ? "mutation-loader" : "init-loader";
         this.error = undefined;
       });
 
+      // Execute the promises and handle the results
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
 
       runInAction(() => {
@@ -293,6 +328,7 @@ export class ProjectPageStore implements IProjectPageStore {
       const page = await this.service.create(workspaceSlug, projectId, pageData);
       runInAction(() => {
         if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
+        // update sub-page count of the parent page
         this.loader = undefined;
       });
 
@@ -313,16 +349,22 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async (pageId: string) => {
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
+      const page = this.getPageById(pageId);
 
-      await this.service.remove(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        unset(this.data, [pageId]);
+        if (pageId) {
+          page.mutateProperties({ deleted_at: new Date() });
+        }
         if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
       });
+
+      if (shouldSync) {
+        await this.service.remove(workspaceSlug, projectId, pageId);
+      }
     } catch (error) {
       runInAction(() => {
         this.loader = undefined;
@@ -340,16 +382,130 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {string} workspaceSlug
    * @param {string} projectId
    * @param {string} pageId
-   * @param {string} newProjectId
+   * @param {string} projectId
    */
-  movePage = async (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => {
+  movePage = async ({
+    workspaceSlug,
+    pageId,
+    newProjectId,
+    projectId,
+    shouldSync = true,
+  }: {
+    workspaceSlug: string;
+    newProjectId: string;
+    pageId: string;
+    projectId: string;
+    shouldSync?: boolean;
+  }) => {
     try {
-      await this.service.move(workspaceSlug, projectId, pageId, newProjectId);
-      runInAction(() => {
-        unset(this.data, [pageId]);
-      });
+      if (shouldSync) {
+        await this.service.move(workspaceSlug, projectId, pageId, newProjectId);
+      }
     } catch (error) {
       console.error("Unable to move page", error);
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to move a page, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  getOrFetchPageInstance = async ({ pageId, projectId }: { pageId: string; projectId?: string }) => {
+    const pageInstance = this.getPageById(pageId);
+    if (pageInstance) {
+      return pageInstance;
+    } else {
+      const { workspaceSlug, projectId: projectIdFromRouter } = this.store.router;
+
+      const actualProjectId = projectId || projectIdFromRouter;
+
+      // Additional type safety check
+      if (!actualProjectId || !workspaceSlug) return;
+
+      const page = await this.fetchPageDetails(actualProjectId, pageId);
+      if (page) {
+        return new ProjectPage(this.store, page);
+      }
+    }
+  };
+
+  removePageInstance = (pageId: string) => {
+    delete this.data[pageId];
+  };
+
+  // page sharing actions
+  fetchPageSharedUsers = async (pageId: string) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.router;
+      if (!workspaceSlug || !projectId || !pageId) return;
+
+      const sharedUsers = await this.shareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
+      const finalUsers = sharedUsers.map((user) => ({
+        user_id: user.user_id,
+        access: user.access,
+      }));
+
+      runInAction(() => {
+        const pageInstance = this.getPageById(pageId);
+        if (pageInstance && finalUsers) {
+          pageInstance.updateSharedUsers(finalUsers);
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to fetch page shared users. Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  bulkUpdatePageSharedUsers = async (pageId: string, sharedUsers: TPageSharedUser[]) => {
+    const oldSharedUsers = this.getPageById(pageId)?.sharedUsers || [];
+    try {
+      const { workspaceSlug, projectId } = this.store.router;
+      if (!workspaceSlug || !projectId || !pageId) return;
+
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      // Optimistically update the state
+      runInAction(() => {
+        if (sharedUsers.length === 0) {
+          pageInstance.is_shared = false;
+        } else {
+          pageInstance.is_shared = true;
+        }
+        pageInstance.updateSharedUsers(sharedUsers);
+      });
+
+      // Make API call
+      await this.shareService.bulkUpdateProjectPageSharedUsers(workspaceSlug, projectId, pageId, sharedUsers);
+    } catch (error) {
+      runInAction(() => {
+        // Revert to old shared users list on error
+        const pageInstance = this.getPageById(pageId);
+        if (pageInstance) {
+          if (oldSharedUsers.length === 0) {
+            pageInstance.is_shared = false;
+          } else {
+            pageInstance.is_shared = true;
+          }
+          pageInstance.updateSharedUsers(oldSharedUsers);
+        }
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to bulk update page shared users. Please try again later.",
+        };
+      });
       throw error;
     }
   };

@@ -1,193 +1,116 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
-import Image, { StaticImageData } from "next/image";
-import { X } from "lucide-react";
+
+import { useParams } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 // plane imports
-import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, PlaneLockup } from "@plane/ui";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { Avatar, Button, PlaneLockup } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUser } from "@/hooks/store/user";
-// assets
-import CyclesTour from "@/public/onboarding/cycles.webp";
-import IssuesTour from "@/public/onboarding/issues.webp";
-import ModulesTour from "@/public/onboarding/modules.webp";
-import PagesTour from "@/public/onboarding/pages.webp";
-import ViewsTour from "@/public/onboarding/views.webp";
-// local imports
-import { TourSidebar } from "./sidebar";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+
+export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
+
+const BUSINESS_FEATURES = [
+  {
+    free: "12 Seats",
+    business: "Unlimited Seats",
+  },
+  {
+    free: "Work items only",
+    business: "Initiatives and Epics",
+  },
+  {
+    free: "Default workflow",
+    business: "Custom workflows and approvals",
+  },
+  {
+    free: "No insights",
+    business: "Dashboards and analytics",
+  },
+  {
+    free: "No collaboration",
+    business: "Teamspaces and shared pages",
+  },
+  {
+    free: "No tracking",
+    business: "Time tracking and reports",
+  },
+];
 
 type Props = {
   onComplete: () => void;
 };
 
-export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
-
-const TOUR_STEPS: {
-  key: TTourSteps;
-  title: string;
-  description: string;
-  image: StaticImageData;
-  prevStep?: TTourSteps;
-  nextStep?: TTourSteps;
-}[] = [
-  {
-    key: "work-items",
-    title: "Plan with work items",
-    description:
-      "The work item is the building block of the Plane. Most concepts in Plane are either associated with work items and their properties.",
-    image: IssuesTour,
-    nextStep: "cycles",
-  },
-  {
-    key: "cycles",
-    title: "Move with cycles",
-    description:
-      "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
-    image: CyclesTour,
-    prevStep: "work-items",
-    nextStep: "modules",
-  },
-  {
-    key: "modules",
-    title: "Break into modules",
-    description: "Modules break your big thing into Projects or Features, to help you organize better.",
-    image: ModulesTour,
-    prevStep: "cycles",
-    nextStep: "views",
-  },
-  {
-    key: "views",
-    title: "Views",
-    description:
-      "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
-    image: ViewsTour,
-    prevStep: "modules",
-    nextStep: "pages",
-  },
-  {
-    key: "pages",
-    title: "Document with pages",
-    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
-    image: PagesTour,
-    prevStep: "views",
-  },
-];
-
 export const TourRoot: React.FC<Props> = observer((props) => {
   const { onComplete } = props;
-  // states
-  const [step, setStep] = useState<TTourSteps>("welcome");
-  // store hooks
-  const { toggleCreateProjectModal } = useCommandPalette();
-  const { data: currentUser } = useUser();
+  const { workspaceSlug } = useParams();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug.toString());
 
-  const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
-  const currentStep = TOUR_STEPS[currentStepIndex];
+  if (!currentWorkspace) return null;
 
   return (
-    <>
-      {step === "welcome" ? (
-        <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
-          <div className="h-full overflow-hidden">
-            <div className="grid h-3/5 place-items-center bg-custom-primary-100">
-              <PlaneLockup className="h-10 w-auto text-custom-text-100" />
-            </div>
-            <div className="flex h-2/5 flex-col overflow-y-auto p-6">
-              <h3 className="font-semibold sm:text-xl">
-                Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
-              </h3>
-              <p className="mt-3 text-sm text-custom-text-200">
-                We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
-                started by creating a project.
-              </p>
-              <div className="flex h-full items-end">
-                <div className="mt-8 flex items-center gap-6">
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.START_BUTTON,
-                      });
-                      setStep("work-items");
-                    }}
-                  >
-                    Take a Product Tour
-                  </Button>
-                  <button
-                    type="button"
-                    className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
-                    onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
-                      });
-                      onComplete();
-                    }}
-                  >
-                    No thanks, I will explore it myself
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="flex bg-[#006399] rounded-lg w-[60%]">
+      <div className="w-[40%] py-9 px-8 flex flex-col gap-5 justify-around">
+        <div className="font-medium text-white flex items-center gap-2 justify-center">
+          <PlaneLockup className="h-6 w-auto" /> <span className="font-bold text-2xl mt-2">Business</span>
         </div>
-      ) : (
-        <div className="relative grid h-3/5 w-4/5 grid-cols-10 overflow-hidden rounded-[10px] bg-custom-background-100 sm:h-3/4 md:w-1/2 lg:w-3/5">
-          <button
-            type="button"
-            className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
-            onClick={onComplete}
-          >
-            <X className="h-3 w-3 text-custom-text-100" />
-          </button>
-          <TourSidebar step={step} setStep={setStep} />
-          <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
-            <div
-              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${
-                currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
-              }`}
-            >
-              <Image src={currentStep?.image} alt={currentStep?.title} />
-            </div>
-            <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
-              <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>
-              <p className="mt-3 text-sm text-custom-text-200">{currentStep?.description}</p>
-              <div className="mt-3 flex h-full items-end justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  {currentStep?.prevStep && (
-                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                      Back
-                    </Button>
-                  )}
-                  {currentStep?.nextStep && (
-                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
-                      Next
-                    </Button>
-                  )}
-                </div>
-                {currentStepIndex === TOUR_STEPS.length - 1 && (
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.CREATE_PROJECT_BUTTON,
-                      });
-                      onComplete();
-                      toggleCreateProjectModal(true);
-                    }}
-                  >
-                    Create your first project
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
+        <div className="space-y-1">
+          <p className="text-white text-center font-medium">Your trial is active now!</p>
+          <p className="text-white/60 text-sm text-center">Unlock your team&apos;s full potential for 14 days</p>
         </div>
-      )}
-    </>
+        <div>
+          <img src="/onboarding/tour.webp" className="w-full" alt="Welcome" />
+        </div>
+        <p className="text-center text-sm text-white/60">You can use free plan after your trial ends</p>
+      </div>
+      <div className="w-[60%] p-2">
+        <div className="bg-custom-background-100 rounded-lg p-4 px-6 h-full flex flex-col justify-between gap-6 items-start">
+          <p className="font-medium text-custom-text-100 text-lg">
+            Features you&apos;ll get with <span className="text-custom-primary-90">Business</span> plan
+          </p>
+          <Avatar
+            src={getFileURL(currentWorkspace.logo_url || "")}
+            name={currentWorkspace?.name}
+            size={30}
+            shape="square"
+          />
+          <p>
+            <span className="font-medium">{currentWorkspace?.name}</span> workspace with Business
+          </p>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="text-left">
+                  <div className="font-bold bg-custom-background-80/50 text-custom-text-300 p-1 px-2 rounded-md w-fit text-sm">
+                    Free
+                  </div>
+                </th>
+                <th className="text-left">{""}</th>
+                <th className="text-left">
+                  <div className="font-bold bg-custom-background-80 text-custom-text-200 p-1 px-2 rounded-md w-fit text-sm">
+                    Business
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {BUSINESS_FEATURES.map((feature, index) => (
+                <tr key={index} className="font-medium">
+                  <td className="text-left text-custom-text-400 text-sm py-3">{feature.free}</td>
+                  <td className="text-left py-3">
+                    <ArrowRight className="h-4 w-4" />
+                  </td>
+                  <td className="text-left text-custom-text-200 text-sm py-3">{feature.business}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Button onClick={onComplete}>Let&apos;s get started</Button>
+        </div>
+      </div>
+    </div>
   );
 });

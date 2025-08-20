@@ -20,7 +20,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
-import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
+import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teamspaces/root";
 
 export const AppSidebar: FC = observer(() => {
   // store hooks
