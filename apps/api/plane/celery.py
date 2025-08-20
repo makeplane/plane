@@ -108,7 +108,7 @@ EE_JOBS = {
     # Outbox cleaner
     "check-every-day-to-delete-outbox-records": {
         "task": "plane.event_stream.bgtasks.outbox_cleaner.delete_outbox_records",
-        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
+        "schedule": crontab(hour=0, minute=30),  # UTC 00:30
     },
 }
 

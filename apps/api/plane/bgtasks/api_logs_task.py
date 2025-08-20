@@ -1,27 +1,37 @@
-from django.utils import timezone
+# Python imports
 from datetime import timedelta
-from plane.db.models import APIActivityLog
+
+# Django imports
+from django.utils import timezone
+
+# Third party imports
 from celery import shared_task
-from django.conf import settings
-from pymongo import MongoClient
 from pymongo.errors import BulkWriteError
+
+# Module imports
+from plane.db.models import APIActivityLog
 from plane.utils.exception_logger import log_exception
+from plane.settings.mongo import MongoConnection
 
 BATCH_SIZE = 3000
 
 
 @shared_task
 def delete_api_logs():
-    if settings.MONGO_DB_URL:
+    """
+    Deletes the API logs from the database
+    """
+    if MongoConnection.is_configured():
+        """
+        Moves the API logs to MongoDB
+        """
         # Get the logs older than 30 days to delete
         logs_to_delete = APIActivityLog.objects.filter(
             created_at__lte=timezone.now() - timedelta(days=30)
         )
 
         # Create a MongoDB client
-        client = MongoClient(settings.MONGO_DB_URL)
-        db = client["plane"]
-        collection = db["api_activity_logs"]
+        collection = MongoConnection.get_collection("api_activity_logs")
 
         # Function to insert documents in batches
         def bulk_insert(docs):

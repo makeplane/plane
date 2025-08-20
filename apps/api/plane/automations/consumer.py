@@ -3,10 +3,11 @@ import json
 import logging
 import signal
 import time
+import sys
 
 # Third Party imports
 import pika
-from django.db import IntegrityError, connection
+from django.db import IntegrityError, close_old_connections, connection
 from django.db.utils import OperationalError
 from django.conf import settings
 
@@ -72,6 +73,15 @@ class AutomationConsumer:
         signal.signal(signal.SIGTERM, signal_handler)
         signal.signal(signal.SIGINT, signal_handler)
 
+    def ensure_database_connection(self):
+        """Ensure database connection is alive, reconnect if necessary."""
+        try:
+            if not connection.is_usable():
+                close_old_connections()
+        except Exception as e:
+            logger.warning(f"Database connection lost, reconnecting... {e}")
+            close_old_connections()
+
     def _setup_queues(self, channel):
         """Set up the automation queue bound to plane_event_stream exchange."""
         # Connect to existing exchange
@@ -124,16 +134,6 @@ class AutomationConsumer:
             f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'"
         )
 
-    def _ensure_db_connection(self):
-        """Ensure database connection is alive, reconnect if necessary."""
-        try:
-            # Test the connection
-            connection.ensure_connection()
-        except OperationalError:
-            logger.warning("Database connection lost, reconnecting...")
-            connection.close()
-            connection.ensure_connection()
-
     def _should_process(self, event_type: str) -> bool:
         """Check if event should be processed for automations."""
         automation_event_types = getattr(settings, "AUTOMATION_EVENT_TYPES", ["issue."])
@@ -150,8 +150,8 @@ class AutomationConsumer:
         self._inflight_messages += 1
 
         try:
-            # Ensure database connection is alive before processing
-            self._ensure_db_connection()
+            # Ensure database connection is alive
+            self.ensure_database_connection()
 
             # Parse message
             event_data = json.loads(body.decode("utf-8"))
@@ -186,7 +186,7 @@ class AutomationConsumer:
                 logger.warning(
                     f"Database error creating ProcessedAutomationEvent, retrying: {e}"
                 )
-                self._ensure_db_connection()
+                self.ensure_database_connection()
                 try:
                     ProcessedAutomationEvent.objects.create(
                         event_id=event_id, event_type=event_type, status="pending"
@@ -209,14 +209,18 @@ class AutomationConsumer:
                 logger.warning(
                     f"Database error updating ProcessedAutomationEvent, retrying: {e}"
                 )
-                self._ensure_db_connection()
+                self.ensure_database_connection()
                 ProcessedAutomationEvent.objects.filter(event_id=event_id).update(
                     task_id=task_result.id
                 )
 
             logger.info(f"Dispatched automation for {event_id} ({event_type})")
             return True
-
+        except OperationalError as e:
+            logger.warning(
+                f"Database connection lost permanently, stopping consumer: {e}"
+            )
+            sys.exit(1)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
             log_exception(e)
@@ -270,6 +274,11 @@ class AutomationConsumer:
 
             except KeyboardInterrupt:
                 self._should_stop = True
+            except OperationalError:
+                logger.warning(
+                    "Database connection lost permanently, stopping consumer"
+                )
+                sys.exit(1)
             except Exception as e:
                 log_exception(e)
                 retry_count += 1

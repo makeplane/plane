@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third party imports
 from celery import shared_task
@@ -95,29 +96,49 @@ def delete_outbox_records() -> None:
             mongo_available = False
 
     # Calculate cutoff time
-    cutoff_days = int(os.environ.get("OUTBOX_CLEANER_CUTOFF_DAYS", 7))
+    cutoff_days = int(os.environ.get("OUTBOX_CLEANER_CUTOFF_DAYS", 2))
     cutoff_time = timezone.now() - timedelta(days=cutoff_days)
     logger.info(
         f"Processing outbox records older than {cutoff_time} (cutoff: {cutoff_days} days)"
     )
 
     # Get records to process
-    queryset = (
-        Outbox.objects.filter(processed_at__lte=cutoff_time)
-        .values(
-            "id",
-            "event_id",
-            "event_type",
-            "entity_type",
-            "entity_id",
-            "payload",
-            "processed_at",
-            "created_at",
-            "workspace_id",
-            "project_id",
+    # if the outbox poller is enabled delete only the processed records else
+    # delete all records older than the cutoff time
+    if settings.ENABLE_OUTBOX_POLLER:
+        queryset = (
+            Outbox.objects.filter(processed_at__lte=cutoff_time)
+            .values(
+                "id",
+                "event_id",
+                "event_type",
+                "entity_type",
+                "entity_id",
+                "payload",
+                "processed_at",
+                "created_at",
+                "workspace_id",
+                "project_id",
+            )
+            .iterator(chunk_size=BATCH_SIZE)
         )
-        .iterator(chunk_size=BATCH_SIZE)
-    )
+    else:
+        queryset = (
+            Outbox.objects.filter(created_at__lte=cutoff_time)
+            .values(
+                "id",
+                "event_id",
+                "event_type",
+                "entity_type",
+                "entity_id",
+                "payload",
+                "processed_at",
+                "created_at",
+                "workspace_id",
+                "project_id",
+            )
+            .iterator(chunk_size=BATCH_SIZE)
+        )
 
     buffer: List[Dict[str, Any]] = []
     ids_to_delete: List[int] = []
@@ -129,15 +150,18 @@ def delete_outbox_records() -> None:
     for log in queryset:
         buffer.append(
             {
-                "event_id": log["event_id"],
+                "event_id": str(log["event_id"]),
                 "event_type": log["event_type"],
                 "entity_type": log["entity_type"],
-                "entity_id": log["entity_id"],
+                "entity_id": str(log["entity_id"]),
                 "payload": log["payload"],
                 "processed_at": log["processed_at"],
                 "created_at": log["created_at"],
-                "workspace_id": log["workspace_id"],
-                "project_id": log["project_id"],
+                "workspace_id": str(log["workspace_id"]),
+                "project_id": str(log["project_id"]),
+                "initiator_id": str(log["initiator_id"]),
+                "initiator_type": log["initiator_type"],
+                "claimed_at": log["claimed_at"],
             }
         )
         ids_to_delete.append(log["id"])
