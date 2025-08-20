@@ -10,7 +10,7 @@ export type TabContent = {
   content: React.ReactNode;
 };
 
-export type TabItem<TKey extends string> = TabListItem<TKey> & TabContent;
+export type TabItem<TKey = string> = TabListItem<TKey> & TabContent;
 
 type TTabsProps<TTabs extends TabItem<string>[]> = {
   tabs: TTabs;
