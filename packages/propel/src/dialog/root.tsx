@@ -13,10 +13,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Base
   return (
     <BaseDialog.Backdrop
       data-slot="dialog-overlay"
-      className={cn(
-        "fixed inset-0 z-30 bg-custom-backdrop transition-all duration-200 [&[data-ending-style]]:opacity-0 [&[data-starting-style]]:opacity-0",
-        className
-      )}
+      className={cn("fixed inset-0 z-backdrop bg-custom-backdrop", className)}
       {...props}
     />
   );
@@ -30,35 +27,30 @@ function DialogTrigger({ ...props }: React.ComponentProps<typeof BaseDialog.Trig
   return <BaseDialog.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogPanel({
-  className,
-  width = EDialogWidth.XXL,
-  children,
-  ...props
-}: React.ComponentProps<typeof BaseDialog.Popup> & { width?: EDialogWidth }) {
-  return (
-    <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
-      <BaseDialog.Popup
-        data-slot="dialog-content"
+const DialogPanel = React.forwardRef<
+  React.ElementRef<typeof BaseDialog.Popup>,
+  React.ComponentProps<typeof BaseDialog.Popup> & { width?: EDialogWidth }
+>(({ className, width = EDialogWidth.XXL, children, ...props }, ref) => (
+  <DialogPortal data-slot="dialog-portal">
+    <DialogOverlay />
+    <BaseDialog.Popup
+      ref={ref}
+      data-slot="dialog-content"
+      className="isolate fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-custom-background-100 border border-border rounded-lg shadow-lg p-6 w-full max-w-md z-modal"
+      {...props}
+    >
+      <div
         className={cn(
-          "fixed flex justify-center top-0 left-0 w-full z-30 px-4 sm:py-20 overflow-y-auto overflow-hidden outline-none"
+          "rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
+          width,
+          className
         )}
-        {...props}
       >
-        <div
-          className={cn(
-            "rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
-            width,
-            className
-          )}
-        >
-          {children}
-        </div>
-      </BaseDialog.Popup>
-    </DialogPortal>
-  );
-}
+        {children}
+      </div>
+    </BaseDialog.Popup>
+  </DialogPortal>
+));
 
 function DialogTitle({ className, ...props }: React.ComponentProps<typeof BaseDialog.Title>) {
   return (
