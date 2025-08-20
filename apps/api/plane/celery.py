@@ -53,7 +53,7 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.cleanup_task.delete_api_logs",
         "schedule": crontab(hour=2, minute=30),  # UTC 02:30
     },
-    "check-every-day-to-delete-logs": {
+    "check-every-day-to-delete-email-notification-logs": {
         "task": "plane.bgtasks.cleanup_task.delete_email_notification_logs",
         "schedule": crontab(hour=3, minute=0),  # UTC 03:00
     },
