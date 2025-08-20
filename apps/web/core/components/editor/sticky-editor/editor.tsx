@@ -10,7 +10,6 @@ import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 // plane web hooks
-import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
@@ -82,9 +81,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
-        embedHandler={{
-          externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
-        }}
       />
       {showToolbar && (
         <div

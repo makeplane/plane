@@ -1,12 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
-import {
-  type NodeViewProps,
-  type EditorRefApi,
-  type IRichTextEditorProps,
-  RichTextEditorWithRef,
-  type TFileHandler,
-} from "@plane/editor";
+import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -15,7 +9,6 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
-import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
@@ -79,9 +72,6 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         getMentionedEntityDetails: (id) => ({
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
-      }}
-      embedHandler={{
-        externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

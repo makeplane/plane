@@ -1,18 +1,11 @@
 import React from "react";
 // plane imports
-import {
-  type NodeViewProps,
-  type EditorRefApi,
-  type ILiteTextEditorProps,
-  LiteTextEditorWithRef,
-  type TFileHandler,
-} from "@plane/editor";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
-import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
@@ -70,11 +63,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         {...rest}
-        embedHandler={{
-          externalEmbedComponent: {
-            widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} anchor={anchor} />,
-          },
-        }}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}
       />
