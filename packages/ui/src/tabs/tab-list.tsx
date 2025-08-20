@@ -4,7 +4,7 @@ import React, { FC } from "react";
 // helpers
 import { cn } from "../utils";
 
-export type TabListItem<TKey extends string> = {
+export type TabListItem<TKey = string> = {
   key: TKey;
   icon?: FC<LucideProps>;
   label?: React.ReactNode;
