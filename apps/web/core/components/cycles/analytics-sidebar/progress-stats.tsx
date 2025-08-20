@@ -248,8 +248,6 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
     filters,
     handleFiltersUpdate,
     size = "sm",
-
-    noBackground = false,
   } = props;
   // hooks
   const { storedValue: currentTab, setValue: setCycleTab } = useLocalStorage<TCycleProgressStatsTabKey>(
