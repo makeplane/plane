@@ -333,7 +333,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             </svg>
                           </div>
                           <span className="text-sm font-medium text-custom-text-200">
-                            {isDragActive ? "Drop the file here" : "Drag & drop or click to upload"}
+                            {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                           </span>
                         </div>
                         <span className="text-xs text-custom-text-400">
