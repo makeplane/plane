@@ -4,7 +4,6 @@ from datetime import datetime
 
 # Django imports
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.core.validators import validate_email
 
 
@@ -51,12 +50,7 @@ def validate_boolean(property, value):
 
 
 def validate_url(property, value):
-    # Validate the URL
-    url_validator = URLValidator()
-    try:
-        url_validator(value)
-    except ValidationError:
-        raise ValidationError(f"{value} is not a valid URL")
+    pass
 
 
 def validate_email_value(property, value):
