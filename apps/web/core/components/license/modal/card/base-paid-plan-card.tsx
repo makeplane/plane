@@ -1,10 +1,10 @@
 "use client";
 
-import { FC, ReactNode, useState } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 // plane imports
-import { Tabs, TabItem } from "@plane/propel/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 // helpers
 import { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { getSubscriptionBackgroundColor, getUpgradeCardVariantStyle } from "@plane/ui";
@@ -40,39 +40,27 @@ export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => 
   // Plane details
   const planeName = getSubscriptionName(planVariant);
 
-  // improvement: create tabs configuration map for better maintainability
-  const billingFrequencyTabs: TabItem<TBillingFrequency>[] = prices.map((price: TSubscriptionPrice) => ({
-    key: price.recurring,
-    label: renderPriceContent(price),
-    content: (
-      <div className="text-center">
-        <div className="text-xl font-medium">Plane {planeName}</div>
-        {renderActionButton(price)}
-      </div>
-    ),
-    onClick: () => setSelectedPlan(price.recurring),
-  }));
-
   return (
     <div className={cn("flex flex-col py-6 px-3", upgradeCardVariantStyle)}>
       <div className="flex w-full justify-center">
-        <Tabs
-          tabs={billingFrequencyTabs}
-          defaultTab={selectedPlan}
-          // tabListContainerClassName={cn(" w-60 ", getSubscriptionBackgroundColor(planVariant, "50"))}
-          // tabClassName={cn(
-          //   "w-full rounded py-1 text-sm font-medium leading-5",
-          //   "data-[state=active]:bg-custom-background-100 data-[state=active]:text-custom-text-100 data-[state=active]:shadow",
-          //   "text-custom-text-300 hover:text-custom-text-200"
-          // )}
-          // tabPanelClassName="px-2 pt-6 pb-2"
-          // tabClassName="p-2"
-          tabListClassName={cn("w-60", getSubscriptionBackgroundColor(planVariant, "50"))}
-          tabPanelClassName="px-2 pb-2"
-          size="sm"
-          tabClassName="py-2"
-          storeInLocalStorage={false}
-        />
+        <Tabs value={selectedPlan} onValueChange={setSelectedPlan} className="w-full">
+          <TabsList className={cn("w-60 mx-auto mb-2", getSubscriptionBackgroundColor(planVariant, "50"))}>
+            {prices.map((price: TSubscriptionPrice) => (
+              <TabsTrigger key={price.recurring} value={price.recurring} className="text-sm">
+                {renderPriceContent(price)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {prices.map((price: TSubscriptionPrice) => (
+            <TabsContent key={price.recurring} value={price.recurring} className="px-2 pb-2">
+              <div className="text-center">
+                <div className="text-xl font-medium">Plane {planeName}</div>
+                {renderActionButton(price)}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
       </div>
 
       {/* Features section - rendered outside tabs since it's common for all billing frequencies */}

@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
-import { Tabs, TabItem } from "@plane/propel/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -15,7 +15,7 @@ import {
 } from "@plane/types";
 import { Avatar, StateGroupIcon } from "@plane/ui";
 
-import { getFileURL } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // helpers
@@ -247,11 +247,9 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
     filters,
     handleFiltersUpdate,
     size = "sm",
-    roundedTab = false,
-    noBackground = false,
   } = props;
   // hooks
-  const { storedValue: currentTab } = useLocalStorage<TModuleProgressStatsTab>(
+  const { storedValue: currentTab, setValue: setModuleTab } = useLocalStorage<TModuleProgressStatsTab>(
     `module-analytics-tab-${moduleId}`,
     "stat-assignees"
   );
@@ -299,55 +297,52 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
     total: totalIssuesCount || 0,
   }));
 
-  // improvement: create tabs configuration map for better maintainability
-  const moduleProgressStatsTabs: TabItem<TModuleProgressStatsTab>[] = [
-    {
-      key: "stat-assignees",
-      label: "Assignees",
-      content: (
-        <AssigneeStatComponent
-          distribution={distributionAssigneeData}
-          isEditable={isEditable}
-          filters={filters}
-          handleFiltersUpdate={handleFiltersUpdate}
-        />
-      ),
-    },
-    {
-      key: "stat-labels",
-      label: "Labels",
-      content: (
-        <LabelStatComponent
-          distribution={distributionLabelData}
-          isEditable={isEditable}
-          filters={filters}
-          handleFiltersUpdate={handleFiltersUpdate}
-        />
-      ),
-    },
-    {
-      key: "stat-states",
-      label: "States",
-      content: (
-        <StateStatComponent
-          distribution={distributionStateData}
-          totalIssuesCount={totalIssuesCount}
-          isEditable={isEditable}
-          handleFiltersUpdate={handleFiltersUpdate}
-        />
-      ),
-    },
-  ];
+  const handleTabChange = (value: TModuleProgressStatsTab) => {
+    setModuleTab(value);
+  };
 
   return (
     <div>
-      <Tabs
-        tabs={moduleProgressStatsTabs}
-        defaultTab={currentTab || "stat-assignees"}
-        storageKey={`module-analytics-tab-${moduleId}`}
-        size={size === "xs" ? "sm" : size}
-        storeInLocalStorage
-      />
+      <Tabs value={currentTab || "stat-assignees"} onValueChange={handleTabChange} className="flex flex-col w-full">
+        <TabsList className={cn("flex w-full items-center justify-between gap-2 rounded-md p-1")}>
+          <TabsTrigger value="stat-assignees" size={size === "xs" ? "sm" : "md"}>
+            Assignees
+          </TabsTrigger>
+          <TabsTrigger value="stat-labels" size={size === "xs" ? "sm" : "md"}>
+            Labels
+          </TabsTrigger>
+          <TabsTrigger value="stat-states" size={size === "xs" ? "sm" : "md"}>
+            States
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="stat-assignees" className="py-3 text-custom-text-200">
+          <AssigneeStatComponent
+            distribution={distributionAssigneeData}
+            isEditable={isEditable}
+            filters={filters}
+            handleFiltersUpdate={handleFiltersUpdate}
+          />
+        </TabsContent>
+
+        <TabsContent value="stat-labels" className="py-3 text-custom-text-200">
+          <LabelStatComponent
+            distribution={distributionLabelData}
+            isEditable={isEditable}
+            filters={filters}
+            handleFiltersUpdate={handleFiltersUpdate}
+          />
+        </TabsContent>
+
+        <TabsContent value="stat-states" className="py-3 text-custom-text-200">
+          <StateStatComponent
+            distribution={distributionStateData}
+            totalIssuesCount={totalIssuesCount}
+            isEditable={isEditable}
+            handleFiltersUpdate={handleFiltersUpdate}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 });

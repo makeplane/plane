@@ -178,7 +178,6 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                           totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                           isEditable={Boolean(!peekCycle)}
                           size="xs"
-                          roundedTab={false}
                           noBackground={false}
                           filters={issueFilters}
                           handleFiltersUpdate={handleFiltersUpdate}

@@ -241,8 +241,6 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                       isEditable={Boolean(!peekModule)}
                       size="xs"
-                      roundedTab={false}
-                      noBackground={false}
                       filters={issueFilters}
                       handleFiltersUpdate={handleFiltersUpdate}
                     />

@@ -107,13 +107,13 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props
     editor: { assetsList },
   } = page;
 
-  if (assetsList.length === 0) return <PageNavigationPaneAssetsTabEmptyState />;
-
   return (
-    <div className="mt-5 space-y-4">
-      {assetsList?.map((asset) => (
-        <AssetItem key={asset.id} asset={asset} page={page} />
-      ))}
+    <div className="size-full pt-3 space-y-1">
+      {assetsList?.length === 0 ? (
+        <PageNavigationPaneAssetsTabEmptyState />
+      ) : (
+        assetsList?.map((asset) => <AssetItem key={asset.id} asset={asset} page={page} />)
+      )}
     </div>
   );
 });
