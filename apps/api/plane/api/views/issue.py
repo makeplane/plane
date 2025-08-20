@@ -75,7 +75,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
-
+from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
     label_docs,
@@ -1782,7 +1782,6 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
-    permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
     @issue_attachment_docs(
@@ -1865,6 +1864,24 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         Generate presigned URL for uploading file attachments to a work item.
         Validates file type and size before creating the attachment record.
         """
+        issue = Issue.objects.get(
+            pk=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        # if the user is creator or admin,member then allow the upload
+        if (
+            not request.user == issue.created_by
+            and not ProjectMember.objects.filter(
+                project_id=project_id,
+                member_id=request.user.id,
+                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "You are not allowed to upload this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         name = request.data.get("name")
         type = request.data.get("type", False)
         size = request.data.get("size")
@@ -1989,7 +2006,6 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     """Issue Attachment Detail Endpoint"""
 
     serializer_class = IssueAttachmentSerializer
-    # permission_classes = [ProjectEntityPermission]
     model = FileAsset
     use_read_replica = True
 
@@ -2021,7 +2037,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             and not ProjectMember.objects.filter(
                 project_id=project_id,
                 user_id=request.user.id,
-                role=ProjectMember.Role.ADMIN,
+                role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
         ):
@@ -2167,7 +2183,8 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             and not ProjectMember.objects.filter(
                 project_id=project_id,
                 user_id=request.user.id,
-                role=ProjectMember.Role.ADMIN,
+                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+                is_active=True,
             ).exists()
         ):
             return Response(
