@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Editor } from "@tiptap/core";
+import { Editor, findChildren } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
 // components
@@ -26,7 +26,12 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
   return {
     blur: () => editor?.commands.blur(),
     clearEditor: (emitUpdate = false) => {
-      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .clearContent(emitUpdate)
+        .run();
     },
     createSelectionAtCursorPosition: () => {
       if (!editor) return;
@@ -85,8 +90,13 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
-    setEditorValue: (content, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
+    setEditorValue: (content: string, emitUpdate = false) => {
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .setContent(content, emitUpdate, { preserveWhitespace: true })
+        .run();
     },
     emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
@@ -238,5 +248,56 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       Y.applyUpdate(document, value);
     },
     undo: () => editor?.commands.undo(),
+    editorHasSynced: () => (provider ? provider.isSynced : false),
+    findAndDeleteNode: ({ attribute, value }: { attribute: string; value: string | string[] }, nodeName: string) => {
+      // We use a single transaction for all deletions
+      editor
+        ?.chain()
+        .command(({ tr }) => {
+          // Set the metadata directly on the transaction
+          tr.setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true);
+          tr.setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true);
+          tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false);
+
+          let modified = false;
+
+          // Find and delete nodes based on whether value is an array or single string
+          if (Array.isArray(value)) {
+            // For array of values, find all matching nodes in one pass
+            const allNodesToDelete = value.flatMap((val) =>
+              findChildren(tr.doc, (node) => node.type.name === nodeName && node.attrs[attribute] === val)
+            );
+
+            // If we found nodes to delete
+            if (allNodesToDelete.length > 0) {
+              // Delete nodes in reverse order to maintain position integrity
+              allNodesToDelete
+                .sort((a, b) => b.pos - a.pos)
+                .forEach((targetNode) => {
+                  tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
+                });
+              modified = true;
+            }
+          } else {
+            // Original single value logic
+            const nodes = findChildren(
+              tr.doc,
+              (node) => node.type.name === nodeName && node.attrs[attribute] === value
+            );
+
+            // If we found a node to delete
+            if (nodes.length > 0) {
+              // Get the first matching node
+              const targetNode = nodes[0];
+              // Delete the node directly using the transaction
+              tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
+              modified = true;
+            }
+          }
+
+          return modified; // Return true if we made changes, false otherwise
+        })
+        .run();
+    },
   };
 };

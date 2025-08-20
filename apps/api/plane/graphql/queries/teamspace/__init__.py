@@ -1,0 +1,1 @@
+from .member import TeamspaceMemberQuery

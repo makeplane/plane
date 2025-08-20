@@ -13,7 +13,6 @@ from rest_framework import status
 
 class WorkspaceUserPreferenceViewSet(BaseAPIView):
     model = WorkspaceUserPreference
-    use_read_replica = True
 
     def get_serializer_class(self):
         return WorkspaceUserPreferenceSerializer
