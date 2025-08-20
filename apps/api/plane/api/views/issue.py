@@ -331,6 +331,10 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             )
         )
 
+        total_issue_queryset = Issue.issue_objects.filter(
+            project_id=project_id, workspace__slug=slug
+        )
+
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
@@ -390,7 +394,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
-            total_count_queryset=issue_queryset,
+            total_count_queryset=total_issue_queryset,
             on_results=lambda issues: IssueSerializer(
                 issues, many=True, fields=self.fields, expand=self.expand
             ).data,
