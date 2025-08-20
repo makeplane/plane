@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tabs, TabItem } from "@plane/propel/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
@@ -40,7 +40,7 @@ export type TActiveCycleStatsTab = "Priority-Issues" | "Assignees" | "Labels";
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
-  const { storedValue: tab } = useLocalStorage<TActiveCycleStatsTab>("activeCycleTab", "Assignees");
+  const { storedValue: tab, setValue: setTab } = useLocalStorage<TActiveCycleStatsTab>("activeCycleTab", "Assignees");
   // refs
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -76,93 +76,167 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     </Loader>
   );
 
-  // improvement: create tabs configuration map for better maintainability
-  const cycleStatsTabs: TabItem<TActiveCycleStatsTab>[] = [
-    {
-      key: "Priority-Issues",
-      label: t("project_cycles.active_cycle.priority_issue"),
-      content: (
-        <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
-          <div
-            ref={issuesContainerRef}
-            className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
-          >
-            {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
-              cycleIssueDetails.issueCount > 0 ? (
-                <>
-                  {cycleIssueDetails.issueIds.map((issueId: string) => {
-                    const issue = getIssueById(issueId);
+  const handleTabChange = (value: string) => {
+    setTab(value as TActiveCycleStatsTab);
+  };
 
-                    if (!issue) return null;
+  return cycleId ? (
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+      <Tabs value={tab || "Assignees"} onValueChange={handleTabChange} className="flex flex-col w-full h-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="Priority-Issues" size="sm">
+            {t("project_cycles.active_cycle.priority_issue")}
+          </TabsTrigger>
+          <TabsTrigger value="Assignees" size="sm">
+            {t("project_cycles.active_cycle.assignees")}
+          </TabsTrigger>
+          <TabsTrigger value="Labels" size="sm">
+            {t("project_cycles.active_cycle.labels")}
+          </TabsTrigger>
+        </TabsList>
 
-                    return (
+        <TabsContent value="Priority-Issues" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
+            <div
+              ref={issuesContainerRef}
+              className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
+            >
+              {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
+                cycleIssueDetails.issueCount > 0 ? (
+                  <>
+                    {cycleIssueDetails.issueIds.map((issueId: string) => {
+                      const issue = getIssueById(issueId);
+
+                      if (!issue) return null;
+
+                      return (
+                        <div
+                          key={issue.id}
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          onClick={() => {
+                            if (issue.id) {
+                              setPeekIssue({
+                                workspaceSlug,
+                                projectId,
+                                issueId: issue.id,
+                                isArchived: !!issue.archived_at,
+                              });
+                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
+                            <IssueIdentifier
+                              issueId={issue.id}
+                              projectId={projectId}
+                              textContainerClassName="text-xs text-custom-text-200"
+                            />
+                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                            </Tooltip>
+                          </div>
+                          <PriorityIcon priority={issue.priority} withContainer size={12} />
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <StateDropdown
+                              value={issue.state_id}
+                              onChange={() => {}}
+                              projectId={projectId?.toString() ?? ""}
+                              disabled
+                              buttonVariant="background-with-text"
+                              buttonContainerClassName="cursor-pointer max-w-24"
+                              showTooltip
+                            />
+                            {issue.target_date && (
+                              <Tooltip
+                                tooltipHeading="Target Date"
+                                tooltipContent={renderFormattedDate(issue.target_date)}
+                              >
+                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                  <CalendarCheck className="h-3 w-3 flex-shrink-0" />
+                                  <span className="text-xs truncate">
+                                    {renderFormattedDateWithoutYear(issue.target_date)}
+                                  </span>
+                                </div>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
                       <div
-                        key={issue.id}
-                        className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                        ref={setIssueLoaderElement}
+                        className={
+                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
+                        }
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center h-full w-full">
+                    <SimpleEmptyState
+                      title={t("active_cycle.empty_state.priority_issue.title")}
+                      assetPath={priorityResolvedPath}
+                    />
+                  </div>
+                )
+              ) : (
+                loaders
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="Assignees" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
+            {cycle && !isEmpty(cycle.distribution) ? (
+              cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
+                cycle.distribution?.assignees?.map((assignee, index) => {
+                  if (assignee.assignee_id)
+                    return (
+                      <SingleProgressStats
+                        key={assignee.assignee_id}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <Avatar
+                              name={assignee?.display_name ?? undefined}
+                              src={getFileURL(assignee?.avatar_url ?? "")}
+                            />
+
+                            <span>{assignee.display_name}</span>
+                          </div>
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
                         onClick={() => {
-                          if (issue.id) {
-                            setPeekIssue({
-                              workspaceSlug,
-                              projectId,
-                              issueId: issue.id,
-                              isArchived: !!issue.archived_at,
-                            });
-                            handleFiltersUpdate("priority", ["urgent", "high"], true);
+                          if (assignee.assignee_id) {
+                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
                           }
                         }}
-                      >
-                        <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                          <IssueIdentifier
-                            issueId={issue.id}
-                            projectId={projectId}
-                            textContainerClassName="text-xs text-custom-text-200"
-                          />
-                          <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                            <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
-                          </Tooltip>
-                        </div>
-                        <PriorityIcon priority={issue.priority} withContainer size={12} />
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                          <StateDropdown
-                            value={issue.state_id}
-                            onChange={() => {}}
-                            projectId={projectId?.toString() ?? ""}
-                            disabled
-                            buttonVariant="background-with-text"
-                            buttonContainerClassName="cursor-pointer max-w-24"
-                            showTooltip
-                          />
-                          {issue.target_date && (
-                            <Tooltip
-                              tooltipHeading="Target Date"
-                              tooltipContent={renderFormattedDate(issue.target_date)}
-                            >
-                              <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
-                                <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                                <span className="text-xs truncate">
-                                  {renderFormattedDateWithoutYear(issue.target_date)}
-                                </span>
-                              </div>
-                            </Tooltip>
-                          )}
-                        </div>
-                      </div>
+                      />
                     );
-                  })}
-                  {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
-                    <div
-                      ref={setIssueLoaderElement}
-                      className={
-                        "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
-                      }
-                    />
-                  )}
-                </>
+                  else
+                    return (
+                      <SingleProgressStats
+                        key={`unassigned-${index}`}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            </div>
+                            <span>{t("no_assignee")}</span>
+                          </div>
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
+                      />
+                    );
+                })
               ) : (
                 <div className="flex items-center justify-center h-full w-full">
                   <SimpleEmptyState
-                    title={t("active_cycle.empty_state.priority_issue.title")}
-                    assetPath={priorityResolvedPath}
+                    title={t("active_cycle.empty_state.assignee.title")}
+                    assetPath={assigneesResolvedPath}
                   />
                 </div>
               )
@@ -170,117 +244,46 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               loaders
             )}
           </div>
-        </div>
-      ),
-    },
-    {
-      key: "Assignees",
-      label: t("project_cycles.active_cycle.assignees"),
-      content: (
-        <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
-          {cycle && !isEmpty(cycle.distribution) ? (
-            cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
-              cycle.distribution?.assignees?.map((assignee, index) => {
-                if (assignee.assignee_id)
-                  return (
-                    <SingleProgressStats
-                      key={assignee.assignee_id}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <Avatar
-                            name={assignee?.display_name ?? undefined}
-                            src={getFileURL(assignee?.avatar_url ?? "")}
-                          />
+        </TabsContent>
 
-                          <span>{assignee.display_name}</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                      onClick={() => {
-                        if (assignee.assignee_id) {
-                          handleFiltersUpdate("assignees", [assignee.assignee_id], true);
-                        }
-                      }}
-                    />
-                  );
-                else
-                  return (
-                    <SingleProgressStats
-                      key={`unassigned-${index}`}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                            <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
-                          </div>
-                          <span>{t("no_assignee")}</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                    />
-                  );
-              })
-            ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <SimpleEmptyState
-                  title={t("active_cycle.empty_state.assignee.title")}
-                  assetPath={assigneesResolvedPath}
-                />
-              </div>
-            )
-          ) : (
-            loaders
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "Labels",
-      label: t("project_cycles.active_cycle.labels"),
-      content: (
-        <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
-          {cycle && !isEmpty(cycle.distribution) ? (
-            cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
-              cycle.distribution.labels?.map((label, index) => (
-                <SingleProgressStats
-                  key={label.label_id ?? `no-label-${index}`}
-                  title={
-                    <div className="flex items-center gap-2 truncate">
-                      <span
-                        className="block h-3 w-3 rounded-full flex-shrink-0"
-                        style={{
-                          backgroundColor: label.color ?? "#000000",
-                        }}
-                      />
-                      <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
-                    </div>
-                  }
-                  completed={label.completed_issues}
-                  total={label.total_issues}
-                  onClick={() => {
-                    if (label.label_id) {
-                      handleFiltersUpdate("labels", [label.label_id], true);
+        <TabsContent value="Labels" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
+            {cycle && !isEmpty(cycle.distribution) ? (
+              cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
+                cycle.distribution.labels?.map((label, index) => (
+                  <SingleProgressStats
+                    key={label.label_id ?? `no-label-${index}`}
+                    title={
+                      <div className="flex items-center gap-2 truncate">
+                        <span
+                          className="block h-3 w-3 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor: label.color ?? "#000000",
+                          }}
+                        />
+                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
+                      </div>
                     }
-                  }}
-                />
-              ))
+                    completed={label.completed_issues}
+                    total={label.total_issues}
+                    onClick={() => {
+                      if (label.label_id) {
+                        handleFiltersUpdate("labels", [label.label_id], true);
+                      }
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <SimpleEmptyState title={t("active_cycle.empty_state.label.title")} assetPath={labelsResolvedPath} />
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <SimpleEmptyState title={t("active_cycle.empty_state.label.title")} assetPath={labelsResolvedPath} />
-              </div>
-            )
-          ) : (
-            loaders
-          )}
-        </div>
-      ),
-    },
-  ];
-
-  return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
-      <Tabs tabs={cycleStatsTabs} defaultTab={tab || "Assignees"} storageKey="activeCycleTab" storeInLocalStorage />
+              loaders
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   ) : null;
 });

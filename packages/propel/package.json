@@ -16,6 +16,7 @@
     "./charts/*": "./src/charts/*/index.ts",
     "./table": "./src/table/index.ts",
     "./tabs": "./src/tabs/index.ts",
+    "./composable-tabs": "./src/composable-tabs.tsx",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
