@@ -102,6 +102,8 @@ export enum E_FEATURE_FLAGS {
   ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED",
   // app rail
   APP_RAIL = "APP_RAIL",
+  // cycles
+  EDIT_CYCLE_DATE = "EDIT_CYCLE_DATE",
   // recurring workitems
   RECURRING_WORKITEMS = "RECURRING_WORKITEMS",
   // automations

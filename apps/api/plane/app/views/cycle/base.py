@@ -1,7 +1,7 @@
 # Python imports
 import json
 import pytz
-
+from datetime import date, timedelta
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -26,6 +26,7 @@ from django.db import models
 from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.dateparse import parse_date
 
 # Third party imports
 from rest_framework import status
@@ -56,10 +57,14 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
-from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
+from plane.utils.timezone_converter import (
+    convert_to_utc,
+    user_timezone_converter,
+)
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
+from plane.ee.models import EntityProgress
 
 
 class CycleViewSet(BaseViewSet):
@@ -384,8 +389,74 @@ class CycleViewSet(BaseViewSet):
         serializer = CycleWriteSerializer(
             cycle, data=request.data, partial=True, context={"project_id": project_id}
         )
+
+        if cycle.start_date is not None and cycle.end_date is not None:
+            if (
+                cycle.start_date.date() <= date.today()
+                and cycle.end_date.date() >= date.today()
+            ):
+                # Convert the given string date
+                parsed_request_start_date = parse_date(request_data["start_date"])
+
+                last_entity_progress = (
+                    EntityProgress.objects.filter(
+                        cycle_id=pk, workspace__slug=slug, entity_type="CYCLE"
+                    )
+                    .order_by("progress_date")
+                    .first()
+                )
+                if parsed_request_start_date < cycle.start_date.date():
+                    # Find all the dates between the requested start date and the cycle's start date
+                    start_date = parsed_request_start_date
+                    end_date = cycle.start_date.date()
+
+                    delta = (end_date - start_date).days
+
+                    dates = []
+
+                    for i in range(delta):
+                        day = start_date + timedelta(days=i)
+                        dates.append(day)
+
+                    if last_entity_progress:
+                        EntityProgress.objects.bulk_create(
+                            [
+                                EntityProgress(
+                                    cycle_id=pk,
+                                    progress_date=date,
+                                    entity_type="CYCLE",
+                                    total_issues=last_entity_progress.total_issues,
+                                    total_estimate_points=last_entity_progress.total_estimate_points,
+                                    backlog_issues=last_entity_progress.backlog_issues,
+                                    unstarted_issues=last_entity_progress.unstarted_issues,
+                                    started_issues=last_entity_progress.started_issues,
+                                    completed_issues=last_entity_progress.completed_issues,
+                                    cancelled_issues=last_entity_progress.cancelled_issues,
+                                    backlog_estimate_points=last_entity_progress.backlog_estimate_points,
+                                    unstarted_estimate_points=last_entity_progress.unstarted_estimate_points,
+                                    started_estimate_points=last_entity_progress.started_estimate_points,
+                                    completed_estimate_points=last_entity_progress.completed_estimate_points,
+                                    cancelled_estimate_points=last_entity_progress.cancelled_estimate_points,
+                                    created_at=timezone.now(),
+                                    updated_at=timezone.now(),
+                                    workspace_id=last_entity_progress.workspace.id,
+                                )
+                                for date in dates
+                            ]
+                        )
+                elif parsed_request_start_date > cycle.start_date.date():
+                    EntityProgress.objects.filter(
+                        progress_date__lte=(
+                            parsed_request_start_date - timedelta(days=1)
+                        ),
+                        workspace__slug=slug,
+                        entity_type="CYCLE",
+                    ).delete()
+                    last_entity_progress.delete()
+
         if serializer.is_valid():
             serializer.save()
+
             cycle = queryset.values(
                 # necessary fields
                 "id",

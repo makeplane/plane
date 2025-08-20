@@ -1,5 +1,6 @@
 # Python imports
 import json
+from datetime import date, timedelta
 
 # Django imports
 from django.core import serializers
@@ -19,6 +20,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Cast, Concat
 from django.db import models
+from django.utils.dateparse import parse_date
 
 # Third party imports
 from rest_framework import status
@@ -80,6 +82,7 @@ from plane.utils.openapi import (
     UNARCHIVED_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
 )
+from plane.ee.models import EntityProgress
 
 
 class CycleListCreateAPIEndpoint(BaseAPIView):
@@ -539,6 +542,70 @@ class CycleDetailAPIEndpoint(BaseAPIView):
                 )
 
         serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True)
+        if cycle.start_date is not None and cycle.end_date is not None:
+            if (
+                cycle.start_date.date() <= date.today()
+                and cycle.end_date.date() >= date.today()
+            ):
+                # Convert the given string date
+                parsed_request_start_date = parse_date(request_data["start_date"])
+
+                last_entity_progress = (
+                    EntityProgress.objects.filter(
+                        cycle_id=pk, workspace__slug=slug, entity_type="CYCLE"
+                    )
+                    .order_by("progress_date")
+                    .first()
+                )
+                if parsed_request_start_date < cycle.start_date.date():
+                    # Find all the dates between the requested start date and the cycle's start date
+                    start_date = parsed_request_start_date
+                    end_date = cycle.start_date.date()
+
+                    delta = (end_date - start_date).days
+
+                    dates = []
+
+                    for i in range(delta):
+                        day = start_date + timedelta(days=i)
+                        dates.append(day)
+
+                    if last_entity_progress:
+                        EntityProgress.objects.bulk_create(
+                            [
+                                EntityProgress(
+                                    cycle_id=pk,
+                                    progress_date=date,
+                                    entity_type="CYCLE",
+                                    total_issues=last_entity_progress.total_issues,
+                                    total_estimate_points=last_entity_progress.total_estimate_points,
+                                    backlog_issues=last_entity_progress.backlog_issues,
+                                    unstarted_issues=last_entity_progress.unstarted_issues,
+                                    started_issues=last_entity_progress.started_issues,
+                                    completed_issues=last_entity_progress.completed_issues,
+                                    cancelled_issues=last_entity_progress.cancelled_issues,
+                                    backlog_estimate_points=last_entity_progress.backlog_estimate_points,
+                                    unstarted_estimate_points=last_entity_progress.unstarted_estimate_points,
+                                    started_estimate_points=last_entity_progress.started_estimate_points,
+                                    completed_estimate_points=last_entity_progress.completed_estimate_points,
+                                    cancelled_estimate_points=last_entity_progress.cancelled_estimate_points,
+                                    created_at=timezone.now(),
+                                    updated_at=timezone.now(),
+                                    workspace_id=last_entity_progress.workspace.id,
+                                )
+                                for date in dates
+                            ]
+                        )
+                elif parsed_request_start_date > cycle.start_date.date():
+                    EntityProgress.objects.filter(
+                        progress_date__lte=(
+                            parsed_request_start_date - timedelta(days=1)
+                        ),
+                        workspace__slug=slug,
+                        entity_type="CYCLE",
+                    ).delete()
+                    last_entity_progress.delete()
+
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
