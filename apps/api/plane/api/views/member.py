@@ -1,15 +1,26 @@
+# Python imports
+import uuid
+
+# Django imports
+from django.core.validators import validate_email
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
+    OpenApiRequest,
+    OpenApiExample,
 )
 
 # Module imports
 from .base import BaseAPIView
 from plane.api.serializers import UserLiteSerializer
-from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
+from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember, Project
 from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
@@ -135,3 +146,119 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         ).data
 
         return Response(users, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        operation_id="add_project_members",
+        summary="Add a user to the specified project.",
+        description="Add a user to the specified project.",
+        tags=["Members"],
+        request=OpenApiRequest(
+            request=UserLiteSerializer,
+            examples=[
+                OpenApiExample(
+                    "Add Project Member",
+                    value={
+                        "email": "test@test.com",
+                        "display_name": "Test User",
+                    },
+                    description="Example request for adding a project member",
+                ),
+            ],
+        ),
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="User added to the project",
+                response=UserLiteSerializer,
+                examples=[PROJECT_MEMBER_EXAMPLE],
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id):
+        # ------------------- Validation -------------------
+        if (
+            request.data.get("email") is None
+            or request.data.get("display_name") is None
+        ):
+            return Response(
+                {
+                    "error": "Expected email, display_name, workspace_slug, project_id, one or more of the fields are missing."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = request.data.get("email")
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response(
+                {"error": "Invalid email provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        workspace = Workspace.objects.filter(slug=slug).first()
+        project = Project.objects.filter(pk=project_id).first()
+
+        if not all([workspace, project]):
+            return Response(
+                {"error": "Provided workspace or project does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.filter(email=email).first()
+
+        workspace_member = None
+        project_member = None
+
+        if user:
+            # Check if user is part of the workspace
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace=workspace, member=user
+            ).first()
+            if workspace_member:
+                # Check if user is part of the project
+                project_member = ProjectMember.objects.filter(
+                    project=project, member=user
+                ).first()
+                if project_member:
+                    return Response(
+                        {"error": "User is already part of the workspace and project"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+        # If user does not exist, create the user
+        if not user:
+            user = User.objects.create(
+                email=email,
+                display_name=request.data.get("display_name"),
+                first_name=request.data.get("first_name", ""),
+                last_name=request.data.get("last_name", ""),
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
+                is_active=False,
+                avatar_asset_id=request.data.get("avatar_asset_id", None),
+            )
+            user.save()
+
+        # Create a workspace member for the user if not already a member
+        if not workspace_member:
+            workspace_member = WorkspaceMember.objects.create(
+                workspace=workspace, member=user, role=request.data.get("role", 5)
+            )
+            workspace_member.save()
+
+        # Create a project member for the user if not already a member
+        if not project_member:
+            project_member = ProjectMember.objects.create(
+                project=project, member=user, role=request.data.get("role", 5)
+            )
+            project_member.save()
+
+        # Serialize the user and return the response
+        user_data = UserLiteSerializer(user).data
+
+        return Response(user_data, status=status.HTTP_201_CREATED)
