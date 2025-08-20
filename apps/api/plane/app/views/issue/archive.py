@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery
+from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery, Count
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -71,25 +71,31 @@ class IssueArchiveViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                link_count=Subquery(
+                    IssueLink.objects.filter(issue=OuterRef("id"))
+                    .values("issue")
+                    .annotate(count=Count("id"))
+                    .values("count")
                 )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
+                attachment_count=Subquery(
+                    FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .values("issue_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
+            )
+            .annotate(
+                sub_issues_count=Subquery(
+                    Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .values("parent")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                )
             )
         )
 
@@ -102,6 +108,19 @@ class IssueArchiveViewSet(BaseViewSet):
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters)
+
+        total_issue_queryset = Issue.objects.filter(
+            deleted_at__isnull=True,
+            archived_at__isnull=False,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).filter(**filters)
+
+        total_issue_queryset = (
+            total_issue_queryset
+            if show_sub_issues == "true"
+            else total_issue_queryset.filter(parent__isnull=True)
+        )
 
         issue_queryset = (
             issue_queryset
@@ -138,6 +157,7 @@ class IssueArchiveViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -172,6 +192,7 @@ class IssueArchiveViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -198,6 +219,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),

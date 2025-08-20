@@ -90,7 +90,9 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "delete"]),
+        IssueAttachmentDetailAPIEndpoint.as_view(
+            http_method_names=["get", "patch", "delete"]
+        ),
         name="issue-attachment",
     ),
     path(
