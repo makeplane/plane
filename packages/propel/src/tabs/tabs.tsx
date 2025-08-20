@@ -1,22 +1,23 @@
-import React, { FC, useEffect, useState } from "react";
 import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
+import React, { FC, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
-import { cn } from "@plane/utils";
+
 // types
-import { TabList, TabListItem } from "./list";
+import { TabList, TabListItem } from "./tab-list";
+import { cn } from "@plane/utils";
 
 export type TabContent = {
   content: React.ReactNode;
 };
 
-export type TabItem = TabListItem & TabContent;
+export type TabItem<TKey = string> = TabListItem<TKey> & TabContent;
 
-type TTabsProps = {
-  tabs: TabItem[];
+type TTabsProps<TTabs extends TabItem<string>[]> = {
+  tabs: TTabs;
   storageKey?: string;
   actions?: React.ReactNode;
-  defaultTab?: string;
+  defaultTab?: TTabs[number]["key"];
   containerClassName?: string;
   tabListContainerClassName?: string;
   tabListClassName?: string;
@@ -26,7 +27,7 @@ type TTabsProps = {
   storeInLocalStorage?: boolean;
 };
 
-export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
+export const Tabs = <TTabs extends TabItem<string>[]>(props: TTabsProps<TTabs>) => {
   const {
     tabs,
     storageKey,
@@ -68,7 +69,7 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
     <BaseTabs.Root
       value={activeIndex}
       onValueChange={handleTabChange}
-      className={cn("flex flex-col w-full h-full overflow-hidden", containerClassName)}
+      className={cn("flex flex-col h-full overflow-hidden gap-3", containerClassName)}
     >
       <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
         <TabList
