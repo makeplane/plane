@@ -7,7 +7,8 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "dev-wiki"
   ],
   "scripts": {
     "build": "turbo run build",

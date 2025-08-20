@@ -3,9 +3,7 @@ from django.urls import path
 
 from plane.app.views import (
     PageViewSet,
-    ProjectPageUserViewSet,
     PageFavoriteViewSet,
-    PageLogEndpoint,
     PagesDescriptionViewSet,
     PageVersionEndpoint,
     PageDuplicateEndpoint,
@@ -19,7 +17,7 @@ urlpatterns = [
         name="project-pages",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
         PageViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
@@ -37,46 +35,36 @@ urlpatterns = [
     ),
     # favorite pages
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:page_id>/",
         PageFavoriteViewSet.as_view({"post": "create", "delete": "destroy"}),
         name="user-favorite-pages",
     ),
     # Lock
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
         PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="project-page-lock-unlock",
     ),
     # archived pages
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/archive/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/archive/",
         PageViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="project-page-archive-unarchive",
     ),
     # lock and unlock
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
         PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="project-pages-lock-unlock",
     ),
     # private and public page
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/access/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/access/",
         PageViewSet.as_view({"post": "access"}),
         name="project-pages-access",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/",
-        PageLogEndpoint.as_view(),
-        name="page-transactions",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/<uuid:transaction>/",
-        PageLogEndpoint.as_view(),
-        name="page-transactions",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/description/",
         PagesDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
     ),
@@ -94,17 +82,5 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/duplicate/",
         PageDuplicateEndpoint.as_view(),
         name="page-duplicate",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/share/",
-        ProjectPageUserViewSet.as_view({"post": "create", "get": "list"}),
-        name="project-page-shared",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/share/<uuid:user_id>/",
-        ProjectPageUserViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy"}
-        ),
-        name="project-page-shared",
     ),
 ]

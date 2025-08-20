@@ -1,5 +1,8 @@
-from .publish import ProjectPagePublishEndpoint, WorkspacePagePublishEndpoint
-from .workspace import (
+from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet
+
+# workspace level
+from .workspace.publish import WorkspacePagePublishEndpoint
+from .workspace.base import (
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
@@ -7,6 +10,9 @@ from .workspace import (
     WorkspacePageDuplicateEndpoint,
     WorkspacePageRestoreEndpoint,
 )
-from .base import MovePageEndpoint
-from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet
-from .shared import WorkspacePageUserViewSet
+from .workspace.share import WorkspacePageUserViewSet
+
+# project level
+from .project.move import MovePageEndpoint
+from .project.share import ProjectPageUserViewSet
+from .project.publish import ProjectPagePublishEndpoint

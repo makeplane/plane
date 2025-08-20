@@ -440,7 +440,7 @@ def nested_page_update(
         elif action == PageAction.DELETED:
             # delete all the descendants
             Page.objects.filter(
-                id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+                id__in=descendants_ids, workspace__slug=slug
             ).delete()
             # delete the page version history
             PageVersion.objects.filter(

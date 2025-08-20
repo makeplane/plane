@@ -43,6 +43,7 @@ from plane.ee.models import (
     TeamspaceProject,
     Initiative,
     Teamspace,
+    PageUser,
 )
 
 
@@ -146,11 +147,17 @@ class GlobalSearchEndpoint(BaseAPIView):
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
+        
+        user_pages = PageUser.objects.filter(
+            user_id=self.request.user.id,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
 
         pages = (
             Page.objects.filter(
                 q, projects__archived_at__isnull=True, workspace__slug=slug
             )
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .annotate(
                 project_ids=Coalesce(
                     ArrayAgg(

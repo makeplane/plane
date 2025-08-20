@@ -13,6 +13,7 @@ from plane.ee.views import (
     PagesLiveServerSubPagesViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
+    ProjectPageUserViewSet,
 )
 
 
@@ -118,12 +119,24 @@ urlpatterns = [
     ),
     ## EE project level
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/publish/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/publish/",
         ProjectPagePublishEndpoint.as_view(),
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/move/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/move/",
         MovePageEndpoint.as_view(),
         name="move-page",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/share/",
+        ProjectPageUserViewSet.as_view({"post": "create", "get": "list"}),
+        name="project-page-shared",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/share/<uuid:user_id>/",
+        ProjectPageUserViewSet.as_view(
+            {"patch": "partial_update", "delete": "destroy"}
+        ),
+        name="project-page-shared",
     ),
 ]

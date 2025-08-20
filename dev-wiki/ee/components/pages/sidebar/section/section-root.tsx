@@ -35,41 +35,64 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const { sidebarCollapsed } = useAppTheme();
-  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
-    EPageStoreType.WORKSPACE
-  );
+  const { createPage, getPageById, contextPageIdsByType } = usePageStore(EPageStoreType.WORKSPACE);
 
   // feature flag check for shared pages
   const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);
-
-  // Don't render shared section if feature flag is disabled
-  if (sectionType === "shared" && !isSharedPagesEnabled) {
-    return null;
-  }
 
   // Custom hooks
   const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType);
   const { isLoading } = useSectionPages(sectionType);
 
-  // Get page IDs based on section type
-  const pageIds = useMemo(() => {
-    switch (sectionType) {
-      case "public":
-        return publicPageIds;
-      case "private":
-        return privatePageIds;
-      case "archived":
-        return archivedPageIds;
-      case "shared":
-        return sharedPageIds;
-      default:
-        return [];
-    }
-  }, [publicPageIds, privatePageIds, archivedPageIds, sharedPageIds, sectionType]);
+  // Memoize derived values
+  const pageIds = useMemo(() => contextPageIdsByType[sectionType], [contextPageIdsByType, sectionType]);
+  const isCollapsed = useMemo(() => !!sidebarCollapsed, [sidebarCollapsed]);
+  const sectionDetails = useMemo(() => SECTION_DETAILS[sectionType], [sectionType]);
 
-  // Derived values
-  const isCollapsed = !!sidebarCollapsed;
-  const sectionDetails = SECTION_DETAILS[sectionType];
+  // Add this ref to track the previous section of the active page
+  const previousPageSectionRef = useRef<TPageNavigationTabs | null>(null);
+
+  // Add this effect to detect page type changes and then scroll to that in the sidebar
+  useEffect(() => {
+    // Skip if no current page is selected
+    if (!currentPageId) return;
+
+    const currentPage = getPageById(currentPageId);
+    // Determine current section of the page
+    const currentPageSection = currentPage?.archived_at
+      ? "archived"
+      : currentPage?.is_shared
+        ? "shared"
+        : currentPage?.access === EPageAccess.PRIVATE
+          ? "private"
+          : "public";
+
+    if (!currentPageSection) return;
+
+    // Get the previous section
+    const prevSection = previousPageSectionRef.current;
+
+    // If this is the first check, just store the current section and exit
+    if (prevSection === null) {
+      previousPageSectionRef.current = currentPageSection;
+      return;
+    }
+
+    // If the page has changed sections
+    if (prevSection !== currentPageSection) {
+      // Update the ref for next comparison
+      previousPageSectionRef.current = currentPageSection;
+
+      // If the page has moved to this section, open it
+      if (currentPageSection === sectionType) {
+        // Reset manual toggle state to allow automatic opening
+        // setIsManuallyToggled(false);
+        // setManualOpenState(true);
+      }
+    }
+  }, [currentPageId, sectionType, getPageById]);
+
+  // Get all pages in this section
   const sectionPages = useMemo(() => new Set(pageIds), [pageIds]);
 
   // Check if section contains the active page or its ancestors
@@ -163,6 +186,11 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
       return hasChanges ? Array.from(expandedSet) : prev;
     });
   }, [currentPageId, sectionContainsActivePage, getPageById, setExpandedPageIds]);
+
+  // Don't render shared section if feature flag is disabled
+  if (sectionType === "shared" && !isSharedPagesEnabled) {
+    return null;
+  }
 
   return (
     <div

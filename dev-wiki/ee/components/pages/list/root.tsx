@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles, TPageNavigationTabs } from "@plane/types";
 // components
@@ -34,8 +34,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   // const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
-  const { filters, fetchPagesByType, filteredPublicPageIds, filteredArchivedPageIds, filteredPrivatePageIds } =
-    pageStore;
+  const { filters, fetchPagesByType, getCurrentWorkspaceFilteredPageIdsByType } = pageStore;
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -53,17 +52,8 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     if (filters.searchQuery) {
       return (data?.map((page) => page.id).filter(Boolean) as string[]) || [];
     }
-    switch (pageType) {
-      case "public":
-        return filteredPublicPageIds;
-      case "private":
-        return filteredPrivatePageIds;
-      case "archived":
-        return filteredArchivedPageIds;
-      default:
-        return [];
-    }
-  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, filters.searchQuery]);
+    return getCurrentWorkspaceFilteredPageIdsByType(pageType);
+  }, [pageType, data, filters.searchQuery, getCurrentWorkspaceFilteredPageIdsByType]);
 
   // derived values - memoized for performance
   const hasWorkspaceMemberLevelPermissions = useMemo(

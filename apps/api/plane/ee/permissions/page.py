@@ -163,7 +163,7 @@ class ProjectPagePermission(BasePermission):
         user_id = request.user.id
         slug = view.kwargs.get("slug")
         project_id = view.kwargs.get("project_id")
-        pk = view.kwargs.get("pk")
+        page_id = view.kwargs.get("page_id")
 
         if request.user.is_anonymous:
             return False
@@ -176,26 +176,28 @@ class ProjectPagePermission(BasePermission):
         ).exists():
             return False
 
-        if pk:
-            page = Page.objects.get(id=pk, workspace__slug=slug)
+        if page_id:
+            page = Page.objects.get(id=page_id, workspace__slug=slug)
 
-        # Allow access if the user is the owner of the page
-        if page.owned_by_id == user_id:
+            # Allow access if the user is the owner of the page
+            if page.owned_by_id == user_id:
+                return True
+
+            # If the page is private, check access based on shared page feature flag
+            if page.access == Page.PRIVATE_ACCESS:
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.SHARED_PAGES,
+                    slug=slug,
+                    user_id=user_id,
+                ):
+                    return self._has_shared_page_access(request, slug, page.id, project_id)
+                # If shared pages feature is not enabled, only the owner can access
+                return False
+
+            # If the page is public, check access based on workspace role
+            return self._has_public_page_access(request, slug, project_id)
+        else:
             return True
-
-        # If the page is private, check access based on shared page feature flag
-        if page.access == Page.PRIVATE_ACCESS:
-            if check_workspace_feature_flag(
-                feature_key=FeatureFlag.SHARED_PAGES,
-                slug=slug,
-                user_id=user_id,
-            ):
-                return self._has_shared_page_access(request, slug, page.id, project_id)
-            # If shared pages feature is not enabled, only the owner can access
-            return False
-
-        # If the page is public, check access based on workspace role
-        return self._has_public_page_access(request, slug, project_id)
 
     def _has_shared_page_access(self, request, slug, page_id, project_id):
         """

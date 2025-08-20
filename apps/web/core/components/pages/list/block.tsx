@@ -20,14 +20,26 @@ import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 type TPageListBlock = {
   handleToggleExpanded: () => void;
   isExpanded: boolean;
+  isDropping: boolean;
   paddingLeft: number;
   pageId: string;
   storeType: EPageStoreType;
   pageType?: TPageNavigationTabs;
+  isDragging?: boolean;
+  isHovered?: boolean;
+  canShowAddButton?: boolean;
 };
 
 export const PageListBlock: FC<TPageListBlock> = observer((props) => {
-  const { handleToggleExpanded, isExpanded, paddingLeft, pageId, storeType, pageType } = props;
+  const {
+    handleToggleExpanded,
+    isExpanded,
+    paddingLeft,
+    pageId,
+    storeType,
+    isDragging = false,
+    isDropping = false,
+  } = props;
   // states
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   // refs
@@ -79,7 +91,12 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   }
 
   return (
-    <div ref={parentRef} className="relative">
+    <div
+      ref={parentRef}
+      className={cn("relative", {
+        "opacity-50": isDragging,
+      })}
+    >
       <ListItem
         title={
           isNestedPagesDisabledForPage
@@ -91,6 +108,9 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         itemLink={getRedirectionLink?.()}
         onItemClick={() => router.push(getRedirectionLink?.() ?? "")}
         leftElementClassName="gap-2"
+        className={cn("outline-none rounded-md transition-colors", {
+          "is-dragging": isDropping,
+        })}
         prependTitleElement={
           <div
             className="flex-shrink-0 flex items-center gap-1"

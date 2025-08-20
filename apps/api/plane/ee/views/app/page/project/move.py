@@ -15,11 +15,11 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.ee.models import PageUser, WorkItemPage
-from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
+from plane.ee.permissions import ProjectPagePermission
 
 # Third party imports
 from rest_framework import status
@@ -29,11 +29,11 @@ from plane.utils.url import normalize_url_path
 
 
 class MovePageEndpoint(BaseAPIView):
+
+    permission_classes = [ProjectPagePermission]
+
     @check_feature_flag(FeatureFlag.MOVE_PAGES)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=Page, field="owned_by"
-    )
-    def post(self, request, slug, project_id, pk):
+    def post(self, request, slug, project_id, page_id):
         new_project_id = request.data.get("new_project_id")
         if not new_project_id:
             return Response(
@@ -41,11 +41,11 @@ class MovePageEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        page = Page.objects.filter(id=pk, workspace__slug=slug).first()
+        page = Page.objects.filter(id=page_id, workspace__slug=slug).first()
 
         parent_id = page.parent_id
 
-        project_ids = ProjectPage.objects.filter(page_id=pk).values_list(
+        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(
             "project_id", flat=True
         )
 
@@ -97,7 +97,7 @@ class MovePageEndpoint(BaseAPIView):
         page.description_html = description_html
         page.save()
 
-        old_page = Page.objects.get(id=pk, workspace__slug=slug)
+        old_page = Page.objects.get(id=page_id, workspace__slug=slug)
 
         new_page_id = page.id
 
@@ -137,7 +137,7 @@ class MovePageEndpoint(BaseAPIView):
         )
 
         # change the page version
-        PageVersion.objects.filter(page_id=pk, workspace__slug=slug).update(
+        PageVersion.objects.filter(page_id=page_id, workspace__slug=slug).update(
             page_id=new_page_id,
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
@@ -145,7 +145,7 @@ class MovePageEndpoint(BaseAPIView):
 
         # change the uploaded files in the page
         FileAsset.objects.filter(
-            page_id=pk, project_id=project_id, workspace__slug=slug
+            page_id=page_id, project_id=project_id, workspace__slug=slug
         ).update(
             page_id=new_page_id,
             project_id=new_project_id,
@@ -155,7 +155,7 @@ class MovePageEndpoint(BaseAPIView):
 
         # change the deployed board url for the page
         DeployBoard.objects.filter(
-            entity_identifier=pk,
+            entity_identifier=page_id,
             project_id=project_id,
             entity_name="page",
             workspace__slug=slug,
@@ -167,7 +167,7 @@ class MovePageEndpoint(BaseAPIView):
 
         # share the page with the new project
         PageUser.objects.filter(
-            page_id=pk, project_id=project_id, workspace__slug=slug
+            page_id=page_id, project_id=project_id, workspace__slug=slug
         ).update(
             page_id=new_page_id,
             updated_by_id=request.user.id,
@@ -176,7 +176,7 @@ class MovePageEndpoint(BaseAPIView):
 
         # update the work item pages
         WorkItemPage.objects.filter(
-            page_id=pk, project_id=project_id, workspace__slug=slug
+            page_id=page_id, project_id=project_id, workspace__slug=slug
         ).delete()
 
         # fetch the old page
@@ -186,7 +186,7 @@ class MovePageEndpoint(BaseAPIView):
 
         # update the descendants pages
         nested_page_update.delay(
-            page_id=pk,
+            page_id=page_id,
             action=PageAction.MOVED,
             project_id=project_id,
             slug=slug,

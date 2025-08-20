@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// types
 import { TPageNavigationTabs } from "@plane/types";
 // components
 import { ProjectPagesListHeaderRoot } from "@/components/pages/header";
@@ -13,18 +14,22 @@ type TPageView = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
   projectId: string;
-  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
 export const ProjectPagesListView: React.FC<TPageView> = observer((props) => {
-  const { children, pageType, projectId, workspaceSlug } = props;
+  const { children, pageType, workspaceSlug, projectId } = props;
   // store hooks
   const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);
+
   // fetching pages list
   useSWR(
-    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null,
-    workspaceSlug && projectId && pageType ? () => fetchPagesList(workspaceSlug, projectId, pageType) : null
+    workspaceSlug && projectId ? `PROJECT_PAGES_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchPagesList(workspaceSlug.toString(), projectId.toString()) : null,
+    {
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
+    }
   );
 
   // pages loader

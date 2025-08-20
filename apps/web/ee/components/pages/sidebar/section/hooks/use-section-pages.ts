@@ -13,7 +13,7 @@ export const useSectionPages = (sectionType: TPageNavigationTabs) => {
   const { fetchPagesByType } = usePageStore(EPageStoreType.WORKSPACE);
 
   const { isLoading } = useSWR(
-    workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${sectionType}_` : null,
+    workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${sectionType}` : null,
     workspaceSlug ? () => fetchPagesByType(sectionType) : null,
     {
       revalidateOnFocus: true,

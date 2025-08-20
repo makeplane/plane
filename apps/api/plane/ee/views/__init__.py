@@ -38,6 +38,7 @@ from plane.ee.views.app.page import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
+    ProjectPageUserViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
 )

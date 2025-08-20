@@ -203,4 +203,19 @@ export class ProjectPageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async fetchPagesByType(
+    workspaceSlug: string,
+    projectId: string,
+    type: string,
+    searchQuery?: string
+  ): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages`, {
+      params: { search: searchQuery, type },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

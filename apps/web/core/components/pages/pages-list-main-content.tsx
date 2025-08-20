@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
@@ -26,13 +27,34 @@ export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => 
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
-    usePageStore(storeType);
+  const {
+    loader,
+    isAnyPageAvailable,
+    filters,
+    filteredPublicPageIds,
+    filteredPrivatePageIds,
+    filteredArchivedPageIds,
+    filteredSharedPageIds,
+  } = usePageStore(storeType);
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  // derived values
-  const pageIds = getCurrentProjectPageIdsByTab(pageType);
-  const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
+
+  // Get the appropriate page IDs based on page type
+  const pageIds = useMemo(() => {
+    switch (pageType) {
+      case "public":
+        return filteredPublicPageIds;
+      case "private":
+        return filteredPrivatePageIds;
+      case "archived":
+        return filteredArchivedPageIds;
+      case "shared":
+        return filteredSharedPageIds;
+      default:
+        return [];
+    }
+  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, filteredSharedPageIds]);
+
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -49,8 +71,14 @@ export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => 
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
   });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/name-filter",
+    extension: "svg",
+  });
 
   if (loader === "init-loader") return <PageLoader />;
+
   // if no pages exist in the active page type
   if (!isAnyPageAvailable || pageIds?.length === 0) {
     if (!isAnyPageAvailable) {
@@ -70,6 +98,9 @@ export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => 
         />
       );
     }
+  }
+
+  if (!pageIds || pageIds.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
@@ -111,13 +142,8 @@ export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => 
         />
       );
   }
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-  });
   // if no pages match the filter criteria
-  if (filteredPageIds?.length === 0)
+  if (filters.searchQuery && pageIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">

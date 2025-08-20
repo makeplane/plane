@@ -31,7 +31,7 @@ export abstract class BasePageService extends APIService {
   /**
    * Gets the base URL path for API requests based on the context (workspace, project, teamspace)
    */
-  protected abstract getBasePath(params: Record<string, any>): string;
+  protected abstract getBasePath(_params: Record<string, any>): string;
 
   /**
    * Gets the common headers used for requests

@@ -60,6 +60,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       // computed
       parentPageIds: computed,
       subPageIds: computed,
+      subPages: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -298,7 +299,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
 
       runInAction(() => {
         for (const page of subPages) {
-          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new ProjectPage(this.rootStore, page));
+          if (page?.id) {
+            const pageInstance = this.rootStore.projectPages.getPageById(page.id);
+            if (pageInstance) {
+              pageInstance.mutateProperties(page);
+            } else {
+              set(this.rootStore.projectPages.data, [page.id], new ProjectPage(this.rootStore, page));
+            }
+          }
         }
       });
     } catch (error) {

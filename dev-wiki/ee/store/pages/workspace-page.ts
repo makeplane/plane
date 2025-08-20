@@ -4,8 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 
 import { EPageAccess } from "@plane/constants";
-import { TPage, EUserWorkspaceRoles } from "@plane/types";
-// helpers
+import { EUserWorkspaceRoles, TPage } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";
@@ -26,35 +25,35 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     super(store, page, {
       update: async (payload) => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        return await workspacePageService.update(workspaceSlug, page.id, payload);
+        return await workspacePageService.update({ workspaceSlug }, page.id, payload);
       },
       updateDescription: async (document) => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        await workspacePageService.updateDescription(workspaceSlug, page.id, document);
+        await workspacePageService.updateDescription({ workspaceSlug }, page.id, document);
       },
       updateAccess: async (payload) => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        await workspacePageService.updateAccess(workspaceSlug, page.id, payload);
+        await workspacePageService.updateAccess({ workspaceSlug }, page.id, payload);
       },
       lock: async (recursive: boolean) => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        await workspacePageService.lock(workspaceSlug, page.id, recursive);
+        await workspacePageService.lock({ workspaceSlug }, page.id, recursive);
       },
       unlock: async (recursive: boolean) => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        await workspacePageService.unlock(workspaceSlug, page.id, recursive);
+        await workspacePageService.unlock({ workspaceSlug }, page.id, recursive);
       },
       archive: async () => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        return await workspacePageService.archive(workspaceSlug, page.id);
+        return await workspacePageService.archive({ workspaceSlug }, page.id);
       },
       restore: async () => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        await workspacePageService.restore(workspaceSlug, page.id);
+        await workspacePageService.restore({ workspaceSlug }, page.id);
       },
       duplicate: async () => {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
-        return await workspacePageService.duplicate(workspaceSlug, page.id);
+        return await workspacePageService.duplicate({ workspaceSlug }, page.id);
       },
     });
     makeObservable(this, {
@@ -79,28 +78,30 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     const immediateParent = this.parent_id;
     if (!immediateParent) return [];
     const parentPageIds = [immediateParent];
-    let parent = this.rootStore.workspacePages.data[immediateParent];
+    let parent = this.rootStore.workspacePages.getPageById(immediateParent) as TWorkspacePage;
     while (parent?.parent_id) {
       parentPageIds.push(parent.parent_id);
-      parent = this.rootStore.workspacePages.data[parent.parent_id];
+      parent = this.rootStore.workspacePages.getPageById(parent.parent_id) as TWorkspacePage;
     }
     return parentPageIds.filter((id): id is string => id !== undefined);
   }
 
   get subPageIds() {
-    const pages = Object.values(this.rootStore.workspacePages.data);
-    const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
+    const pages = this.rootStore.workspacePages.getAllPages();
+    const filteredPages = pages.filter((page) => page?.parent_id === this.id && !page?.deleted_at);
 
     // Sort pages alphabetically by name
     const sortedPages = filteredPages.sort((a, b) =>
       getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
 
-    return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    return sortedPages.map((page) => page?.id).filter((id): id is string => id !== undefined);
   }
 
   get subPages() {
-    return this.subPageIds.map((id) => this.rootStore.workspacePages.data[id]);
+    return this.subPageIds
+      .map((id) => this.rootStore.workspacePages.getPageById(id))
+      .filter((page): page is TWorkspacePage => !!page);
   }
 
   /**
@@ -274,7 +275,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     try {
       const { workspaceSlug } = this.rootStore.router ?? {};
       if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
-      const subPages = await workspacePageService.fetchSubPages(workspaceSlug, this.id);
+      const subPages = await workspacePageService.fetchSubPages({ workspaceSlug }, this.id);
 
       runInAction(() => {
         for (const page of subPages) {

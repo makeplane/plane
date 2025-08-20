@@ -4,7 +4,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // constants
-import { EPageSharedUserAccess, EUserWorkspaceRoles } from "@plane/constants";
+import { EPageSharedUserAccess, EUserWorkspaceRoles } from "@plane/types";
 // plane imports
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/ui";
 // helpers

@@ -1,7 +1,7 @@
-// types
-import { TDocumentPayload, TIssuePage, TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@plane/constants";
+// types
+import { TDocumentPayload, TIssuePage, TPage } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -19,12 +19,9 @@ export class WorkspacePageService extends APIService {
   }
 
   async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
-    let url = `/api/workspaces/${workspaceSlug}/pages/?type=${type}`;
-    if (searchQuery) {
-      url += `&search=${searchQuery}`;
-    }
-
-    return this.get(url)
+    return this.get(`/api/workspaces/${workspaceSlug}/pages`, {
+      params: { search: searchQuery, type },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

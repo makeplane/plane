@@ -90,14 +90,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
 
   // Page Embed Implementation
   const pageEmbedProps: TPageEmbedConfig | undefined = useMemo(() => {
-    if (
-      !storeType ||
-      !page ||
-      !getPageById ||
-      !createPage ||
-      !getRedirectionLink ||
-      storeType !== EPageStoreType.WORKSPACE
-    ) {
+    if (!storeType || !page || !getPageById || !createPage || !getRedirectionLink) {
       return undefined;
     }
 
