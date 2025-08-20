@@ -2036,7 +2036,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             not request.user == issue.created_by
             and not ProjectMember.objects.filter(
                 project_id=project_id,
-                user_id=request.user.id,
+                member_id=request.user.id,
                 role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
@@ -2182,7 +2182,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             not request.user == issue.created_by
             and not ProjectMember.objects.filter(
                 project_id=project_id,
-                user_id=request.user.id,
+                member_id=request.user.id,
                 role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
                 is_active=True,
             ).exists()
