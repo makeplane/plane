@@ -362,7 +362,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                         onClick={() => setImage(null)}
                         disabled={isImageUploading}
                       >
-                        Remove
+                        Cancel
                       </Button>
                     </div>
                   )}

@@ -63,7 +63,6 @@ export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => 
         </Tabs>
       </div>
 
-      {/* Features section - rendered outside tabs since it's common for all billing frequencies */}
       <div className="px-2 pt-6 pb-2">
         <div className="p-2 text-sm font-semibold">{`Everything in ${basePlan} +`}</div>
         <ul className="grid grid-cols-12 gap-x-4">

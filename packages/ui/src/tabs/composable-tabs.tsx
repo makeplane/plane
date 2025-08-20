@@ -2,12 +2,10 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils";
 
-// Root Tabs Container
 function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
   return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col w-full h-full", className)} {...props} />;
 }
 
-// Tabs List Container
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
@@ -21,7 +19,6 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
   );
 }
 
-// Individual Tab Trigger
 function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Tab>) {
   return (
     <TabsPrimitive.Tab
@@ -38,12 +35,10 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
   );
 }
 
-// Tab Content Panel
 function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Panel>) {
   return <TabsPrimitive.Panel data-slot="tabs-content" className={cn("relative outline-none", className)} {...props} />;
 }
 
-// Tab Indicator (optional, for visual feedback)
 function TabsIndicator({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
