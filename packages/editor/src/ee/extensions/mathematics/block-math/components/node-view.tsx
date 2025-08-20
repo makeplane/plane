@@ -6,9 +6,9 @@ import { FloatingMathModal } from "../../components/floating-modal";
 // hooks
 import { useMathNodeView } from "../../hooks/use-math-node-view";
 // types
-import { EMathAttributeNames } from "../../types";
+import { EMathAttributeNames, type TMathAttributes } from "../../types";
 // local types
-import { type BlockMathExtensionType, type TBlockMathAttributes } from "../types";
+import type { BlockMathExtensionType } from "../types";
 // local components
 import { BlockMathEmptyState } from "./empty-state";
 import { BlockMathErrorState } from "./error-state";
@@ -17,9 +17,9 @@ import { BlockMathView } from "./view";
 export type BlockMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
   extension: BlockMathExtensionType;
   node: NodeViewProps["node"] & {
-    attrs: TBlockMathAttributes;
+    attrs: TMathAttributes;
   };
-  updateAttributes: (attrs: Partial<TBlockMathAttributes>) => void;
+  updateAttributes: (attrs: Partial<TMathAttributes>) => void;
 };
 
 export const BlockMathNodeView: React.FC<BlockMathNodeViewProps> = (props) => {

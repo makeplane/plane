@@ -23,7 +23,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     onAssetChange,
     onChange,
     onTransaction,
-    isSmoothCursorEnabled,
     disabledExtensions,
     editable,
     editorClassName = "",
@@ -46,6 +45,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     titleRef,
     user,
     updatePageProperties,
+    // additional props
+    isSmoothCursorEnabled,
+    extensionOptions,
   } = props;
 
   // Server connection states
@@ -164,7 +166,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     forwardedRef,
     handleEditorReady,
     isTouchDevice,
-    isSmoothCursorEnabled,
     mentionHandler,
     onAssetChange,
     onChange,
@@ -173,6 +174,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     placeholder,
     provider,
     tabIndex,
+    // additional props
+    isSmoothCursorEnabled,
+    extensionOptions,
   });
 
   // Use the new hook for realtime events

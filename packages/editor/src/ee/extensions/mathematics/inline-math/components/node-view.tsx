@@ -5,9 +5,9 @@ import { FloatingMathModal } from "../../components/floating-modal";
 // hooks
 import { useMathNodeView } from "../../hooks/use-math-node-view";
 // types
-import { EMathAttributeNames } from "../../types";
+import { EMathAttributeNames, type TMathAttributes } from "../../types";
 // local types
-import { type InlineMathExtensionType, type TInlineMathAttributes } from "../types";
+import type { InlineMathExtensionType } from "../types";
 // local components
 import { InlineMathEmptyState } from "./empty-state";
 import { InlineMathErrorState } from "./error-state";
@@ -16,9 +16,9 @@ import { InlineMathView } from "./view";
 export type InlineMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
   extension: InlineMathExtensionType;
   node: NodeViewProps["node"] & {
-    attrs: TInlineMathAttributes;
+    attrs: TMathAttributes;
   };
-  updateAttributes: (attrs: Partial<TInlineMathAttributes>) => void;
+  updateAttributes: (attrs: Partial<TMathAttributes>) => void;
 };
 
 export const InlineMathNodeView: React.FC<InlineMathNodeViewProps> = (props) => {

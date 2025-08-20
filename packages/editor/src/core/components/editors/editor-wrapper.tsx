@@ -34,7 +34,6 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
-    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
     onEditorFocus,
@@ -43,6 +42,9 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = props;
 
   const editor = useEditor({
@@ -56,7 +58,6 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
-    isSmoothCursorEnabled,
     id,
     isTouchDevice,
     initialValue,
@@ -68,6 +69,9 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({

@@ -24,7 +24,7 @@ export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCom
       searchTerms: ["math", "equation", "latex", "formula", "block"],
       icon: <Sigma className="size-3.5" />,
       command: ({ editor, range }) => {
-        insertBlockMath({ editor, range });
+        insertBlockMath({ editor, range, latex: "" });
       },
       section: "general",
       pushAfter: "attachment",
@@ -38,7 +38,7 @@ export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCom
       searchTerms: ["math", "equation", "latex", "formula", "inline"],
       icon: <SquareRadical className="size-3.5" />,
       command: ({ editor, range }) => {
-        insertInlineMath({ editor, range });
+        insertInlineMath({ editor, range, latex: "" });
       },
       section: "general",
       pushAfter: "block-equation",

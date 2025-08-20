@@ -17,7 +17,6 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     extensions: externalExtensions = [],
     fileHandler,
     flaggedExtensions,
-    isSmoothCursorEnabled,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -38,7 +37,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
   }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions]);
 
   return (
-    <EditorWrapper {...props} extensions={getExtensions()} isSmoothCursorEnabled={isSmoothCursorEnabled}>
+    <EditorWrapper {...props} extensions={getExtensions()}>
       {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
     </EditorWrapper>
   );

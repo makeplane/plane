@@ -1,9 +1,6 @@
 import type { Node } from "@tiptap/core";
-// parent types
-import { TMathAttributes, TMathBaseCommandOptions } from "../types";
-
-// BLOCK ATTRIBUTE TYPES
-export type TBlockMathAttributes = TMathAttributes;
+// local imports
+import type { MathematicsExtensionOptions, TMathBaseCommandOptions } from "../types";
 
 // BLOCK COMMAND OPTION TYPES
 export type TBlockMathSetCommandOptions = TMathBaseCommandOptions;
@@ -18,10 +15,6 @@ export type TBlockMathUpdateCommandOptions = {
 };
 
 // BLOCK EXTENSION TYPE
+export type BlockMathOptions = Pick<MathematicsExtensionOptions, "isFlagged" | "onClick">;
 
 export type BlockMathExtensionType = Node<BlockMathOptions>;
-
-// Base options for individual extensions (imported by specific extension type files)
-export type BlockMathOptions = {
-  isFlagged: boolean;
-};

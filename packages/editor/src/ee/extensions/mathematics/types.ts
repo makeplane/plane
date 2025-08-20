@@ -1,4 +1,5 @@
 import type { Node, Editor } from "@tiptap/core";
+// plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export enum EMathAttributeNames {
@@ -40,6 +41,7 @@ export type TMathModalBaseProps = {
 // MAIN MATHEMATICS EXTENSION TYPES
 export type MathematicsExtensionOptions = {
   isFlagged: boolean;
+  onClick?: (nodeAttrs: TMathAttributes, updateEquation: (latexEquation: string) => void) => void;
 };
 
 export type MathematicsExtensionStorage = {

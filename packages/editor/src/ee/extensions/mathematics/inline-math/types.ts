@@ -1,8 +1,6 @@
 import type { Node } from "@tiptap/core";
-import { TMathAttributes, TMathBaseCommandOptions } from "../types";
-
-// INLINE ATTRIBUTE TYPES
-export type TInlineMathAttributes = TMathAttributes;
+// local imports
+import type { MathematicsExtensionOptions, TMathBaseCommandOptions } from "../types";
 
 // INLINE COMMAND OPTION TYPES
 export type TInlineMathSetCommandOptions = TMathBaseCommandOptions;
@@ -18,8 +16,6 @@ export type TInlineMathUpdateCommandOptions = {
 };
 
 // INLINE EXTENSION TYPE
-export type InlineMathExtensionType = Node<InlineMathOptions>;
+export type InlineMathOptions = Pick<MathematicsExtensionOptions, "isFlagged" | "onClick">;
 
-export type InlineMathOptions = {
-  isFlagged: boolean;
-};
+export type InlineMathExtensionType = Node<InlineMathOptions>;

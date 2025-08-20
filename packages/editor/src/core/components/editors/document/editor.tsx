@@ -32,11 +32,13 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     id,
     isTouchDevice,
     handleEditorReady,
-    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
     user,
     value,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
@@ -81,9 +83,11 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     handleEditorReady,
     id,
     initialValue: value,
-    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({

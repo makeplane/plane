@@ -13,6 +13,7 @@ export const MathematicsExtensionConfig = Extension.create<MathematicsExtensionO
   addOptions() {
     return {
       isFlagged: false,
+      onClick: undefined,
     };
   },
 
@@ -26,9 +27,11 @@ export const MathematicsExtensionConfig = Extension.create<MathematicsExtensionO
     return [
       BlockMathExtension.configure({
         isFlagged: this.options.isFlagged,
+        onClick: this.options.onClick,
       }),
       InlineMathExtension.configure({
         isFlagged: this.options.isFlagged,
+        onClick: this.options.onClick,
       }),
     ];
   },

@@ -1,14 +1,14 @@
-// config
+// local imports
 import { MathematicsExtensionConfig } from "./extension-config";
+import type { MathematicsExtensionOptions } from "./types";
 
-type Props = {
-  isFlagged: boolean;
-};
+type Props = MathematicsExtensionOptions;
 
 export const MathematicsExtension = (props: Props) => {
-  const { isFlagged } = props;
+  const { isFlagged, onClick } = props;
 
   return MathematicsExtensionConfig.configure({
     isFlagged,
+    onClick,
   });
 };

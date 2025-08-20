@@ -29,6 +29,7 @@ import {
 } from "@/extensions";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type { IEditorProps } from "@/types";
 // local imports
@@ -48,9 +49,8 @@ type TArguments = Pick<
   | "tabIndex"
 > & {
   enableHistory: boolean;
-  isSmoothCursorEnabled: boolean;
   editable: boolean;
-};
+} & Pick<IEditorPropsExtended, "extensionOptions" | "isSmoothCursorEnabled">;
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -59,11 +59,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     fileHandler,
     flaggedExtensions,
     isTouchDevice = false,
-    isSmoothCursorEnabled,
     mentionHandler,
     placeholder,
     tabIndex,
     editable,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = args;
 
   const extensions = [
@@ -118,6 +120,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      // additional props
+      extensionOptions,
     }),
   ];
 

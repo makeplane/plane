@@ -1,6 +1,8 @@
 import type { Editor } from "@tiptap/core";
 import type { NodeViewProps } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane constants
@@ -25,23 +27,19 @@ export type UseMathNodeViewProps = {
  */
 export const useMathNodeView = (props: UseMathNodeViewProps) => {
   const { node, getPos, editor, extension, nodeType } = props;
-
-  // Derive configuration from nodeType
-  const displayMode = nodeType === ADDITIONAL_EXTENSIONS.BLOCK_MATH;
-
-  // State management
+  // states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewLatex, setPreviewLatex] = useState<string | null>(null);
-
-  // Refs
+  // refs
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  // Extension options
+  // derive configuration from nodeType
+  const displayMode = nodeType === ADDITIONAL_EXTENSIONS.BLOCK_MATH;
+  // extension options
   const { isFlagged: isExtensionFlagged } = extension.options;
-
-  // Node attributes
+  // node attributes
   const nodeAttrs = node.attrs;
   const isEmpty = !nodeAttrs[EMathAttributeNames.LATEX]?.trim();
+  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
 
   // Display logic - use preview latex if available, otherwise use actual latex
   const displayLatex = previewLatex !== null ? previewLatex : nodeAttrs[EMathAttributeNames.LATEX];
@@ -51,17 +49,6 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
   const validation = !isDisplayEmpty
     ? validateLaTeX(displayLatex, { displayMode })
     : { isValid: true, errorMessage: "" };
-
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (editor.isEditable) {
-        setIsModalOpen(true);
-      }
-    },
-    [editor]
-  );
 
   const updateMathNode = useCallback(
     (latex: string) => {
@@ -75,6 +62,21 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
       }
     },
     [getPos, nodeType, editor]
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (editor.isEditable) {
+        if (isTouchDevice) {
+          extension.options.onClick?.(nodeAttrs, updateMathNode);
+        } else {
+          setIsModalOpen(true);
+        }
+      }
+    },
+    [editor, extension.options, isTouchDevice, nodeAttrs, updateMathNode]
   );
 
   const cleanLatex = useCallback(

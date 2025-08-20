@@ -4,6 +4,8 @@ import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions";
+// plane editor imports
+import { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
@@ -74,6 +76,12 @@ export type TCommandExtraProps = {
   };
   "text-align": {
     alignment: TTextAlign;
+  };
+  "block-equation": {
+    latex: string;
+  };
+  "inline-equation": {
+    latex: string;
   };
 };
 
@@ -167,13 +175,12 @@ export type IEditorProps = {
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
   onChange?: (json: object, html: string) => void;
-  isSmoothCursorEnabled: boolean;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-};
+} & IEditorPropsExtended;
 
 export type ILiteTextEditorProps = IEditorProps;
 

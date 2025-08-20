@@ -1,5 +1,7 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Content } from "@tiptap/core";
+// plane editor imports
+import { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // local imports
 import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
 
@@ -13,8 +15,8 @@ type TCoreHookProps = Pick<
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"
-  | "isSmoothCursorEnabled"
->;
+> &
+  Pick<IEditorPropsExtended, "extensionOptions" | "isSmoothCursorEnabled">;
 
 export type TEditorHookProps = TCoreHookProps &
   Pick<

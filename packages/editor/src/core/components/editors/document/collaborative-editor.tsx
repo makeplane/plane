@@ -51,6 +51,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     titleRef,
     user,
     updatePageProperties,
+    // additional props
+    extensionOptions,
     isSmoothCursorEnabled = false,
   } = props;
 
@@ -83,7 +85,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       handleEditorReady,
       id,
       dragDropEnabled,
-      isSmoothCursorEnabled,
       isTouchDevice,
       mentionHandler,
       onAssetChange,
@@ -97,6 +98,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       titleRef,
       updatePageProperties,
       user,
+      // additional props
+      extensionOptions,
+      isSmoothCursorEnabled,
     });
 
   const editorContainerClassNames = getEditorClassNames({
