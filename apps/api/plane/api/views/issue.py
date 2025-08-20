@@ -145,6 +145,22 @@ from plane.utils.openapi import (
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
+def user_has_issue_permission(
+    user_id, project_id, issue=None, allowed_roles=None, allow_creator=True
+):
+    if allow_creator and issue is not None and user_id == issue.created_by_id:
+        return True
+
+    qs = ProjectMember.objects.filter(
+        project_id=project_id,
+        member_id=user_id,
+        is_active=True,
+    )
+    if allowed_roles is not None:
+        qs = qs.filter(role__in=allowed_roles)
+
+    return qs.exists()
+
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
@@ -1868,14 +1884,12 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         # if the user is creator or admin,member then allow the upload
-        if (
-            not request.user == issue.created_by
-            and not ProjectMember.objects.filter(
-                project_id=project_id,
-                member_id=request.user.id,
-                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
-                is_active=True,
-            ).exists()
+        if not user_has_issue_permission(
+            request.user.id,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allow_creator=True,
         ):
             return Response(
                 {"error": "You are not allowed to upload this attachment"},
@@ -2032,14 +2046,12 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         # if the request user is creator or admin then delete the attachment
-        if (
-            not request.user == issue.created_by
-            and not ProjectMember.objects.filter(
-                project_id=project_id,
-                member_id=request.user.id,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
+        if not user_has_issue_permission(
+            request.user,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value],
+            allow_creator=True,
         ):
             return Response(
                 {"error": "You are not allowed to delete this attachment"},
@@ -2109,11 +2121,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific attachment.
         """
         # if the user is part of the project then allow the download
-        if not ProjectMember.objects.filter(
+        if not user_has_issue_permission(
+            request.user,
             project_id=project_id,
-            member_id=request.user.id,
-            is_active=True,
-        ).exists():
+            issue=None,
+            allowed_roles=None,
+            allow_creator=False,
+        ):
             return Response(
                 {"error": "You are not allowed to download this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -2178,14 +2192,12 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         # if the user is creator or admin then allow the upload
-        if (
-            not request.user == issue.created_by
-            and not ProjectMember.objects.filter(
-                project_id=project_id,
-                member_id=request.user.id,
-                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
-                is_active=True,
-            ).exists()
+        if not user_has_issue_permission(
+            request.user,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allow_creator=True,
         ):
             return Response(
                 {"error": "You are not allowed to upload this attachment"},
