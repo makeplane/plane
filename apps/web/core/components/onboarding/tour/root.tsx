@@ -52,45 +52,50 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   if (!currentWorkspace) return null;
 
   return (
-    <div className="flex bg-[#006399] rounded-lg w-[60%]">
-      <div className="w-[40%] py-9 px-8 flex flex-col gap-5 justify-around">
-        <div className="font-medium text-white flex items-center gap-2 justify-center">
-          <PlaneLockup className="h-6 w-auto" /> <span className="font-bold text-2xl mt-2">Business</span>
+    <div className="flex flex-col bg-[#006399] rounded-lg w-[80%] md:w-[60%] md:flex-row">
+      <div className="w-full py-6 px-4 flex flex-col gap-4 justify-around md:w-[40%] md:py-9 md:px-8 md:gap-5">
+        <div className="font-medium text-white flex items-center gap-1 justify-center md:gap-2">
+          <PlaneLockup className="h-5 w-auto md:h-6" />{" "}
+          <span className="font-bold text-xl mt-1 md:text-2xl md:mt-2">Business</span>
         </div>
-        <div className="space-y-1">
-          <p className="text-white text-center font-medium">Your trial is active now!</p>
-          <p className="text-white/60 text-sm text-center">Unlock your team&apos;s full potential for 14 days</p>
+        <div className="space-y-0.5 md:space-y-1">
+          <p className="text-white text-center font-medium text-sm md:text-base">Your trial is active now!</p>
+          <p className="text-white/60 text-xs text-center md:text-sm">
+            Unlock your team&apos;s full potential for 14 days
+          </p>
         </div>
-        <div>
+        <div className="hidden md:block">
           <img src="/onboarding/tour.webp" className="w-full" alt="Welcome" />
         </div>
-        <p className="text-center text-sm text-white/60">You can use free plan after your trial ends</p>
+        <p className="text-center text-xs text-white/60 md:text-sm">You can use free plan after your trial ends</p>
       </div>
-      <div className="w-[60%] p-2">
-        <div className="bg-custom-background-100 rounded-lg p-4 px-6 h-full flex flex-col justify-between gap-6 items-start">
-          <p className="font-medium text-custom-text-100 text-lg">
+      <div className="w-full p-2 md:w-[60%]">
+        <div className="bg-custom-background-100 rounded-lg p-3 px-4 h-full flex flex-col justify-between gap-4 items-start md:p-4 md:px-6 md:gap-6">
+          <p className="font-medium text-custom-text-100 text-base md:text-lg">
             Features you&apos;ll get with <span className="text-custom-primary-90">Business</span> plan
           </p>
-          <Avatar
-            src={getFileURL(currentWorkspace.logo_url || "")}
-            name={currentWorkspace?.name}
-            size={30}
-            shape="square"
-          />
-          <p>
+          <div className="scale-90 md:scale-100 origin-left">
+            <Avatar
+              src={getFileURL(currentWorkspace.logo_url || "")}
+              name={currentWorkspace?.name}
+              size={30}
+              shape="square"
+            />
+          </div>
+          <p className="text-sm md:text-base">
             <span className="font-medium">{currentWorkspace?.name}</span> workspace with Business
           </p>
           <table className="w-full">
             <thead>
               <tr>
                 <th className="text-left">
-                  <div className="font-bold bg-custom-background-80/50 text-custom-text-300 p-1 px-2 rounded-md w-fit text-sm">
+                  <div className="font-bold bg-custom-background-80/50 text-custom-text-300 p-0.5 px-1.5 rounded-md w-fit text-xs md:p-1 md:px-2 md:text-sm">
                     Free
                   </div>
                 </th>
                 <th className="text-left">{""}</th>
                 <th className="text-left">
-                  <div className="font-bold bg-custom-background-80 text-custom-text-200 p-1 px-2 rounded-md w-fit text-sm">
+                  <div className="font-bold bg-custom-background-80 text-custom-text-200 p-0.5 px-1.5 rounded-md w-fit text-xs md:p-1 md:px-2 md:text-sm">
                     Business
                   </div>
                 </th>
@@ -99,11 +104,11 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             <tbody>
               {BUSINESS_FEATURES.map((feature, index) => (
                 <tr key={index} className="font-medium">
-                  <td className="text-left text-custom-text-400 text-sm py-3">{feature.free}</td>
-                  <td className="text-left py-3">
-                    <ArrowRight className="h-4 w-4" />
+                  <td className="text-left text-custom-text-400 text-xs py-2 md:text-sm md:py-3">{feature.free}</td>
+                  <td className="text-left py-2 md:py-3">
+                    <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
                   </td>
-                  <td className="text-left text-custom-text-200 text-sm py-3">{feature.business}</td>
+                  <td className="text-left text-custom-text-200 text-xs py-2 md:text-sm md:py-3">{feature.business}</td>
                 </tr>
               ))}
             </tbody>
