@@ -34,8 +34,8 @@
     "next": "14.2.30",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.49",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-hook-form": "7.51.5",
     "sharp": "^0.33.5",
     "swr": "^2.2.4",
@@ -47,9 +47,9 @@
     "@plane/typescript-config": "workspace:*",
     "@types/lodash": "4.17.20",
     "@types/node": "18.16.1",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@types/uuid": "^9.0.8",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }
