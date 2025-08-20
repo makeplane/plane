@@ -2111,7 +2111,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         # if the user is part of the project then allow the download
         if not ProjectMember.objects.filter(
             project_id=project_id,
-            user_id=request.user.id,
+            member_id=request.user.id,
             is_active=True,
         ).exists():
             return Response(
