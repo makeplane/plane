@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
+import { TabItem, Tabs } from "@plane/propel/tabs";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -12,7 +13,7 @@ import {
   TCyclePlotType,
   TStateGroups,
 } from "@plane/types";
-import { Avatar, StateGroupIcon, TabItem, Tabs } from "@plane/ui";
+import { Avatar, StateGroupIcon } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core";

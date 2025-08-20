@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
+import { Tabs, TabItem } from "@plane/propel/tabs";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -14,7 +14,8 @@ import {
   TStateGroups,
 } from "@plane/types";
 import { Avatar, StateGroupIcon } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+
+import { getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core";
 // helpers
@@ -220,21 +221,7 @@ export const StateStatComponent = observer((props: TStateStatComponent) => {
   );
 });
 
-const progressStats = [
-  {
-    key: "stat-assignees",
-    title: "Assignees",
-  },
-  {
-    key: "stat-labels",
-    title: "Labels",
-  },
-  {
-    key: "stat-states",
-    title: "States",
-  },
-];
-
+export type TModuleProgressStatsTab = "stat-assignees" | "stat-labels" | "stat-states";
 type TModuleProgressStats = {
   moduleId: string;
   plotType: TModulePlotType;
@@ -264,12 +251,10 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
     noBackground = false,
   } = props;
   // hooks
-  const { storedValue: currentTab, setValue: setModuleTab } = useLocalStorage(
+  const { storedValue: currentTab } = useLocalStorage<TModuleProgressStatsTab>(
     `module-analytics-tab-${moduleId}`,
     "stat-assignees"
   );
-  // derived values
-  const currentTabIndex = (tab: string): number => progressStats.findIndex((stat) => stat.key === tab);
 
   const currentDistribution = distribution as TModuleDistribution;
   const currentEstimateDistribution = distribution as TModuleEstimateDistribution;
@@ -314,61 +299,55 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
     total: totalIssuesCount || 0,
   }));
 
+  // improvement: create tabs configuration map for better maintainability
+  const moduleProgressStatsTabs: TabItem<TModuleProgressStatsTab>[] = [
+    {
+      key: "stat-assignees",
+      label: "Assignees",
+      content: (
+        <AssigneeStatComponent
+          distribution={distributionAssigneeData}
+          isEditable={isEditable}
+          filters={filters}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+    {
+      key: "stat-labels",
+      label: "Labels",
+      content: (
+        <LabelStatComponent
+          distribution={distributionLabelData}
+          isEditable={isEditable}
+          filters={filters}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+    {
+      key: "stat-states",
+      label: "States",
+      content: (
+        <StateStatComponent
+          distribution={distributionStateData}
+          totalIssuesCount={totalIssuesCount}
+          isEditable={isEditable}
+          handleFiltersUpdate={handleFiltersUpdate}
+        />
+      ),
+    },
+  ];
+
   return (
     <div>
-      <Tab.Group defaultIndex={currentTabIndex(currentTab ? currentTab : "stat-assignees")}>
-        <Tab.List
-          as="div"
-          className={cn(
-            `flex w-full items-center justify-between gap-2 rounded-md p-1`,
-            roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-custom-background-90`,
-            size === "xs" ? `text-xs` : `text-sm`
-          )}
-        >
-          {progressStats.map((stat) => (
-            <Tab
-              className={cn(
-                `p-1 w-full text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all`,
-                roundedTab ? `rounded-3xl border border-custom-border-200` : `rounded`,
-                stat.key === currentTab
-                  ? "bg-custom-background-100 text-custom-text-300"
-                  : "text-custom-text-400 hover:text-custom-text-300"
-              )}
-              key={stat.key}
-              onClick={() => setModuleTab(stat.key)}
-            >
-              {stat.title}
-            </Tab>
-          ))}
-        </Tab.List>
-        <Tab.Panels className="py-3 text-custom-text-200">
-          <Tab.Panel key={"stat-assignees"}>
-            <AssigneeStatComponent
-              distribution={distributionAssigneeData}
-              isEditable={isEditable}
-              filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
-            />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-labels"}>
-            <LabelStatComponent
-              distribution={distributionLabelData}
-              isEditable={isEditable}
-              filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
-            />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-states"}>
-            <StateStatComponent
-              distribution={distributionStateData}
-              totalIssuesCount={totalIssuesCount}
-              isEditable={isEditable}
-              handleFiltersUpdate={handleFiltersUpdate}
-            />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+      <Tabs
+        tabs={moduleProgressStatsTabs}
+        defaultTab={currentTab || "stat-assignees"}
+        storageKey={`module-analytics-tab-${moduleId}`}
+        size={size === "xs" ? "sm" : size}
+        storeInLocalStorage
+      />
     </div>
   );
 });

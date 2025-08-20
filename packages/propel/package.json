@@ -15,6 +15,7 @@
     "./ui/*": "./src/ui/*.tsx",
     "./charts/*": "./src/charts/*/index.ts",
     "./table": "./src/table/index.ts",
+    "./tabs": "./src/tabs/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
@@ -31,8 +32,8 @@
     "@plane/eslint-config": "*",
     "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.2.18",
     "typescript": "5.8.3"
   }
 }
