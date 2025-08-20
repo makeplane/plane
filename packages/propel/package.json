@@ -20,7 +20,7 @@
     "./tabs": "./src/tabs/index.ts",
     "./popover": "./src/popover/index.ts",
     "./tooltip": "./src/tooltip/index.ts",
-    "./styles/fonts": "./src/styles/fonts/index.css",
+    "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
