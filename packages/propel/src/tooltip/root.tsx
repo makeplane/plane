@@ -92,7 +92,7 @@ export function Tooltip(props: ITooltipProps) {
     <BaseTooltip.Provider>
       <BaseTooltip.Root delay={openDelay} closeDelay={closeDelay} disabled={disabled}>
         <BaseTooltip.Trigger render={children} />
-        <BaseTooltip.Portal >
+        <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
               "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-custom-shadow-xs",
