@@ -60,4 +60,9 @@ function TabsIndicator({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+Tabs.List = TabsList;
+Tabs.Trigger = TabsTrigger;
+Tabs.Content = TabsContent;
+Tabs.Indicator = TabsIndicator;
+
 export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };
