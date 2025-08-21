@@ -1233,7 +1233,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
         actor_id = str(request.user.id) if request.user else "Unknown"
         issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
-        slug = slug=self.kwargs.get("slug")
+        slug = self.kwargs.get("slug")
         workspace = Workspace.objects.get(slug=slug)
         try:
             issue = Issue.objects.get(id=issue_id)
