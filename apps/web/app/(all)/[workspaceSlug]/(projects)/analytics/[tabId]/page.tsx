@@ -58,7 +58,7 @@ const AnalyticsPage = observer((props: Props) => {
   const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
   const defaultTab = (tabId as TAnalyticsTabsBase) || ANALYTICS_TABS[0].key;
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = (value: TAnalyticsTabsBase) => {
     router.push(`/${currentWorkspace?.slug}/analytics/${value}`);
   };
 

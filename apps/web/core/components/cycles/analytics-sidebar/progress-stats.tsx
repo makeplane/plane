@@ -300,8 +300,8 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
     total: totalIssuesCount || 0,
   }));
 
-  const handleTabChange = (value: string) => {
-    setCycleTab(value as TCycleProgressStatsTabKey);
+  const handleTabChange = (value: TCycleProgressStatsTabKey) => {
+    setCycleTab(value);
   };
 
   return (
