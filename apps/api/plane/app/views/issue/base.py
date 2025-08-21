@@ -1224,7 +1224,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the issue
         issue = (
-            Issue.issue_objects.filter(project_id=project.id)
+            Issue.objects.filter(project_id=project.id)
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -77,6 +77,12 @@ const IssueDetailsPage = observer(() => {
     handleToggleIssueDetailSidebar();
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
+
+  useEffect(() => {
+    if (data?.is_intake) {
+      redirect(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
+    }
+  }, [workspaceSlug, data]);
 
   return (
     <>
