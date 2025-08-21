@@ -34,6 +34,7 @@ class Initiative(BaseModel):
     status = models.CharField(
         max_length=100, choices=StatusContext.choices, default=StatusContext.PLANNED
     )
+    logo_props = models.JSONField(default=dict)
 
     class Meta:
         db_table = "initiatives"

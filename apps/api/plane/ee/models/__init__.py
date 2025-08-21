@@ -99,7 +99,7 @@ from .template import (
     TemplateCategory,
 )
 
-from .page import PageUser
+from .page import PageUser, PageComment, PageCommentReaction
 
 from .recurring import (
     RecurringWorkitemTask,
