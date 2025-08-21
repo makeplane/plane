@@ -1,4 +1,5 @@
 # Python imports
+import uuid
 import hashlib
 
 def convert_uuid_to_integer(uuid_val: uuid.UUID) -> int:
