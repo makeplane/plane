@@ -77,8 +77,6 @@
     "linkifyjs": "^4.3.2",
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
-    "prosemirror-codemark": "^0.4.2",
-    "prosemirror-model": "^1.25.1",
     "prosemirror-safari-ime-span": "^1.0.2",
     "prosemirror-utils": "^1.2.2",
     "smooth-scroll-into-view-if-needed": "^2.0.2",

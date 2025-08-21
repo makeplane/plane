@@ -1,4 +1,4 @@
-import type { MarkType } from "prosemirror-model";
+import type { MarkType } from "@tiptap/pm/model";
 
 export type Options = {
   markType?: MarkType;
