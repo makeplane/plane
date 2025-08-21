@@ -209,6 +209,7 @@ export class PiChatStore implements IPiChatStore {
       payload = {
         ...payload,
         [focus.entityType]: focus.entityIdentifier,
+        workspace_id: workspaceId,
       };
     }
 
