@@ -16,7 +16,7 @@ import { StickyEditorToolbar } from "./toolbar";
 interface StickyEditorWrapperProps
   extends Omit<
     ILiteTextEditorProps,
-    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "embedHandler"
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
   > {
   workspaceSlug: string;
   workspaceId: string;

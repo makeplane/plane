@@ -19,7 +19,7 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceSlug: string;

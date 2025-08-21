@@ -12,7 +12,7 @@ import { EditorMentionsRoot } from "./embeds/mentions";
 import { IssueCommentToolbar } from "./toolbar";
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
