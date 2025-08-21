@@ -18,6 +18,9 @@
     "./menu": "./src/menu/index.ts",
     "./table": "./src/table/index.ts",
     "./tabs": "./src/tabs/index.ts",
+    "./popover": "./src/popover/index.ts",
+    "./command": "./src/command/index.ts",
+    "./combobox": "./src/combobox/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
