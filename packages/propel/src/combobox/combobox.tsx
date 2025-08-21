@@ -42,7 +42,7 @@ export interface ComboboxOptionsProps {
 }
 
 export interface ComboboxOptionProps {
-  value: unknown;
+  value: string;
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
@@ -236,6 +236,7 @@ function ComboboxOptions({
   className,
   inputClassName,
   optionsContainerClassName,
+  emptyMessage,
 }: ComboboxOptionsProps) {
   const { multiSelect } = useComboboxContext();
   return (
@@ -257,7 +258,7 @@ function ComboboxOptions({
         >
           {children}
         </Command.List>
-        <Command.Empty>No options found.</Command.Empty>
+        <Command.Empty>{emptyMessage ?? "No options found."}</Command.Empty>
       </Command>
     </Popover.Panel>
   );
@@ -266,7 +267,7 @@ function ComboboxOptions({
 function ComboboxOption({ value, children, disabled, className }: ComboboxOptionProps) {
   const { handleValueChange, multiSelect, maxSelections, value: selectedValue } = useComboboxContext();
 
-  const stringValue = String(value);
+  const stringValue = value;
   const isSelected = React.useMemo(() => {
     if (!multiSelect) return false;
     return Array.isArray(selectedValue) ? (selectedValue as string[]).includes(stringValue) : false;
