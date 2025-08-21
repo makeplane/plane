@@ -250,7 +250,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
     )
     def get(self, request, slug):
         # Watching Issues Count
-        unread_notifications_count = (
+        unread_notifications_count = len(
             Notification.objects.filter(
                 workspace__slug=slug,
                 receiver_id=request.user.id,
@@ -258,18 +258,19 @@ class UnreadNotificationEndpoint(BaseAPIView):
                 archived_at__isnull=True,
                 snoozed_till__isnull=True,
             )
-            .exclude(sender__icontains="mentioned")
-            .count()
+            .exclude(sender__icontains="mentioned")[:100]
         )
 
-        mention_notifications_count = Notification.objects.filter(
-            workspace__slug=slug,
-            receiver_id=request.user.id,
-            read_at__isnull=True,
-            archived_at__isnull=True,
-            snoozed_till__isnull=True,
-            sender__icontains="mentioned",
-        ).count()
+        mention_notifications_count = len(
+            Notification.objects.filter(
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
+                archived_at__isnull=True,
+                snoozed_till__isnull=True,
+                sender__icontains="mentioned",
+            )[:100]
+        )
 
         return Response(
             {
