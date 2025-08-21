@@ -95,13 +95,21 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
         actor_id = str(request.user.id) if request.user else "Unknown"
         issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
-        slug = slug=self.kwargs.get("slug")
+        slug = self.kwargs.get("slug")
         workspace = Workspace.objects.get(slug=slug)
         try:
-            project = Project.objects.get(workspace=workspace)
-            project_id_str = project.id
-        except Project.DoesNotExist:
-            return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
+            issue = Issue.objects.get(id=issue_id)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "The provided issue does not exist."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if not issue.project:
+            return Response(
+                {"error": "The issue must be associated with a project."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        project_id_str = str(issue.project.id)
         epoch_timestamp = int(timezone.now().timestamp())
 
         custom_property.save()
