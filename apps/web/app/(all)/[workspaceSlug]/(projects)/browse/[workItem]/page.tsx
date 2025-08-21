@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -80,7 +80,7 @@ const IssueDetailsPage = observer(() => {
 
   useEffect(() => {
     if (data?.is_intake) {
-      redirect(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
+      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
     }
   }, [workspaceSlug, data]);
 
