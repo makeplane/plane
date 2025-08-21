@@ -1,4 +1,3 @@
-import React from "react";
 import { Check, ChevronDown } from "lucide-react";
 // helpers
 import { cn } from "@plane/utils";
@@ -31,9 +30,14 @@ const CustomSelect = (props: ICustomSelectProps) => {
       <>
         {customButton ? (
           <Select.Trigger
-            className={`outline-none flex items-center justify-between gap-1 text-xs ${
-              disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-            } ${customButtonClassName}`}
+            className={cn(
+              "outline-none flex items-center justify-between gap-1 text-xs",
+              {
+                "cursor-not-allowed text-custom-text-200": disabled,
+                "cursor-pointer hover:bg-custom-background-80": !disabled,
+              },
+              customButtonClassName
+            )}
           >
             {customButton}
           </Select.Trigger>
@@ -58,7 +62,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
 
       <Select.Portal container={portalElement?.current}>
         <Select.Backdrop />
-        <Select.Positioner align="start">
+        <Select.Positioner align={placement}>
           <Select.ScrollUpArrow />
           <Select.Popup
             className={cn(
