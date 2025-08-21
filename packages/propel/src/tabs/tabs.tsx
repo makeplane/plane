@@ -2,11 +2,41 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "@plane/utils";
 
-function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col w-full h-full", className)} {...props} />;
-}
+type TabsCompound = React.ForwardRefExoticComponent<
+  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
+> & {
+  List: React.ForwardRefExoticComponent<
+    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
+  >;
+  Trigger: React.ForwardRefExoticComponent<
+    React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
+        React.ElementRef<typeof TabsPrimitive.Tab>
+      >
+  >;
+  Content: React.ForwardRefExoticComponent<
+    React.ComponentProps<typeof TabsPrimitive.Panel> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Panel>>
+  >;
+  Indicator: React.ForwardRefExoticComponent<React.ComponentProps<"div"> & React.RefAttributes<HTMLDivElement>>;
+};
 
-function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
+const TabsRoot = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  React.ComponentProps<typeof TabsPrimitive.Root>
+>(({ className, ...props }, ref) => {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn("flex flex-col w-full h-full", className)}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+
+const TabsList = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentProps<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -15,15 +45,15 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
         className
       )}
       {...props}
+      ref={ref}
     />
   );
-}
+});
 
-function TabsTrigger({
-  className,
-  size = "md",
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" }) {
+const TabsTrigger = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Tab>,
+  React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" }
+>(({ className, size = "md", ...props }, ref) => {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
@@ -40,15 +70,25 @@ function TabsTrigger({
         className
       )}
       {...props}
+      ref={ref}
     />
   );
-}
+});
 
-function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Panel>) {
-  return <TabsPrimitive.Panel data-slot="tabs-content" className={cn("relative outline-none", className)} {...props} />;
-}
-
-function TabsIndicator({ className, ...props }: React.ComponentProps<"div">) {
+const TabsContent = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Panel>,
+  React.ComponentProps<typeof TabsPrimitive.Panel>
+>(({ className, ...props }, ref) => {
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("relative outline-none", className)}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+const TabsIndicator = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(({ className, ...props }, ref) => {
   return (
     <div
       className={cn(
@@ -56,13 +96,16 @@ function TabsIndicator({ className, ...props }: React.ComponentProps<"div">) {
         className
       )}
       {...props}
+      ref={ref}
     />
   );
-}
+});
 
-Tabs.List = TabsList;
-Tabs.Trigger = TabsTrigger;
-Tabs.Content = TabsContent;
-Tabs.Indicator = TabsIndicator;
+export const Tabs = Object.assign(TabsRoot, {
+  List: TabsList,
+  Trigger: TabsTrigger,
+  Content: TabsContent,
+  Indicator: TabsIndicator,
+}) satisfies TabsCompound;
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };
+export { TabsList, TabsTrigger, TabsContent, TabsIndicator };
