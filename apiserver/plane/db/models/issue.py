@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.utils import timezone
 from django.db.models import Q
 
@@ -15,6 +15,7 @@ from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
 
 from .project import ProjectBaseModel
+from plane.utils.uuid import convert_uuid_to_integer
 
 
 def get_default_properties():
@@ -236,11 +237,18 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
-                last_sequence = (
-                    IssueSequence.objects.filter(project=self.project)
-                    .select_for_update()
-                    .aggregate(largest=models.Max("sequence"))["largest"]
-                )
+                # Create a lock for this specific project using an advisory lock
+                # This ensures only one transaction per project can execute this code at a time
+                lock_key = convert_uuid_to_integer(self.project.id)
+
+                with connection.cursor() as cursor:
+                    # Get an exclusive lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                # Get the last sequence for the project
+                last_sequence = IssueSequence.objects.filter(
+                    project=self.project
+                ).aggregate(largest=models.Max("sequence"))["largest"]
                 self.sequence_id = last_sequence + 1 if last_sequence else 1
                 # Strip the html tags using html parser
                 self.description_stripped = (
