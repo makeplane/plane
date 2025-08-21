@@ -46,8 +46,8 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   const handleTabChange = useCallback(
-    (value: string) => {
-      const updatedTab = value as TPageNavigationPaneTab;
+    (value: TPageNavigationPaneTab) => {
+      const updatedTab = value;
       const isUpdatedTabInfo = updatedTab === "info";
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: updatedTab },
