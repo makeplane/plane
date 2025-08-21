@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { ExternalLink, Pencil } from "lucide-react";
 // ui
 import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
@@ -79,15 +78,15 @@ export const UrlValueInput = observer((props: TUrlValueInputProps) => {
         {!isEditing && (
           <div className="flex items-center gap-1 group-hover:opacity-100">
             {validUrl && (
-              <Link
-                href={validUrl}
+              <a
+                href={validUrl.toString()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-shrink-0 rounded bg-custom-background-80 hover:bg-custom-background-100"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLink className="h-2.5 w-2.5 flex-shrink-0" />
-              </Link>
+              </a>
             )}
 
             <button className="p-1 flex-shrink-0  text-custom-text-400">
