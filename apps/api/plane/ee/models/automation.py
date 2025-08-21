@@ -92,6 +92,7 @@ class Automation(ProjectBaseModel):
         help_text="The bot user for this automation",
     )
 
+
     def can_execute(self):
         """Check if automation can be executed"""
         return (
@@ -226,7 +227,6 @@ class AutomationVersion(ProjectBaseModel):
         default=dict,
         help_text="Complete automation configuration including nodes and edges",
     )
-
     # Metadata
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
@@ -410,6 +410,13 @@ class AutomationRun(ProjectBaseModel):
         related_name="automation_runs",
         null=True,
         blank=True,
+    )
+    initiator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="automation_initiators",
     )
 
     @classmethod
