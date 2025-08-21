@@ -97,9 +97,11 @@ const PopoverPortal = React.memo<React.ComponentProps<typeof BasePopover.Portal>
   return <BasePopover.Portal data-slot="popover-portal" {...props} />;
 });
 
-const PopoverPositioner = React.memo<React.ComponentProps<typeof BasePopover.Positioner>>(function PopoverPositioner(props) {
-  return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
-});
+const PopoverPositioner = React.memo<React.ComponentProps<typeof BasePopover.Positioner>>(
+  function PopoverPositioner(props) {
+    return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
+  }
+);
 
 // compound components
 const Popover = Object.assign(
@@ -119,4 +121,4 @@ PopoverPortal.displayName = "PopoverPortal";
 PopoverTrigger.displayName = "PopoverTrigger";
 PopoverPositioner.displayName = "PopoverPositioner";
 
-export { Popover};
+export { Popover };
