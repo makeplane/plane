@@ -97,3 +97,5 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+
+storybook-static
