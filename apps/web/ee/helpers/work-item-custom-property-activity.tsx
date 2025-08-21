@@ -209,6 +209,9 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
   );
 };
 
+// ------------ URL ------------
+export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () => null;
+
 // ------------ RELATION ISSUE ------------
 export const getWorkItemRelationIssuePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () =>
   null;
@@ -231,9 +234,7 @@ export const getWorkItemCustomPropertyActivityMessage = (
     DATETIME: getWorkItemDatePropertyActivityMessage,
     RELATION_USER: getWorkItemMemberPropertyActivityMessage,
     RELATION_ISSUE: getWorkItemRelationIssuePropertyActivityMessage,
-    URL: function (props: TGetWorkItemAdditionalPropertiesActivityMessageParams): React.ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    URL: getWorkItemUrlPropertyActivityMessage,
   };
 
   const getWorkItemCustomPropertyActivityMessageHelper =
