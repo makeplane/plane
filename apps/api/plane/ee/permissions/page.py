@@ -5,6 +5,9 @@ from plane.db.models import WorkspaceMember, ProjectMember, Page
 from plane.app.permissions import ROLE
 from plane.ee.models import PageUser
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
 
 # Permission Mappings for workspace members
 ADMIN = ROLE.ADMIN.value
@@ -157,24 +160,26 @@ class ProjectPagePermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        slug = view.kwargs.get("slug")
-        project_id = view.kwargs.get("project_id")
-
         user_id = request.user.id
         slug = view.kwargs.get("slug")
         project_id = view.kwargs.get("project_id")
         page_id = view.kwargs.get("page_id")
 
-        if request.user.is_anonymous:
-            return False
+        is_teamspace_member = None
 
-        if not ProjectMember.objects.filter(
+        project_member_exists = ProjectMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             is_active=True,
             project_id=project_id,
-        ).exists():
-            return False
+        ).exists()
+
+        if not project_member_exists:
+            is_teamspace_member = check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
+            if not is_teamspace_member:
+                return False
 
         if page_id:
             page = Page.objects.get(id=page_id, workspace__slug=slug)
@@ -190,12 +195,20 @@ class ProjectPagePermission(BasePermission):
                     slug=slug,
                     user_id=user_id,
                 ):
-                    return self._has_shared_page_access(request, slug, page.id, project_id)
+                    return self._has_shared_page_access(
+                        request, slug, page.id, project_id
+                    )
                 # If shared pages feature is not enabled, only the owner can access
                 return False
 
             # If the page is public, check access based on workspace role
-            return self._has_public_page_access(request, slug, project_id)
+            # Short-circuit: if project-level access suffices, avoid teamspace check
+            if self._has_public_page_access(request, slug, project_id):
+                return True
+
+            return project_member_exists or self._has_teamspace_page_access(
+                request, slug, page.id, project_id, is_teamspace_member
+            )
         else:
             return True
 
@@ -286,6 +299,21 @@ class ProjectPagePermission(BasePermission):
                 project_id=project_id,
                 is_active=True,
             ).exists()
+
+        # Deny by default
+        return False
+
+    def _has_teamspace_page_access(
+        self, request, slug, page_id, project_id, is_teamspace_member
+    ):
+        """
+        Check if the user has permission to access a page in a teamspace
+        """
+        method = request.method
+
+        # only the admins and members can perform the action in the teamspace page
+        if (method in ["POST", "PUT", "PATCH"]) or (method in SAFE_METHODS):
+            return is_teamspace_member
 
         # Deny by default
         return False
