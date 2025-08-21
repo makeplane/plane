@@ -104,7 +104,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
-  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/intake/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -413,7 +412,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
-                    <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(intakeIssueLink)}>
+                    <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(workItemLink)}>
                       <div className="flex items-center gap-2">
                         <Copy size={14} strokeWidth={2} />
                         {t("inbox_issue.actions.copy")}
