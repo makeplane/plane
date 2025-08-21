@@ -1,91 +1,68 @@
-import React, { FC, useEffect, useState } from "react";
-import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
-// helpers
-import { useLocalStorage } from "@plane/hooks";
+import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
+import * as React from "react";
 import { cn } from "@plane/utils";
-// types
-import { TabList, TabListItem } from "./list";
 
-export type TabContent = {
-  content: React.ReactNode;
-};
+function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col w-full h-full", className)} {...props} />;
+}
 
-export type TabItem = TabListItem & TabContent;
-
-type TTabsProps = {
-  tabs: TabItem[];
-  storageKey?: string;
-  actions?: React.ReactNode;
-  defaultTab?: string;
-  containerClassName?: string;
-  tabListContainerClassName?: string;
-  tabListClassName?: string;
-  tabClassName?: string;
-  tabPanelClassName?: string;
-  size?: "sm" | "md" | "lg";
-  storeInLocalStorage?: boolean;
-};
-
-export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
-  const {
-    tabs,
-    storageKey,
-    actions,
-    defaultTab = tabs[0]?.key,
-    containerClassName = "",
-    tabListContainerClassName = "",
-    tabListClassName = "",
-    tabClassName = "",
-    tabPanelClassName = "",
-    size = "md",
-    storeInLocalStorage = true,
-  } = props;
-
-  const { storedValue, setValue } = useLocalStorage(
-    storeInLocalStorage && storageKey ? `tab-${storageKey}` : `tab-${tabs[0]?.key}`,
-    defaultTab
-  );
-
-  const [activeIndex, setActiveIndex] = useState(() => {
-    const initialTab = storedValue ?? defaultTab;
-    return tabs.findIndex((tab) => tab.key === initialTab);
-  });
-
-  useEffect(() => {
-    if (storeInLocalStorage && tabs[activeIndex]) {
-      setValue(tabs[activeIndex].key);
-    }
-  }, [activeIndex, setValue, storeInLocalStorage, tabs]);
-
-  const handleTabChange = (index: number) => {
-    setActiveIndex(index);
-    if (!tabs[index].disabled) {
-      tabs[index].onClick?.();
-    }
-  };
-
+function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
-    <BaseTabs.Root
-      value={activeIndex}
-      onValueChange={handleTabChange}
-      className={cn("flex flex-col w-full h-full overflow-hidden", containerClassName)}
-    >
-      <div className={cn("flex w-full items-center gap-4", tabListContainerClassName)}>
-        <TabList
-          tabs={tabs}
-          tabListClassName={tabListClassName}
-          tabClassName={tabClassName}
-          size={size}
-          selectedTab={tabs[activeIndex]?.key}
-        />
-        {actions && <div className="flex-grow">{actions}</div>}
-      </div>
-
-      {tabs.map((tab) => (
-        <BaseTabs.Panel key={tab.key} className={cn("relative  h-full overflow-auto", tabPanelClassName)}>
-          {tab.content}
-        </BaseTabs.Panel>
-      ))}
-    </BaseTabs.Root>
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative overflow-auto",
+        className
+      )}
+      {...props}
+    />
   );
-};
+}
+
+function TabsTrigger({
+  className,
+  size = "md",
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" }) {
+  return (
+    <TabsPrimitive.Tab
+      data-slot="tabs-trigger"
+      className={cn(
+        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded",
+        "data-[selected]:bg-custom-background-100 data-[selected]:text-custom-text-100 data-[selected]:shadow-sm",
+        "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
+        "disabled:text-custom-text-400 disabled:cursor-not-allowed",
+        {
+          "text-xs": size === "sm",
+          "text-sm": size === "md",
+          "text-base": size === "lg",
+        },
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Panel>) {
+  return <TabsPrimitive.Panel data-slot="tabs-content" className={cn("relative outline-none", className)} {...props} />;
+}
+
+function TabsIndicator({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "absolute left-0 top-[50%] z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-sm bg-custom-background-100 shadow-sm transition-[width,transform] duration-200 ease-in-out",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+Tabs.List = TabsList;
+Tabs.Trigger = TabsTrigger;
+Tabs.Content = TabsContent;
+Tabs.Indicator = TabsIndicator;
+
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };
