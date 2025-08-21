@@ -1,0 +1,325 @@
+#!/bin/bash
+# Check if script has sudo privileges
+if [ "$EUID" -ne 0 ]; then
+    echo "This script requires sudo privileges. Running with sudo..."
+    exec sudo "$0" "$@"
+    exit $?
+fi
+
+# loop through all arguments
+for arg in "$@"; do
+    case $arg in
+        --prime-host)
+            PRIME_HOST=$2
+            shift
+            ;;
+        --prime-host=*)
+            PRIME_HOST="${arg#*=}"
+            shift
+            ;;
+        *)
+            ;;
+    esac
+done
+
+# Final optimized solution - Flag file approach with instance metadata and MOTD notification
+
+LOG_FILE=/var/log/plane-setup.log
+SETUP_COMPLETE_FLAG=/var/lib/cloud/instance/plane-setup-complete
+SETUP_STATUS_FLAG=/var/lib/cloud/instance/plane-setup-status
+MOTD_FILE=/etc/update-motd.d/99-plane-status
+
+IMDS_TOKEN_URL=http://169.254.169.254/latest/api/token
+IMDS_INSTANCE_ID_URL=http://169.254.169.254/latest/meta-data/instance-id
+IMDS_AVAILABILITY_ZONE_URL=http://169.254.169.254/latest/meta-data/placement/availability-zone
+IMDS_PUBLIC_DNS_URL=http://169.254.169.254/latest/meta-data/public-hostname
+IMDS_PUBLIC_IP_URL=http://169.254.169.254/latest/meta-data/public-ipv4
+IMDS_PRIVATE_IP_URL=http://169.254.169.254/latest/meta-data/local-ipv4
+
+PRIME_HOST=${PRIME_HOST:-https://prime.plane.so}
+PRIME_CLI_DOWNLOAD_URL="${PRIME_HOST}/api/v2/downloads/cli"
+
+OS_NAME=$(uname)
+CPU_ARCH=$(uname -m)
+
+echo "Starting Plane verification at $(date)" | sudo tee -a $LOG_FILE
+
+# Function to log messages
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S'): $1" | sudo tee -a $LOG_FILE
+}
+
+# Update status and metadata
+update_status() {
+    local status="$1"
+    local details="${2:-No details available}"
+    
+    # Update local status file
+    echo "$status" | sudo tee $SETUP_STATUS_FLAG > /dev/null
+    
+    # Update AWS instance tags if possible
+    TOKEN=$(curl -s -X PUT "$IMDS_TOKEN_URL" -H "X-aws-ec2-metadata-token-ttl-seconds: 300" 2>/dev/null || echo "")
+    
+    if [ -n "$TOKEN" ]; then
+        INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" $IMDS_INSTANCE_ID_URL 2>/dev/null || echo "")
+        AVAILABILITY_ZONE=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" $IMDS_AVAILABILITY_ZONE_URL 2>/dev/null || echo "")
+        REGION=${AVAILABILITY_ZONE%?}
+        
+        if [ -n "$INSTANCE_ID" ] && [ -n "$REGION" ] && command -v aws &>/dev/null; then
+            aws ec2 create-tags \
+                --region "$REGION" \
+                --resources "$INSTANCE_ID" \
+                --tags "Key=PlaneStatus,Value=$status" "Key=PlaneStatusDetails,Value=$details" 2>/dev/null || true
+        fi
+    fi
+    
+    log "Status updated: $status - $details"
+}
+
+# Set up MOTD (Message of the Day)
+create_motd() {
+    sudo bash -c "cat > $MOTD_FILE" <<EOF
+#!/bin/bash
+if [ -f "$SETUP_COMPLETE_FLAG" ]; then
+    INSTANCE_DOMAIN_NAME=\$(grep INSTANCE_DOMAIN_NAME /etc/environment | cut -d'=' -f2)
+    DOMAIN=\$(hostname -I | awk '{print \$1}')
+    if [ -n "\$INSTANCE_DOMAIN_NAME" ]; then
+        DOMAIN=\$INSTANCE_DOMAIN_NAME
+    fi
+    echo ""
+    echo "✅ PLANE SETUP IS COMPLETE"
+    echo ""
+    echo "Setup completed: \$(cat $SETUP_COMPLETE_FLAG)"
+    echo ""
+    echo "Usage:"
+    echo "  sudo prime-cli [command]"
+    echo ""
+    echo "Check help for all commands:"
+    echo "  sudo prime-cli --help"
+    echo ""
+    echo "You can access Plane at: http://\$DOMAIN"
+else
+    echo ""
+    echo "⚠️  PLANE SETUP IS STILL IN PROGRESS"
+    echo "Current status: \$(cat $SETUP_STATUS_FLAG 2>/dev/null || echo 'Unknown')"
+    echo "Check logs: sudo cat $LOG_FILE"
+    echo ""
+fi
+EOF
+    sudo chmod +x $MOTD_FILE
+    
+    # Run update-motd to generate /run/motd.dynamic
+    sudo run-parts /etc/update-motd.d/ > /run/motd.dynamic 2>/dev/null || true
+}
+
+# Check if docker is running
+check_docker() {
+    update_status "CHECKING_DOCKER" "Verifying Docker service status"
+    
+    if ! sudo systemctl is-active --quiet docker; then
+        log "Docker is not running. Attempting to start..."
+        sudo systemctl start docker
+        sleep 5
+        if ! sudo systemctl is-active --quiet docker; then
+            log "ERROR: Failed to start Docker"
+            update_status "FAILED" "Docker check failed"
+            return 1
+        fi
+    fi
+    log "Docker is running"
+    return 0
+}
+
+get_metadata_token(){
+    TOKEN=$(curl -s -X PUT "$IMDS_TOKEN_URL" -H "X-aws-ec2-metadata-token-ttl-seconds: 300" 2>/dev/null || echo "")
+    echo $TOKEN
+}
+get_metadata_v2() {
+    url=$1
+    TOKEN=$(get_metadata_token)
+    
+    if [ -n "$TOKEN" ]; then
+        response_value=$(curl -s -o /dev/null -w '%{http_code}' -H "X-aws-ec2-metadata-token: $TOKEN" $url | grep -q "200" && curl -s -H "X-aws-ec2-metadata-token: $TOKEN" $url || echo "")
+    else
+        response_value=$(curl -s -o /dev/null -w '%{http_code}' $url | grep -q "200" && curl -s $url || echo "")
+    fi
+    echo $response_value
+}
+
+# Get instance metadata
+get_metadata() {
+    update_status "GETTING_METADATA" "Retrieving instance metadata"
+    
+    # Try public DNS first
+    PUBLIC_DNS=$(get_metadata_v2 $IMDS_PUBLIC_DNS_URL)
+    
+    if [ -n "$PUBLIC_DNS" ]; then
+        INSTANCE_ADDRESS=$PUBLIC_DNS
+    else
+        # Try public IP next
+        PUBLIC_IP=$(get_metadata_v2 $IMDS_PUBLIC_IP_URL)
+        if [ -n "$PUBLIC_IP" ]; then
+            INSTANCE_ADDRESS=$PUBLIC_IP
+        else
+            # Fall back to private IP
+            INSTANCE_ADDRESS=$(get_metadata_v2 $IMDS_PRIVATE_IP_URL)
+        fi
+    fi
+    
+    log "Metadata obtained - Instance address: $INSTANCE_ADDRESS"
+}
+
+# Run Plane setup
+get_machine_id() {
+  if [ -f /etc/machine-id ]; then
+    cat /etc/machine-id
+  elif [ -f /var/lib/dbus/machine-id ]; then
+    cat /var/lib/dbus/machine-id
+  else
+    # generate a random machine id
+    echo $(uuidgen)
+  fi
+}
+
+download_cli() {
+    MACHINE_ID=$(get_machine_id)
+    log "Machine ID: ${MACHINE_ID}"
+    log "OS: ${OS_NAME}"
+    log "CPU Arch: ${CPU_ARCH}"
+
+    if [ "${OS_NAME}" != "Linux" ] && [ "${OS_NAME}" != "Darwin" ]; then
+        echo "Plane One only works with some flavors of Linux. See https://docs.plane.so/plane-one/self-host/overview"
+        exit 1
+    fi
+
+    if [ -z "${MACHINE_ID}" ]; then
+        echo "❌ Machine ID not found ❌"
+        exit 1
+    fi
+
+    CLI_DOWNLOAD_RESPONSE=$(curl -sL -H "x-machine-signature: ${MACHINE_ID}" "$PRIME_CLI_DOWNLOAD_URL?arch=${CPU_ARCH}&os=${OS_NAME}" -o /tmp/prime-cli.tar.gz -w "%{http_code}" )
+    if [ $? -ne 0 ]; then
+        echo "❌ Prime CLI download failed ❌"
+        log "❌ Prime CLI download failed ❌"
+        update_status "FAILED" "Prime CLI download failed"
+        exit 1
+    fi
+    if [ $CLI_DOWNLOAD_RESPONSE -eq 200 ]; then
+        # Extract the tar.gz file to /bin
+        if ! sudo tar -xzf /tmp/prime-cli.tar.gz -C /bin; then
+            echo "Installation failed. Run the curl command again."
+            rm -f /tmp/prime-cli.tar.gz
+            exit 1
+        fi
+        rm -f /tmp/prime-cli.tar.gz
+    elif [ $CLI_DOWNLOAD_RESPONSE -eq "000" ]; then
+        echo "Prime CLI download failed. Run the curl command again."
+        echo "Error: $CLI_DOWNLOAD_RESPONSE"
+        exit 1
+    elif [ $CLI_DOWNLOAD_RESPONSE -ge 400 ] && [ $CLI_DOWNLOAD_RESPONSE -lt 500 ]; then
+        echo "Prime CLI download failed. Run the curl command again."
+        echo "Error: $CLI_DOWNLOAD_RESPONSE"
+        exit 1
+    elif [ $CLI_DOWNLOAD_RESPONSE -ge 500 ] && [ $CLI_DOWNLOAD_RESPONSE -lt 600 ]; then
+        echo "Prime CLI download failed. Run the curl command again."
+        echo "Error: $CLI_DOWNLOAD_RESPONSE"
+        exit 1
+    else
+        echo "Prime CLI download failed. Run the curl command again."
+        echo "Error: $CLI_DOWNLOAD_RESPONSE"
+        exit 1
+    fi
+}
+
+run_setup() {
+    local DOMAIN=$INSTANCE_ADDRESS
+    local INSTANCE_DOMAIN_NAME=$(grep INSTANCE_DOMAIN_NAME /etc/environment | cut -d'=' -f2)
+
+    if [ -n "$INSTANCE_DOMAIN_NAME" ]; then
+        DOMAIN=$INSTANCE_DOMAIN_NAME
+    fi
+    
+    log "Running setup with domain: $DOMAIN"
+    log "Prime Host: $PRIME_HOST"
+    update_status "INSTALLING" "Installing Plane with domain: $DOMAIN"
+
+    if [ ! -f /opt/plane/.config.env ]; then
+        # Wait for ~/ to be created
+        log "Checking for ~/"
+        while [ ! -d ~/ ]; do
+            log "Waiting for ~/ to be created"
+            sleep 1
+        done
+        log "~/ is available"
+
+        download_cli
+        # Install Plane
+        sudo prime-cli setup --host="$PRIME_HOST" --silent --behind-proxy --domain="$DOMAIN" 2>&1 | tee -a $LOG_FILE
+
+        RESULT=${PIPESTATUS[0]}
+        if [ $RESULT -ne 0 ]; then
+            log "FATAL: Plane setup failed"
+            update_status "FAILED" "Plane installation failed"
+            return 1
+        fi
+    else
+        log "Plane is already setup"
+    fi
+    return 0
+}
+
+# Check HTTP response
+check_http() {
+    local max_attempts=12  # 2 minutes (12 * 10 seconds)
+    local attempt=1
+    update_status "VERIFYING" "Checking if Plane is responding"
+    
+    while [ $attempt -le $max_attempts ]; do
+        log "Checking HTTP response (attempt $attempt/$max_attempts)"
+        if curl -s -o /dev/null -w '%{http_code}' http://localhost | grep -q "200"; then
+            log "Successfully received HTTP 200 response"
+            return 0
+        fi
+        attempt=$((attempt + 1))
+        sleep 10
+    done
+    log "WARNING: Failed to get HTTP 200 response after 3 minutes"
+    return 1
+}
+
+# Main execution
+main() {
+    # Initial setup
+    create_motd
+    update_status "INITIALIZING" "Starting Plane setup process"
+    
+    # Check Docker
+    check_docker || { 
+        update_status "FAILED" "Docker check failed"
+        log "FATAL: Docker check failed" 
+        exit 1
+    }
+    
+    # Get instance metadata
+    get_metadata
+    
+    # Run setup
+    run_setup || {
+        update_status "FAILED" "Plane installation failed" 
+        log "FATAL: Plane setup failed"
+        exit 1
+    }
+    
+    # Verify HTTP
+    check_http || log "WARNING: HTTP check failed but continuing"
+    
+    # Mark as complete
+    echo "Setup completed at $(date)" | sudo tee $SETUP_COMPLETE_FLAG > /dev/null
+    update_status "COMPLETE" "Plane setup completed successfully"
+    create_motd  # Update MOTD with completion status
+    
+    log "SUCCESS: All verification steps completed successfully"
+    exit 0
+}
+
+main

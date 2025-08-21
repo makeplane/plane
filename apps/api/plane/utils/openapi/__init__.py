@@ -10,7 +10,10 @@ This module provides reusable components for API documentation:
 """
 
 # Authentication extensions
-from .auth import APIKeyAuthenticationExtension
+from .auth import (
+    APIKeyAuthenticationExtension,
+    OAuth2AuthenticationExtension,
+)
 
 # Parameters
 from .parameters import (
@@ -160,6 +163,7 @@ from .decorators import (
     module_docs,
     module_issue_docs,
     state_docs,
+    issue_worklog_docs,
 )
 
 # Schema processing hooks
@@ -171,6 +175,7 @@ from .hooks import (
 __all__ = [
     # Authentication
     "APIKeyAuthenticationExtension",
+    "OAuth2AuthenticationExtension",
     # Parameters
     "WORKSPACE_SLUG_PARAMETER",
     "PROJECT_ID_PARAMETER",
@@ -309,6 +314,7 @@ __all__ = [
     "module_docs",
     "module_issue_docs",
     "state_docs",
+    "issue_worklog_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",
