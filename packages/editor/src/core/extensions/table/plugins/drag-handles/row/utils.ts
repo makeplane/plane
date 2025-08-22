@@ -90,8 +90,14 @@ export const getTableRowNodesInfo = (table: TableNodeLocation, editor: Editor): 
   let topPx = 0;
 
   const tableMap = TableMap.get(table.node);
+  if (!tableMap || tableMap.height === 0 || tableMap.width === 0) {
+    return result;
+  }
+
   for (let row = 0; row < tableMap.height; row++) {
-    const dom = editor.view.domAtPos(table.start + tableMap.map[row * tableMap.width]);
+    const cellPos = tableMap.map[row * tableMap.width];
+    if (cellPos === undefined) continue;
+    const dom = editor.view.domAtPos(table.start + cellPos);
     if (dom.node instanceof HTMLElement) {
       const heightPx = dom.node.offsetHeight;
       result.push({

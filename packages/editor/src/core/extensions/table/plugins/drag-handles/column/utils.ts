@@ -89,9 +89,16 @@ export const getTableColumnNodesInfo = (table: TableNodeLocation, editor: Editor
   const result: TableColumn[] = [];
   let leftPx = 0;
 
-  const { map, width } = TableMap.get(table.node);
-  for (let col = 0; col < width; col++) {
-    const dom = editor.view.domAtPos(table.start + map[col] + 1);
+  const tableMap = TableMap.get(table.node);
+  if (!tableMap || tableMap.height === 0 || tableMap.width === 0) {
+    return result;
+  }
+
+  for (let col = 0; col < tableMap.width; col++) {
+    const cellPos = tableMap.map[col];
+    if (cellPos === undefined) continue;
+
+    const dom = editor.view.domAtPos(table.start + cellPos + 1);
     if (dom.node instanceof HTMLElement) {
       if (col === 0) {
         leftPx = dom.node.offsetLeft;

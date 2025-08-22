@@ -37,6 +37,11 @@ export const moveSelectedColumns = (
     }
   });
 
+  if (columnStart === -1 || columnEnd === -1) {
+    console.warn("Invalid column selection");
+    return tr;
+  }
+
   if (to < 0 || to > tableMap.width || (to >= columnStart && to < columnEnd)) return tr;
 
   const rows = tableToCells(table);
@@ -78,6 +83,11 @@ export const moveSelectedRows = (
       rowEnd = rowEnd >= 0 ? Math.max(cell.bottom, rowEnd) : cell.bottom;
     }
   });
+
+  if (rowStart === -1 || rowEnd === -1) {
+    console.warn("Invalid row selection");
+    return tr;
+  }
 
   if (to < 0 || to > tableMap.height || (to >= rowStart && to < rowEnd)) return tr;
 
