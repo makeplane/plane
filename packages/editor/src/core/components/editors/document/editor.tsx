@@ -100,6 +100,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       id={id}
       isTouchDevice={!!isTouchDevice}
       flaggedExtensions={flaggedExtensions}
+      disabledExtensions={disabledExtensions}
     />
   );
 };
