@@ -72,7 +72,12 @@ export const updateColDragMarker = ({
   element.style.width = `${width}px`;
   element.classList.remove("hidden");
   if (pseudoColumn) {
-    element.innerHTML = pseudoColumn.outerHTML;
+    /// clear existing content
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+    // clone and append the pseudo column
+    element.appendChild(pseudoColumn.cloneNode(true));
   }
 };
 
@@ -91,6 +96,11 @@ export const updateRowDragMarker = ({
   element.style.height = `${height}px`;
   element.classList.remove("hidden");
   if (pseudoRow) {
-    element.innerHTML = pseudoRow.outerHTML;
+    /// clear existing content
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+    // clone and append the pseudo row
+    element.appendChild(pseudoRow.cloneNode(true));
   }
 };
