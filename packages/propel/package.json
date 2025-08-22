@@ -18,6 +18,10 @@
     "./menu": "./src/menu/index.ts",
     "./table": "./src/table/index.ts",
     "./tabs": "./src/tabs/index.ts",
+    "./popover": "./src/popover/index.ts",
+    "./command": "./src/command/index.ts",
+    "./combobox": "./src/combobox/index.ts",
+    "./tooltip": "./src/tooltip/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
@@ -32,8 +36,7 @@
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recharts": "^2.15.1",
-    "tailwindcss-animate": "^1.0.7"
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
