@@ -1,3 +1,5 @@
+import tlds from "tlds";
+
 /**
  * Interface representing the components of a URL.
  * @interface IURLComponents
@@ -71,7 +73,23 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
 }
 
 /**
+ * Checks if a string contains a valid TLD (Top Level Domain).
+ *
+ * @param {string} input - The string to check for valid TLD
+ * @returns {boolean} True if the string contains a valid TLD, false otherwise
+ */
+function hasValidTLD(input: string): boolean {
+  // Extract potential domain part (after the last dot)
+  const parts = input.split(".");
+  if (parts.length < 2) return false;
+
+  const potentialTLD = parts[parts.length - 1].toLowerCase();
+  return tlds.includes(potentialTLD);
+}
+
+/**
  * Checks if a string is a valid URL.
+ * Automatically appends 'http://' if the string contains a valid TLD but no protocol.
  *
  * @param {string} urlString - The string to validate as URL
  * @returns {URL | undefined} URL object if valid, undefined if invalid
@@ -81,13 +99,41 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
  * getValidURL('https://example.com')     // returns URL object
  * getValidURL('http://example.com')      // returns URL object
  * getValidURL('https://sub.example.com') // returns URL object
+ * getValidURL('example.com')             // returns URL object (auto-appends http://)
+ * getValidURL('sub.example.org')         // returns URL object (auto-appends http://)
  *
  * // Invalid URLs
  * getValidURL('not-a-url')              // returns undefined
- * getValidURL('example.com')            // returns undefined (no protocol)
  * getValidURL('https://invalid.')       // returns undefined
+ * getValidURL('example.invalid')        // returns undefined (invalid TLD)
+ *
+ * // Test cases:
+ * // getValidURL('google.com')          // ✅ returns URL with http://google.com
+ * // getValidURL('github.io')           // ✅ returns URL with http://github.io
+ * // getValidURL('invalid.tld')         // ❌ returns undefined (invalid TLD)
  */
-export function getValidURL(urlString: string): URL | undefined {
+export function getValidURL(urlString?: string): URL | undefined {
+  if (!urlString) return undefined;
+
+  // Try to create URL as-is first
+  const url = createURL(urlString);
+  if (url) return url;
+
+  // If that fails, try with http:// prefix if it has a valid TLD
+  if (hasValidTLD(urlString)) {
+    return createURL(`http://${urlString}`);
+  }
+
+  return undefined;
+}
+
+/**
+ * Helper function to safely create a URL object.
+ *
+ * @param {string} urlString - The string to create URL from
+ * @returns {URL | undefined} URL object if valid, undefined if invalid
+ */
+function createURL(urlString: string): URL | undefined {
   try {
     return new URL(urlString);
   } catch {
