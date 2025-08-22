@@ -1280,6 +1280,9 @@ importers:
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0
+      tlds:
+        specifier: 1.259.0
+        version: 1.259.0
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
@@ -7160,6 +7163,10 @@ packages:
     resolution: {integrity: sha512-iDVkR2BjAqkTDtFX0h94yVvE2AihCXlF0Q7RIXSJPRSR5I0PA1TMuAg6FHFpmqTn4tPxJ0by0CK7PUMlnFLGEQ==}
     peerDependencies:
       '@tiptap/core': ^2.0.3
+
+  tlds@1.259.0:
+    resolution: {integrity: sha512-AldGGlDP0PNgwppe2quAvuBl18UcjuNtOnDuUkqhd6ipPqrYYBt3aTxK1QTsBVknk97lS2JcafWMghjGWFtunw==}
+    hasBin: true
 
   tldts-core@6.1.86:
     resolution: {integrity: sha512-Je6p7pkk+KMzMv2XXKmAE3McmolOQFdxkKw0R8EYNr7sELW46JqnNeTX8ybPiQgvg1ymCoF8LXs5fzFaZvJPTA==}
@@ -14252,6 +14259,8 @@ snapshots:
       markdown-it: 14.1.0
       markdown-it-task-lists: 2.1.1
       prosemirror-markdown: 1.13.2
+
+  tlds@1.259.0: {}
 
   tldts-core@6.1.86: {}
 
