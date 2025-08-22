@@ -19,10 +19,11 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
         from plane.payment.flags.flag_decorator import check_workspace_feature_flag
         from plane.payment.flags.flag import FeatureFlag
 
-        base_query = Q(
-            project_issue_types__project__project_projectmember__member_id=user_id,
-            project_issue_types__project__project_projectmember__is_active=True,
-        )
+        member_project_ids = ProjectMember.objects.filter(
+            member_id=user_id, workspace__slug=slug, is_active=True
+        ).values_list("project_id", flat=True)
+
+        base_query = Q(project_issue_types__project_id__in=member_project_ids)
 
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
@@ -45,7 +46,7 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
 
             return self.filter(
                 Q(project_issue_types__project_id__in=teamspace_project_ids)
-                | Q(base_query),
+                | base_query,
             )
 
         return self.filter(base_query)

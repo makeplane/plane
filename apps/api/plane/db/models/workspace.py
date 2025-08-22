@@ -195,10 +195,11 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
         from plane.payment.flags.flag_decorator import check_workspace_feature_flag
         from plane.payment.flags.flag import FeatureFlag
 
-        base_query = Q(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-        )
+        member_project_ids = ProjectMember.objects.filter(
+            member_id=user_id, workspace__slug=slug, is_active=True
+        ).values_list("project_id", flat=True)
+
+        base_query = Q(project_id__in=member_project_ids)
 
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
@@ -208,10 +209,6 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
                 member_id=user_id, workspace__slug=slug
             ).values_list("team_space_id", flat=True)
 
-            member_project_ids = ProjectMember.objects.filter(
-                member_id=user_id, workspace__slug=slug, is_active=True
-            ).values_list("project_id", flat=True)
-
             # Get all the projects in the respective teamspaces
             teamspace_project_ids = (
                 TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids)
@@ -220,7 +217,7 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
             )
 
             return self.filter(
-                Q(project_id__in=teamspace_project_ids) | Q(base_query),
+                Q(project_id__in=teamspace_project_ids) | base_query,
             )
 
         return self.filter(base_query)
