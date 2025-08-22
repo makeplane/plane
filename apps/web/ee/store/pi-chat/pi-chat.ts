@@ -204,12 +204,12 @@ export class PiChatStore implements IPiChatStore {
     let payload: TInitPayload = {
       workspace_in_context: focus.isInWorkspaceContext,
       is_project_chat: isProjectChat,
+      workspace_id: workspaceId,
     };
     if (focus.isInWorkspaceContext) {
       payload = {
         ...payload,
         [focus.entityType]: focus.entityIdentifier,
-        workspace_id: workspaceId,
       };
     }
 
@@ -252,6 +252,7 @@ export class PiChatStore implements IPiChatStore {
     // 🔹 Handles `delta` chunks
     eventSource.addEventListener("delta", (event: MessageEvent) => {
       try {
+        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
         const data = JSON.parse(event.data);
         callback("answer", data.chunk);
       } catch (e) {
@@ -268,9 +269,6 @@ export class PiChatStore implements IPiChatStore {
         console.error("Reasoning parse error", e);
       }
     });
-    eventSource.onopen = () => {
-      if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
-    };
 
     // 🔹 Handles done event
     eventSource.addEventListener("done", async () => {

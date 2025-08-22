@@ -81,18 +81,16 @@ export const Messages = observer((props: TProps) => {
       {activeChat?.dialogue?.map((message: TDialogue, index: number) => (
         <div key={index} className="space-y-4">
           <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />
-          {(message.answer || message.reasoning) && (
-            <AiMessage
-              message={message.answer}
-              reasoning={message.reasoning}
-              id={index.toString()}
-              feedback={message.feedback}
-            />
-          )}
+          <AiMessage
+            message={message.answer}
+            reasoning={message.reasoning}
+            id={index.toString()}
+            feedback={message.feedback}
+            isPiThinking={isPiThinking}
+            isLatest={index === activeChat?.dialogue.length - 1}
+          />
         </div>
       ))}
-      {/* Typing */}
-      {isPiThinking && <AiMessage isPiThinking={isPiThinking} id={""} />}
 
       {/* Loading */}
       {isLoading && <AiMessage isLoading={isLoading} id={""} />}

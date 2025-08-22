@@ -6,11 +6,11 @@ import { Thinking } from "./thinking";
 
 type TProps = {
   reasoning: string | undefined;
-  isReasoning: boolean;
+  showLoading?: boolean;
 };
 
 export const ReasoningBlock = (props: TProps) => {
-  const { reasoning, isReasoning } = props;
+  const { reasoning, showLoading } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,7 +21,7 @@ export const ReasoningBlock = (props: TProps) => {
         className="w-fit hover:bg-custom-background-90 rounded-full px-4 py-2 transition-all duration-500 ease-in-out border border-custom-border-200 hover:border-transparent"
       >
         <div className="flex gap-2 items-center">
-          {isReasoning ? (
+          {showLoading ? (
             <Thinking />
           ) : (
             <div className="text-base text-custom-text-200 font-medium">{isOpen ? "Hide" : "Show"} thinking</div>

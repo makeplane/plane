@@ -20,9 +20,10 @@ type TProps = {
   isPiThinking?: boolean;
   isLoading?: boolean;
   feedback?: EFeedback;
+  isLatest?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
-  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback } = props;
+  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
   // store
   const { workspaceSlug } = useParams();
   const { sendFeedback, activeChatId, isPiTyping } = usePiChat();
@@ -65,42 +66,36 @@ export const AiMessage = observer((props: TProps) => {
       </div>
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
-        {!isPiThinking && !isLoading && (
-          <div className="flex flex-col gap-4">
-            {reasoning && <ReasoningBlock reasoning={reasoning} isReasoning={!message} />}
-            <Markdown
-              remarkPlugins={[remarkGfm]}
-              className="pi-chat-root [&>*:first-child]:mt-0"
-              components={{
-                a: ({ children, href }) => (
-                  <a href={href || ""} target="_blank" rel="noopener noreferrer">
-                    {children}
-                  </a>
-                ),
-                table: ({ children }) => (
-                  <div className="overflow-x-auto w-full my-4 border-custom-border-200">
-                    <table className="min-w-full border-collapse">{children}</table>
-                  </div>
-                ),
-                th: ({ children }) => <th className="px-2 py-3 border-custom-border-200">{children}</th>,
-                td: ({ children }) => <td className="px-2 py-3 border-custom-border-200">{children}</td>,
-              }}
-            >
-              {message}
-            </Markdown>
-          </div>
-        )}
-
-        {/* Typing */}
-        {isPiThinking && <Thinking />}
-
+        <div className="flex flex-col gap-4">
+          {!isLoading && <ReasoningBlock reasoning={reasoning} showLoading={isPiThinking && isLatest} />}
+          <Markdown
+            remarkPlugins={[remarkGfm]}
+            className="pi-chat-root [&>*:first-child]:mt-0"
+            components={{
+              a: ({ children, href }) => (
+                <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
+              table: ({ children }) => (
+                <div className="overflow-x-auto w-full my-4 border-custom-border-200">
+                  <table className="min-w-full border-collapse">{children}</table>
+                </div>
+              ),
+              th: ({ children }) => <th className="px-2 py-3 border-custom-border-200">{children}</th>,
+              td: ({ children }) => <td className="px-2 py-3 border-custom-border-200">{children}</td>,
+            }}
+          >
+            {message}
+          </Markdown>
+        </div>
         {isLoading && (
           <Loader>
             <Loader.Item width="50px" height="42px" />
           </Loader>
         )}
         {/* Action bar */}
-        {!isPiTyping && !isPiThinking && !isLoading && (
+        {message && (
           <div className="flex gap-4 mt-6">
             {/* Copy */}
             <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
