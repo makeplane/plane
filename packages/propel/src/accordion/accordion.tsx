@@ -1,5 +1,5 @@
 import { Accordion as BaseAccordion } from "@base-ui-components/react/accordion";
-import { ChevronDownIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import * as React from "react";
 
 export interface AccordionItem {
@@ -10,35 +10,14 @@ export interface AccordionItem {
 }
 
 export interface AccordionProps {
-  /**
-   * Array of accordion items to render
-   */
   items: AccordionItem[];
-  /**
-   * Whether multiple panels can be open at once
-   * @default false
-   */
   allowMultiple?: boolean;
-  /**
-   * Default open item IDs
-   */
   defaultValue?: string[];
-  /**
-   * Optional class name for the root element
-   */
   className?: string;
-  /**
-   * Optional class name for each item
-   */
   itemClassName?: string;
-  /**
-   * Optional class name for the trigger button
-   */
   triggerClassName?: string;
-  /**
-   * Optional class name for the content panel
-   */
   panelClassName?: string;
+  icon?: React.ReactNode;
 }
 
 export const Accordion: React.FC<AccordionProps> = ({
@@ -49,6 +28,9 @@ export const Accordion: React.FC<AccordionProps> = ({
   itemClassName = "",
   triggerClassName = "",
   panelClassName = "",
+  icon = (
+    <PlusIcon className="mr-2 size-3 shrink-0 transition-all ease-out group-data-[panel-open]:scale-110 group-data-[panel-open]:rotate-45" />
+  ),
 }) => {
   return (
     <BaseAccordion.Root
@@ -65,16 +47,16 @@ export const Accordion: React.FC<AccordionProps> = ({
         >
           <BaseAccordion.Header>
             <BaseAccordion.Trigger
-              className={`group relative flex w-full items-center justify-between gap-4 bg-gray-50 px-4 py-3 text-left font-medium transition-colors hover:bg-gray-100 focus-visible:z-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-800 disabled:cursor-not-allowed disabled:opacity-50 ${triggerClassName}`}
+              className={`group relative flex w-full items-center justify-between gap-4 bg-gray-50 py-2 pr-1 pl-3 text-left font-medium hover:bg-gray-100 focus-visible:z-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-800 disabled:cursor-not-allowed disabled:opacity-50 ${triggerClassName}`}
             >
               {item.title}
-              <ChevronDownIcon className="size-4 shrink-0 transition-transform duration-200 ease-out group-data-[panel-open]:rotate-180" />
+              {icon}
             </BaseAccordion.Trigger>
           </BaseAccordion.Header>
           <BaseAccordion.Panel
-            className={`h-[var(--accordion-panel-height)] overflow-hidden text-base text-gray-600 transition-[height] duration-200 ease-out data-[ending-style]:h-0 data-[starting-style]:h-0 ${panelClassName}`}
+            className={`h-[var(--accordion-panel-height)] overflow-hidden text-base text-gray-600 transition-[height] ease-out data-[ending-style]:h-0 data-[starting-style]:h-0 ${panelClassName}`}
           >
-            <div className="p-4">{item.content}</div>
+            <div className="p-3">{item.content}</div>
           </BaseAccordion.Panel>
         </BaseAccordion.Item>
       ))}

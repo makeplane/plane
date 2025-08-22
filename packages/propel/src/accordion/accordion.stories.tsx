@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { PlusIcon, ChevronDownIcon, ChevronsUpDownIcon, ArrowDownIcon } from "lucide-react";
 
 import { Accordion } from "./accordion";
 
@@ -299,7 +300,9 @@ export const Default: Story = {
             className="bg-white border border-gray-200 divide-y divide-gray-200 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:border-gray-300"
             itemClassName="first:rounded-t-lg last:rounded-b-lg overflow-hidden"
             triggerClassName="w-full px-4 py-3 text-left text-gray-700 hover:text-gray-900 font-medium flex items-center justify-between transition-colors duration-200"
-            panelClassName="px-4 py-3 bg-gray-50/50 text-gray-600 text-sm border-t border-gray-200"
+            icon={
+              <ChevronDownIcon className="size-4 shrink-0 text-gray-500 transition-transform ease-out group-data-[panel-open]:rotate-180" />
+            }
           />
         </div>
 
@@ -311,7 +314,9 @@ export const Default: Story = {
             className="bg-white border border-gray-200 divide-y divide-gray-200 rounded-lg shadow-sm hover:shadow transition-all duration-200 ease-in-out"
             itemClassName="first:rounded-t-lg last:rounded-b-lg overflow-hidden"
             triggerClassName="w-full px-4 py-3 text-left hover:bg-gray-50/50 transition-colors duration-200"
-            panelClassName="px-4 py-3 bg-white border-t border-gray-100"
+            icon={
+              <PlusIcon className="mr-2 size-3 shrink-0 text-gray-400 transition-all ease-out group-data-[panel-open]:scale-110 group-data-[panel-open]:rotate-45 group-hover:text-gray-500" />
+            }
           />
         </div>
 
@@ -323,7 +328,9 @@ export const Default: Story = {
             className="bg-white border border-gray-200 divide-y divide-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow transition-all duration-200 ease-in-out"
             itemClassName="first:rounded-t-lg last:rounded-b-lg overflow-hidden"
             triggerClassName="w-full px-4 py-3 text-left hover:bg-gray-50/50 transition-colors duration-200"
-            panelClassName="px-4 py-3 bg-white border-t border-gray-100"
+            icon={
+              <ChevronsUpDownIcon className="size-4 shrink-0 text-gray-400 transition-transform ease-out group-data-[panel-open]:text-gray-600" />
+            }
           />
         </div>
 
@@ -337,7 +344,9 @@ export const Default: Story = {
             className="bg-white border border-gray-200 divide-y divide-gray-200 rounded-lg shadow-sm hover:shadow transition-all duration-200 ease-in-out"
             itemClassName="first:rounded-t-lg last:rounded-b-lg overflow-hidden"
             triggerClassName="w-full px-4 py-3 text-left text-gray-700 hover:text-gray-900 font-medium transition-colors duration-200"
-            panelClassName="px-4 py-3 bg-gray-50/50 text-gray-600 text-sm border-t border-gray-100"
+            icon={
+              <ArrowDownIcon className="size-3.5 shrink-0 text-gray-500 transition-transform ease-out group-data-[panel-open]:-rotate-180" />
+            }
           />
         </div>
       </div>
