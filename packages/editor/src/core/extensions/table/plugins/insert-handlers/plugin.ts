@@ -1,6 +1,7 @@
-import { type Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // local imports
+import { COL_DRAG_MARKER_CLASS, DROP_MARKER_CLASS, ROW_DRAG_MARKER_CLASS } from "../drag-handles/marker-utils";
 import { createColumnInsertButton, createRowInsertButton, findAllTables, TableInfo } from "./utils";
 
 const TABLE_INSERT_PLUGIN_KEY = new PluginKey("table-insert");
@@ -25,6 +26,13 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
       tableInfo.rowButtonElement = rowButton;
     }
 
+    // Create and add drag marker if it doesn't exist
+    if (!tableInfo.dragMarkerContainerElement) {
+      const dragMarker = createMarkerContainer();
+      tableElement.appendChild(dragMarker);
+      tableInfo.dragMarkerContainerElement = dragMarker;
+    }
+
     tableMap.set(tableElement, tableInfo);
   };
 
@@ -32,6 +40,7 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
     const tableInfo = tableMap.get(tableElement);
     tableInfo?.columnButtonElement?.remove();
     tableInfo?.rowButtonElement?.remove();
+    tableInfo?.dragMarkerContainerElement?.remove();
     tableMap.delete(tableElement);
   };
 
@@ -64,6 +73,7 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
 
   return new Plugin({
     key: TABLE_INSERT_PLUGIN_KEY,
+
     view() {
       setTimeout(updateAllTables, 0);
 
@@ -84,4 +94,34 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
       };
     },
   });
+};
+
+const createMarkerContainer = (): HTMLElement => {
+  const el = document.createElement("div");
+  el.className = "table-drag-marker-container";
+  el.contentEditable = "false";
+  el.appendChild(createDropMarker());
+  el.appendChild(createColDragMarker());
+  el.appendChild(createRowDragMarker());
+  return el;
+};
+
+const createDropMarker = (): HTMLElement => {
+  const el = document.createElement("div");
+  el.className = DROP_MARKER_CLASS;
+  return el;
+};
+
+const createColDragMarker = (): HTMLElement => {
+  const el = document.createElement("div");
+  el.className = `${COL_DRAG_MARKER_CLASS} hidden`;
+
+  return el;
+};
+
+const createRowDragMarker = (): HTMLElement => {
+  const el = document.createElement("div");
+  el.className = `${ROW_DRAG_MARKER_CLASS} hidden`;
+
+  return el;
 };

@@ -659,7 +659,7 @@ importers:
     dependencies:
       '@floating-ui/dom':
         specifier: ^1.7.1
-        version: 1.7.3
+        version: 1.7.2
       '@floating-ui/react':
         specifier: ^0.26.4
         version: 0.26.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1751,6 +1751,9 @@ packages:
 
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
+
+  '@floating-ui/dom@1.7.2':
+    resolution: {integrity: sha512-7cfaOQuCS27HD7DX+6ib2OrnW+b4ZBwDNnCcT0uTyidcmyWb03FnQqJybDBoCnpdxwBSfA94UAYlRCt7mV+TbA==}
 
   '@floating-ui/dom@1.7.3':
     resolution: {integrity: sha512-uZA413QEpNuhtb3/iIKoYMSK07keHPYeXF02Zhd6e213j+d1NamLix/mCLxBUDW/Gx52sPH2m+chlUsyaBs/Ag==}
@@ -8188,6 +8191,11 @@ snapshots:
 
   '@floating-ui/core@1.7.3':
     dependencies:
+      '@floating-ui/utils': 0.2.10
+
+  '@floating-ui/dom@1.7.2':
+    dependencies:
+      '@floating-ui/core': 1.7.3
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/dom@1.7.3':
