@@ -51,6 +51,7 @@ def flush_to_mongo_and_delete(
     buffer: List[Dict[str, Any]],
     ids_to_delete: List[int],
     model,
+    mongo_available: bool,
 ) -> None:
     """
     Inserts a batch of records into MongoDB and deletes the corresponding rows from PostgreSQL.
@@ -63,13 +64,21 @@ def flush_to_mongo_and_delete(
         f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete"
     )
 
+    mongo_archival_failed = False
+
     # Try to insert into MongoDB if available
-    if mongo_collection:
+    if mongo_collection and mongo_available:
         try:
             mongo_collection.bulk_write([InsertOne(doc) for doc in buffer])
         except BulkWriteError as bwe:
             logger.error(f"MongoDB bulk write error: {str(bwe)}")
             log_exception(bwe)
+            mongo_archival_failed = True
+
+    # If MongoDB is available and archival failed, log the error and return
+    if mongo_available and mongo_archival_failed:
+        logger.error(f"MongoDB archival failed for {len(buffer)} records")
+        return
 
     # Delete from PostgreSQL - delete() returns (count, {model: count})
     delete_result = model.all_objects.filter(id__in=ids_to_delete).delete()
@@ -119,7 +128,13 @@ def process_cleanup_task(
         # Flush batch when it reaches BATCH_SIZE
         if len(buffer) >= BATCH_SIZE:
             total_batches += 1
-            flush_to_mongo_and_delete(mongo_collection, buffer, ids_to_delete, model)
+            flush_to_mongo_and_delete(
+                mongo_collection=mongo_collection,
+                buffer=buffer,
+                ids_to_delete=ids_to_delete,
+                mode=model,
+                mongo_available=mongo_available,
+            )
             total_processed += len(buffer)
             buffer.clear()
             ids_to_delete.clear()
@@ -127,7 +142,13 @@ def process_cleanup_task(
     # Process final batch if any records remain
     if buffer:
         total_batches += 1
-        flush_to_mongo_and_delete(mongo_collection, buffer, ids_to_delete, model)
+        flush_to_mongo_and_delete(
+            mongo_collection=mongo_collection,
+            buffer=buffer,
+            ids_to_delete=ids_to_delete,
+            model=model,
+            mongo_available=mongo_available,
+        )
         total_processed += len(buffer)
 
     logger.info(
