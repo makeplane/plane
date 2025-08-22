@@ -184,6 +184,13 @@ export class ClickupAPIService {
       .then((response) => response.data.comments);
   }
 
+
+  async getThreadedComments(commentId: string): Promise<TClickUpComment[]> {
+    return this.client
+      .get(`/comment/${commentId}/reply`)
+      .then((response) => response.data.comments);
+  }
+
   /**
    * Get all custom fields for a team
    * @param teamId - the id of the team

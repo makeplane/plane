@@ -194,14 +194,29 @@ export class ClickUpPullService {
     // passing null for lastCommentId and lastCommentTimeStamp will recent 25 comments
     while (true) {
       const comments = await this.apiService.getTaskComments(taskId, lastCommentId, lastCommentTimeStamp);
-      taskComments.push(...comments);
       if (comments.length === 0) {
         break;
       }
-      lastCommentId = comments[comments.length - 1].id;
-      lastCommentTimeStamp = Number(comments[comments.length - 1].date);
+      comments.reverse()
+      for (const comment of comments) {
+        // push the top level comment
+        taskComments.push(comment);
+        const threadedComments = await this.pullThreadedCommentsForAComment(comment.id);
+        // push the threaded comments
+        if (threadedComments.length > 0) {
+          taskComments.push(...threadedComments.reverse());
+        }
+      }
+      lastCommentId = comments[0].id;
+      lastCommentTimeStamp = Number(comments[0].date);
     }
+
     return taskComments;
+  }
+
+  private async pullThreadedCommentsForAComment(commentId: string): Promise<TClickUpComment[]> {
+    const comments = await this.apiService.getThreadedComments(commentId);
+    return comments;
   }
 
   private async pullTasksForAList(listId: string): Promise<TClickUpTask[]> {
