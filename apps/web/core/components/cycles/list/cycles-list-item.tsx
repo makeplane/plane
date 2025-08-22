@@ -1,5 +1,5 @@
 "use client";
-import { FC, MouseEvent, useMemo, useRef } from "react";
+import { FC, MouseEvent, useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -73,7 +73,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
   const handleItemClick = cycleDetails.archived_at ? handleArchivedCycleClick : undefined;
 
-  const progress = useMemo(() => {
+  const getCycleProgress = () => {
     let completionPercentage =
       ((cycleDetails.completed_issues + cycleDetails.cancelled_issues) / cycleDetails.total_issues) * 100;
 
@@ -84,7 +84,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
         100;
     }
     return isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-  }, [cycleDetails, isCompleted, cycleDetails.progress_snapshot]);
+  };
+
+  const progress = getCycleProgress();
 
   return (
     <ListItem
