@@ -1,0 +1,27 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Harici dosyaları yüklemek için sürükle ve bırak"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Dosya çok büyük.",
+        "description": "Dosya başına maksimum boyut {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Desteklenmeyen dosya türü.",
+        "description": "Desteklenen formatları gör"
+      },
+      "default": {
+        "title": "Yükleme başarısız.",
+        "description": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
+      }
+    },
+    "upgrade": {
+      "description": "Bu eki görüntülemek için planınızı yükseltin."
+    },
+    "aria": {
+      "click_to_upload": "Ek yüklemek için tıklayın"
+    }
+  }
+}

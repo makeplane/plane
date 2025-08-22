@@ -36,6 +36,9 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     onChange,
     user,
     value,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
@@ -82,6 +85,9 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     initialValue: value,
     mentionHandler,
     onChange,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({
