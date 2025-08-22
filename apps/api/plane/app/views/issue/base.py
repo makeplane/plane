@@ -53,6 +53,7 @@ from plane.db.models import (
     IssueRelation,
     IssueAssignee,
     IssueLabel,
+    IntakeIssue,
 )
 from plane.ee.models import TeamspaceProject, TeamspaceMember, CustomerRequestIssue
 from plane.utils.grouper import (
@@ -1555,13 +1556,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the issue
         issue = (
-            Issue.objects.filter(
-                Q(issue_intake__status=1)
-                | Q(issue_intake__status=-1)
-                | Q(issue_intake__status=2)
-                | Q(issue_intake__isnull=True)
-            )
-            .filter(project_id=project.id)
+            Issue.objects.filter(project_id=project.id)
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -1657,7 +1652,18 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             )
-        ).annotate(is_epic=F("type__is_epic"))
+            .annotate(
+                is_intake=Exists(
+                    IntakeIssue.objects.filter(
+                        issue=OuterRef("id"),
+                        status__in=[-2, 0],
+                        workspace__slug=slug,
+                        project_id=project.id,
+                    )
+                )
+            ).annotate(is_epic=F("type__is_epic"))
+        ).first()
+        
 
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.CUSTOMERS,
