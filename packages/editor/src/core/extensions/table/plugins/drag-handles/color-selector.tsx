@@ -7,6 +7,8 @@ import { cn } from "@plane/utils";
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
+// TODO: implement text color selector
+
 type Props = {
   editor: Editor;
   onSelect: (color: string | null) => void;

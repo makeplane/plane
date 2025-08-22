@@ -87,9 +87,7 @@ export const getSelectedRect = (selection: CellSelection, map: TableMap): Rect =
  * @returns {number[]} The selected columns.
  */
 export const getSelectedColumns = (selection: Selection, map: TableMap): number[] => {
-  const isColumnSelection = isCellSelection(selection) && selection.isColSelection();
-  console.log("isColumnSelection", isColumnSelection);
-  if (isColumnSelection) {
+  if (isCellSelection(selection) && selection.isColSelection()) {
     const selectedRect = getSelectedRect(selection, map);
     return [...Array(selectedRect.right - selectedRect.left).keys()].map((idx) => idx + selectedRect.left);
   }
@@ -104,10 +102,7 @@ export const getSelectedColumns = (selection: Selection, map: TableMap): number[
  * @returns {number[]} The selected rows.
  */
 export const getSelectedRows = (selection: Selection, map: TableMap): number[] => {
-  console.log("helper isCellSelection", isCellSelection(selection));
-  const isRowSelection = isCellSelection(selection) && selection.isRowSelection();
-  console.log("isRowSelection", isRowSelection);
-  if (isRowSelection) {
+  if (isCellSelection(selection) && selection.isRowSelection()) {
     const selectedRect = getSelectedRect(selection, map);
     return [...Array(selectedRect.bottom - selectedRect.top).keys()].map((idx) => idx + selectedRect.top);
   }

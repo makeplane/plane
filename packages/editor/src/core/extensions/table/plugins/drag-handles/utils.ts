@@ -32,7 +32,7 @@ export const cloneTableCell = (
   clonedCellElement: HTMLElement;
 } => {
   const clonedCellElement = cellElement.cloneNode(true) as HTMLElement;
-  clonedCellElement.style.visibility = "visible !important";
+  clonedCellElement.style.setProperty("visibility", "visible", "important");
 
   const widgetElement = clonedCellElement.querySelectorAll(".ProseMirror-widget");
   widgetElement.forEach((widget) => widget.remove());

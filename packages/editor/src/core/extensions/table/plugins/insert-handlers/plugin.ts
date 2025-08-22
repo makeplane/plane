@@ -98,7 +98,7 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
 
 const createMarkerContainer = (): HTMLElement => {
   const el = document.createElement("div");
-  el.classList.add("table-drag-marker-container");
+  el.className = "table-drag-marker-container";
   el.contentEditable = "false";
   el.appendChild(createDropMarker());
   el.appendChild(createColDragMarker());
@@ -108,20 +108,20 @@ const createMarkerContainer = (): HTMLElement => {
 
 const createDropMarker = (): HTMLElement => {
   const el = document.createElement("div");
-  el.classList.add(DROP_MARKER_CLASS);
+  el.className = DROP_MARKER_CLASS;
   return el;
 };
 
 const createColDragMarker = (): HTMLElement => {
   const el = document.createElement("div");
-  el.classList.value = `${COL_DRAG_MARKER_CLASS} hidden`;
+  el.className = `${COL_DRAG_MARKER_CLASS} hidden`;
 
   return el;
 };
 
 const createRowDragMarker = (): HTMLElement => {
   const el = document.createElement("div");
-  el.classList.value = `${ROW_DRAG_MARKER_CLASS} hidden`;
+  el.className = `${ROW_DRAG_MARKER_CLASS} hidden`;
 
   return el;
 };

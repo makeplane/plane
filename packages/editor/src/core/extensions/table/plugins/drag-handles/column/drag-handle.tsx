@@ -1,7 +1,6 @@
 import {
   shift,
   flip,
-  offset,
   useDismiss,
   useFloating,
   useInteractions,
@@ -147,8 +146,13 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
         });
       };
 
-      window.addEventListener("mouseup", handleFinish);
-      window.addEventListener("mousemove", handleMove);
+      try {
+        window.addEventListener("mouseup", handleFinish);
+        window.addEventListener("mousemove", handleMove);
+      } catch (error) {
+        console.error("Error in ColumnDragHandle:", error);
+        handleFinish();
+      }
     },
     [col, editor]
   );

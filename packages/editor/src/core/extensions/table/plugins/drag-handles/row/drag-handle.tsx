@@ -3,7 +3,6 @@ import {
   flip,
   FloatingOverlay,
   FloatingPortal,
-  offset,
   shift,
   useClick,
   useDismiss,
@@ -146,8 +145,13 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
         });
       };
 
-      window.addEventListener("mouseup", handleFinish);
-      window.addEventListener("mousemove", handleMove);
+      try {
+        window.addEventListener("mouseup", handleFinish);
+        window.addEventListener("mousemove", handleMove);
+      } catch (error) {
+        console.error("Error in RowDragHandle:", error);
+        handleFinish();
+      }
     },
     [editor, row]
   );

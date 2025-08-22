@@ -101,6 +101,14 @@ export const duplicateRows = (table: TableNodeLocation, rowIndices: number[], tr
   const rows = tableToCells(table);
 
   const { map, width } = TableMap.get(table.node);
+
+  // Validate row indices
+  const maxRow = rows.length - 1;
+  if (rowIndices.some((idx) => idx < 0 || idx > maxRow)) {
+    console.warn("Invalid row indices for duplication");
+    return tr;
+  }
+
   const mapStart = tr.mapping.maps.length;
 
   const lastRowPos = map[rowIndices[rowIndices.length - 1] * width + width - 1];
@@ -128,6 +136,13 @@ export const duplicateColumns = (table: TableNodeLocation, columnIndices: number
   const rows = tableToCells(table);
 
   const { map, width, height } = TableMap.get(table.node);
+
+  // Validate column indices
+  if (columnIndices.some((idx) => idx < 0 || idx >= width)) {
+    console.warn("Invalid column indices for duplication");
+    return tr;
+  }
+
   const mapStart = tr.mapping.maps.length;
 
   for (let row = 0; row < height; row++) {
