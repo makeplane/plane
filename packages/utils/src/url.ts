@@ -75,12 +75,15 @@ export function extractURLComponents(url: URL): IURLComponents | undefined {
 /**
  * Checks if a string contains a valid TLD (Top Level Domain).
  *
- * @param {string} input - The string to check for valid TLD
+ * @param {string} urlString - The string to check for valid TLD
  * @returns {boolean} True if the string contains a valid TLD, false otherwise
  */
-function hasValidTLD(input: string): boolean {
-  // Extract potential domain part (after the last dot)
-  const parts = input.split(".");
+function hasValidTLD(urlString: string): boolean {
+  if (!urlString || urlString.startsWith(".") || urlString.endsWith(".")) {
+    return false;
+  }
+
+  const parts = urlString.split(".");
   if (parts.length < 2) return false;
 
   const potentialTLD = parts[parts.length - 1].toLowerCase();
@@ -112,9 +115,7 @@ function hasValidTLD(input: string): boolean {
  * // getValidURL('github.io')           // ✅ returns URL with http://github.io
  * // getValidURL('invalid.tld')         // ❌ returns undefined (invalid TLD)
  */
-export function getValidURL(urlString?: string): URL | undefined {
-  if (!urlString) return undefined;
-
+export function getValidURL(urlString: string): URL | undefined {
   // Try to create URL as-is first
   const url = createURL(urlString);
   if (url) return url;
