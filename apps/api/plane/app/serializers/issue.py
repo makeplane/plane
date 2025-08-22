@@ -1078,21 +1078,15 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
-<<<<<<< HEAD
     is_intake = serializers.BooleanField(read_only=True)
-=======
     is_epic = serializers.BooleanField(read_only=True)
->>>>>>> 67449cd382f4a0d8035a27d852281904df5314ad
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "description_html",
             "is_subscribed",
-<<<<<<< HEAD
             "is_intake",
-=======
             "is_epic",
->>>>>>> 67449cd382f4a0d8035a27d852281904df5314ad
         ]
         read_only_fields = fields
 
