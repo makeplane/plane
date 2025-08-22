@@ -51,6 +51,7 @@ from plane.db.models import (
     IssueRelation,
     IssueAssignee,
     IssueLabel,
+    IntakeIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -1223,7 +1224,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the issue
         issue = (
-            Issue.issue_objects.filter(project_id=project.id)
+            Issue.objects.filter(project_id=project.id)
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -1312,6 +1313,16 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                         project_id=project.id,
                         issue__sequence_id=issue_identifier,
                         subscriber=request.user,
+                    )
+                )
+            )
+            .annotate(
+                is_intake=Exists(
+                    IntakeIssue.objects.filter(
+                        issue=OuterRef("id"),
+                        status__in=[-2, 0],
+                        workspace__slug=slug,
+                        project_id=project.id,
                     )
                 )
             )
