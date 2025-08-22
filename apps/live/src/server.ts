@@ -30,20 +30,16 @@ export class Server {
   }
 
   public async initialize(): Promise<void> {
-    return redisManager
-      .initialize()
-      .then(() => {
-        logger.info("Redis setup completed");
-        const manager = HocusPocusServerManager.getInstance();
-        manager.initialize().catch((error) => {
-          logger.error("Failed to initialize HocusPocusServer:");
-          throw error;
-        });
-      })
-      .catch((error) => {
-        logger.error("Failed to setup Redis:", error);
-        throw error;
-      });
+    try {
+      await redisManager.initialize();
+      logger.info("Redis setup completed");
+      const manager = HocusPocusServerManager.getInstance();
+      await manager.initialize();
+      logger.info("HocusPocus setup completed");
+    } catch (error) {
+      logger.error("Failed to setup Redis:", error);
+      throw error;
+    }
   }
 
   private setupMiddleware() {
@@ -125,7 +121,6 @@ export class Server {
     // Close the Express server
     this.serverInstance.close(() => {
       logger.info("Express server closed gracefully.");
-      process.exit(1);
     });
   }
 }

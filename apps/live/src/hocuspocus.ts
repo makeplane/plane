@@ -13,7 +13,7 @@ import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/pa
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
 // editor types
-import { TUserDetails } from "@plane/editor";
+import type { TUserDetails } from "@plane/editor";
 // types
 import type { HocusPocusServerContext, TDocumentTypes } from "@/core/types/common";
 // redis
@@ -93,55 +93,50 @@ export class HocusPocusServerManager {
   };
 
   private onDatabaseFetch = async ({ context, documentName: pageId, requestParameters }: any) => {
-    const cookie = (context as HocusPocusServerContext).cookie;
-    // query params
-    const params = requestParameters;
-    const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
-    return new Promise(async (resolve) => {
-      try {
-        let fetchedData = null;
-        if (documentType === "project_page") {
-          fetchedData = await fetchPageDescriptionBinary(params, pageId, cookie);
-        } else {
-          fetchedData = await fetchDocument({
-            cookie,
-            documentType,
-            pageId,
-            params,
-          });
-        }
-        resolve(fetchedData);
-      } catch (error) {
-        logger.error("Error in fetching document", error);
+    try {
+      const cookie = (context as HocusPocusServerContext).cookie;
+      // query params
+      const params = requestParameters;
+      const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
+      if (documentType === "project_page") {
+        const data = await fetchPageDescriptionBinary(params, pageId, cookie);
+        return data;
+      } else {
+        const data = await fetchDocument({
+          cookie,
+          documentType,
+          pageId,
+          params,
+        });
+        return data;
       }
-    });
+    } catch (error) {
+      logger.error("Error in fetching document", error);
+      return null;
+    }
   };
 
   private onDatabaseStore = async ({ context, state, documentName: pageId, requestParameters }: any) => {
     const cookie = (context as HocusPocusServerContext).cookie;
-    // query params
-    const params = requestParameters;
-    const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
+    try {
+      // query params
+      const params = requestParameters;
+      const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
 
-    // TODO: Fix this lint error.
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async () => {
-      try {
-        if (documentType === "project_page") {
-          await updatePageDescription(params, pageId, state, cookie);
-        } else {
-          await updateDocument({
-            cookie,
-            documentType,
-            pageId,
-            params,
-            updatedDescription: state,
-          });
-        }
-      } catch (error) {
-        logger.error("Error in updating document:", error);
+      if (documentType === "project_page") {
+        await updatePageDescription(params, pageId, state, cookie);
+      } else {
+        await updateDocument({
+          cookie,
+          documentType,
+          pageId,
+          params,
+          updatedDescription: state,
+        });
       }
-    });
+    } catch (error) {
+      logger.error("Error in updating document:", error);
+    }
   };
   /**
    * Initialize and configure the HocusPocus server
@@ -163,8 +158,8 @@ export class HocusPocusServerManager {
           },
         }),
         new Database({
-          fetch: this.onDatabaseFetch as any,
-          store: this.onDatabaseStore as any,
+          fetch: this.onDatabaseFetch,
+          store: this.onDatabaseStore,
         }),
         new Redis({
           redis: redisManager.getClient(),
