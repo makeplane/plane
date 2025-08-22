@@ -80,6 +80,18 @@ export const transformGitHubIssue = async (
   let labels = issue.labels?.map((label) => (typeof label === "string" ? label : label.name)) || [];
   labels = labels.filter((label) => label.toLowerCase() !== "plane");
 
+  let targetState: string | undefined = undefined;
+  if (issue.state) {
+    const states = (await planeClient.state.list(workspaceSlug, projectId)).results;
+    const backlogState = states.find((state) => state.name.toLowerCase() === "backlog");
+    const doneState = states.find((state) => state.name.toLowerCase() === "done");
+    if (issue.state === "open") {
+      targetState = backlogState?.id;
+    } else if (issue.state === "closed") {
+      targetState = doneState?.id;
+    }
+  }
+
   return {
     external_id: issue.number.toString(),
     external_source: E_INTEGRATION_KEYS.GITHUB,
@@ -87,7 +99,7 @@ export const transformGitHubIssue = async (
     name: issue.title,
     description_html: issue_html,
     created_at: issue.created_at,
-    state: issue.state === "open" ? "Backlog" : "Done",
+    state: targetState,
     priority: "none",
     labels: labels,
     assignees: planeAssignees,
