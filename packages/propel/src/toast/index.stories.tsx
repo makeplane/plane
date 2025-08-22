@@ -1,7 +1,25 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { TOAST_TYPE, Toast, setToast, ToastProps } from "./index";
+import { TOAST_TYPE, Toast, setPromiseToast, setToast, ToastProps } from "./index";
 import React from "react";
+
+const Button = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium 
+    bg-white
+     text-custom-text-200 
+    rounded-[30px] 
+    shadow-[-20px_-20px_60px_#ffffff]
+    hover:text-custom-text-100
+    active:shadow-[inset_20px_20px_60px_#bebebe,inset_-20px_-20px_60px_#ffffff]
+    transition-all duration-300 focus:outline-none
+    border
+    "
+  >
+    {children}
+  </button>
+);
 
 const meta = {
   title: "Components/Toast",
@@ -36,74 +54,116 @@ export const Default: Story = {
     const activeTheme = theme as ToastProps["theme"];
     return (
       <GlobalToast theme={activeTheme}>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-5">
           {/* Success Toast */}
-          <button
+          <Button
             onClick={() => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Success",
-                message: "This is a success message",
+                title: "Saved",
+                message: "Your changes were saved successfully.",
               });
             }}
-            className="bg-custom-background-100 border border-custom-border-200 rounded-md px-4 py-2"
           >
-            Success
-          </button>
+            ✅ Success
+          </Button>
           {/* Error Toast */}
-          <button
+          <Button
             onClick={() => {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Error",
-                message: "This is an error message",
+                title: "Action failed",
+                message: "We couldn't complete that action. Please try again.",
               });
             }}
-            className="bg-custom-background-100 border border-custom-border-200 rounded-md px-4 py-2"
           >
-            Error
-          </button>
+            ❌ Error
+          </Button>
           {/* Toast with action items */}
-          <button
+          <Button
             onClick={() => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Action Items",
-                message: "This is an action items message",
+                title: "Next steps",
+                message: "Pick an option to continue.",
                 actionItems: (
                   <div className="flex items-center gap-1 text-xs text-custom-text-200">
                     <a
-                      href="https://www.google.com"
+                      href="https://plane.so"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-bold rounded"
+                      className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-semibold rounded"
                     >
-                      Action 1
+                      View docs
                     </a>
 
-                    <button className="cursor-pointer group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded">
-                      Action 2
+                    <button
+                      className="cursor-pointer px-2 py-1 text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-90 rounded"
+                      onClick={() =>
+                        setToast({
+                          type: TOAST_TYPE.SUCCESS,
+                          title: "Retried",
+                          message: "We ran that action again.",
+                        })
+                      }
+                    >
+                      Retry
                     </button>
                   </div>
                 ),
               });
             }}
-            className="bg-custom-background-100 border border-custom-border-200 rounded-md px-4 py-2"
           >
-            Action Items
-          </button>
+            🧭 Action items
+          </Button>
+          {/* Promise Toast */}
+          <Button
+            onClick={() => {
+              const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve("Success");
+                }, 1000);
+              });
+              setPromiseToast(promise, {
+                loading: "Working on it...",
+                success: {
+                  title: "All set",
+                  message: () => "Operation completed successfully.",
+                },
+                error: {
+                  title: "Request failed",
+                  message: () => "Something went wrong. Please try again.",
+                },
+              });
+            }}
+          >
+            ⏳→✅ Promise success
+          </Button>
+          {/* Promise Error Toast */}
+          <Button
+            onClick={() => {
+              const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  reject("Error");
+                }, 1000);
+              });
+              setPromiseToast(promise, {
+                loading: "Working on it...",
+                success: {
+                  title: "All set",
+                  message: () => "Operation completed successfully.",
+                },
+                error: {
+                  title: "Request failed",
+                  message: () => "Something went wrong. Please try again.",
+                },
+              });
+            }}
+          >
+            ⏳→❌ Promise error
+          </Button>
         </div>
       </GlobalToast>
     );
-  },
-};
-
-export const PromiseToast: Story = {
-  args: {
-    theme: "light",
-  },
-  render: ({ theme }) => {
-    const activeTheme = theme as ToastProps["theme"];
-    return <></>;
   },
 };
