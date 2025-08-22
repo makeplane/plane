@@ -18,7 +18,6 @@ module.exports = {
       "./pages/**/*.tsx",
       "./app/**/*.tsx",
       "./ui/**/*.tsx",
-      "./propel/src/**/*.tsx",
       "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/propel/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/editor/src/**/*.{js,ts,jsx,tsx}",
