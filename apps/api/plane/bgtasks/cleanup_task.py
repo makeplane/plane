@@ -132,7 +132,7 @@ def process_cleanup_task(
                 mongo_collection=mongo_collection,
                 buffer=buffer,
                 ids_to_delete=ids_to_delete,
-                mode=model,
+                model=model,
                 mongo_available=mongo_available,
             )
             total_processed += len(buffer)
