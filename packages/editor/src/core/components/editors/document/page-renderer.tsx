@@ -19,6 +19,7 @@ type Props = {
   isTouchDevice: boolean;
   tabIndex?: number;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  disabledExtensions?: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
@@ -34,6 +35,7 @@ export const PageRenderer = (props: Props) => {
     isTouchDevice,
     tabIndex,
     flaggedExtensions,
+    disabledExtensions,
   } = props;
 
   return (
@@ -56,7 +58,11 @@ export const PageRenderer = (props: Props) => {
           {editor.isEditable && !isTouchDevice && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} />
+              <BlockMenu
+                editor={editor}
+                flaggedExtensions={flaggedExtensions}
+                disabledExtensions={disabledExtensions}
+              />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}

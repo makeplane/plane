@@ -12,7 +12,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   workspaceSlug: string;

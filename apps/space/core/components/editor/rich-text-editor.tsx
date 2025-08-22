@@ -12,7 +12,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "embedHandler">,
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
