@@ -64,7 +64,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
     interval_seconds = models.PositiveIntegerField(
         null=True,
         blank=True,
-        help_text="Simple repeat interval (≥ 60s). Mutually exclusive with cron_expression",
+        help_text="Simple repeat interval (≥ 60s). Mutually exclusive with cron_expression",  # noqa: E501
     )
     cron_expression = models.CharField(
         max_length=100,
@@ -110,7 +110,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         Args:
             start_at (datetime): The datetime when the task should start
             interval_type (str): One of 'second', 'daily', 'week', 'month', 'year'
-            project_timezone (Optional[str]): IANA timezone for the project; used to compute the correct local day boundaries
+            project_timezone (Optional[str]): IANA timezone for the project;
 
         Returns:
             str: Cron expression in format "minute hour day month day_of_week"
@@ -125,7 +125,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         valid_intervals = [choice[0] for choice in cls.INTERVAL_CHOICES]
         if interval_type not in valid_intervals:
             raise ValidationError(
-                f"Invalid interval_type: {interval_type}. Must be one of {valid_intervals}"
+                f"Invalid interval_type: {interval_type}. Must be one of {valid_intervals}"  # noqa: E501
             )
 
         if not start_at:
@@ -140,20 +140,22 @@ class RecurringWorkitemTask(ProjectBaseModel):
         except Exception:
             tz = pytz.UTC
 
-        # Normalize to project-local midnight, then convert back to UTC
-        local_midnight = aware_start.astimezone(tz).replace(hour=0, minute=0, second=0, microsecond=0)
-        utc_dt = local_midnight.astimezone(pytz.UTC)
+        # Normalize to project-local midnight
+        local_midnight = aware_start.astimezone(tz).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
 
-        # Extract cron fields
-        minute, hour, day, month = utc_dt.minute, utc_dt.hour, utc_dt.day, utc_dt.month
+        # Extract cron fields from project timezone (not UTC) since CrontabSchedule
+        # will be created with project_timezone
+        minute, hour = local_midnight.minute, local_midnight.hour
+        day, month = local_midnight.day, local_midnight.month
         cron_day_of_week = cls._convert_python_weekday_to_cron(local_midnight.weekday())
-
 
         # Generate cron expression based on interval type
         if interval_type == cls.INTERVAL_DAILY:
-            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
+            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"  # noqa: E501
         elif interval_type == cls.INTERVAL_WEEKLY:
-            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cron_day_of_week}"
+            return f"{minute} {hour} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cron_day_of_week}"  # noqa: E501
         elif interval_type == cls.INTERVAL_MONTHLY:
             return f"{minute} {hour} {day} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
         elif interval_type == cls.INTERVAL_YEARLY:
@@ -161,7 +163,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
     @classmethod
     def _convert_python_weekday_to_cron(cls, python_weekday):
-        """Convert Python weekday (0=Monday, 6=Sunday) to cron format (0=Sunday, 6=Saturday)"""
+        """Convert Python weekday (0=Monday, 6=Sunday) to cron format (0=Sunday, 6=Saturday)"""  # noqa: E501
         return (
             cls.CRON_SUNDAY
             if python_weekday == cls.PYTHON_SUNDAY
@@ -169,7 +171,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         )
 
     def save(self, *args, **kwargs):
-        """Override save to generate cron expression and manage PeriodicTask synchronization"""
+        """Override save to generate cron expression and manage PeriodicTask synchronization"""  # noqa: E501
         # Auto-generate cron expression from interval_type and start_at
         if self.interval_type and self.start_at:
             project_tz = getattr(self.project, "timezone", None)
@@ -191,18 +193,18 @@ class RecurringWorkitemTask(ProjectBaseModel):
             self._sync_periodic_task()
 
     def delete(self, *args, **kwargs):
-        """Override delete to clean up associated PeriodicTask and avoid re-sync during soft delete"""
+        """Override delete to clean up associated PeriodicTask and avoid re-sync during soft delete"""  # noqa: E501
         # Ensure save() doesn't attempt to re-sync during soft delete
         self._skip_periodic_sync = True
 
-        # If there is an associated periodic task, delete it and null out the relation on this instance
+        # If there is an associated periodic task, delete it and null out the relation on this instance # noqa: E501
         if self.periodic_task_id is not None:
             try:
                 self.periodic_task.delete()
             except PeriodicTask.DoesNotExist:
                 pass
             finally:
-                # Null local relation to avoid "unsaved related object" on save during soft delete
+                # Null local relation to avoid "unsaved related object" on save during soft delete # noqa: E501
                 self.periodic_task = None
 
         return super().delete(*args, **kwargs)
@@ -332,7 +334,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
         Detect interval type from cron expression pattern.
 
         Returns:
-            str: One of 'daily', 'week', 'month', 'year', or None if pattern doesn't match
+            str: One of 'daily', 'week', 'month', 'year', or None
         """
         if not self.cron_expression:
             return None
@@ -432,7 +434,7 @@ class RecurringWorkitemTask(ProjectBaseModel):
 
 class RecurringWorkitemTaskLog(ProjectBaseModel):
     """
-    One row per execution; records status, timestamps, and the concrete Work Item produced.
+    One row per execution; records status, timestamps, and the concrete WorkItem created
     Provides audit trail for recurring workitem creation.
     """
 
@@ -477,7 +479,7 @@ class RecurringWorkitemTaskLog(ProjectBaseModel):
         ordering = ("-started_at",)
 
     def __str__(self):
-        return f"<{self.recurring_task.workitem_blueprint.name} {self.status} {self.started_at}>"
+        return f"<{self.recurring_task.workitem_blueprint.name} {self.status} {self.started_at}>"  # noqa: E501
 
     @property
     def duration(self):
@@ -489,7 +491,7 @@ class RecurringWorkitemTaskLog(ProjectBaseModel):
 
 class RecurringWorkItemTaskActivity(ProjectBaseModel):
     """
-    One row per execution; records status, timestamps, and the concrete Work Item produced.
+    One row per execution; records status, timestamps, and the concrete WorkItem created
     Provides audit trail for recurring workitem creation.
     """
 
