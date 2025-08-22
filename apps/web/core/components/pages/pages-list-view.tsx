@@ -20,12 +20,12 @@ type TPageView = {
 export const ProjectPagesListView: React.FC<TPageView> = observer((props) => {
   const { children, pageType, workspaceSlug, projectId } = props;
   // store hooks
-  const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);
+  const { isAnyPageAvailable, fetchPagesByType } = usePageStore(storeType);
 
   // fetching pages list
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_PAGES_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchPagesList(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null,
+    workspaceSlug && projectId && pageType ? () => fetchPagesByType(pageType) : null,
     {
       revalidateOnFocus: true,
       revalidateIfStale: true,
