@@ -42,14 +42,17 @@ class MongoConnection:
         if cls._instance is None:
             cls._instance = super(MongoConnection, cls).__new__(cls)
             try:
-                if not settings.MONGO_DB_URL or not settings.MONGO_DB_DATABASE:
+                mongo_url = getattr(settings, "MONGO_DB_URL", None)
+                mongo_db_database = getattr(settings, "MONGO_DB_DATABASE", None)
+
+                if not mongo_url or not mongo_db_database:
                     logger.warning(
                         "MongoDB connection parameters not configured. MongoDB functionality will be disabled."
                     )
                     return cls._instance
 
-                cls._client = MongoClient(settings.MONGO_DB_URL)
-                cls._db = cls._client[settings.MONGO_DB_DATABASE]
+                cls._client = MongoClient(mongo_url)
+                cls._db = cls._client[mongo_db_database]
 
                 # Test the connection
                 cls._client.server_info()
