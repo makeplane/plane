@@ -16,18 +16,17 @@ const Switch: React.FC<IToggleSwitchProps> = ({ value, onChange, label, size = "
     checked={value}
     disabled={disabled}
     onCheckedChange={onChange}
+    aria-label={label}
     className={cn(
-      "relative inline-flex flex-shrink-0 h-6 w-10 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700",
-      {
-        "h-4 w-6": size === "sm",
-        "h-5 w-8": size === "md",
-        "bg-custom-primary-100": value,
-        "cursor-not-allowed bg-custom-background-80": disabled,
-      },
+      "relative inline-flex flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none",
+      // size
+      size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10",
+      // state
+      disabled ? "cursor-not-allowed bg-custom-background-80" : value ? "bg-custom-primary-100" : "bg-gray-700",
       className
     )}
   >
-    <span className="sr-only">{label}</span>
+    {label && <span className="sr-only">{label}</span>}
     <BaseSwitch.Thumb
       aria-hidden="true"
       className={cn(
