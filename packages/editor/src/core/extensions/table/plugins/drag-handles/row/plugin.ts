@@ -14,6 +14,9 @@ import { RowDragHandle, RowDragHandleProps } from "./drag-handle";
 
 type TableRowDragHandlePluginState = {
   decorations?: DecorationSet;
+  // track table structure to detect changes
+  tableHeight?: number;
+  tableNodePos?: number;
 };
 
 const TABLE_ROW_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableRowDragHandlePlugin");
@@ -31,20 +34,33 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
 
         const tableMap = TableMap.get(table.node);
 
-        let isStale = false;
-        const mapped = prev.decorations?.map(tr.mapping, tr.doc);
-        for (let row = 0; row < tableMap.height; row++) {
-          const pos = getTableCellWidgetDecorationPos(table, tableMap, row * tableMap.width);
-          if (mapped?.find(pos, pos + 1)?.length !== 1) {
-            isStale = true;
-            break;
+        // Check if table structure changed (height or position)
+        const tableStructureChanged = prev.tableHeight !== tableMap.height || prev.tableNodePos !== table.pos;
+
+        let isStale = tableStructureChanged;
+
+        // Only do position-based stale check if structure hasn't changed
+        if (!isStale) {
+          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
+          for (let row = 0; row < tableMap.height; row++) {
+            const pos = getTableCellWidgetDecorationPos(table, tableMap, row * tableMap.width);
+            if (mapped?.find(pos, pos + 1)?.length !== 1) {
+              isStale = true;
+              break;
+            }
           }
         }
 
         if (!isStale) {
-          return { decorations: mapped };
+          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
+          return {
+            decorations: mapped,
+            tableHeight: tableMap.height,
+            tableNodePos: table.pos,
+          };
         }
 
+        // recreate all decorations
         const decorations: Decoration[] = [];
 
         for (let row = 0; row < tableMap.height; row++) {
@@ -61,7 +77,11 @@ export const TableRowDragHandlePlugin = (editor: Editor): Plugin<TableRowDragHan
           decorations.push(Decoration.widget(pos, () => dragHandleComponent.element));
         }
 
-        return { decorations: DecorationSet.create(newState.doc, decorations) };
+        return {
+          decorations: DecorationSet.create(newState.doc, decorations),
+          tableHeight: tableMap.height,
+          tableNodePos: table.pos,
+        };
       },
     },
     props: {
