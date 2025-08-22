@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash, X, type LucideIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash2, X, type LucideIcon } from "lucide-react";
 // extensions
 import { findTable, getSelectedRows } from "@/extensions/table/table/utilities/helpers";
 // local imports
@@ -49,7 +49,7 @@ const DROPDOWN_ITEMS: {
   {
     key: "delete",
     label: "Delete",
-    icon: Trash,
+    icon: Trash2,
     action: (editor) => editor.chain().focus().deleteRow().run(),
   },
 ];
