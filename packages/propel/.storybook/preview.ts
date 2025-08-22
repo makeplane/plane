@@ -4,10 +4,7 @@ import "@plane/tailwind-config/global.css";
 const preview: Preview = {
   parameters: {
     controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
+      matchers: {},
     },
   },
 };
