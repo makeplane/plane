@@ -16,7 +16,6 @@ from plane.db.models import (
 from plane.utils.content_validator import (
     validate_html_content,
     validate_json_content,
-    validate_binary_data,
 )
 
 
