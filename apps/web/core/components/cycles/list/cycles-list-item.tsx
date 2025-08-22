@@ -1,6 +1,6 @@
 "use client";
-
-import { FC, MouseEvent, useRef } from "react";
+import { FC, MouseEvent, useMemo, useRef } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
@@ -53,11 +53,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const isCompleted = cycleStatus === "completed";
   const isActive = cycleStatus === "current";
 
-  const completionPercentage =
-    ((cycleDetails.completed_issues + cycleDetails.cancelled_issues) / cycleDetails.total_issues) * 100;
-
-  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-
   // handlers
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
@@ -77,6 +72,19 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   };
 
   const handleItemClick = cycleDetails.archived_at ? handleArchivedCycleClick : undefined;
+
+  const progress = useMemo(() => {
+    let completionPercentage =
+      ((cycleDetails.completed_issues + cycleDetails.cancelled_issues) / cycleDetails.total_issues) * 100;
+
+    if (isCompleted && !isEmpty(cycleDetails.progress_snapshot)) {
+      completionPercentage =
+        ((cycleDetails.progress_snapshot.completed_issues + cycleDetails.progress_snapshot.cancelled_issues) /
+          cycleDetails.progress_snapshot.total_issues) *
+        100;
+    }
+    return isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
+  }, [cycleDetails, isCompleted, cycleDetails.progress_snapshot]);
 
   return (
     <ListItem
