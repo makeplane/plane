@@ -71,6 +71,7 @@
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
+    "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.10",
     "uuid": "^10.0.0",
     "y-indexeddb": "^9.0.12",
