@@ -85,12 +85,17 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       scrollSummary(editor, marking);
     },
     setEditorValue: (content, emitUpdate = false) => {
-      editor?.commands.setContent(content, {
-        emitUpdate,
-        parseOptions: {
-          preserveWhitespace: true,
-        },
-      });
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .setContent(content, {
+          emitUpdate,
+          parseOptions: {
+            preserveWhitespace: true,
+          },
+        })
+        .run();
     },
     emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
