@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/ui";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   handleRemove: (val: string) => void;

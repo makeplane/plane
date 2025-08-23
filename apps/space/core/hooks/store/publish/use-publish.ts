@@ -2,7 +2,7 @@ import { useContext } from "react";
 // lib
 import { StoreContext } from "@/lib/store-provider";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
 
 export const usePublish = (anchor: string): PublishStore => {
   const context = useContext(StoreContext);

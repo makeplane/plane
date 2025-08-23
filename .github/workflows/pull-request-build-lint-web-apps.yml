@@ -4,7 +4,14 @@ on:
   workflow_dispatch:
   pull_request:
     branches: ["preview"]
-    types: ["opened", "synchronize", "ready_for_review", "review_requested", "reopened"]
+    types:
+      [
+        "opened",
+        "synchronize",
+        "ready_for_review",
+        "review_requested",
+        "reopened",
+      ]
     paths:
       - "**.tsx?"
       - "**.jsx?"
@@ -31,13 +38,17 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
 
-      - name: Build web apps
-        run: yarn run build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Lint web apps
-        run: yarn run ci:lint
+        run: pnpm run check:lint
 
+      - name: Check format
+        run: pnpm run check:format
 
+      - name: Build apps
+        run: pnpm run build

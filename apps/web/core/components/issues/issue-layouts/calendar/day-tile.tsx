@@ -11,7 +11,6 @@ import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } fro
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
-import { CalendarIssueBlocks } from "@/components/issues/issue-layouts/calendar";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
 import { MONTHS_LIST } from "@/constants/calendar";
@@ -23,6 +22,7 @@ import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {
   issuesFilterStore:

@@ -11,7 +11,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export type TIssueSubscription = {
   workspaceSlug: string;

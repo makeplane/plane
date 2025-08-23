@@ -15,7 +15,8 @@ import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 //
 import { IIssue } from "@/types/issue";
 import { IssueProperties } from "../properties/all-properties";

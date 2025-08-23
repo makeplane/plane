@@ -4,7 +4,7 @@ import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;

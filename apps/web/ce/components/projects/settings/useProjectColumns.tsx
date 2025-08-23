@@ -5,7 +5,7 @@ import { IWorkspaceMember, TProjectMembership } from "@plane/types";
 // components
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;

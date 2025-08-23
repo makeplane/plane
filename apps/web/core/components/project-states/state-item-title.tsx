@@ -6,7 +6,7 @@ import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // local imports
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { StateDelete, StateMarksAsDefault } from "./options";
 
 type TBaseStateItemTitleProps = {

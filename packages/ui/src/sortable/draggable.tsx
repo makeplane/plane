@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { isEqual } from "lodash";
-import { cn } from "../../helpers";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { isEqual } from "lodash";
+import React, { useEffect, useRef, useState } from "react";
 import { DropIndicator } from "../drop-indicator";
+import { cn } from "../utils";
 
 type Props = {
   children: React.ReactNode;

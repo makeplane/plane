@@ -7,7 +7,7 @@ import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
 // components
 import { Loader, StateGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // ui
 // types
 

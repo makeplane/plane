@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+// components
+import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks
-import { ResizableSidebar } from "@/components/sidebar";
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";

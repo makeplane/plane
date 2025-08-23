@@ -1,9 +1,9 @@
 "use client";
 
 import { CommandPalette } from "@/components/command-palette";
-import { ContentWrapper } from "@/components/core";
-import { SettingsHeader } from "@/components/settings";
-import { AuthenticationWrapper } from "@/lib/wrappers";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { SettingsHeader } from "@/components/settings/header";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {

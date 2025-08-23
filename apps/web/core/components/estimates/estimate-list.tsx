@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// components
-import { EstimateListItem } from "@/components/estimates";
+// local imports
+import { EstimateListItem } from "./estimate-list-item";
 
 type TEstimateList = {
   estimateIds: string[] | undefined;

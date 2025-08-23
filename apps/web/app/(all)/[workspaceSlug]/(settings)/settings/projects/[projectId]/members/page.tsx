@@ -6,12 +6,15 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { ProjectMemberList } from "@/components/project/member-list";
+import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";

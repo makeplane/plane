@@ -16,3 +16,48 @@ out/
 **/out/
 dist/
 **/dist/
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode
+.idea
+
+# Coverage and test output
+coverage/
+**/coverage/
+*.lcov
+.junit/
+test-results/
+
+# Caches and build artifacts
+.cache/
+**/.cache/
+storybook-static/
+*storybook.log
+*.tsbuildinfo
+
+# Local env and secrets
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.secrets
+tmp/
+temp/
+
+# Database/cache dumps
+*.rdb
+*.rdb.gz
+
+# Misc
+*.pem
+*.key

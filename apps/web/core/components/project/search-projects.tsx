@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useProjectFilter } from "@/hooks/store";
+import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
 export const ProjectSearch: FC = observer(() => {
   // i18n

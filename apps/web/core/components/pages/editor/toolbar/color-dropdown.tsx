@@ -4,7 +4,7 @@ import { memo } from "react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // plane editor
-import { COLORS_LIST, TEditorCommands } from "@plane/editor";
+import { COLORS_LIST, type TEditorCommands } from "@plane/editor";
 // helpers
 import { cn } from "@plane/utils";
 

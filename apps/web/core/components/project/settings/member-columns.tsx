@@ -9,7 +9,8 @@ import { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "
 import { CustomMenu, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;

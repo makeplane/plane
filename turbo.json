@@ -19,6 +19,7 @@
     "NEXT_PUBLIC_POSTHOG_DEBUG",
     "NEXT_PUBLIC_SUPPORT_EMAIL"
   ],
+  "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -34,7 +35,8 @@
       "cache": false
     },
     "check:lint": {
-      "cache": false
+      "cache": false,
+      "inputs": ["**/*", "!**/.next/**", "!**/dist/**"]
     },
     "check:format": {
       "cache": false

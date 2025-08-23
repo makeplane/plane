@@ -20,7 +20,7 @@ import { convertToEpoch } from "@plane/utils";
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
 import { Notification, INotification } from "@/store/notifications/notification";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;

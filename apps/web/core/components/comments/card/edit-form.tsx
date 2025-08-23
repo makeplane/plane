@@ -7,7 +7,7 @@ import type { EditorRefApi } from "@plane/editor";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // components
-import { LiteTextEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 
 type Props = {
   activityOperations: TCommentsOperations;

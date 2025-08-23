@@ -33,20 +33,22 @@ declare module "@tiptap/core" {
   }
 }
 
-export interface UtilityExtensionStorage {
+export type UtilityExtensionStorage = {
   assetsList: TEditorAsset[];
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
   activeDropbarExtensions: TActiveDropbarExtensions[];
-}
+  isTouchDevice: boolean;
+};
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
   fileHandler: TFileHandler;
   isEditable: boolean;
+  isTouchDevice: boolean;
 };
 
 export const UtilityExtension = (props: Props) => {
-  const { disabledExtensions, fileHandler, isEditable } = props;
+  const { disabledExtensions, fileHandler, isEditable, isTouchDevice } = props;
   const { restore } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
@@ -79,6 +81,7 @@ export const UtilityExtension = (props: Props) => {
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
         activeDropbarExtensions: [],
+        isTouchDevice,
       };
     },
 

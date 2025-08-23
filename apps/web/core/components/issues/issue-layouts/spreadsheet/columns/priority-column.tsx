@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import { TIssue } from "@plane/types";
 // components
-import { PriorityDropdown } from "@/components/dropdowns";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
 
 type Props = {
   issue: TIssue;

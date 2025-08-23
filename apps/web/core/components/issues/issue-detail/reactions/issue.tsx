@@ -9,7 +9,8 @@ import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 // types
 import { ReactionSelector } from "./reaction-selector";
 

@@ -4,7 +4,7 @@ import { Pen, Trash } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 // components
-import { ProIcon } from "@/components/common";
+import { ProIcon } from "@/components/common/pro-icon";
 
 type TEstimateListItem = {
   estimateId: string;

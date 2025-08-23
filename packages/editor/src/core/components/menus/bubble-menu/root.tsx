@@ -30,7 +30,7 @@ import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
-export interface EditorStateType {
+export type EditorStateType = {
   code: boolean;
   bold: boolean;
   italic: boolean;
@@ -48,7 +48,7 @@ export interface EditorStateType {
         backgroundColor: string;
       }
     | undefined;
-}
+};
 
 type Props = {
   editor: Editor;

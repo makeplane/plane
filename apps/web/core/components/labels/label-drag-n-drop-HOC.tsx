@@ -14,7 +14,7 @@ import { IIssueLabel, InstructionType } from "@plane/types";
 // ui
 import { DropIndicator } from "@plane/ui";
 // components
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { LabelName } from "./label-block/label-name";
 import { TargetData, getCanDrop, getInstructionFromPayload } from "./label-utils";
 
@@ -42,7 +42,7 @@ type Props = {
     isDragging: boolean,
     isDroppingInLabel: boolean,
     dragHandleRef: MutableRefObject<HTMLButtonElement | null>
-  ) => JSX.Element;
+  ) => React.ReactNode;
   onDrop: (
     draggingLabelId: string,
     droppedParentId: string | null,

@@ -11,9 +11,9 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, ISearchIssueResponse, IUser } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useIssues } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

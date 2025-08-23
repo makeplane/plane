@@ -21,19 +21,22 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/constants": "*",
-    "@plane/types": "*",
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "tailwind-merge": "^2.5.5",
+    "tlds": "1.259.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/lodash": "^4.17.6",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/uuid": "^9.0.8",

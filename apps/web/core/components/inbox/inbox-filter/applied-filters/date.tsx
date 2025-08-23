@@ -8,7 +8,7 @@ import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // constants
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersDate = {
   filterKey: TInboxIssueFilterDateKeys;

@@ -1,4 +1,4 @@
-import { Editor, findParentNodeClosestToPos, KeyboardShortcutCommand } from "@tiptap/core";
+import { type Editor, findParentNodeClosestToPos, type KeyboardShortcutCommand } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { CellSelection, TableMap } from "@tiptap/pm/tables";
 // constants
@@ -6,18 +6,18 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellEmpty, isCellSelection } from "@/extensions/table/table/utilities/helpers";
 
-interface CellCoord {
+type CellCoord = {
   row: number;
   col: number;
-}
+};
 
-interface TableInfo {
+type TableInfo = {
   node: ProseMirrorNode;
   pos: number;
   map: TableMap;
   totalColumns: number;
   totalRows: number;
-}
+};
 
 export const handleDeleteKeyOnTable: KeyboardShortcutCommand = (props) => {
   const { editor } = props;

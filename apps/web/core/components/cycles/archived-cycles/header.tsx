@@ -10,11 +10,11 @@ import type { TCycleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
-import { CycleFiltersSelection } from "@/components/cycles";
-import { FiltersDropdown } from "@/components/issues";
-// helpers
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useCycleFilter } from "@/hooks/store";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+// local imports
+import { CycleFiltersSelection } from "../dropdowns";
 
 export const ArchivedCyclesHeader: FC = observer(() => {
   // router

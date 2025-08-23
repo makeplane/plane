@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { TDeDupeIssue } from "@plane/types";
-import { TIssueOperations } from "@/components/issues";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 
 type TDeDupeIssuePopoverRootProps = {
   workspaceSlug: string;

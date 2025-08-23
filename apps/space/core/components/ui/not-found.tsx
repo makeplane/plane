@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-// ui
 // images
 import Image404 from "@/public/404.svg";
 

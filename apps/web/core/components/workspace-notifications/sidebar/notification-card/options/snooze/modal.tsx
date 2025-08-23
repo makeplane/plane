@@ -10,7 +10,7 @@ import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button, CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 
 type TNotificationSnoozeModal = {

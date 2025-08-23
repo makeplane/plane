@@ -10,7 +10,7 @@ import { IProject } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
 import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
 // components
-import { ImagePickerPopover } from "@/components/core";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // helpers
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
