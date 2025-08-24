@@ -119,10 +119,10 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const peekOverviewIssueClassName = cn(
     "flex flex-col",
     !embedIssue
-      ? "fixed z-[25] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "absolute z-[25] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
-      "top-2 bottom-2 right-2 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",
+      "top-0 bottom-0 right-0 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
       "inset-0 m-4 absolute": peekMode === "full-screen",
     }
@@ -132,7 +132,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
   const toggleDuplicateEpicModal = (value: boolean) => setDuplicateEpicModal(value);
 
-  const shouldUsePortal = !embedIssue && peekMode === "full-screen";
+  const shouldUsePortal = !embedIssue;
 
   const portalElement = document.getElementById("full-screen-portal");
 
