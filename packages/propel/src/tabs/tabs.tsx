@@ -2,8 +2,6 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import clsx from "clsx";
 
-
-
 type TabsCompound = React.ForwardRefExoticComponent<
   React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
 > & {
@@ -90,9 +88,7 @@ const TabsIndicator = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
     )}
     {...props}
     ref={ref}
-  >
-    <div className={cn("absolute left-0 top-0 h-full w-full bg-custom-background-100")} />
-  </div>
+  />
 ));
 
 export const Tabs = Object.assign(TabsRoot, {
