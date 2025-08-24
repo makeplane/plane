@@ -90,9 +90,6 @@ django-ratelimit==4.1.0
 # OpenAPI Specification
 drf-spectacular==0.28.0
 
-# mongo
-pymongo==4.6.3
-
 # OpenSearch Integration
 opensearch-py==2.8.0
 django-opensearch-dsl==0.7.0
