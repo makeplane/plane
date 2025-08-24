@@ -1,60 +1,13 @@
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui-components/react/popover";
-
-// types
-export type Placement =
-  | "auto"
-  | "auto-start"
-  | "auto-end"
-  | "top-start"
-  | "top-end"
-  | "bottom-start"
-  | "bottom-end"
-  | "right-start"
-  | "right-end"
-  | "left-start"
-  | "left-end"
-  | "top"
-  | "bottom"
-  | "right"
-  | "left";
-
-type Side = "top" | "bottom" | "left" | "right";
-type Align = "start" | "center" | "end";
+import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
 
 export interface PopoverContentProps extends React.ComponentProps<typeof BasePopover.Popup> {
-  placement?: Placement;
-  align?: Align;
+  placement?: TPlacement;
+  align?: TAlign;
   sideOffset?: BasePopover.Positioner.Props["sideOffset"];
-  side?: Side;
+  side?: TSide;
   containerRef?: React.RefObject<HTMLElement>;
-}
-
-// placement conversion map
-const PLACEMENT_MAP = new Map<Placement, { side: Side; align: Align }>([
-  ["auto", { side: "bottom", align: "center" }],
-  ["auto-start", { side: "bottom", align: "start" }],
-  ["auto-end", { side: "bottom", align: "end" }],
-  ["top", { side: "top", align: "center" }],
-  ["bottom", { side: "bottom", align: "center" }],
-  ["left", { side: "left", align: "center" }],
-  ["right", { side: "right", align: "center" }],
-  ["top-start", { side: "top", align: "start" }],
-  ["top-end", { side: "top", align: "end" }],
-  ["bottom-start", { side: "bottom", align: "start" }],
-  ["bottom-end", { side: "bottom", align: "end" }],
-  ["left-start", { side: "left", align: "start" }],
-  ["left-end", { side: "left", align: "end" }],
-  ["right-start", { side: "right", align: "start" }],
-  ["right-end", { side: "right", align: "end" }],
-]);
-
-// conversion function
-export function convertPlacementToSideAndAlign(placement: Placement): {
-  side: Side;
-  align: Align;
-} {
-  return PLACEMENT_MAP.get(placement) || { side: "bottom", align: "center" };
 }
 
 // PopoverContent component

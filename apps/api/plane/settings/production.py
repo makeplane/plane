@@ -85,6 +85,11 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.mongo": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.silo": {
             "level": "DEBUG" if DEBUG else "INFO",
             "handlers": ["console"],

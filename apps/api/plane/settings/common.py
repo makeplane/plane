@@ -311,7 +311,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.data_import_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
-    "plane.bgtasks.api_logs_task",
+    "plane.bgtasks.cleanup_task",
     "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks

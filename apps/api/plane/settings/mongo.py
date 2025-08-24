@@ -12,7 +12,7 @@ from typing import Optional, TypeVar, Type
 T = TypeVar("T", bound="MongoConnection")
 
 # Set up logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("plane.mongo")
 
 
 class MongoConnection:
@@ -26,7 +26,7 @@ class MongoConnection:
         _instance (Optional[MongoConnection]): The singleton instance of this class
         _client (Optional[MongoClient]): The MongoDB client instance
         _db (Optional[Database]): The MongoDB database instance
-    """
+    """  # noqa: E501
 
     _instance: Optional["MongoConnection"] = None
     _client: Optional[MongoClient] = None
@@ -42,21 +42,24 @@ class MongoConnection:
         if cls._instance is None:
             cls._instance = super(MongoConnection, cls).__new__(cls)
             try:
-                if not settings.MONGO_DB_URL or not settings.MONGO_DB_DATABASE:
+                mongo_url = getattr(settings, "MONGO_DB_URL", None)
+                mongo_db_database = getattr(settings, "MONGO_DB_DATABASE", None)
+
+                if not mongo_url or not mongo_db_database:
                     logger.warning(
-                        "MongoDB connection parameters not configured. MongoDB functionality will be disabled."
+                        "MongoDB connection parameters not configured. MongoDB functionality will be disabled."  # noqa: E501
                     )
                     return cls._instance
 
-                cls._client = MongoClient(settings.MONGO_DB_URL)
-                cls._db = cls._client[settings.MONGO_DB_DATABASE]
+                cls._client = MongoClient(mongo_url)
+                cls._db = cls._client[mongo_db_database]
 
                 # Test the connection
                 cls._client.server_info()
                 logger.info("MongoDB connection established successfully")
             except Exception as e:
                 logger.warning(
-                    f"Failed to initialize MongoDB connection: {str(e)}. MongoDB functionality will be disabled."
+                    f"Failed to initialize MongoDB connection: {str(e)}. MongoDB functionality will be disabled."  # noqa: E501
                 )
         return cls._instance
 
@@ -94,12 +97,12 @@ class MongoConnection:
 
         Returns:
             Optional[Collection]: The MongoDB collection instance or None if not configured
-        """
+        """  # noqa: E501
         try:
             db = cls.get_db()
             if db is None:
                 logger.warning(
-                    f"Cannot access collection '{collection_name}': MongoDB not configured"
+                    f"Cannot access collection '{collection_name}': MongoDB not configured"  # noqa: E501
                 )
                 return None
             return db[collection_name]
