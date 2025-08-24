@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { v4 } from "uuid";
 // plane imports
 import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
-// plane web components
-import { TCustomPropertyOperations } from "@/plane-web/components/issue-types";
-
+// local imports
+import type { TCustomPropertyOperations } from "@/plane-web/components/issue-types/properties/property-list-item";
 // default values
 const defaultIssuePropertyOption: Partial<Partial<TIssuePropertyOption>> = {
   id: undefined,

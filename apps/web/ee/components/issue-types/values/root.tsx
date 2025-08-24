@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
-// plane web components
-import { PropertyValueSelect } from "@/plane-web/components/issue-types/values/value-select";
+// local imports
+import { PropertyValueSelect } from "./value-select";
 
 type TIssueAdditionalPropertyValuesProps = {
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;

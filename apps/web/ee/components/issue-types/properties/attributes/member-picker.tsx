@@ -4,12 +4,10 @@ import { useParams } from "next/navigation";
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
-// plane web components
-import {
-  MemberValueSelect,
-  PropertyMultiSelect,
-  PropertySettingsConfiguration,
-} from "@/plane-web/components/issue-types";
+// local imports
+import { MemberValueSelect } from "../../values/components/member-select";
+import { PropertyMultiSelect } from "./common/property-multi-select";
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 
 type TMemberPickerAttributesProps = {
   memberPickerPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;

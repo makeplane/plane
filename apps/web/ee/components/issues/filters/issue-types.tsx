@@ -11,7 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/fi
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 

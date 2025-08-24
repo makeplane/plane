@@ -14,10 +14,10 @@ import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web imports
-import { AppImageUploadModal } from "@/plane-web/components/common/modal";
+import { AppImageUploadModal } from "@/plane-web/components/common/modal/upload-app-image";
 import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services/workspace.service";

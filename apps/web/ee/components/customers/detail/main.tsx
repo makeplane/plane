@@ -11,7 +11,9 @@ import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { DescriptionInput, MainWrapper, TitleInput } from "@/plane-web/components/common";
+import { DescriptionInput } from "@/plane-web/components/common/input/description-input";
+import { TitleInput } from "@/plane-web/components/common/input/title-input";
+import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // services

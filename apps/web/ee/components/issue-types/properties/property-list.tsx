@@ -3,14 +3,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssuePropertyType, IIssueProperty } from "@plane/types";
 // plane web imports
-import {
-  IssuePropertyCreateListItem,
-  IssuePropertyListItem,
-  TIssuePropertyCreateList,
-  TCustomPropertyOperations,
-} from "@/plane-web/components/issue-types";
-// plane web lib
 import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
+// local imports
+import type { TIssuePropertyCreateList } from "./root";
+import { IssuePropertyCreateListItem } from "./property-create-list-item";
+import { IssuePropertyListItem, type TCustomPropertyOperations } from "./property-list-item";
 
 type TIssuePropertyList = {
   properties: IIssueProperty<EIssuePropertyType>[] | undefined;

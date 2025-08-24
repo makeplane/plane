@@ -43,7 +43,7 @@ const AddMembersIcon = observer(
   }
 );
 
-const AddTeamspaceMembersButton = observer((props: TAddTeamspaceMembersButtonProps) => {
+export const AddTeamspaceMembersButton = observer((props: TAddTeamspaceMembersButtonProps) => {
   const { teamspaceId, variant, isEditingAllowed } = props;
   // state
   const [isAddMembersModalOpen, setIsAddMembersModalOpen] = useState(false);
@@ -81,5 +81,3 @@ const AddTeamspaceMembersButton = observer((props: TAddTeamspaceMembersButtonPro
     </>
   );
 });
-
-export default AddTeamspaceMembersButton;

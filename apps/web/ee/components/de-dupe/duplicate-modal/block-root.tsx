@@ -1,9 +1,10 @@
 "use-client";
 import React, { FC } from "react";
-// types
-import { TDeDupeIssue } from "@plane/types";
-// local-components
-import { DeDupeIssueBlockContent, DeDupeIssueBlockWrapper } from "../issue-block";
+// plane imports
+import type { TDeDupeIssue } from "@plane/types";
+// local-imports
+import { DeDupeIssueBlockContent } from "../issue-block/block-content";
+import { DeDupeIssueBlockWrapper } from "../issue-block/block-wrapper";
 import { DuplicateIssueReadOnlyHeaderRoot } from "./block-header";
 
 type TDuplicateIssueReadOnlyBlockRootProps = {

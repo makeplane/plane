@@ -5,7 +5,7 @@ import { TCustomer } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { SidebarWrapper } from "@/plane-web/components/common";
+import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";
 import {
   CustomerAdditionalPropertyValuesUpdate,
   CustomerDefaultSidebarProperties,

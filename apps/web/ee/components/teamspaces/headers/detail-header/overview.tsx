@@ -8,7 +8,7 @@ import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // plane web imports
-import { TeamQuickActions } from "@/plane-web/components/teamspaces/actions";
+import { TeamQuickActions } from "@/plane-web/components/teamspaces/actions/quick-actions";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TeamOverviewHeaderActionsProps = {

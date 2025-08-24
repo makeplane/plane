@@ -19,7 +19,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { ConvertWorkItemAction } from "@/plane-web/components/epics";
+import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // local imports
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";

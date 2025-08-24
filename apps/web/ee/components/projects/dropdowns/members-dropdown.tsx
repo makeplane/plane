@@ -11,7 +11,8 @@ type Props = {
   disabled?: boolean;
   button?: React.ReactNode;
 };
-const MembersDropdown: React.FC<Props> = (props) => {
+
+export const MembersDropdown: React.FC<Props> = (props) => {
   const { value, onChange, disabled = false, buttonClassName = "", className = "", button } = props;
   const DropdownLabel = () => (
     <div
@@ -40,5 +41,3 @@ const MembersDropdown: React.FC<Props> = (props) => {
     />
   );
 };
-
-export default MembersDropdown;

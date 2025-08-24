@@ -2,13 +2,14 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// constants
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// local components
-import { LayoutRoot } from "../../common";
+// plane web imports
+import { LayoutRoot } from "@/plane-web/components/common/layout";
+// local imports
 import { ProjectOverviewMainContentRoot } from "./main/root";
 import { ProjectOverviewSidebarRoot } from "./sidebar/root";
 

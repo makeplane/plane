@@ -2,9 +2,12 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { CircularProgressIndicator, ControlLink, Loader, ScopeIcon } from "@plane/ui";
-import { SectionEmptyState, SectionWrapper } from "@/plane-web/components/common";
+// plane web imports
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";

@@ -8,7 +8,7 @@ import { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } 
 import { Button, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { IssueTypeListItem } from "@/plane-web/components/issue-types";
+import { IssueTypeListItem } from "@/plane-web/components/issue-types/issue-type-list-item";
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
 // local imports
 import { ProjectTemplateWorkItemTypeModal } from "./create-update-modal";

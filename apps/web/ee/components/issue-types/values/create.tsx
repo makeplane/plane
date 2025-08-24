@@ -7,8 +7,8 @@ import { IIssueType, TIssuePropertyValues } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // store hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-// plane web imports
-import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values/root";
+// local imports
+import { IssueAdditionalPropertyValues } from "./root";
 
 type TIssueAdditionalPropertyValuesCreateProps = {
   arePropertyValuesInitializing: boolean;

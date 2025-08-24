@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOperationMode } from "@plane/types";
+import type { TOperationMode } from "@plane/types";
 import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web components
+// plane web imports
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { DeleteConfirmationModal } from "@/plane-web/components/issue-types";
+// local imports
+import { DeleteConfirmationModal } from "./delete-confirmation-modal";
 
 type TIssuePropertyQuickActions = {
   isPropertyDisabled: boolean;

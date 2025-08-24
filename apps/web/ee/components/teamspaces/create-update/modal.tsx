@@ -1,18 +1,16 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { TTeamspace } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
 import { getRandomEmoji } from "@plane/utils";
-// plane web components
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
-import { CreateOrUpdateTeamForm } from "@/plane-web/components/teamspaces/create-update";
-// plane web
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
-// helpers
+// local imports
+import { CreateOrUpdateTeamForm } from "./form";
 
 type TCreateOrUpdateTeamspaceModalProps = {
   teamspaceId: string | undefined;

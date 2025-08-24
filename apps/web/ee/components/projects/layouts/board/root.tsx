@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { ContentWrapper } from "@plane/ui";
-import { ProjectBoardGroup } from "@/plane-web/components/projects/layouts/board";
+import { ProjectBoardGroup } from "@/plane-web/components/projects/layouts/board/group";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";

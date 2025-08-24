@@ -11,12 +11,15 @@ import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/util
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
-import { PriorityDropdown, StateDropdown } from "../dropdowns";
-import MembersDropdown from "../dropdowns/members-dropdown";
+// local imports
+import { MembersDropdown } from "../dropdowns/members-dropdown";
+import { PriorityDropdown } from "../dropdowns/priority-dropdown";
+import { StateDropdown } from "../dropdowns/state-dropdown";
 
 type Props = {
   project: TProject;
@@ -30,7 +33,7 @@ type Props = {
   displayProperties: { [key: string]: boolean };
 };
 
-const Attributes: React.FC<Props> = observer((props) => {
+export const Attributes: React.FC<Props> = observer((props) => {
   const {
     project,
     isArchived,
@@ -200,4 +203,3 @@ const Attributes: React.FC<Props> = observer((props) => {
     </div>
   );
 });
-export default Attributes;

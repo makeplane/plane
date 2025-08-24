@@ -6,9 +6,10 @@ import type { EditorRefApi } from "@plane/editor";
 import { EFileAssetType } from "@plane/types";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// local components
-import { DescriptionInput, TitleInput } from "../../../input";
-import { SectionWrapper } from "../common";
+// local imports
+import { DescriptionInput } from "../../../input/description-input";
+import { TitleInput } from "../../../input/title-input";
+import { SectionWrapper } from "../common/section-wrapper";
 
 type TInfoSectionProps = {
   editorRef?: React.RefObject<EditorRefApi>;

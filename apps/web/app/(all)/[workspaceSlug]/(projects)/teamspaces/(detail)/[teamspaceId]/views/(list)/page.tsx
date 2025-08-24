@@ -10,7 +10,7 @@ import { calculateTotalFilters } from "@plane/utils";
 // constants
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // plane web imports
-import { TeamspaceViewsList } from "@/plane-web/components/teamspaces/views";
+import { TeamspaceViewsList } from "@/plane-web/components/teamspaces/views/views-list";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 
 const TeamspaceViewsPage = observer(() => {

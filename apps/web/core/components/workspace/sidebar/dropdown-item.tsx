@@ -7,11 +7,10 @@ import { Check, Settings, UserPlus } from "lucide-react";
 import { Menu } from "@headlessui/react";
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
-// helpers
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription";
+import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
 type TProps = {
   workspace: IWorkspace;

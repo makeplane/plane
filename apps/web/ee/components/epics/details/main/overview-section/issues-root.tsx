@@ -16,7 +16,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 

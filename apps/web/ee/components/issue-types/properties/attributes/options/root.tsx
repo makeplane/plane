@@ -3,14 +3,13 @@ import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssuePropertyOptionCreateUpdateData } from "@plane/types";
+import type { TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 import { Sortable, Tooltip } from "@plane/ui";
 // plane web imports
-import {
-  IssuePropertyCreateOptionItem,
-  IssuePropertyOptionItem,
-} from "@/plane-web/components/issue-types/properties/attributes";
 import { usePropertyOptions } from "@/plane-web/hooks/store";
+// local imports
+import { IssuePropertyCreateOptionItem } from "./create-option-item";
+import { IssuePropertyOptionItem } from "./option";
 
 type TIssuePropertyOptionsRoot = {
   customPropertyId: string | undefined;

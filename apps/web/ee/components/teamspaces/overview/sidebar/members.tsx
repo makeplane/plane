@@ -9,11 +9,11 @@ import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { captureClick, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
-import AddTeamspaceMembersButton from "@/plane-web/components/teamspaces/actions/members/button";
+import { AddTeamspaceMembersButton } from "@/plane-web/components/teamspaces/actions/members/button";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

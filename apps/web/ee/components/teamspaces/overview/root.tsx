@@ -5,16 +5,14 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
-import { TeamsOverviewContent } from "@/plane-web/components/teamspaces/overview";
-// plane web hooks
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
-// components
+// local imports
 import { TeamsOverviewSidebar } from "./sidebar/root";
+import { TeamsOverviewContent } from "./content";
 
 type TTeamsOverviewRootProps = {
   teamspaceId: string;

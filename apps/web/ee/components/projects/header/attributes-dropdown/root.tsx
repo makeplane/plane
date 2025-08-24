@@ -5,11 +5,13 @@ import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-// plane web components
-import { FilterPriority, FilterState, FilterUser } from "@/plane-web/components/projects";
-// plane web hooks
+// plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
+// local imports
 import { FilterAccess } from "./access";
+import { FilterPriority } from "./priority";
+import { FilterState } from "./state";
+import { FilterUser } from "./users";
 
 type TProjectAttributesDropdown = {
   workspaceSlug: string;

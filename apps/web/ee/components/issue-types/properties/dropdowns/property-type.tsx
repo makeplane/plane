@@ -11,8 +11,8 @@ import {
 } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/utils";
-// plane web components
-import { PropertyTypeIcon } from "@/plane-web/components/issue-types/properties";
+// local imports
+import { PropertyTypeIcon } from "../property-icon";
 
 type TPropertyTypeDropdownProps = {
   propertyType: EIssuePropertyType | undefined;

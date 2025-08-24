@@ -2,11 +2,10 @@
 
 import { FC } from "react";
 import { X } from "lucide-react";
-// types
-import { TDeDupeIssue } from "@plane/types";
-// ui
+// plane imports
+import type { TDeDupeIssue } from "@plane/types";
 import { PlaneAIIcon, Tooltip } from "@plane/ui";
-// local-components
+// local-imports
 import { DuplicateIssueReadOnlyBlockRoot } from "./block-root";
 
 type TDuplicateModalRootProps = {

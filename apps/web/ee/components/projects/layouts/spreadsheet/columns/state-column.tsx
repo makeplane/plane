@@ -1,11 +1,14 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useProject } from "@/hooks/store/use-project"
+// hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
-import { StateDropdown } from "../../../dropdowns";
+import type { TProject } from "@/plane-web/types/projects";
+// local imports
+import { StateDropdown } from "../../../dropdowns/state-dropdown";
 
 type Props = {
   project: TProject;

@@ -9,13 +9,13 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web components
-import { TeamspaceViewListItem } from "@/plane-web/components/teamspaces/views";
-// plane web hooks
+// plane web imports
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
+// local imports
+import { TeamspaceViewListItem } from "./view-list-item";
 
 type Props = {
   teamspaceId: string;

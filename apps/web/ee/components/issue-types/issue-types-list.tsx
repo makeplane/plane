@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
+// plane imports
 import { EWorkItemTypeEntity } from "@plane/types";
 import { Loader } from "@plane/ui";
-// plane web components
-import { IssueTypeListItem } from "@/plane-web/components/issue-types";
-// plane web hooks
+// plane web imports
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { IssueTypeListItem } from "./issue-type-list-item";
 
 type TIssueTypesList = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;

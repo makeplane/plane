@@ -10,7 +10,8 @@ import { LayersIcon } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { SectionEmptyState, SectionWrapper } from "@/plane-web/components/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import projectService from "@/plane-web/services/project/project.service";
 

@@ -9,7 +9,7 @@ import { getSubscriptionName } from "@plane/utils";
 import { useInstance } from "@/hooks/store/use-instance";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common";
+import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const PlaneOneEditionBadge = observer(() => {

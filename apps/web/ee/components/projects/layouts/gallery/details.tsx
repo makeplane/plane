@@ -19,7 +19,7 @@ import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types/projects";
@@ -31,7 +31,8 @@ type Props = {
   setArchiveRestoreProject: (value: boolean) => void;
   setDeleteProjectModal: (value: boolean) => void;
 };
-const Details: React.FC<Props> = observer((props) => {
+
+export const Details: React.FC<Props> = observer((props) => {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
@@ -242,4 +243,3 @@ const Details: React.FC<Props> = observer((props) => {
     </div>
   );
 });
-export default Details;

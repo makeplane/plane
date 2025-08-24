@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 // plane imports
-import { EventToPayloadMap } from "@plane/editor";
-import { IUserLite, TCollaborator } from "@plane/types";
+import type { EventToPayloadMap } from "@plane/editor";
+import type { IUserLite, TCollaborator } from "@plane/types";
 import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";

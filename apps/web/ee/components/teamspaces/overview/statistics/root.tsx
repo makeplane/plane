@@ -12,19 +12,17 @@ import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE, TreeMapIcon } fro
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { SectionEmptyState } from "@/plane-web/components/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 import { TStatisticsFilter } from "@/plane-web/types/teamspace";
 // local imports
 import { TeamspaceStatisticsMap } from "./chart";
-import {
-  StatisticsDataKeyFilter,
-  StatisticsDependencyFilter,
-  StatisticsDueByFilter,
-  StatisticsLegend,
-  StatisticsStateGroupFilter,
-} from "./filters";
+import { StatisticsDataKeyFilter } from "./filters/data-key";
+import { StatisticsDependencyFilter } from "./filters/dependency";
+import { StatisticsDueByFilter } from "./filters/due-by";
+import { StatisticsLegend } from "./filters/legend";
+import { StatisticsStateGroupFilter } from "./filters/state-group";
 
 const COMMON_FILTER_LIST_CLASSNAME = "flex flex-wrap items-center gap-2.5 text-sm pb-3 px-1.5";
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =

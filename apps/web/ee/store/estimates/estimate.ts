@@ -16,7 +16,7 @@ import { IEstimate as ICeEstimate, Estimate as CeEstimate } from "@/ce/store/est
 import estimateService from "@/plane-web/services/project/estimate.service";
 // store
 import { EstimatePoint } from "@/store/estimates/estimate-point";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export interface IEstimate extends ICeEstimate {
   // actions

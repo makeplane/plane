@@ -21,7 +21,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { ConvertWorkItemAction, ProjectEpicQuickActions } from "@/plane-web/components/epics";
+import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
+import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
 export const EpicItemDetailsHeader = observer(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { TPageEmbedConfig } from "@plane/editor";
-import { TPage } from "@plane/types";
+import type { TPageEmbedConfig } from "@plane/editor";
+import type { TPage } from "@plane/types";
 // icons
 import { EmptyPageIcon } from "@plane/ui";
 // plane web store

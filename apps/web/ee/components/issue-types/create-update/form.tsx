@@ -5,12 +5,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { Info } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TIssueType } from "@plane/types";
+import type { TIssueType } from "@plane/types";
 import { Button, Input, TextArea, Tooltip } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
-// plane web components
-import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
+// local imports
+import { IssueTypeIconPicker } from "../common/icon-picker";
 
 type Props = {
   formData: Partial<TIssueType>;

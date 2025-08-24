@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { X } from "lucide-react";
 // plane web components
-import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 

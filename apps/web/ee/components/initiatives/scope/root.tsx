@@ -9,13 +9,13 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { WorkspaceEpicsListModal } from "@/plane-web/components/initiatives/details/main/collapsible-section/epics/workspace-epic-modal";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
-import { EpicPeekOverview } from "../../epics";
 import { InitiativeScopeGanttView } from "./gantt/root";
 import { InitiativeScopeListView } from "./list/root";
 

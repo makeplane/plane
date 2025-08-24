@@ -11,7 +11,7 @@ import { Button, EpicIcon, getButtonStyling } from "@plane/ui";
 import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@plane/utils";
 // plane-web
-import { SectionEmptyState } from "@/plane-web/components/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { EpicsGroup } from "./epic-list-item/epics-list-group";

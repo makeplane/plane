@@ -12,7 +12,7 @@ import { cn, getSubscriptionName } from "@plane/utils";
 import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common";
+import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const CloudEditionBadge = observer(() => {

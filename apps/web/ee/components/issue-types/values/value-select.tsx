@@ -16,16 +16,14 @@ import { Loader, Tooltip } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// plane web components
-import {
-  TextValueInput,
-  BooleanInput,
-  NumberValueInput,
-  MemberValueSelect,
-  DateValueSelect,
-  OptionValueSelect,
-  IssuePropertyLogo,
-} from "@/plane-web/components/issue-types";
+// local imports
+import { IssuePropertyLogo } from "../properties/common/issue-property-logo";
+import { BooleanInput } from "./components/boolean-input";
+import { DateValueSelect } from "./components/date-select";
+import { MemberValueSelect } from "./components/member-select";
+import { NumberValueInput } from "./components/number-input";
+import { OptionValueSelect } from "./components/option-select";
+import { TextValueInput } from "./components/text-input";
 import { UrlValueInput } from "./components/url-input";
 
 type TPropertyValueSelectProps = {

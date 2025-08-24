@@ -8,14 +8,14 @@ import { useParams, useRouter } from "next/navigation";
 import { Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useProject } from "@/hooks/store/use-project"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import JoinButton from "@/plane-web/components/projects/common/join-button";
-import Attributes from "@/plane-web/components/projects/layouts/attributes";
-import QuickActions from "@/plane-web/components/projects/quick-actions";
+import { JoinButton } from "@/plane-web/components/projects/common/join-button";
+import { Attributes } from "@/plane-web/components/projects/layouts/attributes";
+import { QuickActions } from "@/plane-web/components/projects/quick-actions";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web types

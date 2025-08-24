@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // plane web components
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
+import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";
 
 type TAddProjectsToTeamProps = {
   isEditingAllowed: boolean;

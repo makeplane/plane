@@ -1,12 +1,15 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-// icons
 import { ChevronDown } from "lucide-react";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { ProjectScopeDropdown } from "./dropdowns";
-import { ProjectAttributesDropdown, ProjectDisplayFiltersDropdown, ProjectLayoutSelection } from "./header";
+// local imports
+import { ProjectScopeDropdown } from "./dropdowns/scope-dropdown";
+import { ProjectAttributesDropdown } from "./header/attributes-dropdown/root";
+import { ProjectDisplayFiltersDropdown } from "./header/display-filters-dropdown/root";
+import { ProjectLayoutSelection } from "./header/layout-selection";
 
 export const ProjectsListMobileHeader = observer(() => {
   // router

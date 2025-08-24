@@ -1,9 +1,14 @@
 import { useEffect } from "react";
+// plane imports
 import { EIssueServiceType } from "@plane/types";
+// ce imports
 import { TNotificationPreview } from "@/ce/hooks/use-notification-preview";
+// components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// plane web imports
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 
 /**

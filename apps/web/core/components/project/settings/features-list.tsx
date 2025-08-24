@@ -15,7 +15,7 @@ import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
+import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings/feature-children";
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

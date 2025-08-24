@@ -11,10 +11,10 @@ import {
   TIssueIdentifierProps,
 } from "@/ce/components/issues/issue-details/issue-identifier";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 

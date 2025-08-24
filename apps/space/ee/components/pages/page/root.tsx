@@ -2,12 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
-import { EditorRefApi } from "@plane/editor";
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { Loader, ArchiveIcon, Logo } from "@plane/ui";
-// helpers
-// plane web store
+// plane web imports
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
-// components
+
 export const getPageName = (name: string | undefined) => {
   if (name === undefined) return "Untitled";
   if (!name || name.trim() === "") return "Untitled";

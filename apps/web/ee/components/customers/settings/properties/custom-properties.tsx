@@ -14,7 +14,8 @@ import { Button, Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
 import { CustomerPropertiesEmptyState } from "@/plane-web/components/customers/settings/properties";
-import { IssuePropertyList, TCustomPropertyOperations } from "@/plane-web/components/issue-types";
+import { IssuePropertyList } from "@/plane-web/components/issue-types/properties/property-list";
+import type { TCustomPropertyOperations } from "@/plane-web/components/issue-types/properties/property-list-item";
 import { useCustomerProperties } from "@/plane-web/hooks/store/customers/use-customer-properties";
 
 export type TCustomerPropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {

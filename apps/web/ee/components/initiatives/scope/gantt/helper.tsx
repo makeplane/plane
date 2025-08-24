@@ -9,10 +9,10 @@ import {
 } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks";
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { ProjectGanttBlock } from "@/plane-web/components/projects/layouts/gantt";
+import { ProjectGanttBlock } from "@/plane-web/components/projects/layouts/gantt/blocks";
 
 export const useGanttOperations = (workspaceSlug: string) => {
   const { updateProject } = useProject();

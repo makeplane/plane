@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { EWorkItemTypeEntity, IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
-import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
+import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values";
 
 export type TIssueAdditionalPropertyValuesUpdateProps = {
   entityType?: EWorkItemTypeEntity;

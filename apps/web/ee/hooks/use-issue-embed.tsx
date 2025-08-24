@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 // plane editor
-import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
+import type { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
 // plane ui
 import { PriorityIcon } from "@plane/ui";
 // ce hooks
-import { TIssueEmbedHookProps } from "@/ce/hooks/use-editor-embed";
+import type { TIssueEmbedHookProps } from "@/ce/hooks/use-editor-embed";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pages";
 // plane web hooks

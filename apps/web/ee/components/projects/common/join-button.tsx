@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-const JoinButton: React.FC<Props> = (props) => {
+export const JoinButton: React.FC<Props> = (props) => {
   const { project, className } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -79,5 +79,3 @@ const JoinButton: React.FC<Props> = (props) => {
     </>
   );
 };
-
-export default JoinButton;

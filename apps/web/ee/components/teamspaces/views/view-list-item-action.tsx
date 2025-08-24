@@ -10,18 +10,16 @@ import {
 } from "@plane/constants";
 import { EUserWorkspaceRoles, EViewAccess, TTeamspaceView } from "@plane/types";
 import { Tooltip, FavoriteStar } from "@plane/ui";
-// components
 import { calculateTotalFilters } from "@plane/utils";
+// components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
-// hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store/use-member"
+// hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { TeamspaceViewQuickActions } from "@/plane-web/components/teamspaces/views/quick-actions";
-// plane web constants
-// plane web hooks
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 
 type Props = {

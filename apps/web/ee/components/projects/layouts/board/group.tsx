@@ -2,11 +2,12 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-// plane web components
+// plane imports
 import { cn } from "@plane/utils";
-import { ProjectBoardGroupItem } from "@/plane-web/components/projects/layouts/board";
-// plane web types
-import { TProjectsBoardLayoutStructure } from "@/plane-web/types/workspace-project-filters";
+// plane web imports
+import type { TProjectsBoardLayoutStructure } from "@/plane-web/types/workspace-project-filters";
+// local imports
+import { ProjectBoardGroupItem } from "./group-item";
 
 type ProjectBoardGroup = {
   groupByProjectIds: TProjectsBoardLayoutStructure;

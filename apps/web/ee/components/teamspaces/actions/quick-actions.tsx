@@ -11,7 +11,7 @@ import { cn, copyUrlToClipboard } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web constants
-import { DeleteTeamspaceModal } from "@/plane-web/components/teamspaces/actions";
+import { DeleteTeamspaceModal } from "@/plane-web/components/teamspaces/actions/delete-modal";
 
 type Props = {
   teamspaceId: string;

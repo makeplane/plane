@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
-import { TDeDupeIssue } from "@plane/types";
+import type { TDeDupeIssue } from "@plane/types";
 import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -17,7 +17,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web
+// plane-web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type TDeDupeIssueBlockHeaderProps = {

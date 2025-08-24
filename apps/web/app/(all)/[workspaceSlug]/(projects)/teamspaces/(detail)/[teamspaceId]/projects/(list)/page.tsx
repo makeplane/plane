@@ -12,10 +12,8 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import {
-  TeamspaceProjectsWithGroupingRoot,
-  TeamspaceProjectsWithoutGroupingRoot,
-} from "@/plane-web/components/teamspaces/projects";
+import { TeamspaceProjectsWithGroupingRoot } from "@/plane-web/components/teamspaces/projects/grouping-root";
+import { TeamspaceProjectsWithoutGroupingRoot } from "@/plane-web/components/teamspaces/projects/non-grouping-root";
 import { useFlag, useTeamspaces, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 

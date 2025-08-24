@@ -11,16 +11,16 @@ import { DeleteProjectModal } from "@/components/project/delete-project-modal";
 import { JoinProjectModal } from "@/components/project/join-project-modal";
 import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 // local imports
-import JoinButton from "../../common/join-button";
-import Attributes from "../attributes";
-import Details from "./details";
+import { JoinButton } from "../../common/join-button";
+import { Attributes } from "../attributes";
+import { Details } from "./details";
 
 type Props = {
   project: TProject;

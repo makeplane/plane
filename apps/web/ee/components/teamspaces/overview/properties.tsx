@@ -9,11 +9,13 @@ import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
-import { JoinTeamspaceButton } from "@/plane-web/components/teamspaces/actions";
-import AddTeamspaceMembersButton from "@/plane-web/components/teamspaces/actions/members/button";
-import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
-import { TeamspaceDescriptionInput, TeamNameInput } from "@/plane-web/components/teamspaces/overview";
+import { JoinTeamspaceButton } from "@/plane-web/components/teamspaces/actions/join-teamspace";
+import { AddTeamspaceMembersButton } from "@/plane-web/components/teamspaces/actions/members/button";
+import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// local imports
+import { TeamspaceDescriptionInput } from "./description-input";
+import { TeamNameInput } from "./name-input";
 
 type TTeamsOverviewPropertiesProps = {
   teamspaceId: string;

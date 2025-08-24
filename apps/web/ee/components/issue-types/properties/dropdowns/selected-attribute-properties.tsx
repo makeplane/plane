@@ -2,16 +2,14 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssuePropertyType, TIssueProperty, TIssuePropertyTypeKeys, TOperationMode } from "@plane/types";
 import { getIssuePropertyTypeKey } from "@plane/utils";
-// plane web components
-import {
-  BooleanAttributes,
-  DatePickerAttributes,
-  DropdownAttributes,
-  MemberPickerAttributes,
-  NumberAttributes,
-  TextAttributes,
-  TIssuePropertyFormError,
-} from "@/plane-web/components/issue-types/properties";
+// local imports
+import { BooleanAttributes } from "../attributes/boolean";
+import { DatePickerAttributes } from "../attributes/date-picker";
+import { DropdownAttributes } from "../attributes/dropdown";
+import { MemberPickerAttributes } from "../attributes/member-picker";
+import { NumberAttributes } from "../attributes/number";
+import { TextAttributes } from "../attributes/text";
+import { TIssuePropertyFormError } from "../property-list-item";
 
 type TSelectedPropertyAttributesProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;

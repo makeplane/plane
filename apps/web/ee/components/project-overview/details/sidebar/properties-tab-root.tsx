@@ -15,15 +15,16 @@ import { DateDropdown } from "@/components/dropdowns/date";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
-import { useUserPermissions } from "@/hooks/store/user"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
-import { PriorityDropdown, StateDropdown } from "@/plane-web/components/projects";
-import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";
+import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/priority-dropdown";
+import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
+import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TProject } from "@/plane-web/types";

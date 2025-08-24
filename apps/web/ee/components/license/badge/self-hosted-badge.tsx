@@ -7,7 +7,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common";
+import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

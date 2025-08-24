@@ -1,11 +1,12 @@
 "use client";
 import React, { FC } from "react";
-// local components
 import { observer } from "mobx-react";
+// plane web imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import { WithFeatureFlagHOC } from "../feature-flags";
-import { DeDupeIssueButtonLabel } from "./issue-block";
+import { DeDupeIssueButtonLabel } from "./issue-block/button-label";
 
 type TDeDupeButtonRoot = {
   workspaceSlug: string;

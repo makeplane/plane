@@ -18,21 +18,20 @@ import {
 } from "@plane/types";
 import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
-// plane web components
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import {
-  AttributePill,
-  IssuePropertyLogo,
-  IssuePropertyQuickActions,
-  PropertyActiveCheckbox,
-  PropertyAttributes,
-  PropertyMandatoryFieldCheckbox,
-  PropertyTitleDescriptionInput,
-  PropertyTypeDropdown,
-  TIssuePropertyCreateList,
-} from "@/plane-web/components/issue-types";
-// plane web hooks
+// plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
+// local imports
+import { PropertyActiveCheckbox } from "./active-checkbox";
+import { AttributePill } from "./attributes/attribute-pill";
+import { IssuePropertyLogo } from "./common/issue-property-logo";
+import { PropertyAttributes } from "./dropdowns/property-attributes";
+import { PropertyTitleDescriptionInput } from "./dropdowns/property-title";
+import { PropertyTypeDropdown } from "./dropdowns/property-type";
+import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
+import { IssuePropertyQuickActions } from "./quick-actions";
+import { TIssuePropertyCreateList } from "./root";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;

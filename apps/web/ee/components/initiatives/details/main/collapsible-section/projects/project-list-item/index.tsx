@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 // Plane
 import { Briefcase } from "lucide-react";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
-import { cn, getProgress } from "@plane/utils";
+import { getProgress } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import Attributes from "@/plane-web/components/projects/layouts/attributes";
+import { Attributes } from "@/plane-web/components/projects/layouts/attributes";
 // local components
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";

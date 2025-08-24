@@ -5,7 +5,7 @@ import {
   ProjectInboxStore as CeProjectInboxStore,
   IProjectInboxStore as CeIProjectInboxStore,
 } from "@/store/inbox/project-inbox.store";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 import { InboxIssueService } from "../services/inbox-issue.service";
 
 export interface IProjectInboxStore extends CeIProjectInboxStore {

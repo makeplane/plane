@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
+import { type EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
 import { EFileAssetType, TPageTemplate } from "@plane/types";

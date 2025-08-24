@@ -16,8 +16,9 @@ import {
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// plane web imports
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 // local imports
-import { IssueTypeLogo } from "../../components/issue-types";
 import { useIssueTypes } from "../store/issue-types/use-issue-types";
 
 type TArgs = {

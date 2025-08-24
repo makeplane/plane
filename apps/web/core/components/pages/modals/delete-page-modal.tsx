@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // hooks

@@ -2,9 +2,8 @@
 
 import { FC } from "react";
 import { ChevronRight } from "lucide-react";
-// ui
+// plane imports
 import { PlaneAIIcon } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {

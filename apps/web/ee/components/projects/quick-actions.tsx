@@ -17,7 +17,8 @@ type Props = {
   workspaceSlug: string;
   project: TProject;
 };
-const QuickActions: React.FC<Props> = (props) => {
+
+export const QuickActions: React.FC<Props> = (props) => {
   const { workspaceSlug, project } = props;
   //states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -144,5 +145,3 @@ const QuickActions: React.FC<Props> = (props) => {
     </>
   );
 };
-
-export default QuickActions;

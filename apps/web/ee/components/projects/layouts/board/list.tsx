@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
-import { ProjectBoardListItem } from "@/plane-web/components/projects/layouts/board";
+import { ProjectBoardListItem } from "@/plane-web/components/projects/layouts/board/list-item";
 
 type ProjectBoardList = { groupByKey: string; projectIds: string[] };
 

@@ -4,15 +4,16 @@ import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
-// types
+// plane imports
 import { TTeamspaceView } from "@plane/types";
 // components
 import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { TeamspaceViewListItemAction, TeamspaceViewQuickActions } from "@/plane-web/components/teamspaces/views";
+// local imports
+import { TeamspaceViewListItemAction } from "./view-list-item-action";
+import { TeamspaceViewQuickActions } from "./quick-actions";
 
 type Props = {
   teamspaceId: string;

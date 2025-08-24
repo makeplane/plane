@@ -9,15 +9,15 @@ import { Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 // helpers
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useProject } from "@/hooks/store/use-project"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import JoinButton from "../../common/join-button";
-import QuickActions from "../../quick-actions";
-import Attributes from "../attributes";
+import { JoinButton } from "../../common/join-button";
+import { QuickActions } from "../../quick-actions";
+import { Attributes } from "../attributes";
 
 interface ProjectBlockProps {
   projectId: string;

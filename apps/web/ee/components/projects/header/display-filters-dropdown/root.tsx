@@ -4,11 +4,13 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-// plane web components
-import { DisplayFilterGroupBy, DisplayFilterSortBy, DisplayFilterSortOrder } from "@/plane-web/components/projects";
-// plane web hooks
+// plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
+// local imports
+import { DisplayFilterGroupBy } from "./group-by";
+import { DisplayFilterSortBy } from "./sort-by";
+import { DisplayFilterSortOrder } from "./sort-order";
 
 type TProjectDisplayFiltersDropdown = {
   workspaceSlug: string;

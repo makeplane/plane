@@ -10,7 +10,7 @@ import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components
-import { IssuePropertiesRoot } from "@/plane-web/components/issue-types";
+import { IssuePropertiesRoot } from "@/plane-web/components/issue-types/properties";
 
 type EpicPropertiesProps = {
   epicId: string;

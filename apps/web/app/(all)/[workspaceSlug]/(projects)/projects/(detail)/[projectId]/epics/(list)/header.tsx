@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-// ui
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
@@ -17,7 +16,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";

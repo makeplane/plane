@@ -1,13 +1,11 @@
 "use client";
 
 import { observer } from "mobx-react";
-// plane web components
-import { ProjectBoardLayout } from "@/plane-web/components/projects/layouts";
-// plane web hooks
+// plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states";
-// types
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
-// plane web components
+// local imports
+import { ProjectBoardLayout } from "./board";
 import { BaseProjectRoot } from "./gallery/base-gallery-root";
 import { BaseGanttRoot } from "./gantt/base-gantt-root";
 import { BaseListRoot } from "./list/base-list-root";

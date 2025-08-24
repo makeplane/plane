@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   project: TProject;

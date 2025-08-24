@@ -1,14 +1,15 @@
 "use client";
 
 import { FC } from "react";
-// types
-import { TDeDupeIssue } from "@plane/types";
+// plane imports
+import type { TDeDupeIssue } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-// local components
-import { DeDupeIssueBlockContent, DeDupeIssueBlockWrapper } from "../issue-block";
+// local imports
+import { DeDupeIssueBlockContent } from "../issue-block/block-content";
+import { DeDupeIssueBlockWrapper } from "../issue-block/block-wrapper";
 import { DeDupeIssueBlockHeader } from "./block-header";
 
 type TDeDupeIssueBlockRootProps = {

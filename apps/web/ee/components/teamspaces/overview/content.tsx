@@ -1,17 +1,15 @@
 import { observer } from "mobx-react";
 // plane imports
 import { ContentWrapper, ERowVariant } from "@plane/ui";
-// plane web components
-import {
-  TeamsOverviewProperties,
-  TeamsOverviewQuickLinks,
-  AddProjectsToTeam,
-} from "@/plane-web/components/teamspaces/overview";
-import { TeamspaceProgressRoot } from "@/plane-web/components/teamspaces/overview/progress/root";
-import { TeamspaceRelationsRoot } from "@/plane-web/components/teamspaces/overview/relations/root";
-import { TeamspaceStatisticsRoot } from "@/plane-web/components/teamspaces/overview/statistics/root";
-// plane web hooks
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// local imports
+import { AddProjectsToTeam } from "./add-projects";
+import { TeamspaceProgressRoot } from "./progress/root";
+import { TeamsOverviewProperties } from "./properties";
+import { TeamsOverviewQuickLinks } from "./quick-links";
+import { TeamspaceRelationsRoot } from "./relations/root";
+import { TeamspaceStatisticsRoot } from "./statistics/root";
 
 type TTeamsOverviewContentProps = {
   teamspaceId: string;

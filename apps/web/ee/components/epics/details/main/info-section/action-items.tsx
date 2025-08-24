@@ -3,14 +3,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useMember } from "@/hooks/store/use-member"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // services
 import { WorkItemVersionService } from "@/services/issue";

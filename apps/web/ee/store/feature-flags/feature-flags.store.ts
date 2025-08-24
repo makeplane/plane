@@ -5,7 +5,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane-web
 import { FeatureFlagService, TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
 /// store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 const featureFlagService = new FeatureFlagService();
 

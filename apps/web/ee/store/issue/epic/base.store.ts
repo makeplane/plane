@@ -1,7 +1,5 @@
-/* eslint-disable no-useless-catch */
-
-import { action, makeObservable, observable } from "mobx";
-import { CoreRootStore } from "@/store/root.store";
+import { makeObservable } from "mobx";
+import type { CoreRootStore } from "@/store/root.store";
 import { IUpdateStore, UpdateStore } from "../../updates/base.store";
 
 export interface IEpicBaseStore {

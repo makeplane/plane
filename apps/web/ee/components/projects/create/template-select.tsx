@@ -19,6 +19,7 @@ import { ProjectTemplateDropdown } from "@/plane-web/components/templates/dropdo
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
+
 export const ProjectTemplateSelect = observer((props: TProjectTemplateSelect) => {
   const { disabled = false, size = "sm", placeholder, dropDownContainerClassName, handleModalClose } = props;
   // router

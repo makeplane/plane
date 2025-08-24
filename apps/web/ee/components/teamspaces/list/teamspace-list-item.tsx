@@ -8,10 +8,12 @@ import { Logo, TeamsIcon } from "@plane/ui";
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { TeamProperties, TeamQuickActions, JoinTeamspaceButton } from "@/plane-web/components/teamspaces/actions";
-// plane web hooks
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
+// local imports
+import { TeamProperties } from "../actions/properties";
+import { TeamQuickActions } from "../actions/quick-actions";
+import { JoinTeamspaceButton } from "../actions/join-teamspace";
 
 type TeamspaceListItemProps = {
   teamspaceId: string;

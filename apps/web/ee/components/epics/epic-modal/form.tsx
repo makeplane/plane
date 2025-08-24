@@ -4,16 +4,13 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+// plane imports
 import { ETabIndices } from "@plane/constants";
-// editor
-import { EditorRefApi } from "@plane/editor";
-// types
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, EWorkItemTypeEntity, type ISearchIssueResponse, type TIssue } from "@plane/types";
-// hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-// helpers
 import { cn, getChangedIssuefields, getTabIndex } from "@plane/utils";
+// components
 import {
   IssueDescriptionEditor,
   IssueProjectSelect,
@@ -27,9 +24,11 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { IssueAdditionalProperties } from "../../issues/issue-modal/additional-properties";
-import { EpicDefaultProperties } from "./components";
+import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
+// local imports
+import { EpicDefaultProperties } from "./components/default-properties";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",

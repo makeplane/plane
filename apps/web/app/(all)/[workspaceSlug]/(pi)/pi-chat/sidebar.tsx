@@ -8,7 +8,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
-import { PiSidebar } from "@/plane-web/components/pi-chat";
+import { PiSidebar } from "@/plane-web/components/pi-chat/sidebar";
 
 export const PiAppSidebar: FC = observer(() => {
   // store hooks

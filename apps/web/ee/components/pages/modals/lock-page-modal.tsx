@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { EditorRefApi } from "@plane/editor";
+// plane imports
+import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import type { EditorRefApi } from "@plane/editor";
 import { ToggleSwitch } from "@plane/ui";
 import { getPageName } from "@plane/utils";
+// hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
-import { TPageInstance } from "@/store/pages/base-page";
+// store
+import type { TPageInstance } from "@/store/pages/base-page";
+// local imports
 import { ConfirmationModal } from "./confirmation-modal";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 
 export const LockPageModal = ({
   editorRef,

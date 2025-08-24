@@ -3,14 +3,16 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-// hooks
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
-// plane web components
-import { EpicsEmptyState } from "@/plane-web/components/epics";
+// plane web imports
+import { EpicsEmptyState } from "@/plane-web/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const EpicsLayout = observer(({ children }: { children: ReactNode }) => {

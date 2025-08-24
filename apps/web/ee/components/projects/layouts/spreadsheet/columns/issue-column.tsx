@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   project: TProject;

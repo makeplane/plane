@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
-// plane web components
-import { PropertySettingsConfiguration, BooleanInput } from "@/plane-web/components/issue-types";
+// local imports
+import { BooleanInput } from "../../values/components/boolean-input";
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 
 type TBooleanAttributesProps = {
   booleanPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.BOOLEAN>>;

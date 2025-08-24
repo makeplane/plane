@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { ListLayout } from "@/components/core/list/list-root";
 // plane web hooks
-import { SectionEmptyState } from "@/plane-web/components/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
 // local imports
 import { TeamspaceRelationIssueListItem } from "./list-item";

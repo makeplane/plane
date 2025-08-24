@@ -18,9 +18,9 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-// plane-web
+// plane-web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
+import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
 export const ProjectEpicDetailsHeader = observer(() => {
   // router

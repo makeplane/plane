@@ -6,7 +6,7 @@ import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 // hooks
 // plane web imports
-import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
+import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";
 
 type TeamspaceProjectListHeaderActionsProps = {
   teamspaceId: string;

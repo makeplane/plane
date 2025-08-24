@@ -2,9 +2,9 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
+import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // components
 import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";

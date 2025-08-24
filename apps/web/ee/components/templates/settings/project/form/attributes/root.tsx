@@ -14,8 +14,8 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { StateDropdown } from "@/plane-web/components/projects";
-import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";
+import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
+import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 import { useFlag, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";

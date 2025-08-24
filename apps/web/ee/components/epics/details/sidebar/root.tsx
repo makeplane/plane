@@ -9,7 +9,7 @@ import { CommentFillIcon, InfoFillIcon, UpdatesIcon } from "@plane/ui";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
-import { SidebarRoot } from "@/plane-web/components/common";
+import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
 // local components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { UpdatesWrapper } from "@/plane-web/components/updates/root";

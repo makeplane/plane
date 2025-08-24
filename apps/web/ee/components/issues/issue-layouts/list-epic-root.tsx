@@ -9,7 +9,7 @@ import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-r
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
+import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
 export const EpicListLayout: FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();

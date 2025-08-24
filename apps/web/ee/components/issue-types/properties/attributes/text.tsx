@@ -6,8 +6,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, TIssueProperty, TOperationMode, TTextAttributeDisplayOptions } from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { getTextAttributeDisplayNameKey } from "@plane/utils";
-// plane web components
-import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
+// local imports
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 
 type TTextAttributesProps = {
   textPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.TEXT>>;

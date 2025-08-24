@@ -1,20 +1,17 @@
 "use client";
 import { FC } from "react";
-// icons
 import { CalendarDays, Link2, Signal, Paperclip } from "lucide-react";
-// ui
+// plane imports
 import { LayersIcon, DoubleCircleIcon } from "@plane/ui";
-import { ISvgIcons } from "@plane/ui/src/icons/type";
-
-import {
-  SpreadsheetLeadColumn,
-  SpreadsheetUpdatedOnColumn,
-  SpreadsheetPriorityColumn,
-  SpreadsheetStateColumn,
-  SpreadsheetIssueColumn,
-  SpreadsheetMembersColumn,
-} from "@/plane-web/components/projects/layouts/spreadsheet/columns";
-import { TProject } from "@/plane-web/types/projects";
+import type { ISvgIcons } from "@plane/ui/src/icons/type";
+// plane web imports
+import type { TProject } from "@/plane-web/types/projects";
+import { SpreadsheetIssueColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/issue-column";
+import { SpreadsheetLeadColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/lead-column";
+import { SpreadsheetMembersColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/members-column";
+import { SpreadsheetPriorityColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/priority-column";
+import { SpreadsheetStateColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/state-column";
+import { SpreadsheetUpdatedOnColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/updated-on-column";
 
 export interface IProjectDisplayProperties {
   priority?: boolean;

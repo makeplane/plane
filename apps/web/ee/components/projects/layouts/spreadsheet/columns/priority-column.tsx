@@ -1,8 +1,8 @@
-import React from "react";
 import { observer } from "mobx-react";
-// components
-import { TProject } from "@/plane-web/types/projects";
-import { PriorityDropdown } from "../../../dropdowns";
+// plane web imports
+import type { TProject } from "@/plane-web/types/projects";
+// local imports
+import { PriorityDropdown } from "../../../dropdowns/priority-dropdown";
 
 type Props = {
   project: TProject;
@@ -15,7 +15,7 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props
   const { project, onChange, disabled, onClose } = props;
 
   return (
-    <div className=" h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-custom-border-200">
       <PriorityDropdown
         value={project.priority}
         onChange={(data) => onChange(project, { priority: data })}

@@ -1,19 +1,22 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-// plane web components
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+// plane imports
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { ProjectBoardGroupItemHeader, ProjectBoardList } from "@/plane-web/components/projects/layouts/board";
+// plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
+// local imports
 import { GroupDragOverlay } from "./group-drag-overlay";
+import { ProjectBoardGroupItemHeader } from "./group-item-header";
+import { ProjectBoardList } from "./list";
 import { groupDetails, highlightProjectOnDrop } from "./utils";
 
 type ProjectBoardGroupItem = {

@@ -20,7 +20,7 @@ import {
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypeDetail = {

@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
-
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import {
@@ -15,11 +14,13 @@ import {
 } from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-
-// plane web components
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
 import { epicsPropertiesTrackers } from "@/plane-web/components/epics/trackers";
-import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
+// local imports
+import { IssueTypePropertiesEmptyState } from "./empty-state";
+import { IssuePropertyList } from "./property-list";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;

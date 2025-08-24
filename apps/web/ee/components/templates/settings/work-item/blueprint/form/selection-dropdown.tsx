@@ -9,7 +9,7 @@ import { ProjectDropdownBase } from "@/components/dropdowns/project/base";
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
+import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
 import {
   COMMON_BUTTON_CLASS_NAME,
   COMMON_ERROR_CLASS_NAME,

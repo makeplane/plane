@@ -5,13 +5,15 @@ import { useParams } from "next/navigation";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane web components
+// plane web imports
 import { SettingsHeading } from "@/components/settings/heading";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
-// plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { CreateOrUpdateIssueTypeModal } from "./create-update/modal";
+import { IssueTypeEmptyState } from "./empty-state";
 import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
+import { IssueTypesList } from "./issue-types-list";
 
 export const IssueTypesRoot = observer(() => {
   // router

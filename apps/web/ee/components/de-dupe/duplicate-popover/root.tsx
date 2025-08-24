@@ -4,27 +4,24 @@ import React, { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
-// helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
 import { TDeDupeIssue } from "@plane/types";
-// ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
-// helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
-// plane-web
-import { DeDupeIssueButtonLabel } from "@/plane-web/components/de-dupe";
+// plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { DE_DUPE_SELECT_GROUP } from "@/plane-web/constants/de-dupe";
-// local-components
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
+import { DeDupeIssueButtonLabel } from "../issue-block/button-label";
 import { DeDupeIssueBlockRoot } from "./block-root";
 
 type TDeDupeIssuePopoverRootProps = {

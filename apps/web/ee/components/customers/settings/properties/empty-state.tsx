@@ -9,7 +9,7 @@ import { TCreationListModes } from "@plane/types";
 import { BuildingsIcon, Button } from "@plane/ui";
 // plane web components
 import { defaultCustomProperty } from "@/plane-web/components/customers/settings";
-import { TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
+import type { TIssuePropertyCreateList } from "@/plane-web/components/issue-types/properties";
 
 type TCustomerPropertiesEmptyStateProps = {
   handleCustomerPropertiesCreate: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;

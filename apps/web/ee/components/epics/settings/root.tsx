@@ -3,19 +3,21 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { EWorkItemTypeEntity } from "@plane/types";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
-// hooks
+// components
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
-import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
-// plane web hooks
+// plane web imports
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// local imports
 import { epicsTrackers } from "../trackers";
+import { EpicPropertiesRoot } from "./epics-properties";
+import { EpicsEmptyState } from "./empty-state";
 
 export const EpicsRoot = observer(() => {
   // router

@@ -7,11 +7,11 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
-import { useUserPermissions } from "@/hooks/store/user"
+import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { CustomerDetailSidebar, CustomerEmptyState, CustomerMainRoot } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
-import { LayoutRoot } from "../../common";
 
 export const CustomerDetailRoot: FC = observer(() => {
   const { workspaceSlug, customerId } = useParams();

@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
-// plane web components
-import { PropertySettingsConfiguration, NumberValueInput } from "@/plane-web/components/issue-types/";
+// local imports
+import { NumberValueInput } from "../../values/components/number-input";
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 
 type TNumberAttributesProps = {
   numberPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.DECIMAL>>;

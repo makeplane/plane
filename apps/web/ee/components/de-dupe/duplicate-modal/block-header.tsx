@@ -1,12 +1,12 @@
 "use-client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { TDeDupeIssue } from "@plane/types";
+// plane imports
+import type { TDeDupeIssue } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// components
+// plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-// types
 
 type DuplicateIssueReadOnlyHeaderRoot = {
   issue: TDeDupeIssue;

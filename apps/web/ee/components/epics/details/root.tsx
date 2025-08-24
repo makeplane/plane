@@ -9,12 +9,12 @@ import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/t
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
-import { LayoutRoot } from "../../common";
 import { EpicEmptyState } from "./empty-state";
 import { EpicMainContentRoot } from "./main/root";
 import { EpicDetailsSidebar } from "./sidebar/root";

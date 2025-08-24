@@ -1,17 +1,16 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueType } from "@plane/types";
+import type { TIssueType } from "@plane/types";
 import { EModalPosition, EModalWidth, getRandomIconName, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
 import { getRandomBackgroundColor } from "@plane/utils";
-// plane web components
+// plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
-// plane web
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { CreateOrUpdateIssueTypeForm } from "./form";
 
 type Props = {
   issueTypeId: string | null;

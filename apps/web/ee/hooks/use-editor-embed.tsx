@@ -3,9 +3,9 @@ import { useParams } from "next/navigation";
 // plane constants
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // plane editor
-import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 // plane types
-import { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
 import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers

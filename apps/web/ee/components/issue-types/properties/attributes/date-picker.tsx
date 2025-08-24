@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { EIssuePropertyType, TDateAttributeDisplayOptions, TIssueProperty, TOperationMode } from "@plane/types";
 import { getDateAttributeDisplayName } from "@plane/utils";
-// plane web components
-import { PropertySettingsConfiguration } from "@/plane-web/components/issue-types/properties";
+// local imports
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 
 type TDatePickerAttributesProps = {
   datePickerPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.DATETIME>>;

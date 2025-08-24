@@ -3,16 +3,14 @@ import { observer } from "mobx-react";
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
-// plane web components
-import {
-  DefaultOptionSelect,
-  IssuePropertyOptionsRoot,
-  PropertyMultiSelect,
-  PropertySettingsConfiguration,
-  TIssuePropertyFormError,
-} from "@/plane-web/components/issue-types/properties";
-// plane web hooks
+// plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
+// local imports
+import { TIssuePropertyFormError } from "../property-list-item";
+import { PropertyMultiSelect } from "./common/property-multi-select";
+import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
+import { IssuePropertyOptionsRoot } from "./options";
+import { DefaultOptionSelect } from "./options/default-option-select";
 
 type TDropdownAttributesProps = {
   dropdownPropertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;

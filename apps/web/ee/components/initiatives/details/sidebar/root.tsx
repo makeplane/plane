@@ -8,7 +8,7 @@ import { CommentFillIcon, InfoFillIcon } from "@plane/ui";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
-import { SidebarRoot } from "@/plane-web/components/common";
+import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
 // local components
 import { InitiativeSidebarActivityRoot } from "./activity-tab-root";
 import { InitiativeSidebarCommentsRoot } from "./comment-tab-root";

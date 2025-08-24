@@ -13,7 +13,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 import { AppRailRoot } from "@/plane-web/components/app-rail";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 // local imports
-import { PiChatFloatingBot } from "../pi-chat";
+import { PiChatFloatingBot } from "../pi-chat/floating-bot";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {
   const { shouldRenderAppRail } = useAppRail();
