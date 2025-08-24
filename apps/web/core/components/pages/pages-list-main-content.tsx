@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
@@ -14,24 +15,46 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
+const storeType = EPageStoreType.PROJECT;
+
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
-  storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType, storeType } = props;
+export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => {
+  const { children, pageType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
-    usePageStore(storeType);
+  const {
+    loader,
+    isAnyPageAvailable,
+    filters,
+    filteredPublicPageIds,
+    filteredPrivatePageIds,
+    filteredArchivedPageIds,
+    filteredSharedPageIds,
+  } = usePageStore(storeType);
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  // derived values
-  const pageIds = getCurrentProjectPageIdsByTab(pageType);
-  const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
+
+  // Get the appropriate page IDs based on page type
+  const pageIds = useMemo(() => {
+    switch (pageType) {
+      case "public":
+        return filteredPublicPageIds;
+      case "private":
+        return filteredPrivatePageIds;
+      case "archived":
+        return filteredArchivedPageIds;
+      case "shared":
+        return filteredSharedPageIds;
+      default:
+        return [];
+    }
+  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, filteredSharedPageIds]);
+
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -55,6 +78,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   });
 
   if (loader === "init-loader") return <PageLoader />;
+
   // if no pages exist in the active page type
   if (!isAnyPageAvailable || pageIds?.length === 0) {
     if (!isAnyPageAvailable) {
@@ -74,6 +98,9 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         />
       );
     }
+  }
+
+  if (!pageIds || pageIds.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
@@ -116,7 +143,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       );
   }
   // if no pages match the filter criteria
-  if (filteredPageIds?.length === 0)
+  if (filters.searchQuery && pageIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">

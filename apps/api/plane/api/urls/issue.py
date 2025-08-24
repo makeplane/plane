@@ -14,6 +14,7 @@ from plane.api.views import (
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
+    IssueAttachmentServerEndpoint,
     IssueSearchEndpoint,
 )
 
@@ -93,5 +94,15 @@ urlpatterns = [
             http_method_names=["get", "patch", "delete"]
         ),
         name="issue-attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="attachment",
     ),
 ]

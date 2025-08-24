@@ -11,9 +11,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/core/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/plane-editor/*": ["./src/ce/*"]
+      "@/*": ["src/core/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/plane-editor/*": ["src/ee/*"],
+      "@/ce/*": ["src/ce/*"]
     },
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true

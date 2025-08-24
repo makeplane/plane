@@ -20,6 +20,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -28,6 +29,7 @@ import {
 } from "@/extensions";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type { IEditorProps } from "@/types";
 // local imports
@@ -48,7 +50,7 @@ type TArguments = Pick<
 > & {
   enableHistory: boolean;
   editable: boolean;
-};
+} & Pick<IEditorPropsExtended, "extensionOptions" | "isSmoothCursorEnabled">;
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -61,6 +63,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     placeholder,
     tabIndex,
     editable,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = args;
 
   const extensions = [
@@ -115,8 +120,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      // additional props
+      extensionOptions,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

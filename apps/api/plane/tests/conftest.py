@@ -1,9 +1,26 @@
 import pytest
+from unittest.mock import patch
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
-from plane.db.models import User, Workspace, WorkspaceMember
+from uuid import uuid4
+
+from plane.app.permissions import ROLE
+
+from plane.db.models import (
+    User,
+    Workspace,
+    FileAsset,
+    WorkspaceMember,
+    ProjectMember,
+    ProjectPage,
+    Page,
+    DeployBoard,
+)
+from plane.app.permissions import ROLE
+
 from plane.db.models.api import APIToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @pytest.fixture(scope="session")
@@ -42,6 +59,52 @@ def create_user(db, user_data):
     return user
 
 
+def workspace(db, create_user):
+    """Create and return a workspace instance"""
+    workspace = Workspace.objects.create(
+        name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
+    )
+
+    WorkspaceMember.objects.create(
+        workspace=workspace, member=create_user, role=ROLE.ADMIN.value
+    )
+
+    return workspace
+
+
+@pytest.fixture
+def file_asset(db, workspace):
+    """Create and return a basic FileAsset instance for testing"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="test_file.txt",
+        attributes={
+            "name": "test_file.txt",
+            "size": 1024,
+            "mime_type": "text/plain",
+        },
+        size=1024,
+    )
+    return file_asset
+
+
+@pytest.fixture
+def cover_image_asset(db, workspace):
+    """Create and return a FileAsset instance specifically for cover images"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="cover_image.jpg",
+        attributes={
+            "name": "cover_image.jpg",
+            "size": 2048,
+            "mime_type": "image/jpeg",
+        },
+        size=2048,
+        entity_type=FileAsset.EntityTypeContext.PROJECT_COVER,
+    )
+    return file_asset
+
+
 @pytest.fixture
 def api_token(db, create_user):
     """Create and return an API token for testing the external API"""
@@ -62,8 +125,21 @@ def api_key_client(api_client, api_token):
 
 @pytest.fixture
 def session_client(api_client, create_user):
-    """Return a session authenticated API client for app API testing, which is what plane.app uses"""
+    """Return a session authenticated API client for app API testing, which is what plane.app uses"""  # noqa: E501
     api_client.force_authenticate(user=create_user)
+    return api_client
+
+
+@pytest.fixture
+def jwt_client(api_client, create_user):
+    """Return a JWT authenticated API client for app API testing, which is what plane.graphql uses"""  # noqa: E501
+
+    # Get JWT tokens for the user
+    refresh = RefreshToken.for_user(create_user)
+    access_token = str(refresh.access_token)
+
+    # Set the Authorization header with the JWT token
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
     return api_client
 
 
@@ -118,21 +194,202 @@ def plane_server(live_server):
     return live_server
 
 
+# OAuth Application Testing Fixtures
 @pytest.fixture
-def workspace(create_user):
-    """
-    Create a new workspace and return the
-    corresponding Workspace model instance.
-    """
-    # Create the workspace using the model
-    created_workspace = Workspace.objects.create(
-        name="Test Workspace",
-        owner=create_user,
-        slug="test-workspace",
+def oauth_application(db, create_user, workspace):
+    """Create and return an OAuth application instance"""
+    from plane.tests.factories import ApplicationFactory, ApplicationOwnerFactory
+
+    app = ApplicationFactory(
+        user=create_user,
+        created_by=create_user,
+        updated_by=create_user,
     )
 
-    WorkspaceMember.objects.create(
-        workspace=created_workspace, member=create_user, role=20
+    # Create application owner
+    ApplicationOwnerFactory(
+        user=create_user,
+        application=app,
+        workspace=workspace,
     )
 
-    return created_workspace
+    return app
+
+
+@pytest.fixture
+def workspace_app_installation(db, workspace, oauth_application, create_user):
+    """Create and return a workspace app installation instance"""
+    from plane.tests.factories import WorkspaceAppInstallationFactory
+    from plane.authentication.models import WorkspaceAppInstallation
+
+    # When this factory creates and saves the WorkspaceAppInstallation,
+    # the model's save() method automatically creates a bot user and adds it
+    # to workspace and project members
+    return WorkspaceAppInstallationFactory(
+        workspace=workspace,
+        application=oauth_application,
+        installed_by=create_user,
+        status=WorkspaceAppInstallation.Status.INSTALLED,
+    )
+
+
+@pytest.fixture
+def epic(db, workspace, project, create_user):
+    """Create and return an epic instance"""
+    from plane.tests.factories import EpicFactory, IssueTypeFactory
+    from plane.db.models import State
+
+    # Create an epic issue type ignore duplicates
+    _ = IssueTypeFactory(
+        workspace=workspace, name="Epic", description="Epic issue type", is_epic=True
+    )
+
+    # Create a default state for the project
+    _ = State.objects.create(
+        project=project,
+        workspace=workspace,
+        name="Backlog",
+        group="backlog",
+        default=True,
+        created_by=create_user,
+    )
+
+    ProjectMember.objects.create(
+        project=project,
+        member=create_user,
+        role=ROLE.ADMIN.value,
+    )
+
+    return project
+
+
+@pytest.fixture
+def create_workspace_member_admin(db, workspace, create_user):
+    """Create and return a workspace member with admin role"""
+    workspace_member = WorkspaceMember.objects.create(
+        workspace=workspace,
+        member=create_user,
+        role=ROLE.ADMIN.value,  # 20
+        is_active=True,
+    )
+    return workspace_member
+
+
+@pytest.fixture
+def create_project_member_admin(db, workspace, project, create_user):
+    """Create and return a workspace member with member role"""
+    project_member = ProjectMember.objects.create(
+        workspace=workspace,
+        project=project,
+        member=create_user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    )
+    return project_member
+
+
+@pytest.fixture
+def mock_feature_flag():
+    """Fixture to mock the feature flag check"""
+
+    def mock_decorator(flag_name, default_value=False):
+        def wrapper(func):
+            return func  # Pass through the original function
+
+        return wrapper
+
+    with patch(
+        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
+    ) as mock:
+        yield mock
+
+
+@pytest.fixture
+def create_workspace_member_admin(db, workspace, create_user):
+    """Create and return a workspace member with admin role"""
+    workspace_member = WorkspaceMember.objects.create(
+        workspace=workspace,
+        member=create_user,
+        role=ROLE.ADMIN.value,  # 20
+        is_active=True,
+    )
+    return workspace_member
+
+
+@pytest.fixture
+def create_project_member_admin(db, workspace, project, create_user):
+    """Create and return a workspace member with member role"""
+    project_member = ProjectMember.objects.create(
+        workspace=workspace,
+        project=project,
+        member=create_user,
+        role=ROLE.ADMIN.value,
+        is_active=True,
+    )
+    return project_member
+
+
+@pytest.fixture
+def mock_feature_flag():
+    """Fixture to mock the feature flag check"""
+
+    def mock_decorator(flag_name, default_value=False):
+        def wrapper(func):
+            return func  # Pass through the original function
+
+        return wrapper
+
+    with patch(
+        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
+    ) as mock:
+        yield mock
+
+def workspace_page(db, workspace, create_user):
+    """Create and return a page instance"""
+    from plane.tests.factories import PageFactory
+
+    return PageFactory(
+        workspace=workspace,
+        name="Test Workspace Page",
+        owned_by=create_user,
+        is_global=True,
+    )
+
+
+@pytest.fixture
+def project_page(db, workspace, project, create_user):
+    """Create and return a project page instance"""
+    from plane.tests.factories import PageFactory
+
+    page = PageFactory(
+        workspace=workspace,
+        name="Test Project Page",
+        owned_by=create_user,
+    )
+    # add as a project member
+    ProjectMember.objects.create(
+        project=project,
+        member=create_user,
+        role=20,
+    )
+    ProjectPage.objects.create(
+        project=project,
+        page=page,
+        workspace=workspace,
+    )
+    return page
+
+
+@pytest.fixture
+def published_page(db, workspace, workspace_page) -> tuple[Page, str]:
+    """Publish a page"""
+    workspace_page.access = Page.PUBLIC_ACCESS
+    workspace_page.save()
+
+    deploy_board = DeployBoard.objects.create(
+        entity_name=DeployBoard.DeployBoardType.PAGE,
+        entity_identifier=workspace_page.id,
+        workspace=workspace,
+    )
+    return workspace_page, deploy_board.anchor
+
