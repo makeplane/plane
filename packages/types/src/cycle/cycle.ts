@@ -130,6 +130,7 @@ export type CycleDateCheckData = {
 };
 
 export type TCycleEstimateType = "issues" | "points";
+export type TCycleEstimateSystemAdvanced = TCycleEstimateType | "time";
 export type TCyclePlotType = "burndown" | "burnup";
 
 export type TPublicCycle = {
