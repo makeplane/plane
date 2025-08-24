@@ -18,6 +18,7 @@ from django.db.models import (
     Aggregate,
 )
 from django.db.models.functions import Cast, TruncDay, TruncWeek, TruncMonth, TruncYear
+from django.db import models
 
 from plane.ee.models import Widget
 from plane.db.models import Issue
@@ -196,10 +197,25 @@ def build_grouped_chart_response(
 def build_simple_chart_response(
     queryset: QuerySet, id_field: str, name_field: str, aggregate_func: Aggregate
 ) -> List[Dict[str, Any]]:
-    data = (
-        queryset.annotate(
-            key=F(id_field), display_name=F(name_field) if name_field else F(id_field)
+    display_field = F(name_field) if name_field else F(id_field)
+
+    # For intake work items
+
+    if id_field == "created_by_id":
+        display_field = Case(
+            When(
+                **{f"{id_field}__is_bot": True},
+                then=F(f"{id_field}__bot_type"),
+            ),
+            default=display_field,
+            output_field=models.CharField(),
         )
+
+    else:
+        display_field = display_field
+
+    data = (
+        queryset.annotate(key=F(id_field), display_name=display_field)
         .values("key", "display_name")
         .annotate(count=aggregate_func)
         .order_by("key")
