@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Ek yüklemek için tıklayın"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Gömülü içeriğe dönüştür",
+      "convert_to_link": "Bağlantıya dönüştür",
+      "convert_to_richcard": "Zengin karta dönüştür"
+    },
+    "placeholder": {
+      "insert_embed": "YouTube videosu, Figma tasarımı vb. tercih ettiğiniz gömme bağlantısını buraya ekleyin",
+      "link": "Bir bağlantı girin veya yapıştırın"
+    },
+    "input_modal": {
+      "embed": "Göm",
+      "works_with_links": "YouTube, Figma, Google Docs ve daha fazlasıyla çalışır"
+    },
+    "error": {
+      "not_valid_link": "Lütfen geçerli bir URL girin."
+    }
   }
 }

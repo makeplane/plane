@@ -5,7 +5,7 @@ import { EFileAssetType, TSearchEntityRequestPayload } from "@plane/types";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { WorkspaceService } from "@/plane-web/services";

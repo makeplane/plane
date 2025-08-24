@@ -16,7 +16,7 @@ type TCoreHookProps = Pick<
   | "isTouchDevice"
   | "onEditorFocus"
 > &
-  Pick<IEditorPropsExtended, "extensionOptions" | "isSmoothCursorEnabled">;
+  Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions" | "isSmoothCursorEnabled">;
 
 export type TEditorHookProps = TCoreHookProps &
   Pick<

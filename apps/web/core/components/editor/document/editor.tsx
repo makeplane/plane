@@ -12,6 +12,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
 import { EditorMentionsRoot } from "../embeds/mentions";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
@@ -58,6 +59,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     projectId,
     workspaceSlug,
   });
+
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
@@ -85,6 +87,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       }}
       embedHandler={{
         issue: issueEmbedProps,
+        externalEmbedComponent: {
+          widgetCallback: EmbedHandler,
+        },
         ...embedHandler,
       }}
       isSmoothCursorEnabled={is_smooth_cursor_enabled}

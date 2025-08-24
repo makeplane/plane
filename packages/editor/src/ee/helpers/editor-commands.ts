@@ -1,6 +1,8 @@
-import { Editor, Range } from "@tiptap/core";
+import type { Editor, Range } from "@tiptap/core";
 // plane editor extensions
 import { type InsertAttachmentComponentProps } from "@/plane-editor/extensions/attachments/types";
+// types
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 
 export const insertAttachment = ({
   editor,
@@ -32,3 +34,18 @@ export const insertInlineMath = ({ editor, range, latex }: { editor: Editor; ran
   if (range) editor.chain().focus().deleteRange(range).setInlineMath({ latex, pos: range.from }).run();
   else editor.chain().focus().setInlineMath({ latex }).run();
 };
+
+export const insertExternalEmbed = ({
+  editor,
+  range,
+  is_rich_card = false,
+}: {
+  editor: Editor;
+  range?: Range;
+  is_rich_card?: boolean;
+}) =>
+  editor
+    .chain()
+    .focus()
+    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: is_rich_card, pos: range })
+    .run();

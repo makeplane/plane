@@ -31,6 +31,9 @@ const envSchema = z.object({
 
   // Live server secret key
   LIVE_SERVER_SECRET_KEY: z.string(),
+
+  // Iframely configuration
+  IFRAMELY_URL: z.string(),
 });
 
 // Validate the environment variables

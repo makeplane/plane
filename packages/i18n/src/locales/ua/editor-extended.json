@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Натисніть для завантаження вкладення"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Перетворити на вбудований вміст",
+      "convert_to_link": "Перетворити на посилання",
+      "convert_to_richcard": "Перетворити на rich-картку"
+    },
+    "placeholder": {
+      "insert_embed": "Вставте тут своє бажане посилання для вбудовування, наприклад, відео YouTube, дизайн Figma тощо",
+      "link": "Введіть або вставте посилання"
+    },
+    "input_modal": {
+      "embed": "Вбудувати",
+      "works_with_links": "Працює з YouTube, Figma, Google Docs та іншими"
+    },
+    "error": {
+      "not_valid_link": "Будь ласка, введіть дійсну URL-адресу."
+    }
   }
 }

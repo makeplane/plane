@@ -3,7 +3,7 @@ import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ProBadge } from "@/plane-editor/components/badges/pro-badge";
 
-export const MathUpgradeModal: React.FC = () => (
+export const UpgradeNowModal: React.FC = () => (
   <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg w-72 my-2 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2">
     <div className="flex flex-col space-y-2 p-3 pb-0">
       <ProBadge />

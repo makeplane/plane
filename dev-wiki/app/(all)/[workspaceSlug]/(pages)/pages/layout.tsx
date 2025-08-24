@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { EUserPermissions } from "@plane/constants";
 // wrappers
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { AuthenticationWrapper } from "@/lib/wrappers";
 // plane web components
 // import { PagesAppCommandPalette } from "@/plane-web/components/command-palette";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -16,6 +15,7 @@ import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 // local components
 // import { FloatingActionsRoot } from "../../(projects)/floating-action-bar";
 import { PagesAppSidebar } from "./sidebar";
+import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
 export default function WorkspacePagesLayout({ children }: { children: React.ReactNode }) {
   // router

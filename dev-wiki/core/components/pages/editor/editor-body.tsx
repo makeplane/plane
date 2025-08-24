@@ -289,6 +289,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             serverHandler={serverHandler}
             user={userConfig}
             disabledExtensions={disabledExtensions}
+            // flaggedExtensions={["external-embed"]}
             flaggedExtensions={[]}
             aiHandler={{
               menu: getAIMenu,

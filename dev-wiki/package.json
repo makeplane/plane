@@ -45,7 +45,7 @@
     "cmdk": "^1.0.0",
     "comlink": "^4.4.1",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.6.1",
     "export-to-csv": "^1.4.0",
     "fuse.js": "^7.0.0",
     "isomorphic-dompurify": "^2.12.0",

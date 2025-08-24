@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Kliknij, aby przesłać załącznik"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Konwertuj na osadzenie",
+      "convert_to_link": "Konwertuj na link",
+      "convert_to_richcard": "Konwertuj na bogatą kartę"
+    },
+    "placeholder": {
+      "insert_embed": "Wstaw tutaj preferowany link do osadzenia, np. film YouTube, projekt Figma itp.",
+      "link": "Wprowadź lub wklej link"
+    },
+    "input_modal": {
+      "embed": "Osadź",
+      "works_with_links": "Działa z YouTube, Figma, Google Docs i innymi"
+    },
+    "error": {
+      "not_valid_link": "Wprowadź prawidłowy adres URL."
+    }
   }
 }

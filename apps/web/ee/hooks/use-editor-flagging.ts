@@ -19,6 +19,8 @@ export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreT
   const { isNestedPagesEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
+  const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
+
   // disabled and flagged in the document editor
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
@@ -28,6 +30,8 @@ export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreT
   // disabled and flagged in the lite text editor
   const liteTextDisabled: TExtensions[] = [];
   const liteTextFlagged: TExtensions[] = [];
+
+  liteTextDisabled.push("external-embed");
 
   if (!isWorkItemEmbedEnabled) {
     documentFlagged.push("issue-embed");
@@ -50,6 +54,12 @@ export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreT
     richTextFlagged.push("mathematics");
     liteTextFlagged.push("mathematics");
   }
+  if (!isExternalEmbedEnabled) {
+    documentFlagged.push("external-embed");
+    richTextFlagged.push("external-embed");
+    liteTextFlagged.push("external-embed");
+  }
+
   return {
     document: {
       disabled: documentDisabled,

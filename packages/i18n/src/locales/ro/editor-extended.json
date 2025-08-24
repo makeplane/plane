@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Faceți clic pentru a încărca atașamentul"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Convertește în încorporare",
+      "convert_to_link": "Convertește în link",
+      "convert_to_richcard": "Convertește în card bogat"
+    },
+    "placeholder": {
+      "insert_embed": "Introduceți aici linkul preferat pentru încorporare, cum ar fi video YouTube, design Figma etc.",
+      "link": "Introduceți sau lipiți un link"
+    },
+    "input_modal": {
+      "embed": "Încorporează",
+      "works_with_links": "Funcționează cu YouTube, Figma, Google Docs și altele"
+    },
+    "error": {
+      "not_valid_link": "Vă rugăm să introduceți o adresă URL validă."
+    }
   }
 }

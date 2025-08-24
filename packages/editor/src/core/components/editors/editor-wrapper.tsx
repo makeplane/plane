@@ -43,6 +43,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     tabIndex,
     value,
     // additional props
+    embedHandler,
     extensionOptions,
     isSmoothCursorEnabled,
   } = props;
@@ -70,6 +71,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     tabIndex,
     value,
     // additional props
+    embedHandler,
     extensionOptions,
     isSmoothCursorEnabled,
   });

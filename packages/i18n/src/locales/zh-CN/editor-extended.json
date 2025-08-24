@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "点击上传附件"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "转换为嵌入内容",
+      "convert_to_link": "转换为链接",
+      "convert_to_richcard": "转换为富卡片"
+    },
+    "placeholder": {
+      "insert_embed": "在此插入您喜欢的嵌入链接，如 YouTube 视频、Figma 设计等",
+      "link": "输入或粘贴链接"
+    },
+    "input_modal": {
+      "embed": "嵌入",
+      "works_with_links": "适用于 YouTube、Figma、Google Docs 等"
+    },
+    "error": {
+      "not_valid_link": "请输入有效的 URL。"
+    }
   }
 }

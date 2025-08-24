@@ -12,11 +12,13 @@ import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// plane editor
 
 export type TEmbedHookProps = {
   fetchEmbedSuggestions?: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
@@ -230,6 +232,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     () => ({
       issue: issueEmbedProps,
       ...(pageEmbedProps && { page: pageEmbedProps }),
+      externalEmbedComponent: { widgetCallback: EmbedHandler },
     }),
     [issueEmbedProps, pageEmbedProps]
   );

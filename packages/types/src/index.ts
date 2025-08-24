@@ -69,5 +69,6 @@ export * from "./activity-extended";
 export * from "./layout";
 export * from "./analytics-extended";
 export * from "./mobile";
+export * from "./editor";
 export * from "./recurring-work-items";
 export * from "./rich-filters";

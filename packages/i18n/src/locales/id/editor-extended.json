@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Klik untuk mengunggah lampiran"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Ubah menjadi konten tertanam",
+      "convert_to_link": "Ubah menjadi tautan",
+      "convert_to_richcard": "Ubah menjadi kartu kaya"
+    },
+    "placeholder": {
+      "insert_embed": "Masukkan tautan tertanam pilihan Anda di sini, seperti video YouTube, desain Figma, dll.",
+      "link": "Masukkan atau tempel tautan"
+    },
+    "input_modal": {
+      "embed": "Tanam",
+      "works_with_links": "Bekerja dengan YouTube, Figma, Google Docs dan lainnya"
+    },
+    "error": {
+      "not_valid_link": "Silakan masukkan URL yang valid."
+    }
   }
 }

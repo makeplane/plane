@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "クリックして添付ファイルをアップロード"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "埋め込みに変換",
+      "convert_to_link": "リンクに変換",
+      "convert_to_richcard": "リッチカードに変換"
+    },
+    "placeholder": {
+      "insert_embed": "YouTubeビデオ、Figmaデザインなど、お好みの埋め込みリンクをここに挿入してください",
+      "link": "リンクを入力または貼り付け"
+    },
+    "input_modal": {
+      "embed": "埋め込み",
+      "works_with_links": "YouTube、Figma、Google Docsなどで動作します"
+    },
+    "error": {
+      "not_valid_link": "有効なURLを入力してください。"
+    }
   }
 }

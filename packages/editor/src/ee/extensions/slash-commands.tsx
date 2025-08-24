@@ -1,22 +1,23 @@
 // extensions
-import { Sigma, SquareRadical } from "lucide-react";
+import { FileCode2, Sigma, SquareRadical } from "lucide-react";
 import { TSlashCommandAdditionalOption } from "@/extensions";
 // types
-import type { IEditorProps } from "@/types";
+import type { CommandProps, IEditorProps, TExtensions } from "@/types";
 import { ProBadge } from "../components/badges/pro-badge";
-import { insertBlockMath, insertInlineMath } from "../helpers/editor-commands";
+import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "../helpers/editor-commands";
+import { EMBED_SEARCH_TERMS } from "./external-embed/constants";
 
 type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions">;
 
-export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCommandAdditionalOption[] => {
-  const { flaggedExtensions } = props;
-
-  // General options
-  const options: TSlashCommandAdditionalOption[] = [];
-
-  // Math options
-  const mathOptions: TSlashCommandAdditionalOption[] = [
-    {
+const coreSlashCommandRegistry: {
+  isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
+  getOption: (props: Props) => TSlashCommandAdditionalOption;
+}[] = [
+  {
+    // Block equation slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("mathematics") && !disabledExtensions?.includes("mathematics"),
+    getOption: ({ flaggedExtensions }) => ({
       commandKey: "block-equation",
       key: "block-equation",
       title: "Block equation",
@@ -29,8 +30,13 @@ export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCom
       section: "general",
       pushAfter: "attachment",
       badge: flaggedExtensions?.includes("mathematics") ? <ProBadge /> : undefined,
-    },
-    {
+    }),
+  },
+  {
+    // Inline equation slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("mathematics") && !disabledExtensions?.includes("mathematics"),
+    getOption: ({ flaggedExtensions }) => ({
       commandKey: "inline-equation",
       key: "inline-equation",
       title: "Inline equation",
@@ -43,11 +49,34 @@ export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCom
       section: "general",
       pushAfter: "block-equation",
       badge: flaggedExtensions?.includes("mathematics") ? <ProBadge /> : undefined,
-    },
-  ];
-  // Remove Slash if exteension is flagged
-  if (!flaggedExtensions?.includes("mathematics")) {
-    options.push(...mathOptions);
-  }
+    }),
+  },
+  {
+    // External embed slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("external-embed") && !disabledExtensions?.includes("external-embed"),
+    getOption: ({ flaggedExtensions }) => ({
+      commandKey: "external-embed",
+      key: "embed",
+      title: "Embed",
+      icon: <FileCode2 className="size-3.5" />,
+      description: "Insert an Embed",
+      searchTerms: EMBED_SEARCH_TERMS,
+      command: ({ editor, range }: CommandProps) => insertExternalEmbed({ editor, range, is_rich_card: false }),
+      badge: flaggedExtensions?.includes("external-embed") ? <ProBadge /> : undefined,
+      section: "general",
+      pushAfter: "code",
+    }),
+  },
+];
+
+export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCommandAdditionalOption[] => {
+  const { disabledExtensions = [], flaggedExtensions = [] } = props;
+
+  // Filter enabled slash command options from the registry
+  const options = coreSlashCommandRegistry
+    .filter((command) => command.isEnabled(disabledExtensions, flaggedExtensions))
+    .map((command) => command.getOption(props));
+
   return options;
 };

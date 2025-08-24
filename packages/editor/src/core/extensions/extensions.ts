@@ -27,11 +27,12 @@ import {
   TableRow,
   UtilityExtension,
 } from "@/extensions";
+// helpers
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, TEmbedConfig } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -50,7 +51,7 @@ type TArguments = Pick<
 > & {
   enableHistory: boolean;
   editable: boolean;
-} & Pick<IEditorPropsExtended, "extensionOptions" | "isSmoothCursorEnabled">;
+} & Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions" | "isSmoothCursorEnabled">;
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -64,6 +65,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     tabIndex,
     editable,
     // additional props
+    embedHandler,
     extensionOptions,
     isSmoothCursorEnabled,
   } = args;
@@ -121,6 +123,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       flaggedExtensions,
       fileHandler,
       // additional props
+      embedHandler,
       extensionOptions,
     }),
   ];

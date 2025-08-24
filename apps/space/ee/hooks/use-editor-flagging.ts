@@ -14,9 +14,13 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     if (!hasFetchedFeatureFlag(anchor, "EDITOR_MATHEMATICS")) {
       fetchFeatureFlag(anchor, "EDITOR_MATHEMATICS");
     }
+    if (!hasFetchedFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS")) {
+      fetchFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS");
+    }
   }, [anchor, fetchFeatureFlag, hasFetchedFeatureFlag]);
 
   const isMathematicsEnabled = getFeatureFlag(anchor, "EDITOR_MATHEMATICS", true);
+  const isExternalEmbedEnabled = getFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS", true);
 
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
@@ -27,10 +31,18 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
   const liteTextDisabled: TExtensions[] = [];
   const liteTextFlagged: TExtensions[] = [];
 
+  liteTextDisabled.push("external-embed");
+
   if (!isMathematicsEnabled) {
     documentFlagged.push("mathematics");
     richTextFlagged.push("mathematics");
     liteTextFlagged.push("mathematics");
+  }
+
+  if (!isExternalEmbedEnabled) {
+    documentFlagged.push("external-embed");
+    richTextFlagged.push("external-embed");
+    liteTextFlagged.push("external-embed");
   }
 
   return {

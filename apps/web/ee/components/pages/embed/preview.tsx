@@ -8,10 +8,11 @@ import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 

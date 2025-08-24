@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Nhấp để tải lên tệp đính kèm"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Chuyển thành nội dung nhúng",
+      "convert_to_link": "Chuyển thành liên kết",
+      "convert_to_richcard": "Chuyển thành thẻ phong phú"
+    },
+    "placeholder": {
+      "insert_embed": "Chèn liên kết nhúng ưa thích của bạn vào đây, như video YouTube, thiết kế Figma, v.v.",
+      "link": "Nhập hoặc dán một liên kết"
+    },
+    "input_modal": {
+      "embed": "Nhúng",
+      "works_with_links": "Hoạt động với YouTube, Figma, Google Docs và nhiều hơn nữa"
+    },
+    "error": {
+      "not_valid_link": "Vui lòng nhập một URL hợp lệ."
+    }
   }
 }

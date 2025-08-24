@@ -25,6 +25,7 @@ import {
   LinkIcon,
   Sigma,
   SquareRadical,
+  FileCode2,
 } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -52,7 +53,7 @@ import {
 } from "@/helpers/editor-commands";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { insertBlockMath, insertInlineMath } from "@/plane-editor/helpers/editor-commands";
+import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "@/plane-editor/helpers/editor-commands";
 // types
 import { TCommandWithProps, TEditorCommands } from "@/types";
 
@@ -274,6 +275,17 @@ export const InlineEquationItem = (editor: Editor): EditorMenuItem<"inline-equat
   icon: SquareRadical,
 });
 
+export const ExternalEmbedItem = (editor: Editor): EditorMenuItem<"external-embed"> => ({
+  key: "external-embed",
+  name: "External embed",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED),
+  command: (props) => {
+    if (!props) return;
+    insertExternalEmbed({ editor, is_rich_card: props.is_rich_card });
+  },
+  icon: FileCode2,
+});
+
 export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEditorCommands>[] => {
   if (!editor) return [];
 
@@ -303,5 +315,6 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextAlignItem(editor),
     BlockEquationItem(editor),
     InlineEquationItem(editor),
+    ExternalEmbedItem(editor),
   ];
 };

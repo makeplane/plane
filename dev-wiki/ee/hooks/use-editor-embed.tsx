@@ -13,6 +13,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { TPageInstance } from "@/store/pages/base-page";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "./store/use-page-store";
+import { EmbedHandler } from "../components/pages/editor/external-embed/embed-handler";
 
 export type TEmbedHookProps = {
   fetchEmbedSuggestions?: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
@@ -185,6 +186,9 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     () => ({
       issue: issueEmbedProps,
       ...(pageEmbedProps && { page: pageEmbedProps }),
+      externalEmbedComponent: {
+        widgetCallback: EmbedHandler,
+      },
     }),
     [issueEmbedProps, pageEmbedProps]
   );

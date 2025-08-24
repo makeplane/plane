@@ -129,6 +129,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
 
   // Initialize main document editor
   const editor = useEditor({
+    embedHandler,
     disabledExtensions,
     id,
     editable,

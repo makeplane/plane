@@ -5,4 +5,5 @@ export enum ADDITIONAL_EXTENSIONS {
   MATHEMATICS = "mathematics",
   INLINE_MATH = "inlineMath",
   BLOCK_MATH = "blockMath",
+  EXTERNAL_EMBED = "externalEmbed",
 }

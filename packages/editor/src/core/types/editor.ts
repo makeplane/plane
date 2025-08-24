@@ -54,6 +54,7 @@ export type TEditorCommands =
   | "page-embed"
   | "attachment"
   | "emoji"
+  | "external-embed"
   | "block-equation"
   | "inline-equation";
 
@@ -82,6 +83,10 @@ export type TCommandExtraProps = {
   };
   "inline-equation": {
     latex: string;
+  };
+  "external-embed": {
+    src: string;
+    is_rich_card: boolean;
   };
 };
 
@@ -163,6 +168,7 @@ export type IEditorProps = {
   editable: boolean;
   editorClassName?: string;
   editorProps?: EditorProps;
+  embedHandler?: TEmbedConfig;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;

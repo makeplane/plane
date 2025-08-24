@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Kliknite pre nahranie prílohy"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Konvertovať na vložený obsah",
+      "convert_to_link": "Konvertovať na odkaz",
+      "convert_to_richcard": "Konvertovať na bohatú kartu"
+    },
+    "placeholder": {
+      "insert_embed": "Vložte sem svoj preferovaný odkaz na vloženie, napríklad video YouTube, dizajn Figma atď.",
+      "link": "Zadajte alebo vložte odkaz"
+    },
+    "input_modal": {
+      "embed": "Vložiť",
+      "works_with_links": "Funguje s YouTube, Figma, Google Docs a ďalšími"
+    },
+    "error": {
+      "not_valid_link": "Prosím, zadajte platnú URL adresu."
+    }
   }
 }

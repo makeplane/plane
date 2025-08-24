@@ -9,11 +9,13 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
+// plane web components
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
   "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
 > & {
   workspaceSlug: string;
@@ -77,6 +79,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         getMentionedEntityDetails: (id) => ({
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
+      }}
+      embedHandler={{
+        externalEmbedComponent: { widgetCallback: EmbedHandler },
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

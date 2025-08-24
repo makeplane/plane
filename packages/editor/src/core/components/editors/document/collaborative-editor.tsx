@@ -132,6 +132,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         }
         isTouchDevice={!!isTouchDevice}
         tabIndex={tabIndex}
+        flaggedExtensions={flaggedExtensions}
+        disabledExtensions={disabledExtensions}
       />
     </>
   );

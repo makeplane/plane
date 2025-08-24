@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Click to upload attachment"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Convert to Embed",
+      "convert_to_link": "Convert to Link",
+      "convert_to_richcard": "Convert to Rich Card"
+    },
+    "placeholder": {
+      "insert_embed": "Insert your preferred embed link here, such as YouTube video, Figma design, etc.",
+      "link": "Enter or paste a link"
+    },
+    "input_modal": {
+      "embed": "Embed",
+      "works_with_links": "Works with YouTube, Figma, Google Docs and more"
+    },
+    "error": {
+      "not_valid_link": "Please enter a valid URL."
+    }
   }
 }

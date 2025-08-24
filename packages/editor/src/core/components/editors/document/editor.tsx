@@ -86,6 +86,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     mentionHandler,
     onChange,
     // additional props
+    embedHandler,
     extensionOptions,
     isSmoothCursorEnabled,
   });
@@ -103,6 +104,8 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      flaggedExtensions={flaggedExtensions}
+      disabledExtensions={disabledExtensions}
       isTouchDevice={!!isTouchDevice}
     />
   );

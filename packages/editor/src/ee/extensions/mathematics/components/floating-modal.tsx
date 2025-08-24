@@ -10,10 +10,10 @@ import {
 } from "@floating-ui/react";
 import { FC, useEffect } from "react";
 // types
+import { UpgradeNowModal } from "@/plane-editor/components/modal/upgrade-modal";
 import { TMathModalBaseProps } from "../types";
 // components
 import { MathInputModal } from "./input-modal";
-import { MathUpgradeModal } from "./upgrade-modal";
 
 type TFloatingMathModalProps = TMathModalBaseProps & {
   isOpen: boolean;
@@ -88,7 +88,7 @@ export const FloatingMathModal: FC<TFloatingMathModalProps> = ({
       {/* Modal content */}
       <div ref={refs.setFloating} style={{ ...floatingStyles, zIndex: 100 }} {...getFloatingProps()}>
         {isFlagged ? (
-          <MathUpgradeModal />
+          <UpgradeNowModal />
         ) : (
           <MathInputModal
             latex={latex}

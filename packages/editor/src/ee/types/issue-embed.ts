@@ -1,17 +1,23 @@
 // types
-import { Editor } from "@tiptap/react";
-import { TPage } from "@plane/types";
-import { TEmbedItem } from "@/types";
-import { PageEmbedExtensionAttributes } from "../extensions/page-embed/extension-config";
+import type { Editor } from "@tiptap/react";
+import type { TPage } from "@plane/types";
+import { ExternalEmbedNodeViewProps, TEmbedItem } from "@/types";
+import type { PageEmbedExtensionAttributes } from "../extensions/page-embed/extension-config";
 
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
   page?: TPageEmbedConfig;
+  externalEmbedComponent?: TExternalEmbedConfig;
 };
 
 export type TReadOnlyEmbedConfig = {
   issue?: Omit<TIssueEmbedConfig, "searchCallback">;
   page?: Omit<TPageEmbedConfig, "createCallback" | "searchCallback">;
+  externalEmbedComponent?: TExternalEmbedConfig;
+};
+
+export type TExternalEmbedConfig = {
+  widgetCallback: (props: ExternalEmbedNodeViewProps) => React.ReactNode;
 };
 
 export type TIssueEmbedConfig = {

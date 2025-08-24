@@ -38,6 +38,7 @@ export const useEditor = (props: TEditorHookProps) => {
     tabIndex,
     value,
     // additional props
+    embedHandler,
     extensionOptions,
     isSmoothCursorEnabled = false,
   } = props;
@@ -67,6 +68,7 @@ export const useEditor = (props: TEditorHookProps) => {
           placeholder,
           tabIndex,
           // additional props
+          embedHandler,
           extensionOptions,
           isSmoothCursorEnabled,
         }),

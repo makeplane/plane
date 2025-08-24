@@ -23,5 +23,23 @@
     "aria": {
       "click_to_upload": "Clicca per caricare allegato"
     }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Converti in incorporamento",
+      "convert_to_link": "Converti in link",
+      "convert_to_richcard": "Converti in scheda ricca"
+    },
+    "placeholder": {
+      "insert_embed": "Inserisci qui il tuo link di incorporamento preferito, come video YouTube, design Figma, ecc.",
+      "link": "Inserisci o incolla un link"
+    },
+    "input_modal": {
+      "embed": "Incorpora",
+      "works_with_links": "Funziona con YouTube, Figma, Google Docs e altro"
+    },
+    "error": {
+      "not_valid_link": "Inserisci un URL valido."
+    }
   }
 }

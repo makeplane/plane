@@ -7,5 +7,6 @@ export type TExtensions =
   | "enter-key"
   | "image"
   | "nested-pages"
+  | "external-embed"
   | "attachments"
   | "mathematics";

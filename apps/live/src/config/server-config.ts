@@ -42,12 +42,23 @@ export function configureServerMiddleware(app: express.Application): void {
  * @param app Express application
  */
 function configureCors(app: express.Application): void {
-  const origins = env.CORS_ALLOWED_ORIGINS?.split(",").map((origin) => origin.trim()) || [];
-  for (const origin of origins) {
-    logger.info(`Adding CORS allowed origin: ${origin}`);
+  const corsOrigins = env.CORS_ALLOWED_ORIGINS;
+  if (corsOrigins === "*") {
+    logger.info("Enabling CORS for all origins");
     app.use(
       cors({
-        origin,
+        origin: true,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+      })
+    );
+  } else {
+    const origins = corsOrigins?.split(",").map((origin) => origin.trim()) || [];
+    logger.info(`Enabling CORS for specific origins: ${origins.join(", ")}`);
+    app.use(
+      cors({
+        origin: origins,
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],

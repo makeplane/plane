@@ -1,9 +1,10 @@
 import { BroadcastController } from "./broadcast.controller";
 import { CONTROLLERS as CEControllers } from "@/ce/controllers";
+import { IframelyController } from "./iframely.controller";
 
 export const CONTROLLERS = {
   // Core system controllers (health checks, status endpoints)
-  CORE: [...CEControllers.CORE],
+  CORE: [...CEControllers.CORE, IframelyController],
 
   // Document management controllers
   DOCUMENT: [...CEControllers.DOCUMENT],

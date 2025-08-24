@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
@@ -12,6 +12,7 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps

@@ -1,14 +1,14 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
 import { Paperclip } from "lucide-react";
+// root
+import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
+// types
+import { TExtensions } from "@/types";
 // core imports
 import {
   TRichTextEditorAdditionalExtensionsProps,
   TRichTextEditorAdditionalExtensionsRegistry,
 } from "src/ce/extensions/rich-text-extensions";
-// extensions
-import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
-// types
-import { TExtensions } from "@/types";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
