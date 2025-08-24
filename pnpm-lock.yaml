@@ -1005,19 +1005,14 @@ importers:
         specifier: ^18.3.11
         version: 18.3.11
       '@types/react-dom':
-<<<<<<< HEAD
         specifier: ^18.2.18
         version: 18.3.1
-=======
-        specifier: 18.3.0
-        version: 18.3.0
       eslint-plugin-storybook:
         specifier: ^9.1.2
         version: 9.1.2(eslint@8.57.1)(storybook@9.1.2(@testing-library/dom@10.4.0)(prettier@3.6.2)(vite@7.0.0(@types/node@22.17.2)(jiti@1.21.7)(terser@5.43.1)(yaml@2.8.1)))(typescript@5.8.3)
       storybook:
         specifier: ^9.1.2
         version: 9.1.2(@testing-library/dom@10.4.0)(prettier@3.6.2)(vite@7.0.0(@types/node@22.17.2)(jiti@1.21.7)(terser@5.43.1)(yaml@2.8.1))
->>>>>>> origin/chore-propel-storybook-setup
       typescript:
         specifier: 5.8.3
         version: 5.8.3
