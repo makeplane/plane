@@ -2,7 +2,12 @@ import React, { FC, useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { PencilIcon } from "lucide-react";
 // plane constants
-import { CUSTOMER_CONTRACT_STATUS, CUSTOMER_STAGES, ETabIndices } from "@plane/constants";
+import {
+  CUSTOMER_CONTRACT_STATUS,
+  CUSTOMER_STAGES,
+  CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX,
+  ETabIndices,
+} from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
@@ -11,7 +16,7 @@ import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "
 // utils
 import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -259,8 +264,7 @@ export const DefaultProperties: FC<Props> = (props) => {
             control={control}
             rules={{
               pattern: {
-                value:
-                  /^(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+                value: CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX,
                 message: t("customers.properties.default.website_url.validation.pattern"),
               },
             }}

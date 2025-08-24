@@ -57,3 +57,6 @@ export const DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA: TCreateUpdateCustomerMod
   isOpen: false,
   customerId: undefined,
 };
+
+export const CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX =
+  /^(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,15}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;

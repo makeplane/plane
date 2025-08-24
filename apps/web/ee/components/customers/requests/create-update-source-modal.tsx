@@ -1,6 +1,8 @@
 import React, { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, ModalCore } from "@plane/ui";
 // hooks
@@ -74,8 +76,7 @@ export const SourceCreateUpdateModal: FC<TProps> = observer((props) => {
                 rules={{
                   required: t("customers.requests.form.source.url.required"),
                   pattern: {
-                    value:
-                      /^(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+                    value: CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX,
                     message: t("customers.requests.form.source.url.invalid"),
                   },
                 }}

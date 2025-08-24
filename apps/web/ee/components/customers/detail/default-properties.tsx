@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 // plane imports
+import { CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TCustomer } from "@plane/types";
 import { Input, setToast, TOAST_TYPE } from "@plane/ui";
@@ -67,8 +68,7 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
               updateProperty({ website_url: value.toString() });
             }}
             rules={{
-              value:
-                /^(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+              value: CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX,
               message: t("customers.properties.default.website_url.validation.pattern"),
             }}
             type="link"
