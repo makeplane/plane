@@ -152,7 +152,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
       }
     },
-    isEditorReadyToDiscard: () => editor?.storage.utility?.uploadInProgress === false,
+    isEditorReadyToDiscard: () => editor?.storage?.utility?.uploadInProgress === false,
     isMenuItemActive: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
@@ -166,7 +166,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     onDocumentInfoChange: (callback) => {
       const handleDocumentInfoChange = () => {
-        if (!editor) return;
+        if (!editor?.storage) return;
         callback({
           characters: editor.storage.characterCount?.characters?.() ?? 0,
           paragraphs: getParagraphCount(editor?.state),

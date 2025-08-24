@@ -54,7 +54,9 @@ export const renderMentionsDropdown =
       onUpdate: (props) => {
         component?.updateProps(props);
         if (!props.clientRect) return;
-        updatePosition(props.editor, component?.element as HTMLElement);
+        if (component?.element) {
+          updatePosition(props.editor, component?.element as HTMLElement);
+        }
       },
       onKeyDown: (props) => {
         if (props.event.key === "Escape") {
