@@ -51,6 +51,7 @@ const handleFetch = async ({
           component: "database-extension",
           operation: "fetch",
           extraContext: { documentType, pageId },
+          throw: true,
         });
       }
 
@@ -59,7 +60,8 @@ const handleFetch = async ({
     {
       params: { pageId, documentType: context.documentType },
       extra: { operation: "fetch" },
-    }
+    },
+    { rethrow: true }
   )();
   return fetchedData;
 };
@@ -123,6 +125,7 @@ const handleStore = async ({
         documentType: context?.documentType || "unknown",
       },
       extra: { operation: "store" },
-    }
+    },
+    { rethrow: true }
   )();
 };

@@ -80,8 +80,7 @@ export abstract class BasePageService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        console.log("error", error);
-        // throw error?.response?.data;
+        throw error;
       });
   }
 
