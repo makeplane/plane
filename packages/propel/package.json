@@ -9,7 +9,9 @@
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "exports": {
     "./avatar": "./src/avatar/index.ts",
@@ -33,6 +35,7 @@
     "@plane/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -42,8 +45,11 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@storybook/react-vite": "^9.1.2",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
+    "eslint-plugin-storybook": "^9.1.2",
+    "storybook": "^9.1.2",
     "typescript": "5.8.3"
   }
 }
