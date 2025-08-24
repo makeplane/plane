@@ -69,7 +69,7 @@ export function validateIPAddress(ip: string): {
  */
 export function isLocalhost(url: string): boolean {
   const hostname = extractHostname(url);
-  return LOCALHOST_ADDRESSES.includes(hostname as any);
+  return LOCALHOST_ADDRESSES.includes(hostname);
 }
 
 /**
