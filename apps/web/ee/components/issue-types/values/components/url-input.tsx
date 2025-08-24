@@ -6,7 +6,7 @@ import { ExternalLink, Pencil } from "lucide-react";
 import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
 // helpers
-import { cn, extractURLComponents, getValidURL } from "@plane/utils";
+import { cn, extractURLComponents } from "@plane/utils";
 import { TruncatedUrl } from "./truncated-url";
 
 type TUrlValueInputProps = {
@@ -26,8 +26,8 @@ export const UrlValueInput = observer((props: TUrlValueInputProps) => {
   const [data, setData] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
-  const validUrl = getValidURL(data?.[0]);
-  const urlComponents = validUrl && extractURLComponents(validUrl);
+  const validUrl = data?.[0];
+  const urlComponents = validUrl && extractURLComponents(data?.[0]);
 
   useEffect(() => {
     setData(value);
