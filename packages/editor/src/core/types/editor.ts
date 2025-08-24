@@ -4,9 +4,12 @@ import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions";
+// plane editor imports
+import { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -36,6 +39,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -47,8 +51,12 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment"
-  | "emoji";
+  | "emoji"
+  | "external-embed"
+  | "block-equation"
+  | "inline-equation";
 
 export type TCommandExtraProps = {
   image: {
@@ -69,6 +77,16 @@ export type TCommandExtraProps = {
   };
   "text-align": {
     alignment: TTextAlign;
+  };
+  "block-equation": {
+    latex: string;
+  };
+  "inline-equation": {
+    latex: string;
+  };
+  "external-embed": {
+    src: string;
+    is_rich_card: boolean;
   };
 };
 
@@ -99,6 +117,17 @@ export type EditorRefApi = {
     attribute: string | NodeType | MarkType
   ) => Record<string, any> | undefined;
   getCoordsFromPos: (pos?: number) => ReturnType<EditorView["coordsAtPos"]> | undefined;
+  editorHasSynced: () => boolean;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
   getCurrentCursorPosition: () => number | undefined;
   getDocument: () => {
     binary: Uint8Array | null;
@@ -127,6 +156,8 @@ export type EditorRefApi = {
   undo: () => void;
 };
 
+export type EditorTitleRefApi = EditorRefApi;
+
 // editor props
 export type IEditorProps = {
   autofocus?: boolean;
@@ -137,6 +168,7 @@ export type IEditorProps = {
   editable: boolean;
   editorClassName?: string;
   editorProps?: EditorProps;
+  embedHandler?: TEmbedConfig;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
@@ -154,7 +186,7 @@ export type IEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-};
+} & IEditorPropsExtended;
 
 export type ILiteTextEditorProps = IEditorProps;
 
@@ -171,6 +203,14 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

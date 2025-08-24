@@ -4,7 +4,7 @@ FROM python:3.12.10-alpine
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/f366114e9aba4cbfbe4265b8f2b74f65/
 
 # Update system packages for security
 RUN apk update && apk upgrade
@@ -31,6 +31,7 @@ RUN apk add --no-cache --virtual .build-deps \
     "postgresql-dev" \
     "libc-dev" \
     "linux-headers" \
+    "xmlsec-dev"\
     && \
     pip install -r requirements.txt --compile --no-cache-dir \
     && \

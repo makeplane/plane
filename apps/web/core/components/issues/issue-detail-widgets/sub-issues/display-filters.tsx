@@ -13,7 +13,6 @@ import {
   FiltersDropdown,
 } from "@/components/issues/issue-layouts/filters";
 import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
-
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
