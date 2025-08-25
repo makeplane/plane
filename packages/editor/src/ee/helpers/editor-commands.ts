@@ -39,13 +39,15 @@ export const insertExternalEmbed = ({
   editor,
   range,
   is_rich_card = false,
+  src,
 }: {
   editor: Editor;
   range?: Range;
   is_rich_card?: boolean;
+  src?: string;
 }) =>
   editor
     .chain()
     .focus()
-    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: is_rich_card, pos: range })
+    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: is_rich_card, pos: range, src })
     .run();

@@ -6,6 +6,7 @@ import { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps } from "@/plan
 export type ExternalEmbedProps = {
   widgetCallback: (props: ExternalEmbedNodeViewProps) => React.ReactNode;
   isFlagged: boolean;
+  onClick?: () => void;
 };
 
 export type InsertExternalEmbedCommandProps = {
@@ -17,6 +18,7 @@ export type InsertExternalEmbedCommandProps = {
 export type ExternalEmbedExtensionOptions = {
   externalEmbedCallbackComponent: (props: ExternalEmbedNodeViewProps) => React.ReactNode;
   isFlagged: boolean;
+  onClick?: () => void;
 };
 
 export type ExternalEmbedExtensionStorage = {

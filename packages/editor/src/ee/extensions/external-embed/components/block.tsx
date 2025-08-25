@@ -11,13 +11,15 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // components
 import { ExternalEmbedInputModal } from "./floating-input-modal";
 import { ExternalEmbedNodeViewProps } from "@/types";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((externalEmbedProps) => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const embedButtonRef = useRef<HTMLDivElement>(null);
 
-  const { isFlagged } = externalEmbedProps.extension.options;
+  const { isFlagged, onClick } = externalEmbedProps.extension.options;
+  const isTouchDevice = !!getExtensionStorage(externalEmbedProps.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
   // const { t } = useTranslation();
 
   // subscribe to external embed storage state
@@ -31,10 +33,14 @@ export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((ex
 
   // handlers
   const handleEmbedButtonClick = useCallback(() => {
-    if (externalEmbedProps.editor.isEditable) {
-      setIsOpen(true);
+    if (isTouchDevice) {
+      onClick?.();
+      return;
     }
-  }, [externalEmbedProps.editor.isEditable]);
+    if (externalEmbedProps.editor.isEditable) {
+      return setIsOpen(true);
+    }
+  }, [externalEmbedProps.editor.isEditable, isTouchDevice, onClick]);
 
   // effects
   useEffect(() => {

@@ -21,6 +21,7 @@ export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
         ...this.parent?.(),
         externalEmbedCallbackComponent: props?.widgetCallback,
         isFlagged: !!props?.isFlagged,
+        onClick: props?.onClick,
       };
     },
 
