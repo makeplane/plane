@@ -95,9 +95,14 @@ class IssueSerializer(BaseSerializer):
                 raise serializers.ValidationError({"description": error_msg})
 
         if data.get("description_html"):
-            is_valid, error_msg = validate_html_content(data["description_html"])
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                data["description_html"]
+            )
             if not is_valid:
                 raise serializers.ValidationError({"description_html": error_msg})
+            # Update the data with sanitized HTML if available
+            if sanitized_html is not None:
+                data["description_html"] = sanitized_html
 
         if data.get("description_binary"):
             is_valid, error_msg = validate_binary_data(data["description_binary"])

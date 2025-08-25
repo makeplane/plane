@@ -134,9 +134,14 @@ class IssueCreateSerializer(BaseSerializer):
                 raise serializers.ValidationError({"description": error_msg})
 
         if "description_html" in attrs and attrs["description_html"]:
-            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                attrs["description_html"]
+            )
             if not is_valid:
                 raise serializers.ValidationError({"description_html": error_msg})
+            # Update the attrs with sanitized HTML if available
+            if sanitized_html is not None:
+                attrs["description_html"] = sanitized_html
 
         if "description_binary" in attrs and attrs["description_binary"]:
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])

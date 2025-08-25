@@ -2,6 +2,7 @@
 import base64
 import json
 import re
+import nh3
 
 
 # Maximum allowed size for binary data (10MB)
@@ -41,69 +42,6 @@ SUSPICIOUS_BINARY_PATTERNS = [
     "<iframe",
 ]
 
-# Malicious HTML patterns for content validation
-MALICIOUS_HTML_PATTERNS = [
-    # Script tags with any content
-    r"<script[^>]*>",
-    r"</script>",
-    # JavaScript URLs in various attributes
-    r'(?:href|src|action)\s*=\s*["\']?\s*javascript:',
-    # Data URLs with text/html (potential XSS)
-    r'(?:href|src|action)\s*=\s*["\']?\s*data:text/html',
-    # Dangerous event handlers with JavaScript-like content
-    r'on(?:load|error|click|focus|blur|change|submit|reset|select|resize|scroll|unload|beforeunload|hashchange|popstate|storage|message|offline|online)\s*=\s*["\']?[^"\']*(?:javascript|alert|eval|document\.|window\.|location\.|history\.)[^"\']*["\']?',
-    # Object and embed tags that could load external content
-    r"<(?:object|embed)[^>]*(?:data|src)\s*=",
-    # Base tag that could change relative URL resolution
-    r"<base[^>]*href\s*=",
-    # Dangerous iframe sources
-    r'<iframe[^>]*src\s*=\s*["\']?(?:javascript:|data:text/html)',
-    # Meta refresh redirects
-    r'<meta[^>]*http-equiv\s*=\s*["\']?refresh["\']?',
-    # Link tags - simplified patterns
-    r'<link[^>]*rel\s*=\s*["\']?stylesheet["\']?',
-    r'<link[^>]*href\s*=\s*["\']?https?://',
-    r'<link[^>]*href\s*=\s*["\']?//',
-    r'<link[^>]*href\s*=\s*["\']?(?:data:|javascript:)',
-    # Style tags with external imports
-    r"<style[^>]*>.*?@import.*?(?:https?://|//)",
-    # Link tags with dangerous rel types
-    r'<link[^>]*rel\s*=\s*["\']?(?:import|preload|prefetch|dns-prefetch|preconnect)["\']?',
-    # Forms with action attributes
-    r"<form[^>]*action\s*=",
-]
-
-# Dangerous JavaScript patterns for event handlers
-DANGEROUS_JS_PATTERNS = [
-    r"alert\s*\(",
-    r"eval\s*\(",
-    r"document\s*\.",
-    r"window\s*\.",
-    r"location\s*\.",
-    r"fetch\s*\(",
-    r"XMLHttpRequest",
-    r"innerHTML\s*=",
-    r"outerHTML\s*=",
-    r"document\.write",
-    r"script\s*>",
-]
-
-# HTML self-closing tags that don't need closing tags
-SELF_CLOSING_TAGS = {
-    "img",
-    "br",
-    "hr",
-    "input",
-    "meta",
-    "link",
-    "area",
-    "base",
-    "col",
-    "embed",
-    "source",
-    "track",
-    "wbr",
-}
 
 
 def validate_binary_data(data):
@@ -149,46 +87,23 @@ def validate_binary_data(data):
     return True, None
 
 
-def validate_html_content(html_content):
+def validate_html_content(html_content: str):
     """
-    Validate that HTML content is safe and doesn't contain malicious patterns.
-
-    Args:
-        html_content (str): The HTML content to validate
-
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
+    Sanitize HTML content using nh3.
+    Returns a tuple: (is_valid, error_message, clean_html)
     """
     if not html_content:
-        return True, None  # Empty is OK
+        return True, None, None
 
     # Size check - 10MB limit (consistent with binary validation)
     if len(html_content.encode("utf-8")) > MAX_SIZE:
-        return False, "HTML content exceeds maximum size limit (10MB)"
+        return False, "HTML content exceeds maximum size limit (10MB)", None
 
-    # Check for specific malicious patterns (simplified and more reliable)
-    for pattern in MALICIOUS_HTML_PATTERNS:
-        if re.search(pattern, html_content, re.IGNORECASE | re.DOTALL):
-            return (
-                False,
-                f"HTML content contains potentially malicious patterns: {pattern}",
-            )
-
-    # Additional check for inline event handlers that contain suspicious content
-    # This is more permissive - only blocks if the event handler contains actual dangerous code
-    event_handler_pattern = r'on\w+\s*=\s*["\']([^"\']*)["\']'
-    event_matches = re.findall(event_handler_pattern, html_content, re.IGNORECASE)
-
-    for handler_content in event_matches:
-        for js_pattern in DANGEROUS_JS_PATTERNS:
-            if re.search(js_pattern, handler_content, re.IGNORECASE):
-                return (
-                    False,
-                    f"HTML content contains dangerous JavaScript in event handler: {handler_content[:100]}",
-                )
-
-
-    return True, None
+    try:
+        clean_html = nh3.clean(html_content)
+        return True, None, clean_html
+    except Exception as e:
+        return False, f"Failed to sanitize HTML: {str(e)}", None
 
 
 def validate_json_content(json_content):

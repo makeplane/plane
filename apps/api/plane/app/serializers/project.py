@@ -81,9 +81,12 @@ class ProjectSerializer(BaseSerializer):
             if isinstance(data["description_html"], dict):
                 is_valid, error_msg = validate_json_content(data["description_html"])
             else:
-                is_valid, error_msg = validate_html_content(
+                is_valid, error_msg, sanitized_html = validate_html_content(
                     str(data["description_html"])
                 )
+                # Update the data with sanitized HTML if available
+                if sanitized_html is not None:
+                    data["description_html"] = sanitized_html
             if not is_valid:
                 raise serializers.ValidationError({"description_html": error_msg})
 
