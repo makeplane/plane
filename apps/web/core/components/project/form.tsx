@@ -18,7 +18,7 @@ import {
   EmojiIconPickerTypes,
   Tooltip,
 } from "@plane/ui";
-import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -215,8 +215,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
                     if (val?.type === "emoji")
                       logoValue = {
-                        value: convertHexEmojiToDecimal(val.value.unified),
-                        url: val.value.imageUrl,
+                        value: val.value,
                       };
                     else if (val?.type === "icon") logoValue = val.value;
 

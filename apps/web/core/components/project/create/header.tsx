@@ -7,11 +7,11 @@ import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject } from "@plane/types";
 // plane ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
-import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
+import { CustomEmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { getFileURL, getTabIndex } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-// helpers
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
@@ -81,8 +81,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
 
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 

@@ -19,12 +19,7 @@ import {
 } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
-import {
-  convertHexEmojiToDecimal,
-  getComputedDisplayFilters,
-  getComputedDisplayProperties,
-  getTabIndex,
-} from "@plane/utils";
+import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import {
@@ -184,8 +179,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
 
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 
