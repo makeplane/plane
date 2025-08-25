@@ -1,9 +1,8 @@
-import { Emoji } from "emoji-picker-react";
 import React, { FC } from "react";
 import useFontFaceObserver from "use-font-face-observer";
 // local imports
 import { LUCIDE_ICONS_LIST } from "..";
-import { emojiCodeToUnicode } from "./helpers";
+import { getEmojiSize, stringToEmoji } from "./emoji-icon-helper";
 
 export type TEmojiLogoProps = {
   in_use: "emoji" | "icon";
@@ -59,7 +58,19 @@ export const Logo: FC<Props> = (props) => {
 
   // emoji
   if (in_use === "emoji") {
-    return <Emoji unified={emojiCodeToUnicode(value)} size={size} />;
+    return (
+      <span
+        className="flex items-center justify-center"
+        style={{
+          fontSize: `${getEmojiSize(size)}rem`,
+          lineHeight: `${getEmojiSize(size)}rem`,
+          height: size,
+          width: size,
+        }}
+      >
+        {stringToEmoji(emoji?.value || "")}
+      </span>
+    );
   }
 
   // icon

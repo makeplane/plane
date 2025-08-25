@@ -1,6 +1,6 @@
 // plane imports
 import { EmojiIconPicker, EmojiIconPickerTypes, Logo, TEmojiLogoProps } from "@plane/ui";
-import { cn, convertHexEmojiToDecimal } from "@plane/utils";
+import { cn } from "@plane/utils";
 // types
 import { TCalloutBlockAttributes } from "./types";
 // utils
@@ -52,14 +52,12 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           };
           if (val.type === "emoji") {
             newLogoValue = {
-              "data-emoji-unicode": convertHexEmojiToDecimal(val.value.unified),
-              "data-emoji-url": val.value.imageUrl,
+              "data-emoji-unicode": val.value,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "emoji",
               emoji: {
-                value: convertHexEmojiToDecimal(val.value.unified),
-                url: val.value.imageUrl,
+                value: val.value,
               },
             };
           } else if (val.type === "icon") {

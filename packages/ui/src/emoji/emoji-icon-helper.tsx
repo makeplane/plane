@@ -1,5 +1,4 @@
 import { Placement } from "@popperjs/core";
-import { EmojiClickData, Theme } from "emoji-picker-react";
 
 export enum EmojiIconPickerTypes {
   EMOJI = "emoji",
@@ -20,7 +19,7 @@ export const TABS_LIST = [
 export type TChangeHandlerProps =
   | {
       type: EmojiIconPickerTypes.EMOJI;
-      value: EmojiClickData;
+      value: string;
     }
   | {
       type: EmojiIconPickerTypes.ICON;
@@ -45,8 +44,8 @@ export type TCustomEmojiPicker = {
   placement?: Placement;
   searchDisabled?: boolean;
   searchPlaceholder?: string;
-  theme?: Theme;
   iconType?: "material" | "lucide";
+  theme?: "light" | "dark";
 };
 
 export const DEFAULT_COLORS = ["#95999f", "#6d7b8a", "#5e6ad2", "#02b5ed", "#02b55c", "#f2be02", "#e57a00", "#f38e82"];
@@ -99,4 +98,60 @@ export const adjustColorForContrast = (hex: string): string => {
   };
 
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+/**
+ * Enhanced emoji to decimal conversion that preserves emoji sequences
+ * This function handles complex emoji sequences including skin tone modifiers
+ * @param emoji - The emoji string to convert
+ * @returns Array of decimal Unicode code points
+ */
+export function emojiToDecimalEnhanced(emoji: string): number[] {
+  const codePoints: number[] = [];
+
+  // Use Array.from to properly handle multi-byte Unicode characters
+  const characters = Array.from(emoji);
+
+  for (const char of characters) {
+    const codePoint = char.codePointAt(0);
+    if (codePoint !== undefined) {
+      codePoints.push(codePoint);
+    }
+  }
+
+  return codePoints;
+}
+
+/**
+ * Enhanced decimal to emoji conversion that handles emoji sequences
+ * @param decimals - Array of decimal Unicode code points
+ * @returns The reconstructed emoji string
+ */
+export function decimalToEmojiEnhanced(decimals: number[]): string {
+  return decimals.map((decimal) => String.fromCodePoint(decimal)).join("");
+}
+
+/**
+ * Converts emoji to a string representation for storage
+ * This creates a comma-separated string of decimal values
+ * @param emoji - The emoji string to convert
+ * @returns String representation of decimal values
+ */
+export function emojiToString(emoji: string): string {
+  const decimals = emojiToDecimalEnhanced(emoji);
+  return decimals.join("-");
+}
+
+/**
+ * Converts string representation back to emoji
+ * @param emojiString - Comma-separated string of decimal values
+ * @returns The reconstructed emoji string
+ */
+export function stringToEmoji(emojiString: string): string {
+  const decimals = emojiString.split("-").map(Number);
+  return decimalToEmojiEnhanced(decimals);
+}
+
+export const getEmojiSize = (size: number) => {
+  return size * 0.9 * 0.0625;
 };
