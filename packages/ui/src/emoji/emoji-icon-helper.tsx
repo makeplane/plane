@@ -152,6 +152,4 @@ export function stringToEmoji(emojiString: string): string {
   return decimalToEmojiEnhanced(decimals);
 }
 
-export const getEmojiSize = (size: number) => {
-  return size * 0.9 * 0.0625;
-};
+export const getEmojiSize = (size: number) => size * 0.9 * 0.0625;
