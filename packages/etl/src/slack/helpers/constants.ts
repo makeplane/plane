@@ -21,7 +21,6 @@ const workspaceScopes: string[] = [
   "files:read",
   "files:write",
   "im:write",
-  "incoming-webhook",
 ];
 
 export const getWorkspaceAuthScopes = () => workspaceScopes.join(",");
