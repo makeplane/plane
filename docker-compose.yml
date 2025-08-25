@@ -3,9 +3,10 @@ services:
     container_name: web
     build:
       context: .
-      dockerfile: ./apps/web/Dockerfile.web
+      dockerfile: ./Dockerfile.node
       args:
         DOCKER_BUILDKIT: 1
+        APP_SCOPE: web
     restart: always
     depends_on:
       - api
@@ -14,9 +15,10 @@ services:
     container_name: admin
     build:
       context: .
-      dockerfile: ./apps/admin/Dockerfile.admin
+      dockerfile: ./Dockerfile.node
       args:
         DOCKER_BUILDKIT: 1
+        APP_SCOPE: admin
     restart: always
     depends_on:
       - api
@@ -26,9 +28,10 @@ services:
     container_name: space
     build:
       context: .
-      dockerfile: ./apps/space/Dockerfile.space
+      dockerfile: ./Dockerfile.node
       args:
         DOCKER_BUILDKIT: 1
+        APP_SCOPE: space
     restart: always
     depends_on:
       - api
@@ -37,8 +40,8 @@ services:
   api:
     container_name: api
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile.api
+      context: .
+      dockerfile: ./Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -52,8 +55,8 @@ services:
   worker:
     container_name: bgworker
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile.api
+      context: .
+      dockerfile: ./Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -68,8 +71,8 @@ services:
   beat-worker:
     container_name: beatworker
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile.api
+      context: .
+      dockerfile: ./Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -84,8 +87,8 @@ services:
   migrator:
     container_name: plane-migrator
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile.api
+      context: .
+      dockerfile: ./Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: no

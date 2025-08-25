@@ -139,7 +139,8 @@ jobs:
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Admin Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -152,7 +153,9 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
-          dockerfile-path: ./apps/admin/Dockerfile.admin
+          dockerfile-path: ./Dockerfile.node
+          build-args: |
+            APP_SCOPE=admin
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -161,7 +164,8 @@ jobs:
   branch_build_push_web:
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Web Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -174,7 +178,9 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
-          dockerfile-path: ./apps/web/Dockerfile.web
+          dockerfile-path: ./Dockerfile.node
+          build-args: |
+            APP_SCOPE=web
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -183,7 +189,8 @@ jobs:
   branch_build_push_space:
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Space Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -196,7 +203,9 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
-          dockerfile-path: ./apps/space/Dockerfile.space
+          dockerfile-path: ./Dockerfile.node
+          build-args: |
+            APP_SCOPE=space
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -205,7 +214,8 @@ jobs:
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Live Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -227,7 +237,8 @@ jobs:
   branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Backend Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -239,8 +250,8 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
-          build-context: ./apps/api
-          dockerfile-path: ./apps/api/Dockerfile.api
+          build-context: .
+          dockerfile-path: ./Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -249,7 +260,8 @@ jobs:
   branch_build_push_proxy:
     name: Build-Push Proxy Docker Image
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup]
+    needs:
+      - branch_build_setup
     steps:
       - name: Proxy Build and Push
         uses: makeplane/actions/build-push@v1.0.0
@@ -368,15 +380,13 @@ jobs:
     name: Build Release
     runs-on: ubuntu-22.04
     needs:
-      [
-        branch_build_setup,
-        branch_build_push_admin,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_live,
-        branch_build_push_api,
-        branch_build_push_proxy,
-      ]
+      - branch_build_setup
+      - branch_build_push_admin
+      - branch_build_push_web
+      - branch_build_push_space
+      - branch_build_push_live
+      - branch_build_push_api
+      - branch_build_push_proxy
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
     steps:

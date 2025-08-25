@@ -1,0 +1,171 @@
+name: Docker build and smoke test for apps
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    paths:
+      - "apps/web/**"
+      - "apps/space/**"
+      - "apps/admin/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "turbo.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "Dockerfile.node"
+      - "Dockerfile.api"
+      - "Dockerfile.aio"
+      - "docker-bake.hcl"
+
+      - ".github/workflows/docker-smoke.yml"
+  push:
+    branches:
+      - "preview"
+    paths:
+      - "apps/web/**"
+      - "apps/space/**"
+      - "apps/admin/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "turbo.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "Dockerfile.node"
+      - "Dockerfile.api"
+      - "Dockerfile.aio"
+      - "docker-bake.hcl"
+
+      - ".github/workflows/docker-smoke.yml"
+
+jobs:
+  determine-matrix:
+    name: Determine matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+            space:
+              - 'apps/space/**'
+            admin:
+              - 'apps/admin/**'
+            live:
+              - 'apps/live/**'
+            common:
+              - 'packages/**'
+              - 'turbo.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'Dockerfile.node'
+              - 'Dockerfile.api'
+              - 'Dockerfile.aio'
+              - 'docker-bake.hcl'
+              - '.github/workflows/docker-smoke.yml'
+
+      - name: Build matrix
+        id: build-matrix
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const include = [];
+            const anyCommon = '${{ steps.changes.outputs.common }}' === 'true';
+            const changed = {
+              web:   '${{ steps.changes.outputs.web }}'   === 'true',
+              space: '${{ steps.changes.outputs.space }}' === 'true',
+              admin: '${{ steps.changes.outputs.admin }}' === 'true',
+              live:  '${{ steps.changes.outputs.live }}'  === 'true',
+            };
+            const add = (name, bake_target, image, container, port, path, env_flags = "") =>
+              include.push({ name, bake_target, image, container, host_port: port, path, env_flags });
+
+            const buildAll = anyCommon || changed.web || changed.space || changed.admin || changed.live;
+            if (buildAll || changed.web)   add('web',   'web',   'plane-web:ci-smoke',   'plane-web-ci',   3001, '/');
+            if (buildAll || changed.space) add('space', 'space', 'plane-space:ci-smoke', 'plane-space-ci', 3002, '/spaces');
+            if (buildAll || changed.admin) add('admin', 'admin', 'plane-admin:ci-smoke', 'plane-admin-ci', 3003, '/god-mode');
+            if (buildAll || changed.live)  add('live',  'live',  'plane-live:ci-smoke',  'plane-live-ci',  3005, '/live/health', '-e NODE_ENV=production -e LIVE_BASE_PATH=/live');
+
+            if (include.length === 0) {
+              // Default to web to keep job non-empty
+              add('web', 'web', 'plane-web:ci-smoke', 'plane-web-ci', 3001, '/');
+            }
+            core.setOutput('matrix', JSON.stringify({ include }));
+
+  smoke:
+    name: Build and smoke test ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: determine-matrix
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.determine-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare build environment
+        run: echo "Using docker build (no buildx bake)"
+
+      - name: Show Docker version
+        run: |
+          docker version
+          docker info
+
+      - name: Build image (${{ matrix.name }})
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="${{ matrix.name }}"
+          tag="${{ matrix.image }}"
+          if [ "$name" = "live" ]; then
+            docker build -f "apps/live/Dockerfile.live" -t "$tag" "."
+          else
+            docker build -f "Dockerfile.node" --target runtime --build-arg APP_SCOPE="$name" -t "$tag" "."
+          fi
+
+      - name: Run container (${{ matrix.name }})
+        run: |
+          docker run -d --name ${{ matrix.container }} -p ${{ matrix.host_port }}:3000 ${{ matrix.env_flags }} ${{ matrix.image }}
+          docker ps -a
+
+      - name: Smoke test HTTP endpoint (${{ matrix.name }})
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="http://localhost:${{ matrix.host_port }}${{ matrix.path }}"
+          echo "Probing $URL ..."
+          for i in {1..60}; do
+            STATUS="$(curl -sS -o /dev/null -w "%{http_code}" -L "${URL}" || true)"
+            if [ "${STATUS}" = "200" ]; then
+              echo "Success: HTTP ${STATUS} from ${URL}"
+              exit 0
+            fi
+            echo "Attempt ${i}: HTTP ${STATUS} (waiting 2s)"
+            sleep 2
+          done
+          echo "Failed to get HTTP 200 from ${URL}"
+          echo "::group::Container logs (${{ matrix.container }})"
+          docker logs ${{ matrix.container }} || true
+          echo "::endgroup::"
+          exit 1
+
+      - name: Cleanup container (${{ matrix.name }})
+        if: always()
+        run: |
+          docker rm -f ${{ matrix.container }} || true

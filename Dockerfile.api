@@ -1,0 +1,151 @@
+# syntax=docker/dockerfile:1.7
+#
+# Unified multi-stage Dockerfile for the Python API
+# Targets:
+#   - dev:      local development with hot reload and full build toolchain
+#   - runtime:  production runtime using prebuilt wheels
+#
+# Example builds (from repo root):
+#   docker build -f plane/Dockerfile.api --target dev -t plane-api:dev .
+#   docker build -f plane/Dockerfile.api --target runtime -t plane-api:latest .
+
+ARG PY_VERSION=python:3.12.10-alpine
+
+# -----------------------------------------------------------------------------
+# base: common runtime base (no build toolchain)
+# -----------------------------------------------------------------------------
+FROM ${PY_VERSION} AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+
+# Runtime libraries required by the app
+RUN apk add --no-cache \
+    libpq \
+    libxslt \
+    xmlsec \
+    ca-certificates \
+    openssl
+
+WORKDIR /code
+
+# -----------------------------------------------------------------------------
+# builder: build Python wheels for all dependencies
+# -----------------------------------------------------------------------------
+FROM ${PY_VERSION} AS builder
+
+# Full build toolchain to compile deps to wheels
+RUN apk add --no-cache \
+    bash~=5.2 \
+    g++ \
+    gcc \
+    cargo \
+    git \
+    make \
+    postgresql-dev \
+    libc-dev \
+    linux-headers \
+    libffi-dev \
+    libxml2-dev \
+    libxslt-dev \
+    openssl-dev \
+    xmlsec-dev
+
+WORKDIR /w
+
+# Copy requirements (relative to repo root)
+COPY apps/api/requirements.txt /w/requirements.txt
+COPY apps/api/requirements /w/requirements
+
+# Build wheels into /wheels to reuse in runtime
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip wheel -r /w/requirements.txt --wheel-dir /wheels
+
+# -----------------------------------------------------------------------------
+# dev: local development image (bind mount source into /code)
+# -----------------------------------------------------------------------------
+FROM ${PY_VERSION} AS dev
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+
+# Match prior dev environment: runtime + build deps + node
+RUN apk add --no-cache \
+    libpq \
+    libxslt \
+    xmlsec \
+    nodejs-current \
+    bash~=5.2 \
+    g++ \
+    gcc \
+    cargo \
+    git \
+    make \
+    postgresql-dev \
+    libc-dev \
+    linux-headers \
+    libffi-dev
+
+WORKDIR /code
+
+# Copy and install local dev requirements
+COPY apps/api/requirements.txt ./requirements.txt
+COPY apps/api/requirements ./requirements
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements/local.txt --no-cache-dir
+
+# Bring in the API source
+COPY apps/api/ ./
+
+# Permissions similar to existing Dockerfiles
+RUN mkdir -p /code/plane/logs \
+ && chmod -R +x /code/bin \
+ && chmod -R 777 /code
+
+EXPOSE 8000
+CMD ["./bin/docker-entrypoint-api-local.sh"]
+
+# -----------------------------------------------------------------------------
+# runtime: production image using wheels from builder
+# -----------------------------------------------------------------------------
+FROM base AS runtime
+
+# Bash needed for entrypoint scripts
+RUN apk add --no-cache bash~=5.2
+
+WORKDIR /code
+
+# Install from wheels for reproducible, fast builds
+COPY --from=builder /wheels /wheels
+COPY apps/api/requirements.txt ./requirements.txt
+COPY apps/api/requirements ./requirements
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
+
+# Copy only what is required to run
+COPY apps/api/manage.py ./manage.py
+COPY apps/api/plane ./plane
+COPY apps/api/templates ./templates
+COPY apps/api/package.json ./package.json
+COPY apps/api/bin ./bin
+
+# Create unprivileged user and set secure permissions
+RUN addgroup -S plane && adduser -S -G plane -h /code -s /sbin/nologin plane \
+ && chmod +x ./bin/* \
+ && mkdir -p /code/plane/logs \
+ && chown -R plane:plane /code \
+ && chmod -R 755 /code \
+ && chmod 775 /code/plane/logs
+
+ENV GUNICORN_WORKERS=3 \
+    PORT=8000
+
+USER plane
+EXPOSE 8000
+
+# Default: API server; override command for worker/beat/migrator as needed
+CMD ["./bin/docker-entrypoint-api.sh"]

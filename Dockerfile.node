@@ -1,0 +1,138 @@
+# syntax=docker/dockerfile:1.7
+#
+# Unified multi-stage Dockerfile for Next.js apps in this monorepo.
+# Supports:
+#  - target=dev     (hot-reload, expects bind-mounted repo)
+#  - target=runtime (production image using Next.js standalone output)
+#
+# Usage examples:
+#  - Build dev image for web:    docker build --target dev --build-arg APP_SCOPE=web -t plane-web:dev .
+#  - Run dev (with compose):     mount the repo into /repo and override command/ports as needed
+#  - Build prod image for web:   docker build --target runtime --build-arg APP_SCOPE=web -t plane-web:latest .
+#
+# APP_SCOPE must be one of: web, space, admin
+
+ARG NODE_VERSION=22-alpine
+ARG TURBO_VERSION=2.5.6
+
+# -----------------------------------------------------------------------------
+# Base: Node + pnpm (corepack)
+# -----------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS base
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable && apk add --no-cache libc6-compat
+
+# -----------------------------------------------------------------------------
+# builder: prune workspace using turbo for the selected app scope
+# -----------------------------------------------------------------------------
+FROM base AS builder
+ARG APP_SCOPE
+WORKDIR /repo
+
+# Full context is required for turbo prune
+COPY . .
+RUN pnpm add -g turbo@${TURBO_VERSION}
+RUN turbo prune --scope=${APP_SCOPE} --docker
+
+# -----------------------------------------------------------------------------
+# installer: install deps (offline) and build the selected scope
+# -----------------------------------------------------------------------------
+FROM base AS installer
+WORKDIR /repo
+
+# Seed minimal files for reproducible installs and good caching
+COPY .gitignore .gitignore
+COPY --from=builder /repo/out/json/ .
+COPY --from=builder /repo/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Fetch dependencies into a cached store layer
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm fetch --store-dir=/pnpm/store
+
+# Bring in only the pruned workspace for fast installs/builds
+COPY --from=builder /repo/out/full/ .
+COPY turbo.json turbo.json
+
+# Offline, frozen lockfile install from cached store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
+
+# Build-time environment (safe to pass through; only NEXT_PUBLIC_* are embedded)
+# Keep parity with existing app Dockerfiles
+ARG NEXT_PUBLIC_API_BASE_URL=""
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+
+# Build only the selected scope
+ARG APP_SCOPE
+RUN pnpm turbo run build --filter=${APP_SCOPE}
+
+# -----------------------------------------------------------------------------
+# dev: for local development with hot reload (bind-mount the repo to /repo)
+# -----------------------------------------------------------------------------
+FROM base AS dev
+WORKDIR /repo
+
+# Helpful global tool for selective builds/dev
+RUN pnpm add -g turbo@${TURBO_VERSION}
+
+ENV NODE_ENV=development \
+    NEXT_TELEMETRY_DISABLED=1 \
+    TURBO_TELEMETRY_DISABLED=1
+
+# Select which app to run in dev (web|space|admin)
+ARG APP_SCOPE
+ENV APP_SCOPE=${APP_SCOPE}
+
+EXPOSE 3000
+# Expect the source to be bind-mounted; install deps and start dev server
+CMD ["sh", "-lc", "pnpm install && pnpm dev --filter=${APP_SCOPE}"]
+
+# -----------------------------------------------------------------------------
+# runtime: minimal Next.js standalone runner for the selected scope
+# -----------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS runtime
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    TURBO_TELEMETRY_DISABLED=1 \
+    HOSTNAME=0.0.0.0 \
+    PORT=3000
+
+# Drop privileges
+RUN addgroup -S -g 1001 nodejs \
+ && adduser -S -u 1001 -G nodejs -h /home/nextjs -D nextjs \
+ && mkdir -p /home/nextjs \
+ && chown -R nextjs:nodejs /home/nextjs
+USER nextjs
+
+# Copy only the built output for the selected scope
+ARG APP_SCOPE
+ENV APP_SCOPE=${APP_SCOPE}
+# Next.js standalone layout
+COPY --from=installer /repo/apps/${APP_SCOPE}/.next/standalone ./
+COPY --from=installer /repo/apps/${APP_SCOPE}/.next/static ./apps/${APP_SCOPE}/.next/static
+COPY --from=installer /repo/apps/${APP_SCOPE}/public ./apps/${APP_SCOPE}/public
+
+EXPOSE 3000
+CMD ["sh", "-lc", "set -e; : \"${APP_SCOPE:?APP_SCOPE env is required}\"; SERVER=\"apps/${APP_SCOPE}/server.js\"; if [ ! -f \"$SERVER\" ]; then echo \"Error: $SERVER not found.\"; ls -la \"apps/${APP_SCOPE}\" || true; echo \"Known apps:\"; ls -1 apps || true; exit 1; fi; exec node \"$SERVER\""]
