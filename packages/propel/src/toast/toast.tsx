@@ -207,7 +207,7 @@ export const setPromiseToast = <ToastData,>(
     loading: {
       data: {
         title: options.loading ?? "Loading...",
-        type: TOAST_TYPE.LOADING, 
+        type: TOAST_TYPE.LOADING,
         message: undefined,
         actionItems: undefined,
       },
