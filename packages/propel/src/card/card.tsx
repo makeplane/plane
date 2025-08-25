@@ -10,7 +10,7 @@ import {
   TCardVariant,
 } from "./helper";
 
-export interface CardProps {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TCardVariant;
   spacing?: TCardSpacing;
   direction?: TCardDirection;
