@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Collapsible as BaseCollapsible } from "@base-ui-components/react/collapsible";
-import { cn } from "../utils";
+import clsx from "clsx";
 
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
@@ -35,7 +35,7 @@ export const Collapsible: React.FC<TCollapsibleProps> = (props) => {
 
   return (
     <BaseCollapsible.Root
-      className={cn(className)}
+      className={clsx(className)}
       defaultOpen={defaultOpen}
       open={localIsOpen}
       onOpenChange={handleOnClick}
