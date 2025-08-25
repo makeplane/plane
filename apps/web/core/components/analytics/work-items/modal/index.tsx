@@ -61,6 +61,7 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
             projectDetails={projectDetails}
             cycleDetails={cycleDetails}
             moduleDetails={moduleDetails}
+            isEpic={isEpic}
           />
         </div>
       </div>
