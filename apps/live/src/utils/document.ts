@@ -3,10 +3,52 @@ import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import * as Y from "yjs";
 // plane editor
+import {
+  getAllDocumentFormatsFromDocumentEditorBinaryData,
+  getAllDocumentFormatsFromRichTextEditorBinaryData,
+  getBinaryDataFromDocumentEditorHTMLString,
+  getBinaryDataFromRichTextEditorHTMLString,
+} from "@plane/editor";
+// plane types
+import { TDocumentPayload } from "@plane/types";
+// plane editor
 import { CoreEditorExtensionsWithoutProps, DocumentEditorExtensionsWithoutProps } from "@plane/editor/lib";
 
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
+
+type TArgs = {
+  document_html: string;
+  variant: "rich" | "document";
+};
+
+export const convertHTMLDocumentToAllFormats = (args: TArgs): TDocumentPayload => {
+  const { document_html, variant } = args;
+
+  if (variant === "rich") {
+    const contentBinary = getBinaryDataFromRichTextEditorHTMLString(document_html);
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
+    return {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  }
+
+  if (variant === "document") {
+    const contentBinary = getBinaryDataFromDocumentEditorHTMLString(document_html);
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromDocumentEditorBinaryData(contentBinary);
+    return {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  }
+
+  throw new Error(`Invalid variant provided: ${variant}`);
+};
 
 export const getAllDocumentFormatsFromBinaryData = (
   description: Uint8Array

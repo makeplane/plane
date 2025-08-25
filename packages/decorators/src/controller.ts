@@ -22,7 +22,7 @@ interface ControllerConstructor {
 
 export function registerControllers(
   router: Router,
-  Controller: ControllerConstructor,
+  Controller: ControllerConstructor
 ): void {
   const instance = new Controller();
   const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
@@ -33,14 +33,14 @@ export function registerControllers(
     const method = Reflect.getMetadata(
       "method",
       instance,
-      methodName,
+      methodName
     ) as HttpMethod;
     const route = Reflect.getMetadata("route", instance, methodName) as string;
     const middlewares =
       (Reflect.getMetadata(
         "middlewares",
         instance,
-        methodName,
+        methodName
       ) as RequestHandler[]) || [];
 
     if (method && route) {

@@ -4,18 +4,15 @@ import { Logger } from "@hocuspocus/extension-logger";
 import { Database } from "@hocuspocus/extension-database";
 import { Redis } from "@hocuspocus/extension-redis";
 import { logger } from "@plane/logger";
-// lib
-import { handleAuthentication } from "@/core/lib/authentication";
-// extensions
 import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page";
-// plane live libraries
-import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
-import { updateDocument } from "@/plane-live/lib/update-document.js";
+// lib
+import { UserService } from "@/services/user.service";
+// extensions
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
 // editor types
 import type { TUserDetails } from "@plane/editor";
 // types
-import type { HocusPocusServerContext, TDocumentTypes } from "@/core/types/common";
+import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 // redis
 import { redisManager } from "@/redis";
 
@@ -75,10 +72,18 @@ export class HocusPocusServerManager {
     (context as HocusPocusServerContext).cookie = cookie;
 
     try {
-      await handleAuthentication({
-        cookie,
-        userId,
-      });
+      const userService = new UserService();
+      const user = await userService.currentUser(cookie);
+      if (user.id !== userId) {
+        throw new Error("Authentication unsuccessful!");
+      }
+
+      return {
+        user: {
+          id: user.id,
+          name: user.display_name,
+        },
+      };
     } catch (_error) {
       throw Error("Authentication unsuccessful!");
     }
@@ -98,18 +103,12 @@ export class HocusPocusServerManager {
       // query params
       const params = requestParameters;
       const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
+      // fetch document
       if (documentType === "project_page") {
         const data = await fetchPageDescriptionBinary(params, pageId, cookie);
         return data;
-      } else {
-        const data = await fetchDocument({
-          cookie,
-          documentType,
-          pageId,
-          params,
-        });
-        return data;
       }
+      throw new Error(`Invalid document type ${documentType} provided.`);
     } catch (error) {
       logger.error("Error in fetching document", error);
       return null;
@@ -125,14 +124,6 @@ export class HocusPocusServerManager {
 
       if (documentType === "project_page") {
         await updatePageDescription(params, pageId, state, cookie);
-      } else {
-        await updateDocument({
-          cookie,
-          documentType,
-          pageId,
-          params,
-          updatedDescription: state,
-        });
       }
     } catch (error) {
       logger.error("Error in updating document:", error);

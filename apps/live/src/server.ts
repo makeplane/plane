@@ -3,14 +3,12 @@ import cors from "cors";
 import expressWs from "express-ws";
 import express, { Request, Response } from "express";
 import helmet from "helmet";
-import { logger } from "@plane/logger";
+import { logger, loggerMiddleware } from "@plane/logger";
 import { registerControllers } from "@plane/decorators";
 // controllers
 import { CONTROLLERS } from "@/controllers";
 // hocuspocus server
 import { HocusPocusServerManager } from "@/hocuspocus";
-// helpers
-import { logger as loggerMiddleware } from "@/middlewares/logger";
 // redis
 import { redisManager } from "@/redis";
 
@@ -65,7 +63,7 @@ export class Server {
   }
 
   private setupRoutes() {
-    CONTROLLERS.forEach((controller) => registerControllers(this.router, controller));
+    CONTROLLERS.forEach((controller) => registerControllers(this.router, controller as any)); // TODO: fix this
   }
 
   public listen() {

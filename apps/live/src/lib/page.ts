@@ -1,8 +1,8 @@
 import { logger } from "@plane/logger";
-// helpers
-import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page.js";
 // services
-import { PageService } from "@/core/services/page.service.js";
+import { PageService } from "@/services/page.service";
+// utils
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/utils";
 
 const pageService = new PageService();
 

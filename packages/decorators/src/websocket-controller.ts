@@ -14,7 +14,7 @@ interface ControllerConstructor {
 export function registerWebSocketControllers(
   router: Router,
   Controller: ControllerConstructor,
-  existingInstance?: ControllerInstance,
+  existingInstance?: ControllerInstance
 ): void {
   const instance = existingInstance || new Controller();
   const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
@@ -25,7 +25,7 @@ export function registerWebSocketControllers(
     const method = Reflect.getMetadata(
       "method",
       instance,
-      methodName,
+      methodName
     ) as string;
     const route = Reflect.getMetadata("route", instance, methodName) as string;
 
@@ -43,11 +43,11 @@ export function registerWebSocketControllers(
           } catch (error) {
             console.error(
               `WebSocket error in ${Controller.name}.${methodName}`,
-              error,
+              error
             );
             ws.close(
               1011,
-              error instanceof Error ? error.message : "Internal server error",
+              error instanceof Error ? error.message : "Internal server error"
             );
           }
         });

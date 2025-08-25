@@ -2,8 +2,9 @@ import type { Request, Response } from "express";
 import { logger } from "@plane/logger";
 import { Controller, Post } from "@plane/decorators";
 // types
-import { TConvertDocumentRequestBody } from "@/core/types/common";
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
+import { TConvertDocumentRequestBody } from "@/types";
+// utils
+import { convertHTMLDocumentToAllFormats } from "@/utils";
 
 @Controller("/collaboration")
 export class ConvertDocumentController {
