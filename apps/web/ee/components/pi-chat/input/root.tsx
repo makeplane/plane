@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ArrowUp, FileText } from "lucide-react";
-// plane imports
-import { PiChatEditor } from "@plane/editor";
+import { ArrowUp, Disc, FileText, Loader } from "lucide-react";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { EditorRefApi, PiChatEditorWithRef } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
-import { cn, isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -15,7 +15,9 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
 // local imports
+import { WithFeatureFlagHOC } from "../../feature-flags";
 import { FocusFilter } from "./focus-filter";
+import AudioRecorder from "./voice-input";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -30,7 +32,7 @@ type TProps = {
 };
 
 export const InputBox = observer((props: TProps) => {
-  const { className, activeChatId, shouldRedirect = true, isProjectLevel = false } = props;
+  const { className, activeChatId, shouldRedirect = true, isProjectLevel = false, isFullScreen = false } = props;
 
   // store hooks
   const {
@@ -39,15 +41,15 @@ export const InputBox = observer((props: TProps) => {
     isPiTyping,
     isLoading: isChatLoading,
     createNewChat,
-    getChatById,
+    getChatFocus,
     fetchModels,
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId, chatId: routeChatId } = useParams();
   const router = useAppRouter();
   // derived values
-  const chat = activeChatId && getChatById(activeChatId);
+  const chatFocus = activeChatId && getChatFocus(activeChatId);
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   // state
   const [focus, setFocus] = useState<TFocus>({
@@ -56,11 +58,14 @@ export const InputBox = observer((props: TProps) => {
     entityIdentifier: workspaceId || "",
   });
   const [isInitializing, setIsInitializing] = useState<boolean>(false);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
   //ref
   const isLoadingRef = useRef(false);
   const activeChatIdRef = useRef<string | undefined>(undefined);
   const focusRef = useRef<TFocus>(focus);
   const editorCommands = useRef<TEditCommands | null>(null);
+  const editorRef = useRef<EditorRefApi>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: true,
@@ -70,6 +75,10 @@ export const InputBox = observer((props: TProps) => {
 
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
+  };
+
+  const setChatId = (chatId: string) => {
+    activeChatIdRef.current = chatId;
   };
 
   const handleSubmit = useCallback(
@@ -83,9 +92,12 @@ export const InputBox = observer((props: TProps) => {
         const newChatId = await createNewChat(focusRef.current, isProjectLevel, workspaceId);
         activeChatIdRef.current = newChatId;
         setIsInitializing(false);
-        // Don't redirect if we are in the floating chat window
-        if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
       }
+      // Don't redirect if we are in the floating chat window
+      if (shouldRedirect && !routeChatId)
+        router.push(
+          joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat", activeChatIdRef.current)
+        );
       getAnswer(
         activeChatIdRef.current,
         query,
@@ -96,7 +108,7 @@ export const InputBox = observer((props: TProps) => {
       );
       editorCommands.current?.clear();
     },
-    [editorCommands, getAnswer, activeChatId]
+    [editorCommands, getAnswer, activeChatId, shouldRedirect, routeChatId, isProjectLevel]
   );
 
   const getMentionSuggestions = async (query: string) => {
@@ -154,11 +166,11 @@ export const InputBox = observer((props: TProps) => {
   };
 
   useEffect(() => {
-    if (chat) {
+    if (chatFocus) {
       const presentFocus = {
-        isInWorkspaceContext: chat.is_focus_enabled,
-        entityType: chat.focus_project_id ? "project_id" : "workspace_id",
-        entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
+        isInWorkspaceContext: chatFocus.isInWorkspaceContext,
+        entityType: chatFocus.entityType,
+        entityIdentifier: chatFocus.entityIdentifier,
       };
       setFocus(presentFocus);
       focusRef.current = presentFocus;
@@ -166,7 +178,7 @@ export const InputBox = observer((props: TProps) => {
   }, [isChatLoading]);
 
   useEffect(() => {
-    activeChatIdRef.current = activeChatId;
+    setChatId(activeChatId || "");
     if (activeChatId === "") {
       const presentFocus = {
         isInWorkspaceContext: true,
@@ -189,37 +201,77 @@ export const InputBox = observer((props: TProps) => {
         className
       )}
     >
-      <div
-        className={cn(
-          "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 min-h-[120px] justify-between"
+      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100 max-h-[250px]")}>
+        {(recording || transcribing) && (
+          <div className="flex gap-2 p-2 items-center">
+            <Disc className="size-3 text-red-500" strokeWidth={3} />
+            <span className="text-sm text-custom-text-300 font-medium">Recording...</span>
+          </div>
         )}
-      >
-        {/* Input Box */}
-        <PiChatEditor
-          setEditorCommand={(command) => {
-            setEditorCommands({ ...command });
-          }}
-          handleSubmit={handleSubmit}
-          mentionSuggestions={(query: string) => getMentionSuggestions(query)}
-          className="flex-1"
-        />
-        <div className="flex w-full gap-3 justify-between">
-          {/* Focus */}
-          <FocusFilter focus={focus} setFocus={updateFocus} isLoading={isChatLoading && !!activeChatId} />
-
-          {/* Submit button */}
-          <button
-            className={cn("rounded-full bg-pi-700 text-white size-8 flex items-center justify-center", {
-              "bg-pi-700/10 cursor-not-allowed": isPiTyping || isInitializing,
+        <div
+          className={cn(
+            "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 justify-between h-fit",
+            {
+              "min-h-[120px]": !recording && !transcribing,
+            }
+          )}
+        >
+          {/* Input Box */}
+          <PiChatEditorWithRef
+            setEditorCommand={(command) => {
+              setEditorCommands({ ...command });
+            }}
+            handleSubmit={handleSubmit}
+            mentionSuggestions={(query: string) => getMentionSuggestions(query)}
+            className={cn("flex-1", {
+              "absolute w-0": transcribing || recording,
             })}
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isPiTyping || isInitializing}
-          >
-            <ArrowUp size={16} />
-          </button>
+            ref={editorRef}
+          />
+          <div className="flex w-full gap-3 justify-between">
+            {/* Focus */}
+            {!recording && !transcribing && (
+              <FocusFilter focus={focus} setFocus={updateFocus} isLoading={isChatLoading && !!activeChatId} />
+            )}
+            {/* Submit button */}
+            <div className="flex items-center w-full justify-end">
+              <WithFeatureFlagHOC
+                workspaceSlug={workspaceSlug?.toString() || ""}
+                flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                fallback={<></>}
+              >
+                <AudioRecorder
+                  recording={recording}
+                  workspaceId={workspaceId || ""}
+                  chatId={activeChatIdRef.current || ""}
+                  setChatId={setChatId}
+                  editorRef={editorRef}
+                  setRecording={setRecording}
+                  setTranscribing={setTranscribing}
+                  createNewChat={createNewChat}
+                  focusRef={focusRef}
+                  isProjectLevel={isProjectLevel}
+                  transcribing={transcribing}
+                  isFullScreen={isFullScreen}
+                />
+              </WithFeatureFlagHOC>
+              {!recording && !transcribing && (
+                <button
+                  className={cn(
+                    "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-pi-700/10"
+                  )}
+                  type="submit"
+                  onClick={handleSubmit}
+                  disabled={isPiTyping || isInitializing || transcribing}
+                >
+                  <ArrowUp size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
+
       <div className="text-xs text-custom-text-350 pt-2 text-center">
         Pi can make mistakes, please double-check responses.
       </div>

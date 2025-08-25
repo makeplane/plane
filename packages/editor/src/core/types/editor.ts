@@ -154,6 +154,7 @@ export type EditorRefApi = {
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
+  appendText: (textContent: string) => boolean | undefined;
 };
 
 export type EditorTitleRefApi = EditorRefApi;

@@ -7,8 +7,8 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { useUser } from "@/hooks/store/user";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { Messages } from "./conversation/messages";
 import { Loading } from "./conversation/loading";
+import { Messages } from "./conversation/messages";
 import { scrollIntoViewHelper } from "./helper";
 import { InputBox } from "./input";
 

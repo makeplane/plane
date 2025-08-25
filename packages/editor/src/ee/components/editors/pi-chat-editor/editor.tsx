@@ -1,9 +1,12 @@
 import { EditorContent, useEditor } from "@tiptap/react";
+import { forwardRef, MutableRefObject, useImperativeHandle } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // plane editor imports
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { PiChatEditorExtensions } from "@/plane-editor/extensions/pi-chat-editor/extensions";
+import { EditorRefApi } from "@/types";
 
 type IItem = {
   id: string;
@@ -27,19 +30,21 @@ type PiChatEditorProps = {
   className?: string;
   setEditorCommand?: (command: any) => void;
   mentionSuggestions?: (query: string) => Promise<any>;
+  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleSubmit?: (e?: any) => void;
   editable?: boolean;
   content?: string;
   editorClass?: string;
 };
 
-export const PiChatEditor = (props: PiChatEditorProps) => {
+const PiChatEditor = (props: PiChatEditorProps) => {
   const {
     className,
     setEditorCommand,
     mentionSuggestions,
     editable = true,
     content = "<p></p>",
+    forwardedRef,
     handleSubmit,
     editorClass = "",
   } = props;
@@ -100,6 +105,16 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
     }
   };
 
+  useImperativeHandle(
+    forwardedRef,
+    () =>
+      getEditorRefHelpers({
+        editor,
+        provider: undefined,
+      }),
+    [editor]
+  );
+
   if (!editor) return null;
 
   return (
@@ -115,3 +130,11 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
     </div>
   );
 };
+
+const PiChatEditorWithRef = forwardRef<EditorRefApi, PiChatEditorProps>((props, ref) => (
+  <PiChatEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />
+));
+
+PiChatEditorWithRef.displayName = "PiChatEditorWithRef";
+
+export { PiChatEditorWithRef };

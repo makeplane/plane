@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { PiChatEditor } from "@plane/editor";
+import { PiChatEditorWithRef } from "@plane/editor";
 import { IUser } from "@plane/types";
-import { Avatar, Card, Loader } from "@plane/ui";
+import { Avatar, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type TProps = {
@@ -18,7 +18,7 @@ export const MyMessage = observer((props: TProps) => {
       {!isLoading && (
         <div className={cn("px-4 py-3 pr-10 text-base rounded-lg bg-custom-background-90 w-fit max-w-[75%]")}>
           {/* Message */}
-          <PiChatEditor editable={false} content={message} editorClass="!break-words" />
+          <PiChatEditorWithRef editable={false} content={message} editorClass="!break-words" />
         </div>
       )}
       {/* Loading */}

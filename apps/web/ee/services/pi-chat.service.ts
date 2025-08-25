@@ -58,6 +58,24 @@ export class PiChatService extends APIService {
     return streamToken;
   }
 
+  async transcribeAudio(workspace_id: string, formData: FormData, chat_id: string): Promise<string> {
+    try {
+      const response = await this.post(`/api/v1/transcription/transcribe`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        params: {
+          workspace_id,
+          chat_id,
+        },
+      });
+
+      return response?.data?.detail;
+    } catch (error: any) {
+      throw error?.response?.data;
+    }
+  }
+
   // fetch answer
   async retrieveAnswer(data: TQuery): Promise<string> {
     const r = await this.post(`/api/v1/chat/get-answer/`, data)

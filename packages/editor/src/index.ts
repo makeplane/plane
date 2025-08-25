@@ -15,7 +15,7 @@ export {
   LiteTextEditorWithRef,
   RichTextEditorWithRef,
 } from "@/components/editors";
-export { PiChatEditor } from "./ee/components/editors";
+export { PiChatEditorWithRef } from "./ee/components/editors/pi-chat-editor/editor";
 
 // constants
 export * from "@/constants/common";

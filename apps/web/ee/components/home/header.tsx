@@ -29,7 +29,7 @@ export const HomePageHeader = observer(() => {
           </Tooltip>
         </div>
         <InputBox
-          isFullScreen={false}
+          isFullScreen={true}
           isProjectLevel
           className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
         />

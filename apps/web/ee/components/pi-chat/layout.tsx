@@ -5,8 +5,8 @@ import useSWR from "swr";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { RightSidePanel } from "./sidebar/right-side-panel";
 import { Header } from "./header/header";
+import { RightSidePanel } from "./sidebar/right-side-panel";
 
 type TProps = {
   isFullScreen?: boolean;

@@ -80,6 +80,7 @@ export enum E_FEATURE_FLAGS {
   // PI
   PI_CHAT = "PI_CHAT",
   PI_DEDUPE = "PI_DEDUPE",
+  PI_CONVERSE = "PI_CONVERSE",
   // initiatives
   INITIATIVES = "INITIATIVES",
   // dashboards

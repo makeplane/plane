@@ -299,5 +299,30 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         })
         .run();
     },
+    appendText: (textContent: string) => {
+      if (!editor) return;
+      try {
+        const { doc } = editor.state;
+
+        // Get the last child node of the document
+        const lastNode = doc.content.lastChild;
+
+        if (!lastNode) return false;
+
+        // Position *before* the end of the last node
+        const endPosition = doc.content.size - 1;
+
+        editor
+          .chain()
+          .insertContentAt(endPosition, textContent)
+          .focus(endPosition + textContent.length)
+          .run();
+
+        return true;
+      } catch (error) {
+        console.error("Error appending text to editor:", error);
+        return false;
+      }
+    },
   };
 };

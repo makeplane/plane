@@ -44,6 +44,7 @@ export interface IPiChatStore {
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
+  getChatFocus: (chatId: string) => TFocus | undefined;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
@@ -187,6 +188,16 @@ export class PiChatStore implements IPiChatStore {
 
   getChatById = computedFn((chatId: string) => this.chatMap[chatId]);
 
+  getChatFocus = computedFn((chatId: string) => {
+    const chat = this.chatMap[chatId];
+    if (!chat) return;
+    return {
+      isInWorkspaceContext: chat.is_focus_enabled,
+      entityType: chat.focus_project_id ? "project_id" : "workspace_id",
+      entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
+    };
+  });
+
   // actions
   initPiChat = async (chatId?: string | undefined) => {
     // Existing chat
@@ -210,6 +221,7 @@ export class PiChatStore implements IPiChatStore {
       payload = {
         ...payload,
         [focus.entityType]: focus.entityIdentifier,
+        workspace_id: workspaceId,
       };
     }
 
@@ -279,11 +291,11 @@ export class PiChatStore implements IPiChatStore {
         const title = await this.piChatService.retrieveTitle(chatId, workspaceId);
         runInAction(() => {
           this.isNewChat = false;
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            title: title.title,
-            last_modified: new Date().toISOString(),
-          }));
+          update(this.chatMap, chatId, (chat) => {
+            chat.title = title.title;
+            chat.last_modified = new Date().toISOString();
+            return chat; // same reference, mutated
+          });
         });
       }
     });
@@ -319,21 +331,22 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         this.isPiThinkingMap[chatId] = true;
         this.isPiTypingMap[chatId] = true;
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          dialogue: [...dialogueHistory, newDialogue],
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.dialogue = [...dialogueHistory, newDialogue];
+          return chat; // same reference, mutated
+        });
+
         if (isNewChat) {
           if (isProjectChat) {
             this.projectThreads = [chatId, ...this.projectThreads];
           } else {
             this.piThreads = [chatId, ...this.piThreads];
           }
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            title: "New Chat",
-            last_modified: new Date().toISOString(),
-          }));
+          update(this.chatMap, chatId, (chat) => {
+            chat.title = "New Chat";
+            chat.last_modified = new Date().toISOString();
+            return chat; // same reference, mutated
+          });
         }
       });
 
@@ -364,10 +377,10 @@ export class PiChatStore implements IPiChatStore {
       this.getStreamingAnswer(isNewChat, chatId, payload, workspaceId, (property, value) => {
         newDialogue[property] += value;
         runInAction(() => {
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            dialogue: [...dialogueHistory, newDialogue],
-          }));
+          update(this.chatMap, chatId, (chat) => {
+            chat.dialogue = [...dialogueHistory, newDialogue];
+            return chat; // same reference, mutated
+          });
         });
       });
 
@@ -376,10 +389,10 @@ export class PiChatStore implements IPiChatStore {
       console.log(e);
       runInAction(() => {
         newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          dialogue: [...dialogueHistory, newDialogue],
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.dialogue = [...dialogueHistory, newDialogue];
+          return chat; // same reference, mutated
+        });
         this.isPiThinkingMap[chatId] = false;
         this.isPiTypingMap[chatId] = false;
       });
@@ -553,19 +566,19 @@ export class PiChatStore implements IPiChatStore {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: true,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = true;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = [...this.favoriteChats, chatId];
       });
       await this.piChatService.favoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: false,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = false;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats;
       });
     }
@@ -575,19 +588,19 @@ export class PiChatStore implements IPiChatStore {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: false,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = false;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats.filter((id) => id !== chatId);
       });
       await this.piChatService.unfavoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: true,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = true;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats;
       });
     }
@@ -597,18 +610,18 @@ export class PiChatStore implements IPiChatStore {
     const initialState = this.chatMap[chatId]?.title;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          title,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.title = title;
+          return chat; // same reference, mutated
+        });
       });
       await this.piChatService.renameChat(chatId, title, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          title: initialState,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.title = initialState;
+          return chat; // same reference, mutated
+        });
       });
     }
   };
