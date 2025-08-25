@@ -961,9 +961,6 @@ importers:
       '@plane/types':
         specifier: workspace:*
         version: link:../types
-      '@plane/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@plane/utils':
         specifier: workspace:*
         version: link:../utils
