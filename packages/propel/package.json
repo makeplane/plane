@@ -23,7 +23,8 @@
     "./combobox": "./src/combobox/index.ts",
     "./tooltip": "./src/tooltip/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css",
-    "./switch": "./src/switch/index.ts"
+    "./switch": "./src/switch/index.ts",
+    "./toast": "./src/toast/index.ts"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",

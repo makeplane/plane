@@ -170,8 +170,9 @@ const ToastRender = ({ id, toast }: { id: string; toast: BaseToast.Root.ToastObj
 };
 
 export const setToast = (props: SetToastProps) => {
-  if (props.type != TOAST_TYPE.LOADING) {
-    toastManager.add({
+  let toastId: string | undefined;
+  if (props.type !== TOAST_TYPE.LOADING) {
+    toastId = toastManager.add({
       data: {
         type: props.type,
         title: props.title,
@@ -179,7 +180,23 @@ export const setToast = (props: SetToastProps) => {
         actionItems: props.actionItems,
       },
     });
+  } else {
+    toastId = toastManager.add({
+      data: {
+        type: props.type,
+        title: props.title,
+      },
+    });
   }
+  return toastId;
+};
+
+export const updateToast = (id: string, props: SetToastProps) => {
+  toastManager.update(id, {
+    data: {
+      type: props.type,
+    },
+  });
 };
 
 export const setPromiseToast = <ToastData,>(
@@ -190,30 +207,26 @@ export const setPromiseToast = <ToastData,>(
     loading: {
       data: {
         title: options.loading ?? "Loading...",
-        type: TOAST_TYPE.LOADING,
+        type: TOAST_TYPE.LOADING, 
         message: undefined,
         actionItems: undefined,
       },
     },
-    success: (data) => {
-      return {
-        data: {
-          type: TOAST_TYPE.SUCCESS,
-          title: options.success.title,
-          message: options.success.message?.(data),
-          actionItems: options.success.actionItems?.(data),
-        },
-      };
-    },
-    error: (data) => {
-      return {
-        data: {
-          type: TOAST_TYPE.ERROR,
-          title: options.error.title,
-          message: options.error.message?.(data),
-          actionItems: options.error.actionItems?.(data),
-        },
-      };
-    },
+    success: (data) => ({
+      data: {
+        type: TOAST_TYPE.SUCCESS,
+        title: options.success.title,
+        message: options.success.message?.(data),
+        actionItems: options.success.actionItems?.(data),
+      },
+    }),
+    error: (data) => ({
+      data: {
+        type: TOAST_TYPE.ERROR,
+        title: options.error.title,
+        message: options.error.message?.(data),
+        actionItems: options.error.actionItems?.(data),
+      },
+    }),
   });
 };
