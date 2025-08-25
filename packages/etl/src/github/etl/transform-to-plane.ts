@@ -83,8 +83,8 @@ export const transformGitHubIssue = async (
   let targetState: string | undefined = undefined;
   if (issue.state) {
     const states = (await planeClient.state.list(workspaceSlug, projectId)).results;
-    const backlogState = states.find((state) => state.name.toLowerCase() === "backlog");
-    const doneState = states.find((state) => state.name.toLowerCase() === "done");
+    const backlogState = states.find((state) => state.group === "backlog");
+    const doneState = states.find((state) => state.group === "completed");
     if (issue.state === "open") {
       targetState = backlogState?.id;
     } else if (issue.state === "closed") {

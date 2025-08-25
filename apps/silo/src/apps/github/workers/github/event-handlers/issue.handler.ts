@@ -130,16 +130,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       issue ? true : false
     );
 
-    const states = (await planeClient.state.list(entityConnection.workspace_slug, entityConnection.project_id ?? ""))
-      .results;
     const users = await planeClient.users.list(entityConnection.workspace_slug, entityConnection.project_id ?? "");
-
-    if (planeIssue.state) {
-      const state = states.find((s) => s.name === planeIssue.state);
-      if (state) {
-        planeIssue.state = state.id;
-      }
-    }
 
     if (planeIssue.labels) {
       const labels = (await planeClient.label.list(entityConnection.workspace_slug, entityConnection.project_id ?? ""))
