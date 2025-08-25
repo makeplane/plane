@@ -129,31 +129,25 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
 
   fetchFilters = async (workspaceSlug: string, teamspaceId: string, projectId: string) => {
     try {
-      const _filters = await this.teamspaceWorkItemFilterService.fetchTeamspaceWorkItemFilters(
+      // current user details
+      const currentUserId = this.rootIssueStore.currentUserId;
+
+      // fetching the filters from the local storage
+      const _filters = this.handleIssuesLocalFilters.get(
+        EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
         workspaceSlug,
-        teamspaceId
+        projectId,
+        currentUserId
       );
 
+      // computed filters
       const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
       const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
-
-      // fetching the kanban toggle helpers in the local storage
       const kanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
+        group_by: _filters?.kanban_filters?.group_by || [],
+        sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
       };
-      const currentUserId = this.rootIssueStore.currentUserId;
-      if (currentUserId) {
-        const _kanbanFilters = this.handleIssuesLocalFilters.get(
-          EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
-          workspaceSlug,
-          projectId,
-          currentUserId
-        );
-        kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
-        kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
-      }
 
       runInAction(() => {
         set(this.filters, [projectId, "filters"], filters);

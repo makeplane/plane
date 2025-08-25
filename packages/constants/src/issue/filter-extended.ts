@@ -138,7 +138,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       },
     },
     calendar: {
-      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date", "team_project"],
+      filters: ["priority", "state_group", "assignees", "mentions", "created_by", "start_date"],
       display_properties: ["key", "issue_type"],
       display_filters: {
         type: [null, "active", "backlog"],
