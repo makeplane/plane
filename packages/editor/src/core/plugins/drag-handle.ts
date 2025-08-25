@@ -21,6 +21,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-embed-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -100,6 +101,11 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
     // Skip table cells
     if (elem.closest("table")) {
+      continue;
+    }
+
+    // Skip elements inside .editor-embed-component
+    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
       continue;
     }
 
