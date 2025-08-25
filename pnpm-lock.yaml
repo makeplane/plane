@@ -477,9 +477,6 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
-      emoji-picker-react:
-        specifier: ^4.5.16
-        version: 4.13.2(react@18.3.1)
       export-to-csv:
         specifier: ^1.4.0
         version: 1.4.0
@@ -837,7 +834,7 @@ importers:
         version: 14.2.31(eslint@8.57.1)(typescript@5.8.3)
       eslint-config-prettier:
         specifier: ^9.1.0
-        version: 9.1.2(eslint@8.57.1)
+        version: 9.1.0(eslint@8.57.1)
       eslint-config-turbo:
         specifier: ^1.12.4
         version: 1.13.4(eslint@8.57.1)
@@ -1141,9 +1138,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      emoji-picker-react:
-        specifier: ^4.5.16
-        version: 4.13.2(react@18.3.1)
+      frimousse:
+        specifier: ^0.3.0
+        version: 0.3.0(react@18.3.1)(typescript@5.8.3)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -4429,12 +4426,6 @@ packages:
   element-resize-detector@1.2.4:
     resolution: {integrity: sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg==}
 
-  emoji-picker-react@4.13.2:
-    resolution: {integrity: sha512-azaJQLTshEOZVhksgU136izJWJyZ4Clx6xQ6Vctzk1gOdPPAUbTa/JYDwZJ8rh97QxnjpyeftXl99eRlYr3vNA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>=16'
-
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
 
@@ -4557,8 +4548,8 @@ packages:
       typescript:
         optional: true
 
-  eslint-config-prettier@9.1.2:
-    resolution: {integrity: sha512-iI1f+D2ViGn+uvv5HuHVUamg8ll4tN+JRHGc6IJi4TP9Kl976C57fzPXgseXNs8v0iA8aSJpHsTWjDb9QJamGQ==}
+  eslint-config-prettier@9.1.0:
+    resolution: {integrity: sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
@@ -4828,9 +4819,6 @@ packages:
   fizzy-ui-utils@2.0.7:
     resolution: {integrity: sha512-CZXDVXQ1If3/r8s0T+v+qVeMshhfcuq0rqIFgJnrtd+Bu8GmDmqMjntjUePypVtjHXKJ6V4sw9zeyox34n9aCg==}
 
-  flairup@1.0.0:
-    resolution: {integrity: sha512-IKlE+pNvL2R+kVL1kEhUYqRxVqeFnjiIvHWDMLFXNaqyUdFXQM2wte44EfMYJNHkW16X991t2Zg8apKkhv7OBA==}
-
   flat-cache@3.2.0:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -4889,6 +4877,15 @@ packages:
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
+
+  frimousse@0.3.0:
+    resolution: {integrity: sha512-kO6LMoKY/cLAYEhXXtqLRaLIE6L/DagpFPrUZaLv3LsUa1/8Iza3HhwZcgN8eZ+weXnhv69eoclNUPohcCa/IQ==}
+    peerDependencies:
+      react: ^18 || ^19
+      typescript: 5.8.3
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
@@ -11083,11 +11080,6 @@ snapshots:
     dependencies:
       batch-processor: 1.0.0
 
-  emoji-picker-react@4.13.2(react@18.3.1):
-    dependencies:
-      flairup: 1.0.0
-      react: 18.3.1
-
   emoji-regex@10.4.0: {}
 
   emoji-regex@8.0.0: {}
@@ -11297,7 +11289,7 @@ snapshots:
       - eslint-plugin-import-x
       - supports-color
 
-  eslint-config-prettier@9.1.2(eslint@8.57.1):
+  eslint-config-prettier@9.1.0(eslint@8.57.1):
     dependencies:
       eslint: 8.57.1
 
@@ -11658,8 +11650,6 @@ snapshots:
     dependencies:
       desandro-matches-selector: 2.0.2
 
-  flairup@1.0.0: {}
-
   flat-cache@3.2.0:
     dependencies:
       flatted: 3.3.3
@@ -11727,6 +11717,12 @@ snapshots:
   fraction.js@4.3.7: {}
 
   fresh@0.5.2: {}
+
+  frimousse@0.3.0(react@18.3.1)(typescript@5.8.3):
+    dependencies:
+      react: 18.3.1
+    optionalDependencies:
+      typescript: 5.8.3
 
   fs-extra@10.1.0:
     dependencies:
