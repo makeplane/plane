@@ -64,6 +64,7 @@ const envSchema = z.object({
   // Slack Env Variables
   SLACK_CLIENT_ID: z.string().optional(),
   SLACK_CLIENT_SECRET: z.string().optional(),
+  SLACK_SIGNING_SECRET: z.string().optional(),
   // Sentry Env Variables
   SENTRY_BASE_URL: z
     .string()

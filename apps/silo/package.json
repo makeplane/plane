@@ -20,6 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
     "@aws-sdk/s3-request-presigner": "^3.810.0",
+    "@dotenvx/dotenvx": "^1.47.6",
     "@flatfile/api": "^1.12.0",
     "@flatfile/listener": "^1.1.1",
     "@flatfile/plugin-record-hook": "^1.11.2",
@@ -28,6 +29,7 @@
     "@plane/constants": "workspace:*",
     "@plane/decorators": "workspace:*",
     "@plane/sdk": "workspace:*",
+    "@slack/bolt": "^4.4.0",
     "@types/bluebird": "^3.5.42",
     "@types/cookie-parser": "^1.4.8",
     "@types/jest": "^29.5.14",
@@ -39,7 +41,6 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csv-string": "^4.1.1",
-    "@dotenvx/dotenvx": "^1.47.6",
     "express": "^4.21.2",
     "express-winston": "^4.2.0",
     "jira.js": "^4.0.1",

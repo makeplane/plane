@@ -39,6 +39,7 @@ import { logger } from "./logger";
 // types
 import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
 import { APIErrorResponse } from "./types";
+import { setRawBodyOnRequest } from "./middleware/raw-body.middlware";
 
 export default class Server {
   private readonly app: Application;
@@ -97,9 +98,19 @@ export default class Server {
       })
     );
 
-    this.app.use(express.json({ limit: "25mb" }));
+    this.app.use(
+      express.json({
+        limit: "25mb",
+        verify: setRawBodyOnRequest,
+      })
+    );
     this.app.use(cookieParser());
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(
+      express.urlencoded({
+        extended: true,
+        verify: setRawBodyOnRequest,
+      })
+    );
   }
 
   private setupLogger() {

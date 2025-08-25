@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { validate as uuidValidate } from "uuid";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
@@ -21,14 +21,14 @@ import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
+import { Controller, Delete, EnsureEnabled, Get, Middleware, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { Store } from "@/worker/base";
-import { slackAuth } from "../auth/auth";
+import { authenticateSlackRequestMiddleware, slackAuth } from "../auth/auth";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
@@ -579,6 +579,7 @@ export default class SlackController {
   }
 
   @Post("/action")
+  @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async ackSlackAction(req: Request, res: Response) {
     try {
       const payloadStr = req.body.payload;
@@ -611,6 +612,7 @@ export default class SlackController {
   }
 
   @Post("/command")
+  @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async slackCommand(req: Request, res: Response) {
     try {
       const payload = req.body as TSlackCommandPayload;
@@ -636,6 +638,7 @@ export default class SlackController {
   }
 
   @Post("/events")
+  @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async slackEvents(req: Request, res: Response) {
     try {
       const payload = req.body;
@@ -667,6 +670,7 @@ export default class SlackController {
   }
 
   @Post("/options")
+  @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async slackOptions(req: Request, res: Response) {
     try {
       const payload = JSON.parse(req.body.payload) as TSlackPayload;
