@@ -20,7 +20,7 @@ type Props = {
 
 export const WorkItemsModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, isEpic } = props;
-  const { updateIsEpic } = useAnalytics();
+  const { updateIsEpic, isPeekView } = useAnalytics();
   const [fullScreen, setFullScreen] = useState(false);
 
   const handleClose = () => {
@@ -29,18 +29,18 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
   };
 
   useEffect(() => {
-    updateIsEpic(isEpic ?? false);
-  }, [isEpic, updateIsEpic]);
+    updateIsEpic(isPeekView ? (isEpic ?? false) : false);
+  }, [isEpic, updateIsEpic, isPeekView]);
 
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   if (!isOpen) return null;
 
   const content = (
-    <div className={cn("inset-0 z-[25] h-full w-full overflow-y-auto", fullScreen ? "absolute" : "fixed")}>
+    <div className={cn("z-[25] h-full w-full overflow-y-auto absolute")}>
       <div
-        className={`right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${
-          fullScreen ? "w-full p-2 absolute" : "w-full sm:w-full md:w-1/2 fixed"
+        className={`top-0 right-0 z-[25] h-full bg-custom-background-100 shadow-custom-shadow-md absolute ${
+          fullScreen ? "w-full p-2" : "w-1/2"
         }`}
       >
         <div
@@ -67,5 +67,5 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
     </div>
   );
 
-  return fullScreen && portalContainer ? createPortal(content, portalContainer) : content;
+  return portalContainer ? createPortal(content, portalContainer) : content;
 });
