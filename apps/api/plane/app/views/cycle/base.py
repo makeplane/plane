@@ -2,6 +2,8 @@
 import json
 import pytz
 from datetime import date, timedelta
+from dateutil.parser import parse as datetime_parse
+
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -26,7 +28,7 @@ from django.db import models
 from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.dateparse import parse_date
+
 
 # Third party imports
 from rest_framework import status
@@ -390,13 +392,15 @@ class CycleViewSet(BaseViewSet):
             cycle, data=request.data, partial=True, context={"project_id": project_id}
         )
 
-        if cycle.start_date is not None and cycle.end_date is not None:
+        if request_data.get("start_date", None) and cycle.start_date and cycle.end_date:
             if (
                 cycle.start_date.date() <= date.today()
                 and cycle.end_date.date() >= date.today()
             ):
                 # Convert the given string date
-                parsed_request_start_date = parse_date(request_data["start_date"])
+                parsed_request_start_date = datetime_parse(
+                    request_data["start_date"]
+                ).date()
 
                 last_entity_progress = (
                     EntityProgress.objects.filter(
