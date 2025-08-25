@@ -46,6 +46,7 @@ export const handleCommand = async (data: TSlackCommandPayload) => {
         },
         response_url: data.response_url,
       },
+      undefined,
       ENTITIES.COMMAND_PROJECT_SELECTION
     );
 

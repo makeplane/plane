@@ -1,17 +1,17 @@
 import axios from "axios";
 import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
-import { fetchPlaneAssets } from "@/apps/slack/helpers/fetch-plane-data";
-import { convertToSlackOption, convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
-import { createIssueModalViewFull, createProjectSelectionModal } from "@/apps/slack/views";
+import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
+import { createProjectSelectionModal } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
-import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
+import { refreshLinkback } from "../../helpers/linkback";
+import { createIntakeModal, createWorkItemModal } from "../../helpers/modal";
+import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails, TSlackWorkItemOrIntakeModalParams } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { createCommentModal } from "../../views/create-comment-modal";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
-import { createSlackLinkback } from "../../views/issue-linkback";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
   const excludedActions = [E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT];
@@ -51,8 +51,16 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return await handleLinkbackStateChange(data, details);
       case ACTIONS.LINKBACK_SWITCH_PRIORITY:
         return await handleSwitchPriorityAction(data, details);
-      case ACTIONS.LINKBACK_SWITCH_CYCLE:
-        return await handleSwitchCycleAction(data, details);
+      case ACTIONS.ISSUE_OBJECT_TYPE_SELECTION:
+        return await handleWorkItemOrIntakeSelectionAction(data as TBlockActionModalPayload, details);
+      case ACTIONS.CREATE_WORK_ITEM:
+        return await handleCreateWorkItemAction(data, details);
+      case ACTIONS.ISSUE_TYPE:
+        return await handleIssueTypeSelectAction(data as TBlockActionModalPayload, details);
+      case ACTIONS.UPDATE_WORK_ITEM:
+        return await handleUpdateWorkItemAction(data, details);
+      case ACTIONS.ASSIGN_TO_ME:
+        return await handleAssignToMeButtonAction(data, details);
       case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
         return await handleOverflowActions(data, details);
       case ACTIONS.LINKBACK_CREATE_COMMENT:
@@ -91,6 +99,90 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
   }
 };
 
+async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "static_select") return;
+
+  const selection = data.actions[0].selected_option;
+  if (!selection) return;
+
+  const { workspaceConnection, slackService, planeClient } = details;
+
+  const value = selection.value.split(".");
+  if (value.length === 3) {
+    const projectId = value[0];
+    const issueId = value[1];
+
+    await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+      priority: value[2],
+    });
+    const refreshedLinkback = await refreshLinkback({
+      details,
+      issueId,
+      projectId,
+    });
+
+    if (data.response_url) {
+      await axios.post(data.response_url, {
+        blocks: refreshedLinkback.blocks,
+      });
+    }
+
+    await slackService.sendEphemeralMessage(
+      data.user.id,
+      `Work item *priority* successfully updated to *${selection.text.text}*`,
+      data.channel.id,
+      data.message?.thread_ts
+    );
+  }
+}
+
+async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type === "static_select") {
+    const selection = data.actions[0].selected_option;
+    if (!selection) return;
+
+    const { workspaceConnection, slackService, planeClient } = details;
+
+    const state = selection.value.split(".");
+    if (state.length === 3) {
+      const projectId = state[0];
+      const issueId = state[1];
+      const stateId = state[2];
+
+      const stateFull = await planeClient.state.getState(workspaceConnection.workspace_slug, projectId, stateId);
+
+      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+        state: stateId,
+      });
+
+      // Update the linkback
+      const refreshedLinkback = await refreshLinkback({
+        details,
+        issueId,
+        projectId,
+      });
+
+      if (data.response_url) {
+        await axios.post(data.response_url, {
+          blocks: refreshedLinkback.blocks,
+        });
+      }
+
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Work Item *state* successfully updated to *${stateFull.name}*`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
+    }
+  }
+}
+
+
+/**
+ * @deprecated
+ * With the new UI changes, we don't have overflow actions anymore.
+ */
 async function handleOverflowActions(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
 
@@ -109,31 +201,10 @@ async function handleOverflowActions(data: TBlockActionPayload, details: TSlackC
   }
 }
 
-async function handleSwitchCycleAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
-  if (data.actions[0].type !== "static_select") return;
-
-  const selection = data.actions[0].selected_option;
-  if (!selection) return;
-
-  const { workspaceConnection, slackService, planeClient } = details;
-
-  const value = selection.value.split(".");
-  if (value.length === 3) {
-    const projectId = value[0];
-    const issueId = value[1];
-    const cycleId = value[2];
-
-    await planeClient.cycles.addIssues(workspaceConnection.workspace_slug, projectId, cycleId, [issueId]);
-
-    await slackService.sendEphemeralMessage(
-      data.user.id,
-      `Issue *cycle* successfully updated to *${selection.text.text}*`,
-      data.channel.id,
-      data.message?.thread_ts
-    );
-  }
-}
-
+/**
+ * @deprecated
+ * With the new UI changes, we don't have overflow actions anymore.
+ */
 async function handleCreateCommentAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
 
@@ -158,6 +229,10 @@ async function handleCreateCommentAction(data: TBlockActionPayload, details: TSl
   }
 }
 
+/**
+ * @deprecated
+ * With the new UI changes, we don't have overflow actions anymore.
+ */
 async function handleCreateWebLinkAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
 
@@ -182,54 +257,62 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload, details: TSl
   }
 }
 
-async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
-  if (data.actions[0].type !== "static_select") return;
+async function handleUpdateWorkItemAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
 
-  const isThreadSync =
-    data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
+  const value = data.actions[0].value;
+  const values = value.split(".");
+  const isUnfurl = data.container.is_app_unfurl === true;
 
-  const selection = data.actions[0].selected_option;
-  if (!selection) return;
-
-  const { workspaceConnection, slackService, planeClient } = details;
-
-  const value = selection.value.split(".");
-  if (value.length === 3) {
-    const projectId = value[0];
-    const issueId = value[1];
-
-    await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
-      priority: value[2],
-    });
-
-    const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, [
-      "state",
-      "project",
-      "assignees",
-      "labels",
-    ]);
-    const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
-
-    const updatedLinkback = createSlackLinkback(
-      workspaceConnection.workspace_slug,
-      issue,
-      states.results,
-      isThreadSync
-    );
-
-    if (data.response_url) {
-      await axios.post(data.response_url, {
-        blocks: updatedLinkback.blocks,
-      });
-    }
-
-    await slackService.sendEphemeralMessage(
-      data.user.id,
-      `Issue *priority* successfully updated to *${selection.text.text}*`,
-      data.channel.id,
-      data.message?.thread_ts
-    );
+  if (values.length !== 2) {
+    return;
   }
+
+  const projectId = values[0];
+  const issueId = values[1];
+  const { workspaceConnection, planeClient } = details;
+
+  const existingIssue = await planeClient.issue.getIssueWithFields(
+    workspaceConnection.workspace_slug,
+    projectId,
+    issueId,
+    ["assignees", "labels", "state"]
+  );
+
+  const metadata = {
+    entityType: ENTITIES.SHORTCUT_PROJECT_SELECTION,
+    entityPayload: {
+      type: "shortcut_action",
+      mode: "update" as const,
+      message: {
+        text: "Update Work Item",
+        ts: data.message?.thread_ts || data.container.message_ts,
+      },
+      channel: {
+        id: data.channel.id,
+      },
+      preselected_values: {
+        project_id: projectId,
+        issue_id: issueId,
+      },
+      response_url: data.response_url,
+    },
+  }
+
+  const showThreadSync = isUnfurl ? false :
+    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+
+  const params: TSlackWorkItemOrIntakeModalParams = {
+    triggerId: data.trigger_id,
+    projectId,
+    metadata,
+    details,
+    workItem: existingIssue,
+    showThreadSync,
+    disableIssueType: true,
+  };
+
+  await createWorkItemModal(params);
 }
 
 async function handleProjectSelectAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
@@ -240,110 +323,168 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
 
   const { workspaceConnection, slackService, planeClient } = details;
 
-  const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
-  const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
-  const projectAssets = await fetchPlaneAssets(workspaceConnection.workspace_slug, selection.value, planeClient);
+  // Parse metadata once
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<
     typeof ENTITIES.SHORTCUT_PROJECT_SELECTION
   >;
 
-  if (data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE) {
-    const intakeEnabled = selectedProject.intake_view;
-    if (!intakeEnabled) {
-      const modal = createProjectSelectionModal(
-        convertToSlackOptions(projects.results),
-        {
-          type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
-          message: {
-            text: metadata.entityPayload.message.text,
-            ts: metadata.entityPayload.message.ts,
-          },
-          channel: {
-            id: metadata.entityPayload.channel.id,
-          },
-        },
-        undefined,
-        false,
-        "Intake is not enabled for this project."
-      );
-      await slackService.updateModal(data.view.id, modal);
-      return;
-    }
+  // Check if we should handle this entity type
+  if (
+    metadata.entityType !== ENTITIES.SHORTCUT_PROJECT_SELECTION &&
+    metadata.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION
+  ) {
+    return;
   }
 
-  if (
-    metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ||
-    metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION
-  ) {
-    const modal = createIssueModalViewFull(
-      {
-        selectedProject: convertToSlackOption(selectedProject),
-        projectOptions: convertToSlackOptions(projects.results),
-        priorityOptions: convertToSlackOptions(PLANE_PRIORITIES),
-        stateOptions: convertToSlackOptions(projectAssets.states.results),
-      },
-      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ? metadata.entityPayload.message?.text : "",
-      JSON.stringify({ entityType: metadata.entityType, entityPayload: metadata.entityPayload }),
-      metadata.entityPayload.type !== ENTITIES.COMMAND_PROJECT_SELECTION,
-      data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM
+  // Get project to check if intake is enabled
+  const selectedProject = await planeClient.project.getProject(
+    workspaceConnection.workspace_slug,
+    selection.value
+  );
+  const isIntakeEnabled = selectedProject.intake_view;
+
+  const showThreadSync =
+    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+
+  if (isIntakeEnabled) {
+    // Show project selection modal with intake/work item choice
+    const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
+    const modal = createProjectSelectionModal(
+      convertToSlackOptions(projects.results),
+      metadata.entityPayload,
+      selection.value,
+      metadata.entityType,
+      true
     );
 
     await slackService.updateModal(data.view.id, modal);
+  } else {
+    // Delegate to work item modal creation
+    await createWorkItemModal({
+      viewId: data.view.id,
+      projectId: selection.value,
+      showThreadSync,
+      metadata,
+      details,
+    });
   }
 }
 
-async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSlackConnectionDetails) {
-  if (data.actions[0].type === "static_select") {
-    const isThreadSync =
-      data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
-    const selection = data.actions[0].selected_option;
-    if (!selection) return;
+async function handleCreateWorkItemAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+  const { workspaceConnection, slackService, planeClient } = details;
 
-    const { workspaceConnection, slackService, planeClient } = details;
+  const value = data.actions[0].value;
+  const projectId = value;
+  // Get project to check if intake is enabled
+  const selectedProject = await planeClient.project.getProject(
+    workspaceConnection.workspace_slug,
+    projectId
+  );
+  const isIntakeEnabled = selectedProject.intake_view;
 
-    const state = selection.value.split(".");
-    if (state.length === 3) {
-      const projectId = state[0];
-      const issueId = state[1];
-      const stateId = state[2];
+  if (isIntakeEnabled) {
+    // Show project selection modal with intake/work item choice
+    const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
+    const modal = createProjectSelectionModal(
+      convertToSlackOptions(projects.results),
+      {
+        type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
+        mode: "create",
+        message: {
+          text: "Create Work Item",
+          ts: data.message?.thread_ts || data.container.message_ts,
+        },
+        channel: {
+          id: data.channel.id,
+        },
+      },
+      projectId,
+      undefined,
+      true
+    );
 
-      const stateFull = await planeClient.state.getState(workspaceConnection.workspace_slug, projectId, stateId);
-
-      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
-        state: stateId,
-      });
-
-      const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, [
-        "state",
-        "project",
-        "assignees",
-        "labels",
-      ]);
-      const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
-
-      const updatedLinkback = createSlackLinkback(
-        workspaceConnection.workspace_slug,
-        issue,
-        states.results,
-        isThreadSync
-      );
-
-      if (data.response_url) {
-        await axios.post(data.response_url, {
-          blocks: updatedLinkback.blocks,
-        });
-      }
-
-      await slackService.sendEphemeralMessage(
-        data.user.id,
-        `Issue *state* successfully updated to *${stateFull.name}*`,
-        data.channel.id,
-        data.message?.thread_ts
-      );
-    }
+    await slackService.openModal(data.trigger_id, modal);
+  } else {
+    // Delegate to work item modal creation
+    await createWorkItemModal({
+      triggerId: data.trigger_id,
+      projectId,
+      details,
+    });
   }
 }
 
+
+async function handleWorkItemOrIntakeSelectionAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "static_select") return;
+
+  const selection = data.actions[0].selected_option;
+  if (!selection) return;
+
+  const value = selection.value.split(".");
+  if (value.length !== 2) return;
+
+  const selectedProjectId = value[0];
+  const selectedWorkItemOrIntake = value[1];
+
+  const metadata = JSON.parse(data.view.private_metadata)
+
+  const isWorkItem = selectedWorkItemOrIntake === E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM;
+  const showThreadSync =
+    (metadata?.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+
+  // Common parameters for both modal types
+  const modalParams: TSlackWorkItemOrIntakeModalParams = {
+    viewId: data.view.id,
+    projectId: selectedProjectId,
+    metadata: metadata,
+    details,
+    showThreadSync,
+  };
+
+  // Delegate to appropriate modal creation
+  if (isWorkItem) {
+    await createWorkItemModal(modalParams);
+  } else {
+    await createIntakeModal(modalParams);
+  }
+}
+
+async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "static_select") return;
+
+  const selection = data.actions[0].selected_option;
+  if (!selection) return;
+
+  const value = selection.value.split(".");
+  if (value.length !== 2) return;
+
+  const selectedProjectId = value[0];
+  const selectedIssueTypeId = value[1];
+
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<
+    typeof ENTITIES.SHORTCUT_PROJECT_SELECTION
+  >;
+  const showThreadSync =
+    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+
+  const modalParams: TSlackWorkItemOrIntakeModalParams = {
+    viewId: data.view.id,
+    projectId: selectedProjectId,
+    issueTypeId: selectedIssueTypeId,
+    showThreadSync,
+    metadata,
+    details,
+  };
+
+  await createWorkItemModal(modalParams);
+}
+
+/**
+ * @deprecated
+ * With the new UI changes, we don't have overflow actions anymore.
+ */
 async function handleAssignToMeAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
 
@@ -365,10 +506,53 @@ async function handleAssignToMeAction(data: TBlockActionPayload, details: TSlack
 
       await slackService.sendEphemeralMessage(
         data.user.id,
-        `Issue successfully *assigned* to you.`,
+        `Work Item successfully *assigned* to you.`,
         data.channel.id,
         data.message?.thread_ts
       );
     }
   }
 }
+
+async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+
+  const { workspaceConnection, slackService, planeClient } = details;
+
+  const user = await slackService.getUserInfo(data.user.id);
+  const issue = data.actions[0].value.split(".");
+  if (issue.length === 2) {
+    const projectId = issue[0];
+    const issueId = issue[1];
+
+    const planeMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
+    const member = planeMembers.find((member) => member.email === user?.user.profile.email);
+
+    if (member) {
+      await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
+        assignees: [member.id],
+      });
+
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Work Item successfully *assigned* to you.`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
+
+      // Update the linkback
+      const refreshedLinkback = await refreshLinkback({
+        details,
+        issueId,
+        projectId,
+      });
+
+      if (data.response_url) {
+        await axios.post(data.response_url, {
+          blocks: refreshedLinkback.blocks,
+        });
+      }
+    }
+  }
+}
+

@@ -503,7 +503,7 @@ export function isUserMessage(
 
 /* ------------------ Parser Types --------------------------------- */
 export interface BasePlaneResource {
-  type: "issue" | "cycle" | "module" | "project";
+  type: "issue" | "cycle" | "module" | "project" | "page";
   workspaceSlug: string;
 }
 
@@ -530,11 +530,39 @@ export interface ProjectResource extends BasePlaneResource {
   type: "project";
 }
 
+export enum PageSubType {
+  PUBLISHED = "published",
+  WIKI = "wiki",
+  PROJECT = "project",
+}
 export interface UnfurlMap {
   [url: string]: {
+    color?: string;
     blocks: any[];
     thread_ts?: string;
   };
 }
 
-export type PlaneResource = IssueResource | CycleResource | ModuleResource | ProjectResource;
+export interface PageResource {
+  type: "page";
+  projectId?: string;
+  workspaceSlug?: string;
+  subType: PageSubType;
+  pageId: string;
+}
+
+
+export interface UnfurlBlock {
+  blocks: any[];
+  thread_ts?: string;
+}
+
+export interface UnfurlLink {
+  title: string;
+  title_link: string;
+  text: string;
+  image_url?: string;
+  footer?: string;
+}
+
+export type PlaneResource = IssueResource | CycleResource | ModuleResource | ProjectResource | PageResource;

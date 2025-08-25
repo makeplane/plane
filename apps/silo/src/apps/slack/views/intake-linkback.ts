@@ -1,23 +1,59 @@
 import { ExIntakeIssue } from "@plane/sdk";
-import { env } from "@/env";
+import { getIntakeUrl } from "@/helpers/urls";
+import { invertStringMap } from "@/helpers/utils";
+import { createSlackLinkbackMutationContext, E_MUTATION_CONTEXT_FORMAT_TYPE, E_MUTATION_CONTEXT_ITEM_TYPE } from "../helpers/blocks";
+import { INTAKE_STATUSES } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
-// Intake issue statuses based on the Django model
-export const INTAKE_STATUSES = [
-  { id: -2, name: "Pending", emoji: "⏳" },
-  { id: -1, name: "Rejected", emoji: "❌" },
-  { id: 0, name: "Snoozed", emoji: "😴" },
-  { id: 1, name: "Accepted", emoji: "✅" },
-  { id: 2, name: "Duplicate", emoji: "🔄" },
-];
-
-export const createSlackIntakeLinkback = (workspaceSlug: string, issue: ExIntakeIssue, showLogo = false) => {
+export const createSlackIntakeLinkback = (
+  workspaceSlug: string,
+  issue: ExIntakeIssue,
+  userMap: Map<string, string>,
+  showLogo = false
+) => {
   const { issue_detail } = issue;
+  const planeToSlackUserMap = invertStringMap(userMap);
+  const blocks: any[] = [];
 
   // Get status info
   const statusInfo = INTAKE_STATUSES.find((s) => s.id === issue.status) || INTAKE_STATUSES[0];
 
-  const blocks: any[] = [];
+  // Build markdown content for main section
+  const title = `<${getIntakeUrl(workspaceSlug, issue.project, issue.id)}|Intake: *${issue_detail?.name || "Untitled"}*>`;
+
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: title,
+    },
+  });
+
+  let sectionContent = `> Status: *${statusInfo.name}*`;
+
+  // Priority
+  if (issue_detail?.priority && issue_detail.priority !== "none") {
+    sectionContent += `\n> Priority: *${titleCaseWord(issue_detail.priority)}*`;
+  }
+
+  // Target date
+  if (issue_detail?.target_date) {
+    sectionContent += `\n> Target Date: *${formatTimestampToNaturalLanguage(issue_detail.target_date, false)}*`;
+  }
+
+  // Snoozed until date (for snoozed status)
+  if (issue.status === 0 && issue.snoozed_till) {
+    sectionContent += `\n> Snoozed Until: *${formatTimestampToNaturalLanguage(issue.snoozed_till, false)}*`;
+  }
+
+  // Main section with intake details
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: sectionContent,
+    },
+  });
 
   if (showLogo) {
     blocks.push({
@@ -30,148 +66,57 @@ export const createSlackIntakeLinkback = (workspaceSlug: string, issue: ExIntake
         },
         {
           type: "mrkdwn",
-          text: `*Plane Intake*`,
+          text: `*Plane*`,
         },
       ],
     });
   }
 
-  // Main title with link to issue (if we have the issue detail)
-  const titleText = issue_detail?.project
-    ? `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue_detail.project}/intake|📥 ${issue_detail.name}>`
-    : `📥 *${issue_detail.name}*`;
-
-  blocks.push({
-    type: "section",
-    text: {
-      type: "mrkdwn",
-      text: titleText,
-    },
-  });
-
-  // Create context elements array with intake-specific information
-  const contextElements: any[] = [];
-
-  // Status information
-  contextElements.push({
-    type: "mrkdwn",
-    text: `*Status:* ${statusInfo.emoji} ${statusInfo.name}`,
-  });
-
-  // Source information
-  if (issue.source) {
-    let sourceText = `*Source:* ${issue.source}`;
-    if (issue.source_email) {
-      sourceText += ` (${issue.source_email})`;
-    }
-    contextElements.push({
-      type: "mrkdwn",
-      text: sourceText,
-    });
-  }
-
-  // External source if available
-  if (issue.external_source) {
-    contextElements.push({
-      type: "mrkdwn",
-      text: `*External Source:* ${issue.external_source}`,
-    });
-  }
-
-  // Project information (if available)
-  if (issue_detail?.project) {
-    contextElements.push({
-      type: "mrkdwn",
-      text: `📋 <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue_detail.project}/issues|Project>`,
-    });
-  }
-
-  // Add context block for intake-specific info
-  if (contextElements.length > 0) {
-    blocks.push({
-      type: "context",
-      elements: contextElements,
-    });
-  }
-
-  // Issue details context (state, priority, assignees, dates)
-  const issueContextElements: any[] = [];
-
-  // State and priority information
-  if (issue_detail?.state || issue_detail?.priority) {
-    // @ts-expect-error
-    const stateLabel = issue_detail?.state ? `*State:* ${issue_detail.state.name}` : "*State:* Not set";
-    const priorityLabel =
-      issue_detail?.priority && issue_detail.priority !== "none"
-        ? `*Priority:* ${titleCaseWord(issue_detail.priority)}`
-        : "*Priority:* Not set";
-
-    issueContextElements.push({
-      type: "mrkdwn",
-      text: `${stateLabel}    ${priorityLabel}`,
-    });
-  }
-
-  // Assignees information
-  if (issue_detail?.assignees && issue_detail.assignees.length > 0) {
-    const assigneeCount = issue_detail.assignees.length;
-    const assigneeText = assigneeCount === 1 ? "Assignee" : "Assignees";
-
-    issueContextElements.push({
-      type: "mrkdwn",
-      text: `*${assigneeText}:* ${assigneeCount} assigned`,
-    });
-  }
-
-  // Target date
-  if (issue_detail?.target_date) {
-    issueContextElements.push({
-      type: "plain_text",
-      text: `Target Date: ${formatTimestampToNaturalLanguage(issue_detail.target_date)}`,
-    });
-  }
-
-  // Created date
-  if (issue.created_at) {
-    issueContextElements.push({
-      type: "plain_text",
-      text: `Created: ${formatTimestampToNaturalLanguage(issue.created_at)}`,
-    });
-  }
-
-  // Snoozed until date (for snoozed status)
-  if (issue.status === 0 && issue.snoozed_till) {
-    issueContextElements.push({
-      type: "plain_text",
-      text: `Snoozed until: ${formatTimestampToNaturalLanguage(issue.snoozed_till)}`,
-    });
-  }
-
-  // Add issue context block if there are any elements
-  if (issueContextElements.length > 0) {
-    blocks.push({
-      type: "context",
-      elements: issueContextElements,
-    });
-  }
-
-  // Duplicate issue information (for duplicate status)
-  if (issue.status === 2 && issue.duplicate_to) {
-    blocks.push({
-      type: "context",
-      elements: [
-        {
-          type: "mrkdwn",
-          text: `🔄 *Duplicate of:* <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue_detail.project}/issues/${issue.duplicate_to}|View Original Issue>`,
-        },
-      ],
-    });
-  }
-
+  // Divider
   blocks.push({
     type: "divider",
   });
 
+  // Build markdown content for creation/update info
+  const mutationContext = createSlackLinkbackMutationContext({
+    issue,
+    planeToSlackUserMap,
+    workspaceSlug,
+    options: {
+      itemType: E_MUTATION_CONTEXT_ITEM_TYPE.INTAKE,
+      format: E_MUTATION_CONTEXT_FORMAT_TYPE.CREATION_ONLY,
+    },
+  });
+
+  // Context with creation and update info using mrkdwn
+  blocks.push({
+    type: "context",
+    elements: [
+      {
+        type: "mrkdwn",
+        text: mutationContext,
+      },
+    ],
+  });
+
+  // View in Plane button
+  if (issue.project) {
+    blocks.push({
+      type: "actions",
+      elements: [
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "View in Plane",
+            emoji: true,
+          },
+          url: getIntakeUrl(workspaceSlug, issue.project, issue.id),
+          action_id: "view_intake_in_plane",
+        },
+      ],
+    });
+  }
   return { blocks };
 };
 

@@ -6,6 +6,7 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
+import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
@@ -62,7 +63,9 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
     return;
   }
 
-  const { slackService, planeClient } = details;
+  const { slackService, planeClient, workspaceConnection } = details;
+
+  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
 
   const metadata = {
     type: "message_action",
@@ -98,7 +101,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
     const [issue, states] = await Promise.all([issuePromise, statesPromise]);
 
-    modal = alreadyLinkedModalView(workspaceEntityConnections[0].workspace_slug, issue, states.results, metadata);
+    modal = alreadyLinkedModalView(workspaceEntityConnections[0].workspace_slug, issue, states.results, userMap, metadata);
   } else {
     modal = createLinkIssueModalView(metadata);
   }
@@ -118,6 +121,7 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload, isWorkItem: 
   const details = await getConnectionDetails(data.team.id, {
     id: data.user.id,
   });
+
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
     return;
@@ -146,6 +150,7 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload, isWorkItem: 
     plainTextOptions,
     {
       type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
+      mode: "create",
       message: {
         text: data.message.text,
         ts: data.message.ts,
@@ -156,7 +161,8 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload, isWorkItem: 
       },
     },
     undefined,
-    isWorkItem
+    undefined,
+    false
   );
 
   try {

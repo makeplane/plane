@@ -2,9 +2,10 @@ import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { PlaneWebhookPayload } from "@plane/sdk";
 import { Store } from "@/worker/base";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
+import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
 import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
+import { createActivityLinkback } from "../../views/activity";
 
-const ignoredFieldUpdates = ["description", "attachment", "sort_order"];
 
 export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const activities = await getActivities(payload);
@@ -23,80 +24,31 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
     return;
   }
 
-  const { slackService, entityConnection } = details;
+  const { slackService, entityConnection, workspaceConnection } = details;
 
-  const message = createSlackBlocksFromActivity(activities);
+  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+
+  const activityBlocks = createActivityLinkback({
+    activities,
+    workspaceSlug: entityConnection.workspace_slug,
+    projectId: entityConnection.project_id!,
+    issueId: payload.id,
+    userMap,
+  });
+
   const entityData = entityConnection.entity_data as TSlackIssueEntityData;
 
   const channel = entityData.channel;
   const messageTs = entityData.message.ts;
 
-  if (message.length === 0) {
+  if (activityBlocks.blocks.length === 0) {
     return;
   }
 
   await slackService.sendThreadMessage(channel, messageTs, {
     text: "Work Item Updated",
-    blocks: message,
+    blocks: activityBlocks.blocks,
   });
-};
-
-// Message formatter function
-const formatMessage = (field: string, cleanField: string, newValue: string, actor: string): string => {
-  switch (field) {
-    case "link":
-      return `\n• *${actor}* added link ${newValue}`;
-    case "reaction": {
-      const emoji = String.fromCodePoint(parseInt(newValue));
-      return `\n• *${actor}* reacted with *${emoji}*`;
-    }
-    default:
-      return `\n• *${actor}* updated *${cleanField}* to *${newValue}*`;
-  }
-};
-
-export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
-  // Sort the fields so that array fields are at the end
-  fields.sort((a, b) => (a.isArrayField ? 1 : -1));
-
-  let message = "Work item updated 🔄\n";
-
-  // Filter out fields that should be ignored
-  fields = fields.filter((field) => !shouldIgnoreField(field.field, ignoredFieldUpdates));
-
-  if (fields.length === 0) {
-    return [];
-  }
-
-  fields.forEach((field) => {
-    const cleanField = field.field.replace("_", " ");
-
-    if (field.isArrayField) {
-      if (field.added.length > 0 || field.removed.length > 0) {
-        message += `\n• *${cleanField} updated:*`;
-        if (field.added.length > 0) {
-          message += `\n    • Added _${field.added.join(", ")}_`;
-        }
-        if (field.removed.length > 0) {
-          message += `\n    • Removed _${field.removed.join(", ")}_`;
-        }
-      }
-    } else {
-      message += formatMessage(field.field, cleanField, field.newValue, field.actor);
-    }
-  });
-
-  const blocks = [
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: message,
-      },
-    },
-  ];
-
-  return blocks;
 };
 
 export const getActivities = async (payload: PlaneWebhookPayload): Promise<ActivityForSlack[]> => {
@@ -134,16 +86,19 @@ export const getActivities = async (payload: PlaneWebhookPayload): Promise<Activ
   */
   for (const [field, fieldActivities] of fieldGroups.entries()) {
     const isArrayField = field.endsWith("s");
-    const actor = fieldActivities[0].actor.display_name;
+    const actorId = fieldActivities[0].actor.id;
+    const actorDisplayName = fieldActivities[0].actor.display_name;
 
     if (isArrayField) {
       const { added, removed } = getArrayActivity(fieldActivities);
       latestActivities.set(field, {
         isArrayField: true,
         field,
-        actor,
+        actorId,
+        actorDisplayName,
         added,
         removed,
+        timestamp: fieldActivities[fieldActivities.length - 1].timestamp,
       });
     } else {
       // For singular fields, use the last activity's new_value
@@ -151,8 +106,11 @@ export const getActivities = async (payload: PlaneWebhookPayload): Promise<Activ
       latestActivities.set(field, {
         isArrayField: false,
         field,
-        actor,
+        actorId,
+        actorDisplayName,
         newValue: latestActivity.new_value || "",
+        oldValue: latestActivity.old_value || "",
+        timestamp: latestActivity.timestamp,
       });
     }
   }
@@ -180,17 +138,4 @@ export const getArrayActivity = (activities: PlaneActivityWithTimestamp[]) => {
   }
 
   return { added, removed };
-};
-
-// Helper function to check if a field should be ignored
-const shouldIgnoreField = (fieldName: string, ignoredFieldUpdates: string[]): boolean => {
-  // Check if any ignored field is a prefix of this field
-  // This handles cases like "description" also ignoring "description_html"
-  for (const ignoredField of ignoredFieldUpdates) {
-    if (fieldName === ignoredField || fieldName.startsWith(ignoredField + "_")) {
-      return true;
-    }
-  }
-
-  return false;
 };

@@ -3,6 +3,7 @@ import { PlaneWebhookPayload } from "@plane/sdk";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
+import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
 import { createSlackLinkback } from "../../views/issue-linkback";
 
 const apiClient = getAPIClient();
@@ -45,9 +46,10 @@ export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) =
     payload.id,
     ["state", "project", "assignees", "labels"]
   );
-  const states = await planeClient.state.list(workspaceConnection.workspace_slug, payload.project);
 
-  const linkback = createSlackLinkback(workspaceConnection.workspace_slug, issue, states.results, true);
+  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+
+  const linkback = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false);
 
   const response = await slackService.sendMessageToChannel(channelId!, {
     blocks: linkback.blocks,

@@ -6,9 +6,9 @@ import {
   isUserMessage,
   SlackAuthState,
   SlackPlaneOAuthState,
-  SlackUserAuthState,
+  SlackUserAuthState, TBlockSuggestionPayload,
   TSlackCommandPayload,
-  TSlackPayload,
+  TSlackPayload
 } from "@plane/etl/slack";
 import {
   E_PLANE_WEBHOOK_ACTION,
@@ -24,6 +24,7 @@ import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Middleware, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
+import { getFormUtilsService } from "@/services/form-fields/form-utils";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
@@ -31,7 +32,6 @@ import { Store } from "@/worker/base";
 import { authenticateSlackRequestMiddleware, slackAuth } from "../auth/auth";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
-import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
 const apiClient = getAPIClient();
 
@@ -673,30 +673,8 @@ export default class SlackController {
   @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async slackOptions(req: Request, res: Response) {
     try {
-      const payload = JSON.parse(req.body.payload) as TSlackPayload;
 
-      // Check if the payload type is block_suggestion
-      if (payload.type === "block_suggestion" && payload.action_id && payload.action_id === ACTIONS.ISSUE_LABELS) {
-        const text = payload.value;
-        // If the action is issue_labels, parse the view to be of type
-        // IssueModalViewFull and pass it to the slack worker
-        const details = await getConnectionDetails(payload.team.id);
-        if (!details) {
-          logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
-          return res.status(200).json({});
-        }
-
-        const { workspaceConnection, planeClient } = details;
-        const values = await parseIssueFormData(payload.view.state.values);
-        const labels = await planeClient.label.list(workspaceConnection.workspace_id, values.project);
-        const filteredLabels = labels.results
-          .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        const labelOptions = convertToSlackOptions(filteredLabels);
-        return res.status(200).json({
-          options: labelOptions,
-        });
-      }
+      const payload = JSON.parse(req.body.payload) as TBlockSuggestionPayload;
 
       if (payload.type === "block_suggestion" && payload.action_id && payload.action_id === ACTIONS.LINK_WORK_ITEM) {
         const text = payload.value;
@@ -724,7 +702,53 @@ export default class SlackController {
         });
       }
 
-      return res.status(200).json({});
+      const values = payload.action_id.split(".");
+
+      if (values.length != 2) {
+        logger.error(`[SLACK] Invalid action id: ${payload.action_id}`);
+        return res.status(200).json({});
+      }
+
+      const [projectId, fieldId] = values;
+
+      const details = await getConnectionDetails(payload.team.id, {
+        id: payload.user.id
+      });
+      if (!details) {
+        logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
+        return res.status(200).json({});
+      }
+
+      const { workspaceConnection, credentials } = details;
+
+      if (!credentials.target_access_token) {
+        logger.error(`[SLACK] No target access token found for team`, payload);
+        return res.status(200).json({});
+      }
+
+      const formUtilsService = getFormUtilsService(credentials.target_access_token);
+      const optionsResponse = await formUtilsService.getOptionsForEntity(
+        {
+          slug: workspaceConnection.workspace_slug,
+          projectId: projectId,
+          typeIdentifier: fieldId,
+          searchText: payload.value,
+        }
+      );
+
+      const options = optionsResponse.map((option) => ({
+        text: {
+          type: "plain_text",
+          text: option.label,
+          emoji: true,
+        },
+        value: option.value,
+      }));
+
+      return res.status(200).json({
+        options: options,
+      });
+
     } catch (error) {
       return responseHandler(res, 500, error);
     }

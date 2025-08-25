@@ -1,3 +1,4 @@
+import { ExIssueType } from "./issue-types";
 
 // service types
 export type ClientOptions = {
@@ -89,6 +90,7 @@ export type ExpandableFields = {
   project: ExProject;
   assignees: ExUser[];
   labels: ExIssueLabel[];
+  type: ExIssueType;
 }
 // Create a type that can handle both expanded and unexpanded fields
 export type IssueWithExpanded<T extends Array<keyof ExpandableFields>> = Omit<ExIssue, T[number]> &
@@ -306,6 +308,7 @@ export type ExPage = ExBase & {
   owned_by: string;
   parent_id: string | null;
   description_html: string;
+  description_stripped: string;
   external_id: string;
   external_source: string;
 };

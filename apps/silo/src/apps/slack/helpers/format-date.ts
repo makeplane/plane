@@ -1,21 +1,6 @@
 export function formatTimestampToNaturalLanguage(timestamp: string, includeTime: boolean = true): string {
   const date = new Date(timestamp);
-  const now = new Date();
-
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
   const timeStr = includeTime ? ` at ${formatTime(date)}` : "";
-
-  // Check if the date is today
-  if (diffDays === 0 && now.getDate() === date.getDate()) {
-    return `Today${timeStr}`;
-  }
-
-  // Check if the date is yesterday
-  if (diffDays === 1 || (diffDays === 0 && now.getDate() !== date.getDate())) {
-    return `Yesterday${timeStr}`;
-  }
 
   // Format the date as "Month Day, Year"
   const options: Intl.DateTimeFormatOptions = {

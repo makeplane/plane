@@ -35,9 +35,12 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectIdentifier: string,
     issueSequence: number,
-    expand: (keyof ExpandableFields)[]
+    expand: (keyof ExpandableFields)[],
+    includeEpics: boolean = false
   ): Promise<IssueWithExpanded<typeof expand>> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?expand=${expand.join(",")}`)
+    return this.get(
+      `/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?expand=${expand.join(",")}&include_epics=${includeEpics}`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -253,8 +256,15 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssueWithFields(workspaceSlug: string, projectId: string, issueId: string, expand: (keyof ExpandableFields)[]): Promise<IssueWithExpanded<typeof expand>> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/?expand=${expand.join(",")}`)
+  async getIssueWithFields(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    expand: (keyof ExpandableFields)[]
+  ): Promise<IssueWithExpanded<typeof expand>> {
+    return this.get(
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/?expand=${expand.join(",")}`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

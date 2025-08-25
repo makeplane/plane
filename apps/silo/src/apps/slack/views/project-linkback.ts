@@ -1,137 +1,94 @@
 import { ExProject, PlaneUser } from "@plane/sdk";
-import { convertUnicodeToSlackEmoji } from "../helpers/emoji-converter";
+import { getPlaneLogoUrl, getProjectUrl } from "@/helpers/urls";
+import { invertStringMap } from "@/helpers/utils";
+import { ACTIONS } from "../helpers/constants";
+import { getUserMarkdown } from "../helpers/user";
 
-export const createProjectLinkback = (project: ExProject, members: PlaneUser[]) => {
+export const createProjectLinkback = (
+  workspaceSlug: string,
+  project: ExProject,
+  members: PlaneUser[],
+  userMap: Map<string, string>,
+  showLogo = false,
+) => {
   const blocks: any[] = [];
 
-  // Add Plane Logo with Title on top
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "image",
-        image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
-        alt_text: "Plane",
-      },
-      {
-        type: "mrkdwn",
-        text: `*Plane*`,
-      },
-    ],
-  });
+  const planeToSlackUserMap = invertStringMap(userMap);
 
-  // Project header with emoji and name
-  const emoji =
-    project.logo_props &&
-      project.logo_props?.in_use === "emoji" &&
-      project.logo_props?.emoji &&
-      project.logo_props?.emoji?.value
-      ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value)
-      : "📋";
+  let sectionContent = `Project: *${project.name}*`;
+
+  // Members (max 2 with + icon if more)
+  if (project.total_members && project.total_members > 0) {
+    if (members.length > 0) {
+      const memberText = members.slice(0, 2).map(member => getUserMarkdown(planeToSlackUserMap, workspaceSlug, member.id)).join(", ");
+      const plusText = project.total_members > 2 ? ` and ${project.total_members - 2} more` : "";
+      sectionContent += `\nMembers: *${memberText}${plusText}*`;
+    }
+  }
+
+  // Lead (as mention if exists)
+  if (project.project_lead) {
+    const lead = members.find((member) => member.id === project.project_lead);
+    if (lead) {
+      sectionContent += `\nLead: *${getUserMarkdown(planeToSlackUserMap, workspaceSlug, project.project_lead)}*`;
+    }
+  }
+
+  // Main section with project details
   blocks.push({
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `${emoji} *${project.name}*`,
+      text: sectionContent,
     },
   });
 
-  // Project description
-  if (project.description) {
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: project.description,
+  // Divider
+  blocks.push({
+    type: "divider",
+  });
+
+  // Action buttons
+  blocks.push({
+    type: "actions",
+    elements: [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "View in Plane",
+          emoji: true,
+        },
+        url: getProjectUrl(workspaceSlug, project.identifier ?? ""),
+        action_id: "view_project_in_plane",
       },
-    });
-  }
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "Create Work Item",
+          emoji: true,
+        },
+        value: `${project.id}`,
+        action_id: ACTIONS.CREATE_WORK_ITEM,
+      },
+    ],
+  });
 
-  // Stats context (cycles, modules, members)
-  const contextElements: any[] = [];
-
-  if (project.total_cycles && project.total_cycles > 0) {
-    contextElements.push({
-      type: "mrkdwn",
-      text: `*${project.total_cycles}* ${project.total_cycles > 1 ? "cycles" : "cycle"}`,
-    });
-  }
-
-  if (project.total_modules && project.total_modules > 0) {
-    contextElements.push({
-      type: "mrkdwn",
-      text: `*${project.total_modules}* ${project.total_modules > 1 ? "modules" : "module"}`,
-    });
-  }
-
-  if (project.total_members && project.total_members > 0) {
-    contextElements.push({
-      type: "mrkdwn",
-      text: `*${project.total_members}* ${project.total_members > 1 ? "members" : "member"}`,
-    });
-
-    const memberCtxElements = members
-      .filter((member) => member.id !== project.project_lead && member.avatar)
-      .slice(0, 3)
-      .map((member) => ({
-        type: "image",
-        image_url: member.avatar,
-        alt_text: `${member.first_name} ${member.last_name}`,
-      }));
-
-    if (memberCtxElements.length === 3) {
-      contextElements.push(...memberCtxElements);
-    }
-  }
-
-  if (contextElements.length > 0) {
+  if (showLogo) {
     blocks.push({
       type: "context",
-      elements: contextElements,
-    });
-  }
-
-  // Project lead and default assignee context
-  const userCtxElements: any[] = [];
-
-  if (project.project_lead) {
-    const lead = members.find((member) => member.id === project.project_lead);
-    if (lead) {
-      userCtxElements.push(
+      elements: [
         {
           type: "image",
-          image_url: lead.avatar,
-          alt_text: `${lead.first_name} ${lead.last_name}`,
+          image_url: getPlaneLogoUrl(),
+          alt_text: "Plane",
         },
         {
-          type: "plain_text",
-          text: `Lead by ${lead.first_name} ${lead.last_name}`,
-        }
-      );
-    }
-  }
-
-  if (project.default_assignee) {
-    const assignee = members.find((member) => member.id === project.default_assignee);
-    if (assignee) {
-      userCtxElements.push(
-        {
-          type: "plain_text",
-          text: `Default assignee: ${assignee.first_name} ${assignee.last_name}`,
+          type: "mrkdwn",
+          text: `*Plane*`,
         },
-        {
-          type: "image",
-          image_url: assignee.avatar,
-          alt_text: `${assignee.first_name} ${assignee.last_name}`,
-        }
-      );
-    }
-  }
-
-  if (userCtxElements.length > 0) {
-    blocks.push({
-      type: "context",
-      elements: userCtxElements,
+      ],
     });
   }
 

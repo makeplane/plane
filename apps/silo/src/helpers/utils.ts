@@ -2,8 +2,8 @@ import axios from "axios";
 import { parse, HTMLElement } from "node-html-parser";
 import { Client as PlaneClient } from "@plane/sdk";
 import { env } from "@/env";
-import { getValidCredentials } from "./credential";
 import { logger } from "@/logger";
+import { getValidCredentials } from "./credential";
 export const removeSpanAroundImg = (htmlContent: string): string => {
   // Parse the HTML content
   const root = parse(htmlContent);
@@ -99,4 +99,12 @@ export const createPlaneClient = async (workspaceId: string, userId: string, sou
   } catch (error) {
     throw error;
   }
+};
+
+export const invertStringMap = (map: Map<string, string>) => {
+  const invertedMap = new Map<string, string>();
+  map.forEach((value, key) => {
+    invertedMap.set(value, key);
+  });
+  return invertedMap;
 };

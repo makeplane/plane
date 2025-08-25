@@ -1,8 +1,8 @@
-import { ACTIONS, ENTITIES } from "../helpers/constants";
 import { PlainTextElement } from "@slack/types";
-import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 import { ExState, IssueWithExpanded } from "@plane/sdk";
-import { createSlackLinkback } from "./issue-linkback";
+import { getIssueUrlFromSequenceId } from "@/helpers/urls";
+import { ACTIONS, ENTITIES } from "../helpers/constants";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export type LinkIssueModalView = {
   type: "modal";
@@ -47,14 +47,14 @@ export const createLinkIssueModalView = (
   blocks: [
     ...(error
       ? [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: error,
-            },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: error,
           },
-        ]
+        },
+      ]
       : []),
     {
       type: "input",
@@ -63,7 +63,7 @@ export const createLinkIssueModalView = (
         type: "external_select",
         placeholder: {
           type: "plain_text",
-          text: "Search for work items by title or ID",
+          text: "Type a few letters of the work item title or it's id",
           emoji: true,
         },
         min_query_length: 2,
@@ -92,32 +92,47 @@ export const alreadyLinkedModalView = (
   workspaceSlug: string,
   issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
   states: ExState[],
+  userMap: Map<string, string>,
   privateMetadata: any = {}
-) => {
-  const linkbackBlocks = createSlackLinkback(workspaceSlug, issue, states, false, false, true, true);
-
-  return {
-    type: "modal",
-    callback_id: E_MESSAGE_ACTION_TYPES.DISCONNECT_WORK_ITEM,
-    private_metadata: JSON.stringify({
-      entityType: ENTITIES.DISCONNECT_WORK_ITEM,
-      entityPayload: { ...privateMetadata },
-    }),
-    title: {
-      type: "plain_text",
-      text: "Linked Work Item",
-      emoji: true,
+) => ({
+  type: "modal",
+  callback_id: E_MESSAGE_ACTION_TYPES.DISCONNECT_WORK_ITEM,
+  private_metadata: JSON.stringify({
+    entityType: ENTITIES.DISCONNECT_WORK_ITEM,
+    entityPayload: { ...privateMetadata },
+  }),
+  title: {
+    type: "plain_text",
+    text: "Linked Work Item",
+    emoji: true,
+  },
+  submit: {
+    type: "plain_text",
+    text: "Delink",
+    emoji: true,
+  },
+  close: {
+    type: "plain_text",
+    text: "Cancel",
+    emoji: true,
+  },
+  blocks: [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "You can only link one work item to a Slack thread. To connect this thread to a different work item, first delink the current work item.",
+      },
     },
-    submit: {
-      type: "plain_text",
-      text: "Disconnect",
-      emoji: true,
+    {
+      type: "divider"
     },
-    close: {
-      type: "plain_text",
-      text: "Cancel",
-      emoji: true,
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `> <${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier!, issue.sequence_id.toString())}|${issue.project.identifier}-${issue.sequence_id}>\n> ${issue.name}`,
+      },
     },
-    blocks: linkbackBlocks.blocks,
-  };
-};
+  ]
+});

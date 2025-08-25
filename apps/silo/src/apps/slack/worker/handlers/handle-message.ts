@@ -1,15 +1,19 @@
-import { SlackEventPayload, UnfurlMap } from "@plane/etl/slack";
+import { PageResource, PageSubType, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
+import { ExPage } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
+import { getProjectPageUrl, getPublishedPageUrl, getWorkspacePageUrl } from "@/helpers/urls";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { TSlackWorkspaceConnectionConfig } from "../../types/types";
+import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
+import { createPageLinkback } from "../../views/page-linkback";
 import { createProjectLinkback } from "../../views/project-linkback";
 
 const apiClient = getAPIClient();
@@ -71,18 +75,13 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const eConnection = entityConnection[0];
 
-    const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
-
     const members = await planeClient.users.list(workspaceConnection.workspace_slug, eConnection.project_id ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
     const issueId = eConnection.entity_slug ?? eConnection.issue_id;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
-    const userMap = new Map<string, string>();
-    config.userMap?.forEach((user) => {
-      userMap.set(user.slackUser, user.planeUserId);
-    });
+    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
 
     const parser = getSlackContentParser({
       userMap,
@@ -94,7 +93,11 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
       type: "rich_text",
       elements: richTextElements,
     });
-    const parsedDescription = await parser.toPlaneHtml(richText ?? "<p></p>");
+    let parsedDescription = await parser.toPlaneHtml(richText ?? "<p></p>");
+
+    // Add a simple line in the bottom of the comment, mentioneding `Commented from Slack
+    parsedDescription = `<div>${parsedDescription}<div class="py-4 border-custom-border-400" data-type="horizontalRule"></div><span data-text-color="gray">Synced from Slack</span></div>`;
+
     await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
       eConnection.project_id ?? "",
@@ -121,6 +124,8 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
 
     const { workspaceConnection, planeClient, slackService } = details;
 
+    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+
     const unfurlMap: UnfurlMap = {};
 
     await Promise.all(
@@ -135,19 +140,37 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             workspaceConnection.workspace_slug,
             resource.projectIdentifier,
             Number(resource.issueKey),
-            ["state", "project", "assignees", "labels"]
+            ["state", "project", "assignees", "labels", "type"],
+            true
           );
-          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project.id ?? "");
 
-          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, states.results, false, true);
+          const hideActions = issue.type?.is_epic ?? false;
 
-          unfurlMap[link.url] = linkBack;
+          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false, hideActions);
+          unfurlMap[link.url] = {
+            blocks: linkBack.blocks,
+          };
+
+        } else if (resource.type === "page") {
+          const linkBack = await getPageLinkback(resource, details);
+          if (!linkBack) return;
+          unfurlMap[link.url] = {
+            blocks: linkBack.blocks,
+          };
         } else {
           const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, resource.projectId);
           const members = await planeClient.users.list(workspaceConnection.workspace_slug, resource.projectId);
           if (resource.type === "project") {
-            const projectLinkback = createProjectLinkback(project, members);
-            unfurlMap[link.url] = projectLinkback;
+            const projectLinkback = createProjectLinkback(
+              workspaceConnection.workspace_slug,
+              project,
+              members,
+              userMap,
+              true
+            );
+            unfurlMap[link.url] = {
+              blocks: projectLinkback.blocks,
+            };
           } else if (resource.type === "cycle") {
             const cycle = await planeClient.cycles.getCycle(
               workspaceConnection.workspace_slug,
@@ -156,7 +179,9 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             );
 
             const linkBack = createCycleLinkback(workspaceConnection.workspace_slug, project, cycle);
-            unfurlMap[link.url] = linkBack;
+            unfurlMap[link.url] = {
+              blocks: linkBack.blocks,
+            };
           } else if (resource.type === "module") {
             const module = await planeClient.modules.getModule(
               workspaceConnection.workspace_slug,
@@ -165,14 +190,61 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             );
 
             const moduleLinkback = createModuleLinkback(workspaceConnection.workspace_slug, project, module);
-            unfurlMap[link.url] = moduleLinkback;
+            unfurlMap[link.url] = {
+              blocks: moduleLinkback.blocks,
+            };
           }
         }
       })
     );
 
     if (Object.keys(unfurlMap).length > 0) {
-      await slackService.unfurlLink(data.event.channel, data.event.message_ts, unfurlMap);
+      const unfurlResponse = await slackService.unfurlLink(data.event.channel, data.event.message_ts, unfurlMap);
+      logger.info(`[SLACK] Unfurl response`, { unfurlResponse });
     }
   }
+};
+
+export const getPageLinkback = async (
+  pageResource: PageResource,
+  details: TSlackConnectionDetails
+): Promise<UnfurlBlock | undefined> => {
+  const { workspaceConnection, planeClient } = details;
+
+  let page: ExPage | undefined;
+  let pageURL = "";
+
+  switch (pageResource.subType) {
+    case PageSubType.PUBLISHED:
+      page = await planeClient.page.getPublishedPage(pageResource.pageId);
+      pageURL = getPublishedPageUrl(pageResource.pageId);
+      break;
+    case PageSubType.WIKI:
+      if (pageResource.workspaceSlug !== workspaceConnection.workspace_slug) {
+        logger.error(`[SLACK] Workspace slug mismatch for page`, { pageResource });
+        return;
+      }
+      page = await planeClient.page.getWorkspacePage(workspaceConnection.workspace_slug, pageResource.pageId);
+      pageURL = getWorkspacePageUrl(workspaceConnection.workspace_slug, pageResource.pageId);
+      break;
+    case PageSubType.PROJECT:
+      if (!pageResource.projectId) {
+        logger.error(`[SLACK] No project ID found for page`, { pageResource });
+        return;
+      }
+      page = await planeClient.page.getProjectPage(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
+      pageURL = getProjectPageUrl(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
+      break;
+    default:
+      logger.error(`[SLACK] Unknown page sub type`, { pageResource });
+      return;
+  }
+
+  if (!page) {
+    logger.error(`[SLACK] No page found`, { pageResource });
+    return;
+  }
+
+  const linkBack = createPageLinkback(page, pageURL);
+  return linkBack;
 };

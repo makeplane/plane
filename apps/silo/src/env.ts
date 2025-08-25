@@ -27,6 +27,10 @@ const envSchema = z.object({
     .default("")
     // Remove the slash at the end of the URL
     .transform((str) => str.replace(/\/$/, "")),
+  SPACE_BASE_URL: z
+    .string()
+    .default("https://sites.plane.so")
+    .transform((str) => str.replace(/\/$/, "")),
   SILO_API_BASE_URL: z
     .string()
     .default("")

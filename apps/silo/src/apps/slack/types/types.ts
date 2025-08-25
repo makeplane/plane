@@ -1,5 +1,5 @@
 import { ISlackChannel, ISlackUser, SlackService, TSlackPayload } from "@plane/etl/slack";
-import { PlaneActivity, Client as PlaneClient } from "@plane/sdk";
+import { IssueWithExpanded, PlaneActivity, Client as PlaneClient } from "@plane/sdk";
 import { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { ENTITIES } from "../helpers/constants";
 
@@ -40,9 +40,14 @@ export type ShortcutActionPayload = {
     ts?: string;
     blocks?: any[];
   };
+  mode?: "create" | "update";
   channel: {
     id: string;
   };
+  preselected_values?: {
+    project_id?: string;
+    issue_id?: string;
+  }
   response_url?: string;
 };
 // Define the payload mapping first
@@ -92,6 +97,26 @@ export type SlackPrivateMetadata<T extends keyof EntityPayloadMapping = keyof En
 //     entityPayload: ShortcutActionPayload;
 //   }
 
+export type TSlackWorkItemOrIntakeModalParams = {
+  // Selected project id from the base project selection modal
+  projectId: string;
+  issueTypeId?: string;
+
+  // Metadata from the base project selection modal
+  metadata?: SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>;
+  showThreadSync?: boolean;
+
+  // Work item to update
+  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels"]>>
+  disableIssueType?: boolean;
+
+  // Connection details
+  details: TSlackConnectionDetails;
+} & (
+    | { viewId: string, triggerId?: never }
+    | { viewId?: never, triggerId: string }
+  );
+
 export enum E_MESSAGE_ACTION_TYPES {
   LINK_WORK_ITEM = "link_work_item",
   CREATE_NEW_WORK_ITEM = "issue_shortcut",
@@ -108,15 +133,18 @@ export type PlaneActivityWithTimestamp = {
 
 export type ActivityForSlack = {
   field: string;
-  actor: string;
+  actorId: string;
+  actorDisplayName: string;
+  timestamp: string;
 } & (
-  | {
+    | {
       isArrayField: true;
       removed: string[];
       added: string[];
     }
-  | {
+    | {
       isArrayField: false;
       newValue: string;
+      oldValue?: string;
     }
-);
+  );

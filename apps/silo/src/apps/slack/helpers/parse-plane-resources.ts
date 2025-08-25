@@ -1,4 +1,18 @@
-import { PlaneResource } from "@plane/etl/slack";
+import TurndownService from "turndown";
+import { PageSubType, PlaneResource } from "@plane/etl/slack";
+
+import { TWorkspaceConnection } from "@plane/types";
+import { env } from "@/env";
+import { logger } from "@/logger";
+import { getPlaneContentParser } from "./content-parser";
+import { getUserMapFromSlackWorkspaceConnection } from "./user";
+
+export enum EPlaneURLSegments {
+  PROJECTS = "projects",
+  ISSUES = "issues",
+  PAGES = "pages",
+  BROWSE = "browse",
+}
 
 export function extractPlaneResource(url: string): PlaneResource | null {
   try {
@@ -8,7 +22,7 @@ export function extractPlaneResource(url: string): PlaneResource | null {
     const segments = urlObj.pathname.split("/").filter(Boolean);
 
     // Basic validation
-    if (segments.length < 3) return null;
+    if (segments.length < 2) return null;
 
     // Check if it's an issue URL (must contain /browse/)
     if (segments.includes("browse")) {
@@ -28,9 +42,52 @@ export function extractPlaneResource(url: string): PlaneResource | null {
         type: "issue",
         issueKey: issueIdentifer,
       };
-    }
-    // Handle other resource types (cycles, modules)
-    else {
+    } else if (segments.includes("pages")) {
+      // Format can be one of these: https://sites.plane.so/pages/<pageId>/
+      // https://app.plane.so/plane/pages/<pageId>/
+      // https://app.plane.so/plane/projects/<projectId>/pages/<pageId>/
+
+      if (segments[0] === EPlaneURLSegments.PAGES) {
+        // published page
+        return {
+          pageId: segments[1],
+          type: "page",
+          subType: PageSubType.PUBLISHED,
+        };
+      } else if (segments[1] === EPlaneURLSegments.PROJECTS) {
+        // project page
+        const workspaceSlug = segments[0];
+        const projectId = segments[2];
+        const pageId = segments[4];
+
+        if (!workspaceSlug || !projectId || !pageId) {
+          logger.error(`[SLACK] No workspace slug, project ID or page ID found for page`, { url });
+          return null;
+        }
+
+        return {
+          projectId,
+          pageId,
+          workspaceSlug,
+          type: "page",
+          subType: PageSubType.PROJECT,
+        };
+      } else if (segments[1] === EPlaneURLSegments.PAGES) {
+        // workspace level page
+        const pageId = segments[2];
+        const workspaceSlug = segments[0];
+        return {
+          pageId,
+          workspaceSlug,
+          type: "page",
+          subType: PageSubType.WIKI,
+        };
+      } else {
+        logger.info(`Unknown plane URL segments in pages: ${segments}`, { url });
+        return null;
+      }
+    } else {
+      // Handle other resource types (cycles, modules)
       const [workspaceSlug, projectsSegment, projectId, _, resourceId] = segments;
       let resourceType = segments[3];
 
@@ -72,6 +129,42 @@ export function extractPlaneResource(url: string): PlaneResource | null {
       }
     }
   } catch (error) {
+    logger.error(`Error extracting plane resource:`, { error, url });
     return null;
   }
 }
+
+type TSlackMarkdownFromPlaneHtmlParams = {
+  workspaceConnection: TWorkspaceConnection;
+  html: string;
+};
+
+export const getSlackMarkdownFromPlaneHtml = async (params: TSlackMarkdownFromPlaneHtmlParams) => {
+  const { workspaceConnection, html } = params;
+
+  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+
+  const parser = getPlaneContentParser({
+    appBaseUrl: env.APP_BASE_URL,
+    workspaceSlug: workspaceConnection.workspace_slug,
+    userMap,
+  });
+  const parsedHtml = await parser.toPlaneHtml(html);
+  const turndown = new TurndownService({
+    headingStyle: "atx",
+    bulletListMarker: "-",
+    codeBlockStyle: "fenced",
+    emDelimiter: "_",
+    strongDelimiter: "**",
+    linkStyle: "inlined",
+  });
+
+  turndown.addRule("link", {
+    filter: (node) => node.tagName === "A",
+    replacement: (content, node) => `<${(node as Element).getAttribute("href")}|${content}>`,
+  });
+
+  const markdown = turndown.turndown(parsedHtml);
+
+  return markdown;
+};

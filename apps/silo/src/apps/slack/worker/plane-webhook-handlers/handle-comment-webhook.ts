@@ -1,11 +1,10 @@
-import TurndownService from "turndown";
 import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
-import { env } from "@/env";
 import { logger } from "@/logger";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
-import { getPlaneContentParser } from "../../helpers/content-parser";
-import { TSlackWorkspaceConnectionConfig } from "../../types/types";
+import { getSlackMarkdownFromPlaneHtml } from "../../helpers/parse-plane-resources";
+import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { createSlackCommentBlock } from "../../views/comments";
 
 export const handleIssueCommentWebhook = async (payload: PlaneWebhookPayload) => {
   await handleCommentSync(payload);
@@ -51,57 +50,43 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
 
   const channel = slackData.channel;
 
-  const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
-
-  const userMap = new Map<string, string>();
-  for (const user of config.userMap ?? []) {
-    userMap.set(user.planeUserId, user.slackUser);
-  }
-
-  const parser = getPlaneContentParser({
-    appBaseUrl: env.APP_BASE_URL,
-    workspaceSlug: workspaceConnection.workspace_slug,
-    userMap,
-  });
-  const comment = await parser.toPlaneHtml(commentData.comment_html);
-  const turndown = new TurndownService({
-    headingStyle: "atx",
-    bulletListMarker: "-",
-    codeBlockStyle: "fenced",
-    emDelimiter: "_",
-    strongDelimiter: "**",
-    linkStyle: "inlined",
+  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const markdown = await getSlackMarkdownFromPlaneHtml({
+    workspaceConnection,
+    html: commentData.comment_html,
   });
 
-  turndown.addRule("link", {
-    filter: (node) => node.tagName === "A",
-    replacement: (content, node) => `<${(node as Element).getAttribute("href")}|${content}>`,
-  });
-
-  let markdown = turndown.turndown(comment);
+  let displayName = payload.actor_display_name;
 
   // If we don't have the credentials of the user, in that case we'll add the user's information to the comment
   if (!isUser) {
-    // Find the user in the list
-    let displayName = payload.actor_display_name;
     // Fallback logic to get the display name from the user
     if (!displayName) {
       const users = await planeClient.users.list(entityConnection.workspace_slug, commentData.project);
       const user = users.find((user: PlaneUser) => user.id === commentData.actor);
       displayName = user?.display_name;
     }
-
-    if (displayName) {
-      markdown = `*From ${displayName}*\n\n${markdown}`;
-    }
   }
 
-  const response = await slackService.sendThreadMessage(channel, entityConnection.entity_id ?? "", markdown);
+  const commentBlocks = createSlackCommentBlock({
+    comment: markdown,
+    createdById: commentData.actor,
+    createdByDisplayName: displayName,
+    workspaceSlug: entityConnection.workspace_slug,
+    projectId: entityConnection.project_id ?? "",
+    issueId: payload.issue,
+    isUser,
+    userMap,
+  });
+
+  const response = await slackService.sendThreadMessage(channel, entityConnection.entity_id ?? "", {
+    blocks: commentBlocks,
+  });
 
   logger.info("Slack message sent", {
     slackMessageId: response.ts,
     slackChannelId: channel,
     slackThreadTs: entityConnection.entity_id,
-    slackMessage: comment,
+    slackMessage: markdown,
   });
 };

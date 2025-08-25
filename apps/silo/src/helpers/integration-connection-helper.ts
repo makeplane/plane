@@ -162,6 +162,23 @@ class IntegrationConnectionHelper {
     });
   }
 
+  async getWorkspaceEntityConnectionsByPlaneProps({
+    workspace_id,
+    issue_id,
+    entity_type,
+  }: {
+    workspace_id: string;
+    issue_id?: string;
+    entity_type?: string;
+  }): Promise<TWorkspaceEntityConnection[]> {
+    return this.apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+      workspace_id,
+      issue_id,
+      entity_type,
+    });
+  }
+
+
   async updateWorkspaceEntityConnection({
     entity_connection_id,
     entity_data,

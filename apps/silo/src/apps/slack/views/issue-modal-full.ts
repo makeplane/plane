@@ -1,6 +1,5 @@
 import { PlainTextElement } from "@slack/types";
-import { ACTIONS } from "../helpers/constants";
-import { extractRichTextElements } from "../helpers/parse-issue-form";
+import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION } from "../helpers/constants";
 import { PlainTextOption } from "../helpers/slack-options";
 import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 import {
@@ -23,175 +22,166 @@ export type IssueModalViewFull = {
 
 export type IssueModalViewBlocks = (
   | StaticSelectInputBlock
+  | StaticSelectInputBlock
   | PlainTextInputBlock
   | RichTextInputBlock
   | MultiExternalSelectInputBlock
   | CheckboxInputBlock
 )[];
 
-export const createIssueModalViewFull = (
-  {
-    selectedProject,
-    projectOptions,
-    stateOptions,
-    priorityOptions,
-  }: {
+export type TIssueModalViewProps = {
+  options: {
     selectedProject: PlainTextOption;
     projectOptions: Array<PlainTextOption>;
-    stateOptions: Array<PlainTextOption>;
-    priorityOptions: Array<PlainTextOption>;
-  },
-  title?: string,
-  privateMetadata: string = "{}",
-  showThreadSync: boolean = true,
-  isWorkItem: boolean = true,
-  messageBlocks?: any[] // Add optional messageBlocks parameter
-): IssueModalViewFull => ({
-  type: "modal",
-  callback_id: isWorkItem ? E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM : E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE,
-  private_metadata: privateMetadata,
-  title: {
-    type: "plain_text",
-    text: isWorkItem ? "Create Work Item" : "Create Intake Issue",
-    emoji: true,
-  },
-  submit: {
-    type: "plain_text",
-    text: isWorkItem ? "Create Work Item" : "Create Intake Issue",
-    emoji: true,
-  },
-  close: {
-    type: "plain_text",
-    text: "Discard",
-    emoji: true,
-  },
-  blocks: [
-    // For intake issues (non-work items), only show title, description, and priority
-    {
-      dispatch_action: true,
-      type: "input" as const,
-      element: {
-        type: "static_select" as const,
-        placeholder: {
-          type: "plain_text" as const,
-          text: "Select a Project",
-          emoji: true,
-        },
-        initial_option: selectedProject,
-        options: projectOptions,
-        action_id: ACTIONS.PROJECT,
-      },
-      label: {
-        type: "plain_text" as const,
-        text: "Project",
-        emoji: true,
-      },
+  }
+  config: {
+    showIntakeDropdown: boolean;
+    threadSync?: {
+      showThreadSync: boolean;
+      threadSyncEnabled: boolean;
     },
-    {
-      type: "input" as const,
-      element: {
-        type: "plain_text_input" as const,
-        placeholder: {
-          type: "plain_text" as const,
-          text: "Issue Title",
-        },
-        action_id: ACTIONS.ISSUE_TITLE,
-      },
-      label: {
-        type: "plain_text" as const,
-        text: "Title",
-        emoji: true,
-      },
+    issueType?: {
+      showIssueTypeDropdown: boolean;
+      issueTypeOptions: Array<PlainTextOption>;
+      selectedIssueType?: PlainTextOption;
+    }
+  }
+  slackBlocks: any[];
+  privateMetadata: string;
+  isWorkItem: boolean;
+  isUpdate?: boolean;
+}
+
+export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModalViewFull => {
+  const { options, privateMetadata, config, isWorkItem, slackBlocks, isUpdate } = props;
+  const { selectedProject, projectOptions } = options;
+  const { showIntakeDropdown, threadSync } = config;
+  const { showThreadSync, threadSyncEnabled } = threadSync ?? { showThreadSync: false, threadSyncEnabled: false };
+
+  const createOrUpdate = isUpdate ? "Update" : "Create";
+
+  return {
+    type: "modal",
+    callback_id: isWorkItem ? E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM : E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE,
+    private_metadata: privateMetadata,
+    title: {
+      type: "plain_text",
+      text: `${createOrUpdate} ${isWorkItem ? "work item" : "intake work item"}`,
+      emoji: true,
     },
-    {
-      type: "input" as const,
-      optional: true,
-      element: {
-        type: "rich_text_input" as const,
-        action_id: ACTIONS.ISSUE_DESCRIPTION,
-        initial_value: {
-          type: "rich_text" as const,
-          elements: extractRichTextElements(title, messageBlocks),
-        },
-        placeholder: {
-          type: "plain_text" as const,
-          text: "Issue Description (Optional)",
-        },
-      },
-      label: {
-        type: "plain_text" as const,
-        text: "Description",
-        emoji: true,
-      },
+    submit: {
+      type: "plain_text",
+      text: createOrUpdate,
+      emoji: true,
     },
-    ...(isWorkItem
-      ? [
+    close: {
+      type: "plain_text",
+      text: "Discard",
+      emoji: true,
+    },
+    blocks: [
+      // For intake issues (non-work items), only show title, description, and priority
+      ...(!isUpdate ? [
+        {
+          dispatch_action: true,
+          type: "input" as const,
+          element: {
+            type: "static_select" as const,
+            placeholder: {
+              type: "plain_text" as const,
+              text: "Choose Project",
+              emoji: true,
+            },
+            initial_option: selectedProject,
+            options: projectOptions,
+            action_id: ACTIONS.PROJECT,
+          },
+          label: {
+            type: "plain_text" as const,
+            text: "Project",
+            emoji: true,
+          },
+        },
+      ] : []),
+      ...(showIntakeDropdown && !isUpdate ? [
+        {
+          dispatch_action: true,
+          type: "input" as const,
+          element: {
+            type: "static_select" as const,
+            placeholder: {
+              type: "plain_text" as const,
+              text: "Work Item or Intake",
+              emoji: true,
+            },
+            initial_option: isWorkItem ? {
+              text: {
+                type: "plain_text" as const,
+                text: "Work Item",
+                emoji: true,
+              },
+              value: `${selectedProject.value}.${E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM}`,
+            } : {
+              text: {
+                type: "plain_text" as const,
+                text: "Intake",
+                emoji: true,
+              },
+              value: `${selectedProject.value}.${E_ISSUE_OBJECT_TYPE_SELECTION.INTAKE}`,
+            },
+            options: [
+              {
+                text: {
+                  type: "plain_text" as const,
+                  text: "Work Item",
+                  emoji: true,
+                },
+                value: `${selectedProject.value}.${E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM}`,
+              },
+              {
+                text: {
+                  type: "plain_text" as const,
+                  text: "Intake",
+                  emoji: true,
+                },
+                value: `${selectedProject.value}.${E_ISSUE_OBJECT_TYPE_SELECTION.INTAKE}`,
+              },
+            ],
+            action_id: ACTIONS.ISSUE_OBJECT_TYPE_SELECTION,
+          },
+          label: {
+            type: "plain_text" as const,
+            text: "Add as",
+            emoji: true,
+          },
+        },
+      ] : []),
+      ...(config.issueType?.showIssueTypeDropdown && !isUpdate ?
+        [
           {
             type: "input" as const,
-            optional: true,
+            dispatch_action: true,
             element: {
               type: "static_select" as const,
               placeholder: {
                 type: "plain_text" as const,
-                text: "Select a State",
+                text: "Select an Issue Type",
                 emoji: true,
               },
-              options: stateOptions,
-              action_id: ACTIONS.ISSUE_STATE,
+              initial_option: config.issueType.selectedIssueType,
+              options: config.issueType.issueTypeOptions,
+              action_id: ACTIONS.ISSUE_TYPE,
             },
             label: {
               type: "plain_text" as const,
-              text: "State",
+              text: "Issue Type",
               emoji: true,
             },
           },
-        ]
-      : []),
-    {
-      type: "input" as const,
-      optional: true,
-      element: {
-        type: "static_select" as const,
-        placeholder: {
-          type: "plain_text" as const,
-          text: "Select a Priority (Optional)",
-          emoji: true,
-        },
-        options: priorityOptions,
-        action_id: ACTIONS.ISSUE_PRIORITY,
-      },
-      label: {
-        type: "plain_text" as const,
-        text: "Priority",
-        emoji: true,
-      },
-    },
-    ...(isWorkItem
-      ? [
-          {
-            type: "input" as const,
-            optional: true,
-            element: {
-              type: "multi_external_select" as const,
-              placeholder: {
-                type: "plain_text" as const,
-                text: "Labels (Optional)",
-                emoji: true,
-              },
-              min_query_length: 3,
-              action_id: ACTIONS.ISSUE_LABELS,
-              initial_options: [],
-            },
-            label: {
-              type: "plain_text" as const,
-              text: "Labels",
-              emoji: true,
-            },
-          },
-        ]
-      : []),
-    ...(showThreadSync && isWorkItem
-      ? [
+        ] : []),
+      ...slackBlocks,
+      ...(showThreadSync && isWorkItem && !isUpdate
+        ? [
           {
             type: "input" as const,
             optional: true,
@@ -207,6 +197,14 @@ export const createIssueModalViewFull = (
                   value: "true",
                 },
               ],
+              initial_options: threadSyncEnabled ? [{
+                text: {
+                  type: "plain_text",
+                  text: "Sync slack comments with plane comments and vice versa",
+                  emoji: true,
+                } as PlainTextElement,
+                value: "true",
+              }] : undefined,
               action_id: "enable_thread_sync",
             },
             label: {
@@ -216,6 +214,7 @@ export const createIssueModalViewFull = (
             },
           },
         ]
-      : []),
-  ],
-});
+        : []),
+    ],
+  };
+};

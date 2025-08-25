@@ -200,6 +200,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related("type")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 

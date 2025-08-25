@@ -18,11 +18,13 @@ class WorkspaceEntityConnectionAPISerializer(BaseSerializer):
         source="project",  # Maps to the `project` ForeignKey field
         queryset=Project.objects.all(),
         required=False,
+        allow_null=True,
     )
     issue_id = serializers.PrimaryKeyRelatedField(
         source="issue",  # Maps to the `issue` ForeignKey field
         queryset=Issue.objects.all(),
         required=False,
+        allow_null=True,
     )
     workspace_slug = serializers.CharField(source="workspace.slug", read_only=True)
 

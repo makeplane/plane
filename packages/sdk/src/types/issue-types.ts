@@ -21,6 +21,7 @@ export type ExIssueType = ExIssueTypeBase & {
   description: string;
   is_active: boolean;
   is_default: boolean;
+  is_epic: boolean;
 
   external_source: string;
   external_id: string;
