@@ -25,6 +25,7 @@
     "./combobox": "./src/combobox/index.ts",
     "./tooltip": "./src/tooltip/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css",
+    "./card": "./src/card/index.ts",
     "./switch": "./src/switch/index.ts"
   },
   "dependencies": {
@@ -32,7 +33,6 @@
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
-    "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
