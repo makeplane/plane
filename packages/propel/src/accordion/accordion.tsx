@@ -28,7 +28,9 @@ export const Accordion: React.FC<AccordionProps> = ({
   itemClassName = "",
   triggerClassName = "",
   panelClassName = "",
-  icon = <PlusIcon className="mr-2 size-3 shrink-0 transition-all ease-out group-data-[panel-open]:scale-110 group-data-[panel-open]:rotate-45" />,
+  icon = (
+    <PlusIcon className="mr-2 size-3 shrink-0 transition-all ease-out group-data-[panel-open]:scale-110 group-data-[panel-open]:rotate-45" />
+  ),
 }) => (
   <BaseAccordion.Root
     defaultValue={defaultValue}
