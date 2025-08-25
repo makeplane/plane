@@ -67,7 +67,7 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent as any}
+      tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -91,7 +91,7 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent as any}
+      tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -114,7 +114,7 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent as any}
+      tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
