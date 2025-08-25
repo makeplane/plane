@@ -1,5 +1,5 @@
-import * as React from "react";
 import { EmojiPicker as BaseEmojiPicker } from "frimousse";
+import * as React from "react";
 import { cn } from "../utils";
 
 function EmojiPicker({ className, ...props }: React.ComponentProps<typeof BaseEmojiPicker.Root>) {

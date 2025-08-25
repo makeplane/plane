@@ -4,8 +4,8 @@ import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "../utils";
 import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker, emojiToString } from "./emoji-icon-helper";
-import { IconsList } from "./icons-list";
 import { EmojiPickerComponent } from "./emoji-picker";
+import { IconsList } from "./icons-list";
 
 export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   const {
