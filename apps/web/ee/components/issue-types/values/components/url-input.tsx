@@ -26,16 +26,14 @@ export const UrlValueInput = observer((props: TUrlValueInputProps) => {
   const [data, setData] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
-  const validUrl = data?.[0];
-  const urlComponents = validUrl && extractURLComponents(data?.[0]);
+  const urlComponents = data?.[0] ? extractURLComponents(data?.[0]) : undefined;
 
   useEffect(() => {
     setData(value);
   }, [value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setData([newValue]);
+    setData([e.target.value]);
   };
 
   const commonClassNames = cn(
@@ -49,7 +47,7 @@ export const UrlValueInput = observer((props: TUrlValueInputProps) => {
   );
 
   const handleUrlValueChange = () => {
-    const trimmedValue = data.map((val) => val.trim()).filter((val) => val);
+    const trimmedValue = data.map((val) => val.trim()).filter(Boolean);
     if (!isEqual(value, trimmedValue)) {
       onTextValueChange(trimmedValue);
     }
@@ -77,9 +75,9 @@ export const UrlValueInput = observer((props: TUrlValueInputProps) => {
         )}
         {!isEditing && (
           <div className="flex items-center gap-1 group-hover:opacity-100">
-            {validUrl && (
+            {urlComponents && (
               <a
-                href={validUrl.toString()}
+                href={urlComponents.full.toString()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-shrink-0 rounded bg-custom-background-80 hover:bg-custom-background-100"

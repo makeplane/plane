@@ -18,10 +18,11 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
   showLinkIcon = false,
   onClick,
 }) => {
-  const { path, full: fullURL } = url;
+  const { pathname, full: fullURL } = url;
   const displayDomain = fullURL.hostname;
-  const isTruncated = path.length > maxPathLength;
-  const truncatedPath = isTruncated ? path.slice(0, maxPathLength) : path;
+  const fullDisplayUrl = (pathname ?? "") + (fullURL.search ?? "") + (fullURL.hash ?? "");
+  const shouldTruncate = fullDisplayUrl.length > maxPathLength;
+  const truncatedDisplayUrl = shouldTruncate ? fullDisplayUrl.slice(0, maxPathLength) : fullDisplayUrl;
 
   return (
     <a
@@ -38,10 +39,10 @@ export const TruncatedUrl: React.FC<TruncatedUrlProps> = ({
       }}
     >
       <span className="text-sm">{displayDomain}</span>
-      {path && (
+      {fullURL.pathname && fullURL.pathname.length > 0 && (
         <span className="text-sm">
-          /{truncatedPath}
-          {isTruncated && "..."}
+          {truncatedDisplayUrl}
+          {shouldTruncate && "..."}
         </span>
       )}
       {showLinkIcon && (
