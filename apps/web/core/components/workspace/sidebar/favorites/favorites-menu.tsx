@@ -17,7 +17,8 @@ import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { IFavorite } from "@plane/types";
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // constants
 
 // helpers

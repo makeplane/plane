@@ -8,7 +8,8 @@ import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";

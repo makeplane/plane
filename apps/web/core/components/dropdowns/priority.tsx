@@ -10,7 +10,8 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { TIssuePriorities } from "@plane/types";
 // ui
-import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
+import { ComboDropDown, PriorityIcon } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

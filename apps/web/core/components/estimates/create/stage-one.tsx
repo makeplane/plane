@@ -6,7 +6,7 @@ import { Info } from "lucide-react";
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TEstimateSystemKeys } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports

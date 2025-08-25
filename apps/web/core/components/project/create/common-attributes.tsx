@@ -5,7 +5,8 @@ import { Info } from "lucide-react";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Input, TextArea, Tooltip } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
 // helpers
@@ -111,7 +112,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
           isMobile={isMobile}
           tooltipContent={t("project_id_tooltip_content")}
           className="text-sm"
-          position="right-top"
+          position="right-start"
         >
           <Info className="absolute right-2 top-2.5 h-3 w-3 text-custom-text-400" />
         </Tooltip>

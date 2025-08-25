@@ -6,7 +6,8 @@ import { Plus, StickyNote as StickyIcon, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
-import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
+import { RecentStickyIcon, StickyNoteIcon } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks

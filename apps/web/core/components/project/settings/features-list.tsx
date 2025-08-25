@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
-import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
+import { ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers

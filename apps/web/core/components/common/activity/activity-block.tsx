@@ -5,7 +5,7 @@ import { Network } from "lucide-react";
 // types
 import { TWorkspaceBaseActivity } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks

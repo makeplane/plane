@@ -6,7 +6,8 @@ import { Loader, X } from "lucide-react";
 // plane imports
 import { STATE_TRACKER_EVENTS, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
-import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

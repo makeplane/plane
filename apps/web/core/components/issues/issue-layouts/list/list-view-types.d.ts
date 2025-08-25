@@ -1,5 +1,5 @@
-import { Placement } from "@popperjs/core";
 import { TIssue } from "@plane/types";
+import { TPlacement } from "@plane/propel/utils/placement";
 
 export interface IQuickActionProps {
   parentRef: React.RefObject<HTMLElement>;
@@ -13,7 +13,7 @@ export interface IQuickActionProps {
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
   readOnly?: boolean;
-  placements?: Placement;
+  placements?: TPlacement;
 }
 
 export type TRenderQuickActions = ({

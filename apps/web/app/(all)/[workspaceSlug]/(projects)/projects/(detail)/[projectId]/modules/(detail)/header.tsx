@@ -22,7 +22,8 @@ import {
   IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, DiceIcon, Header, BreadcrumbNavigationSearchDropdown, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, DiceIcon, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";

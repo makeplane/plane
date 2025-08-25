@@ -6,7 +6,8 @@ import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
-import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks

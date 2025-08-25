@@ -9,7 +9,8 @@ import {
   NOTIFICATION_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

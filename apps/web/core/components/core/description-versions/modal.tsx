@@ -15,8 +15,8 @@ import {
   ModalCore,
   setToast,
   TOAST_TYPE,
-  Tooltip,
 } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";

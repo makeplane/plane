@@ -6,7 +6,8 @@ import { Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
-import { CustomMenu, Tooltip } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 //

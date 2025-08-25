@@ -9,7 +9,8 @@ import { ChevronRight } from "lucide-react";
 // types
 import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { Spinner, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -264,7 +265,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             <Tooltip
               tooltipContent={issue.name}
               isMobile={isMobile}
-              position="top-left"
+              position="top-start"
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >

@@ -24,7 +24,8 @@ import {
   EIssueLayoutTypes,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";

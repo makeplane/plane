@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import { ICustomSearchSelectOption } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
 import { CustomSearchSelect } from "../dropdowns";
-import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 

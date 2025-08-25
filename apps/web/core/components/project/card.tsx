@@ -13,7 +13,6 @@ import {
   Avatar,
   AvatarGroup,
   Button,
-  Tooltip,
   TOAST_TYPE,
   setToast,
   setPromiseToast,
@@ -21,6 +20,7 @@ import {
   TContextMenuItem,
   FavoriteStar,
 } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

@@ -21,7 +21,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { CustomMenu, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -179,7 +180,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         tooltipContent={
                           favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
                         }
-                        position="top-right"
+                        position="top-end"
                         disabled={isDragging}
                       >
                         <button

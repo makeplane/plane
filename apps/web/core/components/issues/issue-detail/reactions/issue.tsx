@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { IUser } from "@plane/types";
 // hooks
 // ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, formatTextList } from "@plane/utils";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";

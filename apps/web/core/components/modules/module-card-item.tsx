@@ -23,10 +23,10 @@ import {
   LayersIcon,
   LinearProgressIndicator,
   TOAST_TYPE,
-  Tooltip,
   setPromiseToast,
   setToast,
 } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

@@ -4,7 +4,8 @@ import { Copy, Pencil, Trash2 } from "lucide-react";
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { ILinkDetails } from "@plane/types";
 // plane ui
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
 //

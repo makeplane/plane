@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssueComment } from "@plane/types";
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

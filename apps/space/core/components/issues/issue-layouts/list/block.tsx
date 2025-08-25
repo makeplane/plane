@@ -7,7 +7,7 @@ import { useParams, useSearchParams } from "next/navigation";
 // plane types
 import { IIssueDisplayProperties } from "@plane/types";
 // plane ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // helpers
@@ -75,7 +75,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             onClick={handleIssuePeekOverview}
             className="w-full truncate cursor-pointer text-sm text-custom-text-100"
           >
-            <Tooltip tooltipContent={issue.name} position="top-left">
+            <Tooltip tooltipContent={issue.name} position="top-start">
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           </Link>

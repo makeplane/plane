@@ -14,7 +14,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
-import { Loader, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

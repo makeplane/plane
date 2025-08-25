@@ -10,7 +10,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
-import { ControlLink, Row, Tooltip } from "@plane/ui";
+import { ControlLink, Row } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";

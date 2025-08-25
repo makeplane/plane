@@ -6,7 +6,7 @@ import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssueLayoutTypes } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // types
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { usePlatformOS } from "@/hooks/use-platform-os";

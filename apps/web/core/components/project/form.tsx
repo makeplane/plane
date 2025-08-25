@@ -16,8 +16,8 @@ import {
   setToast,
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
-  Tooltip,
 } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -352,7 +352,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 isMobile={isMobile}
                 tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
-                position="right-top"
+                position="right-start"
               >
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
               </Tooltip>

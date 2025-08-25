@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { cn } from "@plane/utils";
 import { useLabel } from "@/hooks/store/use-label";

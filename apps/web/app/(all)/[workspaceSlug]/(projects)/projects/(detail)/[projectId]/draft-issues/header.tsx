@@ -16,7 +16,8 @@ import {
   EIssueLayoutTypes,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

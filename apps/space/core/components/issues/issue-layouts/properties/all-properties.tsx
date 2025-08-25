@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { Layers, Link, Paperclip } from "lucide-react";
 // plane imports
 import type { IIssueDisplayProperties } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";

@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // ui
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks

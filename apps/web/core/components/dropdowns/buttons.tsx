@@ -1,7 +1,7 @@
 "use client";
 
 // helpers
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -67,7 +67,7 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={tooltipContent as any}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -91,7 +91,7 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={tooltipContent as any}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -114,7 +114,7 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={tooltipContent as any}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}

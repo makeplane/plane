@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
+import { CustomMenu, ToggleSwitch } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";

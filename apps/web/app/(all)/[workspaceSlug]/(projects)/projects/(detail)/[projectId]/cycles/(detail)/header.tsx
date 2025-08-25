@@ -24,7 +24,8 @@ import {
   IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";

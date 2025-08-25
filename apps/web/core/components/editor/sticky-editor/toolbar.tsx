@@ -7,7 +7,7 @@ import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
 import { TSticky } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";

@@ -11,7 +11,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components

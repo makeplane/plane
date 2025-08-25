@@ -6,7 +6,8 @@ import { Check, Info, X } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers

@@ -9,7 +9,8 @@ import { CheckCircle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks

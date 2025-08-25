@@ -9,7 +9,8 @@ import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IWebhook } from "@plane/types";
 // ui
-import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks

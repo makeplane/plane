@@ -9,7 +9,8 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks

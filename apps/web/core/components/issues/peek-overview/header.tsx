@@ -8,15 +8,8 @@ import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TNameDescriptionLoader } from "@plane/types";
-import {
-  CenterPanelIcon,
-  CustomSelect,
-  FullScreenPanelIcon,
-  SidePanelIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip"; 
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
