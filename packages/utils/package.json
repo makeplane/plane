@@ -30,6 +30,7 @@
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "tailwind-merge": "^2.5.5",
+    "tlds": "1.259.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

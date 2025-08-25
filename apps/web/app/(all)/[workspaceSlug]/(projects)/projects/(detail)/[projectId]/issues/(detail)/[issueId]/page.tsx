@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -34,7 +34,7 @@ const IssueDetailsPage = observer(() => {
 
   useEffect(() => {
     if (data) {
-      redirect(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
+      router.push(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
     }
   }, [workspaceSlug, data]);
 
