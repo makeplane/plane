@@ -15,6 +15,7 @@ export const handleConvertDocument = (req: Request, res: Response) => {
     const { description, description_binary } = convertHTMLDocumentToAllFormats({
       document_html: description_html,
       variant,
+      updateTitle: false,
     });
     res.status(200).json({
       description,

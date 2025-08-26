@@ -212,10 +212,9 @@ def copy_s3_objects_of_description_and_assets(
 
                 if external_data:
                     entity.description = external_data.get("description")
-                    entity.description_html = external_data.get(
-                        "description_html", "<p></p>"
+                    entity.description_binary = base64.b64decode(
+                        external_data.get("description_binary")
                     )
-
                     entity.save()
 
         return
