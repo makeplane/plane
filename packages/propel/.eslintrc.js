@@ -2,7 +2,6 @@
 module.exports = {
   root: true,
   extends: ["@plane/eslint-config/library.js", "plugin:storybook/recommended"],
-  parser: "@typescript-eslint/parser",
   rules: {
     "import/order": [
       "warn",
