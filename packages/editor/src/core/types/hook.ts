@@ -13,7 +13,6 @@ type TCoreHookProps = Pick<
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"
-  | "embedHandler"
 >;
 
 export type TEditorHookProps = TCoreHookProps &
@@ -51,7 +50,4 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
   > &
-  Pick<
-    ICollaborativeDocumentEditorProps,
-    "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user"
-  >;
+  Pick<ICollaborativeDocumentEditorProps, "dragDropEnabled" | "realtimeConfig" | "serverHandler" | "user">;

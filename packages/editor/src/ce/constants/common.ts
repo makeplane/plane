@@ -1,0 +1,1 @@
+export const DRAG_HANDLE_ADDITIONAL_SELECTORS = [];

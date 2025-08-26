@@ -4,7 +4,9 @@ import { EditorView } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions/side-menu";
+// plane editor imports
+import { DRAG_HANDLE_ADDITIONAL_SELECTORS } from "@/plane-editor/constants/common";
 
 const verticalEllipsisIcon =
   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
@@ -17,11 +19,10 @@ const generalSelectors = [
   "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
   "table:not(.table-drag-preview)",
-  ".issue-embed",
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
-  ".editor-embed-component",
+  ...DRAG_HANDLE_ADDITIONAL_SELECTORS,
 ].join(", ");
 
 const maxScrollSpeed = 20;

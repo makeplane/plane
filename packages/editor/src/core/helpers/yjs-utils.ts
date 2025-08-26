@@ -4,14 +4,11 @@ import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-pros
 import * as Y from "yjs";
 // extensions
 import { TDocumentPayload } from "@plane/types";
-import {
-  CoreEditorExtensionsWithoutProps,
-  DocumentEditorExtensionsWithoutProps,
-} from "@/extensions/core-without-props";
+import { CoreEditorExtensionsWithoutProps } from "@/extensions/core-without-props";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
-const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
+const DOCUMENT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 // editor schemas
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);

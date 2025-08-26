@@ -2,9 +2,14 @@ import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
-import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
-import type { TTextAlign } from "@/extensions";
+import type { TTextAlign } from "@/extensions/text-align";
+// plane editor types
+import type {
+  TAdditionalCommandExtraProps,
+  TAdditionalEditorCommands,
+  TAdditionalEditorRefApiMethods,
+} from "@/plane-editor/types/editor";
 // types
 import type {
   IMarking,
@@ -13,7 +18,6 @@ import type {
   TDocumentEventEmitter,
   TDocumentEventsServer,
   TEditorAsset,
-  TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -43,20 +47,15 @@ export type TEditorCommands =
   | "image"
   | "divider"
   | "link"
-  | "issue-embed"
   | "text-color"
   | "background-color"
   | "text-align"
   | "callout"
-  | "attachment"
   | "emoji"
-  | "external-embed";
+  | TAdditionalEditorCommands;
 
 export type TCommandExtraProps = {
   image: {
-    savedSelection: Selection | null;
-  };
-  attachment: {
     savedSelection: Selection | null;
   };
   "text-color": {
@@ -72,7 +71,7 @@ export type TCommandExtraProps = {
   "text-align": {
     alignment: TTextAlign;
   };
-};
+} & TAdditionalCommandExtraProps;
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
 export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
@@ -127,7 +126,7 @@ export type EditorRefApi = {
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
-};
+} & TAdditionalEditorRefApiMethods;
 
 // editor props
 export type IEditorProps = {
@@ -140,7 +139,6 @@ export type IEditorProps = {
   editorClassName?: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
-  embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -150,8 +148,8 @@ export type IEditorProps = {
   isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
-  onEditorFocus?: () => void;
   onChange?: (json: object, html: string) => void;
+  onEditorFocus?: () => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -170,7 +168,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -178,7 +175,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
-  embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 };
@@ -194,5 +190,3 @@ export type EditorEvents = {
   destroy: never;
   ready: { height: number };
 };
-
-export type NodeViewProps = TNodeViewProps;

@@ -21,7 +21,6 @@ import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
-import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -101,5 +100,3 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomColorExtension,
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
-
-export const DocumentEditorExtensionsWithoutProps = [WorkItemEmbedExtensionConfig];
