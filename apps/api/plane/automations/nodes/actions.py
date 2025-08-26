@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Literal
 from pydantic import BaseModel, Field, field_validator
 
 # Django imports
+from django.db import transaction
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from django.db.models import Q, Value
@@ -186,29 +187,32 @@ class AddCommentAction(ActionNode):
             # copy the assets in the s3
 
             # Create the comment (automation comments are always internal)
-            comment = IssueComment.objects.create(
-                issue=issue,
-                project=issue.project,
-                workspace=issue.workspace,
-                comment_html=rendered_comment,
-                comment_stripped=rendered_comment,
-                actor_id=automation_user_id,
-                created_by_id=automation_user_id,
-                access="INTERNAL",
-            )
-            requested_data = IssueCommentSerializer(comment).data
+            with transaction.atomic():
+                # Create the comment
+                comment = IssueComment.objects.create(
+                    issue=issue,
+                    project=issue.project,
+                    workspace=issue.workspace,
+                    comment_html=rendered_comment,
+                    comment_stripped=rendered_comment,
+                    actor_id=automation_user_id,
+                    created_by_id=automation_user_id,
+                    access="INTERNAL",
+                )
+                requested_data = IssueCommentSerializer(comment).data
 
-            issue_activity.delay(
-                type="comment.activity.created",
-                requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
-                actor_id=str(automation_user_id),
-                issue_id=str(issue_id),
-                project_id=str(issue.project_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=None,
-            )
+                # Ensure the activity fires only AFTER the commit
+                transaction.on_commit(lambda: issue_activity.delay(
+                    type="comment.activity.created",
+                    requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
+                    actor_id=str(automation_user_id),
+                    issue_id=str(issue_id),
+                    project_id=str(issue.project_id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=None,
+                ))
 
             return {
                 "success": True,
