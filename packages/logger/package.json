@@ -34,6 +34,8 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.9",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
   }

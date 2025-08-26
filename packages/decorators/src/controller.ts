@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from "express";
+import type { RequestHandler, Router, Request } from "express";
 import type { WebSocket } from "ws";
 
 import "reflect-metadata";
@@ -24,7 +24,7 @@ interface ControllerConstructor {
 
 export function registerControllers(
   router: Router,
-  controllers: any[],
+  controllers: ControllerConstructor[],
   dependencies: any[] = []
 ): void {
   controllers.forEach((Controller) => {
