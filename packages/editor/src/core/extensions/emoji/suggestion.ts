@@ -10,7 +10,7 @@ import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
-const emojiSuggestion: EmojiOptions["suggestion"] = {
+export const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
     const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
     const { isSupported } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
@@ -52,8 +52,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
 
     return {
       onStart: (props: SuggestionProps): void => {
-        const isTouchDevice = !!getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
-        if (!props.clientRect || isTouchDevice) return;
+        if (!props.clientRect) return;
 
         editor = props.editor;
 
@@ -117,5 +116,3 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
     };
   },
 };
-
-export default emojiSuggestion;
