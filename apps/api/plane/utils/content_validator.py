@@ -3,7 +3,7 @@ import base64
 import json
 import re
 import nh3
-
+from plane.utils.exception_logger import log_exception
 
 # Maximum allowed size for binary data (10MB)
 MAX_SIZE = 10 * 1024 * 1024
@@ -41,7 +41,6 @@ SUSPICIOUS_BINARY_PATTERNS = [
     "data:",
     "<iframe",
 ]
-
 
 
 def validate_binary_data(data):
@@ -103,7 +102,8 @@ def validate_html_content(html_content: str):
         clean_html = nh3.clean(html_content)
         return True, None, clean_html
     except Exception as e:
-        return False, f"Failed to sanitize HTML: {str(e)}", None
+        log_exception(e)
+        return False, "Failed to sanitize HTML", None
 
 
 def validate_json_content(json_content):
