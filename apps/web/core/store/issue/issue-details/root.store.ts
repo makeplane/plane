@@ -99,6 +99,7 @@ export interface IIssueDetail
   isPagesModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
+  isPeekOpen: boolean;
   // helper actions
   getIsIssuePeeked: (issueId: string) => boolean;
   // actions
@@ -204,6 +205,7 @@ export abstract class IssueDetail implements IIssueDetail {
       isPagesModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
+      isPeekOpen: computed,
       // action
       setPeekIssue: action,
       setIssueLinkData: action,
@@ -257,6 +259,10 @@ export abstract class IssueDetail implements IIssueDetail {
       !!this.isConversionWarningModalOpen ||
       !!this.isPagesModalOpen
     );
+  }
+
+  get isPeekOpen() {
+    return !!this.peekIssue;
   }
 
   // helper actions

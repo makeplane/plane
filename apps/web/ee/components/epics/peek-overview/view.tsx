@@ -62,8 +62,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const {
     updatesStore: { deleteModalId },
   } = useEpics();
-  const { setPeekIssue: setIssuePeekIssue } = useIssueDetail();
-  const { isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
+  const { setPeekIssue: setIssuePeekIssue, isPeekOpen, isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
   const { isAnyModalOpen: isAnyCustomerModalOpen } = useCustomers();
   const {
     initiative: { isInitiativeModalOpen },
@@ -88,7 +87,8 @@ export const EpicView: FC<IEpicView> = observer((props) => {
           !deleteModalId &&
           !isAnyCustomerModalOpen &&
           !isInitiativeModalOpen &&
-          !duplicateEpicModal
+          !duplicateEpicModal &&
+          !isPeekOpen
         ) {
           removeRoutePeekId();
         }
