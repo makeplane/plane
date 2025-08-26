@@ -1,7 +1,11 @@
 import { getIssueUrlFromId } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
 import { formatActivityValue } from "../helpers/activity";
-import { createSlackLinkbackMutationContext, E_MUTATION_CONTEXT_FORMAT_TYPE, E_MUTATION_CONTEXT_ITEM_TYPE } from "../helpers/blocks";
+import {
+  createSlackLinkbackMutationContext,
+  E_MUTATION_CONTEXT_FORMAT_TYPE,
+  E_MUTATION_CONTEXT_ITEM_TYPE,
+} from "../helpers/blocks";
 import { ACTIONS, IGNORED_FIELD_UPDATES } from "../helpers/constants";
 import { ActivityForSlack } from "../types/types";
 
@@ -17,7 +21,6 @@ type ActivityProps = {
   // userMap, as we need to mention the user if the relation exist
   userMap: Map<string, string>;
 };
-
 
 export const createActivityLinkback = (activity: ActivityProps) => {
   const { activities, workspaceSlug, projectId, issueId, userMap } = activity;
@@ -85,9 +88,7 @@ export const createActivityLinkback = (activity: ActivityProps) => {
     const mutationContext = createSlackLinkbackMutationContext({
       issue: {
         updated_by: actorId,
-        updated_at: actorActivities[actorActivities.length - 1].timestamp,
         created_by: actorId,
-        created_at: actorActivities[0].timestamp,
       },
       planeToSlackUserMap,
       workspaceSlug,
