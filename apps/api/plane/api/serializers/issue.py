@@ -783,6 +783,7 @@ class IssueSearchSerializer(serializers.Serializer):
 
     issues = IssueSearchItemSerializer(many=True)
 
+
 class IssueDetailSerializer(IssueSerializer):
     """
     Comprehensive work item serializer with full relationship management.

@@ -151,6 +151,7 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
 
+
 def user_has_issue_permission(
     user_id, project_id, issue=None, allowed_roles=None, allow_creator=True
 ):
@@ -231,9 +232,15 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         """
         # ee start
         # epics support
-        if request.GET.get("include_epics") == "true" and issue_identifier and project_identifier:
+        if (
+            request.GET.get("include_epics") == "true"
+            and issue_identifier
+            and project_identifier
+        ):
             issue = Issue.issue_and_epics_objects.annotate(
-                sub_issues_count=Issue.issue_and_epics_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_and_epics_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

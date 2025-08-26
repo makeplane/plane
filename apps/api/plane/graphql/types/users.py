@@ -51,6 +51,17 @@ class UserType:
     cover_image_url: Optional[str]
 
 
+@strawberry_django.type(User)
+class UserLiteType:
+    id: Optional[strawberry.ID] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    avatar: Optional[str] = None
+    avatar_url: Optional[str] = None
+    is_bot: bool = False
+    display_name: Optional[str] = None
+
+
 @strawberry.input
 @dataclass
 class ProfileUpdateInputType:

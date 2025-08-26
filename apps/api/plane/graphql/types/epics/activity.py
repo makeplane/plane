@@ -8,6 +8,7 @@ import strawberry_django
 
 # Module Imports
 from plane.db.models import IssueActivity
+from plane.graphql.types.users import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
@@ -23,6 +24,7 @@ class EpicPropertyActivityType:
     attachments: list[str]
     issue_comment: Optional[strawberry.ID]
     actor: strawberry.ID
+    actor_details: Optional[UserLiteType]
     old_identifier: Optional[strawberry.ID]
     new_identifier: Optional[strawberry.ID]
     epoch: float
@@ -38,6 +40,12 @@ class EpicPropertyActivityType:
     @strawberry.field
     def actor(self) -> int:
         return self.actor_id
+
+    @strawberry.field
+    async def actor_details(self) -> Optional[UserLiteType]:
+        if self.actor:
+            return self.actor
+        return UserLiteType()
 
     @strawberry.field
     def project(self) -> int:
