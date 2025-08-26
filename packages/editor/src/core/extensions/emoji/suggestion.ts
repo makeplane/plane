@@ -52,7 +52,8 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
 
     return {
       onStart: (props: SuggestionProps): void => {
-        if (!props.clientRect) return;
+        const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+        if (!props.clientRect || isTouchDevice) return;
 
         editor = props.editor;
 
