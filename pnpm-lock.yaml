@@ -113,8 +113,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -379,8 +379,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.14.1
         version: 18.14.1
@@ -572,8 +572,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -897,8 +897,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -1217,8 +1217,8 @@ importers:
         specifier: ^8.1.1
         version: 8.6.14(storybook@8.6.14(prettier@3.6.2))
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^20.5.2
         version: 20.19.11
@@ -1293,8 +1293,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -3254,8 +3254,8 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/lodash@4.17.18':
-    resolution: {integrity: sha512-KJ65INaxqxmU6EoCiJmRPZC9H9RVWCRd349tXM2M3O5NA7cY6YL7c0bHAHQ93NOfTObEQ004kd2QVHs/r0+m4g==}
+  '@types/lodash@4.17.20':
+    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
   '@types/markdown-it@13.0.9':
     resolution: {integrity: sha512-1XPwR0+MgXLWfTn9gCsZ55AHOKW1WN+P9vr0PaQh5aerR9LLQXUbjfEAFhjmEmyoYFWAyuN2Mqkn40MZ4ukjBw==}
@@ -10050,7 +10050,7 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash@4.17.18': {}
+  '@types/lodash@4.17.20': {}
 
   '@types/markdown-it@13.0.9':
     dependencies:
