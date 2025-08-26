@@ -53,7 +53,7 @@ export interface IProjectPageStore {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    trackVisit?: boolean
+    trackVisit: boolean
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
@@ -244,7 +244,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string, trackVisit?: boolean) => {
+  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string, trackVisit: boolean) => {
     try {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
