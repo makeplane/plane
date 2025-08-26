@@ -52,7 +52,6 @@ export class DocumentController {
       const { description, description_binary } = convertHTMLDocumentToAllFormats({
         document_html: description_html,
         variant,
-        updateTitle: false,
       });
 
       // Update metrics

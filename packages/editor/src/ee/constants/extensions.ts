@@ -6,4 +6,5 @@ export enum ADDITIONAL_EXTENSIONS {
   INLINE_MATH = "inlineMath",
   BLOCK_MATH = "blockMath",
   EXTERNAL_EMBED = "externalEmbed",
+  PAGE_LINK_COMPONENT = "pageLinkComponent",
 }

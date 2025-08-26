@@ -156,7 +156,6 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
 type TConvertHTMLDocumentToAllFormatsArgs = {
   document_html: string;
   variant: "rich" | "document";
-  updateTitle?: boolean;
 };
 
 /**
@@ -168,7 +167,7 @@ type TConvertHTMLDocumentToAllFormatsArgs = {
  * @throws {Error} If an invalid variant is provided
  */
 export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllFormatsArgs): TDocumentPayload => {
-  const { document_html, variant, updateTitle = true } = args;
+  const { document_html, variant } = args;
 
   let allFormats: TDocumentPayload;
 
@@ -189,7 +188,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
     // Generate all document formats from the binary data
     const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
       contentBinary,
-      updateTitle
+      false
     );
     allFormats = {
       description: contentJSON,

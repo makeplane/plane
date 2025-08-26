@@ -89,7 +89,6 @@ export const getEditorContentWithReplacedAssets = async (props: {
   const documentPayload = convertHTMLDocumentToAllFormats({
     document_html: replacedDescription,
     variant,
-    updateTitle: false,
   });
   return documentPayload;
 };

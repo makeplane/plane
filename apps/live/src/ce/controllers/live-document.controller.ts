@@ -13,11 +13,8 @@ import { env } from "@/env";
 
 // Types
 import { HocusPocusServerContext } from "@/core/types/common";
-import { DOCUMENT_EDITOR_EXTENSIONS, documentEditorSchema, extractTextFromHTML } from "@/core/helpers/page";
-import { yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
-import { generateHTML } from "@tiptap/html";
 import { manualLogger } from "@/core/helpers/logger";
-import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor";
+import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor/lib";
 
 // Schema for request validation
 const getLiveDocumentValuesSchema = z.object({
@@ -60,7 +57,7 @@ export class LiveDocumentController {
           description_binary: string;
           description: object;
           description_html: string;
-          name: string;
+          name?: string;
         };
 
         // Create a promise to wrap the setTimeout
@@ -78,14 +75,17 @@ export class LiveDocumentController {
 
             const yjsBinary = Y.encodeStateAsUpdate(contentDoc);
             const { contentBinaryEncoded, contentJSON, contentHTML, titleHTML } =
-              getAllDocumentFormatsFromDocumentEditorBinaryData(yjsBinary);
+              getAllDocumentFormatsFromDocumentEditorBinaryData(yjsBinary, true);
 
             documentData = {
               description_binary: contentBinaryEncoded,
               description: contentJSON,
               description_html: contentHTML,
-              name: titleHTML,
             };
+
+            if (titleHTML) {
+              documentData.name = titleHTML;
+            }
 
             resolve(documentData);
           });

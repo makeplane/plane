@@ -1,10 +1,13 @@
 import { HocusPocusServerContext } from "@/core/types/common";
 import { BasePageService } from "@/core/services/base-page.service";
 import { logger } from "@plane/logger";
-import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page";
 import { TPage } from "@plane/types";
 import { DocumentHandler, HandlerDefinition } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/page-handlers/handler-factory";
+import {
+  getAllDocumentFormatsFromDocumentEditorBinaryData,
+  getBinaryDataFromDocumentEditorHTMLString,
+} from "@plane/editor/lib";
 
 /**
  * Base class for page handlers with factory integration
@@ -77,7 +80,10 @@ export abstract class BasePageHandler<TService extends BasePageService, TConfig 
 
     if (!pageId) return;
 
-    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(updatedDescription);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      updatedDescription,
+      true
+    );
     const payload = {
       description_binary: contentBinaryEncoded,
       description_html: contentHTML,
@@ -196,7 +202,7 @@ export abstract class BasePageHandler<TService extends BasePageService, TConfig 
         cookie,
       });
 
-      const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
+      const contentBinary = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
       return contentBinary;
     } catch (error) {
       logger.error("Error while transforming from HTML to Uint8Array", error);
