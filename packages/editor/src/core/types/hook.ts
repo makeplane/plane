@@ -13,6 +13,7 @@ type TCoreHookProps = Pick<
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"
+  | "embedHandler"
 >;
 
 export type TEditorHookProps = TCoreHookProps &

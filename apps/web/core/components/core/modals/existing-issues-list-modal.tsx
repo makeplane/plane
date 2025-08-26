@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { filter } from "lodash";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
@@ -20,7 +21,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { ProjectService } from "@/services/project";
 // components
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
-import { filter } from "lodash";
 
 type Props = {
   workspaceSlug: string | undefined;

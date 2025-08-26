@@ -45,6 +45,10 @@ class ProjectCreateSerializer(BaseSerializer):
             "archive_in",
             "close_in",
             "timezone",
+            "logo_props",
+            "external_source",
+            "external_id",
+            "is_issue_type_enabled",
         ]
 
         read_only_fields = [

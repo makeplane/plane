@@ -108,6 +108,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       isTouchDevice={!!isTouchDevice}
       isLoading={!hasServerSynced && !hasServerConnectionFailed}
       tabIndex={tabIndex}
+      flaggedExtensions={flaggedExtensions}
+      disabledExtensions={disabledExtensions}
     />
   );
 };
