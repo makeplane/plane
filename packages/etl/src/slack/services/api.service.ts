@@ -183,7 +183,7 @@ export class SlackService {
     threadTs: string,
     message: string | { text?: string; blocks?: any[] },
     metadata?: any,
-    unfurlLinks = true
+    unfurlLinks = false
   ): Promise<SlackMessageResponse> {
     try {
       const payload =
@@ -236,7 +236,8 @@ export class SlackService {
 
   async sendMessageToChannel(
     channelId: string,
-    message: { text?: string; blocks?: any[] }
+    message: { text?: string; blocks?: any[] },
+    unfurlLinks = false,
   ): Promise<SlackMessageResponse> {
     try {
       // Check if bot is in channel
@@ -249,6 +250,8 @@ export class SlackService {
         channel: channelId,
         text: message.text,
         blocks: message.blocks,
+        unfurl_links: unfurlLinks,
+        unfurl_media: unfurlLinks,
       });
       return response.data;
     } catch (error) {
