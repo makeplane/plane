@@ -9,18 +9,20 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // types
 import type { EditorRefApi, TEditorCommands } from "@/types";
+// plane editor imports
+import { getAdditionalEditorRefHelpers } from "@/plane-editor/helpers/editor-ref";
 // local imports
 import { getParagraphCount } from "./common";
 import { getExtensionStorage } from "./get-extension-storage";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
-type TArgs = {
+export type TEditorRefHelperArgs = {
   editor: Editor | null;
   provider: HocuspocusProvider | undefined;
 };
 
-export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
+export const getEditorRefHelpers = (args: TEditorRefHelperArgs): EditorRefApi => {
   const { editor, provider } = args;
 
   return {
@@ -238,5 +240,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       Y.applyUpdate(document, value);
     },
     undo: () => editor?.commands.undo(),
+    ...getAdditionalEditorRefHelpers(args),
   };
 };

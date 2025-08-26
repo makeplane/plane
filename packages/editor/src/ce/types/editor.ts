@@ -1,5 +1,7 @@
 export type TAdditionalEditorCommands = never;
 
-export type TAdditionalCommandExtraProps = unknown;
+export type TAdditionalCommandExtraProps = {};
 
-export type TAdditionalEditorRefApiMethods = unknown;
+export type TAdditionalEditorRefApiMethods = {};
+
+export type IEditorPropsExtended = {};

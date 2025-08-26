@@ -4,8 +4,9 @@ import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions/text-align";
-// plane editor types
+// plane editor imports
 import type {
+  IEditorPropsExtended,
   TAdditionalCommandExtraProps,
   TAdditionalEditorCommands,
   TAdditionalEditorRefApiMethods,
@@ -155,7 +156,7 @@ export type IEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-};
+} & IEditorPropsExtended;
 
 export type ILiteTextEditorProps = IEditorProps;
 
