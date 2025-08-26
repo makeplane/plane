@@ -22,7 +22,7 @@ export function Controller(baseRoute: string = ""): ClassDecorator {
  * @returns Method decorator
  */
 function createHttpMethodDecorator(
-  method: RestMethod,
+  method: RestMethod
 ): (route: string) => MethodDecorator {
   return function (route: string): MethodDecorator {
     return function (target: object, propertyKey: string | symbol) {
