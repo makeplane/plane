@@ -14,7 +14,6 @@ export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   "data-icon-color": undefined,
   "data-icon-name": undefined,
   "data-emoji-unicode": "128161",
-  "data-emoji-url": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
   "data-background": undefined,
   "data-block-type": "callout-component",
 };
@@ -27,7 +26,6 @@ export const getStoredLogo = (): TStoredLogoValue => {
   const fallBackValues: TStoredLogoValue = {
     "data-logo-in-use": "emoji",
     "data-emoji-unicode": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
-    "data-emoji-url": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
   };
 
   if (typeof window !== "undefined") {
@@ -45,7 +43,6 @@ export const getStoredLogo = (): TStoredLogoValue => {
         return {
           "data-logo-in-use": "emoji",
           "data-emoji-unicode": parsedData.emoji.value || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
-          "data-emoji-url": parsedData.emoji.url || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
         };
       }
       if (parsedData.in_use === "icon" && parsedData.icon?.name) {

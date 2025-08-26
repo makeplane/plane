@@ -47,7 +47,6 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
             in_use: "emoji",
             emoji: {
               value: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
-              url: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
             },
           };
           if (val.type === "emoji") {

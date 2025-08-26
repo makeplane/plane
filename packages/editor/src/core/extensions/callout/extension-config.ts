@@ -1,6 +1,8 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import { Node as NodeType } from "@tiptap/pm/model";
+// plane ui
+import { stringToEmoji } from "@plane/ui";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
@@ -42,10 +44,8 @@ export const CustomCalloutExtensionConfig = Node.create({
           const attrs = node.attrs as TCalloutBlockAttributes;
           const logoInUse = attrs["data-logo-in-use"];
           // add callout logo
-          if (logoInUse === "emoji") {
-            state.write(
-              `> <img src="${attrs["data-emoji-url"]}" alt="${attrs["data-emoji-unicode"]}" width="30px" />\n`
-            );
+          if (logoInUse === "emoji" && attrs["data-emoji-unicode"]) {
+            state.write(`> ${stringToEmoji(attrs["data-emoji-unicode"])} \n`);
           } else {
             state.write(`> <icon>${attrs["data-icon-name"]} icon</icon>\n`);
           }
