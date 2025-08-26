@@ -29,6 +29,7 @@ export enum ChartYAxisMetric {
   WORK_ITEM_DUE_THIS_WEEK_COUNT = "WORK_ITEM_DUE_THIS_WEEK_COUNT",
   WORK_ITEM_DUE_TODAY_COUNT = "WORK_ITEM_DUE_TODAY_COUNT",
   BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT",
+  EPIC_WORK_ITEM_COUNT = "EPIC_WORK_ITEM_COUNT",
 }
 
 export type TAnalyticsTabsBase = "overview" | "work-items" | TAnalyticsTabsExtended;

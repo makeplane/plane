@@ -65,7 +65,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}

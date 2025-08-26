@@ -558,3 +558,9 @@ span[data-name][data-type="emoji"] img {
   max-width: 1.25em;
   max-height: 1.25em;
 }
+
+/* touch device styles */
+.touch-select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}

@@ -48,6 +48,7 @@ type TArguments = Pick<
   | "mentionHandler"
   | "placeholder"
   | "tabIndex"
+  | "embedHandler"
 > & {
   enableHistory: boolean;
   editable: boolean;

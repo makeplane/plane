@@ -26,6 +26,10 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**", "out/**"]
     },
+    "build-storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"]
+    },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,

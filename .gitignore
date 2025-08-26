@@ -99,6 +99,7 @@ dev-editor
 *.rdb
 *.rdb.gz
 
+storybook-static
 # Monitor
 monitor/prime.key
 monitor/prime.key.pub
