@@ -18,8 +18,8 @@ type Props = {
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  disabledExtensions?: IEditorProps["disabledExtensions"];
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
+  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
