@@ -18,6 +18,9 @@ from plane.app.serializers import (
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
 
 
 class IssueVersionEndpoint(BaseAPIView):
@@ -100,6 +103,9 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

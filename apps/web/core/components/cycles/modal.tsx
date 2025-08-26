@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { observer } from "mobx-react";
 import { mutate } from "swr";
 // types
 import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
@@ -15,6 +16,8 @@ import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store";
 // services
 import { CycleService } from "@/services/cycle.service";
 // local imports
@@ -31,7 +34,7 @@ type CycleModalProps = {
 // services
 const cycleService = new CycleService();
 
-export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
+export const CycleCreateUpdateModal: React.FC<CycleModalProps> = observer((props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
@@ -39,6 +42,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   const { isMobile } = usePlatformOS();
+  const isBackwardDateEditEnabled = useFlag(workspaceSlug?.toString(), "EDIT_CYCLE_DATE");
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
@@ -188,6 +192,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     if (isOpen) handleClose();
   });
 
+
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <CycleForm
@@ -198,7 +203,8 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         setActiveProject={setActiveProject}
         data={data}
         isMobile={isMobile}
+        isBackwardDateEditEnabled={isBackwardDateEditEnabled}
       />
     </ModalCore>
   );
-};
+});
