@@ -33,7 +33,7 @@ const CrossOriginLoader = ({
     // Create object element
     const obj = document.createElement("object");
     obj.innerHTML = '<div class="h-[5px]"></div>'; // fallback
-    obj.className = "block invisible";
+    obj.className = "block invisible w-full h-full";
     obj.data = src;
 
     // // Add parameters
@@ -115,6 +115,6 @@ const CrossOriginLoader = ({
 
   useEffect(loadContent, [loadContent]);
 
-  return <div ref={containerRef} className={`${hasError ? "hidden" : ""} ${className}`} style={style} />;
+  return <div ref={containerRef} className={`w-full h-full ${hasError ? "hidden" : ""} ${className}`} style={style} />;
 };
 export default CrossOriginLoader;
