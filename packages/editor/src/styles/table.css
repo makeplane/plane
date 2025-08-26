@@ -25,7 +25,7 @@
       }
 
       /* Selected cell outline */
-      &.selectedCell {
+      &.selectedCell:not(.content-hidden) {
         user-select: none;
 
         &::after {
@@ -54,6 +54,30 @@
         }
       }
       /* End selected cell outline */
+
+      .table-col-handle-container,
+      .table-row-handle-container {
+        & > button {
+          opacity: 0;
+        }
+      }
+
+      &:hover {
+        .table-col-handle-container,
+        .table-row-handle-container {
+          & > button {
+            opacity: 1;
+          }
+        }
+      }
+
+      .ProseMirror-widget + * {
+        padding-top: 0 !important;
+      }
+
+      &.content-hidden > * {
+        visibility: hidden;
+      }
     }
 
     th {
@@ -66,6 +90,34 @@
       th {
         background-color: rgba(var(--color-background-90));
       }
+    }
+
+    .table-drop-marker {
+      background-color: rgba(var(--color-primary-100));
+      position: absolute;
+      z-index: 10;
+
+      &.hidden {
+        display: none;
+      }
+    }
+
+    .table-col-drag-marker,
+    .table-row-drag-marker {
+      position: absolute;
+      z-index: 10;
+
+      &.hidden {
+        display: none;
+      }
+    }
+
+    .table-col-drag-marker {
+      top: -9px;
+    }
+
+    .table-row-drag-marker {
+      left: 0;
     }
   }
 

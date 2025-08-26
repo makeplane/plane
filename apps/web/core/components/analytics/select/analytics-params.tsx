@@ -16,10 +16,11 @@ type Props = {
   params: IAnalyticsParams;
   workspaceSlug: string;
   classNames?: string;
+  isEpic?: boolean;
 };
 
 export const AnalyticsSelectParams: React.FC<Props> = observer((props) => {
-  const { control, params, classNames } = props;
+  const { control, params, classNames, isEpic } = props;
   const xAxisOptions = useMemo(
     () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
     [params.group_by]
@@ -42,7 +43,10 @@ export const AnalyticsSelectParams: React.FC<Props> = observer((props) => {
                 onChange(val);
               }}
               options={ANALYTICS_Y_AXIS_VALUES}
-              hiddenOptions={[ChartYAxisMetric.ESTIMATE_POINT_COUNT]}
+              hiddenOptions={[
+                ChartYAxisMetric.ESTIMATE_POINT_COUNT,
+                isEpic ? ChartYAxisMetric.WORK_ITEM_COUNT : ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,
+              ]}
             />
           )}
         />
