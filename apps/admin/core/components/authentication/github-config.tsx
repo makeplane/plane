@@ -35,9 +35,8 @@ export const GithubConfiguration: React.FC<Props> = observer((props) => {
           <ToggleSwitch
             value={Boolean(parseInt(enableGithubConfig))}
             onChange={() => {
-              Boolean(parseInt(enableGithubConfig)) === true
-                ? updateConfig("IS_GITHUB_ENABLED", "0")
-                : updateConfig("IS_GITHUB_ENABLED", "1");
+              const newEnableGithubConfig = Boolean(parseInt(enableGithubConfig)) === true ? "0" : "1";
+              updateConfig("IS_GITHUB_ENABLED", newEnableGithubConfig);
             }}
             size="sm"
             disabled={disabled}
