@@ -3,15 +3,14 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Check, Settings, UserPlus } from "lucide-react";
-// plane imports
 import { Menu } from "@headlessui/react";
+// plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
-// helpers
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription";
+import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
 type TProps = {
   workspace: IWorkspace;
