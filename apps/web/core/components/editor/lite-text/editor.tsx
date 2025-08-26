@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-// plane imports
+// plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
+// plane imports
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { MakeOptional } from "@plane/types";
@@ -87,7 +88,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn(

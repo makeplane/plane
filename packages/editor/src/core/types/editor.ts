@@ -2,6 +2,7 @@ import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
+import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // types
@@ -48,7 +49,8 @@ export type TEditorCommands =
   | "text-align"
   | "callout"
   | "attachment"
-  | "emoji";
+  | "emoji"
+  | "external-embed";
 
 export type TCommandExtraProps = {
   image: {
@@ -138,6 +140,7 @@ export type IEditorProps = {
   editorClassName?: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
+  embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -191,3 +194,5 @@ export type EditorEvents = {
   destroy: never;
   ready: { height: number };
 };
+
+export type NodeViewProps = TNodeViewProps;
