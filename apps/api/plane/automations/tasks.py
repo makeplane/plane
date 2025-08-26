@@ -8,9 +8,12 @@ from celery import shared_task
 from django.db import transaction
 
 # Module imports
+from plane.db.models import Workspace
 from plane.ee.models import ProcessedAutomationEvent
 from plane.automations.engine import dispatch_automation_event
 from plane.utils.exception_logger import log_exception
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 # Set up logger
 logger = logging.getLogger("plane.automations.tasks")
@@ -38,6 +41,23 @@ def execute_automation_task(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     event_id = event_data.get("event_id")
     event_type = event_data.get("event_type")
+
+    # Get the workspace slug
+    workspace_id = event_data.get("workspace_id")
+
+    workspace = Workspace.objects.get(id=workspace_id)
+
+    # Check if the automation quota is exceeded
+    is_automation_enabled = check_workspace_feature_flag(
+        feature_key=FeatureFlag.PROJECT_AUTOMATIONS,
+        slug=workspace.slug,
+    )
+
+    if not is_automation_enabled:
+        logger.info(f"Automation is not enabled for workspace {workspace.slug}")
+        return {
+            "success": True,
+        }
 
     logger.info(f"Starting automation task for event {event_id} ({event_type})")
 
