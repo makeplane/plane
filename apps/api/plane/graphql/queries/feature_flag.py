@@ -173,6 +173,9 @@ class FeatureFlagQuery:
             editor_mathematics=feature_flags.get(
                 FeatureFlagsTypesEnum.EDITOR_MATHEMATICS.value, False
             ),
+            editor_external_embeds=feature_flags.get(
+                FeatureFlagsTypesEnum.EDITOR_EXTERNAL_EMBEDS.value, False
+            ),
             # Silo importers and integrations
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(
@@ -237,12 +240,8 @@ class FeatureFlagQuery:
             # PI
             pi_chat=feature_flags.get(FeatureFlagsTypesEnum.PI_CHAT.value, False),
             pi_dedupe=feature_flags.get(FeatureFlagsTypesEnum.PI_DEDUPE.value, False),
-            # Mobile specific flags
-            pi_chat_mobile=feature_flags.get(
-                FeatureFlagsTypesEnum.PI_CHAT_MOBILE.value, False
-            ),
-            pi_dedupe_mobile=feature_flags.get(
-                FeatureFlagsTypesEnum.PI_DEDUPE_MOBILE.value, False
+            pi_converse=feature_flags.get(
+                FeatureFlagsTypesEnum.PI_CONVERSE.value, False
             ),
             # advanced search
             advanced_search=feature_flags.get(
