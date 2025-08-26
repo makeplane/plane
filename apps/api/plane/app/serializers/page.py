@@ -7,7 +7,6 @@ from .base import BaseSerializer
 from plane.utils.content_validator import (
     validate_binary_data,
     validate_html_content,
-    validate_json_content,
 )
 from plane.db.models import (
     Page,
@@ -236,17 +235,6 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
 
-    def validate_description(self, value):
-        """Validate the JSON description"""
-        if not value:
-            return value
-
-        # Use the validation function from utils
-        is_valid, error_message = validate_json_content(value)
-        if not is_valid:
-            raise serializers.ValidationError(error_message)
-
-        return value
 
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""
