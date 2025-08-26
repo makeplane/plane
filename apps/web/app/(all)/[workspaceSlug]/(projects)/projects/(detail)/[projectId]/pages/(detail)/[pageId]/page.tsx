@@ -58,7 +58,7 @@ const PageDetailsPage = observer(() => {
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
+      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString(), true)
       : null,
     {
       revalidateIfStale: true,
