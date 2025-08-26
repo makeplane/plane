@@ -15,9 +15,9 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { ICycle, TCycleGroups } from "@plane/types";
 import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, TransferIcon, setPromiseToast } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // plane imports
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-import { Avatar, FavoriteStar } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar, FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";

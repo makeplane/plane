@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { MoveRight } from "lucide-react";
-import { Loader } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Loader } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

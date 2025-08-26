@@ -10,9 +10,9 @@ import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-r
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
 import {
   cn,
   getDate,

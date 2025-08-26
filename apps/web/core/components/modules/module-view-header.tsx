@@ -9,9 +9,9 @@ import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TModuleFilters } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components

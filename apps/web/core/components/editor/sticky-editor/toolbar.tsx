@@ -6,8 +6,8 @@ import { Palette, Trash2 } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TSticky } from "@plane/types";
 import { Tooltip } from "@plane/propel/tooltip";
+import { TSticky } from "@plane/types";
 // constants
 import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";

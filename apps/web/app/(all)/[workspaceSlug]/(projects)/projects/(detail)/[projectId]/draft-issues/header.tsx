@@ -8,6 +8,7 @@ import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constant
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
@@ -17,7 +18,6 @@ import {
 } from "@plane/types";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

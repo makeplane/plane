@@ -2,8 +2,8 @@
 
 import { observer } from "mobx-react";
 // plane ui
-import { ContrastIcon } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { ContrastIcon } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 //hooks

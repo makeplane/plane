@@ -4,8 +4,8 @@ import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { IApiToken } from "@plane/types";
 import { Tooltip } from "@plane/propel/tooltip";
+import { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
 // components
 import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";

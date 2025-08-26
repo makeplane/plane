@@ -6,8 +6,8 @@ import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
-import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { Tooltip } from "@plane/propel/tooltip";
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 import { ICustomSearchSelectProps } from "./helper";
 

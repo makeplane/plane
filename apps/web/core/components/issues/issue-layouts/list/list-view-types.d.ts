@@ -1,5 +1,5 @@
-import { TIssue } from "@plane/types";
 import { TPlacement } from "@plane/propel/utils/placement";
+import { TIssue } from "@plane/types";
 
 export interface IQuickActionProps {
   parentRef: React.RefObject<HTMLElement>;
@@ -26,6 +26,6 @@ export type TRenderQuickActions = ({
   issue: TIssue;
   parentRef: React.RefObject<HTMLElement>;
   customActionButton?: React.ReactElement;
-  placement?: Placement;
+  placement?: TPlacement;
   portalElement?: HTMLDivElement | null;
 }) => React.ReactNode;

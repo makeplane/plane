@@ -2,8 +2,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // ui
-import { DragHandle } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { DragHandle } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
 // hooks

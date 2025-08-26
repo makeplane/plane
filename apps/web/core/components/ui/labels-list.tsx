@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 // ui
-import { IIssueLabel } from "@plane/types";
 import { Tooltip } from "@plane/propel/tooltip";
+import { IIssueLabel } from "@plane/types";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks

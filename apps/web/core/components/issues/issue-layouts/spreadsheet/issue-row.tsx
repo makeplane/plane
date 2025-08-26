@@ -8,10 +8,10 @@ import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Row } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";

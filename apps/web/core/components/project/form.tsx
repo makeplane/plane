@@ -6,6 +6,7 @@ import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
 import {
   Button,
@@ -17,7 +18,6 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
 } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

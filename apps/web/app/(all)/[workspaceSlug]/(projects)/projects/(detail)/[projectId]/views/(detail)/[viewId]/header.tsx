@@ -14,6 +14,7 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
   EViewAccess,
@@ -25,7 +26,6 @@ import {
 } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";

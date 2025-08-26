@@ -5,8 +5,8 @@ import { Info } from "lucide-react";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Input, TextArea } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { Input, TextArea } from "@plane/ui";
 import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
 // helpers

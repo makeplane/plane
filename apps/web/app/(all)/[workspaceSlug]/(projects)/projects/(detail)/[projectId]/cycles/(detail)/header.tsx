@@ -16,6 +16,7 @@ import {
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
   ICustomSearchSelectOption,
@@ -25,7 +26,6 @@ import {
   EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";

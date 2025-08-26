@@ -16,10 +16,10 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

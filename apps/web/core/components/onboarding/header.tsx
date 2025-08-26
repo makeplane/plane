@@ -4,9 +4,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { EOnboardingSteps, TOnboardingStep } from "@plane/types";
 import { PlaneLockup } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";

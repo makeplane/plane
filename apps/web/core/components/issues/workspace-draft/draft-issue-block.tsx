@@ -4,9 +4,9 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // plane utils
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
 import { Row, TContextMenuItem } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

@@ -7,10 +7,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";

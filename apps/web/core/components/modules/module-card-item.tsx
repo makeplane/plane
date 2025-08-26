@@ -16,6 +16,7 @@ import {
   MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -26,7 +27,6 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
-import { Tooltip } from "@plane/propel/tooltip";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

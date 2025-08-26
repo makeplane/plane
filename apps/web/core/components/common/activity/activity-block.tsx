@@ -3,9 +3,9 @@
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { TWorkspaceBaseActivity } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks

@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { ControlLink } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { ControlLink } from "@plane/ui";
 import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";

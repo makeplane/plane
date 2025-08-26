@@ -2,8 +2,8 @@
 
 import { ChevronDown, X } from "lucide-react";
 // plane imports
-import { DiceIcon } from "@plane/ui";
 import { Tooltip } from "@plane/propel/tooltip";
+import { DiceIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useModule } from "@/hooks/store/use-module";

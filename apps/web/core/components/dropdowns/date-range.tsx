@@ -160,13 +160,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         isActive={isOpen}
         tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
         tooltipContent={
-          customTooltipContent ?? (
-            <>
-              {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
-              {dateRange.from && dateRange.to ? " - " : ""}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
-            </>
-          )
+          <>
+            {customTooltipContent ?? (
+              <>
+                {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
+                {dateRange.from && dateRange.to ? " - " : ""}
+                {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
+              </>
+            )}
+          </>
         }
         showTooltip={showTooltip}
         variant={buttonVariant}

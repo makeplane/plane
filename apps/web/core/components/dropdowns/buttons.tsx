@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 // helpers
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -12,7 +12,7 @@ export type DropdownButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent?: string | React.ReactNode | null;
   tooltipHeading: string;
   showTooltip: boolean;
   variant: TButtonVariants;
@@ -23,7 +23,7 @@ type ButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent?: string | React.ReactNode | null;
   tooltipHeading: string;
   showTooltip: boolean;
   renderToolTipByDefault?: boolean;
@@ -67,7 +67,7 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -91,7 +91,7 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -114,7 +114,7 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
