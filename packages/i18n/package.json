@@ -4,11 +4,17 @@
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
+    "build": "tsc && tsup",
+    "dev": "tsup --watch",
     "check:lint": "eslint . --max-warnings 0",
-    "check:types": "tsc --noEmit",
+    "check:types": "tsc",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -27,6 +33,7 @@
     "@types/node": "^22.5.4",
     "@types/lodash": "^4.17.6",
     "@types/react": "^18.3.11",
+    "tsup": "8.4.0",
     "typescript": "5.8.3"
   }
 }

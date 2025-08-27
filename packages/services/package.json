@@ -3,12 +3,17 @@
   "version": "0.28.0",
   "license": "AGPL-3.0",
   "private": true,
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "tsc --noEmit && tsup --minify",
+    "build": "tsc && tsup",
     "dev": "tsup --watch",
     "check:lint": "eslint . --max-warnings 62",
-    "check:types": "tsc --noEmit",
+    "check:types": "tsc",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",

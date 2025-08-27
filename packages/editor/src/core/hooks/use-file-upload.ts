@@ -66,7 +66,7 @@ export const useUploader = (args: TUploaderArgs) => {
           throw new Error("Something went wrong while uploading the file.");
         }
         onUpload(url, file);
-      } catch (errPayload) {
+      } catch (errPayload: any) {
         const error = errPayload?.response?.data?.error || "Something went wrong";
         console.error(error);
       } finally {

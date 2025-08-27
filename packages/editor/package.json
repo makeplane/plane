@@ -22,10 +22,10 @@
     }
   },
   "scripts": {
-    "build": "tsc && tsup --minify",
+    "build": "tsc && tsup",
     "dev": "tsup --watch",
     "check:lint": "eslint . --max-warnings 30",
-    "check:types": "tsc --noEmit",
+    "check:types": "tsc",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -87,6 +87,7 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsup": "8.4.0",
     "typescript": "5.8.3"

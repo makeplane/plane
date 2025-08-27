@@ -38,10 +38,10 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         const addedFiles: TFileNode[] = [];
 
         newState.doc.descendants((node, pos) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as CORE_EXTENSIONS;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
-          if (!isAValidNode) return;
+          if (!isAValidNode || !nodeType) return;
           if (pos < 0 || pos > newState.doc.content.size) return;
           if (oldFileSources[nodeType]?.has(node.attrs.src)) return;
           // update assets list storage value

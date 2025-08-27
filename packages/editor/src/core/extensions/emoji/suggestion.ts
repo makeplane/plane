@@ -27,7 +27,7 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
 
     if (query.trim() === "") {
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        filteredEmojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+        filteredEmojis.find((emoji) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);
