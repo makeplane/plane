@@ -465,3 +465,6 @@ if ENABLE_DRF_SPECTACULAR:
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
     INSTALLED_APPS.append("drf_spectacular")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
+
+# Use X-Forwarded-Host for get_host calls when behind proxy
+USE_X_FORWARDED_HOST = int(os.environ.get("USE_X_FORWARDED_HOST", 0)) == 1
