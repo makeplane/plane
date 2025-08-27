@@ -29,10 +29,8 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useOutsideClickDetector(ref, () => {
-    if (sidebarCollapsed === false) {
-      if (window.innerWidth < 768) {
-        toggleSidebar();
-      }
+    if (sidebarCollapsed === false && window.innerWidth < 768) {
+      toggleSidebar();
     }
   });
 
@@ -56,7 +54,7 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
           </div>
         )}
         {/* Quick actions */}
-        {quickActions && quickActions}
+        {quickActions}
       </div>
       <div className="flex flex-col gap-3 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar px-3 pt-3 pb-0.5">
         {children}
