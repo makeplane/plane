@@ -35,9 +35,8 @@ export const GitlabConfiguration: React.FC<Props> = observer((props) => {
           <ToggleSwitch
             value={Boolean(parseInt(enableGitlabConfig))}
             onChange={() => {
-              Boolean(parseInt(enableGitlabConfig)) === true
-                ? updateConfig("IS_GITLAB_ENABLED", "0")
-                : updateConfig("IS_GITLAB_ENABLED", "1");
+              const newEnableGitlabConfig = Boolean(parseInt(enableGitlabConfig)) === true ? "0" : "1";
+              updateConfig("IS_GITLAB_ENABLED", newEnableGitlabConfig);
             }}
             size="sm"
             disabled={disabled}

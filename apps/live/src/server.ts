@@ -1,34 +1,30 @@
+import http from "http";
+import type { Hocuspocus } from "@hocuspocus/server";
 import express from "express";
 import type { Application, Request, Router } from "express";
 import expressWs from "express-ws";
-// server agent
 import type * as ws from "ws";
-import type { Hocuspocus } from "@hocuspocus/server";
-import http from "http";
-// Environment and configuration
-import { serverConfig, configureServerMiddleware } from "./config/server-config";
+// plane imports
+import { logger } from "@plane/logger";
 // Core functionality
+import { serverConfig, configureServerMiddleware } from "@/config/server-config";
+// server agent
+import { serverAgentManager } from "@/core/agents/server-agent";
+import { getAllControllers } from "@/core/controller-registry";
+import { serverAgentHandler } from "@/core/document-types/server-agent-handlers";
+import { syncAgentHandler } from "@/core/document-types/sync-agent-handlers";
+// Error handling
+import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
-import { initializeSentry } from "./sentry-config";
-
-import { registerControllers } from "./lib/controller.utils";
-
 // Redis manager
 import { RedisManager } from "@/core/lib/redis-manager";
-
-// Logging
-import { logger } from "@plane/logger";
-
-// Error handling
-import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
-import { getAllControllers } from "./core/controller-registry";
-import { initializeDocumentHandlers } from "@/plane-live/document-types";
 // Shutdown manager
 import { shutdownManager } from "@/core/shutdown-manager";
-import { serverAgentManager } from "./core/agents/server-agent";
-import { serverAgentHandler } from "./core/document-types/server-agent-handlers";
-import { syncAgentHandler } from "./core/document-types/sync-agent-handlers";
+// lib
+import { registerControllers } from "@/lib/controller.utils";
+import { initializeDocumentHandlers } from "@/plane-live/document-types";
+import { initializeSentry } from "@/sentry-config";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {

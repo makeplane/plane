@@ -1,18 +1,18 @@
+import { IncomingHttpHeaders } from "http";
 import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
-import { IncomingHttpHeaders } from "http";
-// lib
-import { handleAuthentication } from "@/core/lib/authentication";
-// extensions
-import { getExtensions } from "@/core/extensions/index";
-import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 // editor types
 import { EventToPayloadMap, TUserDetails, createRealtimeEvent } from "@plane/editor";
+import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
+// extensions
+import { getExtensions } from "@/core/extensions/index";
+// error handling
+import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { catchAsync } from "@/core/helpers/error-handling/error-handler";
+// lib
+import { handleAuthentication } from "@/core/lib/authentication";
 // types
 import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/common";
-// error handling
-import { catchAsync } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
 // server agent
 import { serverAgentManager } from "./agents/server-agent";
 

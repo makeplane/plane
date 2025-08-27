@@ -1,9 +1,12 @@
 // hocuspocus extensions and core
-import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
-import { setupRedisExtension } from "@/core/extensions/setup-redis";
-import { createDatabaseExtension } from "@/core/extensions/database";
+import { Extension } from "@hocuspocus/server";
+// plane logger
 import { logger } from "@plane/logger";
+// extensions
+import { createDatabaseExtension } from "@/core/extensions/database";
+import { setupRedisExtension } from "@/core/extensions/setup-redis";
+// title sync extension
 import { TitleSyncExtension } from "./title-sync";
 
 export const getExtensions = async (): Promise<Extension[]> => {

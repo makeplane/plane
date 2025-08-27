@@ -1,6 +1,6 @@
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 // services
 import { UserService } from "@/core/services/user.service";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
 
 const userService = new UserService();
 
