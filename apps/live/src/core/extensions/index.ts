@@ -1,20 +1,17 @@
-// Third-party libraries
-import { Redis } from "ioredis";
-// Hocuspocus extensions and core
 import { Database } from "@hocuspocus/extension-database";
-import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
+import { Extension } from "@hocuspocus/server";
+import { Redis } from "ioredis";
 // core helpers and utilities
 import { manualLogger } from "@/core/helpers/logger.js";
-import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 // core libraries
 import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page.js";
+import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
+import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common.js";
 // plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
-// types
-import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common.js";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
