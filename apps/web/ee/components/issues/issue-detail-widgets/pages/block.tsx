@@ -7,7 +7,7 @@ import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
 import { setToast, TContextMenuItem, TOAST_TYPE, CustomMenu, Logo } from "@plane/ui";
 import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 
 type TProps = {
@@ -104,12 +104,16 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
         </div>
         <div className="flex flex-col gap-2 ">
           <div className="flex gap-1 items-center">
-            {page.logo_props && page.logo_props?.in_use ? (
-              <Logo logo={page.logo_props} size={16} type="lucide" />
-            ) : (
-              <FileText className="size-4 text-custom-text-300" />
-            )}
-            <div className="text-base font-medium text-custom-text-200 line-clamp-2 overflow-hidden">{page.name}</div>
+            <div className="shrink-0">
+              {page.logo_props && page.logo_props?.in_use ? (
+                <Logo logo={page.logo_props} size={16} type="lucide" />
+              ) : (
+                <FileText className="size-4 text-custom-text-300" />
+              )}
+            </div>
+            <div className="text-base font-medium text-custom-text-200 line-clamp-2 overflow-hidden break-words min-w-0 flex-1">
+              {page.name}
+            </div>
           </div>
           <div className="text-sm text-custom-text-350 line-clamp-3 overflow-hidden">
             {page.description_stripped === "" ? t("issue.pages.no_description") : page.description_stripped}

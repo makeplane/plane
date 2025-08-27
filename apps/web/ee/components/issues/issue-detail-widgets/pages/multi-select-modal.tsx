@@ -165,7 +165,7 @@ const PagesMultiSelectModal = observer(
               />
             </div>
             <div className="w-full flex items-center gap-2 text-sm text-custom-text-200 justify-end">
-              <span className="text-sm font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
+              <span className="text-xs font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
               <ToggleSwitch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
             </div>
           </div>
@@ -175,14 +175,16 @@ const PagesMultiSelectModal = observer(
               {selectedPages.map((page) => (
                 <div
                   key={page.id}
-                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer w-fit overflow-hidden"
+                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer max-w-[150px] overflow-hidden"
                   onClick={() => setSelectedPages((prev) => prev.filter((p) => p.id !== page.id))}
                 >
-                  {page?.logo_props && page.logo_props?.in_use ? (
-                    <Logo logo={page.logo_props} size={16} type="lucide" />
-                  ) : (
-                    <FileText className="size-4 text-custom-text-300" />
-                  )}
+                  <div className="shrink-0">
+                    {page?.logo_props && page.logo_props?.in_use ? (
+                      <Logo logo={page.logo_props} size={16} type="lucide" />
+                    ) : (
+                      <FileText className="size-4 text-custom-text-300" />
+                    )}
+                  </div>
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {getPageName(page?.name ?? "")}
                   </p>
@@ -227,7 +229,7 @@ const PagesMultiSelectModal = observer(
                           <FileText className="size-4 text-custom-text-300" />
                         )}
                       </div>
-                      <span className="truncate text-base">{getPageName(page.name)}</span>
+                      <span className="truncate text-sm">{getPageName(page.name)}</span>
                     </div>
                     {page.access != null && (
                       <div className="hidden flex-shrink-0 text-custom-text-350 group-hover:flex">
@@ -248,8 +250,7 @@ const PagesMultiSelectModal = observer(
             )}
           </Combobox.Options>
         </Combobox>
-
-        <div className="flex items-center justify-end gap-2 p-3">
+        <div className="flex items-center justify-end gap-2 p-3 border-t-[0.5px] border-custom-border-200 ">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
