@@ -2,14 +2,21 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { LOGICAL_OPERATOR, TAllOperators } from "@plane/types";
+import {
+  LOGICAL_OPERATOR,
+  SingleOrArray,
+  TAllOperators,
+  TExternalFilter,
+  TFilterProperty,
+  TFilterValue,
+} from "@plane/types";
 import { CustomSearchSelect, getButtonStyling, TButtonVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 
-export type TAddFilterButtonProps<FilterPropertyKey extends string, TExternalFilterType> = {
-  filter: IFilterInstance<FilterPropertyKey, TExternalFilterType>;
+export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
+  filter: IFilterInstance<P, E>;
   buttonConfig?: {
     label?: string;
     variant?: TButtonVariant;
@@ -23,9 +30,7 @@ export type TAddFilterButtonProps<FilterPropertyKey extends string, TExternalFil
 };
 
 export const AddFilterButton = observer(
-  <FilterPropertyKey extends string, TExternalFilterType>(
-    props: TAddFilterButtonProps<FilterPropertyKey, TExternalFilterType>
-  ) => {
+  <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterButtonProps<P, E>) => {
     const { filter, buttonConfig } = props;
     const {
       label = "Filters",
@@ -62,13 +67,13 @@ export const AddFilterButton = observer(
         ]
       : filterOptions;
 
-    const handleFilterSelect = (property: FilterPropertyKey) => {
-      const config = filter.configManager.getConfigById(property);
+    const handleFilterSelect = (id: string) => {
+      const config = filter.configManager.getConfigById(id);
       if (config) {
         filter.addCondition(LOGICAL_OPERATOR.AND, {
           property: config.id,
           operator: config.defaultOperator as TAllOperators,
-          value: config.defaultValue,
+          value: config.defaultValue as SingleOrArray<TFilterValue>,
         });
       }
     };

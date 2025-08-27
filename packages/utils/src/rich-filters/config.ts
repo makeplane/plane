@@ -3,6 +3,7 @@ import {
   TBooleanFilterConfig,
   TDateFilterConfig,
   TFilterConfig,
+  TFilterProperty,
   TFilterType,
   TFilterValue,
   TMultiSelectFilterConfig,
@@ -16,20 +17,20 @@ import {
  * @param config - The filter config to create
  * @returns The created filter config
  */
-export function createFilterConfig<K extends string, T extends TFilterType, TValue extends TFilterValue = TFilterValue>(
+export function createFilterConfig<P extends TFilterProperty, T extends TFilterType, V extends TFilterValue>(
   config: T extends typeof FILTER_TYPE.TEXT
-    ? TTextFilterConfig<K, TValue>
+    ? TTextFilterConfig<P, V>
     : T extends typeof FILTER_TYPE.NUMBER
-      ? TNumberFilterConfig<K, TValue>
+      ? TNumberFilterConfig<P, V>
       : T extends typeof FILTER_TYPE.BOOLEAN
-        ? TBooleanFilterConfig<K>
+        ? TBooleanFilterConfig<P>
         : T extends typeof FILTER_TYPE.SELECT
-          ? TSelectFilterConfig<K, TValue>
+          ? TSelectFilterConfig<P, V>
           : T extends typeof FILTER_TYPE.MULTI_SELECT
-            ? TMultiSelectFilterConfig<K, TValue>
+            ? TMultiSelectFilterConfig<P, V>
             : T extends typeof FILTER_TYPE.DATE
-              ? TDateFilterConfig<K, TValue>
+              ? TDateFilterConfig<P, V>
               : never
-): TFilterConfig<K, TValue> {
-  return config as TFilterConfig<K, TValue>;
+): TFilterConfig<P, V> {
+  return config as TFilterConfig<P, V>;
 }

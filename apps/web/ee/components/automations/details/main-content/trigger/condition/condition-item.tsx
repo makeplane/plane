@@ -2,8 +2,11 @@ import { observer } from "mobx-react";
 // plane imports
 import type {
   TAutomationConditionFilterExpression,
-  TAutomationConditionFilterKeys,
+  TAutomationConditionFilterProperty,
+  TExternalFilter,
   TFilterConditionNode,
+  TFilterProperty,
+  TFilterValue,
 } from "@plane/types";
 import { getOperatorLabel } from "@plane/utils";
 // plane web imports
@@ -11,13 +14,13 @@ import type { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 // local imports
 import { AutomationDetailsMainContentTriggerConditionItemValue } from "./condition-item-value";
 
-interface FilterItemProps<FilterPropertyKey extends string, TExternalFilterType> {
-  filter: IFilterInstance<FilterPropertyKey, TExternalFilterType>;
-  condition: TFilterConditionNode<FilterPropertyKey>;
+interface FilterItemProps<K extends TFilterProperty, E extends TExternalFilter> {
+  filter: IFilterInstance<K, E>;
+  condition: TFilterConditionNode<K, TFilterValue>;
 }
 
 export const AutomationDetailsMainContentTriggerConditionItem: React.FC<
-  FilterItemProps<TAutomationConditionFilterKeys, TAutomationConditionFilterExpression>
+  FilterItemProps<TAutomationConditionFilterProperty, TAutomationConditionFilterExpression>
 > = observer((props) => {
   const { filter, condition } = props;
   // derived values

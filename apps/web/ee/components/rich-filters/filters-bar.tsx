@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { TExternalFilter, TFilterProperty } from "@plane/types";
 import { Button, EHeaderVariant, Header } from "@plane/ui";
 // plane web imports
 import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
@@ -9,16 +10,14 @@ import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 import { AddFilterButton, TAddFilterButtonProps } from "./add-filters-button";
 import { FilterItem } from "./filter-item";
 
-type TFilterBarProps<FilterPropertyKey extends string, TExternalFilterType> = {
-  filter: IFilterInstance<FilterPropertyKey, TExternalFilterType>;
+type TFilterBarProps<K extends TFilterProperty, E extends TExternalFilter> = {
+  filter: IFilterInstance<K, E>;
   visible?: boolean;
-  buttonConfig?: TAddFilterButtonProps<FilterPropertyKey, TExternalFilterType>["buttonConfig"];
+  buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
 };
 
 export const FilterBar = observer(
-  <FilterPropertyKey extends string, TExternalFilterType>(
-    props: TFilterBarProps<FilterPropertyKey, TExternalFilterType>
-  ) => {
+  <K extends TFilterProperty, E extends TExternalFilter>(props: TFilterBarProps<K, E>) => {
     const { filter, buttonConfig } = props;
     return (
       <Header variant={EHeaderVariant.TERNARY}>

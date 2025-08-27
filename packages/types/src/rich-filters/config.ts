@@ -1,4 +1,5 @@
-import { FILTER_TYPE, TFilterType } from "./base";
+import { SingleOrArray } from "../utils";
+import { FILTER_TYPE, TFilterProperty, TFilterType, TFilterValue } from "./base";
 import {
   TAllOperators,
   TBooleanOperators,
@@ -10,32 +11,19 @@ import {
 } from "./operator";
 
 /**
- * Filter value.
- * @template T - The base type for filter value.
+ * Individual option for select/multi-select filters.
+ * - id: Unique identifier for the option
+ * - label: Display text shown to users
+ * - value: Actual value used in filtering
+ * - icon: Optional icon component
+ * - iconClassName: CSS class for icon styling
+ * - disabled: Whether option can be selected
+ * - description: Additional context to be displayed in the filter dropdown
  */
-export type TFilterValueBase = string | number | Date | boolean | null;
-
-/**
- * Filter values.
- * @template T - The type of the filter value.
- */
-export type TFilterValue<T extends TFilterValueBase = TFilterValueBase> = T | T[];
-
-/**
- * Filter option.
- * - id: The id of the filter option.
- * - label: The label of the filter option.
- * - value: The value of the filter option.
- * - icon?: The icon of the filter option.
- * - iconClassName?: The class name of the filter option icon.
- * - disabled?: Whether the filter option is disabled.
- * - description?: The description of the filter option.
- * @template T - The type of the filter value.
- */
-export interface TFilterOption<T extends TFilterValue = TFilterValue> {
+export interface TFilterOption<V extends TFilterValue> {
   id: string;
   label: string;
-  value: T;
+  value: V;
   icon?: React.ReactNode;
   iconClassName?: string;
   disabled?: boolean;
@@ -43,127 +31,123 @@ export interface TFilterOption<T extends TFilterValue = TFilterValue> {
 }
 
 /**
- * Base filter config.
- * - id: The id of the filter.
- * - label: The label of the filter.
- * - type: The type of the filter.
- * - icon?: The icon of the filter.
- * - placeholder?: The placeholder of the filter.
- * - isEnabled: Whether the filter is enabled.
- * - allowMultiple?: Whether the filter allows multiple values.
+ * Base configuration shared by all filter types.
+ * - id: Field name that matches the filter property
+ * - label: Human-readable name displayed in UI
+ * - type: Filter type that determines available operators
+ * - icon: Optional icon for the filter
+ * - placeholder: Placeholder text for input fields
+ * - isEnabled: Controls filter availability in UI
+ * - customOperators: Override default operators for this filter config
  */
-export interface TBaseFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue> {
-  id: K;
+export interface TBaseFilterConfig<P extends TFilterProperty> {
+  id: P;
   label: string;
   type: TFilterType;
   icon?: React.FC<React.SVGAttributes<SVGElement>>;
   placeholder?: string;
   isEnabled: boolean;
-  defaultValue: TValue;
   customOperators?: TAllOperators[];
 }
 
 /**
- * Text filter configuration.
- * Extends the base filter config with text-specific properties.
- * - type: Always set to EFilterType.TEXT for text filters.
- * - defaultOperator: The default text operator to use when the filter is applied.
+ * Text filter configuration - for string-based filtering.
+ * - defaultOperator: Default operator applied when filter is created
+ * - defaultValue: Initial value when filter is added
  */
-export interface TTextFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
-  extends TBaseFilterConfig<K, TValue> {
+export interface TTextFilterConfig<P extends TFilterProperty, V extends TFilterValue> extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.TEXT;
   defaultOperator: TTextOperators;
+  defaultValue?: SingleOrArray<V>;
 }
 
 /**
- * Number filter configuration.
- * Extends the base filter config with number-specific properties.
- * - type: Always set to EFilterType.NUMBER for number filters.
- * - defaultOperator: The default number operator to use when the filter is applied.
- * - min?: The minimum value of the filter.
- * - max?: The maximum value of the filter.
+ * Numeric filter configuration - for number-based filtering.
+ * - defaultOperator: Default operator applied when filter is created
+ * - defaultValue: Initial value when filter is added
+ * - min: Minimum allowed value for validation
+ * - max: Maximum allowed value for validation
  */
-export interface TNumberFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
-  extends TBaseFilterConfig<K, TValue> {
+export interface TNumberFilterConfig<P extends TFilterProperty, V extends TFilterValue> extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.NUMBER;
   defaultOperator: TNumberOperators;
+  defaultValue?: SingleOrArray<V>;
   min?: number;
   max?: number;
 }
 
 /**
- * Boolean filter configuration.
- * Extends the base filter config with boolean-specific properties.
- * - type: Always set to EFilterType.BOOLEAN for boolean filters.
- * - defaultOperator: The default boolean operator to use when the filter is applied.
+ * Boolean filter configuration - for true/false filtering.
+ * - defaultOperator: Default operator applied when filter is created
+ * - defaultValue: Initial value when filter is added
  */
-export interface TBooleanFilterConfig<K extends string = string> extends TBaseFilterConfig<K, boolean> {
+export interface TBooleanFilterConfig<P extends TFilterProperty> extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.BOOLEAN;
   defaultOperator: TBooleanOperators;
+  defaultValue?: boolean;
 }
 
 /**
- * Select filter configuration.
- * Extends the base filter config with select-specific properties.
- * - type: Always set to EFilterType.SELECT for select filters.
- * - defaultOperator: The default select operator to use when the filter is applied.
- * - getOptions: A function that returns the options for the select filter.
+ * Single-select filter configuration - dropdown with one selectable option.
+ * - defaultOperator: Default comparison operator
+ * - defaultValue: Initial selected value
+ * - getOptions: Options as static array or async function
  */
-export interface TSelectFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
-  extends TBaseFilterConfig<K, TValue> {
+export interface TSelectFilterConfig<P extends TFilterProperty, V extends TFilterValue> extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.SELECT;
   defaultOperator: TSelectOperators;
-  getOptions: TFilterOption<string>[] | (() => TFilterOption<string>[] | Promise<TFilterOption<string>[]>);
+  defaultValue?: V;
+  getOptions: TFilterOption<V>[] | (() => TFilterOption<V>[] | Promise<TFilterOption<V>[]>);
 }
 
 /**
- * Multi-select filter configuration.
- * Extends the base filter config with multi-select-specific properties.
- * - type: Always set to EFilterType.MULTI_SELECT for multi-select filters.
- * - defaultOperator: The default multi-select operator to use when the filter is applied.
- * - getOptions: A function that returns the options for the multi-select filter.
+ * Multi-select filter configuration - allows selecting multiple options.
+ * - defaultOperator: Default comparison operator (usually 'in')
+ * - defaultValue: Initial selected values array
+ * - getOptions: Options as static array or async function
  */
-export interface TMultiSelectFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
-  extends TBaseFilterConfig<K, TValue> {
+export interface TMultiSelectFilterConfig<P extends TFilterProperty, V extends TFilterValue>
+  extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.MULTI_SELECT;
   defaultOperator: TMultiSelectOperators;
-  getOptions: TFilterOption<string>[] | (() => TFilterOption<string>[] | Promise<TFilterOption<string>[]>);
+  defaultValue?: V[];
+  getOptions: TFilterOption<V>[] | (() => TFilterOption<V>[] | Promise<TFilterOption<V>[]>);
 }
 
 /**
- * Date filter configuration.
- * Extends the base filter config with date-specific properties.
- * - type: Always set to EFilterType.DATE for date filters.
- * - defaultOperator: The default date operator to use when the filter is applied.
+ * Date filter configuration - for temporal filtering.
+ * - defaultOperator: Default temporal operator
+ * - defaultValue: Initial date/time value
  */
-export interface TDateFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue>
-  extends TBaseFilterConfig<K, TValue> {
+export interface TDateFilterConfig<P extends TFilterProperty, V extends TFilterValue> extends TBaseFilterConfig<P> {
   type: typeof FILTER_TYPE.DATE;
   defaultOperator: TDateOperators;
+  defaultValue?: SingleOrArray<V>;
 }
 
 /**
- * Filter configuration.
- * Combines all filter configurations into a single type.
- * @template K - The type of the filter id.
+ * Union type for all possible filter configurations.
  */
-export type TFilterConfig<K extends string = string, TValue extends TFilterValue = TFilterValue> =
-  | TTextFilterConfig<K, TValue>
-  | TNumberFilterConfig<K, TValue>
-  | TBooleanFilterConfig<K>
-  | TSelectFilterConfig<K, TValue>
-  | TMultiSelectFilterConfig<K, TValue>
-  | TDateFilterConfig<K, TValue>;
+export type TFilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue> =
+  | TTextFilterConfig<P, V>
+  | TNumberFilterConfig<P, V>
+  | TBooleanFilterConfig<P>
+  | TSelectFilterConfig<P, V>
+  | TMultiSelectFilterConfig<P, V>
+  | TDateFilterConfig<P, V>;
 
 /**
- * Base parameters for all filter config creators
+ * Base parameters for filter config factory functions.
+ * - isEnabled: Controls filter availability in UI.
  */
 export type TCreateFilterConfigParams = {
   isEnabled: boolean;
 };
 
 /**
- * Icon configuration for filter options
+ * Icon configuration for filters and their options.
+ * - filterIcon: Optional icon for the filter
+ * - getOptionIcon: Function to get icon for specific option values
  */
 export type TFilterIconConfig<T extends string | number | boolean | object | undefined = undefined> = {
   filterIcon?: React.FC<React.SVGAttributes<SVGElement>>;
@@ -171,6 +155,6 @@ export type TFilterIconConfig<T extends string | number | boolean | object | und
 };
 
 /**
- * Function signature for creating filter configurations
+ * Factory function signature for creating filter configurations.
  */
-export type TCreateFilterConfig<K extends string, P> = (params: P) => TFilterConfig<K>;
+export type TCreateFilterConfig<P extends TFilterProperty, T> = (params: T) => TFilterConfig<P>;

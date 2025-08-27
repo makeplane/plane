@@ -97,7 +97,7 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
   };
 
   const createOrUpdateCondition = async () => {
-    if (!automation || !selectedFilterExpression || !selectedTriggerNodeHandlerName) return;
+    if (!automation || !selectedTriggerNodeHandlerName) return;
 
     // If condition node doesn't exist, create it.
     if (!conditionNode) {

@@ -2,23 +2,31 @@ import React, { useState, useEffect, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { FILTER_TYPE, TFilterConfig, TFilterConditionNode, TFilterOption, TFilterValue } from "@plane/types";
+import {
+  FILTER_TYPE,
+  TFilterConfig,
+  TFilterConditionNode,
+  TFilterOption,
+  TFilterProperty,
+  TFilterValue,
+  SingleOrArray,
+} from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 
-interface FilterValueInputProps<FilterPropertyKey extends string> {
-  config: TFilterConfig<FilterPropertyKey>;
-  filter: TFilterConditionNode<FilterPropertyKey>;
-  onChange: (values: TFilterValue) => void;
+interface FilterValueInputProps<P extends TFilterProperty, V extends TFilterValue> {
+  config: TFilterConfig<P, V>;
+  filter: TFilterConditionNode<P, V>;
+  onChange: (values: SingleOrArray<V>) => void;
 }
 
 const EMPTY_VALUE = "--";
 
 export const FilterValueInput = observer(
-  <FilterPropertyKey extends string>(props: FilterValueInputProps<FilterPropertyKey>) => {
+  <P extends TFilterProperty, V extends TFilterValue>(props: FilterValueInputProps<P, V>) => {
     const { config, filter, onChange } = props;
     // states
-    const [options, setOptions] = useState<TFilterOption[]>([]);
+    const [options, setOptions] = useState<TFilterOption<V>[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -55,14 +63,8 @@ export const FilterValueInput = observer(
       tooltip: option.description,
     }));
 
-    const handleSelectChange = (selected: TFilterValue) => {
-      if (Array.isArray(selected)) {
-        onChange(selected);
-      } else if (selected !== undefined) {
-        onChange([selected]);
-      } else {
-        onChange([]);
-      }
+    const handleSelectChange = (selected: SingleOrArray<V>) => {
+      onChange(selected ?? ([] as unknown as SingleOrArray<V>));
     };
 
     const getDisplayContent = (): ReactNode => {
@@ -70,9 +72,11 @@ export const FilterValueInput = observer(
         return EMPTY_VALUE;
       }
 
-      const selectedOptions = (Array.isArray(filter.value) ? filter.value : [filter.value])
+      const filterValues = filter.value;
+      const values = (Array.isArray(filterValues) ? filterValues : [filterValues]) as V[];
+      const selectedOptions = values
         .map((value) => options.find((opt) => opt.value === value))
-        .filter(Boolean) as TFilterOption[];
+        .filter(Boolean) as TFilterOption<V>[];
 
       if (selectedOptions.length === 0) {
         // Handle special types when no matching option is found
@@ -126,7 +130,7 @@ export const FilterValueInput = observer(
       case FILTER_TYPE.MULTI_SELECT:
         return (
           <CustomSearchSelect
-            value={Array.isArray(filter.value) ? filter.value : [filter.value]}
+            value={Array.isArray(filter.value) ? filter.value : filter.value ? [filter.value] : []}
             onChange={handleSelectChange}
             options={formattedOptions}
             multiple

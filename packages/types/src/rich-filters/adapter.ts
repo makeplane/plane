@@ -1,22 +1,23 @@
 // local imports
-import { TFilterExpression } from "./base";
+import { TFilterExpression, TFilterProperty } from "./base";
 
 /**
- * Filter adapter interface.
- * @template FilterPropertyKey - The type of the filter property key.
- * @template TExternalFilterType - The type of the external filter.
+ * External filter format
  */
-export interface IFilterAdapter<FilterPropertyKey extends string, TExternalFilterType> {
+export type TExternalFilter = Record<string, unknown> | undefined | null;
+
+/**
+ * Adapter for converting between internal filter trees and external formats.
+ * @template P - Filter property type (e.g., 'state_id', 'priority', 'assignee')
+ * @template E - External filter format type (e.g., work item filters, automation filters)
+ */
+export interface IFilterAdapter<P extends TFilterProperty, E extends TExternalFilter> {
   /**
-   * Converts an external filter to an internal filter.
-   * @param externalFilter - The external filter to convert.
-   * @returns The internal filter.
+   * Converts external format to internal filter tree.
    */
-  toInternal(externalFilter: TExternalFilterType): TFilterExpression<FilterPropertyKey> | null;
+  toInternal(externalFilter: E): TFilterExpression<P> | null;
   /**
-   * Converts an internal filter to an external filter.
-   * @param internalFilter - The internal filter to convert.
-   * @returns The external filter.
+   * Converts internal filter tree to external format.
    */
-  toExternal(internalFilter: TFilterExpression<FilterPropertyKey> | null): TExternalFilterType;
+  toExternal(internalFilter: TFilterExpression<P> | null): E;
 }

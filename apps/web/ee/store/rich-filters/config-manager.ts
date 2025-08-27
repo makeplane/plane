@@ -4,40 +4,72 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { DEFAULT_FILTER_CONFIG_OPTIONS, TConfigOptions } from "@plane/constants";
-import { TFilterConfig } from "@plane/types";
+import { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
 // local imports
 import { IFilterInstance } from "./filter";
 
-export interface IFilterConfigManager<FilterPropertyKey extends string> {
+/**
+ * Interface for managing filter configurations.
+ * Provides methods to register, update, and retrieve filter configurations.
+ * - filterConfigs: Map storing filter configurations by their ID
+ * - configOptions: Configuration options controlling filter behavior
+ * - allConfigs: All registered filter configurations
+ * - allAvailableConfigs: All available filter configurations based on current state
+ * - getConfigById: Retrieves a filter configuration by its ID
+ * - register: Registers a single filter configuration
+ * - registerAll: Registers multiple filter configurations
+ * - updateConfigById: Updates an existing filter configuration by ID
+ * @template P - The filter property type extending TFilterProperty
+ */
+export interface IFilterConfigManager<P extends TFilterProperty> {
   // observables
-  filterConfigs: Map<FilterPropertyKey, TFilterConfig<FilterPropertyKey>>;
+  filterConfigs: Map<string, TFilterConfig<P, TFilterValue>>; // config id -> config
   configOptions: TConfigOptions;
   // computed
-  allConfigs: TFilterConfig<FilterPropertyKey>[];
-  allAvailableConfigs: TFilterConfig<FilterPropertyKey>[];
+  allConfigs: TFilterConfig<P, TFilterValue>[];
+  allAvailableConfigs: TFilterConfig<P, TFilterValue>[];
   // computed functions
-  getConfigById: (id: FilterPropertyKey) => TFilterConfig<FilterPropertyKey> | undefined;
+  getConfigById: (id: string) => TFilterConfig<P, TFilterValue> | undefined;
   // helpers
-  register: <T extends TFilterConfig<FilterPropertyKey>>(config: T) => void;
-  registerAll: (configs: TFilterConfig<FilterPropertyKey>[]) => void;
-  updateConfigById: (id: FilterPropertyKey, configUpdates: Partial<TFilterConfig<FilterPropertyKey>>) => void;
+  register: <C extends TFilterConfig<P, TFilterValue>>(config: C) => void;
+  registerAll: (configs: TFilterConfig<P, TFilterValue>[]) => void;
+  updateConfigById: (id: string, configUpdates: Partial<TFilterConfig<P, TFilterValue>>) => void;
 }
 
+/**
+ * Parameters for initializing the FilterConfigManager.
+ * - options: Optional configuration options to override defaults
+ */
 export type TConfigManagerParams = {
   options?: Partial<TConfigOptions>;
 };
 
-export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilterType>
-  implements IFilterConfigManager<FilterPropertyKey>
+/**
+ * Manages filter configurations for a filter instance.
+ * Handles registration, updates, and retrieval of filter configurations.
+ * Provides computed properties for available configurations based on current filter state.
+ *
+ * @template P - The filter property type extending TFilterProperty
+ * @template V - The filter value type extending TFilterValue
+ * @template E - The external filter type extending TExternalFilter
+ */
+export class FilterConfigManager<P extends TFilterProperty, E extends TExternalFilter>
+  implements IFilterConfigManager<P>
 {
   // observables
-  filterConfigs: IFilterConfigManager<FilterPropertyKey>["filterConfigs"];
-  configOptions: IFilterConfigManager<FilterPropertyKey>["configOptions"];
+  filterConfigs: IFilterConfigManager<P>["filterConfigs"];
+  configOptions: IFilterConfigManager<P>["configOptions"];
   // parent filter instance
-  _filterInstance: IFilterInstance<FilterPropertyKey, TExternalFilterType>;
+  _filterInstance: IFilterInstance<P, E>;
 
-  constructor(filterInstance: IFilterInstance<FilterPropertyKey, TExternalFilterType>, params: TConfigManagerParams) {
-    this.filterConfigs = new Map<FilterPropertyKey, TFilterConfig<FilterPropertyKey>>();
+  /**
+   * Creates a new FilterConfigManager instance.
+   *
+   * @param filterInstance - The parent filter instance this manager belongs to
+   * @param params - Configuration parameters for the manager
+   */
+  constructor(filterInstance: IFilterInstance<P, E>, params: TConfigManagerParams) {
+    this.filterConfigs = new Map<P, TFilterConfig<P, TFilterValue>>();
     this.configOptions = this._initializeConfigOptions(params.options);
     // parent filter instance
     this._filterInstance = filterInstance;
@@ -61,7 +93,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Returns all filterConfigs.
    * @returns All filterConfigs.
    */
-  get allConfigs(): TFilterConfig<FilterPropertyKey>[] {
+  get allConfigs(): IFilterConfigManager<P>["allConfigs"] {
     return Array.from(this.filterConfigs.values());
   }
 
@@ -71,7 +103,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Otherwise, only configs that are not already applied to the filter instance are returned.
    * @returns All available filterConfigs.
    */
-  get allAvailableConfigs(): TFilterConfig<FilterPropertyKey>[] {
+  get allAvailableConfigs(): IFilterConfigManager<P>["allAvailableConfigs"] {
     // if allowSameFilters is true, all enabled configs are returned
     if (this.configOptions.allowSameFilters) {
       return this._allEnabledConfigs;
@@ -91,8 +123,8 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * @param id - The id to get the config for.
    * @returns The config for the id, or undefined if not found.
    */
-  getConfigById = computedFn((id: FilterPropertyKey): TFilterConfig<FilterPropertyKey> | undefined =>
-    this.filterConfigs.get(id)
+  getConfigById: IFilterConfigManager<P>["getConfigById"] = computedFn(
+    (id) => this.filterConfigs.get(id) as TFilterConfig<P, TFilterValue>
   );
 
   // ------------ helpers ------------
@@ -103,7 +135,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Otherwise, a new config will be created.
    * @param config - The config to register.
    */
-  register = action(<T extends TFilterConfig<FilterPropertyKey>>(config: T): void => {
+  register: IFilterConfigManager<P>["register"] = action((config) => {
     if (this.filterConfigs.has(config.id)) {
       // Update existing config if it has differences
       const existingConfig = this.filterConfigs.get(config.id)!;
@@ -121,7 +153,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Register all configs.
    * @param configs - The configs to register.
    */
-  registerAll = action((configs: TFilterConfig<FilterPropertyKey>[]): void => {
+  registerAll: IFilterConfigManager<P>["registerAll"] = action((configs) => {
     configs.forEach((config) => this.register(config));
   });
 
@@ -131,7 +163,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * @param id - The id of the config to update.
    * @param configUpdates - The updates to apply to the config.
    */
-  updateConfigById = action((id: FilterPropertyKey, configUpdates: Partial<TFilterConfig<FilterPropertyKey>>): void => {
+  updateConfigById: IFilterConfigManager<P>["updateConfigById"] = action((id, configUpdates) => {
     const prevConfig = this.filterConfigs.get(id);
     const updatedConfig = merge({}, prevConfig, configUpdates);
     this.filterConfigs.set(id, updatedConfig);
@@ -143,7 +175,7 @@ export class FilterConfigManager<FilterPropertyKey extends string, TExternalFilt
    * Returns all enabled filterConfigs.
    * @returns All enabled filterConfigs.
    */
-  private get _allEnabledConfigs(): TFilterConfig<FilterPropertyKey>[] {
+  private get _allEnabledConfigs(): TFilterConfig<P, TFilterValue>[] {
     return this.allConfigs.filter((config) => config.isEnabled);
   }
 

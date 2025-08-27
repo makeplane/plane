@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { CircleUserRound, SignalHigh, Tag, Users } from "lucide-react";
 // plane imports
-import type { IUserLite, TAutomationConditionFilterKeys, TFilterConfig } from "@plane/types";
+import type { IUserLite, TAutomationConditionFilterProperty, TFilterConfig } from "@plane/types";
 import { Avatar, DoubleCircleIcon, LayersIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
@@ -48,7 +48,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const stateFilterConfig = useMemo(
     () =>
-      getStateFilterConfig<TAutomationConditionFilterKeys>("payload.data.state_id")({
+      getStateFilterConfig<TAutomationConditionFilterProperty>("payload.data.state_id")({
         isEnabled: true,
         filterIcon: DoubleCircleIcon,
         getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
@@ -59,7 +59,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const workItemTypeFilterConfig = useMemo(
     () =>
-      getWorkItemTypeFilterConfig<TAutomationConditionFilterKeys>("payload.data.type_id")({
+      getWorkItemTypeFilterConfig<TAutomationConditionFilterProperty>("payload.data.type_id")({
         isEnabled: isWorkItemTypeEnabled,
         filterIcon: LayersIcon,
         getOptionIcon: (workItemType) => (
@@ -72,7 +72,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const labelFilterConfig = useMemo(
     () =>
-      getLabelFilterConfig<TAutomationConditionFilterKeys>("payload.data.label_ids")({
+      getLabelFilterConfig<TAutomationConditionFilterProperty>("payload.data.label_ids")({
         isEnabled: true,
         filterIcon: Tag,
         labels: projectLabels ?? [],
@@ -85,7 +85,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const assigneeFilterConfig = useMemo(
     () =>
-      getAssigneeFilterConfig<TAutomationConditionFilterKeys>("payload.data.assignee_ids")({
+      getAssigneeFilterConfig<TAutomationConditionFilterProperty>("payload.data.assignee_ids")({
         isEnabled: true,
         filterIcon: Users,
         members: members ?? [],
@@ -103,7 +103,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const createdByFilterConfig = useMemo(
     () =>
-      getCreatedByFilterConfig<TAutomationConditionFilterKeys>("payload.data.created_by_id")({
+      getCreatedByFilterConfig<TAutomationConditionFilterProperty>("payload.data.created_by_id")({
         isEnabled: true,
         filterIcon: CircleUserRound,
         members: members ?? [],
@@ -121,7 +121,7 @@ export const useAutomationConfig = (args: TArgs) => {
 
   const priorityFilterConfig = useMemo(
     () =>
-      getPriorityFilterConfig<TAutomationConditionFilterKeys>("payload.data.priority")({
+      getPriorityFilterConfig<TAutomationConditionFilterProperty>("payload.data.priority")({
         isEnabled: true,
         filterIcon: SignalHigh,
         getOptionIcon: (priority) => <PriorityIcon priority={priority} />,
@@ -129,7 +129,7 @@ export const useAutomationConfig = (args: TArgs) => {
     []
   );
 
-  const automationConfigs: TFilterConfig<TAutomationConditionFilterKeys>[] = useMemo(
+  const automationConfigs: TFilterConfig<TAutomationConditionFilterProperty>[] = useMemo(
     () => [
       stateFilterConfig,
       workItemTypeFilterConfig,

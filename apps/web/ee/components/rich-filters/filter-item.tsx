@@ -2,7 +2,14 @@ import React, { useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
-import { TAllOperators, TFilterConditionNode, TFilterValue } from "@plane/types";
+import {
+  SingleOrArray,
+  TAllOperators,
+  TExternalFilter,
+  TFilterConditionNode,
+  TFilterProperty,
+  TFilterValue,
+} from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { getOperatorLabel, getValidOperatorsForType } from "@plane/utils";
 // plane web imports
@@ -10,16 +17,14 @@ import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 // local imports
 import { FilterValueInput } from "./filter-value-input";
 
-interface FilterItemProps<FilterPropertyKey extends string, TExternalFilterType> {
-  filter: IFilterInstance<FilterPropertyKey, TExternalFilterType>;
-  condition: TFilterConditionNode<FilterPropertyKey>;
+interface FilterItemProps<P extends TFilterProperty, E extends TExternalFilter> {
+  filter: IFilterInstance<P, E>;
+  condition: TFilterConditionNode<P, TFilterValue>;
   showTransition?: boolean;
 }
 
 export const FilterItem = observer(
-  <FilterPropertyKey extends string, TExternalFilterType>(
-    props: FilterItemProps<FilterPropertyKey, TExternalFilterType>
-  ) => {
+  <P extends TFilterProperty, E extends TExternalFilter>(props: FilterItemProps<P, E>) => {
     const { filter, condition, showTransition = true } = props;
     // refs
     const itemRef = useRef<HTMLDivElement>(null);
@@ -74,7 +79,7 @@ export const FilterItem = observer(
       }
     };
 
-    const handleValueChange = (values: TFilterValue) => {
+    const handleValueChange = (values: SingleOrArray<TFilterValue>) => {
       filter.updateCondition(condition.id, { value: values });
     };
 

@@ -12,6 +12,7 @@ import {
   TCreateFilterConfigParams,
   TCycleGroups,
   TFilterIconConfig,
+  TFilterProperty,
   TIssueType,
   TStateGroups,
 } from "@plane/types";
@@ -32,16 +33,15 @@ export type TCreateStateGroupFilterParams = TCreateFilterConfigParams & TFilterI
  * @returns A function that takes parameters and returns the state group filter config
  */
 export const getStateGroupFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateStateGroupFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateGroupFilterParams> =>
   (params: TCreateStateGroupFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, TStateGroups[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, TStateGroups>({
       id: key,
       label: "State Group",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         Object.values(STATE_GROUPS).map((state) => ({
           id: state.key,
@@ -68,16 +68,15 @@ export type TCreateStateFilterParams = TCreateFilterConfigParams &
  * @returns A function that takes parameters and returns the state filter config
  */
 export const getStateFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateStateFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateFilterParams> =>
   (params: TCreateStateFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "State",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         params.states.map((state) => ({
           id: state.id,
@@ -101,16 +100,15 @@ export type TCreatePriorityFilterParams = TCreateFilterConfigParams & TFilterIco
  * @returns A function that takes parameters and returns the priority filter config
  */
 export const getPriorityFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreatePriorityFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreatePriorityFilterParams> =>
   (params: TCreatePriorityFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, TIssuePriorities[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, TIssuePriorities>({
       id: key,
       label: "Priority",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         ISSUE_PRIORITIES.map((priority) => ({
           id: priority.key,
@@ -137,16 +135,15 @@ export type TCreateWorkItemTypeFilterParams = TCreateFilterConfigParams &
  * @returns A function that takes parameters and returns the work item type filter config
  */
 export const getWorkItemTypeFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateWorkItemTypeFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateWorkItemTypeFilterParams> =>
   (params: TCreateWorkItemTypeFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Type",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         params.workItemTypes
           .filter((type) => type.id && type.name)
@@ -175,16 +172,15 @@ export type TCreateCycleFilterParams = TCreateFilterConfigParams &
  * @returns A function that takes parameters and returns the cycle filter config
  */
 export const getCycleFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateCycleFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateCycleFilterParams> =>
   (params: TCreateCycleFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Cycle",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         params.cycles.map((cycle) => ({
           id: cycle.id,
@@ -211,16 +207,15 @@ export type TCreateModuleFilterParams = TCreateFilterConfigParams &
  * @returns A function that takes parameters and returns the module filter config
  */
 export const getModuleFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateModuleFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateModuleFilterParams> =>
   (params: TCreateModuleFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Module",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         params.modules.map((module) => ({
           id: module.id,
@@ -247,16 +242,15 @@ export type TCreateLabelFilterParams = TCreateFilterConfigParams &
  * @returns A function that takes parameters and returns the label filter config
  */
 export const getLabelFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateLabelFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateLabelFilterParams> =>
   (params: TCreateLabelFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Label",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () =>
         params.labels.map((label) => ({
           id: label.id,
@@ -304,16 +298,15 @@ export type TCreateAssigneeFilterParams = TCreateUserFilterParams;
  * @returns A function that takes parameters and returns the assignee filter config
  */
 export const getAssigneeFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateAssigneeFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateAssigneeFilterParams> =>
   (params: TCreateAssigneeFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Assignees",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () => getMemberOptions(params.members, params.getOptionIcon),
     });
 
@@ -331,16 +324,15 @@ export type TCreateMentionFilterParams = TCreateUserFilterParams;
  * @returns A function that takes parameters and returns the mention filter config
  */
 export const getMentionFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateMentionFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateMentionFilterParams> =>
   (params: TCreateMentionFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Mentions",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () => getMemberOptions(params.members, params.getOptionIcon),
     });
 
@@ -358,15 +350,14 @@ export type TCreateCreatedByFilterParams = TCreateUserFilterParams;
  * @returns A function that takes parameters and returns the created by filter config
  */
 export const getCreatedByFilterConfig =
-  <K extends string>(key: K): TCreateFilterConfig<K, TCreateCreatedByFilterParams> =>
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateCreatedByFilterParams> =>
   (params: TCreateCreatedByFilterParams) =>
-    createFilterConfig<K, typeof FILTER_TYPE.MULTI_SELECT, string[]>({
+    createFilterConfig<P, typeof FILTER_TYPE.MULTI_SELECT, string>({
       id: key,
       label: "Created by",
       icon: params.filterIcon,
       type: FILTER_TYPE.MULTI_SELECT,
       isEnabled: params.isEnabled,
       defaultOperator: EQUALITY_OPERATORS.IS,
-      defaultValue: [],
       getOptions: () => getMemberOptions(params.members, params.getOptionIcon),
     });

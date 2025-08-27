@@ -2,18 +2,25 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { FILTER_TYPE, type TFilterConditionNode, type TFilterConfig, type TFilterOption } from "@plane/types";
+import {
+  FILTER_TYPE,
+  TAutomationConditionFilterProperty,
+  TFilterValue,
+  type TFilterConditionNode,
+  type TFilterConfig,
+  type TFilterOption,
+} from "@plane/types";
 
-interface FilterValueInputProps<FilterPropertyKey extends string> {
-  config: TFilterConfig<FilterPropertyKey>;
-  filter: TFilterConditionNode<FilterPropertyKey>;
+interface FilterValueInputProps<V extends TFilterValue> {
+  config: TFilterConfig<TAutomationConditionFilterProperty, V>;
+  filter: TFilterConditionNode<TAutomationConditionFilterProperty, V>;
 }
 
-export const AutomationDetailsMainContentTriggerConditionItemValue: React.FC<FilterValueInputProps<string>> = observer(
-  (props) => {
+export const AutomationDetailsMainContentTriggerConditionItemValue: React.FC<FilterValueInputProps<TFilterValue>> =
+  observer((props) => {
     const { config, filter } = props;
     // states
-    const [options, setOptions] = useState<TFilterOption[]>([]);
+    const [options, setOptions] = useState<TFilterOption<TFilterValue>[]>([]);
 
     useEffect(() => {
       const loadOptions = async () => {
@@ -37,7 +44,7 @@ export const AutomationDetailsMainContentTriggerConditionItemValue: React.FC<Fil
 
       const selectedOptions = (Array.isArray(filter.value) ? filter.value : [filter.value])
         .map((value) => options.find((opt) => opt.value === value))
-        .filter(Boolean) as TFilterOption[];
+        .filter(Boolean) as TFilterOption<TFilterValue>[];
 
       if (selectedOptions.length === 0) {
         // Handle special types when no matching option is found
@@ -84,5 +91,4 @@ export const AutomationDetailsMainContentTriggerConditionItemValue: React.FC<Fil
     };
 
     return <>{getDisplayContent()}</>;
-  }
-);
+  });

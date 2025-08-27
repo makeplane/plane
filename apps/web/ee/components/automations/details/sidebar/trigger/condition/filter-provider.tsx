@@ -1,56 +1,30 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { TAutomationConditionFilterExpression, TAutomationConditionFilterKeys } from "@plane/types";
+import type { TAutomationConditionFilterExpression, TAutomationConditionFilterProperty } from "@plane/types";
 // plane web imports
 import { useAutomationConfig } from "@/plane-web/hooks/automations/use-automation-condition-config";
 import { automationConditionFilterAdapter } from "@/plane-web/store/automations/node/condition/adapter";
 import { FilterInstance, IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 
-type TBaseAutomationConditionFilterProps = {
-  projectId: string;
-  workspaceSlug: string;
-  updateFilterExpression?: (updatedFilters: TAutomationConditionFilterExpression) => void;
-};
-
-type TAutomationConditionFilterHOCProps = TBaseAutomationConditionFilterProps & {
-  initialFilterExpression: TAutomationConditionFilterExpression | undefined;
+type TAutomationConditionFilterHOCProps = {
   children:
     | React.ReactNode
     | ((props: {
-        filter: IFilterInstance<TAutomationConditionFilterKeys, TAutomationConditionFilterExpression> | undefined;
+        filter: IFilterInstance<TAutomationConditionFilterProperty, TAutomationConditionFilterExpression>;
       }) => React.ReactNode);
+  initialFilterExpression: TAutomationConditionFilterExpression;
+  projectId: string;
+  updateFilterExpression?: (updatedFilters: TAutomationConditionFilterExpression) => void;
+  workspaceSlug: string;
 };
 
 export const AutomationConditionFilterHOC = observer((props: TAutomationConditionFilterHOCProps) => {
-  const { children, initialFilterExpression } = props;
-
-  // Only initialize filter instance when initialFilterExpression are defined
-  if (!initialFilterExpression)
-    return <>{typeof children === "function" ? children({ filter: undefined }) : children}</>;
-
-  return (
-    <AutomationConditionFilterRoot {...props} initialFilterExpression={initialFilterExpression}>
-      {children}
-    </AutomationConditionFilterRoot>
-  );
-});
-
-type TAutomationConditionFilterProps = TBaseAutomationConditionFilterProps & {
-  initialFilterExpression: TAutomationConditionFilterExpression;
-  children:
-    | React.ReactNode
-    | ((props: {
-        filter: IFilterInstance<TAutomationConditionFilterKeys, TAutomationConditionFilterExpression>;
-      }) => React.ReactNode);
-};
-
-const AutomationConditionFilterRoot = observer((props: TAutomationConditionFilterProps) => {
   const { children, projectId, initialFilterExpression, updateFilterExpression, workspaceSlug } = props;
   // Create new filter instance
   const conditionFilter = useMemo(
     () =>
-      new FilterInstance<TAutomationConditionFilterKeys, TAutomationConditionFilterExpression>({
+      new FilterInstance<TAutomationConditionFilterProperty, TAutomationConditionFilterExpression>({
         adapter: automationConditionFilterAdapter,
         initialExpression: initialFilterExpression,
         onExpressionChange: updateFilterExpression,

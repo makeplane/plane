@@ -1,10 +1,11 @@
-import { TFilterValue } from "./config";
-import { TAllOperators, TLogicalOperator } from "./operator";
+// local imports
+import { SingleOrArray } from "../utils";
+import { TAllOperators, LOGICAL_OPERATOR } from "./operator";
 
 /**
- * Filter node can be a condition or an operator. This will allow us to build a tree of filters.
- * - A condition is a single filter that can be used to filter a single field.
- * - An operator is a logical operator that can be used to combine multiple conditions.
+ * Filter node types for building hierarchical filter trees.
+ * - CONDITION: Single filter for one field (e.g., "state is backlog")
+ * - GROUP: Logical container combining multiple filters with AND/OR or single filter/group with NOT
  */
 export const FILTER_NODE_TYPE = {
   CONDITION: "condition",
@@ -13,7 +14,7 @@ export const FILTER_NODE_TYPE = {
 export type TFilterNodeType = (typeof FILTER_NODE_TYPE)[keyof typeof FILTER_NODE_TYPE];
 
 /**
- * Filter type is the type of filter that can be applied to a field.
+ * Supported data types for filter fields.
  */
 export const FILTER_TYPE = {
   TEXT: "text",
@@ -26,63 +27,131 @@ export const FILTER_TYPE = {
 export type TFilterType = (typeof FILTER_TYPE)[keyof typeof FILTER_TYPE];
 
 /**
- * Base filter node.
- * @property id - The id of the filter node.
- * @property type - The type of the filter node.
+ * Field property key that can be filtered (e.g., "state", "assignee", "created_at").
  */
-export type TFilterNodeBase = {
+export type TFilterProperty = string;
+
+/**
+ * Allowed filter values - primitives plus null/undefined for empty states.
+ */
+export type TFilterValue = string | number | Date | boolean | null | undefined;
+
+/**
+ * Base properties shared by all filter nodes.
+ * - id: Unique identifier for the node
+ * - type: Node type (condition or group)
+ */
+type TBaseFilterNode = {
   id: string;
   type: TFilterNodeType;
 };
 
-export type TFilterNode = TFilterNodeBase;
-
 /**
- * Filter condition node.
- * @property property - The property of the filter condition.
- * @property operator - The operator of the filter condition.
- * @property value - The value of the filter condition.
+ * Leaf node representing a single filter condition (e.g., "state is backlog").
+ * - type: Node type (condition)
+ * - property: Field being filtered
+ * - operator: Comparison operator (is, is not, between, not between, etc.)
+ * - value: Filter value(s) - array for operators that support multiple values
+ * @template P - Property key type
+ * @template V - Value type
  */
-export type TFilterConditionNode<FilterPropertyKey extends string> = TFilterNode & {
+export type TFilterConditionNode<P extends TFilterProperty, V extends TFilterValue> = TBaseFilterNode & {
   type: typeof FILTER_NODE_TYPE.CONDITION;
-  property: FilterPropertyKey;
+  property: P;
   operator: TAllOperators;
-  value: TFilterValue;
+  value: SingleOrArray<V>;
 };
 
 /**
- * Filter group node.
- * @property logicalOperator - The logical operator of the filter group.
- * @property children - The children of the filter group.
+ * Container node that combines multiple conditions with AND logical operator.
+ * - type: Node type (group)
+ * - logicalOperator: AND operator for combining child filters
+ * - children: Child conditions and/or nested groups (minimum 2 for meaningful operations)
+ * @template P - Property key type
  */
-export type TFilterGroupNode<FilterPropertyKey extends string> = TFilterNode & {
+export type TFilterAndGroupNode<P extends TFilterProperty> = TBaseFilterNode & {
   type: typeof FILTER_NODE_TYPE.GROUP;
-  logicalOperator: TLogicalOperator;
-  children: TFilterExpression<FilterPropertyKey>[];
+  logicalOperator: typeof LOGICAL_OPERATOR.AND;
+  children: TFilterExpression<P>[];
 };
 
 /**
- * Filter expression. It can be a condition or a group.
- * @template FilterPropertyKey - The type of the filter property key.
+ * Container node that combines multiple conditions with OR logical operator.
+ * - type: Node type (group)
+ * - logicalOperator: OR operator for combining child filters
+ * - children: Child conditions and/or nested groups (minimum 2 for meaningful operations)
+ * @template P - Property key type
  */
-export type TFilterExpression<FilterPropertyKey extends string> =
-  | TFilterConditionNode<FilterPropertyKey>
-  | TFilterGroupNode<FilterPropertyKey>;
+export type TFilterOrGroupNode<P extends TFilterProperty> = TBaseFilterNode & {
+  type: typeof FILTER_NODE_TYPE.GROUP;
+  logicalOperator: typeof LOGICAL_OPERATOR.OR;
+  children: TFilterExpression<P>[];
+};
 
 /**
- * Filter condition payload. Used to create / update a condition node.
- * @template FilterPropertyKey - The type of the filter property key.
+ * Container node that negates a single condition or group with NOT logical operator.
+ * - type: Node type (group)
+ * - logicalOperator: NOT operator for negation
+ * - child: Single child condition or nested group to negate
+ * @template P - Property key type
  */
-export type TFilterConditionPayload<FilterPropertyKey extends string> = Omit<
-  TFilterConditionNode<FilterPropertyKey>,
-  keyof TFilterNodeBase
+export type TFilterNotGroupNode<P extends TFilterProperty> = TBaseFilterNode & {
+  type: typeof FILTER_NODE_TYPE.GROUP;
+  logicalOperator: typeof LOGICAL_OPERATOR.NOT;
+  child: TFilterExpression<P>;
+};
+
+/**
+ * Union type for all group node types - AND, OR, and NOT groups.
+ * @template P - Property key type
+ */
+export type TFilterGroupNode<P extends TFilterProperty> =
+  | TFilterAndGroupNode<P>
+  | TFilterOrGroupNode<P>
+  | TFilterNotGroupNode<P>;
+
+/**
+ * Union type for any filter node - either a single condition or a group container.
+ * @template P - Property key type
+ * @template V - Value type
+ */
+export type TFilterExpression<P extends TFilterProperty, V extends TFilterValue = TFilterValue> =
+  | TFilterConditionNode<P, V>
+  | TFilterGroupNode<P>;
+
+/**
+ * Payload for creating/updating condition nodes - excludes base node properties.
+ * @template P - Property key type
+ * @template V - Value type
+ */
+export type TFilterConditionPayload<P extends TFilterProperty, V extends TFilterValue> = Omit<
+  TFilterConditionNode<P, V>,
+  keyof TBaseFilterNode
 >;
 
 /**
- * Filter group payload. Used to create / update a group node.
- * @template FilterPropertyKey - The type of the filter property key.
+ * Payload for creating/updating AND group nodes - excludes base node properties.
+ * @template P - Property key type
  */
-export type TFilterGroupPayload<FilterPropertyKey extends string> = Omit<
-  TFilterGroupNode<FilterPropertyKey>,
-  keyof TFilterNodeBase
->;
+export type TFilterAndGroupPayload<P extends TFilterProperty> = Omit<TFilterAndGroupNode<P>, keyof TBaseFilterNode>;
+
+/**
+ * Payload for creating/updating OR group nodes - excludes base node properties.
+ * @template P - Property key type
+ */
+export type TFilterOrGroupPayload<P extends TFilterProperty> = Omit<TFilterOrGroupNode<P>, keyof TBaseFilterNode>;
+
+/**
+ * Payload for creating/updating NOT group nodes - excludes base node properties.
+ * @template P - Property key type
+ */
+export type TFilterNotGroupPayload<P extends TFilterProperty> = Omit<TFilterNotGroupNode<P>, keyof TBaseFilterNode>;
+
+/**
+ * Union payload type for creating/updating any group node - excludes base node properties.
+ * @template P - Property key type
+ */
+export type TFilterGroupPayload<P extends TFilterProperty> =
+  | TFilterAndGroupPayload<P>
+  | TFilterOrGroupPayload<P>
+  | TFilterNotGroupPayload<P>;

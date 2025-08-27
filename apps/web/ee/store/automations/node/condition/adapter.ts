@@ -1,152 +1,96 @@
 // plane imports
+import { isAndGroupNode, isOrGroupNode, isNotGroupNode, isConditionNode, isSingleValueOperator } from "@plane/utils";
 import {
   LOGICAL_OPERATOR,
-  TAutomationConditionFilterExpression,
-  TAutomationConditionFilterConfig,
+  TAutomationConditionFilterExpressionData,
   TFilterExpression,
-  TFilterConditionNode,
-  TAutomationConditionFilterKeys,
-  TLogicalOperator,
+  TAutomationConditionFilterProperty,
+  TAutomationConditionFilterExpression,
 } from "@plane/types";
 // local imports
 import { FilterAdapter } from "@/plane-web/store/rich-filters/adapter";
 
 class AutomationConditionFilterAdapter extends FilterAdapter<
-  TAutomationConditionFilterKeys,
+  TAutomationConditionFilterProperty,
   TAutomationConditionFilterExpression
 > {
   toInternal(
-    externalFilter: TAutomationConditionFilterExpression | null
-  ): TFilterExpression<TAutomationConditionFilterKeys> | null {
+    externalFilter: TAutomationConditionFilterExpression
+  ): TFilterExpression<TAutomationConditionFilterProperty> | null {
     if (!externalFilter) return null;
 
     return this._convertExpressionToInternal(externalFilter);
   }
 
   private _convertExpressionToInternal(
-    expression: TAutomationConditionFilterExpression
-  ): TFilterExpression<TAutomationConditionFilterKeys> {
-    // Get the first logical operator key and its value
-    const logicalOperator = Object.keys(expression)[0] as TLogicalOperator;
-    const value = expression[logicalOperator as keyof TAutomationConditionFilterExpression];
-
-    if (!value) {
-      throw new Error("Invalid expression: no value found for logical operator");
-    }
-
-    if (logicalOperator === LOGICAL_OPERATOR.NOT) {
-      // NOT takes a single config or expression
-      if ("field" in value) {
-        // It's a config
-        const config = value as TAutomationConditionFilterConfig;
-        return this._createGroupNode(logicalOperator, [
-          this._createConditionNode({
-            property: config.field,
-            operator: config.operator,
-            value: Array.isArray(config.value) ? config.value : [config.value],
-          }),
-        ]);
-      } else {
-        // It's a nested expression
-        return this._createGroupNode(logicalOperator, [
-          this._convertExpressionToInternal(value as TAutomationConditionFilterExpression),
-        ]);
-      }
-    } else {
-      // AND/OR take arrays
-      const arrayValue = value as (TAutomationConditionFilterConfig | TAutomationConditionFilterExpression)[];
-      const conditions = arrayValue.map((item) => {
-        if ("field" in item) {
-          // It's a config
-          const config = item as TAutomationConditionFilterConfig;
-          return this._createConditionNode({
-            property: config.field,
-            operator: config.operator,
-            value: Array.isArray(config.value) ? config.value : [config.value],
-          });
-        } else {
-          // It's a nested expression
-          return this._convertExpressionToInternal(item as TAutomationConditionFilterExpression);
-        }
+    expression: TAutomationConditionFilterExpressionData
+  ): TFilterExpression<TAutomationConditionFilterProperty> {
+    // Check if it's a simple condition (has field property)
+    if ("field" in expression) {
+      return this._createConditionNode({
+        property: expression.field,
+        operator: expression.operator,
+        value: expression.value,
       });
-
-      return this._createGroupNode(logicalOperator, conditions);
     }
+
+    // It's a logical group - check which type
+    if (LOGICAL_OPERATOR.AND in expression) {
+      const conditions = expression[LOGICAL_OPERATOR.AND].map((item) => this._convertExpressionToInternal(item));
+      return this._createGroupNode(LOGICAL_OPERATOR.AND, conditions);
+    }
+
+    if (LOGICAL_OPERATOR.OR in expression) {
+      const conditions = expression[LOGICAL_OPERATOR.OR].map((item) => this._convertExpressionToInternal(item));
+      return this._createGroupNode(LOGICAL_OPERATOR.OR, conditions);
+    }
+
+    if (LOGICAL_OPERATOR.NOT in expression) {
+      const condition = this._convertExpressionToInternal(expression[LOGICAL_OPERATOR.NOT]);
+      return this._createGroupNode(LOGICAL_OPERATOR.NOT, [condition]);
+    }
+
+    throw new Error("Invalid expression: unknown structure");
   }
 
-  toExternal(internalFilter: TFilterExpression<TAutomationConditionFilterKeys>): TAutomationConditionFilterExpression {
+  toExternal(
+    internalFilter: TFilterExpression<TAutomationConditionFilterProperty>
+  ): TAutomationConditionFilterExpression {
     if (!internalFilter) {
-      return this._createEmptyExpression();
+      return undefined;
     }
 
     return this._convertExpressionToExternal(internalFilter);
   }
 
-  private _createEmptyExpression(): TAutomationConditionFilterExpression {
-    return {
-      [LOGICAL_OPERATOR.AND]: [],
-    };
-  }
-
   private _convertExpressionToExternal(
-    expression: TFilterExpression<TAutomationConditionFilterKeys>
-  ): TAutomationConditionFilterExpression {
-    if (expression.type === "condition") {
-      // Convert single condition to AND group with one condition
+    expression: TFilterExpression<TAutomationConditionFilterProperty>
+  ): TAutomationConditionFilterExpressionData {
+    if (isConditionNode(expression)) {
+      // Return simple condition
       return {
-        [LOGICAL_OPERATOR.AND]: [
-          {
-            field: expression.property,
-            operator: expression.operator,
-            value: expression.value,
-          },
-        ],
+        field: expression.property,
+        operator: expression.operator,
+        value: isSingleValueOperator(expression.operator) && Array.isArray(expression.value) ? expression.value[0] : expression.value,
       };
     } else {
       // It's a group node
-      if (expression.logicalOperator === LOGICAL_OPERATOR.NOT) {
-        // NOT takes a single value, not an array
-        const firstChild = expression.children[0];
-        if (firstChild.type === "condition") {
-          const conditionChild = firstChild as TFilterConditionNode<TAutomationConditionFilterKeys>;
-          return {
-            [LOGICAL_OPERATOR.NOT]: {
-              field: conditionChild.property,
-              operator: conditionChild.operator,
-              value: conditionChild.value,
-            },
-          };
-        } else {
-          return {
-            [LOGICAL_OPERATOR.NOT]: this._convertExpressionToExternal(firstChild),
-          };
-        }
-      } else {
-        // AND/OR take arrays
-        const children = expression.children.map((child) => {
-          if (child.type === "condition") {
-            const conditionChild = child as TFilterConditionNode<TAutomationConditionFilterKeys>;
-            return {
-              field: conditionChild.property,
-              operator: conditionChild.operator,
-              value: conditionChild.value,
-            };
-          } else {
-            return this._convertExpressionToExternal(child);
-          }
-        });
-
-        if (expression.logicalOperator === LOGICAL_OPERATOR.AND) {
-          return {
-            [LOGICAL_OPERATOR.AND]: children,
-          };
-        } else {
-          return {
-            [LOGICAL_OPERATOR.OR]: children,
-          };
-        }
+      if (isNotGroupNode(expression)) {
+        return {
+          [LOGICAL_OPERATOR.NOT]: this._convertExpressionToExternal(expression.child),
+        };
+      } else if (isAndGroupNode(expression)) {
+        return {
+          [LOGICAL_OPERATOR.AND]: expression.children.map((child) => this._convertExpressionToExternal(child)),
+        };
+      } else if (isOrGroupNode(expression)) {
+        return {
+          [LOGICAL_OPERATOR.OR]: expression.children.map((child) => this._convertExpressionToExternal(child)),
+        };
       }
     }
+
+    throw new Error(`Unknown logical operator for expression: ${expression}`);
   }
 }
 
