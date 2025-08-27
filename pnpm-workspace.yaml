@@ -1,11 +1,11 @@
 packages:
-  - apps/*
-  - packages/*
-  - "!apps/api"
-  - "!apps/proxy"
+- apps/*
+- packages/*
+- "!apps/api"
+- "!apps/proxy"
 
 onlyBuiltDependencies:
-  - turbo
-  - sharp
+- turbo
+- sharp
 
 useNodeVersion: 22.18.0
