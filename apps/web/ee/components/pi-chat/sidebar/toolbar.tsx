@@ -36,7 +36,7 @@ export const Toolbar: FC<Props> = observer((props) => {
       <Link
         href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
         className={cn(
-          "flex items-center px-3 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded-lg border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
+          "flex items-center px-3 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
           {
             "w-full justify-start": !isSearchOpen,
           }
@@ -50,7 +50,7 @@ export const Toolbar: FC<Props> = observer((props) => {
         {!isSearchOpen && (
           <button
             type="button"
-            className="flex items-center justify-center size-8 rounded-lg bg-custom-background-100 text-custom-text-400 hover:text-custom-text-200 border-[0.5px] border-custom-sidebar-border-300"
+            className="flex items-center justify-center size-8 rounded bg-custom-background-100 text-custom-text-400 hover:text-custom-text-200 border-[0.5px] border-custom-sidebar-border-300"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
@@ -62,7 +62,7 @@ export const Toolbar: FC<Props> = observer((props) => {
 
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-90 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex items-center justify-start gap-1 rounded border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-90 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
             {
               "w-full px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
             }

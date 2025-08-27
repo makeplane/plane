@@ -1,20 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
-// plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
-import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
-import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
+import { SidebarWrapper } from "@/components/sidebar/sidebar-wrapper";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useAppRail } from "@/hooks/use-app-rail";
-import useSize from "@/hooks/use-window-size";
 // plane web components
 import { PagesAppSidebarList, PagesAppSidebarMenu, PagesAppSidebarQuickActions } from "@/plane-web/components/pages";
-import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -25,12 +17,7 @@ export const WikiAppSidebar = observer(() => {
   // state
   const [expandedPageIds, setExpandedPageIds] = useState<string[]>([]);
   // store hooks
-  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
-  const windowSize = useSize();
-  // refs
-  const ref = useRef<HTMLDivElement>(null);
 
   // Fetch parent pages if we're on a page detail view
   const { data: parentPagesList } = useSWR(
@@ -71,43 +58,10 @@ export const WikiAppSidebar = observer(() => {
     }
   }, [parentPagesList, handleParentPagesExpansion]);
 
-  useOutsideClickDetector(ref, () => {
-    if (sidebarCollapsed === false) {
-      if (window.innerWidth < 768) {
-        toggleSidebar();
-      }
-    }
-  });
-
-  useEffect(() => {
-    if (windowSize[0] < 768 && !sidebarCollapsed) toggleSidebar();
-  }, [windowSize]);
-
   return (
-    <>
-      <div className="flex flex-col gap-2 px-4">
-        {!shouldRenderAppRail && <SidebarDropdown />}
-
-        {isAppRailEnabled && (
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Wiki</span>
-            <div className="flex items-center gap-2">
-              <AppSidebarToggleButton />
-            </div>
-          </div>
-        )}
-
-        <PagesAppSidebarQuickActions />
-      </div>
-      <div className="flex flex-col gap-1 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto pt-3 pb-0.5 vertical-scrollbar px-4">
-        <PagesAppSidebarMenu />
-        <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
-      </div>
-      <div className="flex items-center justify-between p-2 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
-        <WorkspaceEditionBadge />
-        {!shouldRenderAppRail && <HelpMenu />}
-        {!isAppRailEnabled && <AppSidebarToggleButton />}
-      </div>
-    </>
+    <SidebarWrapper title="Wiki" quickActions={<PagesAppSidebarQuickActions />}>
+      <PagesAppSidebarMenu />
+      <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
+    </SidebarWrapper>
   );
 });

@@ -21,7 +21,7 @@ const RecentChats = observer((props: TProps) => {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="text-sm font-semibold text-custom-text-300">Recents</div>
+      <div className="text-sm font-semibold text-custom-text-400">Recents</div>
       <div className="flex flex-col gap-0.5">
         {userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => (

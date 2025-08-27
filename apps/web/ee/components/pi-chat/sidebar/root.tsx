@@ -4,10 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
-import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
+import { SidebarWrapper } from "@/components/sidebar/sidebar-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useAppRail } from "@/hooks/use-app-rail";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import FavoriteChats from "./favorites";
 import RecentChats from "./recents";
@@ -19,7 +17,6 @@ export const PiSidebar = observer(() => {
   // store
   const { geUserThreads, geFavoriteChats, fetchFavoriteChats, isLoadingThreads } = usePiChat();
   const userThreads = geUserThreads();
-  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   const { workspaceSlug } = useParams();
   const { getWorkspaceBySlug } = useWorkspace();
 
@@ -40,30 +37,16 @@ export const PiSidebar = observer(() => {
   const updateSearchQuery = (value: string) => setSearchQuery(value);
 
   return (
-    <>
-      <div className="flex flex-col gap-2 px-3">
-        {!shouldRenderAppRail && <SidebarDropdown />}
-
-        {isAppRailEnabled && (
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Pi Chat</span>
-            <div className="flex items-center gap-2">
-              <AppSidebarToggleButton />
-            </div>
-          </div>
-        )}
-
-        {/* Toolbar */}
-        <Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />
-      </div>
-      <div className="flex flex-col gap-1 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto pt-3 pb-0.5 vertical-scrollbar px-3 space-y-2">
-        {/* Favorites */}
-        {favoriteChats && favoriteChats.length > 0 && (
-          <FavoriteChats favoriteChats={favoriteChats} isLoading={isLoadingFavoriteChats} />
-        )}
-        {/* History List */}
-        <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} />
-      </div>
-    </>
+    <SidebarWrapper
+      title="Pi Chat"
+      quickActions={<Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />}
+    >
+      {/* Favorites */}
+      {favoriteChats && favoriteChats.length > 0 && (
+        <FavoriteChats favoriteChats={favoriteChats} isLoading={isLoadingFavoriteChats} />
+      )}
+      {/* History List */}
+      <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} />
+    </SidebarWrapper>
   );
 });
