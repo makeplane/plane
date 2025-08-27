@@ -71,6 +71,7 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
               tabClassName={tabClassName}
               size={size}
               onTabChange={handleTabChange}
+              autoWrap={false}
             />
             {actions && <div className="flex-grow">{actions}</div>}
           </div>
