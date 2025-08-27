@@ -95,6 +95,7 @@ export interface IIssueDetail
   attachmentDeleteModalId: string | null;
   // computed
   isAnyModalOpen: boolean;
+  isPeekOpen: boolean;
   // helper actions
   getIsIssuePeeked: (issueId: string) => boolean;
   // actions
@@ -188,6 +189,7 @@ export abstract class IssueDetail implements IIssueDetail {
       lastWidgetAction: observable.ref,
       // computed
       isAnyModalOpen: computed,
+      isPeekOpen: computed,
       // action
       setPeekIssue: action,
       setIssueLinkData: action,
@@ -233,6 +235,10 @@ export abstract class IssueDetail implements IIssueDetail {
       !!this.isSubIssuesModalOpen ||
       !!this.attachmentDeleteModalId
     );
+  }
+
+  get isPeekOpen() {
+    return !!this.peekIssue;
   }
 
   // helper actions

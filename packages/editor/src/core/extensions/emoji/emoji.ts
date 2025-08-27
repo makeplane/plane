@@ -16,7 +16,9 @@ import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -342,6 +344,10 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
   },
 
   addProseMirrorPlugins() {
+    const isTouchDevice = !!getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+    if (isTouchDevice) {
+      return [];
+    }
     return [
       Suggestion({
         editor: this.editor,
