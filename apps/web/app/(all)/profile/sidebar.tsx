@@ -16,6 +16,7 @@ import {
   Settings2,
   CirclePlus,
   Mails,
+  Blocks,
 } from "lucide-react";
 // plane imports
 import { PROFILE_ACTION_LINKS } from "@plane/constants";
@@ -28,7 +29,7 @@ import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserSettings } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
@@ -53,6 +54,7 @@ const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size
     activity: Activity,
     preferences: Settings2,
     notifications: Bell,
+    connections: Blocks,
     "api-tokens": KeyRound,
   };
 
@@ -69,7 +71,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
-  const { data: currentUserSettings } = useUserSettings();
+  // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -77,9 +79,10 @@ export const ProfileLayoutSidebar = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
+  // FIXME:
   const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const ref = useRef<HTMLDivElement>(null);
@@ -208,7 +211,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   >
                     <span
                       className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                        !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
+                        !workspace?.logo_url && "rounded bg-custom-primary-500 text-white "
                       }`}
                     >
                       {workspace?.logo_url && workspace.logo_url !== "" ? (

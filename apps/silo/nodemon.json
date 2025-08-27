@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": ["src/public"],
+  "exec": "NODE_ENV=development PORT=3200 tsup src/start.ts --watch --onSuccess 'node dist/start.cjs'"
+}

@@ -19,11 +19,9 @@ class WorkspaceStatesEndpoint(BaseAPIView):
     def get(self, request, slug):
         states = State.objects.filter(
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
             is_triage=False,
-        )
+        ).accessible_to(request.user.id, slug)
 
         grouped_states = defaultdict(list)
         for state in states:
