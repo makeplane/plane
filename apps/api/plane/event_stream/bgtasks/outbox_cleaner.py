@@ -119,6 +119,9 @@ def delete_outbox_records() -> None:
                 "created_at",
                 "workspace_id",
                 "project_id",
+                "initiator_id",
+                "initiator_type",
+                "claimed_at",
             )
             .iterator(chunk_size=BATCH_SIZE)
         )
@@ -136,6 +139,9 @@ def delete_outbox_records() -> None:
                 "created_at",
                 "workspace_id",
                 "project_id",
+                "initiator_id",
+                "initiator_type",
+                "claimed_at",
             )
             .iterator(chunk_size=BATCH_SIZE)
         )
