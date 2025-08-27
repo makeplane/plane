@@ -1,6 +1,7 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
 import { EAutomationSidebarTab } from "@plane/types";
+import { IAutomationInstance } from "./automation";
 
 type TSelectedSidebarConfig = {
   tab: EAutomationSidebarTab | null;
@@ -10,6 +11,7 @@ type TSelectedSidebarConfig = {
 export interface IAutomationDetailSidebarHelper {
   // properties
   selectedSidebarConfig: TSelectedSidebarConfig;
+  // computed
   isPublishAlertOpen: boolean;
   // actions
   setSelectedSidebarConfig: (config: TSelectedSidebarConfig) => void;
@@ -19,22 +21,34 @@ export interface IAutomationDetailSidebarHelper {
 export class AutomationDetailSidebarHelper implements IAutomationDetailSidebarHelper {
   // properties
   selectedSidebarConfig: IAutomationDetailSidebarHelper["selectedSidebarConfig"];
-  isPublishAlertOpen: IAutomationDetailSidebarHelper["isPublishAlertOpen"];
+  _isPublishAlertOpen: IAutomationDetailSidebarHelper["isPublishAlertOpen"];
+  // automation instance
+  automation: IAutomationInstance;
 
-  constructor() {
+  constructor(automation: IAutomationInstance) {
+    // automation instance
+    this.automation = automation;
     this.selectedSidebarConfig = {
-      tab: null,
+      tab: EAutomationSidebarTab.TRIGGER,
       mode: "create",
     };
-    this.isPublishAlertOpen = true;
+    this._isPublishAlertOpen = true;
     makeObservable(this, {
       // properties
       selectedSidebarConfig: observable,
-      isPublishAlertOpen: observable,
+      _isPublishAlertOpen: observable,
+      // computed
+      isPublishAlertOpen: computed,
       // actions
       setSelectedSidebarConfig: action,
       setIsPublishAlertOpen: action,
     });
+  }
+
+  get isPublishAlertOpen() {
+    return (
+      this._isPublishAlertOpen && this.automation.isTriggerNodeAvailable && this.automation.isAnyActionNodeAvailable
+    );
   }
 
   // actions
@@ -43,6 +57,6 @@ export class AutomationDetailSidebarHelper implements IAutomationDetailSidebarHe
   });
 
   setIsPublishAlertOpen: IAutomationDetailSidebarHelper["setIsPublishAlertOpen"] = action((isOpen) => {
-    this.isPublishAlertOpen = isOpen;
+    this._isPublishAlertOpen = isOpen;
   });
 }

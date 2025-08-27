@@ -8,51 +8,30 @@ type TProps = {
   actionButtons?: React.ReactNode;
   children: React.ReactNode;
   defaultOpen?: boolean;
-  headerActions?: React.ReactNode;
+  headerActions?: React.ReactNode | ((open: boolean) => React.ReactNode);
   title: string;
 };
 
-// TODO: Check if we can use collapsible component from plane-ui
 export const AutomationDetailsSidebarSectionWrapper: React.FC<TProps> = (props) => {
   const { actionButtons, children, defaultOpen = true, headerActions, title } = props;
 
   return (
-    <Disclosure as="section" defaultOpen={defaultOpen} className="flex-grow">
+    <Disclosure as="section" defaultOpen={defaultOpen} className="flex-grow w-full">
       {({ open }) => (
         <>
-          <div
-            className={cn("flex items-center gap-2 border-b pb-1.5", {
-              "border-transparent px-6": open,
-              "border-custom-border-200 mx-6": !open,
-            })}
-          >
-            <h3
-              className={cn("flex-shrink-0 text-[9px] font-semibold uppercase transition-colors", {
-                "text-custom-text-300": open,
-                "text-custom-text-400": !open,
-              })}
-            >
-              {title}
-            </h3>
-            <div className="flex-grow h-px" />
-            {headerActions}
+          <div className="px-3">
             <Disclosure.Button
               className={cn(
-                "flex-shrink-0 size-4 rounded hover:text-custom-text-100 hover:bg-custom-background-80 grid place-items-center outline-none border-none transition-colors",
-                {
-                  "text-custom-text-200": open,
-                  "text-custom-text-300": !open,
-                }
+                "group/section-wrapper flex items-center gap-2 py-1.5 px-1 flex-shrink-0 w-full hover:rounded hover:text-custom-text-100 hover:bg-custom-background-80"
               )}
               aria-label="Toggle section"
             >
-              {({ open }) => (
-                <ChevronRight
-                  className={cn("size-3.5 transition-transform", {
-                    "rotate-90": open,
-                  })}
-                />
-              )}
+              <h3 className="flex-shrink-0 text-[9px] font-semibold uppercase text-custom-text-200">{title}</h3>
+              <div className="flex-grow h-px" />
+              {typeof headerActions === "function" ? headerActions(open) : headerActions}
+              <div className="flex-shrink-0 size-4 rounded grid place-items-center outline-none border-none">
+                <ChevronRight className={cn("size-3.5 transition-transform", { "rotate-90": open })} />
+              </div>
             </Disclosure.Button>
           </div>
           <Transition
@@ -63,8 +42,8 @@ export const AutomationDetailsSidebarSectionWrapper: React.FC<TProps> = (props) 
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className="mt-4 space-y-4">
-              <div className="px-6 space-y-4">{children}</div>
+            <Disclosure.Panel className="mt-2 space-y-3">
+              <div className="space-y-3 px-4">{children}</div>
               {actionButtons}
             </Disclosure.Panel>
           </Transition>

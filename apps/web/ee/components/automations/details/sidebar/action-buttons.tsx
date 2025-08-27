@@ -1,8 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@plane/ui";
+// plane imports
+import { Button, cn } from "@plane/ui";
 
 type TProps = {
   nextButton?: {
+    type?: "button" | "submit";
     label: string;
     isDisabled?: boolean;
     onClick?: () => void | Promise<void>;
@@ -14,20 +16,26 @@ type TProps = {
     onClick?: () => void | Promise<void>;
     renderIcon?: boolean;
   };
+  borderPosition?: "top" | "bottom";
 };
 
 export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) => {
-  const { nextButton, previousButton } = props;
+  const { nextButton, previousButton, borderPosition = "top" } = props;
 
   return (
-    <div className="space-y-2 border-t border-custom-border-200 px-6 pt-4">
+    <div
+      className={cn("space-y-2 px-4", {
+        "pt-4 border-t border-custom-border-200": borderPosition === "top",
+        "pb-4 border-b border-custom-border-200": borderPosition === "bottom",
+      })}
+    >
       <div className="flex items-center justify-end gap-3">
         {previousButton && (
           <Button
             variant="neutral-primary"
             size="sm"
             prependIcon={previousButton.renderIcon === false ? undefined : <ChevronLeft className="size-5" />}
-            disabled={previousButton.isDisabled || !previousButton.onClick}
+            disabled={previousButton.isDisabled}
             onClick={previousButton.onClick}
           >
             {previousButton.label}
@@ -35,10 +43,11 @@ export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) =
         )}
         {nextButton && (
           <Button
+            type={nextButton.type ?? "button"}
             variant="primary"
             size="sm"
             appendIcon={nextButton.renderIcon === false ? undefined : <ChevronRight className="size-5" />}
-            disabled={nextButton.isDisabled || !nextButton.onClick}
+            disabled={nextButton.isDisabled}
             onClick={nextButton.onClick}
           >
             {nextButton.label}

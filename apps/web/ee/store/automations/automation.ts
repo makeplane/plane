@@ -9,6 +9,7 @@ import {
   TAutomation,
   TAutomationActionNode,
   TAutomationActivity,
+  TAutomationActivityFilters,
   TAutomationConditionNode,
   TAutomationNode,
   TAutomationNodeConfig,
@@ -17,9 +18,8 @@ import {
   TAutomationTriggerNode,
   TCreateActionPayload,
   TCreateConditionPayload,
-  TCreateTriggerResponse,
   TCreateTriggerPayload,
-  TAutomationActivityFilters,
+  TCreateTriggerResponse,
 } from "@plane/types";
 import { generateConditionPayload, getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
 // plane web imports
@@ -182,7 +182,7 @@ export class AutomationInstance implements IAutomationInstance {
     this.edges = new Map();
     // initialize helpers
     this.helpers = helpers;
-    this.sidebarHelper = new AutomationDetailSidebarHelper();
+    this.sidebarHelper = new AutomationDetailSidebarHelper(this);
     // initialize root store
     this.activity = new AutomationActivityStore(helpers.activityHelpers);
     this.rootStore = store;

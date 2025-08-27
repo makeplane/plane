@@ -17,7 +17,7 @@ export const AutomationDetailsSidebarActivityList: React.FC<Props> = observer((p
   const { activityIds } = automation?.activity ?? {};
 
   return (
-    <div className="px-6">
+    <div className="px-4">
       {activityIds?.map((activityId) => (
         <AutomationDetailsSidebarActivityListItem
           key={activityId}

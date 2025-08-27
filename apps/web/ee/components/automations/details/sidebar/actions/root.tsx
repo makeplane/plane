@@ -18,7 +18,6 @@ import { DeleteAutomationNodeConfirmationModal } from "../delete-confirmation-mo
 import {
   AutomationDetailsSidebarActionsFormRoot,
   EAutomationActionFormType,
-  EAutomationExistingActionMode,
   TAutomationActionFormData,
 } from "./form/root";
 
@@ -32,9 +31,6 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
   const actionFormRef = useRef<HTMLFormElement>(null);
   // states
   const [isActionFormOpen, setIsActionFormOpen] = useState(false);
-  const [existingActionModeMap, setExistingActionModeMap] = useState<Map<string, EAutomationExistingActionMode>>(
-    new Map()
-  );
   const [selectedActionToDelete, setSelectedActionToDelete] = useState<string | null>(null);
   const [isCreatingUpdatingAction, setIsCreatingUpdatingAction] = useState(false);
   // plane hooks
@@ -80,13 +76,6 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
     }
   }, [isCreateActionButtonSelected]);
 
-  const getExistingActionMode = (actionNodeId: string) =>
-    existingActionModeMap.get(actionNodeId) ?? EAutomationExistingActionMode.VIEW;
-
-  const setExistingActionMode = (actionNodeId: string, mode: EAutomationExistingActionMode) => {
-    setExistingActionModeMap((prev) => new Map(prev).set(actionNodeId, mode));
-  };
-
   const validateAndTransformFormData = (data: TAutomationActionFormData): TAutomationActionNodeConfig | null => {
     if (!data.handler_name || !data.config) return null;
 
@@ -127,7 +116,6 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
       handler_name: data.handler_name,
       config: validConfig,
     });
-    setExistingActionMode(actionNode.id, EAutomationExistingActionMode.VIEW);
     setIsCreatingUpdatingAction(false);
   };
 
@@ -146,14 +134,13 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
         handleDelete={() => handleDeleteAction()}
         isOpen={!!selectedActionToDelete}
       />
-      <section className="flex-grow space-y-4">
+      <section className="flex-grow space-y-2">
         {actionNodes?.map((actionNode, index) => (
           <AutomationDetailsSidebarActionsFormRoot
             key={actionNode.id}
             automationId={automationId}
             currentIndex={index}
             isSubmitting={isCreatingUpdatingAction}
-            onCancel={() => setExistingActionMode(actionNode.id, EAutomationExistingActionMode.VIEW)}
             onDelete={() => setSelectedActionToDelete(actionNode.id)}
             onSubmit={(data) => handleUpdateAction(actionNode, data)}
             projectId={projectId}
@@ -161,8 +148,6 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
             workspaceSlug={workspaceSlug}
             type={EAutomationActionFormType.EXISTING}
             data={actionNode.asJSON}
-            mode={getExistingActionMode(actionNode.id)}
-            updateMode={(mode) => setExistingActionMode(actionNode.id, mode)}
             isOnlyActionNode={actionNodesCount === 1}
             isAutomationEnabled={automation?.is_enabled}
           />
@@ -182,7 +167,7 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
             type={EAutomationActionFormType.NEW}
           />
         ) : (
-          <section className="flex-grow px-6">
+          <section className="flex-grow px-4 pt-2">
             <Button
               size="sm"
               variant="neutral-primary"

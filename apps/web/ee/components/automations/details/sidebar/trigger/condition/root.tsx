@@ -37,7 +37,7 @@ export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = obs
       {({ filter }) => (
         <section className="space-y-2">
           {filter && (
-            <div className="space-y-2 px-6">
+            <div className="space-y-2 px-4">
               <p className="text-xs font-medium">{t("automations.condition.label")}</p>
               <div className="flex flex-col items-start">
                 {filter.allConditions.map((condition, index) => (

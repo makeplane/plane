@@ -155,8 +155,8 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
 
   if (!automation) return null;
   return (
-    <section className="flex-grow space-y-6">
-      <div className="space-y-2 px-6">
+    <section className="flex-grow space-y-4 pt-2">
+      <div className="space-y-2 px-4">
         <div className="flex items-center gap-1">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <Zap className="size-3" />

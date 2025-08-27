@@ -75,11 +75,11 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
         await handleCreate(payload);
       }
       handleClose();
-    } catch {
+    } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: isEditing ? "Failed to update automation" : "Failed to create automation",
-        message: "Something went wrong. Please try again.",
+        message: error?.error || "Something went wrong. Please try again.",
       });
     }
   };

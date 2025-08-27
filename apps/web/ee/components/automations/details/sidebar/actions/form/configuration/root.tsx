@@ -1,4 +1,5 @@
 // plane imports
+import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EActionNodeHandlerName } from "@plane/types";
 // local imports
@@ -7,6 +8,7 @@ import { AutomationActionChangePropertyConfiguration } from "./change-property/r
 
 type TProps = {
   automationId: string;
+  editorRef: React.RefObject<EditorRefApi>;
   isDisabled?: boolean;
   projectId: string;
   selectedHandlerName: EActionNodeHandlerName;
@@ -15,7 +17,7 @@ type TProps = {
 };
 
 export const AutomationActionConfigurationRoot: React.FC<TProps> = (props) => {
-  const { automationId, isDisabled, selectedHandlerName, projectId, workspaceId, workspaceSlug } = props;
+  const { automationId, editorRef, isDisabled, selectedHandlerName, projectId, workspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
 
@@ -25,6 +27,7 @@ export const AutomationActionConfigurationRoot: React.FC<TProps> = (props) => {
       {selectedHandlerName === EActionNodeHandlerName.ADD_COMMENT && (
         <AutomationActionAddCommentConfiguration
           automationId={automationId}
+          editorRef={editorRef}
           isDisabled={isDisabled}
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}

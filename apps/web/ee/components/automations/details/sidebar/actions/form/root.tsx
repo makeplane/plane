@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { SquarePen, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 // plane imports
+import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import {
   EActionNodeHandlerName,
@@ -12,8 +13,8 @@ import {
   TAddCommentActionConfig,
   TAutomationActionNodeConfig,
 } from "@plane/types";
-// plane web imports
 import { isCommentEmpty } from "@plane/utils";
+// plane web imports
 import { AutomationDetailsSidebarActionButtons } from "@/plane-web/components/automations/details/sidebar/action-buttons";
 import { AutomationDetailsSidebarSectionWrapper } from "@/plane-web/components/automations/details/sidebar/section-wrapper";
 // local imports
@@ -46,19 +47,12 @@ export enum EAutomationActionFormType {
   EXISTING = "existing",
 }
 
-export enum EAutomationExistingActionMode {
-  VIEW = "view",
-  EDIT = "edit",
-}
-
 type TNewAutomationAction = {
   type: EAutomationActionFormType.NEW;
 };
 
 type TExistingAutomationAction = {
   type: EAutomationActionFormType.EXISTING;
-  mode: EAutomationExistingActionMode;
-  updateMode: (mode: EAutomationExistingActionMode) => void;
   data: TAutomationActionNode;
   isOnlyActionNode: boolean;
   isAutomationEnabled: boolean;
@@ -69,7 +63,7 @@ type TProps = {
   currentIndex: number;
   defaultOpen?: boolean;
   isSubmitting: boolean;
-  onCancel: () => void | Promise<void>;
+  onCancel?: () => void | Promise<void>;
   onDelete: () => void | Promise<void>;
   onSubmit: (data: TAutomationActionFormData) => void | Promise<void>;
   projectId: string;
@@ -93,6 +87,8 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
   } = props;
   // plane hooks
   const { t } = useTranslation();
+  // editor ref
+  const editorRef = useRef<EditorRefApi>(null);
   // form state
   const defaultValueForReset =
     type === EAutomationActionFormType.EXISTING
@@ -104,10 +100,9 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
   // derived values
   const selectedHandlerName = methods.watch("handler_name");
   const selectedConfig = methods.watch("config");
+  const isFormDirty = methods.formState.isDirty;
   const isDeleteButtonDisabled =
     type === EAutomationActionFormType.EXISTING && props.isAutomationEnabled && props.isOnlyActionNode;
-  const isFormFieldsDisabled =
-    type === EAutomationActionFormType.EXISTING && props.mode === EAutomationExistingActionMode.VIEW;
   const isNextButtonDisabled = () => {
     if (!selectedHandlerName || !selectedConfig) return true;
     if (selectedHandlerName === EActionNodeHandlerName.CHANGE_PROPERTY) {
@@ -127,30 +122,47 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
   };
 
   const handleHandlerNameChange = (value: EActionNodeHandlerName) => {
-    methods.setValue("handler_name", value);
+    methods.setValue("handler_name", value, {
+      shouldDirty: true,
+    });
     if (value === EActionNodeHandlerName.CHANGE_PROPERTY) {
-      methods.setValue("config", DEFAULT_CHANGE_PROPERTY_CONFIG);
+      methods.setValue("config", DEFAULT_CHANGE_PROPERTY_CONFIG, {
+        shouldDirty: true,
+      });
     }
     if (value === EActionNodeHandlerName.ADD_COMMENT) {
-      methods.setValue("config", DEFAULT_ADD_COMMENT_CONFIG);
+      methods.setValue("config", DEFAULT_ADD_COMMENT_CONFIG, {
+        shouldDirty: true,
+      });
+    }
+  };
+
+  const handleSubmit = async (data: TAutomationActionFormData): Promise<void> => {
+    try {
+      await onSubmit(data);
+      methods.reset(data);
+    } catch (error) {
+      throw error;
     }
   };
 
   const handleCancel = () => {
     methods.reset(defaultValueForReset);
-    onCancel();
+    const config = defaultValueForReset.config as TAddCommentActionConfig | undefined;
+    editorRef.current?.setEditorValue(config?.comment_text || "<p></p>", true);
+    onCancel?.();
   };
 
   return (
     <FormProvider {...methods}>
-      <form ref={ref} onSubmit={methods.handleSubmit(onSubmit)} className="space-y-5">
+      <form ref={ref} onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
         <AutomationDetailsSidebarSectionWrapper
           defaultOpen={defaultOpen}
           title={`${t("automations.action.label")} #${currentIndex + 1}`}
           actionButtons={
             <AutomationDetailsSidebarActionButtons
               previousButton={
-                !isFormFieldsDisabled
+                isFormDirty
                   ? {
                       label: t("common.cancel"),
                       onClick: handleCancel,
@@ -160,29 +172,20 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
                   : undefined
               }
               nextButton={
-                !isFormFieldsDisabled
+                isFormDirty
                   ? {
+                      type: "submit",
                       label: isSubmitting ? t("common.confirming") : t("common.confirm"),
                       isDisabled: isNextButtonDisabled() || isSubmitting,
-                      onClick: () => {
-                        onSubmit(methods.getValues());
-                      },
                       renderIcon: false,
                     }
                   : undefined
               }
+              borderPosition="bottom"
             />
           }
-          headerActions={
-            <>
-              {type === EAutomationActionFormType.EXISTING && props.mode === EAutomationExistingActionMode.VIEW && (
-                <AutomationDetailsSidebarActionFormHeaderButton
-                  onClick={() => props.updateMode(EAutomationExistingActionMode.EDIT)}
-                  variant="default"
-                >
-                  <SquarePen className="size-3" />
-                </AutomationDetailsSidebarActionFormHeaderButton>
-              )}
+          headerActions={(open) =>
+            open && (
               <AutomationDetailsSidebarActionFormHeaderButton
                 onClick={onDelete}
                 variant="destructive"
@@ -191,22 +194,18 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
                   isDeleteButtonDisabled ? t("automations.action.validation.delete_only_action") : undefined
                 }
               >
-                <Trash2 className="size-3" />
+                <Trash2 className="size-3.5" />
               </AutomationDetailsSidebarActionFormHeaderButton>
-            </>
+            )
           }
         >
-          <AutomationActionHandlerDropdown
-            value={methods.watch("handler_name")}
-            onChange={handleHandlerNameChange}
-            isDisabled={isFormFieldsDisabled}
-          />
+          <AutomationActionHandlerDropdown value={methods.watch("handler_name")} onChange={handleHandlerNameChange} />
           {selectedHandlerName && (
             <AutomationActionConfigurationRoot
               automationId={automationId}
+              editorRef={editorRef}
               selectedHandlerName={selectedHandlerName}
               projectId={projectId}
-              isDisabled={isFormFieldsDisabled}
               workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
             />

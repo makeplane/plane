@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, TContextMenuItem, Tooltip } from "@plane/ui";
@@ -33,10 +33,14 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getAutomationById } = useAutomations();
+  const {
+    getAutomationById,
+    projectAutomations: { setCreateUpdateModalConfig },
+  } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
-  if (!automation || !automation.canCurrentUserDelete) return null;
+  const isAnyActionAllowed = automation?.canCurrentUserEdit || automation?.canCurrentUserDelete;
+  if (!automation || !isAnyActionAllowed) return null;
 
   const handleAutomationDeletion = async () => {
     if (!automation.id) return;
@@ -47,6 +51,15 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
   };
 
   const MENU_ITEMS: TAutomationQuickActionsMenuItem[] = [
+    {
+      key: "edit",
+      action: () => {
+        setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
+      },
+      title: t("common.actions.edit"),
+      icon: Pencil,
+      shouldRender: automation.canCurrentUserEdit,
+    },
     {
       key: "delete",
       action: () => setIsDeleteModalOpen(true),

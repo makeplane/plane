@@ -26,7 +26,10 @@ export const AutomationDetailsSidebarActionFormHeaderButton: React.FC<TProps> = 
               "hover:text-custom-text-300 hover:bg-transparent cursor-not-allowed": isDisabled,
             }
           )}
-          onClick={onClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
           disabled={isDisabled}
         >
           {children}
