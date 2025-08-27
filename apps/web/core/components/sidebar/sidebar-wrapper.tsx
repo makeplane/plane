@@ -20,7 +20,7 @@ type TSidebarWrapperProps = {
 };
 
 export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
-  const { children, title, quickActions  } = props;
+  const { children, title, quickActions } = props;
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
@@ -42,7 +42,7 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
   }, [windowSize]);
 
   return (
-    <>
+    <div ref={ref} className="flex flex-col h-full w-full">
       <div className="flex flex-col gap-3 px-3">
         {/* Workspace switcher and settings */}
         {!shouldRenderAppRail && <SidebarDropdown />}
@@ -69,6 +69,6 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
           {!isAppRailEnabled && <AppSidebarToggleButton />}
         </div>
       </div>
-    </>
+    </div>
   );
 });
