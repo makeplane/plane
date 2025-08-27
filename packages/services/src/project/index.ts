@@ -1,2 +1,8 @@
-export * from "./view.service";
-export * from "./sites-publish.service";
+import { API_BASE_URL } from "@plane/constants";
+import { ExtendedProjectService } from "./extended.service";
+
+export class ProjectService extends ExtendedProjectService {
+  constructor() {
+    super(API_BASE_URL || "");
+  }
+}
