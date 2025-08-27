@@ -12,7 +12,7 @@ from plane.ee.models import (
 
 class IssuePropertyAPISerializer(BaseSerializer):
     relation_type = serializers.ChoiceField(
-        choices=RelationTypeEnum.choices, required=False
+        choices=RelationTypeEnum.choices, required=False, allow_null=True
     )
 
     class Meta:

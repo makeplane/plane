@@ -1235,6 +1235,7 @@
     "invalid_app_installation_id": "Impossibile installare l'app"
   },
   "import_status": {
+    "queued": "In coda",
     "created": "Creato",
     "initiated": "Inizializzato",
     "pulling": "Trascinamento",

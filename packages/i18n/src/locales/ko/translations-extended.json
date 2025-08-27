@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "앱 설치에 실패했습니다"
   },
   "import_status": {
+    "queued": "대기 중",
     "created": "생성됨",
     "initiated": "시작됨",
     "pulling": "풀링 중",

@@ -1235,6 +1235,7 @@
     "invalid_app_installation_id": "A apărut o eroare la instalarea aplicației"
   },
   "import_status": {
+    "queued": "În coadă",
     "created": "Creat",
     "initiated": "Inițiat",
     "pulling": "Se extrag",

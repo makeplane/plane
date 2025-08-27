@@ -1,5 +1,6 @@
-import { TJobStatus, PlaneEntities } from "@plane/etl/core";
+import { TJobStatus, PlaneEntities, E_JOB_STATUS } from "@plane/etl/core";
 import { TImportJob } from "@plane/types";
+import { JobService } from "@/apps/engine/services/job.service";
 import { IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY } from "@/helpers/cache-keys";
 import { wait } from "@/helpers/delay";
 import { updateJobWithReport } from "@/helpers/job";
@@ -67,6 +68,22 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         completed_batch_count: report.total_batch_count,
       }),
     ]);
+
+    // start the queued jobs
+    const queuedJobs = await client.importJob.listImportJobs({
+      workspace_id: job.workspace_id,
+      source: job.source,
+      statuses: E_JOB_STATUS.QUEUED,
+      order_by: "created_at",
+    });
+    const nextJob = queuedJobs[0];
+    const isAnyJobsQueued = queuedJobs.length > 0;
+
+    if (isAnyJobsQueued) {
+      const jobService = new JobService();
+      logger.info(`Starting next job for ${job.source}`, { jobId: job.id, nextJobId: nextJob.id });
+      await jobService.runJob(nextJob.id);
+    }
   }
 
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {

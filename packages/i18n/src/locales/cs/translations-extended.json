@@ -1237,6 +1237,7 @@
     "invalid_app_installation_id": "Nepodařilo se nainstalovat aplikaci"
   },
   "import_status": {
+    "queued": "V pořádku",
     "created": "Vytvořeno",
     "initiated": "Zahájeno",
     "pulling": "Stahování",

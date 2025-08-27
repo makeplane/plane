@@ -13,6 +13,7 @@ type TSyncJobStatusProps = {
 
 const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.CREATED]: "text-gray-500 border border-gray-500 bg-gray-500/10",
+  [E_JOB_STATUS.QUEUED]: "text-gray-500 border border-gray-500 bg-gray-500/10",
   [E_JOB_STATUS.INITIATED]: "text-gray-500 border border-gray-500 bg-gray-500/10",
   [E_JOB_STATUS.PULLING]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",
   [E_JOB_STATUS.PULLED]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",

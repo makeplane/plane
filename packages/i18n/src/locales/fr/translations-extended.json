@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "Échec de l'installation de l'application"
   },
   "import_status": {
+    "queued": "En attente",
     "created": "Créé",
     "initiated": "Initié",
     "pulling": "Extraction",

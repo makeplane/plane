@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "安装应用失败"
   },
   "import_status": {
+    "queued": "排队中",
     "created": "已创建",
     "initiated": "已启动",
     "pulling": "拉取中",

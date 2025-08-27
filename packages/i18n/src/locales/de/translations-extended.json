@@ -1231,6 +1231,7 @@
     "invalid_app_installation_id": "Fehler beim Installieren der App"
   },
   "import_status": {
+    "queued": "In Warteschlange",
     "created": "Erstellt",
     "initiated": "Eingeleitet",
     "pulling": "Abrufen",

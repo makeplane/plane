@@ -4,6 +4,12 @@ import { logger } from "@/logger";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
+
+export type TImportJobListQueryParams = Partial<Record<keyof TImportJob, string | boolean | number>> & {
+  statuses?: string;
+  order_by?: "created_at" | "updated_at" | "status";
+};
+
 export class ImportJobAPIService<TJobConfig = object> extends APIService {
   constructor(options: ClientOptions) {
     super(options);
@@ -38,7 +44,7 @@ export class ImportJobAPIService<TJobConfig = object> extends APIService {
       });
   }
 
-  async listImportJobs(params?: Partial<Record<keyof TImportJob, string | boolean | number>>): Promise<TImportJob[]> {
+  async listImportJobs(params?: TImportJobListQueryParams): Promise<TImportJob[]> {
     params = removeUndefinedFromObject(params);
     return this.get(`/api/v1/import-jobs/`, { params: params })
       .then((response) => response.data)

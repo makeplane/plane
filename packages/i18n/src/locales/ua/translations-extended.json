@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "Не вдалося встановити застосунок"
   },
   "import_status": {
+    "queued": "В черзі",
     "created": "Створено",
     "initiated": "Ініційовано",
     "pulling": "Отримання",

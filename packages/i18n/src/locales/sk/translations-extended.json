@@ -1243,6 +1243,7 @@
     "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
   },
   "import_status": {
+    "queued": "V poradí",
     "created": "Vytvorené",
     "initiated": "Iniciované",
     "pulling": "Sťahuje sa",

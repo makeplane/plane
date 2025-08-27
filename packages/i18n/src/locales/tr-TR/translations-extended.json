@@ -1252,6 +1252,7 @@
     "invalid_app_installation_id": "Uygulama yüklenemedi"
   },
   "import_status": {
+    "queued": "Sıraya Alındı",
     "created": "Oluşturuldu",
     "initiated": "Başlatıldı",
     "pulling": "Çekiliyor",

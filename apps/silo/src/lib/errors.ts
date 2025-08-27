@@ -1,6 +1,6 @@
 import { AxiosError, RawAxiosResponseHeaders } from "axios";
 import { wait } from "@/helpers/delay";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 
 export type APIRatelimitResponse = {
   error_code: number;
@@ -26,11 +26,6 @@ interface RateLimitHeaders {
   "x-ratelimit-reset": string;
 }
 
-interface APIRateLimitError extends Error {
-  response?: {
-    headers?: Partial<RateLimitHeaders>;
-  };
-}
 
 function isRateLimitHeaders(headers: any): headers is RateLimitHeaders {
   return (
@@ -65,6 +60,7 @@ export async function protect<T>(fn: (...args: any[]) => Promise<T>, ...args: an
     try {
       return await fn(...args);
     } catch (error) {
+      captureException(error as Error);
       // Check if the error is an Axios error with status 429
       if (error instanceof AxiosError && error.response?.status === 429) {
         logger.info("Rate limit exceeded ====== in protect");

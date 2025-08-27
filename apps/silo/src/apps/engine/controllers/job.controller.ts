@@ -8,15 +8,16 @@
 
 import { Request, Response } from "express";
 
-import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
-import { resetJobIfStarted } from "@/helpers/job";
+import { E_JOB_STATUS, TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
+import { APIError, Controller, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { importTaskManger } from "@/worker";
+import { JobService } from "../services/job.service";
 
 const client = getAPIClient();
+const jobService = new JobService();
 
 @Controller("/api/jobs")
 export class JobController {
@@ -120,13 +121,13 @@ export class JobController {
 
       // Get the job from the given job id
       const job = await client.importJob.getImportJob(body.jobId);
-      if ((job.status && job.status === "FINISHED") || job.status === "ERROR") {
+      if ((job.status && job.status === E_JOB_STATUS.FINISHED) || job.status === E_JOB_STATUS.ERROR) {
         res.status(400).json({ message: "Job already finished or errored out, can't cancel" });
         return;
       }
 
       await client.importJob.updateImportJob(body.jobId, {
-        status: "CANCELLED",
+        status: E_JOB_STATUS.CANCELLED,
         cancelled_at: new Date().toISOString(),
       });
       res.status(200).json({ message: "Job cancelled successfully" });
@@ -157,6 +158,7 @@ export class JobController {
         },
         { phase, isLastBatch }
       );
+
       res.status(200).json({ message: "Job updated successfully" });
     } catch (error: any) {
       responseHandler(res, 500, error);
@@ -182,48 +184,14 @@ export class JobController {
         return;
       }
 
-      // Get the job from the given job id
-      const job = await client.importJob.getImportJob(body.jobId);
-      // If the job is not finished or error, just send 400 OK, and don't do
-      // anything
-      if (
-        job.status &&
-        job.status != "CREATED" &&
-        job.status != "FINISHED" &&
-        job.status != "ERROR" &&
-        job.status != "CANCELLED"
-      ) {
-        res.status(400).json({ message: "Job already in progress, can't instantiate again" });
-        return;
-      }
-      // Check if the config is already present, for the particular job or not
-      if (!job.config || job.source == null) {
-        res.status(400).json({
-          message: "Config for the requested job is not found, make sure to create a config before initiating a job",
-        });
-        return;
-      }
-      logger.info(`[${job.id}] Initiating job ${job.source}}`);
-
-      await client.importJob.updateImportJob(job.id, {
-        status: "CREATED",
-        cancelled_at: null,
-        error_metadata: {},
-      });
-
-      await resetJobIfStarted(job);
-
-      await importTaskManger.registerTask(
-        {
-          route: job.source.toLowerCase(),
-          jobId: job.id,
-          type: "initiate",
-        },
-        {}
-      );
+      await jobService.runJob(body.jobId);
 
       res.status(200).json({ message: "Job initiated successfully" });
     } catch (error: any) {
+      if (error instanceof APIError) {
+        res.status(error.statusCode).json({ message: error.message });
+        return;
+      }
       responseHandler(res, 500, error);
     }
   }

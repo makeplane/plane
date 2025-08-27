@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
   "import_status": {
+    "queued": "キューに登録済み",
     "created": "作成済み",
     "initiated": "開始済み",
     "pulling": "取得中",

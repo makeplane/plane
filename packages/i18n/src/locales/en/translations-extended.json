@@ -1346,6 +1346,7 @@
     "invalid_app_installation_id": "Failed to install the app"
   },
   "import_status": {
+    "queued": "Queued",
     "created": "Created",
     "initiated": "Initiated",
     "pulling": "Pulling",

@@ -1236,6 +1236,7 @@
     "invalid_app_installation_id": "Gagal menginstal aplikasi"
   },
   "import_status": {
+    "queued": "Dalam Antrian",
     "created": "Dibuat",
     "initiated": "Dimulai",
     "pulling": "Menarik",

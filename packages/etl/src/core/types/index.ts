@@ -86,6 +86,7 @@ export type TEntityConnectionKeys = keyof typeof E_ENTITY_CONNECTION_KEYS;
 
 // job types
 export enum E_JOB_STATUS {
+  QUEUED = "QUEUED",
   CREATED = "CREATED",
   INITIATED = "INITIATED",
   CANCELLED = "CANCELLED",

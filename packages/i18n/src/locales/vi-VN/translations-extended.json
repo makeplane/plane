@@ -1226,6 +1226,7 @@
     "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
   "import_status": {
+    "queued": "Đang chờ",
     "created": "Đã tạo",
     "initiated": "Đã bắt đầu",
     "pulling": "Đang kéo",

@@ -54,9 +54,14 @@ class ImportJobAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):
         if not pk:
             filters = {}
+            order_by = "-created_at"
             # Handle source parameter
             if "source" in request.query_params:
                 filters["source"] = request.query_params["source"]
+
+            # Handle status parameter
+            if "statuses" in request.query_params:
+                filters["status__in"] = request.query_params["statuses"].split(",")
 
             # Handle workspace_id/workspaceId parameter
             if "workspace_id" in request.query_params:
@@ -64,9 +69,13 @@ class ImportJobAPIView(BaseServiceAPIView):
             elif "workspaceId" in request.query_params:
                 filters["workspace_id"] = request.query_params["workspaceId"]
 
+            # Handle order_by parameter
+            if "order_by" in request.query_params:
+                order_by = request.query_params["order_by"]
+
             import_jobs = (
                 ImportJob.objects.filter(**filters)
-                .order_by("-created_at")
+                .order_by(order_by)
                 .select_related("workspace", "report")
             )
             serializer = ImportJobAPISerializer(import_jobs, many=True)
