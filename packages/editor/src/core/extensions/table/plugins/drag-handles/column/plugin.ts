@@ -14,6 +14,9 @@ import { ColumnDragHandle, ColumnDragHandleProps } from "./drag-handle";
 
 type TableColumnDragHandlePluginState = {
   decorations?: DecorationSet;
+  // track table structure to detect changes
+  tableWidth?: number;
+  tableNodePos?: number;
 };
 
 const TABLE_COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey("tableColumnHandlerDecorationPlugin");
@@ -31,20 +34,33 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
 
         const tableMap = TableMap.get(table.node);
 
-        let isStale = false;
-        const mapped = prev.decorations?.map(tr.mapping, tr.doc);
-        for (let col = 0; col < tableMap.width; col++) {
-          const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
-          if (mapped?.find(pos, pos + 1)?.length !== 1) {
-            isStale = true;
-            break;
+        // Check if table structure changed (width or position)
+        const tableStructureChanged = prev.tableWidth !== tableMap.width || prev.tableNodePos !== table.pos;
+
+        let isStale = tableStructureChanged;
+
+        // Only do position-based stale check if structure hasn't changed
+        if (!isStale) {
+          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
+          for (let col = 0; col < tableMap.width; col++) {
+            const pos = getTableCellWidgetDecorationPos(table, tableMap, col);
+            if (mapped?.find(pos, pos + 1)?.length !== 1) {
+              isStale = true;
+              break;
+            }
           }
         }
 
         if (!isStale) {
-          return { decorations: mapped };
+          const mapped = prev.decorations?.map(tr.mapping, tr.doc);
+          return {
+            decorations: mapped,
+            tableWidth: tableMap.width,
+            tableNodePos: table.pos,
+          };
         }
 
+        // recreate all decorations
         const decorations: Decoration[] = [];
 
         for (let col = 0; col < tableMap.width; col++) {
@@ -63,6 +79,8 @@ export const TableColumnDragHandlePlugin = (editor: Editor): Plugin<TableColumnD
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),
+          tableWidth: tableMap.width,
+          tableNodePos: table.pos,
         };
       },
     },

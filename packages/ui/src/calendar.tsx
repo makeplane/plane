@@ -8,6 +8,7 @@ import { cn } from "./utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Calendar = ({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) => {
   const currentYear = new Date().getFullYear();
   const thirtyYearsAgoFirstDay = new Date(currentYear - 30, 0, 1);
