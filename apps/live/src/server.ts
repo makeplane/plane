@@ -1,7 +1,7 @@
 import compression from "compression";
 import cors from "cors";
-import expressWs from "express-ws";
 import express, { Request, Response } from "express";
+import expressWs from "express-ws";
 import helmet from "helmet";
 import { logger, loggerMiddleware } from "@plane/logger";
 import { registerControllers } from "@plane/decorators";
