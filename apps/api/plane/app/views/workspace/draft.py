@@ -193,6 +193,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 {"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+        project_id = request.data.get("project_id", issue.project_id)
+
         # EE start
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(
@@ -216,7 +218,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             data=request.data,
             partial=True,
             context={
-                "project_id": request.data.get("project_id", None),
+                "project_id": project_id,
                 "cycle_id": request.data.get("cycle_id", "not_provided"),
             },
         )

@@ -506,7 +506,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        signed_url = storage.generate_presigned_url(object_name=asset.asset.name)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
@@ -743,7 +747,11 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        signed_url = storage.generate_presigned_url(object_name=asset.asset.name)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
