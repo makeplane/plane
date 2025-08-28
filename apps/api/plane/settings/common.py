@@ -682,6 +682,10 @@ if ENABLE_DRF_SPECTACULAR:
     INSTALLED_APPS.append("drf_spectacular")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
 
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
+MONGO_DB_DATABASE = os.environ.get("MONGO_DB_DATABASE", False)
+
 # Airgapped settings
 IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"
 

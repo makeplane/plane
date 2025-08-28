@@ -118,4 +118,7 @@ class MongoConnection:
         Returns:
             bool: True if MongoDB is configured and connected, False otherwise
         """
+
+        if cls._client is None:
+            cls._instance = cls()
         return cls._client is not None and cls._db is not None
