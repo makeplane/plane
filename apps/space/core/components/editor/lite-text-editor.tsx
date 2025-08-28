@@ -2,10 +2,9 @@ import React from "react";
 // plane imports
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, isCommentEmpty } from "@plane/utils";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-import { isCommentEmpty } from "@/helpers/string.helper";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
