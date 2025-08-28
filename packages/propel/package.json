@@ -9,7 +9,9 @@
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "exports": {
     "./avatar": "./src/avatar/index.ts",
@@ -25,16 +27,17 @@
     "./styles/fonts": "./src/styles/fonts/index.css",
     "./switch": "./src/switch/index.ts",
     "./collapsible": "./src/collapsible/index.ts"
+    "./card": "./src/card/index.ts"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
-    "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -44,8 +47,11 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@storybook/react-vite": "^9.1.2",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
+    "eslint-plugin-storybook": "^9.1.2",
+    "storybook": "^9.1.2",
     "typescript": "5.8.3"
   }
 }
