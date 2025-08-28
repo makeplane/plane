@@ -77,7 +77,7 @@ export const PageForm: React.FC<Props> = (props) => {
                 </>
               </span>
             }
-            onChange={(val: any) => {
+            onChange={(val) => {
               let logoValue = {};
 
               if (val?.type === "emoji")

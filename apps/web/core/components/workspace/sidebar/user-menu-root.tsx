@@ -66,7 +66,7 @@ export const UserMenuRoot = observer((props: Props) => {
 
   return (
     <Menu as="div" className="relative flex-shrink-0">
-      {({ open, close }: { open: boolean; close: () => void }) => {
+      {({ open }: { open: boolean; close: () => void }) => {
         // Update local state directly
         if (isUserMenuOpen !== open) {
           setIsUserMenuOpen(open);

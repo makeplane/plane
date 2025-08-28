@@ -80,7 +80,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     const payload: any = { ...data };
     if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
 
-    updateIssue && (await updateIssue(issue.project_id, issue.id, payload));
+    await updateIssue?.(issue.project_id, issue.id, payload);
   };
 
   const isAllowed = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);

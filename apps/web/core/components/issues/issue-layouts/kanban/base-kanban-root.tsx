@@ -7,7 +7,7 @@ import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-sc
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes, TIssue } from "@plane/types";
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -42,7 +42,7 @@ export type KanbanStoreType =
 
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
-  addIssuesToView?: (issueIds: string[]) => Promise<any>;
+  addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;

@@ -98,9 +98,11 @@ export class UserSettingsStore implements IUserSettingsStore {
       } else if (workspaceSlug) {
         await persistence.initialize(workspaceSlug);
         persistence.syncWorkspace();
-        projectId && persistence.syncIssues(projectId);
+        if (projectId) {
+          persistence.syncIssues(projectId);
+        }
       }
-    } catch (e) {
+    } catch {
       console.warn("error while toggling local DB");
       runInAction(() => {
         this.canUseLocalDB = currentLocalDBValue;

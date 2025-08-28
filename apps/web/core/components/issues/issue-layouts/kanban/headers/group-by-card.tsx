@@ -78,7 +78,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

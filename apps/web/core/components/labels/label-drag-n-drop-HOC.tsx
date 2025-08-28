@@ -154,7 +154,7 @@ export const LabelDndHOC = observer((props: Props) => {
         },
       })
     );
-  }, [labelRef?.current, dragHandleRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
+  }, [dragHandleRef?.current, label, isChild, isGroup, isLastChild, onDrop]);
 
   const isMakeChild = instruction == "make-child";
 

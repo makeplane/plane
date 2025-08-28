@@ -56,7 +56,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
     <>
       {userProfileActivity ? (
         <ul role="list">
-          {userProfileActivity.results.map((activityItem: any) => {
+          {userProfileActivity.results.map((activityItem) => {
             if (activityItem.field === "comment")
               return (
                 <div key={activityItem.id} className="mt-2">
@@ -98,7 +98,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                           editable={false}
                           id={activityItem.id}
                           initialValue={
-                            activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
+                            (activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value) ?? ""
                           }
                           containerClassName="text-xs bg-custom-background-100"
                           workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
@@ -155,7 +155,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                               <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                             ) : (
                               <Link
-                                href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
+                                href={`/${activityItem.workspace_detail?.slug}/profile/${activityItem.actor_detail.id}`}
                                 className="inline"
                               >
                                 <span className="text-gray font-medium">

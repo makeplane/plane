@@ -192,7 +192,9 @@ export const ListGroup = observer((props: Props) => {
           const sourceGroupId = source?.data?.groupId as string | undefined;
           const currentGroupId = group.id;
 
-          sourceGroupId && handleWorkFlowState(sourceGroupId, currentGroupId);
+          if (sourceGroupId) {
+            handleWorkFlowState(sourceGroupId, currentGroupId);
+          }
 
           const sourceIndex = getGroupIndex(sourceGroupId);
           const currentIndex = getGroupIndex(currentGroupId);
@@ -230,15 +232,7 @@ export const ListGroup = observer((props: Props) => {
         },
       })
     );
-  }, [
-    groupRef?.current,
-    group,
-    orderBy,
-    getGroupIndex,
-    setDragColumnOrientation,
-    setIsDraggingOverColumn,
-    isWorkflowDropDisabled,
-  ]);
+  }, [group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn, isWorkflowDropDisabled]);
 
   const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;

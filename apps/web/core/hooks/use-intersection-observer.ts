@@ -18,7 +18,7 @@ export const useIntersectionObserver = (
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[entries.length - 1].isIntersecting) {
-            callback && callback();
+            callback?.();
           }
         },
         {

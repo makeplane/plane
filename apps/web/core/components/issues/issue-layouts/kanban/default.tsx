@@ -1,7 +1,6 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-// i18n
-import { useTranslation } from "@plane/i18n";
+// plane imports
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -14,7 +13,6 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-// constants
 import { ContentWrapper } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
@@ -92,8 +90,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     subGroupIndex = 0,
     isEpic = false,
   } = props;
-  // i18n
-  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();

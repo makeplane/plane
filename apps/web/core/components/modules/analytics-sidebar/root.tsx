@@ -16,7 +16,7 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import { ILinkDetails, IModule, ModuleLink, TModuleStatus } from "@plane/types";
 // plane ui
 import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
@@ -270,7 +270,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     </span>
                   }
                   value={value}
-                  onChange={(value: any) => {
+                  onChange={(value: TModuleStatus) => {
                     submitChanges({ status: value });
                   }}
                   disabled={!isEditingAllowed || isArchived}

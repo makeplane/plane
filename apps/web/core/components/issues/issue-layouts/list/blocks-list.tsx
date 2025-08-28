@@ -7,7 +7,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { IssueBlockRoot } from "./block-root";
 import { TRenderQuickActions } from "./list-view-types";
 
-interface Props {
+type Props = {
   issueIds: TGroupedIssues | any;
   issuesMap: TIssueMap;
   groupId: string;
@@ -20,7 +20,7 @@ interface Props {
   canDropOverIssue: boolean;
   selectionHelpers: TSelectionHelper;
   isEpic?: boolean;
-}
+};
 
 export const IssueBlocksList: FC<Props> = (props) => {
   const {

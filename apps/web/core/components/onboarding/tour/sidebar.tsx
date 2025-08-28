@@ -1,15 +1,15 @@
 "use client";
 
-// icons
-import { FileText, Layers } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
-// types
-import { TTourSteps } from "./root";
+import { FileText, Layers, type LucideIcon } from "lucide-react";
+// plane imports
+import { ContrastIcon, DiceIcon, type ISvgIcons, LayersIcon } from "@plane/ui";
+// local imports
+import type { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;
   label: string;
-  Icon: any;
+  Icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
   {
     key: "work-items",

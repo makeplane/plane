@@ -27,7 +27,7 @@ type Props = {
 };
 
 export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
-  const { invitations, totalSteps, stepChange, finishOnboarding } = props;
+  const { invitations, totalSteps: _totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks

@@ -112,8 +112,8 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   const issueDetails = getIssueById(issueId);
   const projectIdentifier = getProjectIdentifierById(issueDetails?.project_id);
 
-  const handleIssuePeekOverview = (e: any) => {
-    e.stopPropagation(true);
+  const handleIssuePeekOverview = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
     e.preventDefault();
     handleRedirection(workspaceSlug, issueDetails, isMobile);
   };

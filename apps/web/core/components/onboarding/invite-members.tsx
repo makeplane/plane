@@ -262,7 +262,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
 });
 
 export const InviteMembers: React.FC<Props> = (props) => {
-  const { finishOnboarding, totalSteps, workspace } = props;
+  const { finishOnboarding, totalSteps: _totalSteps, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 

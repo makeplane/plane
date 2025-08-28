@@ -17,7 +17,7 @@ import {
   List,
   ListOrdered,
   ListTodo,
-  LucideIcon,
+  type LucideIcon,
   Strikethrough,
   Table,
   TextQuote,
@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
+import { type ISvgIcons, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
@@ -191,7 +191,7 @@ export const TOOLBAR_ITEMS: {
 export const EDITOR_FONT_STYLES: {
   key: TEditorFontStyle;
   label: string;
-  icon: any;
+  icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
   {
     key: "sans-serif",

@@ -27,7 +27,7 @@ import { PageEditorToolbarRoot } from "./toolbar";
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchDescriptionBinary: () => Promise<any>;
+  fetchDescriptionBinary: () => Promise<ArrayBuffer>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   getRedirectionLink: (pageId: string) => string;
   updateDescription: (document: TDocumentPayload) => Promise<void>;

@@ -3,7 +3,7 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { Link2, type LucideIcon, MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -12,6 +12,7 @@ import {
   CenterPanelIcon,
   CustomSelect,
   FullScreenPanelIcon,
+  type ISvgIcons,
   SidePanelIcon,
   TOAST_TYPE,
   Tooltip,
@@ -33,7 +34,7 @@ import { NameDescriptionUpdateStatus } from "../issue-update-status";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
+const PEEK_OPTIONS: { key: TPeekModes; icon: LucideIcon | React.FC<ISvgIcons>; i18n_title: string }[] = [
   {
     key: "side-peek",
     icon: SidePanelIcon,

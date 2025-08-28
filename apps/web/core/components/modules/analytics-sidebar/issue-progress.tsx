@@ -110,7 +110,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
         await fetchModuleDetails(workspaceSlug, projectId, moduleId);
       }
       setLoader(false);
-    } catch (error) {
+    } catch {
       setLoader(false);
       setPlotType(moduleId, plotType);
     }

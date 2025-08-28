@@ -1,22 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 
-export const getValueFromLocalStorage = (key: string, defaultValue: any) => {
+export const getValueFromLocalStorage = (key: string, defaultValue: unknown) => {
   if (typeof window === undefined || typeof window === "undefined") return defaultValue;
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
+  } catch {
     window.localStorage.removeItem(key);
     return defaultValue;
   }
 };
 
-export const setValueIntoLocalStorage = (key: string, value: any) => {
+export const setValueIntoLocalStorage = (key: string, value: unknown) => {
   if (typeof window === undefined || typeof window === "undefined") return false;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

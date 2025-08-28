@@ -18,6 +18,7 @@ import { runQuery } from "./utils/query-executor";
 import { sanitizeWorkItemQueries } from "./utils/query-sanitizer.ts";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
+import type { DBClass } from "./worker/db";
 
 const DB_VERSION = 1.3;
 const PAGE_SIZE = 500;
@@ -70,7 +71,6 @@ export class Storage {
   };
 
   private initializeWorker = async (workspaceSlug: string) => {
-    const { DBClass } = await import("./worker/db");
     const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
     const MyWorker = Comlink.wrap<typeof DBClass>(worker);
 
@@ -367,7 +367,6 @@ export class Storage {
         issueResults = getGroupedIssueResults(issueResults);
       }
     }
-    const groupCount = group_by ? Object.keys(issueResults).length : undefined;
     // const subGroupCount = sub_group_by ? Object.keys(issueResults[Object.keys(issueResults)[0]]).length : undefined;
     const groupingEnd = performance.now();
 
