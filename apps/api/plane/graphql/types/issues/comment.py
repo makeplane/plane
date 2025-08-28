@@ -6,11 +6,15 @@ from typing import Optional
 import strawberry
 import strawberry_django
 
+# Python Standard Library Imports
+from asgiref.sync import sync_to_async
+
 # Strawberry imports
 from strawberry.scalars import JSON
 
 # Module Imports
 from plane.db.models import IssueComment
+from plane.graphql.types.users import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
@@ -23,6 +27,7 @@ class IssueCommentActivityType:
     attachments: list[str]
     issue: strawberry.ID
     actor: strawberry.ID
+    actor_details: Optional[UserLiteType]
     access: str
     external_source: Optional[str]
     external_id: Optional[str]
@@ -38,6 +43,12 @@ class IssueCommentActivityType:
     @strawberry.field
     def actor(self) -> int:
         return self.actor_id
+
+    @strawberry.field
+    async def actor_details(self) -> Optional[UserLiteType]:
+        if self.actor:
+            return self.actor
+        return UserLiteType()
 
     @strawberry.field
     def project(self) -> int:

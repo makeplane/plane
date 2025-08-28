@@ -133,6 +133,8 @@ class IssueAndEpicsManager(ProjectManager):
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
         )
+
+
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),

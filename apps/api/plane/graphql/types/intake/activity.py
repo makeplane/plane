@@ -9,6 +9,7 @@ from asgiref.sync import sync_to_async
 
 # Module Imports
 from plane.db.models import IntakeIssue, IssueActivity
+from plane.graphql.types.users import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
@@ -24,6 +25,7 @@ class IntakeWorkItemPropertyActivityType:
     attachments: list[str]
     issue_comment: Optional[strawberry.ID]
     actor: Optional[strawberry.ID]
+    actor_details: Optional[UserLiteType]
     old_identifier: Optional[strawberry.ID]
     new_identifier: Optional[strawberry.ID]
     epoch: float
@@ -41,6 +43,12 @@ class IntakeWorkItemPropertyActivityType:
     @strawberry.field
     def actor(self) -> Optional[strawberry.ID]:
         return self.actor_id if self.actor_id else None
+
+    @strawberry.field
+    async def actor_details(self) -> Optional[UserLiteType]:
+        if self.actor:
+            return self.actor
+        return UserLiteType()
 
     @strawberry.field
     def project(self) -> int:
