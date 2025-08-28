@@ -284,7 +284,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
-    "plane.bgtasks.api_logs_task",
+    "plane.bgtasks.cleanup_task",
     "plane.license.bgtasks.tracer",
     # management tasks
     "plane.bgtasks.dummy_data_task",
@@ -465,3 +465,7 @@ if ENABLE_DRF_SPECTACULAR:
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
     INSTALLED_APPS.append("drf_spectacular")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
+
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
+MONGO_DB_DATABASE = os.environ.get("MONGO_DB_DATABASE", False)

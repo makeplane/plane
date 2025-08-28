@@ -55,6 +55,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
       isActive: () => editorState.right,
     },
   ];
+  if (editorState.code) return null;
 
   return (
     <div className="flex gap-0.5 px-2">

@@ -78,6 +78,12 @@ const IssueDetailsPage = observer(() => {
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
+  useEffect(() => {
+    if (data?.is_intake) {
+      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
+    }
+  }, [workspaceSlug, data]);
+
   return (
     <>
       <PageHead title={pageTitle} />

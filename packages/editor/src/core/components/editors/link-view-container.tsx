@@ -1,8 +1,12 @@
 import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import { Editor, useEditorState } from "@tiptap/react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
+
 // components
 import { LinkView, LinkViewProps } from "@/components/links";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// components
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type Props = {
   editor: Editor;
@@ -18,7 +22,7 @@ export const LinkViewContainer: FC<Props> = ({ editor, containerRef }) => {
   const editorState = useEditorState({
     editor,
     selector: ({ editor }: { editor: Editor }) => ({
-      linkExtensionStorage: editor.storage.link,
+      linkExtensionStorage: getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_LINK),
     }),
   });
 

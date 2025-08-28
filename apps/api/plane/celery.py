@@ -50,8 +50,20 @@ app.conf.beat_schedule = {
         "schedule": crontab(hour=2, minute=0),  # UTC 02:00
     },
     "check-every-day-to-delete-api-logs": {
-        "task": "plane.bgtasks.api_logs_task.delete_api_logs",
+        "task": "plane.bgtasks.cleanup_task.delete_api_logs",
         "schedule": crontab(hour=2, minute=30),  # UTC 02:30
+    },
+    "check-every-day-to-delete-email-notification-logs": {
+        "task": "plane.bgtasks.cleanup_task.delete_email_notification_logs",
+        "schedule": crontab(hour=3, minute=0),  # UTC 03:00
+    },
+    "check-every-day-to-delete-page-versions": {
+        "task": "plane.bgtasks.cleanup_task.delete_page_versions",
+        "schedule": crontab(hour=3, minute=30),  # UTC 03:30
+    },
+    "check-every-day-to-delete-issue-description-versions": {
+        "task": "plane.bgtasks.cleanup_task.delete_issue_description_versions",
+        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
     },
 }
 

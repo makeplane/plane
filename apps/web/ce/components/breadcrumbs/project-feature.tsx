@@ -12,7 +12,7 @@ import type { TNavigationItem } from "@/components/workspace/sidebar/project-nav
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { getProjectFeatureNavigation } from "../projects/navigation";
+import { getProjectFeatureNavigation } from "../projects/navigation/helper";
 
 type TProjectFeatureBreadcrumbProps = {
   workspaceSlug: string;

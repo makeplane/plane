@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { addColumn, removeColumn, addRow, removeRow, TableMap } from "@tiptap/pm/tables";
+import { addColumn, removeColumn, addRow, removeRow, TableMap, type TableRect } from "@tiptap/pm/tables";
 // local imports
 import { isCellEmpty } from "../../table/utilities/helpers";
 
@@ -17,6 +17,7 @@ export type TableInfo = {
   tablePos: number;
   columnButtonElement?: HTMLElement;
   rowButtonElement?: HTMLElement;
+  dragMarkerContainerElement?: HTMLElement;
 };
 
 export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement => {
@@ -274,7 +275,7 @@ const insertColumnAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const lastColumnIndex = tableMapData.width;
 
   const tr = editor.state.tr;
-  const rect = {
+  const rect: TableRect = {
     map: tableMapData,
     tableStart: tablePos,
     table: tableNode,
@@ -346,7 +347,7 @@ const insertRowAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const lastRowIndex = tableMapData.height;
 
   const tr = editor.state.tr;
-  const rect = {
+  const rect: TableRect = {
     map: tableMapData,
     tableStart: tablePos,
     table: tableNode,

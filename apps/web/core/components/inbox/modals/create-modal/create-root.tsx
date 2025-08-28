@@ -19,7 +19,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
+import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { FileService } from "@/services/file.service";
