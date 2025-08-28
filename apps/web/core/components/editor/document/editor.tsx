@@ -6,15 +6,17 @@ import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
 import { EditorMentionsRoot } from "../embeds/mentions";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
 > & {
   embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
   workspaceSlug: string;
@@ -58,6 +60,10 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     workspaceSlug,
   });
 
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
+
   return (
     <DocumentEditorWithRef
       ref={ref}
@@ -81,8 +87,12 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       }}
       embedHandler={{
         issue: issueEmbedProps,
+        externalEmbedComponent: {
+          widgetCallback: EmbedHandler,
+        },
         ...embedHandler,
       }}
+      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

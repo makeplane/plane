@@ -32,7 +32,9 @@ class Intake(ProjectBaseModel):
 
 
 class SourceType(models.TextChoices):
+    EMAIL = "EMAIL"
     IN_APP = "IN_APP"
+    FORMS = "FORMS"
 
 
 class IntakeIssueStatus(models.IntegerChoices):
@@ -41,7 +43,6 @@ class IntakeIssueStatus(models.IntegerChoices):
     SNOOZED = 0
     ACCEPTED = 1
     DUPLICATE = 2
-
 
 class IntakeIssue(ProjectBaseModel):
     intake = models.ForeignKey(

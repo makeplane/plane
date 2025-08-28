@@ -12,7 +12,7 @@ import { EditorMentionsRoot } from "./embeds/mentions";
 import { IssueCommentToolbar } from "./toolbar";
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -47,7 +47,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
   const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
-
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
@@ -63,6 +62,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
+        isSmoothCursorEnabled={false}
         {...rest}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}

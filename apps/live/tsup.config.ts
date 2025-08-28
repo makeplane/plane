@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/server.ts"],
+  entry: ["src/start.ts"],
   format: ["esm", "cjs"],
   dts: true,
   splitting: false,

@@ -11,10 +11,8 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { captureClick } from "@/helpers/event-tracker.helper";
-// constants
-
 // helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
