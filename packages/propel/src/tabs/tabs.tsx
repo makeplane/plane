@@ -2,7 +2,6 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils";
 
-
 type TabsCompound = React.ForwardRefExoticComponent<
   React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
 > & {
@@ -24,12 +23,7 @@ const TabsRoot = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   React.ComponentProps<typeof TabsPrimitive.Root>
 >(({ className, ...props }, ref) => (
-  <TabsPrimitive.Root
-    data-slot="tabs"
-    className={cn("flex flex-col w-full h-full", className)}
-    {...props}
-    ref={ref}
-  />
+  <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col w-full h-full", className)} {...props} ref={ref} />
 ));
 
 const TabsList = React.forwardRef<
