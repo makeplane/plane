@@ -45,6 +45,7 @@ from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class UserEndpoint(BaseViewSet):
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
     serializer_class = UserSerializer
     model = User
     use_read_replica = True

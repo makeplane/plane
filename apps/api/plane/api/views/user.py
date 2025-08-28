@@ -9,12 +9,8 @@ from plane.api.views.base import BaseAPIView
 from plane.db.models import User
 from plane.utils.openapi.decorators import user_docs
 from plane.utils.openapi import USER_EXAMPLE
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from plane.authentication.session import BaseSessionAuthentication
-
 
 class UserEndpoint(BaseAPIView):
-    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
     serializer_class = UserLiteSerializer
     model = User
 
