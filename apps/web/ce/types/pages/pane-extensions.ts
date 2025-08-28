@@ -1,15 +1,16 @@
-import { type INavigationPaneExtension as ICoreNavigationPaneExtension } from "@/components/pages/navigation-pane";
+import {
+  type INavigationPaneExtension as ICoreNavigationPaneExtension,
+  type INavigationPaneExtensionComponent,
+} from "@/components/pages/navigation-pane";
 
-// EE Union of all possible navigation pane extension data types
-export type TNavigationPaneExtensionData = unknown;
+// EE Union/map of extension data types (keyed by extension id)
+export type TNavigationPaneExtensionData = Record<string, unknown>;
 
-// EE Navigation pane extension configuration with comment support
+// EE Navigation pane extension configuration
 export interface INavigationPaneExtension<
   T extends keyof TNavigationPaneExtensionData = keyof TNavigationPaneExtensionData,
-> extends ICoreNavigationPaneExtension<TNavigationPaneExtensionData[T]> {
+> extends Omit<ICoreNavigationPaneExtension<TNavigationPaneExtensionData[T]>, "id" | "data" | "component"> {
   id: T;
-  triggerParam: string;
-  component: any;
+  component: INavigationPaneExtensionComponent<TNavigationPaneExtensionData[T]>;
   data?: TNavigationPaneExtensionData[T];
-  width?: number;
 }

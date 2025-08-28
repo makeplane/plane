@@ -2,7 +2,7 @@ export type IEditorExtensionOptions = unknown;
 
 export type IEditorPropsExtended = unknown;
 
-export type TExtendedEditorCommands = "";
+export type TExtendedEditorCommands = never;
 
 export type TExtendedCommandExtraProps = unknown;
 

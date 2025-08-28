@@ -160,7 +160,7 @@ export type IEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-  extendedEditorProps?: IEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
 };
 
 export type ILiteTextEditorProps = IEditorProps;

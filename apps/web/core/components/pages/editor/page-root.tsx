@@ -102,10 +102,13 @@ export const PageRoot = observer((props: TPageRootProps) => {
     projectId,
   });
 
-  const handleRestoreVersion = async (descriptionHTML: string) => {
-    editorRef.current?.clearEditor();
-    editorRef.current?.setEditorValue(descriptionHTML);
-  };
+  const handleRestoreVersion = useCallback(
+    async (descriptionHTML: string) => {
+      editorRef.current?.clearEditor();
+      editorRef.current?.setEditorValue(descriptionHTML);
+    },
+    [editorRef]
+  );
 
   // reset editor ref on unmount
   useEffect(

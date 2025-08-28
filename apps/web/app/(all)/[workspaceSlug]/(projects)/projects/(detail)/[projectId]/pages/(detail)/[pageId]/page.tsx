@@ -176,7 +176,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (!page) return null;
+  if (!page || !workspaceSlug.toString() || !projectId.toString()) return null;
 
   return (
     <>
@@ -189,8 +189,8 @@ const PageDetailsPage = observer(() => {
             storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={projectId?.toString() ?? ""}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId?.toString()}
           />
           <IssuePeekOverview />
         </div>

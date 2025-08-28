@@ -17,13 +17,15 @@ export type TEditorFlaggingHookReturnType = {
   };
 };
 
+export type TEditorFlaggingHookProps = {
+  workspaceSlug: string;
+  storeType?: EPageStoreType;
+};
+
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (
-  workspaceSlug: string,
-  storeType?: EPageStoreType
-): TEditorFlaggingHookReturnType => ({
+export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => ({
   document: {
     disabled: ["ai", "collaboration-cursor"],
     flagged: [],

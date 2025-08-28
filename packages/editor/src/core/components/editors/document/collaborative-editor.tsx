@@ -13,7 +13,7 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // constants
-import { EditorSideEffects } from "@/plane-editor/components/editor-side-effects";
+import { DocumentEditorSideEffects } from "@/plane-editor/components/editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
@@ -101,7 +101,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
   return (
     <>
-      <EditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
+      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
       <PageRenderer
         aiHandler={aiHandler}
         bubbleMenuEnabled={bubbleMenuEnabled}

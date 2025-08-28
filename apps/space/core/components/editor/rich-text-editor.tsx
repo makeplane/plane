@@ -12,7 +12,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler">,
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -56,6 +56,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
       })}
       flaggedExtensions={richTextEditorExtensions.flagged}
+      extendedEditorProps={{}}
       {...rest}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"

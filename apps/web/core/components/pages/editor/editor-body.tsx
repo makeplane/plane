@@ -106,7 +106,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug, storeType);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+    storeType: storeType ?? "",
+  });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation

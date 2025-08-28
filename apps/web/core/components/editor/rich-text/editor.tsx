@@ -12,7 +12,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
@@ -42,7 +42,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { richText: richTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -73,6 +75,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
+      extendedEditorProps={{}}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

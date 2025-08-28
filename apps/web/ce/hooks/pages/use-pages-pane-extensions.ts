@@ -16,7 +16,7 @@ export type TPageExtensionHookParams = {
   editorRef: RefObject<EditorRefApi>;
 };
 
-export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
+export const usePagesPaneExtensions = (_params: TPageExtensionHookParams) => {
   const router = useAppRouter();
   const { updateQueryParams } = useQueryParams();
   const searchParams = useSearchParams();
@@ -27,8 +27,7 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
   ) as TPageNavigationPaneTab | null;
 
   const isNavigationPaneOpen =
-    (!!navigationPaneQueryParam && PAGE_NAVIGATION_PANE_TAB_KEYS.includes(navigationPaneQueryParam)) ||
-    searchParams.get("paneTab") === "comments";
+    !!navigationPaneQueryParam && PAGE_NAVIGATION_PANE_TAB_KEYS.includes(navigationPaneQueryParam);
 
   const handleOpenNavigationPane = useCallback(() => {
     const updatedRoute = updateQueryParams({

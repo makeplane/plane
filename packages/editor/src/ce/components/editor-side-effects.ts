@@ -1,9 +1,12 @@
 import { type Editor } from "@tiptap/core";
+import type { ReactElement } from "react";
 import type { IEditorPropsExtended } from "@/types";
 
-export const EditorSideEffects = (props: {
+export type DocumentEditorSideEffectsProps = {
   editor: Editor;
   id: string;
-  updatePageProperties?: any;
+  updatePageProperties?: unknown;
   extendedEditorProps?: IEditorPropsExtended;
-}) => null;
+};
+
+export const DocumentEditorSideEffects = (_props: DocumentEditorSideEffectsProps): ReactElement | null => null;
