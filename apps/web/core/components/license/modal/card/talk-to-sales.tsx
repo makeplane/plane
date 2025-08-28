@@ -107,7 +107,6 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
       extraFeatures={extraFeatures}
       renderPriceContent={renderPriceContent}
       renderActionButton={renderActionButton}
-      isSelfHosted={isSelfHosted}
     />
   );
 });
