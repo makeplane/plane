@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
-// helpers
 import { useLocalStorage } from "@plane/hooks";
-import { cn } from "@plane/utils";
-// types
+import { cn } from "../utils/classname";
 import { TabList, TabListItem } from "./list";
 
 export type TabContent = {
