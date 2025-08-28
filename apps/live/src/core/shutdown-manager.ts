@@ -1,5 +1,5 @@
-import { logger } from "@plane/logger";
 import { Server as HttpServer } from "http";
+import { logger } from "@plane/logger";
 import { handleError } from "./helpers/error-handling/error-factory";
 
 /**

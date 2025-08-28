@@ -1,14 +1,14 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
+import { Controller, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
-// types
-import { TConvertDocumentRequestBody } from "@/core/types/common";
 // logger
 import { logger } from "@plane/logger";
-import { Controller, Post } from "@plane/decorators";
-import { AppError } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+// types
+import { AppError } from "@/core/helpers/error-handling/error-handler";
+import { TConvertDocumentRequestBody } from "@/core/types/common";
 
 // Define the schema with more robust validation
 const convertDocumentSchema = z.object({

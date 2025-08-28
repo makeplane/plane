@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
-import { env } from "@/env";
 import { logger } from "@plane/logger";
+import { env } from "@/env";
 
 export const initializeSentry = () => {
   if (!env.LIVE_SENTRY_DSN) {

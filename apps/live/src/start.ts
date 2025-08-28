@@ -1,7 +1,7 @@
-import { Server } from "./server";
-import { env } from "./env";
 import { logger } from "@plane/logger";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { env } from "./env";
+import { Server } from "./server";
 
 /**
  * The main entry point for the application
