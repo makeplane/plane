@@ -35,7 +35,7 @@ class TimezoneMixin:
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        if request.user.is_authenticated:
+        if request.user and request.user.is_authenticated:
             timezone.activate(zoneinfo.ZoneInfo(request.user.user_timezone))
         else:
             timezone.deactivate()
@@ -78,6 +78,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                 else print("Server Error")
             )
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -180,6 +181,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
             return response
         except Exception as e:
             if isinstance(e, IntegrityError):
+                log_exception(e)
                 return Response(
                     {"error": "The payload is not valid"},
                     status=status.HTTP_400_BAD_REQUEST,

@@ -1,5 +1,5 @@
 import { getWeekOfMonth, isValid } from "date-fns";
-import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
+import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, TO_CAPITALIZE_CHART_PROPERTIES } from "@plane/constants";
 import { ChartXAxisProperty, TChart, TChartDatum } from "@plane/types";
 import {
   capitalizeFirstLetter,
@@ -8,7 +8,6 @@ import {
   renderFormattedDate,
   renderFormattedDateWithoutYear,
 } from "@plane/utils";
-//
 
 const getDateGroupingName = (date: string, dateGrouping: ChartXAxisDateGrouping): string => {
   if (!date || ["none", "null"].includes(date.toLowerCase())) return "None";
@@ -70,8 +69,8 @@ export const parseChartData = (
     const missingValues: Record<string, number> = Object.fromEntries(missingKeys.map((key) => [key, 0]));
 
     if (xAxisProperty) {
-      // capitalize first letter if xAxisProperty is in TO_CAPITALIZE_PROPERTIES and no groupByProperty is set
-      if (TO_CAPITALIZE_PROPERTIES.includes(xAxisProperty)) {
+      // capitalize first letter if xAxisProperty is in TO_CAPITALIZE_CHART_PROPERTIES and no groupByProperty is set
+      if (TO_CAPITALIZE_CHART_PROPERTIES.includes(xAxisProperty)) {
         datum.name = capitalizeFirstLetter(datum.name);
       }
 
@@ -87,10 +86,10 @@ export const parseChartData = (
     };
   });
 
-  // capitalize first letter if groupByProperty is in TO_CAPITALIZE_PROPERTIES
+  // capitalize first letter if groupByProperty is in TO_CAPITALIZE_CHART_PROPERTIES
   const updatedSchema = schema;
   if (groupByProperty) {
-    if (TO_CAPITALIZE_PROPERTIES.includes(groupByProperty)) {
+    if (TO_CAPITALIZE_CHART_PROPERTIES.includes(groupByProperty)) {
       Object.keys(updatedSchema).forEach((key) => {
         updatedSchema[key] = capitalizeFirstLetter(updatedSchema[key]);
       });

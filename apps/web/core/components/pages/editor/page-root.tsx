@@ -4,15 +4,20 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+// components
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
+import { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+// services
+import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { WorkspacePageVersionService } from "@/plane-web/services/page";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
-// local imports
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
@@ -29,7 +34,6 @@ export type TPageRootHandlers = {
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
   fetchDescriptionBinary: () => Promise<any>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
-  getRedirectionLink: (pageId: string) => string;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
 } & TEditorBodyHandlers;
 
@@ -39,12 +43,26 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
+  storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId?: string;
   workspaceSlug: string;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
+const workspacePageVersionService = new WorkspacePageVersionService();
+
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, webhookConnectionParams, workspaceSlug } = props;
+  const {
+    config,
+    handlers,
+    page,
+    projectId,
+    storeType,
+    webhookConnectionParams,
+    workspaceSlug,
+    customRealtimeEventHandlers,
+  } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -55,6 +73,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
+  const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
     isContentEditable,
     editor: { setEditorRef },
@@ -85,10 +104,19 @@ export const PageRoot = observer((props: TPageRootProps) => {
     }, 0);
   }, [isContentEditable, setEditorRef]);
 
-  const handleRestoreVersion = useCallback(async (descriptionHTML: string) => {
-    editorRef.current?.clearEditor();
-    editorRef.current?.setEditorValue(descriptionHTML);
-  }, []);
+  const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
+
+  const handleRestoreVersion = async (descriptionHTML: string) => {
+    if (version && isNestedPagesEnabled(workspaceSlug?.toString())) {
+      page.setVersionToBeRestored(version, descriptionHTML);
+      page.setRestorationStatus(true);
+      setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+      await workspacePageVersionService.restoreVersion(workspaceSlug, page.id ?? "", version ?? "");
+    } else {
+      editorRef.current?.clearEditor();
+      editorRef.current?.setEditorValue(descriptionHTML);
+    }
+  };
 
   // reset editor ref on unmount
   useEffect(
@@ -127,14 +155,17 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handleRestore={handleRestoreVersion}
           pageId={page.id ?? ""}
           restoreEnabled={isContentEditable}
+          storeType={storeType}
         />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
           isNavigationPaneOpen={isValidNavigationPaneTab}
           page={page}
+          storeType={storeType}
         />
         <PageEditorBody
           config={config}
+          customRealtimeEventHandlers={customRealtimeEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
           handleConnectionStatus={setHasConnectionFailed}
@@ -143,6 +174,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handlers={handlers}
           isNavigationPaneOpen={isValidNavigationPaneTab}
           page={page}
+          projectId={projectId}
+          storeType={storeType}
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
         />

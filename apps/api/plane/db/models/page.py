@@ -1,24 +1,83 @@
+# Python imports
 import uuid
-
-from django.conf import settings
-from django.utils import timezone
+from uuid import UUID
+from enum import IntEnum
 
 # Django imports
+from django.conf import settings
+from django.utils import timezone
 from django.db import models
+from django.db.models import Q
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
 from .base import BaseModel
+from .project import ProjectMember
 
 
 def get_view_props():
     return {"full_width": False}
 
 
+class PageQuerySet(SoftDeletionQuerySet):
+    """QuerySet for project related models that handles accessibility"""
+
+    def accessible_to(self, user_id: UUID, slug: str):
+        from plane.ee.models import TeamspaceProject, TeamspaceMember
+        from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+        from plane.payment.flags.flag import FeatureFlag
+
+        base_query = Q(
+            projects__project_projectmember__member=user_id,
+            projects__project_projectmember__is_active=True,
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
+        ):
+            ## Get all team ids where the user is a member
+            teamspace_ids = TeamspaceMember.objects.filter(
+                member_id=user_id, workspace__slug=slug
+            ).values_list("team_space_id", flat=True)
+
+            member_project_ids = ProjectMember.objects.filter(
+                member_id=user_id, workspace__slug=slug, is_active=True
+            ).values_list("project_id", flat=True)
+
+            # Get all the projects in the respective teamspaces
+            teamspace_project_ids = (
+                TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids)
+                .exclude(project_id__in=member_project_ids)
+                .values_list("project_id", flat=True)
+            )
+
+            return self.filter(
+                Q(projects__id__in=teamspace_project_ids) | Q(base_query),
+            )
+
+        return self.filter(base_query, deleted_at__isnull=True)
+
+
+class PageManager(SoftDeletionManager):
+    """Manager for project related models that handles accessibility"""
+
+    def get_queryset(self):
+        return PageQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
+
+    def accessible_to(self, user_id: UUID, slug: str):
+        return self.get_queryset().accessible_to(user_id, slug)
+
+
+class PageAccess(IntEnum):
+    PUBLIC = 0
+    PRIVATE = 1
+
+
 class Page(BaseModel):
-    PRIVATE_ACCESS = 1
-    PUBLIC_ACCESS = 0
+    PRIVATE_ACCESS = PageAccess.PRIVATE
+    PUBLIC_ACCESS = PageAccess.PUBLIC
 
     ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
 
@@ -57,7 +116,7 @@ class Page(BaseModel):
     )
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
-
+    objects = PageManager()
     external_id = models.CharField(max_length=255, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
 
@@ -66,6 +125,18 @@ class Page(BaseModel):
         verbose_name_plural = "Pages"
         db_table = "pages"
         ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store original values of semantic fields for change tracking
+        # Only set if fields are not deferred to avoid unnecessary DB queries
+        deferred_fields = self.get_deferred_fields()
+        self._original_name = self.name if "name" not in deferred_fields else None
+        self._original_description_stripped = (
+            self.description_stripped
+            if "description_stripped" not in deferred_fields
+            else None
+        )
 
     def __str__(self):
         """Return owner email and page name"""
@@ -80,6 +151,16 @@ class Page(BaseModel):
         )
         super(Page, self).save(*args, **kwargs)
 
+    @property
+    def is_description_empty(self):
+        return (
+            self.description_html == "<p></p>"
+            or self.description_html == '<p class="editor-paragraph-block"></p>'
+            or self.description_html
+            == '<p class="editor-paragraph-block"></p><p class="editor-paragraph-block"></p>'
+            or not self.description_html
+        )
+
 
 class PageLog(BaseModel):
     TYPE_CHOICES = (
@@ -91,10 +172,16 @@ class PageLog(BaseModel):
         ("link", "Link"),
         ("cycle", "Cycle"),
         ("module", "Module"),
-        ("back_link", "Back Link"),
-        ("forward_link", "Forward Link"),
         ("page_mention", "Page Mention"),
         ("user_mention", "User Mention"),
+        (
+            "sub_page",
+            "Sub Page",
+        ),  # nested relationship where one page is a child of another.
+        (
+            "page_link",
+            "Page Link",
+        ),  # Indicates a reference or external link to another page.
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
@@ -180,6 +267,8 @@ class PageVersion(BaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_json = models.JSONField(default=dict, blank=True)
+    sub_pages_data = models.JSONField(default=dict, blank=True)
+
     sub_pages_data = models.JSONField(default=dict, blank=True)
 
     class Meta:
