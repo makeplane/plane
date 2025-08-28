@@ -4,6 +4,8 @@ import { cn } from "@plane/utils";
 // types
 import { ICustomSelectItemProps, ICustomSelectProps } from "./types";
 import { Select } from "@base-ui-components/react/select";
+import { convertPlacementToSideAndAlign } from "../utils/placement";
+import React from "react";
 
 const CustomSelect = (props: ICustomSelectProps) => {
   const {
@@ -23,7 +25,19 @@ const CustomSelect = (props: ICustomSelectProps) => {
     value,
     tabIndex,
     portalElement,
+    side,
+    align,
+    sideOffset = 8,
   } = props;
+  // side and align calculations
+  const { finalSide, finalAlign } = React.useMemo(() => {
+    if (placement) {
+      const converted = convertPlacementToSideAndAlign(placement);
+      return { finalSide: converted.side, finalAlign: converted.align };
+    }
+    return { finalSide: side, finalAlign: align };
+  }, [placement, side, align]);
+
   // states
   return (
     <Select.Root value={value} onValueChange={onChange} disabled={disabled}>
@@ -62,7 +76,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
 
       <Select.Portal container={portalElement?.current}>
         <Select.Backdrop />
-        <Select.Positioner align={placement}>
+        <Select.Positioner side={finalSide} sideOffset={sideOffset} align={finalAlign}>
           <Select.ScrollUpArrow />
           <Select.Popup
             className={cn(

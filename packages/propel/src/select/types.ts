@@ -1,3 +1,5 @@
+import { TAlign, TPlacement, TSide } from "../utils/placement";
+
 export type ICustomSearchSelectOption = {
   value: any;
   query: string;
@@ -20,10 +22,13 @@ export interface IDropdownProps {
   chevronClassName?: string;
   onOpen?: () => void;
   optionsClassName?: string;
-  placement?: "center" | "start" | "end";
   tabIndex?: number;
   useCaptureForOutsideClick?: boolean;
   defaultOpen?: boolean;
+  placement?: TPlacement;
+  side?: TSide;
+  align?: TAlign;
+  sideOffset?: number;
 }
 
 export interface IPortalProps {
