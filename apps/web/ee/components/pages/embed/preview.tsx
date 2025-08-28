@@ -62,7 +62,10 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
     const getPage = async () => {
       if (storeType === EPageStoreType.WORKSPACE) {
         // @ts-expect-error store fixes
-        await fetchPageDetails(page.id, false);
+        await fetchPageDetails(page.id, {
+          shouldFetchSubPages: false,
+          trackVisit: false,
+        });
       }
     };
 

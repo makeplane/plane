@@ -28,8 +28,12 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async fetchById(workspaceSlug: string, pageId: string): Promise<TPage> {
-    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`)
+  async fetchById(workspaceSlug: string, pageId: string, trackVisit: boolean): Promise<TPage> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`, {
+      params: {
+        track_visit: trackVisit,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

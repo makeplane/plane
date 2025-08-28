@@ -31,8 +31,12 @@ export class TeamspacePageService extends APIService {
    * @param pageId
    * @returns
    */
-  async fetchById(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<TPage> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/`)
+  async fetchById(workspaceSlug: string, teamspaceId: string, pageId: string, trackVisit: boolean): Promise<TPage> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/`, {
+      params: {
+        track_visit: trackVisit,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

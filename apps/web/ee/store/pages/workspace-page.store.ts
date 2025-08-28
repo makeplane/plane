@@ -50,7 +50,13 @@ export interface IWorkspacePageStore {
   fetchAllPages: () => Promise<TPage[] | undefined>;
   fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (pageId: string, shouldFetchSubPages?: boolean | undefined) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    pageId: string,
+    options?: {
+      trackVisit?: boolean;
+      shouldFetchSubPages?: boolean;
+    }
+  ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
@@ -551,7 +557,9 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (pageId: string, shouldFetchSubPages: boolean | undefined = true) => {
+  fetchPageDetails: IWorkspacePageStore["fetchPageDetails"] = async (pageId, options) => {
+    const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
+    const trackVisit = options?.trackVisit ?? true;
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;
@@ -562,7 +570,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId)];
+      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
 
       if (shouldFetchSubPages) {
         promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));

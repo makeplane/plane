@@ -69,7 +69,10 @@ export interface IProjectPageStore {
   fetchPageDetails: (
     projectId: string,
     pageId: string,
-    shouldFetchSubPages?: boolean | undefined
+    options?: {
+      trackVisit?: boolean;
+      shouldFetchSubPages?: boolean;
+    }
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
@@ -660,7 +663,9 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (projectId: string, pageId: string, shouldFetchSubPages: boolean | undefined = true) => {
+  fetchPageDetails: IProjectPageStore["fetchPageDetails"] = async (projectId, pageId, options) => {
+    const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
+    const trackVisit = options?.trackVisit ?? true;
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
@@ -671,7 +676,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.service.fetchById(workspaceSlug, projectId, pageId)];
+      const promises: Promise<any>[] = [this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true)];
 
       if (shouldFetchSubPages) {
         promises.push(this.service.fetchSubPages(workspaceSlug, projectId, pageId));

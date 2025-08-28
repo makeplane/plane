@@ -85,7 +85,9 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     const getPage = async () => {
       if (storeType === EPageStoreType.WORKSPACE && isNestedPagesEnabled(workspaceSlug?.toString() ?? "")) {
         // @ts-expect-error - fix this
-        await fetchPageDetails(embedPageId, false);
+        await fetchPageDetails(embedPageId, {
+          shouldFetchSubPages: false,
+        });
       }
     };
     if (!storePageData) {

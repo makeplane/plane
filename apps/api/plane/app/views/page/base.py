@@ -61,6 +61,7 @@ from plane.ee.utils.check_user_teamspace_member import (
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
+
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
@@ -234,10 +235,9 @@ class PageViewSet(BaseViewSet):
                         user_id=request.user.id,
                     )
 
-                if (
-                    request.data.get("parent_id")
-                    and current_instance.get("parent_id") != request.data.get("parent_id")
-                ):
+                if request.data.get("parent_id") and current_instance.get(
+                    "parent_id"
+                ) != request.data.get("parent_id"):
                     nested_page_update.delay(
                         page_id=page.id,
                         action=PageAction.MOVED_INTERNALLY,
@@ -272,6 +272,7 @@ class PageViewSet(BaseViewSet):
     def retrieve(self, request, slug, project_id, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
         project = Project.objects.get(pk=project_id)
+        track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         """
         if the role is guest and guest_view_all_features is false and owned by is not
@@ -319,13 +320,14 @@ class PageViewSet(BaseViewSet):
             ).values_list("entity_identifier", flat=True)
             data = PageDetailSerializer(page).data
             data["issue_ids"] = issue_ids
-            recent_visited_task.delay(
-                slug=slug,
-                entity_name="page",
-                entity_identifier=page_id,
-                user_id=request.user.id,
-                project_id=project_id,
-            )
+            if track_visit:
+                recent_visited_task.delay(
+                    slug=slug,
+                    entity_name="page",
+                    entity_identifier=page_id,
+                    user_id=request.user.id,
+                    project_id=project_id,
+                )
             return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
@@ -411,7 +413,8 @@ class PageViewSet(BaseViewSet):
 
         user_pages = PageUser.objects.filter(
             Q(user_id=request.user.id) | Q(page__owned_by_id=request.user.id),
-            workspace__slug=slug, project_id=project_id,
+            workspace__slug=slug,
+            project_id=project_id,
         ).values_list("page_id", flat=True)
 
         sub_pages_count = (
@@ -767,7 +770,6 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 
 class PageDuplicateEndpoint(BaseAPIView):
-
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):

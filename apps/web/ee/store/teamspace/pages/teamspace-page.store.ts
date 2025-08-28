@@ -3,10 +3,10 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { TLoader, TPageFilters, TPage } from "@plane/types";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -36,7 +36,15 @@ export interface ITeamspacePageStore {
   clearAllFilters: (teamspaceId: string) => void;
   // fetch actions
   fetchTeamspacePages: (workspaceSlug: string, teamspaceId: string, loader?: TLoader) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (teamspaceId: string, pageId: string, loader?: TLoader) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    teamspaceId: string,
+    pageId: string,
+    options?: {
+      trackVisit?: boolean;
+      loader?: TLoader;
+      shouldFetchSubPages?: boolean;
+    }
+  ) => Promise<TPage | undefined>;
   // CRUD actions
   createPage: (data: Partial<TPage>) => Promise<TPage>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
@@ -253,11 +261,13 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param pageId
    * @returns Promise<TTeamspacePage>
    */
-  fetchPageDetails = async (
-    teamspaceId: string,
-    pageId: string,
-    loader: TLoader = "init-loader"
+  fetchPageDetails: ITeamspacePageStore["fetchPageDetails"] = async (
+    teamspaceId,
+    pageId,
+    options
   ): Promise<TTeamspacePage | undefined> => {
+    let loader: TLoader = options?.loader ?? "init-loader";
+    const trackVisit = options?.trackVisit ?? true;
     try {
       const { workspaceSlug } = this.rootStore.router;
       if (!workspaceSlug) return;
@@ -266,7 +276,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
         loader = "mutation";
       }
       set(this.loaderMap, teamspaceId, loader);
-      await this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId).then((response) => {
+      await this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId, trackVisit).then((response) => {
         runInAction(() => {
           if (response?.id) {
             const existingInstance = this.getPageById(pageId);

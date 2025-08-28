@@ -260,8 +260,8 @@ export interface IWorkspaceSidebarNavigationItem {
   key: string;
   labelTranslationKey: string;
   href: string;
-  highlight: (pathname: string, url: string) => boolean;
   access: EUserWorkspaceRoles[];
+  highlight: (pathname: string, url: string) => boolean;
 }
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
