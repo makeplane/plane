@@ -49,7 +49,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ value, disabled, classNam
 
 const AccordionTrigger: React.FC<AccordionTriggerProps> = ({
   className = "",
-  icon = <PlusIcon className="transition-all ease-out  group-data-[panel-open]:rotate-45" />,
+  icon = <PlusIcon aria-hidden="true" className="transition-all ease-out  group-data-[panel-open]:rotate-45" />,
   iconClassName = "",
   children,
   asChild = false,
@@ -60,7 +60,9 @@ const AccordionTrigger: React.FC<AccordionTriggerProps> = ({
     ) : (
       <BaseAccordion.Trigger className={`flex w-full items-center justify-between gap-2 py-2 ${className}`}>
         {children}
-        <div className={`flex-shrink-0 ${iconClassName}`}>{icon}</div>
+        <span aria-hidden="true" className={`flex-shrink-0 ${iconClassName}`}>
+          {icon}
+        </span>
       </BaseAccordion.Trigger>
     )}
   </BaseAccordion.Header>
