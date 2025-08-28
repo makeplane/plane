@@ -3,7 +3,7 @@ import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTo
 // plane imports
 import { Card, ECardSpacing } from "../../card";
 
-import { cn } from "@plane/utils";
+import { cn } from "@/utils/classname";
 
 type Props = {
   active: boolean | undefined;

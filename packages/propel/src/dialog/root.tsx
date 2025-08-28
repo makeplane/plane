@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Dialog as BaseDialog } from "@base-ui-components/react";
-import { cn } from "@plane/utils";
+import { cn } from "@/utils/classname";
 
 // enums
 

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { cn } from "@plane/utils";
 import {
   ECardDirection,
   ECardSpacing,
@@ -9,6 +8,7 @@ import {
   TCardSpacing,
   TCardVariant,
 } from "./helper";
+import { cn } from "@/utils/classname";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TCardVariant;

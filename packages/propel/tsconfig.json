@@ -5,7 +5,7 @@
     "lib": ["esnext", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["src/utils/*"]
+      "@/utils/*": ["src/utils/*"]
     }
   },
   "include": ["src"],

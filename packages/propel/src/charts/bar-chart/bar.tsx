@@ -2,7 +2,7 @@
 import React from "react";
 // plane imports
 import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn } from "@/utils/classname";
 
 // Constants
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height required to show text inside bar
