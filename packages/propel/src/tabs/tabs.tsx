@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
-import { cn } from "../utils";
+import { cn } from "../utils/classname";
 
 type TabsCompound = React.ForwardRefExoticComponent<
   React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
