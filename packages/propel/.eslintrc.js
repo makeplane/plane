@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@plane/eslint-config/library.js", "plugin:storybook/recommended", "plugin:storybook/recommended"],
+  extends: ["@plane/eslint-config/library.js", "plugin:storybook/recommended"],
   rules: {
     "import/order": [
       "warn",
