@@ -25,8 +25,9 @@ export const createExternalEmbedPastePlugin = (options: { isFlagged: boolean; ed
 
         const { isFlagged } = options;
         const link = find(textContent).find((item) => item.isLink && item.value === textContent);
+        const isWebUrl = link?.href.startsWith("http") || link?.href.startsWith("www");
 
-        if (link?.href && isEmpty && !isFlagged) {
+        if (link?.href && isEmpty && !isFlagged && isWebUrl) {
           const { from, to } = view.state.selection;
 
           options.editor
