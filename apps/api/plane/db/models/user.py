@@ -38,7 +38,7 @@ def get_mobile_default_onboarding():
 
 
 def validate_name(value):
-    if not re.match(r"^[a-zA-Z0-9_-]+$", value):
+    if not re.match(r"^[a-zA-Z0-9_\- ]+$", value):
         raise ValidationError(
             "name can only contain letters, numbers, hyphens (-), and underscores (_)"
         )
