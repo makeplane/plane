@@ -48,7 +48,7 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
   const itemHref = item.key === "your_work" ? `/${slug}${item.href}${data?.id}/` : `/${slug}${item.href}`;
-  const isActive = itemHref === pathname;
+  const isActive = item.key === "home" ? pathname === itemHref : pathname.includes(itemHref);
   const icon = getSidebarNavigationItemIcon(item.key);
 
   return (
