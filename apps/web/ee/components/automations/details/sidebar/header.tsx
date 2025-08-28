@@ -34,7 +34,7 @@ export const AutomationDetailsSidebarHeader: React.FC<Props> = observer((props) 
         {isActivityTab && <AutomationDetailsSidebarActivityHeaderFilters automationId={automationId} />}
         <button
           type="button"
-          className="shrink-0 size-5 grid place-items-center"
+          className="shrink-0 size-5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
           onClick={() => sidebarHelper?.setSelectedSidebarConfig({ tab: null, mode: null })}
         >
           <X className="size-4" />

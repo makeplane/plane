@@ -1,5 +1,5 @@
 // local imports
-import { TAutomationNode } from "./node";
+import { EAutomationNodeType, TAutomationNode } from "./node";
 import { EAutomationScope, TAutomation } from "./root";
 
 export type TAutomationActivityKeys = Pick<TAutomation, "name" | "description" | "scope">;
@@ -8,11 +8,13 @@ export type TAutomationNodeActivityKeys = Pick<TAutomationNode, "name" | "config
 export type TAutomationActivityField =
   | "automation"
   | `automation.${keyof TAutomationActivityKeys}`
-  | "automation.node"
-  | `automation.node.${keyof TAutomationNodeActivityKeys}`
+  | `automation.node.${EAutomationNodeType}`
+  | `automation.node.${EAutomationNodeType}.${keyof TAutomationNodeActivityKeys}`
   | "automation.run_history";
 
 export type TAutomationActivityVerb = "created" | "updated" | "deleted";
+
+export type TAutomationRunStatus = "pending" | "running" | "success" | "failed" | "cancelled";
 
 export type TAutomationActivity = {
   actor: string;
@@ -20,7 +22,15 @@ export type TAutomationActivity = {
   automation_version: string | null;
   automation_node: string | null;
   automation_edge: string | null;
-  automation_run: string | null;
+  automation_run: {
+    completed_at: string | null;
+    id: string;
+    initiator: string;
+    started_at: string;
+    status: TAutomationRunStatus;
+    work_item: string;
+    work_item_sequence_id: number;
+  } | null;
   automation_scope: EAutomationScope;
   created_at: string | null;
   created_by: string | null;

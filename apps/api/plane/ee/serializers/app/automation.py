@@ -16,7 +16,6 @@ from plane.ee.models import (
 
 
 class AutomationWriteSerializer(BaseSerializer):
-
     # validate payload here check scope
     def validate_scope(self, value):
         if value not in AutomationScopeChoices.values:
@@ -83,7 +82,6 @@ class AutomationReadSerializer(BaseSerializer):
 
 
 class AutomationDetailReadSerializer(AutomationReadSerializer):
-
     nodes = serializers.SerializerMethodField()
     edges = serializers.SerializerMethodField()
 
@@ -159,7 +157,6 @@ class AutomationNodeReadSerializer(BaseSerializer):
 
 
 class AutomationEdgeWriteSerializer(BaseSerializer):
-
     def validate_source_node(self, value):
         if value not in AutomationNode.objects.filter(
             version=self.context["version"],
@@ -218,7 +215,6 @@ class AutomationEdgeReadSerializer(BaseSerializer):
 
 
 class AutomationRunReadSerializer(BaseSerializer):
-
     class Meta:
         model = AutomationRun
         fields = [
@@ -263,9 +259,28 @@ class NodeExecutionReadSerializer(BaseSerializer):
         read_only_fields = fields
 
 
+class AutomationRunLiteSerializer(BaseSerializer):
+    work_item_sequence_id = serializers.IntegerField(
+        source="work_item.sequence_id", read_only=True
+    )
+
+    class Meta:
+        model = AutomationRun
+        fields = [
+            "id",
+            "work_item",
+            "initiator",
+            "started_at",
+            "status",
+            "completed_at",
+            "work_item_sequence_id",
+        ]
+        read_only_fields = fields
+
+
 class AutomationActivityReadSerializer(BaseSerializer):
     automation_scope = serializers.CharField(source="automation.scope", read_only=True)
-    work_item_sequence_id = serializers.SerializerMethodField()
+    automation_run = AutomationRunLiteSerializer()
 
     class Meta:
         model = AutomationActivity
@@ -292,11 +307,5 @@ class AutomationActivityReadSerializer(BaseSerializer):
             "new_identifier",
             "epoch",
             "automation_scope",
-            "work_item_sequence_id",
         ]
         read_only_fields = fields
-
-    def get_work_item_sequence_id(self, obj):
-        if obj.automation_run and obj.automation_run.work_item:
-            return obj.automation_run.work_item.sequence_id
-        return None

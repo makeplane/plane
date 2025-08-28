@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { EAutomationChangePropertyType, EAutomationChangeType, type ICustomSearchSelectOption } from "@plane/types";
@@ -75,8 +76,14 @@ export const useAutomationActionConfig = (args: TArgs) => {
           ),
         })) ?? [],
       getPreviewContent: (value: string[]) => {
-        const states = value.map((id) => projectStates?.find((state) => state.id === id)?.name);
-        return states.join(", ");
+        const state = projectStates?.find((state) => state.id === value[0]);
+        if (!state) return null;
+        return (
+          <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+            <StateGroupIcon stateGroup={state.group} color={state.color} />
+            <span className="flex-grow truncate">{state.name}</span>
+          </div>
+        );
       },
     }),
     [projectStates]
@@ -97,8 +104,14 @@ export const useAutomationActionConfig = (args: TArgs) => {
         ),
       })),
       getPreviewContent: (value: string[]) => {
-        const priorities = value.map((key) => ISSUE_PRIORITIES.find((priority) => priority.key === key)?.title);
-        return priorities.join(", ");
+        const priority = ISSUE_PRIORITIES.find((priority) => priority.key === value[0]);
+        if (!priority) return null;
+        return (
+          <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+            <PriorityIcon priority={priority.key} size={14} withContainer />
+            <span className="flex-grow truncate">{priority.title}</span>
+          </div>
+        );
       },
     }),
     []
@@ -130,8 +143,25 @@ export const useAutomationActionConfig = (args: TArgs) => {
           })
           .filter((o) => o !== undefined) ?? [],
       getPreviewContent: (value: string[]) => {
-        const members = value.map((id) => getProjectMemberDetails(id, projectId)?.member?.display_name);
-        return members.join(", ");
+        const members = value.map((id) => getProjectMemberDetails(id, projectId)).filter((m) => m !== undefined);
+        return (
+          <>
+            {members.map((member, index) => (
+              <div key={member?.id} className="shrink-0">
+                <div className="inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+                  <Avatar
+                    name={member?.member?.display_name}
+                    src={getFileURL(member?.member?.avatar_url ?? "")}
+                    showTooltip={false}
+                    size="sm"
+                  />
+                  {member?.member?.display_name}
+                </div>
+                {index !== members.length - 1 && <span className="mr-1">,</span>}
+              </div>
+            ))}
+          </>
+        );
       },
     }),
     [projectMemberIds, getProjectMemberDetails, projectId]
@@ -147,7 +177,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
         content: (
           <div className="flex items-center justify-start gap-2 overflow-hidden">
             <span
-              className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+              className="size-2.5 flex-shrink-0 rounded-full"
               style={{
                 backgroundColor: label.color,
               }}
@@ -157,8 +187,27 @@ export const useAutomationActionConfig = (args: TArgs) => {
         ),
       })),
       getPreviewContent: (value: string[]) => {
-        const labels = value.map((id) => projectLabels?.find((label) => label.id === id)?.name);
-        return labels.join(", ");
+        const labels = value
+          .map((id) => projectLabels?.find((label) => label.id === id))
+          .filter((l) => l !== undefined);
+        return (
+          <>
+            {labels.map((label, index) => (
+              <div key={label.id} className="shrink-0">
+                <div className="inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+                  <span
+                    className="size-2.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label.color,
+                    }}
+                  />
+                  <span className="flex-grow truncate">{label.name}</span>
+                </div>
+                {index !== labels.length - 1 && <span className="mr-1">,</span>}
+              </div>
+            ))}
+          </>
+        );
       },
     }),
     [projectLabels]
@@ -169,7 +218,12 @@ export const useAutomationActionConfig = (args: TArgs) => {
       supported_change_types: [EAutomationChangeType.UPDATE],
       component_type: EConfigurationComponentType.DATE_PICKER,
       minDate: new Date(),
-      getPreviewContent: (value: string[]) => renderFormattedDate(value[0] ?? ""),
+      getPreviewContent: (value: string[]) => (
+        <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+          <CalendarClock className="shrink-0 size-3.5" />
+          <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
+        </div>
+      ),
     }),
     []
   );
@@ -179,7 +233,12 @@ export const useAutomationActionConfig = (args: TArgs) => {
       supported_change_types: [EAutomationChangeType.UPDATE],
       component_type: EConfigurationComponentType.DATE_PICKER,
       minDate: new Date(),
-      getPreviewContent: (value: string[]) => renderFormattedDate(value[0] ?? ""),
+      getPreviewContent: (value: string[]) => (
+        <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
+          <CalendarCheck2 className="shrink-0 size-3.5" />
+          <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
+        </div>
+      ),
     }),
     []
   );

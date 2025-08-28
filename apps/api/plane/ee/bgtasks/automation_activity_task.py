@@ -146,7 +146,7 @@ def create_automation_node_activity(
             automation_version=automation.current_version,
             actor_id=actor_id,
             verb="created",
-            field="automation.node",
+            field=f"automation.node.{requested_data.get('node_type')}",
             workspace_id=workspace_id,
             epoch=epoch,
         )
@@ -230,7 +230,7 @@ def delete_automation_node_activity(
             automation_node_id=requested_data.get("id"),
             actor_id=actor_id,
             verb="deleted",
-            field="automation.node",
+            field=f"automation.node.{requested_data.get('node_type')}",
             workspace_id=workspace_id,
             project_id=project_id,
             epoch=epoch,

@@ -25,7 +25,7 @@ export const AutomationDetailsMainContentRoot: React.FC<TProps> = observer((prop
 
   return (
     <main className="@container flex-shrink-0 flex-grow flex justify-center bg-custom-background-90 px-page-x py-6 overflow-y-scroll vertical-scrollbar scrollbar-sm">
-      <div className="@lg:w-4/5 @xl:w-3/5 @3xl:w-2/5 space-y-6">
+      <div className="@lg:w-4/5 @4xl:w-3/5 space-y-6">
         {isAutomationLoaded ? (
           <>
             <AutomationDetailsMainContentHeader automationId={automationId} />

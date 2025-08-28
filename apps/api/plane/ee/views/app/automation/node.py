@@ -25,7 +25,6 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationNodeEndpoint(AutomationBaseEndpoint):
-
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     def get(
@@ -36,7 +35,6 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
         automation_id: uuid.UUID,
         pk=None,
     ):
-
         if pk:
             node = AutomationNode.objects.get(
                 id=pk,
@@ -75,7 +73,11 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
             automation_activity.delay(
                 type="automation.node.activity.created",
                 requested_data=json.dumps(
-                    {"id": str(serializer.instance.id)}, cls=DjangoJSONEncoder
+                    {
+                        "id": str(serializer.instance.id),
+                        "node_type": serializer.instance.node_type,
+                    },
+                    cls=DjangoJSONEncoder,
                 ),
                 actor_id=str(request.user.id),
                 automation_id=str(automation_id),
@@ -159,12 +161,12 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
             project_id=project_id,
         ).delete()
 
-        node.delete()
-
         # Delete node activity
         automation_activity.delay(
             type="automation.node.activity.deleted",
-            requested_data=json.dumps({"id": str(pk)}, cls=DjangoJSONEncoder),
+            requested_data=json.dumps(
+                {"id": str(pk), "node_type": node.node_type}, cls=DjangoJSONEncoder
+            ),
             actor_id=str(request.user.id),
             automation_id=str(automation_id),
             project_id=str(project_id),
@@ -172,4 +174,6 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
             epoch=int(timezone.now().timestamp()),
             slug=slug,
         )
+
+        node.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

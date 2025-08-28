@@ -19,11 +19,11 @@ export const AutomationDetailsMainContentAddCommentBlock: React.FC<TProps> = obs
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="flex-shrink-0 size-12 rounded-full bg-custom-background-80 grid place-items-center">
-        <MessageCircle className="size-5 text-custom-primary-100" />
+    <div className="flex gap-2">
+      <span className="shrink-0 size-12 rounded-full bg-custom-background-80 grid place-items-center">
+        <MessageCircle className="size-5 text-custom-text-300" />
       </span>
-      <div className="text-sm text-custom-text-300 font-medium">
+      <div className="flex-grow text-sm text-custom-text-300 font-medium">
         <p>{t("automations.action.comment_block.title")}</p>
         <LiteTextEditor
           editable={false}
@@ -33,7 +33,7 @@ export const AutomationDetailsMainContentAddCommentBlock: React.FC<TProps> = obs
           }}
           id={actionId}
           initialValue={config.comment_text ?? "<p></p>"}
-          parentClassName="border-none p-0"
+          parentClassName="p-0"
           showSubmitButton={false}
           showToolbar={false}
           workspaceId={workspaceId}

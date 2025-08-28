@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationDetailsSidebarActivityList } from "./list";
+import { AutomationActivityLoader } from "./loader";
 
 type Props = {
   automationId: string;
@@ -19,7 +20,7 @@ export const AutomationDetailsSidebarActivityRoot: React.FC<Props> = observer((p
 
   useSWR(`AUTOMATION_ACTIVITY_${automationId}_${filtersFetchKey}`, () => fetchActivities?.());
 
-  if (!hasFetchedActivities) return null;
+  if (!hasFetchedActivities) return <AutomationActivityLoader />;
 
   return <AutomationDetailsSidebarActivityList automationId={automationId} />;
 });

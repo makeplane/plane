@@ -47,11 +47,15 @@ export const AutomationDetailsSidebarActivityHeaderFilters: React.FC<Props> = ob
           })
         }
         customButton={
-          <Button variant="link-primary" size="sm" prependIcon={<ListFilter className="size-3" />} className="relative">
+          <button
+            type="button"
+            className="relative grid place-items-center rounded hover:bg-custom-background-80 p-1 aspect-square transition-colors"
+          >
+            <ListFilter className="size-3" />
             {activityTypeFilter !== "all" && (
               <span className="absolute size-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
             )}
-          </Button>
+          </button>
         }
       >
         {AUTOMATION_ACTIVITY_TYPE_OPTIONS.map((item) => (

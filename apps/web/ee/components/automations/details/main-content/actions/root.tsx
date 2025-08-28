@@ -65,7 +65,6 @@ export const AutomationDetailsMainContentActionsRoot: React.FC<TProps> = observe
                 )}
                 {actionNode.handler_name === EActionNodeHandlerName.CHANGE_PROPERTY && (
                   <AutomationDetailsMainContentChangePropertyBlock
-                    automationId={automationId}
                     config={actionNode.config as TChangePropertyActionConfig} // TODO: Check if we can avoid this type assertion
                     projectId={automation.project}
                   />

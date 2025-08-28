@@ -1,25 +1,18 @@
 import { useMemo } from "react";
 import { PencilLine } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
 import { EAutomationChangeType, type TChangePropertyActionConfig } from "@plane/types";
 import { getAutomationChangePropertyTypeLabel } from "@plane/utils";
 // plane web imports
 import { useAutomationActionConfig } from "@/plane-web/hooks/automations/use-automation-action-config";
-import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 type Props = {
-  automationId: string;
   config: TChangePropertyActionConfig;
   projectId: string;
 };
 
 export const AutomationDetailsMainContentChangePropertyBlock: React.FC<Props> = (props) => {
-  const { automationId, config, projectId } = props;
-  // store hooks
-  const { getAutomationById } = useAutomations();
-  // derived values
-  const {} = getAutomationById(automationId) ?? {};
+  const { config, projectId } = props;
   const { configurationMap } = useAutomationActionConfig({
     projectId,
   });
@@ -28,30 +21,24 @@ export const AutomationDetailsMainContentChangePropertyBlock: React.FC<Props> = 
     const propertyDetails = configurationMap[config.property_name];
     return propertyDetails.getPreviewContent(config.property_value);
   }, [config.property_name, config.property_value, configurationMap]);
-  // translation
-  const { t } = useTranslation();
 
   const description: React.ReactNode = useMemo(() => {
     if (config.change_type === EAutomationChangeType.ADD) {
       return (
-        <p>
-          add <span className="text-custom-text-100">{propertyValue}</span> to{" "}
-          <span className="text-custom-text-100">{getAutomationChangePropertyTypeLabel(config.property_name)}</span>
+        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
+          <span className="shrink-0 text-custom-text-300">add</span> {propertyValue}
         </p>
       );
     } else if (config.change_type === EAutomationChangeType.REMOVE) {
       return (
-        <p>
-          remove <span className="text-custom-text-100">{propertyValue}</span> from{" "}
-          <span className="text-custom-text-100">{getAutomationChangePropertyTypeLabel(config.property_name)}</span>
+        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
+          <span className="shrink-0 text-custom-text-300">remove</span> {propertyValue}
         </p>
       );
     } else if (config.change_type === EAutomationChangeType.UPDATE) {
       return (
-        <p>
-          update{" "}
-          <span className="text-custom-text-100">{getAutomationChangePropertyTypeLabel(config.property_name)}</span> to{" "}
-          <span className="text-custom-text-100">{propertyValue}</span>
+        <p className="flex items-center gap-1 flex-wrap text-custom-text-100">
+          <span className="shrink-0 text-custom-text-300">set to</span> {propertyValue}
         </p>
       );
     }
@@ -59,12 +46,15 @@ export const AutomationDetailsMainContentChangePropertyBlock: React.FC<Props> = 
   }, [config, propertyValue]);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex gap-2">
       <span className="flex-shrink-0 size-12 rounded-full bg-custom-background-80 grid place-items-center">
-        <PencilLine className="size-5 text-custom-primary-100" />
+        <PencilLine className="size-5 text-custom-text-300" />
       </span>
       <div className="text-sm text-custom-text-300 font-medium">
-        <p>{t("automations.action.change_property_block.title")}</p>
+        <p>
+          Update the work item{" "}
+          <span className="text-custom-text-100">{getAutomationChangePropertyTypeLabel(config.property_name)}</span>
+        </p>
         {description}
       </div>
     </div>

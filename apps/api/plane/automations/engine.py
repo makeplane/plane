@@ -459,6 +459,7 @@ class AutomationExecutionEngine:
                             status=RunStatusChoices.RUNNING,
                             started_at=timezone.now(),
                             entity_type=entity_type,
+                            initiator_id=event.get("initiator_id", None),
                             **self.get_entity_id_field(entity_type, entity_id),
                         )
 

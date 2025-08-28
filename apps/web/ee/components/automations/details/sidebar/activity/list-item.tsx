@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
+// plane imports
+import { cn } from "@plane/utils";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
-import { AutomationDetailsSidebarActivityListItemWrapper } from "./list-item-wrapper";
-import { useAutomationActivity } from "./use-automation-activity";
+import { AutomationDetailsSidebarActivityLogItem } from "./activity-log-item";
+import { AutomationDetailsSidebarActivityRunHistoryItem } from "./run-history-item";
 
 type Props = {
   automationId: string;
@@ -16,24 +18,27 @@ export const AutomationDetailsSidebarActivityListItem: React.FC<Props> = observe
   const { getAutomationById } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
-  const { getActivityById } = automation?.activity ?? {};
+  const { getActivityById, checkIfActivityIsFirst, checkIfActivityIsLast } = automation?.activity ?? {};
   const activityDetails = getActivityById?.(activityId);
+  const isFirst = checkIfActivityIsFirst?.(activityId);
+  const isLast = checkIfActivityIsLast?.(activityId);
+  const isRunHistory = activityDetails?.field === "automation.run_history";
 
   if (!activityDetails) return null;
 
-  const { activityListItemDetails } = useAutomationActivity({
-    activityId,
-    automationId,
-  });
-  if (!activityListItemDetails) return null;
-
   return (
-    <AutomationDetailsSidebarActivityListItemWrapper
-      automationId={automationId}
-      activityId={activityId}
-      descriptionContent={activityListItemDetails.descriptionContent}
-      icon={activityListItemDetails.icon}
-      titleContent={activityListItemDetails.titleContent}
-    />
+    <div
+      className={cn("relative flex items-center gap-3 text-xs py-2", {
+        "pt-0": isFirst,
+        "pb-0": isLast,
+      })}
+    >
+      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
+      {isRunHistory ? (
+        <AutomationDetailsSidebarActivityRunHistoryItem automationId={automationId} activityId={activityId} />
+      ) : (
+        <AutomationDetailsSidebarActivityLogItem automationId={automationId} activityId={activityId} />
+      )}
+    </div>
   );
 });

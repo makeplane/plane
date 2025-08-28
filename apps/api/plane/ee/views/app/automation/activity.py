@@ -34,6 +34,10 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
         pk=None,
     ):
         filters = {}
+        excludes = {"field": "automation.edge"}
+
+        show_fails = request.GET.get("show_fails", "true")
+
         if request.GET.get("created_at__gt", None) is not None:
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
@@ -41,25 +45,34 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
             if request.GET.get("type") == "run_history":
                 filters["field"] = "automation.run_history"
             elif request.GET.get("type") == "activity":
-                filters["field__ne"] = "automation.run_history"
+                excludes["field"] = "automation.run_history"
+
+        if str(show_fails).lower() == "false":
+            excludes["automation_run__status"] = "failed"
 
         if pk:
-            activity = (
+            queryset = (
                 AutomationActivity.objects.select_related("automation")
-                .filter(**filters)
-                .exclude(field="automation.edge")
-                .get(
-                    id=pk,
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    automation_id=automation_id,
+                .prefetch_related(
+                    Prefetch(
+                        "automation_run",
+                        queryset=AutomationRun.objects.select_related("work_item"),
+                    )
                 )
+                .filter(**filters)
+                .exclude(**excludes)
+            )
+            activity = queryset.get(
+                id=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                automation_id=automation_id,
             )
 
             serializer = AutomationActivityReadSerializer(activity)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        activities = (
+        queryset = (
             AutomationActivity.objects.select_related("automation")
             .prefetch_related(
                 Prefetch(
@@ -73,8 +86,9 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
                 automation_id=automation_id,
             )
             .filter(**filters)
-            .exclude(field="automation.edge")
-            .order_by("created_at")
+            .exclude(**excludes)
         )
+
+        activities = queryset.order_by("created_at")
         serializer = AutomationActivityReadSerializer(activities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
