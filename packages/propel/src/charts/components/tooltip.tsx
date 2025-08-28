@@ -4,7 +4,6 @@ import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTo
 import { cn } from "@plane/utils";
 import { Card, ECardSpacing } from "../../card";
 
-
 type Props = {
   active: boolean | undefined;
   activeKey?: string | null;
