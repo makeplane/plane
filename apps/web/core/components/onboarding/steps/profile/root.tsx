@@ -214,7 +214,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                 message: "Name must be within 24 characters.",
               },
               validate: (value) => {
-                if (!/^[a-zA-Z0-9_-]+$/.test(value))
+                if (!/^[a-zA-Z0-9 _-]+$/.test(value))
                   return "First name can only contain letters, numbers, hyphens, and underscores.";
                 return true;
               },

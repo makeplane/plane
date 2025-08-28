@@ -248,7 +248,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                   rules={{
                     required: "Please enter first name",
                     validate: (value) => {
-                      if (!/^[a-zA-Z0-9_-]+$/.test(value))
+                      if (!/^[a-zA-Z0-9 _-]+$/.test(value))
                         return "First name can only contain letters, numbers, hyphens, and underscores.";
                       return true;
                     },
@@ -278,7 +278,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                   name="last_name"
                   rules={{
                     validate: (value) => {
-                      if (!/^[a-zA-Z0-9_-]+$/.test(value))
+                      if (!/^[a-zA-Z0-9 _-]+$/.test(value))
                         return "Last name can only contain letters, numbers, hyphens, and underscores.";
                       return true;
                     },
