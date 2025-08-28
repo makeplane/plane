@@ -4,7 +4,7 @@
 # logo: svgs/plane.svg
 
 x-plane-commercial: &plane-commercial
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.13.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.14.0}
   APP_DOMAIN: ${SERVICE_URL_PLANE}
   MACHINE_SIGNATURE: ${SERVICE_PASSWORD_64_MACHINESIGNATURE}
   DEPLOY_PLATFORM: coolify
@@ -129,6 +129,28 @@ x-app-env: &app-env
 x-live-env: &live-env
   API_BASE_URL: http://api:8000
   LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY}
+  IFRAMELY_URL: ${IFRAMELY_URL:-http://iframely:8061}
+
+x-outbox-poller-env: &outbox-poller-env
+  OUTBOX_POLLER_MEMORY_LIMIT_MB: ${OUTBOX_POLLER_MEMORY_LIMIT_MB:-512}
+  OUTBOX_POLLER_INTERVAL_MIN: ${OUTBOX_POLLER_INTERVAL_MIN:-0.25}
+  OUTBOX_POLLER_INTERVAL_MAX: ${OUTBOX_POLLER_INTERVAL_MAX:-2}
+  OUTBOX_POLLER_BATCH_SIZE: ${OUTBOX_POLLER_BATCH_SIZE:-250}
+  OUTBOX_POLLER_MEMORY_CHECK_INTERVAL: ${OUTBOX_POLLER_MEMORY_CHECK_INTERVAL:-30}
+  OUTBOX_POLLER_POOL_SIZE: ${OUTBOX_POLLER_POOL_SIZE:-4}
+  OUTBOX_POLLER_POOL_MIN_SIZE: ${OUTBOX_POLLER_POOL_MIN_SIZE:-2}
+  OUTBOX_POLLER_POOL_MAX_SIZE: ${OUTBOX_POLLER_POOL_MAX_SIZE:-10}
+  OUTBOX_POLLER_POOL_TIMEOUT: ${OUTBOX_POLLER_POOL_TIMEOUT:-30.0}
+  OUTBOX_POLLER_POOL_MAX_IDLE: ${OUTBOX_POLLER_POOL_MAX_IDLE:-300.0}
+  OUTBOX_POLLER_POOL_MAX_LIFETIME: ${OUTBOX_POLLER_POOL_MAX_LIFETIME:-3600}
+  OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT: ${OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT:-5.0}
+  OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL: ${OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL:-30}
+
+x-automation-consumer-env: &automation-consumer-env
+  AUTOMATION_EVENT_STREAM_QUEUE_NAME: ${AUTOMATION_EVENT_STREAM_QUEUE_NAME:-plane.event_stream.automations}
+  AUTOMATION_EVENT_STREAM_PREFETCH: ${AUTOMATION_EVENT_STREAM_PREFETCH:-10}
+  AUTOMATION_EXCHANGE_NAME: ${AUTOMATION_EXCHANGE_NAME:-plane.event_stream}
+  AUTOMATION_EVENT_TYPES: ${AUTOMATION_EVENT_TYPES:-issue.}
 
 services:
   admin:
@@ -295,6 +317,13 @@ services:
     - uploads:/export
     - minio_data:/data
 
+  iframely:
+    image: artifacts.plane.so/makeplane/iframely:v1.2.0
+    deploy:
+      replicas: ${IFRAMELY_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+
   silo:
     image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
@@ -305,6 +334,32 @@ services:
     depends_on:
     - plane-redis
     - plane-mq
+
+  automation-consumer:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-automation-consumer.sh
+    environment:
+      <<: [ *automation-consumer-env, *app-env, *docstore-env ]
+    deploy:
+      replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - plane-db
+      - plane-mq
+
+  outbox-poller:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-outbox-poller.sh
+    environment:
+      <<: [ *outbox-poller-env, *app-env ]
+    deploy:
+      replicas: ${OUTBOX_POLLER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - plane-db
+      - plane-mq
 
   # Comment this if you already have a reverse proxy running
   proxy:

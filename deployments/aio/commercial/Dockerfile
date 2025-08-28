@@ -1,4 +1,4 @@
-ARG PLANE_VERSION=v1.13.0
+ARG PLANE_VERSION=v1.14.0
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
 # **************************************************
@@ -15,6 +15,7 @@ FROM artifacts.plane.so/makeplane/silo-commercial:${PLANE_VERSION} AS silo-img
 FROM artifacts.plane.so/makeplane/proxy-commercial:${PLANE_VERSION} AS proxy-img
 FROM artifacts.plane.so/makeplane/email-commercial:${PLANE_VERSION} AS email-img
 FROM artifacts.plane.so/makeplane/monitor-commercial:${PLANE_VERSION} AS monitor-img
+FROM artifacts.plane.so/makeplane/iframely:v1.2.0 AS iframely-img
 
 # **************************************************
 #  STAGE 1: Runner
@@ -39,6 +40,7 @@ COPY --from=space-img /app /app/space
 COPY --from=admin-img /app /app/admin
 COPY --from=live-img /app /app/live
 COPY --from=silo-img /app /app/silo
+COPY --from=iframely-img /iframely /app/iframely
 COPY --from=monitor-img /usr/local/bin/prime-monitor /usr/local/bin/prime-monitor
 
 RUN mkdir -p /app/monitor && \

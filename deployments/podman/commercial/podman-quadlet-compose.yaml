@@ -4,7 +4,7 @@ networks:
 
 services:
   admin:
-    image: artifacts.plane.so/makeplane/admin-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/admin-commercial:v1.14.0
     restart: unless-stopped
     networks:
     - systemd-plane-nw
@@ -13,7 +13,7 @@ services:
     - web
 
   web:
-    image: artifacts.plane.so/makeplane/web-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/web-commercial:v1.14.0
     restart: unless-stopped
     networks:
     - systemd-plane-nw
@@ -22,7 +22,7 @@ services:
     - worker
 
   space:
-    image: artifacts.plane.so/makeplane/space-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/space-commercial:v1.14.0
     restart: unless-stopped
     networks:
     - systemd-plane-nw
@@ -31,7 +31,7 @@ services:
     - web
 
   live:
-    image: artifacts.plane.so/makeplane/live-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/live-commercial:v1.14.0
     restart: unless-stopped
     env_file:
     - /opt/plane/plane.env
@@ -42,7 +42,7 @@ services:
     - web
 
   monitor:
-    image: artifacts.plane.so/makeplane/monitor-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/monitor-commercial:v1.14.0
     restart: unless-stopped
     env_file:
     - /opt/plane/plane.env
@@ -55,7 +55,7 @@ services:
     - systemd-plane-nw
 
   api:
-    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
     command: ./bin/docker-entrypoint-api-ee.sh
     restart: unless-stopped
     env_file:
@@ -72,7 +72,7 @@ services:
     - plane-redis
 
   worker:
-    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
     command: ./bin/docker-entrypoint-worker.sh
     restart: unless-stopped
     env_file:
@@ -90,7 +90,7 @@ services:
     - plane-redis
 
   beat-worker:
-    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
     command: ./bin/docker-entrypoint-beat.sh
     restart: unless-stopped
     env_file:
@@ -108,7 +108,7 @@ services:
     - plane-redis
 
   migrator:
-    image: artifacts.plane.so/makeplane/backend-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
     command: ./bin/docker-entrypoint-migrator.sh
     restart: "no"
     env_file:
@@ -156,6 +156,12 @@ services:
     volumes:
     - /opt/plane/data/rabbitmq:/var/lib/rabbitmq
 
+  iframely:
+    image: artifacts.plane.so/makeplane/iframely:v1.2.0
+    restart: unless-stopped
+    networks:
+    - systemd-plane-nw
+
   plane-minio:
     image: minio/minio:latest
     command: server /export --console-address ":9090"
@@ -166,10 +172,9 @@ services:
     - systemd-plane-nw
     volumes:
     - /opt/plane/data/minio:/export
-    
 
   silo:
-    image: artifacts.plane.so/makeplane/silo-commercial:v1.13.0  
+    image: artifacts.plane.so/makeplane/silo-commercial:v1.14.0
     restart: unless-stopped
     env_file:
     - /opt/plane/plane.env
@@ -179,9 +184,33 @@ services:
     - plane-redis
     - plane-mq
 
+  automation-consumer:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
+    command: ./bin/docker-entrypoint-automation-consumer.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+
+  outbox-poller:
+    image: artifacts.plane.so/makeplane/backend-commercial:v1.14.0
+    command: ./bin/docker-entrypoint-outbox-poller.sh
+    restart: unless-stopped
+    env_file:
+    - /opt/plane/plane.env
+    networks:
+    - systemd-plane-nw
+    depends_on:
+    - plane-db
+    - plane-mq
+
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: artifacts.plane.so/makeplane/proxy-commercial:v1.13.0
+    image: artifacts.plane.so/makeplane/proxy-commercial:v1.14.0
     restart: unless-stopped
     env_file:
     - /opt/plane/plane.env
