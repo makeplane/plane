@@ -17,7 +17,7 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     };
   },
 
-  content: "paragraph+",
+  content: "block+",
 
   addAttributes() {
     return {
@@ -39,6 +39,9 @@ export const TableHeader = Node.create<TableHeaderOptions>({
       background: {
         default: "none",
       },
+      hideContent: {
+        default: false,
+      },
     };
   },
 
@@ -54,7 +57,8 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     return [
       "th",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}`,
+        class: node.attrs.hideContent ? "content-hidden" : "",
+        style: `background-color: ${node.attrs.background};`,
       }),
       0,
     ];

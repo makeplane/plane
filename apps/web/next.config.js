@@ -12,7 +12,7 @@ const nextConfig = {
     return [
       {
         source: "/(.*)?",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+        headers: [{ key: "X-Frame-Options", value: "DENY" }],
       },
     ];
   },

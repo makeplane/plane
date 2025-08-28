@@ -1,50 +1,12 @@
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
 import { cn } from "@plane/utils";
-
-export type TPosition =
-  | "top"
-  | "right"
-  | "bottom"
-  | "left"
-  | "auto"
-  | "auto-end"
-  | "auto-start"
-  | "bottom-start"
-  | "bottom-end"
-  | "left-start"
-  | "left-end"
-  | "right-start"
-  | "right-end"
-  | "top-start"
-  | "top-end";
-
-type Side = "top" | "bottom" | "left" | "right";
-type Align = "start" | "center" | "end";
-
-// placement conversion map
-const PLACEMENT_MAP = new Map<TPosition, { side: Side; align: Align }>([
-  ["auto", { side: "bottom", align: "center" }],
-  ["auto-start", { side: "bottom", align: "start" }],
-  ["auto-end", { side: "bottom", align: "end" }],
-  ["top", { side: "top", align: "center" }],
-  ["bottom", { side: "bottom", align: "center" }],
-  ["left", { side: "left", align: "center" }],
-  ["right", { side: "right", align: "center" }],
-  ["top-start", { side: "top", align: "start" }],
-  ["top-end", { side: "top", align: "end" }],
-  ["bottom-start", { side: "bottom", align: "start" }],
-  ["bottom-end", { side: "bottom", align: "end" }],
-  ["left-start", { side: "left", align: "start" }],
-  ["left-end", { side: "left", align: "end" }],
-  ["right-start", { side: "right", align: "start" }],
-  ["right-end", { side: "right", align: "end" }],
-]);
+import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
 
 type ITooltipProps = {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
-  position?: TPosition;
+  position?: TPlacement;
   children: React.ReactElement;
   disabled?: boolean;
   className?: string;
@@ -52,18 +14,10 @@ type ITooltipProps = {
   closeDelay?: number;
   isMobile?: boolean;
   renderByDefault?: boolean;
-  side?: Side;
-  align?: Align;
+  side?: TSide;
+  align?: TAlign;
   sideOffset?: number;
 };
-
-// conversion function
-export function convertPlacementToSideAndAlign(placement: TPosition): {
-  side: Side;
-  align: Align;
-} {
-  return PLACEMENT_MAP.get(placement) || { side: "bottom", align: "center" };
-}
 
 export function Tooltip(props: ITooltipProps) {
   const {

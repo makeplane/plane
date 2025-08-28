@@ -1,7 +1,7 @@
+import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
-import * as React from "react";
-import { cn } from "@plane/ui";
+import { cn } from "@plane/utils";
 
 function CommandComponent({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return <CommandPrimitive data-slot="command" className={cn("", className)} {...props} />;
