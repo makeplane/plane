@@ -198,7 +198,7 @@ class PageViewSet(BaseViewSet):
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         project = Project.objects.get(pk=project_id)
-        track_visit = request.query_params.get("track_visit", "false").lower() == "true"
+        track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         """
         if the role is guest and guest_view_all_features is false and owned by is not
