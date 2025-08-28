@@ -1,7 +1,6 @@
 .next/*
 out/*
 public/*
-core/local-db/worker/wa-sqlite/src/*
 dist/*
 node_modules/*
 .turbo/*
