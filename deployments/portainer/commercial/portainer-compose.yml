@@ -50,6 +50,7 @@ x-redis-env: &redis-env
 
 x-docstore-env: &docstore-env
   USE_MINIO: ${USE_MINIO:-1}
+  USE_STORAGE_PROXY: ${USE_STORAGE_PROXY:-0}
   MINIO_ROOT_USER: ${MINIO_ROOT_USER:-access-key}
   MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-secret-key}
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
