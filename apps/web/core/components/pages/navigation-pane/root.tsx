@@ -53,7 +53,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
 
   // Check if any extension is currently active based on query parameters
   const ActiveExtension = extensions.find((extension) => {
-    const paneTabValue = searchParams.get("paneTab");
+    const paneTabValue = searchParams.get(PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM);
     const hasVersionParam = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
 
     // Extension is active ONLY when paneTab matches AND no regular navigation params are present

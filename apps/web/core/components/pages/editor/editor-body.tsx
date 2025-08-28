@@ -107,8 +107,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-    storeType: storeType ?? "",
+    workspaceSlug,
+    storeType,
   });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
@@ -131,7 +131,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         isOpen={isOpen}
         onClose={onClose}
         workspaceId={workspaceId}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        workspaceSlug={workspaceSlug}
       />
     ),
     [editorRef, workspaceId, workspaceSlug]

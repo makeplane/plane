@@ -169,7 +169,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         }}
         extensions={navigationPaneExtensions}
       />
-      <PageModals page={page} storeType={storeType} editorRef={editorRef.current} />
+      <PageModals page={page} storeType={storeType} />
     </div>
   );
 });
