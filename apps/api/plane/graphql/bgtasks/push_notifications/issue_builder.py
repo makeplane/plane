@@ -240,7 +240,12 @@ class IssueNotificationBuilder:
             else:
                 action = "commented"
 
-        return f"{action} '{constructed_comment['content']}'"
+        content = (
+            constructed_comment["content"]
+            if constructed_comment and constructed_comment["content"]
+            else ""
+        )
+        return f"{action} '{content}'"
 
     def build_notification(self) -> str:
         """Build and return the notification string for the property change."""

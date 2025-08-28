@@ -7,6 +7,9 @@ from typing import Optional
 import strawberry
 import strawberry_django
 
+# Python Standard Library Imports
+from asgiref.sync import sync_to_async
+
 # Strawberry imports
 from strawberry.scalars import JSON
 

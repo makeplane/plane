@@ -6,6 +6,9 @@ from typing import Optional
 import strawberry
 import strawberry_django
 
+# Python Standard Library Imports
+from asgiref.sync import sync_to_async
+
 # Module Imports
 from plane.db.models import IssueActivity
 from plane.graphql.types.users import UserLiteType

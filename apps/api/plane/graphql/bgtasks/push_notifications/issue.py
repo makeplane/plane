@@ -6,15 +6,16 @@ from celery import shared_task
 
 # Module imports
 from plane.db.models import User, Workspace
+from plane.graphql.helpers.catch_up import push_notification_catch_up
 
 # Local module imports
+from .firebase import PushNotification
 from .helper import (
     fetch_device_tokens_by_user_id,
     is_mobile_push_notification_disabled,
     notification_count,
 )
 from .issue_builder import Actor, IssueNotificationBuilder
-from .firebase import PushNotification
 
 
 class IssuePushNotificationTypes(Enum):
@@ -205,6 +206,12 @@ def issue_push_notifications(notification):
         receiver_push_tokens = notification_receiver.get("push_tokens", [])
         mention_push_tokens = []
 
+        catch_up = push_notification_catch_up(
+            workspace_slug=workspace_slug,
+            user_id=receiver_id,
+            entity_identifier=issue_id,
+        )
+
         title = f"{project_identifier}-{issue_sequence_id} - {issue_name}"
         data = {
             # deprecated fields
@@ -219,13 +226,16 @@ def issue_push_notifications(notification):
             "workspace_slug": workspace_slug,
             "project_id": project_id,
             "issue_id": issue_id,
-            "epic_id": "none",
-            "intake_id": "none",
+            "epic_id": "",
+            "intake_id": "",
             "notification_id": notification_id,
             "issue_activity_id": issue_activity_id,
             "issue_comment_id": issue_comment_id,
             "unread_notification_count": str(unread_notification_count),
         }
+
+        if catch_up:
+            data["catch_up"] = catch_up
 
         property_key = notification_issue_activity.get("field", "")
         old_value = notification_issue_activity.get("old_value", "")
