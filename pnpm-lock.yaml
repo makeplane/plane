@@ -113,8 +113,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -385,8 +385,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.14.1
         version: 18.14.1
@@ -515,7 +515,7 @@ importers:
         version: 0.2.1(next@14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       posthog-js:
         specifier: ^1.131.3
-        version: 1.258.5
+        version: 1.255.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -578,8 +578,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -628,16 +628,6 @@ importers:
         version: 5.8.3
 
   packages/decorators:
-    dependencies:
-      express:
-        specifier: ^4.21.2
-        version: 4.21.2
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      ws:
-        specifier: '>=8.0.0'
-        version: 8.18.3
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -654,6 +644,9 @@ importers:
       '@types/ws':
         specifier: ^8.5.10
         version: 8.18.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.13.3(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.1)
@@ -910,8 +903,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -937,6 +930,12 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/express':
+        specifier: 4.17.23
+        version: 4.17.23
+      '@types/node':
+        specifier: ^20.14.9
+        version: 20.19.11
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.13.3(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.1)
@@ -1224,8 +1223,8 @@ importers:
         specifier: ^8.1.1
         version: 8.6.14(storybook@8.6.14(prettier@3.6.2))
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^20.5.2
         version: 20.19.11
@@ -1300,8 +1299,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: ^4.17.6
-        version: 4.17.18
+        specifier: 4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.17.2
@@ -3261,8 +3260,8 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/lodash@4.17.18':
-    resolution: {integrity: sha512-KJ65INaxqxmU6EoCiJmRPZC9H9RVWCRd349tXM2M3O5NA7cY6YL7c0bHAHQ93NOfTObEQ004kd2QVHs/r0+m4g==}
+  '@types/lodash@4.17.20':
+    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
   '@types/markdown-it@13.0.9':
     resolution: {integrity: sha512-1XPwR0+MgXLWfTn9gCsZ55AHOKW1WN+P9vr0PaQh5aerR9LLQXUbjfEAFhjmEmyoYFWAyuN2Mqkn40MZ4ukjBw==}
@@ -3299,9 +3298,6 @@ packages:
 
   '@types/node@20.19.11':
     resolution: {integrity: sha512-uug3FEEGv0r+jrecvUUpbY8lLisvIjg6AAic6a2bSP5OEOLeJsDSnvhCDov7ipFFMXS3orMpzlmi0ZcuGkBbow==}
-
-  '@types/node@20.19.4':
-    resolution: {integrity: sha512-OP+We5WV8Xnbuvw0zC2m4qfB/BJvjyCwtNjhHdJxV1639SGSKrLmJkc3fMnp2Qy8nJyHp8RO6umxELN/dS1/EA==}
 
   '@types/node@22.17.2':
     resolution: {integrity: sha512-gL6z5N9Jm9mhY+U2KXZpteb+09zyffliRkZyZOHODGATyC5B1Jt/7TzuuiLkFsSUMLbS1OLmlj/E+/3KF4Q/4w==}
@@ -6378,8 +6374,8 @@ packages:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.258.5:
-    resolution: {integrity: sha512-Tx6CzS8MsGAQGPrQth5TbkGxGQgAY01SktNW773/KDmVOWiRVZq/WQF/MRJRiuFxJ7qjethZQi3aBWfWKdr1RA==}
+  posthog-js@1.255.1:
+    resolution: {integrity: sha512-KMh0o9MhORhEZVjXpktXB5rJ8PfDk+poqBoTSoLzWgNjhJf6D8jcyB9jUMA6vVPfn4YeepVX5NuclDRqOwr5Mw==}
     peerDependencies:
       '@rrweb/types': 2.0.0-alpha.17
       rrweb-snapshot: 2.0.0-alpha.17
@@ -10063,7 +10059,7 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash@4.17.18': {}
+  '@types/lodash@4.17.20': {}
 
   '@types/markdown-it@13.0.9':
     dependencies:
@@ -10099,10 +10095,6 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@20.19.4':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@22.17.2':
     dependencies:
       undici-types: 6.21.0
@@ -10125,7 +10117,7 @@ snapshots:
 
   '@types/pino@6.3.12':
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       '@types/pino-pretty': 5.0.0
       '@types/pino-std-serializers': 4.0.0
       sonic-boom: 2.8.0
@@ -12591,7 +12583,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.19.4
+      '@types/node': 20.19.11
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -13550,7 +13542,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.258.5:
+  posthog-js@1.255.1:
     dependencies:
       core-js: 3.45.0
       fflate: 0.4.8
