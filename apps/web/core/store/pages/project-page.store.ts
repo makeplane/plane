@@ -49,7 +49,12 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    { trackVisit }: { trackVisit: boolean }
+  ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
@@ -239,7 +244,12 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageDetails = async (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    { trackVisit }: { trackVisit: boolean }
+  ) => {
     try {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
@@ -249,7 +259,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const page = await this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit);
 
       runInAction(() => {
         if (page?.id) {
