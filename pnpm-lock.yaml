@@ -961,9 +961,6 @@ importers:
       '@plane/types':
         specifier: workspace:*
         version: link:../types
-      '@plane/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
