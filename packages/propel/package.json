@@ -26,7 +26,7 @@
     "./tooltip": "./src/tooltip/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css",
     "./switch": "./src/switch/index.ts",
-    "./collapsible": "./src/collapsible/index.ts"
+    "./collapsible": "./src/collapsible/index.ts",
     "./card": "./src/card/index.ts"
   },
   "dependencies": {

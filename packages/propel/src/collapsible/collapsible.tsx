@@ -81,18 +81,16 @@ const Trigger: React.FC<TriggerProps> = ({ children, className, buttonRef }) => 
   );
 };
 
-const Content: React.FC<ContentProps> = ({ children, className }) => {
-  return (
-    <BaseCollapsible.Panel
-      className={clsx(
-        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-sm transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
-        className
-      )}
-    >
-      {children}
-    </BaseCollapsible.Panel>
-  );
-};
+const Content: React.FC<ContentProps> = ({ children, className }) => (
+  <BaseCollapsible.Panel
+    className={clsx(
+      "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-sm transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
+      className
+    )}
+  >
+    {children}
+  </BaseCollapsible.Panel>
+);
 
 // Compound Component
 export const Collapsible = {
