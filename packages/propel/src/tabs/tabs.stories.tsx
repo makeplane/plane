@@ -1,6 +1,6 @@
+import { Fragment } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Tabs } from "./tabs";
-import { Fragment } from "react";
 
 const meta: Meta<typeof Tabs> = {
   title: "Components/Tabs",
