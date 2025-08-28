@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -20,6 +20,7 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
@@ -30,13 +31,17 @@ const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 
+const storeType = EPageStoreType.PROJECT;
+
 const PageDetailsPage = observer(() => {
+  // router
+  const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails } = usePageStore(EPageStoreType.PROJECT);
+  const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.PROJECT,
+    storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
@@ -88,10 +93,25 @@ const PageDetailsPage = observer(() => {
           versionId
         );
       },
-      getRedirectionLink: (pageId) => `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`,
+      restoreVersion: async (pageId, versionId) => {
+        if (!workspaceSlug || !projectId) return;
+        await projectPageVersionService.restoreVersion(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          pageId,
+          versionId
+        );
+      },
+      getRedirectionLink: (pageId) => {
+        if (pageId) {
+          return `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
+        } else {
+          return `/${workspaceSlug}/projects/${projectId}/pages`;
+        }
+      },
       updateDescription: updateDescription ?? (async () => {}),
     }),
-    [createPage, fetchEntityCallback, id, projectId, updateDescription, workspaceSlug]
+    [createPage, fetchEntityCallback, id, updateDescription, workspaceSlug, projectId]
   );
   // page root config
   const pageRootConfig: TPageRootConfig = useMemo(
@@ -115,7 +135,7 @@ const PageDetailsPage = observer(() => {
         workspaceSlug: workspaceSlug?.toString() ?? "",
       }),
     }),
-    [getEditorFileHandlers, id, projectId, uploadEditorAsset, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
@@ -126,6 +146,12 @@ const PageDetailsPage = observer(() => {
     }),
     [projectId, workspaceSlug]
   );
+
+  useEffect(() => {
+    if (page?.deleted_at && page?.id) {
+      router.push(pageRootHandlers.getRedirectionLink());
+    }
+  }, [page?.deleted_at, page?.id, router, pageRootHandlers]);
 
   if ((!page || !id) && !pageDetailsError)
     return (
@@ -160,9 +186,11 @@ const PageDetailsPage = observer(() => {
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}
+            storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
+            projectId={projectId?.toString() ?? ""}
           />
           <IssuePeekOverview />
         </div>

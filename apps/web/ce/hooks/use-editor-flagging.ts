@@ -1,5 +1,6 @@
 // editor
 import type { TExtensions } from "@plane/editor";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TEditorFlaggingHookReturnType = {
   document: {
@@ -19,7 +20,10 @@ export type TEditorFlaggingHookReturnType = {
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (workspaceSlug: string): TEditorFlaggingHookReturnType => ({
+export const useEditorFlagging = (
+  workspaceSlug: string,
+  storeType?: EPageStoreType
+): TEditorFlaggingHookReturnType => ({
   document: {
     disabled: ["ai", "collaboration-cursor"],
     flagged: [],

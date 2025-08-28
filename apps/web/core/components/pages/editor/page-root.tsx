@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
@@ -9,19 +8,20 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web import
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import { PageModals } from "@/plane-web/components/pages";
+import { usePagesPaneExtensions, useExtendedEditorExtensions } from "@/plane-web/hooks/pages";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import {
-  PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PageNavigationPaneRoot,
 } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
-import { PageEditorBody, TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
+import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
 
 export type TPageRootHandlers = {
@@ -29,7 +29,7 @@ export type TPageRootHandlers = {
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
   fetchDescriptionBinary: () => Promise<any>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
-  getRedirectionLink: (pageId: string) => string;
+  restoreVersion: (pageId: string, versionId: string) => Promise<void>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
 } & TEditorBodyHandlers;
 
@@ -39,12 +39,14 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
+  storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId: string;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, webhookConnectionParams, workspaceSlug } = props;
+  const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -52,8 +54,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
-  // search params
-  const searchParams = useSearchParams();
   // derived values
   const {
     isContentEditable,
@@ -66,7 +66,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     hasConnectionFailed,
     updatePageDescription: handlers.updateDescription,
   });
-  // update query params
   const { updateQueryParams } = useQueryParams();
 
   const handleEditorReady = useCallback(
@@ -85,10 +84,28 @@ export const PageRoot = observer((props: TPageRootProps) => {
     }, 0);
   }, [isContentEditable, setEditorRef]);
 
-  const handleRestoreVersion = useCallback(async (descriptionHTML: string) => {
+  // Get extensions and navigation logic from hook
+  const { editorExtensionHandlers, navigationPaneExtensions, handleOpenNavigationPane, isNavigationPaneOpen } =
+    usePagesPaneExtensions({
+      page,
+      editorRef,
+    });
+
+  // Get extended editor extensions configuration
+  const extendedEditorProps = useExtendedEditorExtensions({
+    workspaceSlug,
+    page,
+    storeType,
+    fetchEntity: handlers.fetchEntity,
+    getRedirectionLink: handlers.getRedirectionLink,
+    extensionHandlers: editorExtensionHandlers,
+    projectId,
+  });
+
+  const handleRestoreVersion = async (descriptionHTML: string) => {
     editorRef.current?.clearEditor();
     editorRef.current?.setEditorValue(descriptionHTML);
-  }, []);
+  };
 
   // reset editor ref on unmount
   useEffect(
@@ -97,19 +114,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     },
     [setEditorRef]
   );
-
-  const navigationPaneQueryParam = searchParams.get(
-    PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
-  ) as TPageNavigationPaneTab | null;
-  const isValidNavigationPaneTab =
-    !!navigationPaneQueryParam && PAGE_NAVIGATION_PANE_TAB_KEYS.includes(navigationPaneQueryParam);
-
-  const handleOpenNavigationPane = useCallback(() => {
-    const updatedRoute = updateQueryParams({
-      paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "outline" },
-    });
-    router.push(updatedRoute);
-  }, [router, updateQueryParams]);
 
   const handleCloseNavigationPane = useCallback(() => {
     const updatedRoute = updateQueryParams({
@@ -127,10 +131,11 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handleRestore={handleRestoreVersion}
           pageId={page.id ?? ""}
           restoreEnabled={isContentEditable}
+          storeType={storeType}
         />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
-          isNavigationPaneOpen={isValidNavigationPaneTab}
+          isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
         <PageEditorBody
@@ -141,21 +146,27 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handleEditorReady={handleEditorReady}
           handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
-          isNavigationPaneOpen={isValidNavigationPaneTab}
+          isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
+          projectId={projectId}
+          storeType={storeType}
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
+          extendedEditorProps={extendedEditorProps}
         />
       </div>
       <PageNavigationPaneRoot
+        storeType={storeType}
         handleClose={handleCloseNavigationPane}
-        isNavigationPaneOpen={isValidNavigationPaneTab}
+        isNavigationPaneOpen={isNavigationPaneOpen}
         page={page}
         versionHistory={{
           fetchAllVersions: handlers.fetchAllVersions,
           fetchVersionDetails: handlers.fetchVersionDetails,
         }}
+        extensions={navigationPaneExtensions}
       />
+      <PageModals page={page} storeType={storeType} editorRef={editorRef.current} />
     </div>
   );
 });

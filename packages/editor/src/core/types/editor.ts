@@ -5,6 +5,8 @@ import type { EditorProps, EditorView } from "@tiptap/pm/view";
 import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
+// plane editor imports
+import type { IEditorPropsExtended, TExtendedEditorCommands } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
@@ -50,7 +52,8 @@ export type TEditorCommands =
   | "callout"
   | "attachment"
   | "emoji"
-  | "external-embed";
+  | "external-embed"
+  | TExtendedEditorCommands;
 
 export type TCommandExtraProps = {
   image: {
@@ -157,6 +160,7 @@ export type IEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  extendedEditorProps?: IEditorPropsExtended;
 };
 
 export type ILiteTextEditorProps = IEditorProps;

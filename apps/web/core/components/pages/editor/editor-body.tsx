@@ -24,8 +24,13 @@ import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
+// plane web types
+import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
+// plane web store
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -41,6 +46,7 @@ export type TEditorBodyConfig = {
 
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+  getRedirectionLink: (pageId?: string) => string;
 };
 
 type Props = {
@@ -54,7 +60,11 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId: string;
   workspaceSlug: string;
+  storeType: EPageStoreType;
+
+  extendedEditorProps: TExtendedEditorExtensionsConfig;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -67,8 +77,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handlers,
     isNavigationPaneOpen,
     page,
+    storeType,
     webhookConnectionParams,
+    projectId,
     workspaceSlug,
+    extendedEditorProps,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -93,7 +106,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug, storeType);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation
@@ -202,7 +215,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
         <div className="page-header-container group/page-header">
           <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot page={page} />
+            <PageEditorHeaderRoot page={page} projectId={projectId} />
             <PageEditorTitle
               editorRef={editorRef}
               readOnly={!isContentEditable}
@@ -240,6 +253,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             menu: getAIMenu,
           }}
           onAssetChange={updateAssetsList}
+          extendedEditorProps={extendedEditorProps}
         />
       </div>
     </Row>
