@@ -9,7 +9,7 @@ import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
-import { usePagesPaneExtensions, useExtendedEditorExtensions } from "@/plane-web/hooks/pages";
+import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -92,7 +92,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
     });
 
   // Get extended editor extensions configuration
-  const extendedEditorProps = useExtendedEditorExtensions({
+  const extendedEditorProps = useExtendedEditorProps({
     workspaceSlug,
     page,
     storeType,

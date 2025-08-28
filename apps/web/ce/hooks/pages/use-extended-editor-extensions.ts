@@ -15,4 +15,4 @@ export type TExtendedEditorExtensionsHookParams = {
 
 export type TExtendedEditorExtensionsConfig = IEditorPropsExtended;
 
-export const useExtendedEditorExtensions = (params: TExtendedEditorExtensionsHookParams) => null;
+export const useExtendedEditorProps = (params: TExtendedEditorExtensionsHookParams) => null;
