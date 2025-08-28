@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane ui
 import { Logo } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
@@ -84,7 +84,7 @@ export const TeamspaceSidebarListItem = observer((props: Props) => {
               if (!project) return null;
 
               const isProjectActive = pathname.includes(
-                `/${workspaceSlug}/teamspaces/${teamspaceId}/projects${projectId}`
+                joinUrlPath(workspaceSlug?.toString(), "teamspaces", teamspaceId, "projects", projectId)
               );
 
               return (
