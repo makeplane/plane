@@ -3,9 +3,9 @@ import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
 import { TreeMapChartProps } from "@plane/types";
 // local imports
+import { cn } from "../../utils/classname";
 import { CustomTreeMapContent } from "./map-content";
 import { TreeMapTooltip } from "./tooltip";
-import { cn } from "@/utils/classname";
 
 export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
   const { data, className = "w-full h-96", isAnimationActive = false, showTooltip = true } = props;

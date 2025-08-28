@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
 import { LucideProps } from "lucide-react";
 // helpers
-import { cn } from "@/utils/classname";
+import { cn } from "../utils/classname";
 
 export type TabListItem = {
   key: string;

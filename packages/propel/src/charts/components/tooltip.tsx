@@ -2,8 +2,7 @@ import React from "react";
 import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
 import { Card, ECardSpacing } from "../../card";
-
-import { cn } from "@/utils/classname";
+import { cn } from "../../utils/classname";
 
 type Props = {
   active: boolean | undefined;

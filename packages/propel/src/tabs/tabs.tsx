@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { Tabs as BaseTabs } from "@base-ui-components/react/tabs";
 import { useLocalStorage } from "@plane/hooks";
+import { cn } from "../utils/classname";
 import { TabList, TabListItem } from "./list";
-import { cn } from "@/utils/classname";
 
 export type TabContent = {
   content: React.ReactNode;

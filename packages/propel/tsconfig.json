@@ -3,10 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["esnext", "dom"],
-    "baseUrl": ".",
-    "paths": {
-      "@/utils/*": ["src/utils/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
