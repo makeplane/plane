@@ -176,7 +176,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (!page || !workspaceSlug.toString() || !projectId.toString()) return null;
+  if (!page || !workspaceSlug || !projectId) return null;
 
   return (
     <>
