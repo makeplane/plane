@@ -4,7 +4,7 @@ import type { IEditorProps } from "@/types";
 
 export type TCoreAdditionalExtensionsProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "embedHandler"
 >;
 
 export const CoreEditorAdditionalExtensions = (props: TCoreAdditionalExtensionsProps): Extensions => {

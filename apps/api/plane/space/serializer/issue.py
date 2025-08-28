@@ -30,7 +30,6 @@ from plane.db.models import (
 )
 from plane.utils.content_validator import (
     validate_html_content,
-    validate_json_content,
     validate_binary_data,
 )
 
@@ -290,20 +289,22 @@ class IssueCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         # Validate description content for security
-        if "description" in data and data["description"]:
-            is_valid, error_msg = validate_json_content(data["description"])
-            if not is_valid:
-                raise serializers.ValidationError({"description": error_msg})
-
         if "description_html" in data and data["description_html"]:
-            is_valid, error_msg = validate_html_content(data["description_html"])
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                data["description_html"]
+            )
             if not is_valid:
-                raise serializers.ValidationError({"description_html": error_msg})
+                raise serializers.ValidationError(
+                    {"error": "html content is not valid"}
+                )
+            # Update the data with sanitized HTML if available
+            if sanitized_html is not None:
+                data["description_html"] = sanitized_html
 
         if "description_binary" in data and data["description_binary"]:
             is_valid, error_msg = validate_binary_data(data["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError({"description_binary": error_msg})
+                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
 
         return data
 
