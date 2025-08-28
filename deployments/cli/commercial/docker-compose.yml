@@ -344,7 +344,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-automation-consumer.sh
     environment:
-      <<: [*automation-consumer-env, *app-env, *docstore-env]
+      <<: [*automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     restart: unless-stopped
     deploy:
       replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}
@@ -356,7 +356,7 @@ services:
     image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-outbox-poller.sh
     environment:
-      <<: [*outbox-poller-env, *app-env]
+      <<: [*outbox-poller-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     restart: unless-stopped
     deploy:
       replicas: ${OUTBOX_POLLER_REPLICAS:-1}
