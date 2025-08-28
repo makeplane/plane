@@ -103,7 +103,7 @@ const ToastList = () => {
   return toasts.map((toast) => <ToastRender key={toast.id} id={toast.id} toast={toast} />);
 };
 
-const ToastRender = ({ id, toast }: { id: string; toast: BaseToast.Root.ToastObject }) => {
+const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) => {
   const toastData = toast.data as SetToastProps;
   const type = toastData.type as TOAST_TYPE;
   const data = TOAST_DATA[type];
@@ -193,9 +193,18 @@ export const setToast = (props: SetToastProps) => {
 
 export const updateToast = (id: string, props: SetToastProps) => {
   toastManager.update(id, {
-    data: {
-      type: props.type,
-    },
+    data:
+      props.type === TOAST_TYPE.LOADING
+        ? {
+            type: TOAST_TYPE.LOADING,
+            title: props.title,
+          }
+        : {
+            type: props.type,
+            title: props.title,
+            message: props.message,
+            actionItems: props.actionItems,
+          },
   });
 };
 
