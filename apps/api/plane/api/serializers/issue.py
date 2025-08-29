@@ -343,10 +343,6 @@ class IssueSerializer(BaseSerializer):
                     )
                 ]
 
-         if "type" in self.fields:
-            if "type" in self.expand:
-                data["type"] = IssueTypeAPISerializer(instance.type).data
-
         return data
 
 

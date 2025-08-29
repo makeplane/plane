@@ -96,6 +96,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         "actor": UserLiteSerializer,
                         "owned_by": UserLiteSerializer,
                         "members": UserLiteSerializer,
+                        "type": IssueTypeLiteSerializer,
                         "parent": IssueLiteSerializer,
                         "estimate_point": EstimatePointSerializer,
                     }
