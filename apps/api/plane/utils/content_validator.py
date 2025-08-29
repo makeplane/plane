@@ -2,6 +2,9 @@
 import base64
 import nh3
 from plane.utils.exception_logger import log_exception
+from bs4 import BeautifulSoup
+from collections import defaultdict
+
 
 # Maximum allowed size for binary data (10MB)
 MAX_SIZE = 10 * 1024 * 1024
@@ -144,7 +147,7 @@ ATTRIBUTES = {
     "image-component": {"src", "id", "width", "height", "aspectratio", "alignment"},
 }
 
-ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel", "data"}
+SAFE_PROTOCOLS = {"http", "https", "mailto", "tel"}
 
 
 def _compute_html_sanitization_diff(before_html: str, after_html: str):
@@ -156,8 +159,6 @@ def _compute_html_sanitization_diff(before_html: str, after_html: str):
     - removed_attributes: mapping[tag] -> sorted list of attribute names removed
     """
     try:
-        from bs4 import BeautifulSoup
-        from collections import defaultdict
 
         def collect(soup):
             tag_counts = defaultdict(int)
@@ -215,7 +216,7 @@ def validate_html_content(html_content: str):
             html_content,
             tags=ALLOWED_TAGS,
             attributes=ATTRIBUTES,
-            url_schemes=ALLOWED_URL_SCHEMES,
+            url_schemes=SAFE_PROTOCOLS,
         )
         # Report removals to logger (Sentry) if anything was stripped
         diff = _compute_html_sanitization_diff(html_content, clean_html)
