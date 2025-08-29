@@ -25,7 +25,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/react": "^18.3.11",
     "typescript": "5.8.3"
   }

@@ -6,7 +6,6 @@
     "lib": ["ES2020"],
     "rootDir": ".",
     "baseUrl": ".",
-
     "paths": {
       "@/*": ["./src/*"]
     }
