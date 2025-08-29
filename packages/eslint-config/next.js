@@ -45,9 +45,13 @@ export const config = [
       "react/react-in-jsx-scope": "off",
     },
   },
-  ...pluginImport.flatConfigs.recommended,
   {
+    plugins: {
+      import: pluginImport,
+    },
     rules: {
+      ...pluginImport.configs.recommended.rules,
+      "import/no-unresolved": "off",
       "import/order": [
         "warn",
         {

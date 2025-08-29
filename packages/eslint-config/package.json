@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.28.0",
   "license": "AGPL-3.0",
+  "type": "module",
   "exports": {
     ".": "./index.js",
     "./next": "./next.js",
