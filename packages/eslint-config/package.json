@@ -3,21 +3,24 @@
   "private": true,
   "version": "0.28.0",
   "license": "AGPL-3.0",
-  "files": [
-    "library.js",
-    "next.js",
-    "server.js"
-  ],
+  "exports": {
+    ".": "./index.js",
+    "./next": "./next.js",
+    "./library": "./library.js",
+    "./server": "./server.js"
+  },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "@typescript-eslint/parser": "^8.6.0",
-    "eslint": "8.57.1",
-    "eslint-config-next": "^14.1.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-turbo": "^1.12.4",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "typescript": "5.8.3"
+    "@eslint/js": "9.31.0",
+    "@next/eslint-plugin-next": "15.4.2",
+    "eslint": "9.31.0",
+    "eslint-config-prettier": "10.1.1",
+    "eslint-plugin-only-warn": "1.1.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-import": "2.31.0",
+    "eslint-config-turbo": "2.5.0",
+    "globals": "16.3.0",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.37.0"
   }
 }

@@ -4,6 +4,7 @@
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

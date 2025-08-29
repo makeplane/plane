@@ -4,6 +4,7 @@
   "version": "0.28.0",
   "license": "AGPL-3.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
@@ -49,6 +50,7 @@
     "@types/node": "18.16.1",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
+    "eslint": "9.31.0",
     "@types/uuid": "^9.0.8",
     "typescript": "5.8.3"
   }
