@@ -6,6 +6,35 @@ import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
 /**
+ * @description extracts number from a string for natural sorting
+ * @param {string} str - string to extract number from
+ * @returns {number} - extracted number or -1 if no number found
+ */
+const extractNumber = (str: string): number => {
+  const matches = str.match(/\d+/);
+  return matches ? parseInt(matches[0]) : -1;
+};
+
+/**
+ * @description performs natural sorting of strings (handles numbers within strings correctly)
+ * @param {string} a - first string to compare
+ * @param {string} b - second string to compare
+ * @returns {number} - comparison result (-1, 0, or 1)
+ */
+const naturalSort = (a: string, b: string): number => {
+  const aNum = extractNumber(a);
+  const bNum = extractNumber(b);
+
+  // If both strings contain numbers, compare them first
+  if (aNum !== -1 && bNum !== -1) {
+    if (aNum !== bNum) return aNum - bNum;
+  }
+
+  // If numbers are equal or not present, fall back to case-insensitive string comparison
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+};
+
+/**
  * @description orders modules based on their status
  * @param {IModule[]} modules
  * @param {TModuleOrderByOptions | undefined} orderByKey
@@ -15,8 +44,8 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
   let orderedModules: IModule[] = [];
   if (modules.length === 0 || !orderByKey) return [];
 
-  if (orderByKey === "name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]);
-  if (orderByKey === "-name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]).reverse();
+  if (orderByKey === "name") orderedModules = [...modules].sort((a, b) => naturalSort(a.name, b.name));
+  if (orderByKey === "-name") orderedModules = [...modules].sort((a, b) => naturalSort(b.name, a.name));
   if (["progress", "-progress"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => {
@@ -24,12 +53,12 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
         if (isNaN(progress)) progress = 0;
         return orderByKey === "progress" ? progress : -progress;
       },
-      "name",
+      (m) => naturalSort(m.name, ""), // Use naturalSort for secondary sorting
     ]);
   if (["issues_length", "-issues_length"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues),
-      "name",
+      (m) => naturalSort(m.name, ""), // Use naturalSort for secondary sorting
     ]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
   if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
