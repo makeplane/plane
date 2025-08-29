@@ -60,7 +60,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "18.14.1",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.3.11",

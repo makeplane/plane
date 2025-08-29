@@ -21,9 +21,7 @@ export function Controller(baseRoute: string = ""): ClassDecorator {
  * @param method HTTP method to handle
  * @returns Method decorator
  */
-function createHttpMethodDecorator(
-  method: RestMethod,
-): (route: string) => MethodDecorator {
+function createHttpMethodDecorator(method: RestMethod): (route: string) => MethodDecorator {
   return function (route: string): MethodDecorator {
     return function (target: object, propertyKey: string | symbol) {
       Reflect.defineMetadata("method", method, target, propertyKey);
@@ -46,8 +44,7 @@ export const Delete = createHttpMethodDecorator("delete");
  */
 export function Middleware(middleware: RequestHandler): MethodDecorator {
   return function (target: object, propertyKey: string | symbol) {
-    const middlewares =
-      Reflect.getMetadata("middlewares", target, propertyKey) || [];
+    const middlewares = Reflect.getMetadata("middlewares", target, propertyKey) || [];
     middlewares.push(middleware);
     Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
   };

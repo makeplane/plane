@@ -86,7 +86,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "18.16.1",
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18.3.11",

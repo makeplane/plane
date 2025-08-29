@@ -7,5 +7,3 @@ packages:
 onlyBuiltDependencies:
 - turbo
 - sharp
-
-useNodeVersion: 22.18.0

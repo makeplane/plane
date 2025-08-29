@@ -65,7 +65,7 @@
     "@storybook/react": "^8.1.1",
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "^20.5.2",
     "@types/react": "^18.3.11",
     "@types/react-color": "^3.0.12",
