@@ -32,7 +32,6 @@ from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
-from .issue_type import IssueTypeAPISerializer
 
 # Django imports
 from django.core.exceptions import ValidationError
