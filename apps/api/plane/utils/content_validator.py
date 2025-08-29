@@ -19,7 +19,8 @@ SUSPICIOUS_BINARY_PATTERNS = [
 
 def validate_binary_data(data):
     """
-    Validate that binary data appears to be valid document format and doesn't contain malicious content.
+    Validate that binary data appears to be a valid document format
+    and doesn't contain malicious content.
 
     Args:
         data (bytes or str): The binary data to validate, or base64-encoded string
@@ -60,6 +61,178 @@ def validate_binary_data(data):
     return True, None
 
 
+# Combine custom components and editor-specific nodes into a single set of tags
+CUSTOM_TAGS = {
+    # editor node/tag names
+    "imageComponent",
+    "image",
+    "mention",
+    "link",
+    "customColor",
+    "emoji",
+    "tableHeader",
+    "tableCell",
+    "tableRow",
+    "codeBlock",
+    "code",
+    "horizontalRule",
+    "calloutComponent",
+    # component-style tag used by editor embeds
+    "image-component",
+}
+ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS
+
+# Merge nh3 defaults with all attributes used across our custom components
+ATTRIBUTES = {
+    "*": {
+        "class",
+        "id",
+        "title",
+        "role",
+        "aria-label",
+        "aria-hidden",
+        "style",
+        # common editor data-* attributes seen in stored HTML
+        # (wildcards like data-* are NOT supported by nh3; we add known keys
+        # here and dynamically include all data-* seen in the input below)
+        "data-tight",
+        "data-node-type",
+        "data-type",
+        "data-checked",
+        "data-background",
+        "data-text-color",
+        "data-icon-name",
+        "data-icon-color",
+        "data-background-color",
+        "data-emoji-unicode",
+        "data-emoji-url",
+        "data-logo-in-use",
+        "data-block-type",
+        "data-name",
+        "data-entity-id",
+        "data-entity-group-id",
+    },
+    "a": {"href", "target"},
+    # editor node/tag attributes
+    "imageComponent": {"id", "width", "height", "aspectRatio", "src", "alignment"},
+    "image": {"width", "height", "aspectRatio", "alignment", "src", "alt", "title"},
+    "mention": {"id", "entity_identifier", "entity_name"},
+    "issue-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+    },
+    "link": {"href", "target"},
+    "customColor": {"color", "backgroundColor"},
+    "emoji": {"name"},
+    "tableHeader": {"colspan", "rowspan", "colwidth", "background", "hideContent"},
+    "tableCell": {
+        "colspan",
+        "rowspan",
+        "colwidth",
+        "background",
+        "textColor",
+        "hideContent",
+    },
+    "tableRow": {"background", "textColor"},
+    "codeBlock": {"language"},
+    "calloutComponent": {
+        "data-icon-color",
+        "data-icon-name",
+        "data-emoji-unicode",
+        "data-emoji-url",
+        "data-logo-in-use",
+        "data-background",
+        "data-block-type",
+    },
+    # image-component (from editor extension and seeds)
+    "image-component": {"src", "id", "width", "height", "aspectratio", "alignment"},
+    # mention-component (from editor extension and notification utils)
+    "mention-component": {"id", "entity_identifier", "entity_name", "label"},
+    # external embed variants (generic)
+    "external-embed": {"src", "href", "title", "id"},
+    "external-embed-component": {
+        "src",
+        "href",
+        "title",
+        "id",
+    },
+    # page-related components (no concrete usages found; allow common identifiers)
+    "page-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+        "title",
+        "sequence_id",
+    },
+    "page-link-component": {"href", "id", "title"},
+    # attachment (generic)
+    "attachment-component": {"id", "src", "href", "title", "name", "size", "type"},
+    # math components (generic)
+    "inline-math-component": {"formula", "data-latex", "id"},
+    "block-math-component": {"formula", "data-latex", "id"},
+}
+
+
+ALLOWED_ATTRIBUTES = {k: set(v) for k, v in nh3.ALLOWED_ATTRIBUTES.items()}
+ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel", "data"}
+
+
+def _compute_html_sanitization_diff(before_html: str, after_html: str):
+    """
+    Compute a coarse diff between original and sanitized HTML.
+
+    Returns a dict with:
+    - removed_tags: mapping[tag] -> removed_count
+    - removed_attributes: mapping[tag] -> sorted list of attribute names removed
+    """
+    try:
+        from bs4 import BeautifulSoup
+        from collections import defaultdict
+
+        def collect(soup):
+            tag_counts = defaultdict(int)
+            attrs_by_tag = defaultdict(set)
+            for el in soup.find_all(True):
+                tag_name = (el.name or "").lower()
+                if not tag_name:
+                    continue
+                tag_counts[tag_name] += 1
+                for attr_name in list(el.attrs.keys()):
+                    if isinstance(attr_name, str) and attr_name:
+                        attrs_by_tag[tag_name].add(attr_name.lower())
+            return tag_counts, attrs_by_tag
+
+        soup_before = BeautifulSoup(before_html or "", "html.parser")
+        soup_after = BeautifulSoup(after_html or "", "html.parser")
+
+        counts_before, attrs_before = collect(soup_before)
+        counts_after, attrs_after = collect(soup_after)
+
+        removed_tags = {}
+        for tag, cnt_before in counts_before.items():
+            cnt_after = counts_after.get(tag, 0)
+            if cnt_after < cnt_before:
+                removed = cnt_before - cnt_after
+                removed_tags[tag] = removed
+
+        removed_attributes = {}
+        for tag, before_set in attrs_before.items():
+            after_set = attrs_after.get(tag, set())
+            removed = before_set - after_set
+            if removed:
+                removed_attributes[tag] = sorted(list(removed))
+
+        return {"removed_tags": removed_tags, "removed_attributes": removed_attributes}
+    except Exception:
+        # Best-effort only; if diffing fails we don't block the request
+        return {"removed_tags": {}, "removed_attributes": {}}
+
+
 def validate_html_content(html_content: str):
     """
     Sanitize HTML content using nh3.
@@ -73,7 +246,25 @@ def validate_html_content(html_content: str):
         return False, "HTML content exceeds maximum size limit (10MB)", None
 
     try:
-        clean_html = nh3.clean(html_content)
+        clean_html = nh3.clean(
+            html_content,
+            tags=ALLOWED_TAGS,
+            attributes=ATTRIBUTES,
+            url_schemes=ALLOWED_URL_SCHEMES,
+        )
+        # Report removals to logger (Sentry) if anything was stripped
+        diff = _compute_html_sanitization_diff(html_content, clean_html)
+        if diff.get("removed_tags") or diff.get("removed_attributes"):
+            try:
+                import json
+
+                summary = json.dumps(diff)
+            except Exception:
+                summary = str(diff)
+            log_exception(
+                f"HTML sanitization removals: {summary}",
+                warning=True,
+            )
         return True, None, clean_html
     except Exception as e:
         log_exception(e)
