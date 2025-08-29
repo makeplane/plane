@@ -1,6 +1,6 @@
 import React from "react";
 import useFontFaceObserver from "use-font-face-observer";
-import { MATERIAL_ICONS_LIST } from "./material-icons";
+import { MATERIAL_ICONS_LIST } from "../material-icons";
 
 type MaterialIconListProps = {
   onChange: (value: { name: string; color: string }) => void;

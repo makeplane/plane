@@ -1,5 +1,5 @@
 import React from "react";
-import { LUCIDE_ICONS_LIST } from "./lucide-icons";
+import { LUCIDE_ICONS_LIST } from "../lucide-icons";
 
 type LucideIconsListProps = {
   onChange: (value: { name: string; color: string }) => void;

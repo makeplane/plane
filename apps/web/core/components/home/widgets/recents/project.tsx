@@ -2,9 +2,9 @@ import { useRouter } from "next/navigation";
 // plane types
 import { TActivityEntityData, TProjectEntityData } from "@plane/types";
 // plane ui
-import { Logo } from "@plane/ui";
-// components
 import { calculateTimeAgo } from "@plane/utils";
+// components
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers

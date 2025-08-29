@@ -2,8 +2,10 @@ import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
-import { Avatar, Logo } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
+// components
+import { Logo } from "@/components/common/logo";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks

@@ -4,10 +4,10 @@ import { X } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 // plane types
 import { IProject } from "@plane/types";
 // plane ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { getFileURL, getTabIndex } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -66,7 +66,8 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           name="logo_props"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomEmojiIconPicker
+            <EmojiPicker
+              iconType="material"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
               className="flex items-center justify-center"

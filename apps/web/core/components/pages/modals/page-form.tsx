@@ -5,8 +5,9 @@ import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import type { TPage } from "@plane/types";
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
@@ -61,7 +62,8 @@ export const PageForm: React.FC<Props> = (props) => {
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <EmojiIconPicker
+          <EmojiPicker
+            iconType="lucide"
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"

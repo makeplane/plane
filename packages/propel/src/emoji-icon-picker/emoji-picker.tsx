@@ -3,8 +3,8 @@ import { Tabs } from "@base-ui-components/react";
 import { Popover } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
-import { emojiToString, TCustomEmojiPicker, EmojiIconPickerTypes } from "./helper";
 import { EmojiRoot } from "./emoji/emoji";
+import { emojiToString, TCustomEmojiPicker, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
 export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
@@ -96,6 +96,7 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         {label}
       </Popover.Button>
       <Popover.Panel
+        positionerClassName="z-50"
         className={cn(
           "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
           dropdownClassName
