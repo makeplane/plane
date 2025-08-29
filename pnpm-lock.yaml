@@ -414,9 +414,6 @@ importers:
       '@types/uuid':
         specifier: ^9.0.1
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^8.36.0
-        version: 8.38.0(@typescript-eslint/parser@8.40.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)
       typescript:
         specifier: 5.8.3
         version: 5.8.3
