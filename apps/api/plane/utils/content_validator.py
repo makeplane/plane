@@ -117,13 +117,6 @@ ATTRIBUTES = {
     "imageComponent": {"id", "width", "height", "aspectRatio", "src", "alignment"},
     "image": {"width", "height", "aspectRatio", "alignment", "src", "alt", "title"},
     "mention": {"id", "entity_identifier", "entity_name"},
-    "issue-embed-component": {
-        "entity_identifier",
-        "project_identifier",
-        "workspace_identifier",
-        "id",
-        "entity_name",
-    },
     "link": {"href", "target"},
     "customColor": {"color", "backgroundColor"},
     "emoji": {"name"},
@@ -149,36 +142,8 @@ ATTRIBUTES = {
     },
     # image-component (from editor extension and seeds)
     "image-component": {"src", "id", "width", "height", "aspectratio", "alignment"},
-    # mention-component (from editor extension and notification utils)
-    "mention-component": {"id", "entity_identifier", "entity_name", "label"},
-    # external embed variants (generic)
-    "external-embed": {"src", "href", "title", "id"},
-    "external-embed-component": {
-        "src",
-        "href",
-        "title",
-        "id",
-    },
-    # page-related components (no concrete usages found; allow common identifiers)
-    "page-embed-component": {
-        "entity_identifier",
-        "project_identifier",
-        "workspace_identifier",
-        "id",
-        "entity_name",
-        "title",
-        "sequence_id",
-    },
-    "page-link-component": {"href", "id", "title"},
-    # attachment (generic)
-    "attachment-component": {"id", "src", "href", "title", "name", "size", "type"},
-    # math components (generic)
-    "inline-math-component": {"formula", "data-latex", "id"},
-    "block-math-component": {"formula", "data-latex", "id"},
 }
 
-
-ALLOWED_ATTRIBUTES = {k: set(v) for k, v in nh3.ALLOWED_ATTRIBUTES.items()}
 ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel", "data"}
 
 
