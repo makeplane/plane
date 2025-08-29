@@ -42,7 +42,7 @@ class S3Storage(S3Boto3Storage):
         ) or os.environ.get("MINIO_ENDPOINT_URL")
 
         # Use the USE_STORAGE_PROXY environment variable for the storage proxy
-        self.use_storage_proxy = settings.USE_STORAGE_PROXY
+        self.use_storage_proxy = getattr(settings, "USE_STORAGE_PROXY", False)
         self.request = request
 
         if os.environ.get("USE_MINIO") == "1":
