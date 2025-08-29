@@ -64,7 +64,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
     "typescript": "catalog:"
   }
 }
