@@ -6,7 +6,6 @@ import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
-// components
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

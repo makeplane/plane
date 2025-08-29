@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
 // plane types
 import { TActivityEntityData, TProjectEntityData } from "@plane/types";
-// plane ui
 import { calculateTimeAgo } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

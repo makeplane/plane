@@ -2,7 +2,7 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import { Node as NodeType } from "@tiptap/pm/model";
 // plane ui
-import { stringToEmoji } from "@plane/ui";
+import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
