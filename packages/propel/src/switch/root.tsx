@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui-components/react/switch";
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 
 interface IToggleSwitchProps {
   value: boolean;

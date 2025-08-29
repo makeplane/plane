@@ -107,7 +107,6 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
           isTrialAllowed={isTrialAllowed}
         />
       )}
-      isSelfHosted={isSelfHosted}
     />
   );
 });
