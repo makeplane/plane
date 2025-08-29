@@ -1,4 +1,4 @@
-import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection, useEditorState } from "@tiptap/react";
+import { BubbleMenu, type BubbleMenuProps, type Editor, isNodeSelection, useEditorState } from "@tiptap/react";
 import { FC, useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -27,7 +27,9 @@ import { TEditorCommands } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
+type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children" | "editor"> & {
+  editor: Editor;
+};
 
 export type EditorStateType = {
   code: boolean;
@@ -49,26 +51,29 @@ export type EditorStateType = {
     | undefined;
 };
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
+export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
+  const { editor } = props;
+  // states
   const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
   const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
+  // refs
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const formattingItems = {
-    code: CodeItem(props.editor),
-    bold: BoldItem(props.editor),
-    italic: ItalicItem(props.editor),
-    underline: UnderLineItem(props.editor),
-    strikethrough: StrikeThroughItem(props.editor),
-    "text-align": TextAlignItem(props.editor),
+    code: CodeItem(editor),
+    bold: BoldItem(editor),
+    italic: ItalicItem(editor),
+    underline: UnderLineItem(editor),
+    strikethrough: StrikeThroughItem(editor),
+    "text-align": TextAlignItem(editor),
   } satisfies {
     [K in TEditorCommands]?: EditorMenuItem<K>;
   };
 
   const editorState: EditorStateType = useEditorState({
-    editor: props.editor,
+    editor,
     selector: ({ editor }: { editor: Editor }) => ({
       code: formattingItems.code.isActive(),
       bold: formattingItems.bold.isActive(),
@@ -111,10 +116,14 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       duration: [300, 0],
       zIndex: 9,
       onShow: () => {
-        props.editor.storage.link.isBubbleMenuOpen = true;
+        if (editor) {
+          editor.storage.link.isBubbleMenuOpen = true;
+        }
       },
       onHidden: () => {
-        props.editor.storage.link.isBubbleMenuOpen = false;
+        if (editor) {
+          editor.storage.link.isBubbleMenuOpen = false;
+        }
         setIsNodeSelectorOpen(false);
         setIsLinkSelectorOpen(false);
         setIsColorSelectorOpen(false);
@@ -127,7 +136,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       if (menuRef.current?.contains(e.target as Node)) return;
 
       function handleMouseMove() {
-        if (!props.editor.state.selection.empty) {
+        if (!editor?.state.selection.empty) {
           setIsSelecting(true);
           document.removeEventListener("mousemove", handleMouseMove);
         }
@@ -148,7 +157,9 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     return () => {
       document.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [props.editor]);
+  }, [editor]);
+
+  if (!editor) return null;
 
   return (
     <BubbleMenu {...bubbleMenuProps}>
@@ -159,7 +170,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
         >
           <div className="px-2">
             <BubbleMenuNodeSelector
-              editor={props.editor!}
+              editor={editor}
               isOpen={isNodeSelectorOpen}
               setIsOpen={() => {
                 setIsNodeSelectorOpen((prev) => !prev);
@@ -171,7 +182,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
           {!editorState.code && (
             <div className="px-2">
               <BubbleMenuLinkSelector
-                editor={props.editor}
+                editor={editor}
                 isOpen={isLinkSelectorOpen}
                 setIsOpen={() => {
                   setIsLinkSelectorOpen((prev) => !prev);
@@ -184,7 +195,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
           {!editorState.code && (
             <div className="px-2">
               <BubbleMenuColorSelector
-                editor={props.editor}
+                editor={editor}
                 isOpen={isColorSelectorOpen}
                 editorState={editorState}
                 setIsOpen={() => {
@@ -215,7 +226,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
               </button>
             ))}
           </div>
-          <TextAlignmentSelector editor={props.editor} editorState={editorState} />
+          <TextAlignmentSelector editor={editor} editorState={editorState} />
         </div>
       )}
     </BubbleMenu>
