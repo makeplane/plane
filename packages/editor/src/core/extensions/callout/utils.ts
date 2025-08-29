@@ -10,13 +10,13 @@ import {
 } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
-  "data-logo-in-use": "emoji",
-  "data-icon-color": undefined,
-  "data-icon-name": undefined,
-  "data-emoji-unicode": "128161",
-  "data-emoji-url": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
-  "data-background": undefined,
-  "data-block-type": "callout-component",
+  [EAttributeNames.LOGO_IN_USE]: "emoji",
+  [EAttributeNames.ICON_COLOR]: undefined,
+  [EAttributeNames.ICON_NAME]: undefined,
+  [EAttributeNames.EMOJI_UNICODE]: "128161",
+  [EAttributeNames.EMOJI_URL]: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
+  [EAttributeNames.BACKGROUND]: undefined,
+  [EAttributeNames.BLOCK_TYPE]: "callout-component",
 };
 
 type TStoredLogoValue = Pick<TCalloutBlockAttributes, EAttributeNames.LOGO_IN_USE> &

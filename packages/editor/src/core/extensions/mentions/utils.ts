@@ -1,26 +1,24 @@
-import { Editor } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import { SuggestionOptions } from "@tiptap/suggestion";
-import tippy, { Instance } from "tippy.js";
+import type { SuggestionOptions } from "@tiptap/suggestion";
+import tippy, { type Instance } from "tippy.js";
 // helpers
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local components
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
 
 export const renderMentionsDropdown =
   (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
-  // @ts-expect-error - Tiptap types are incorrect
   () => {
     const { searchCallback } = props;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
-    let popup: Instance | null = null;
+    let popup: (Instance[] & Instance) | null = null;
 
     return {
-      onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onStart: (props) => {
         if (!searchCallback) return;
         if (!props.clientRect) return;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
@@ -45,13 +43,16 @@ export const renderMentionsDropdown =
           placement: "bottom-start",
         });
       },
-      onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onUpdate: (props) => {
         component?.updateProps(props);
-        popup?.[0]?.setProps({
-          getReferenceClientRect: props.clientRect,
-        });
+        const clientRect = props.clientRect?.();
+        if (clientRect) {
+          popup?.[0]?.setProps({
+            getReferenceClientRect: () => clientRect,
+          });
+        }
       },
-      onKeyDown: (props: { event: KeyboardEvent }) => {
+      onKeyDown: (props) => {
         if (props.event.key === "Escape") {
           popup?.[0]?.hide();
           return true;
@@ -67,7 +68,7 @@ export const renderMentionsDropdown =
         }
         return false;
       },
-      onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
+      onExit: (props) => {
         const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
         const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.MENTION);
         if (index > -1) {
