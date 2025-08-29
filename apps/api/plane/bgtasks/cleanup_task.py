@@ -67,7 +67,7 @@ def flush_to_mongo_and_delete(
     mongo_archival_failed = False
 
     # Try to insert into MongoDB if available
-    if mongo_collection and mongo_available:
+    if mongo_collection is not None and mongo_available:
         try:
             mongo_collection.bulk_write([InsertOne(doc) for doc in buffer])
         except BulkWriteError as bwe:
