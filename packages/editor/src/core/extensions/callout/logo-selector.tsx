@@ -1,5 +1,7 @@
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes, Logo, TEmojiLogoProps } from "@plane/ui";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { TLogoProps } from "@plane/types";
+import { Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
 // types
 import { TCalloutBlockAttributes } from "./types";
@@ -17,7 +19,7 @@ type Props = {
 export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
 
-  const logoValue: TEmojiLogoProps = {
+  const logoValue: TLogoProps = {
     in_use: blockAttributes["data-logo-in-use"],
     icon: {
       color: blockAttributes["data-icon-color"],
@@ -31,7 +33,8 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
 
   return (
     <div contentEditable={false}>
-      <EmojiIconPicker
+      <EmojiPicker
+        iconType="lucide"
         closeOnSelect={false}
         isOpen={isOpen}
         handleToggle={handleOpen}
@@ -43,7 +46,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
         onChange={(val) => {
           // construct the new logo value based on the type of value
           let newLogoValue: Partial<TCalloutBlockAttributes> = {};
-          let newLogoValueToStoreInLocalStorage: TEmojiLogoProps = {
+          let newLogoValueToStoreInLocalStorage: TLogoProps = {
             in_use: "emoji",
             emoji: {
               value: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],

@@ -1,5 +1,5 @@
 // plane imports
-import { TEmojiLogoProps } from "@plane/ui";
+import { TLogoProps } from "@plane/types";
 import { sanitizeHTML } from "@plane/utils";
 // types
 import {
@@ -31,7 +31,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
   if (typeof window !== "undefined") {
     const storedData = sanitizeHTML(localStorage.getItem("editor-calloutComponent-logo") ?? "");
     if (storedData) {
-      let parsedData: TEmojiLogoProps;
+      let parsedData: TLogoProps;
       try {
         parsedData = JSON.parse(storedData);
       } catch (error) {
@@ -58,7 +58,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
   return fallBackValues;
 };
 // function to update the stored logo on local storage
-export const updateStoredLogo = (value: TEmojiLogoProps): void => {
+export const updateStoredLogo = (value: TLogoProps): void => {
   if (typeof window === "undefined") return;
   localStorage.setItem("editor-calloutComponent-logo", JSON.stringify(value));
 };
