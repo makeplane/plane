@@ -53,13 +53,9 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
         if (isNaN(progress)) progress = 0;
         return orderByKey === "progress" ? progress : -progress;
       },
-      (m) => naturalSort(m.name, ""), // Use naturalSort for secondary sorting
     ]);
   if (["issues_length", "-issues_length"].includes(orderByKey))
-    orderedModules = sortBy(modules, [
-      (m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues),
-      (m) => naturalSort(m.name, ""), // Use naturalSort for secondary sorting
-    ]);
+    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues)]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
   if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
   if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
