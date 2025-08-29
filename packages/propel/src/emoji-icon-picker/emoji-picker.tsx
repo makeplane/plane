@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { Tabs } from "@base-ui-components/react";
 import { Popover } from "../popover";
 import { cn } from "../utils/classname";
@@ -36,21 +36,27 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
     return { finalSide: side, finalAlign: align };
   }, [placement, side, align]);
 
-  const handleEmojiChange = (value: string) => {
-    onChange({
-      type: EmojiIconPickerTypes.EMOJI,
-      value: emojiToString(value),
-    });
-    if (closeOnSelect) handleToggle(false);
-  };
+  const handleEmojiChange = useCallback(
+    (value: string) => {
+      onChange({
+        type: EmojiIconPickerTypes.EMOJI,
+        value: emojiToString(value),
+      });
+      if (closeOnSelect) handleToggle(false);
+    },
+    [onChange, closeOnSelect, handleToggle]
+  );
 
-  const handleIconChange = (value: { name: string; color: string }) => {
-    onChange({
-      type: EmojiIconPickerTypes.ICON,
-      value: value,
-    });
-    if (closeOnSelect) handleToggle(false);
-  };
+  const handleIconChange = useCallback(
+    (value: { name: string; color: string }) => {
+      onChange({
+        type: EmojiIconPickerTypes.ICON,
+        value: value,
+      });
+      if (closeOnSelect) handleToggle(false);
+    },
+    [onChange, closeOnSelect, handleToggle]
+  );
 
   const tabs = useMemo(
     () =>
@@ -83,16 +89,12 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         label: tab.label,
         content: tab.content,
       })),
-    []
+    [defaultIconColor, searchDisabled, searchPlaceholder, iconType, handleEmojiChange, handleIconChange]
   );
 
   return (
-    <Popover>
-      <Popover.Button
-        className={cn("outline-none", buttonClassName)}
-        disabled={disabled}
-        onClick={() => handleToggle(!isOpen)}
-      >
+    <Popover open={isOpen} onOpenChange={handleToggle}>
+      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
       </Popover.Button>
       <Popover.Panel

@@ -240,9 +240,6 @@ export const MATERIAL_ICONS_LIST = [
     name: "forward",
   },
   {
-    name: "download",
-  },
-  {
     name: "settings_applications",
   },
   {

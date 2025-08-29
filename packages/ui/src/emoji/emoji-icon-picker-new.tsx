@@ -103,7 +103,6 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                       }}
                       className="h-full w-full border-none p-2"
                     >
-                      {/* data-slot="emoji-picker-search-wrapper" */}
                       <div className="flex items-center gap-2 justify-between [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0 px-1.5 py-2 sticky top-0 z-10 bg-custom-background-100">
                         <EmojiPickerComponent.Search
                           placeholder={searchPlaceholder}

@@ -28,7 +28,7 @@ export const EmojiRoot = (props: EmojiRootProps) => {
           className="bg-custom-background-100 hover:bg-accent mx-2 mb-1.5 size-8 rounded-md text-lg flex-shrink-0"
         />
       </div>
-      <EmojiPicker.Viewport data-slot="emoji-picker-content" className={cn("relative flex-1 outline-hidden")}>
+      <EmojiPicker.Viewport data-slot="emoji-picker-content" className={cn("relative flex-1 outline-none")}>
         <EmojiPicker.List
           data-slot="emoji-picker-list"
           className={cn("pb-2 select-none")}
@@ -49,6 +49,8 @@ export const EmojiRoot = (props: EmojiRootProps) => {
             ),
             Emoji: ({ emoji, ...props }) => (
               <button
+                type="button"
+                aria-label={emoji?.label ?? emoji?.emoji}
                 data-slot="emoji-picker-list-emoji"
                 className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-lg"
                 {...props}

@@ -139,8 +139,16 @@ export function emojiToString(emoji: string): string {
  * @returns The reconstructed emoji string
  */
 export function stringToEmoji(emojiString: string): string {
-  const decimals = emojiString.split("-").map(Number);
-  return decimalToEmojiEnhanced(decimals);
+  if (!emojiString) return "";
+  const decimals = emojiString
+    .split("-")
+    .map((s) => Number(s.trim()))
+    .filter((n) => Number.isFinite(n) && n >= 0 && n <= 0x10ffff);
+  try {
+    return decimalToEmojiEnhanced(decimals);
+  } catch {
+    return "";
+  }
 }
 
 export const getEmojiSize = (size: number) => size * 0.9 * 0.0625;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { InfoIcon, Search } from "lucide-react";
-import useFontFaceObserver from "use-font-face-observer";
 import { cn } from "../../utils/classname";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
@@ -29,15 +28,6 @@ export const IconRoot: React.FC<IconRootProps> = (props) => {
       setShowHexInput(true);
     }
   }, [defaultColor]);
-
-  const isMaterialSymbolsFontLoaded = useFontFaceObserver([
-    {
-      family: `Material Symbols Rounded`,
-      style: `normal`,
-      weight: `normal`,
-      stretch: `condensed`,
-    },
-  ]);
 
   return (
     <>
