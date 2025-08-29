@@ -741,6 +741,9 @@ importers:
       '@tiptap/suggestion':
         specifier: ^2.22.3
         version: 2.26.1(@tiptap/core@2.26.1)(@tiptap/pm@2.26.1)
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
       emoji-regex:
         specifier: ^10.3.0
         version: 10.4.0
@@ -811,9 +814,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.18
         version: 18.3.1
-      '@types/uuid':
-        specifier: ^8.3.4
-        version: 8.3.4
       postcss:
         specifier: ^8.4.38
         version: 8.5.5
@@ -5256,6 +5256,10 @@ packages:
 
   /@types/use-sync-external-store@0.0.6:
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
+    dev: false
+
+  /@types/uuid@10.0.0:
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
     dev: false
 
   /@types/uuid@8.3.4:

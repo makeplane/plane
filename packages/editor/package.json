@@ -87,7 +87,7 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
-    "@types/uuid": "^8.3.4",
+    "@types/uuid": "^10.0.0",
     "postcss": "^8.4.38",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
