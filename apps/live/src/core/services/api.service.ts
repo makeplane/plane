@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { config } from "dotenv";
+import { config } from "@dotenvx/dotenvx";
 
 config();
 

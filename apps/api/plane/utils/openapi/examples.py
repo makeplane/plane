@@ -499,7 +499,7 @@ ISSUE_COMMENT_EXAMPLE = OpenApiExample(
     name="IssueComment",
     value={
         "id": "550e8400-e29b-41d4-a716-446655440000",
-        "comment_html": "<p>This issue has been resolved by implementing OAuth 2.0 flow.</p>",
+        "comment_html": "<p>This issue has been resolved by implementing OAuth 2.0 flow.</p>",  # noqa: E501
         "comment_json": {
             "type": "doc",
             "content": [
@@ -508,7 +508,7 @@ ISSUE_COMMENT_EXAMPLE = OpenApiExample(
                     "content": [
                         {
                             "type": "text",
-                            "text": "This issue has been resolved by implementing OAuth 2.0 flow.",
+                            "text": "This issue has been resolved by implementing OAuth 2.0 flow.",  # noqa: E501
                         }
                     ],
                 }
@@ -551,7 +551,7 @@ ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE = OpenApiExample(
         "error": "The asset is not uploaded.",
         "status": False,
     },
-    description="Error when trying to download an attachment that hasn't been uploaded yet",
+    description="Error when trying to download an attachment that hasn't been uploaded yet",  # noqa: E501
 )
 
 # Intake Issue Response Examples
@@ -733,7 +733,7 @@ SAMPLE_STATE = {
 
 SAMPLE_COMMENT = {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "comment_html": "<p>This issue needs more investigation. I'll look into the database connection timeout.</p>",
+    "comment_html": "<p>This issue needs more investigation. I'll look into the database connection timeout.</p>",  # noqa: E501
     "created_at": "2024-01-15T14:20:00Z",
     "actor": {"id": "550e8400-e29b-41d4-a716-446655440002", "display_name": "John Doe"},
 }
@@ -781,6 +781,20 @@ SAMPLE_CYCLE_ISSUE = {
     "created_at": "2024-01-01T10:30:00Z",
 }
 
+SAMPLE_EPIC = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Epic 1",
+    "description": "Epic 1 description",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
+SAMPLE_PAGE = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Sample Page",
+    "description": "Sample page description",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,
@@ -795,6 +809,8 @@ SCHEMA_EXAMPLES = {
     "Activity": SAMPLE_ACTIVITY,
     "Intake": SAMPLE_INTAKE,
     "CycleIssue": SAMPLE_CYCLE_ISSUE,
+    "Epic": SAMPLE_EPIC,
+    "Page": SAMPLE_PAGE,
 }
 
 

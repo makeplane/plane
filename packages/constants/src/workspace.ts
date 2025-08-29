@@ -1,4 +1,9 @@
 import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
+import {
+  EXTENDED_WORKSPACE_RESULT_ENTITIES,
+  EXTENDED_WORKSPACE_SETTINGS,
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS,
+} from "./workspace-extended";
 
 export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
@@ -68,6 +73,8 @@ export const RESTRICTED_URLS = [
   "licenses",
   "instances",
   "instance",
+  "oauth",
+  "applications",
 ];
 
 export const WORKSPACE_SETTINGS = {
@@ -106,6 +113,7 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
   },
+  ...EXTENDED_WORKSPACE_SETTINGS,
 };
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
@@ -121,9 +129,18 @@ export const WORKSPACE_SETTINGS_LINKS: {
 }[] = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
+  WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
+  WORKSPACE_SETTINGS["integrations"],
+  WORKSPACE_SETTINGS["applications"],
+  WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
+  WORKSPACE_SETTINGS["worklogs"],
+  WORKSPACE_SETTINGS["teamspaces"],
+  WORKSPACE_SETTINGS["initiatives"],
+  WORKSPACE_SETTINGS["customers"],
+  WORKSPACE_SETTINGS["templates"],
 ];
 
 export const ROLE = {
@@ -253,7 +270,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     labelTranslationKey: "views",
     href: `/workspace-views/all-issues/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-    highlight: (pathname: string, url: string) => pathname === url,
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   analytics: {
     key: "analytics",
@@ -279,10 +296,15 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
 };
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"]!,
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["dashboards"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["active-cycles"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["initiatives"],
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["teamspaces"],
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["customers"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -336,6 +358,7 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     module: [],
     issue_view: [],
     page: [],
+    ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
   },
 };
 

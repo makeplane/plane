@@ -1,0 +1,65 @@
+(plane_proxy) {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT}
+	}
+
+	reverse_proxy /spaces/* space:3000
+	reverse_proxy /god-mode/* admin:3000
+	reverse_proxy /api/* api:8000
+	reverse_proxy /graphql/* api:8000
+	reverse_proxy /auth/* api:8000
+	reverse_proxy /live/* live:3000
+	reverse_proxy /silo/* silo:3000
+	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
+	reverse_proxy /* web:3000
+}
+
+{
+	email {$CERT_EMAIL:admin@example.com}
+	acme_ca {$CERT_ACME_CA} 
+	{$CERT_ACME_DNS}
+	layer4 {
+		:10025 {
+			route {
+				proxy {
+					upstream email:10025
+				}
+			}
+		}
+		:10465 {
+			route {
+				tls
+				proxy {
+					upstream email:10465
+				}
+			}
+		}
+		:10587 {
+			route {
+				proxy {
+					upstream email:10587
+				}
+			}
+		}
+	}
+	servers {
+		timeouts {
+			read_body 600s
+			read_header 30s
+			write 600s
+			idle 600s
+		}
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
+	}
+	log {
+		output {$LOG_OUTPUT:stdout}
+		level {$LOG_LEVEL:INFO}
+	}
+}
+
+{$SITE_ADDRESS} {
+	import plane_proxy
+}
