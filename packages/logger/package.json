@@ -18,8 +18,8 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsc --noEmit && tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -36,7 +36,7 @@
     "@plane/typescript-config": "workspace:*",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.9",
-    "tsup": "8.4.0",
+    "tsdown": "^0.14.2",
     "typescript": "5.8.3"
   }
 }
