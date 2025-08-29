@@ -95,7 +95,6 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                   <Tab.Panel>
                     <EmojiPickerComponent
                       onEmojiSelect={(val) => {
-                        console.log(val);
                         onChange({
                           type: EmojiIconPickerTypes.EMOJI,
                           value: emojiToString(val.emoji),
