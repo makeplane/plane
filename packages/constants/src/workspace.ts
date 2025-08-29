@@ -312,7 +312,7 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     labelTranslationKey: "projects",
     href: `/projects/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-    highlight: (pathname: string, url: string) => pathname.includes(url),
+    highlight: (pathname: string, url: string) => pathname === url,
   },
 };
 
