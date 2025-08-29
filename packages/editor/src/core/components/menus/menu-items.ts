@@ -23,6 +23,9 @@ import {
   Palette,
   AlignCenter,
   LinkIcon,
+  Sigma,
+  SquareRadical,
+  FileCode2,
 } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -48,6 +51,9 @@ import {
   toggleUnderline,
   unsetLinkEditor,
 } from "@/helpers/editor-commands";
+// plane editor imports
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "@/plane-editor/helpers/editor-commands";
 // types
 import { TCommandWithProps, TEditorCommands } from "@/types";
 
@@ -247,6 +253,39 @@ export const TextAlignItem = (editor: Editor): EditorMenuItem<"text-align"> => (
   icon: AlignCenter,
 });
 
+export const BlockEquationItem = (editor: Editor): EditorMenuItem<"block-equation"> => ({
+  key: "block-equation",
+  name: "Block equation",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.BLOCK_MATH),
+  command: (props) => {
+    if (!props) return;
+    insertBlockMath({ editor, latex: props.latex });
+  },
+  icon: Sigma,
+});
+
+export const InlineEquationItem = (editor: Editor): EditorMenuItem<"inline-equation"> => ({
+  key: "inline-equation",
+  name: "Inline equation",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.INLINE_MATH),
+  command: (props) => {
+    if (!props) return;
+    insertInlineMath({ editor, latex: props.latex });
+  },
+  icon: SquareRadical,
+});
+
+export const ExternalEmbedItem = (editor: Editor): EditorMenuItem<"external-embed"> => ({
+  key: "external-embed",
+  name: "External embed",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED),
+  command: (props) => {
+    if (!props) return;
+    insertExternalEmbed({ editor, is_rich_card: props.is_rich_card });
+  },
+  icon: FileCode2,
+});
+
 export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEditorCommands>[] => {
   if (!editor) return [];
 
@@ -274,5 +313,8 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
+    BlockEquationItem(editor),
+    InlineEquationItem(editor),
+    ExternalEmbedItem(editor),
   ];
 };
