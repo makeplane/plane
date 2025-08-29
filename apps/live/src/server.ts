@@ -5,6 +5,7 @@ import type { Application, Request, Router } from "express";
 import expressWs from "express-ws";
 import type * as ws from "ws";
 // plane imports
+import { registerControllers } from "@plane/decorators";
 import { logger } from "@plane/logger";
 // Core functionality
 import { serverConfig, configureServerMiddleware } from "@/config/server-config";
@@ -22,7 +23,6 @@ import { RedisManager } from "@/core/lib/redis-manager";
 // Shutdown manager
 import { shutdownManager } from "@/core/shutdown-manager";
 // lib
-import { registerControllers } from "@/lib/controller.utils";
 import { initializeDocumentHandlers } from "@/plane-live/document-types";
 import { initializeSentry } from "@/sentry-config";
 
