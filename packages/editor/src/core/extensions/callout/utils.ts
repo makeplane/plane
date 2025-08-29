@@ -1,33 +1,33 @@
 // plane imports
-import { TEmojiLogoProps } from "@plane/ui";
+import type { TEmojiLogoProps } from "@plane/ui";
 import { sanitizeHTML } from "@plane/utils";
 // types
 import {
-  EAttributeNames,
+  ECalloutAttributeNames,
   TCalloutBlockAttributes,
   TCalloutBlockEmojiAttributes,
   TCalloutBlockIconAttributes,
 } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
-  [EAttributeNames.LOGO_IN_USE]: "emoji",
-  [EAttributeNames.ICON_COLOR]: undefined,
-  [EAttributeNames.ICON_NAME]: undefined,
-  [EAttributeNames.EMOJI_UNICODE]: "128161",
-  [EAttributeNames.EMOJI_URL]: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
-  [EAttributeNames.BACKGROUND]: undefined,
-  [EAttributeNames.BLOCK_TYPE]: "callout-component",
+  [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",
+  [ECalloutAttributeNames.ICON_COLOR]: undefined,
+  [ECalloutAttributeNames.ICON_NAME]: undefined,
+  [ECalloutAttributeNames.EMOJI_UNICODE]: "128161",
+  [ECalloutAttributeNames.EMOJI_URL]: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
+  [ECalloutAttributeNames.BACKGROUND]: undefined,
+  [ECalloutAttributeNames.BLOCK_TYPE]: "callout-component",
 };
 
-type TStoredLogoValue = Pick<TCalloutBlockAttributes, EAttributeNames.LOGO_IN_USE> &
+type TStoredLogoValue = Pick<TCalloutBlockAttributes, ECalloutAttributeNames.LOGO_IN_USE> &
   (TCalloutBlockEmojiAttributes | TCalloutBlockIconAttributes);
 
 // function to get the stored logo from local storage
 export const getStoredLogo = (): TStoredLogoValue => {
   const fallBackValues: TStoredLogoValue = {
-    "data-logo-in-use": "emoji",
-    "data-emoji-unicode": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
-    "data-emoji-url": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
+    [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",
+    [ECalloutAttributeNames.EMOJI_UNICODE]: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.EMOJI_UNICODE],
+    [ECalloutAttributeNames.EMOJI_URL]: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.EMOJI_URL],
   };
 
   if (typeof window !== "undefined") {
@@ -43,16 +43,20 @@ export const getStoredLogo = (): TStoredLogoValue => {
       }
       if (parsedData.in_use === "emoji" && parsedData.emoji?.value) {
         return {
-          "data-logo-in-use": "emoji",
-          "data-emoji-unicode": parsedData.emoji.value || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
-          "data-emoji-url": parsedData.emoji.url || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
+          [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",
+          [ECalloutAttributeNames.EMOJI_UNICODE]:
+            parsedData.emoji.value || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.EMOJI_UNICODE],
+          [ECalloutAttributeNames.EMOJI_URL]:
+            parsedData.emoji.url || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.EMOJI_URL],
         };
       }
       if (parsedData.in_use === "icon" && parsedData.icon?.name) {
         return {
-          "data-logo-in-use": "icon",
-          "data-icon-name": parsedData.icon.name || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-icon-name"],
-          "data-icon-color": parsedData.icon.color || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-icon-color"],
+          [ECalloutAttributeNames.LOGO_IN_USE]: "icon",
+          [ECalloutAttributeNames.ICON_NAME]:
+            parsedData.icon.name || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.ICON_NAME],
+          [ECalloutAttributeNames.ICON_COLOR]:
+            parsedData.icon.color || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.ICON_COLOR],
         };
       }
     }
