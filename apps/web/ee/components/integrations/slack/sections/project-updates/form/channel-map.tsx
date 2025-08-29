@@ -4,6 +4,8 @@ import Image from "next/image";
 import { ArrowRight, Hash, Briefcase } from "lucide-react";
 
 // Plane components
+import { SlackConversation } from "@plane/etl/slack";
+import { useTranslation } from "@plane/i18n";
 import { PlaneLogo } from "@plane/ui";
 import { Logo } from "@/components/common/logo";
 import { Dropdown } from "@/plane-web/components/importers/ui";
@@ -12,12 +14,10 @@ import { Dropdown } from "@/plane-web/components/importers/ui";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 
 // Types
-import { SlackConversation } from "@plane/etl/slack";
+import SlackLogo from "@/public/services/slack.png";
 import { SlackProjectNotificationMap } from "./form";
 
 // Assets
-import SlackLogo from "@/public/services/slack.png";
-import { useTranslation } from "@plane/i18n";
 
 type TSlackProjectChannelForm = {
   value: SlackProjectNotificationMap;
@@ -63,14 +63,11 @@ export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((p
       return project.id === value.projectId || !connectedProjectIds.includes(project.id);
     });
 
-  const availableChannels = channels.filter((channel) => {
-    // Check if it's a valid channel type
-    const isValidChannelType = (channel.is_channel || channel.is_group) && !channel.is_im;
-    if (!isValidChannelType) return false;
-    // Always include the currently selected channel (for editing scenario)
-    // Filter out channels that are already connected
-    return channel.id === value.channelId || !connectedChannelIds.includes(channel.id);
-  });
+  const availableChannels = channels.filter(
+    (channel) =>
+      // Check if it's a valid channel type
+      (channel.is_channel || channel.is_group) && !channel.is_im
+  );
 
   return (
     <div className="relative space-y-4">

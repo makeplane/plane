@@ -9,21 +9,19 @@ import { createSlackLinkback } from "../../views/issue-linkback";
 const apiClient = getAPIClient();
 
 export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) => {
-  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+  const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: payload.workspace,
     project_id: payload.project,
     entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
   });
 
-  if (!entityConnection) {
+  if (entityConnections.length === 0) {
     logger.info("No entity connection found for project update webhook");
     return;
   }
 
-  // Get the channel id and project id from the entity connection
-  const channelId = entityConnection.entity_id;
   const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
-    entityConnection.workspace_connection_id
+    entityConnections[0].workspace_connection_id
   );
 
   if (!workspaceConnection) {
@@ -51,10 +49,17 @@ export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) =
 
   const linkback = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false);
 
-  const response = await slackService.sendMessageToChannel(channelId!, {
-    blocks: linkback.blocks,
-    text: "New work item created in Plane",
-  });
+  await Promise.all(
+    entityConnections.map(async (entityConnection) => {
+      // Get the channel id and project id from the entity connection
+      const channelId = entityConnection.entity_id;
 
-  logger.info("Project update webhook sent", response);
+      const response = await slackService.sendMessageToChannel(channelId!, {
+        blocks: linkback.blocks,
+        text: "New work item created in Plane",
+      });
+
+      logger.info("Project update webhook sent", response);
+    })
+  );
 };
