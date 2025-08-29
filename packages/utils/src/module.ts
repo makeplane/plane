@@ -5,15 +5,7 @@ import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions }
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
-/**
- * @description extracts number from a string for natural sorting
- * @param {string} str - string to extract number from
- * @returns {number} - extracted number or -1 if no number found
- */
-const extractNumber = (str: string): number => {
-  const matches = str.match(/\d+/);
-  return matches ? parseInt(matches[0]) : -1;
-};
+const collator = new Intl.Collator("en-US", { numeric: true, sensitivity: "base" });
 
 /**
  * @description performs natural sorting of strings (handles numbers within strings correctly)
@@ -21,19 +13,7 @@ const extractNumber = (str: string): number => {
  * @param {string} b - second string to compare
  * @returns {number} - comparison result (-1, 0, or 1)
  */
-const naturalSort = (a: string, b: string): number => {
-  const aNum = extractNumber(a);
-  const bNum = extractNumber(b);
-
-  // If both strings contain numbers, compare them first
-  if (aNum !== -1 && bNum !== -1) {
-    if (aNum !== bNum) return aNum - bNum;
-  }
-
-  // If numbers are equal or not present, fall back to case-insensitive string comparison
-  return a.toLowerCase().localeCompare(b.toLowerCase());
-};
-
+const naturalSort = (a: string, b: string): number => collator.compare(a, b);
 /**
  * @description orders modules based on their status
  * @param {IModule[]} modules
