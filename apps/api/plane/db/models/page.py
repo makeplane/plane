@@ -116,6 +116,7 @@ class Page(BaseModel):
     )
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
+    sort_order = models.FloatField(default=65535)
     objects = PageManager()
     external_id = models.CharField(max_length=255, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
@@ -185,8 +186,11 @@ class PageLog(BaseModel):
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
-    entity_identifier = models.UUIDField(null=True)
+    entity_identifier = models.UUIDField(null=True, blank=True)
     entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
+    entity_type = models.CharField(
+        max_length=30, verbose_name="Entity Type", null=True, blank=True
+    )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )

@@ -5,11 +5,6 @@
   "version": "0.28.0",
   "license": "AGPL-3.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "dev-wiki"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=18",
