@@ -594,13 +594,14 @@ importers:
         version: 5.8.3
 
   packages/constants:
+    dependencies:
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@plane/types':
-        specifier: workspace:*
-        version: link:../types
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
