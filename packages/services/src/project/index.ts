@@ -3,6 +3,6 @@ import { ExtendedProjectService } from "./extended.service";
 
 export class ProjectService extends ExtendedProjectService {
   constructor() {
-    super(API_BASE_URL || "");
+    super(API_BASE_URL);
   }
 }

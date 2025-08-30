@@ -1,7 +1,7 @@
 import { CoreProjectPublishService } from "./core.service";
 
-export class ExtendedProjectPublishService extends CoreProjectPublishService {
-  constructor() {
-    super();
+export abstract class ExtendedProjectPublishService extends CoreProjectPublishService {
+  constructor(baseUrl: string) {
+    super(baseUrl);
   }
 }

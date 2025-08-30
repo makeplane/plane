@@ -1,6 +1,6 @@
-import { ProjectViewService } from "./core.service";
+import { CoreProjectViewService } from "./core.service";
 
-export class ExtendedProjectViewService extends ProjectViewService {
+export class ExtendedProjectViewService extends CoreProjectViewService {
   constructor(baseUrl: string) {
     super(baseUrl);
   }

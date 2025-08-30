@@ -1,7 +1,7 @@
 import { IProjectView } from "@plane/types";
 import { APIService } from "../api.service";
 
-export class ProjectViewService extends APIService {
+export class CoreProjectViewService extends APIService {
   constructor(baseUrl: string) {
     super(baseUrl);
   }

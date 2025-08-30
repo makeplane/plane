@@ -1,7 +1,8 @@
+import { API_BASE_URL } from "@plane/constants";
 import { ExtendedStateService } from "./extended.service";
 
 export class StateService extends ExtendedStateService {
-  constructor(baseUrl: string) {
-    super(baseUrl);
+  constructor() {
+    super(API_BASE_URL);
   }
 }

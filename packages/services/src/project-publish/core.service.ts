@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@plane/constants";
 import { TProjectPublishSettings } from "@plane/types";
 import { APIService } from "../api.service";
 
@@ -8,9 +7,9 @@ import { APIService } from "../api.service";
  * @extends {APIService}
  * @remarks This service is only available for plane core
  */
-export class CoreProjectPublishService extends APIService {
-  constructor(BASE_URL?: string) {
-    super(BASE_URL || API_BASE_URL);
+export abstract class CoreProjectPublishService extends APIService {
+  constructor(BASE_URL: string) {
+    super(BASE_URL);
   }
 
   async retrieve(workspaceSlug: string, projectID: string): Promise<TProjectPublishSettings> {
