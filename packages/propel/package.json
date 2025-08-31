@@ -4,6 +4,8 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsc --noEmit && tsdown",
     "check:lint": "eslint . --max-warnings 7",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -36,6 +38,7 @@
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -51,6 +54,7 @@
     "@types/react-dom": "18.3.0",
     "eslint-plugin-storybook": "^9.1.2",
     "storybook": "^9.1.2",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "tsdown": "^0.14.2"
   }
 }
