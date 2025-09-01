@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -36,6 +37,8 @@ export const TeamspacePagesList = observer((props: Props) => {
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -72,6 +75,7 @@ export const TeamspacePagesList = observer((props: Props) => {
   });
   // handlers
   const handleCreatePage = async () => {
+    setIsCreatingPage(true);
     captureClick({
       elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON,
     });
@@ -80,15 +84,17 @@ export const TeamspacePagesList = observer((props: Props) => {
       access: EPageAccess.PUBLIC,
     })
       .then((res) => {
-        const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
-        router.push(pageId);
-        captureSuccess({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            id: res?.id,
-            teamspaceId,
-          },
-        });
+        if (res?.id) {
+          const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
+          router.push(pageId);
+          captureSuccess({
+            eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+            payload: {
+              id: res?.id,
+              teamspaceId,
+            },
+          });
+        }
       })
       .catch((err) => {
         setToast({
@@ -102,6 +108,9 @@ export const TeamspacePagesList = observer((props: Props) => {
             teamspaceId,
           },
         });
+      })
+      .finally(() => {
+        setIsCreatingPage(false);
       });
   };
 
@@ -147,9 +156,11 @@ export const TeamspacePagesList = observer((props: Props) => {
           description={t("teamspace_pages.empty_state.team_page.description")}
           assetPath={generalPageResolvedPath}
           primaryButton={{
-            text: t("teamspace_pages.empty_state.team_page.primary_button.text"),
+            text: isCreatingPage
+              ? t("common.creating")
+              : t("teamspace_pages.empty_state.team_page.primary_button.text"),
             onClick: handleCreatePage,
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
           }}
         />
       )}

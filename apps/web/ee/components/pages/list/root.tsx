@@ -1,19 +1,21 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles, type TPageNavigationTabs } from "@plane/types";
+import { EUserWorkspaceRoles, TPage, type TPageNavigationTabs } from "@plane/types";
 // components
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -27,11 +29,10 @@ type Props = {
 export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { pageType } = props;
   const { workspaceSlug } = useParams();
-
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
   const {
@@ -41,8 +42,10 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     filteredArchivedPageIds,
     filteredPrivatePageIds,
     filteredSharedPageIds,
+    createPage,
   } = pageStore;
-
+  // params
+  const router = useAppRouter();
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
 
@@ -113,7 +116,42 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   });
 
   if (isLoading) return <PageLoader />;
+  const handleCreatePage = async () => {
+    setIsCreatingPage(true);
+    const payload: Partial<TPage> = {
+      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+    };
 
+    await createPage(payload)
+      .then((res) => {
+        if (res?.id) {
+          captureSuccess({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+            payload: {
+              id: res?.id,
+              state: "SUCCESS",
+            },
+          });
+          const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+          router.push(pageId);
+        }
+      })
+      .catch((err) => {
+        captureError({
+          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            state: "ERROR",
+            error: err?.data?.error,
+          },
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        });
+      })
+      .finally(() => setIsCreatingPage(false));
+  };
   // if no pages exist in the active page type
   if (!pageIds || pageIds.length === 0) {
     if (pageType === "public")
@@ -123,11 +161,9 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           description={t("workspace_pages.empty_state.public.description")}
           assetPath={publicPageResolvedPath}
           primaryButton={{
-            text: t("workspace_pages.empty_state.public.primary_button.text"),
-            onClick: () => {
-              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
-            },
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.public.primary_button.text"),
+            onClick: handleCreatePage,
+            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
           }}
         />
       );
@@ -138,11 +174,9 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           description={t("workspace_pages.empty_state.private.description")}
           assetPath={privatePageResolvedPath}
           primaryButton={{
-            text: t("workspace_pages.empty_state.private.primary_button.text"),
-            onClick: () => {
-              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
-            },
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.private.primary_button.text"),
+            onClick: handleCreatePage,
+            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
           }}
         />
       );
@@ -170,11 +204,9 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
         description={t("workspace_pages.empty_state.general.description")}
         assetPath={generalPageResolvedPath}
         primaryButton={{
-          text: t("workspace_pages.empty_state.general.primary_button.text"),
-          onClick: () => {
-            toggleCreatePageModal({ isOpen: true });
-          },
-          disabled: !hasWorkspaceMemberLevelPermissions,
+          text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.general.primary_button.text"),
+          onClick: handleCreatePage,
+          disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
         }}
       />
     );
