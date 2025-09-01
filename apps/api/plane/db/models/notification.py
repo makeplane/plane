@@ -14,8 +14,8 @@ class Notification(BaseModel):
         "db.Project", related_name="notifications", on_delete=models.CASCADE, null=True
     )
     data = models.JSONField(null=True)
-    entity_identifier = models.UUIDField(null=True)
-    entity_name = models.CharField(max_length=255)
+    entity_identifier = models.UUIDField(null=True, db_index=True)
+    entity_name = models.CharField(max_length=255, db_index=True)
     title = models.TextField()
     message = models.JSONField(null=True)
     message_html = models.TextField(blank=True, default="<p></p>")
@@ -30,7 +30,7 @@ class Notification(BaseModel):
     receiver = models.ForeignKey(
         "db.User", related_name="received_notifications", on_delete=models.CASCADE
     )
-    read_at = models.DateTimeField(null=True)
+    read_at = models.DateTimeField(null=True, db_index=True)
     snoozed_till = models.DateTimeField(null=True)
     archived_at = models.DateTimeField(null=True)
 
@@ -39,6 +39,16 @@ class Notification(BaseModel):
         verbose_name_plural = "Notifications"
         db_table = "notifications"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(
+                fields=["receiver", "workspace"], name="receiver_workspace_idx"
+            ),
+            models.Index(fields=["receiver", "read_at"], name="receiver_read_at_idx"),
+            models.Index(
+                fields=["receiver", "workspace", "read_at"],
+                name="receiver_workspace_read_at_idx",
+            ),
+        ]
 
     def __str__(self):
         """Return name of the notifications"""
