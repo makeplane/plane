@@ -21,7 +21,7 @@ export const handleConvertDocument = (req: Request, res: Response) => {
       description_binary,
     });
   } catch (error) {
-    manualLogger.error("Error in /convert-document endpoint:", error);
+    manualLogger.error(error, "Error in /convert-document endpoint:");
     res.status(500).send({
       message: `Internal server error. ${error}`,
     });

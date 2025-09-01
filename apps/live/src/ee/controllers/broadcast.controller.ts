@@ -81,7 +81,7 @@ export class BroadcastController {
         this.handleSubPage(payload, connectionContext);
       }
     } catch (error) {
-      manualLogger.error("Error in broadcast handler:", error);
+      manualLogger.error(error, "Error in broadcast handler:");
       if (!res.headersSent) {
         res.status(500).json({ error: "Internal server error" });
       }
@@ -110,7 +110,7 @@ export class BroadcastController {
       try {
         broadcastMessageToPage(serverAgentManager, pageId, metadata);
       } catch (error) {
-        manualLogger.error(`Error broadcasting to page ${pageId}:`, error);
+        manualLogger.error(error, `Error broadcasting to page ${pageId}:`);
       }
     });
   }
@@ -169,7 +169,7 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        manualLogger.error("Error handling duplicated action:", error);
+        manualLogger.error(error, "Error handling duplicated action:");
       });
   }
 
@@ -208,7 +208,7 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        manualLogger.error("Error handling deleted action:", error);
+        manualLogger.error(error, "Error handling deleted action:");
       });
   }
 

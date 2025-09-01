@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
   "main": "./src/index.ts",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

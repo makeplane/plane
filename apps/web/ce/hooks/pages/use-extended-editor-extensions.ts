@@ -1,1 +1,1 @@
-export * from "@/plane-web/hooks/pages/use-extended-editor-extensions";
+export * from "ee/hooks/pages/use-extended-editor-extensions";

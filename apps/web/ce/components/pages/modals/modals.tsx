@@ -2,8 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import type { EditorRefApi } from "@plane/editor";
-// plane web hooks
+// components
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";

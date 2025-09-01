@@ -30,6 +30,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     editable,
     editorClassName = "",
     editorProps,
+    extendedEditorProps,
     embedHandler,
     fileHandler,
     flaggedExtensions,
@@ -51,8 +52,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     titleRef,
     user,
     updatePageProperties,
-    // additional props
-    extendedEditorProps,
   } = props;
 
   const extensions: Extensions = useMemo(() => {

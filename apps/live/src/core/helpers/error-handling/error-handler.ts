@@ -125,28 +125,37 @@ export class AppError extends Error {
   private report(): void {
     // Different logging based on error category
     if (this.category === ErrorCategory.OPERATIONAL) {
-      manualLogger.error(`Operational error: ${this.message}`, {
-        errorName: this.name,
-        errorStatus: this.status,
-        errorCategory: this.category,
-        context: this.context,
-      });
+      manualLogger.error(
+        {
+          errorName: this.name,
+          errorStatus: this.status,
+          errorCategory: this.category,
+          context: this.context,
+        },
+        `Operational error: ${this.message}`
+      );
     } else if (this.category === ErrorCategory.FATAL) {
-      manualLogger.error(`FATAL error: ${this.message}`, {
-        errorName: this.name,
-        errorStatus: this.status,
-        errorCategory: this.category,
-        stack: this.stack,
-        context: this.context,
-      });
+      manualLogger.error(
+        {
+          errorName: this.name,
+          errorStatus: this.status,
+          errorCategory: this.category,
+          stack: this.stack,
+          context: this.context,
+        },
+        `FATAL error: ${this.message}`
+      );
     } else {
-      manualLogger.error(`${this.category} error: ${this.message}`, {
-        errorName: this.name,
-        errorStatus: this.status,
-        errorCategory: this.category,
-        stack: this.stack,
-        context: this.context,
-      });
+      manualLogger.error(
+        {
+          errorName: this.name,
+          errorStatus: this.status,
+          errorCategory: this.category,
+          stack: this.stack,
+          context: this.context,
+        },
+        `${this.category} error: ${this.message}`
+      );
     }
   }
 }

@@ -30,8 +30,8 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     handleClose,
     handleRestore,
     pageId,
-    storeType,
     restoreEnabled,
+    storeType,
   } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);

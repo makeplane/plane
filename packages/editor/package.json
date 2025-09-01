@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -33,8 +33,8 @@
   },
   "peerDependencies": {
     "nanoid": "^3.3.8",
-    "react": "^18.3.1",
-    "react-dom": "18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -95,11 +95,11 @@
     "@plane/typescript-config": "workspace:*",
     "@types/node": "18.15.3",
     "@types/tldjs": "^2.3.4",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "keywords": [
     "editor",

@@ -30,9 +30,9 @@ import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-re
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web types
-import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages/use-extended-editor-extensions";
+import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 // plane web store
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store

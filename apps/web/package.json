@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -62,10 +62,10 @@
     "pako": "^2.1.0",
     "papaparse": "^5.4.1",
     "posthog-js": "^1.131.3",
-    "react": "^18.3.1",
+    "react": "catalog:",
     "react-color": "^2.19.3",
     "react-day-picker": "9.5.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",
     "react-grid-layout": "^1.5.0",
     "react-hook-form": "7.51.5",
@@ -89,12 +89,12 @@
     "@types/lodash": "4.17.20",
     "@types/node": "18.16.1",
     "@types/papaparse": "^5.3.14",
-    "@types/react": "^18.3.11",
+    "@types/react": "catalog:",
     "@types/react-color": "^3.0.6",
-    "@types/react-dom": "^18.2.18",
+    "@types/react-dom": "catalog:",
     "@types/react-grid-layout": "^1.3.5",
     "@types/uuid": "^8.3.4",
     "prettier": "^3.2.5",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }
