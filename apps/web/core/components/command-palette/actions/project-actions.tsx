@@ -11,7 +11,7 @@ import {
 } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // ui
 
 type Props = {

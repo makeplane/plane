@@ -52,11 +52,7 @@ userController.registerRoutes(router);
 ### WebSocket Controller
 
 ```typescript
-import {
-  Controller,
-  WebSocket,
-  BaseWebSocketController,
-} from "@plane/decorators";
+import { Controller, WebSocket, BaseWebSocketController } from "@plane/decorators";
 import { Request } from "express";
 import { WebSocket as WS } from "ws";
 

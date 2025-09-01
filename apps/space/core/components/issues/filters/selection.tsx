@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // types
-import { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
-// components
-import { FilterPriority, FilterState } from ".";
+import type { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
+// local imports
+import { FilterPriority } from "./priority";
+import { FilterState } from "./state";
 
 type Props = {
   filters: IIssueFilterOptions;

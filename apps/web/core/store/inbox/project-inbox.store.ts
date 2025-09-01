@@ -22,7 +22,7 @@ import { getCustomDates } from "@plane/utils";
 import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 type TLoader =
   | "init-loading"

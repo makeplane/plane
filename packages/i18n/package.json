@@ -1,6 +1,6 @@
 {
   "name": "@plane/i18n",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
@@ -15,12 +15,18 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/utils": "*",
-    "intl-messageformat": "^10.7.11"
+    "@plane/utils": "workspace:*",
+    "intl-messageformat": "^10.7.11",
+    "mobx": "^6.13.5",
+    "mobx-react": "^9.1.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "typescript": "5.8.3"
+    "@types/lodash": "4.17.20",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
   }
 }

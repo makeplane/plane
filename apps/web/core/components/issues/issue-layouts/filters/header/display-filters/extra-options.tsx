@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
 // components
-import { FilterOption } from "@/components/issues";
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
 
 // constants
 const ISSUE_EXTRA_OPTIONS: {

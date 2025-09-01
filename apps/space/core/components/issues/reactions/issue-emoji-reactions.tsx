@@ -9,7 +9,8 @@ import { ReactionSelector } from "@/components/ui";
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, useUser } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 
 type IssueEmojiReactionsProps = {
   anchor: string;

@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
+// plane imports
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
-// components
 import { TModuleStatus } from "@plane/ui";
-import { FilterOption } from "@/components/issues";
+// components
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "@/components/modules";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
 
 type Props = {
   displayFilters: TModuleDisplayFilters;

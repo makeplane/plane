@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { TCycleGroups } from "@plane/types";
 // hooks
 import { CycleGroupIcon } from "@plane/ui";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types
 

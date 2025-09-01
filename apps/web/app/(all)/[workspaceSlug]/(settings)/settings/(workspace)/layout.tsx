@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { SettingsMobileNav } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
+import { SettingsMobileNav } from "@/components/settings/mobile";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 

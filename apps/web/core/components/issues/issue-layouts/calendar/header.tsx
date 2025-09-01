@@ -11,7 +11,6 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { Row } from "@plane/ui";
-import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
@@ -19,6 +18,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "./dropdowns";
 
 interface ICalendarHeader {
   issuesFilterStore:

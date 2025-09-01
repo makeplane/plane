@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
 const ProjectSettingsPage = () => {
   // store hooks

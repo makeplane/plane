@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.28.0",
+  "version": "1.0.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [
@@ -25,8 +25,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
@@ -34,10 +34,10 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
-    "@plane/constants": "*",
-    "@plane/hooks": "*",
-    "@plane/utils": "*",
-    "@plane/types": "*",
+    "@plane/constants": "workspace:*",
+    "@plane/hooks": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
@@ -53,9 +53,9 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
-    "@plane/eslint-config": "*",
-    "@plane/tailwind-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/tailwind-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-interactions": "^8.1.1",
     "@storybook/addon-links": "^8.1.1",
@@ -66,16 +66,16 @@
     "@storybook/react": "^8.1.1",
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "^20.5.2",
-    "@types/react": "^18.3.11",
+    "@types/react": "catalog:",
     "@types/react-color": "^3.0.9",
-    "@types/react-dom": "^18.2.18",
+    "@types/react-dom": "catalog:",
     "autoprefixer": "^10.4.19",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

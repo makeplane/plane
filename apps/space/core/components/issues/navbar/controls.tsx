@@ -4,17 +4,21 @@ import { useEffect, FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
-import { IssuesLayoutSelection, NavbarTheme, UserAvatar } from "@/components/issues";
 import { IssueFiltersDropdown } from "@/components/issues/filters";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueFilter, useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
 // types
-import { TIssueLayout } from "@/types/issue";
+import type { TIssueLayout } from "@/types/issue";
+// local imports
+import { IssuesLayoutSelection } from "./layout-selection";
+import { NavbarTheme } from "./theme";
+import { UserAvatar } from "./user-avatar";
 
 export type NavbarControlsProps = {
   publishSettings: PublishStore;

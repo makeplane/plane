@@ -10,7 +10,8 @@ import { EEstimateSystem } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // hooks
-import { useEstimate, useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -33,7 +34,7 @@ type DropdownOptions =
   | {
       value: string | null;
       query: string;
-      content: JSX.Element;
+      content: React.ReactNode;
     }[]
   | undefined;
 

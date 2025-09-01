@@ -5,8 +5,11 @@ import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles";
+// local imports
+import { CyclePeekOverview } from "../cycle-peek-overview";
+import { CycleListGroupHeader } from "./cycle-list-group-header";
+import { CyclesListMap } from "./cycles-list-map";
 
 export interface ICyclesList {
   completedCycleIds: string[];

@@ -11,7 +11,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 // Define our lock display states, renaming "icon-only" to "neutral"
 type LockDisplayState = "neutral" | "locked" | "unlocked";

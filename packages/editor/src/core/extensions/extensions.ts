@@ -29,7 +29,7 @@ import {
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, TEmbedConfig } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -38,10 +38,18 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isTouchDevice"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "embedHandler"
 > & {
   enableHistory: boolean;
   editable: boolean;
+  embedHandler?: TEmbedConfig;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -50,9 +58,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    isTouchDevice = false,
     mentionHandler,
     placeholder,
     tabIndex,
+    embedHandler,
     editable,
   } = args;
 
@@ -102,11 +112,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: editable,
+      isTouchDevice,
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      embedHandler,
     }),
   ];
 

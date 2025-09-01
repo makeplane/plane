@@ -5,7 +5,7 @@ import { SmilePlus } from "lucide-react";
 import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { cn } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageEditorHeaderLogoPicker } from "./logo-picker";
 

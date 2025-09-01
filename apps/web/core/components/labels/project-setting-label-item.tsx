@@ -6,7 +6,7 @@ import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // components
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";

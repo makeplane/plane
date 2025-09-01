@@ -9,7 +9,8 @@ import { cn, formatTextList } from "@plane/utils";
 // helper
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 // types
 import { ReactionSelector } from "./reaction-selector";
 

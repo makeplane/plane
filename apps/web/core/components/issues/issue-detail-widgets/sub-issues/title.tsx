@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {

@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
-import { CreateUpdateProjectViewModal } from "@/components/views";
+import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 
 interface ISaveFilterView {
   workspaceSlug: string;

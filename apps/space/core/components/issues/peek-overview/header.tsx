@@ -9,7 +9,7 @@ import { CenterPanelIcon, FullScreenPanelIcon, setToast, SidePanelIcon, TOAST_TY
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";

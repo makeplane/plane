@@ -1,17 +1,13 @@
 import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
-// plane types
-import { TActivityEntityData, TPageEntityData } from "@plane/types";
-// plane ui
+// plane import
+import type { TActivityEntityData, TPageEntityData } from "@plane/types";
 import { Avatar, Logo } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
-// plane utils
 // components
 import { ListItem } from "@/components/core/list";
-// helpers
-//
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type BlockProps = {
   activity: TActivityEntityData;

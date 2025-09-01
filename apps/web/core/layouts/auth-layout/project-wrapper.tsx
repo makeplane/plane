@@ -8,24 +8,23 @@ import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { EProjectNetwork } from "@plane/types";
 // components
-import { JoinProject } from "@/components/auth-screens";
-import { LogoSpinner } from "@/components/common";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { JoinProject } from "@/components/auth-screens/project/join-project";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import {
-  useCommandPalette,
-  useCycle,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectEstimates,
-  useProjectState,
-  useProjectView,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local

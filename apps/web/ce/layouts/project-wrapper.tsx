@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // layouts
-import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout";
+import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 
 export type IProjectAuthWrapper = {
   workspaceSlug: string;

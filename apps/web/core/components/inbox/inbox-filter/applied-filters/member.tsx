@@ -10,7 +10,8 @@ import { Avatar, Tag } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useProjectInbox } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersMember = {
   filterKey: TInboxIssueFilterMemberKeys;

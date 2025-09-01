@@ -9,11 +9,11 @@ import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@pl
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web constants
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 import { ProjectPage, TProjectPage } from "./project-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
@@ -49,7 +49,12 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    options?: { trackVisit?: boolean }
+  ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
@@ -239,7 +244,9 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageDetails = async (...args: Parameters<IProjectPageStore["fetchPageDetails"]>) => {
+    const [workspaceSlug, projectId, pageId, options] = args;
+    const { trackVisit } = options || {};
     try {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
@@ -249,7 +256,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const page = await this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true);
 
       runInAction(() => {
         if (page?.id) {

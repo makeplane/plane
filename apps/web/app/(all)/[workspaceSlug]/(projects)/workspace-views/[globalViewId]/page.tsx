@@ -6,11 +6,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
-import { PageHead } from "@/components/core";
-import { AllIssueLayoutRoot, GlobalViewsAppliedFiltersRoot } from "@/components/issues";
-// constants
+import { PageHead } from "@/components/core/page-title";
+import { GlobalViewsAppliedFiltersRoot } from "@/components/issues/issue-layouts/filters";
+import { AllIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/all-issue-layout-root";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const GlobalViewIssuesPage = observer(() => {
   // router

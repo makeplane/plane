@@ -1,16 +1,15 @@
 "use client";
 
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-import { ProfileEmptyState } from "@/components/ui";
-// image
+// components
+import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
+// assets
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
-// helpers
-// types
 
 type Props = {
   userProfile: IUserProfileData | undefined;

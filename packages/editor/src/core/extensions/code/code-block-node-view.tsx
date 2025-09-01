@@ -1,6 +1,6 @@
 "use client";
 
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
@@ -16,11 +16,11 @@ import { cn } from "@plane/utils";
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
-interface CodeBlockComponentProps {
+type Props = {
   node: ProseMirrorNode;
-}
+};
 
-export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) => {
+export const CodeBlockComponent: React.FC<Props> = ({ node }) => {
   const [copied, setCopied] = useState(false);
 
   const uniqueId = useMemo(() => uuidv4(), []);

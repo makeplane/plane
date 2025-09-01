@@ -8,7 +8,7 @@ import {
   TProjectPublishViewProps,
 } from "@plane/types";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IPublishStore extends TProjectPublishSettings {
   // computed

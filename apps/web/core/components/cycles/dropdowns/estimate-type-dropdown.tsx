@@ -2,8 +2,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { EEstimateSystem, TCycleEstimateType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { useCycle, useProjectEstimates } from "@/hooks/store";
-import { cycleEstimateOptions } from "../analytics-sidebar";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCycle } from "@/hooks/store/use-cycle";
+// local imports
+import { cycleEstimateOptions } from "../analytics-sidebar/issue-progress";
 
 type TProps = {
   value: TCycleEstimateType;

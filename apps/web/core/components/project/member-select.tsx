@@ -10,7 +10,7 @@ import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   value: any;
@@ -50,7 +50,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
   const selectedOption = projectId ? getProjectMemberDetails(value, projectId.toString()) : null;

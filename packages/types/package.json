@@ -1,6 +1,6 @@
 {
   "name": "@plane/types",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
   "files": [
@@ -26,10 +26,16 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }
