@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Separator as SeparatorPrimitive } from "@base-ui-components/react/separator";
-import clsx from "clsx";
+import { cn } from "../utils";
+
 
 interface SeparatorProps extends React.ComponentProps<typeof SeparatorPrimitive> {
   /**
@@ -18,7 +19,7 @@ const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive>, 
       data-slot="separator"
       data-orientation={orientation}
       {...props}
-      className={clsx("bg-custom-border-200", "shrink-0", orientation === "horizontal" ? "h-px w-full" : "h-full w-px")}
+      className={cn("bg-custom-border-200", "shrink-0", orientation === "horizontal" ? "h-px w-full" : "h-full w-px")}
     />
   )
 );
