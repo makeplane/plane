@@ -67,7 +67,7 @@ def flush_to_mongo_and_delete(
     mongo_archival_failed = False
 
     # Try to insert into MongoDB if available
-    if mongo_collection and mongo_available:
+    if mongo_collection is not None and mongo_available:
         try:
             mongo_collection.bulk_write([InsertOne(doc) for doc in buffer])
         except BulkWriteError as bwe:
@@ -166,9 +166,9 @@ def process_cleanup_task(
 def transform_api_log(record: Dict) -> Dict:
     """Transform API activity log record."""
     return {
-        "id": record["id"],
+        "id": str(record["id"]),
         "created_at": str(record["created_at"]) if record.get("created_at") else None,
-        "token_identifier": record["token_identifier"],
+        "token_identifier": str(record["token_identifier"]),
         "path": record["path"],
         "method": record["method"],
         "query_params": record.get("query_params"),
@@ -178,18 +178,18 @@ def transform_api_log(record: Dict) -> Dict:
         "response_body": record["response_body"],
         "ip_address": record["ip_address"],
         "user_agent": record["user_agent"],
-        "created_by_id": record["created_by_id"],
+        "created_by_id": str(record["created_by_id"]),
     }
 
 
 def transform_email_log(record: Dict) -> Dict:
     """Transform email notification log record."""
     return {
-        "id": record["id"],
+        "id": str(record["id"]),
         "created_at": str(record["created_at"]) if record.get("created_at") else None,
-        "receiver_id": record["receiver_id"],
-        "triggered_by_id": record["triggered_by_id"],
-        "entity_identifier": record["entity_identifier"],
+        "receiver_id": str(record["receiver_id"]),
+        "triggered_by_id": str(record["triggered_by_id"]),
+        "entity_identifier": str(record["entity_identifier"]),
         "entity_name": record["entity_name"],
         "data": record["data"],
         "processed_at": (
@@ -197,27 +197,27 @@ def transform_email_log(record: Dict) -> Dict:
         ),
         "sent_at": str(record["sent_at"]) if record.get("sent_at") else None,
         "entity": record["entity"],
-        "old_value": record["old_value"],
-        "new_value": record["new_value"],
-        "created_by_id": record["created_by_id"],
+        "old_value": str(record["old_value"]),
+        "new_value": str(record["new_value"]),
+        "created_by_id": str(record["created_by_id"]),
     }
 
 
 def transform_page_version(record: Dict) -> Dict:
     """Transform page version record."""
     return {
-        "id": record["id"],
+        "id": str(record["id"]),
         "created_at": str(record["created_at"]) if record.get("created_at") else None,
-        "page_id": record["page_id"],
-        "workspace_id": record["workspace_id"],
-        "owned_by_id": record["owned_by_id"],
+        "page_id": str(record["page_id"]),
+        "workspace_id": str(record["workspace_id"]),
+        "owned_by_id": str(record["owned_by_id"]),
         "description_html": record["description_html"],
         "description_binary": record["description_binary"],
         "description_stripped": record["description_stripped"],
         "description_json": record["description_json"],
         "sub_pages_data": record["sub_pages_data"],
-        "created_by_id": record["created_by_id"],
-        "updated_by_id": record["updated_by_id"],
+        "created_by_id": str(record["created_by_id"]),
+        "updated_by_id": str(record["updated_by_id"]),
         "deleted_at": str(record["deleted_at"]) if record.get("deleted_at") else None,
         "last_saved_at": (
             str(record["last_saved_at"]) if record.get("last_saved_at") else None
@@ -228,14 +228,14 @@ def transform_page_version(record: Dict) -> Dict:
 def transform_issue_description_version(record: Dict) -> Dict:
     """Transform issue description version record."""
     return {
-        "id": record["id"],
+        "id": str(record["id"]),
         "created_at": str(record["created_at"]) if record.get("created_at") else None,
-        "issue_id": record["issue_id"],
-        "workspace_id": record["workspace_id"],
-        "project_id": record["project_id"],
-        "created_by_id": record["created_by_id"],
-        "updated_by_id": record["updated_by_id"],
-        "owned_by_id": record["owned_by_id"],
+        "issue_id": str(record["issue_id"]),
+        "workspace_id": str(record["workspace_id"]),
+        "project_id": str(record["project_id"]),
+        "created_by_id": str(record["created_by_id"]),
+        "updated_by_id": str(record["updated_by_id"]),
+        "owned_by_id": str(record["owned_by_id"]),
         "last_saved_at": (
             str(record["last_saved_at"]) if record.get("last_saved_at") else None
         ),

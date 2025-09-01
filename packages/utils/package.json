@@ -1,6 +1,6 @@
 {
   "name": "@plane/utils",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
@@ -28,7 +28,7 @@
     "isomorphic-dompurify": "^2.16.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
-    "react": "^18.3.1",
+    "react": "catalog:",
     "tailwind-merge": "^2.5.5",
     "tlds": "1.259.0",
     "uuid": "^10.0.0"
@@ -36,11 +36,11 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "^22.5.4",
-    "@types/react": "^18.3.11",
+    "@types/react": "catalog:",
     "@types/uuid": "^9.0.8",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }
