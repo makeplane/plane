@@ -232,7 +232,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
           project_id: getValues<"project_id">("project_id"),
           id: data.id,
-          description_html: formData.description_html ?? "<p></p>",
           type_id: getValues<"type_id">("type_id"),
         };
 
