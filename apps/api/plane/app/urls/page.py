@@ -4,8 +4,6 @@ from django.urls import path
 from plane.app.views import (
     PageViewSet,
     PageFavoriteViewSet,
-    PageLogEndpoint,
-    SubPagesEndpoint,
     PagesDescriptionViewSet,
     PageVersionEndpoint,
     PageDuplicateEndpoint,
@@ -19,53 +17,54 @@ urlpatterns = [
         name="project-pages",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
         PageViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-pages",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
+        PageViewSet.as_view({"get": "sub_pages"}),
+        name="project-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/parent-pages/",
+        PageViewSet.as_view({"get": "parent_pages"}),
+        name="project-parent-pages",
+    ),
     # favorite pages
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:page_id>/",
         PageFavoriteViewSet.as_view({"post": "create", "delete": "destroy"}),
         name="user-favorite-pages",
     ),
+    # Lock
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
+        PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
+        name="project-page-lock-unlock",
+    ),
     # archived pages
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/archive/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/archive/",
         PageViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="project-page-archive-unarchive",
     ),
     # lock and unlock
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
         PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="project-pages-lock-unlock",
     ),
     # private and public page
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/access/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/access/",
         PageViewSet.as_view({"post": "access"}),
         name="project-pages-access",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/",
-        PageLogEndpoint.as_view(),
-        name="page-transactions",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/transactions/<uuid:transaction>/",
-        PageLogEndpoint.as_view(),
-        name="page-transactions",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/sub-pages/",
-        SubPagesEndpoint.as_view(),
-        name="sub-page",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/description/",
         PagesDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
     ),

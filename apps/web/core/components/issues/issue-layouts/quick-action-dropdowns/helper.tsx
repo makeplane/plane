@@ -5,8 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ArchiveIcon, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// types
-import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+// plane web imports
+import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/copy-menu-helper";
 
 // Generic helper function to handle optional function calls gracefully
 // Overload for functions without parameters
@@ -265,7 +265,7 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
   return useMemo(
     () => [
       factory.createEditMenuItem(),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createArchiveMenuItem(),
@@ -296,7 +296,7 @@ export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuI
   return useMemo(
     () => [
       factory.createEditMenuItem(),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createArchiveMenuItem(),
@@ -320,7 +320,7 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createRemoveFromCycleMenuItem(),
@@ -345,7 +345,7 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createRemoveFromModuleMenuItem(),

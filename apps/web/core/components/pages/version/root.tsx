@@ -6,6 +6,8 @@ import { TPageVersion } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web imports
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "../navigation-pane";
 import { TVersionEditorProps } from "./editor";
@@ -17,10 +19,11 @@ type Props = {
   handleRestore: (descriptionHTML: string) => Promise<void>;
   pageId: string;
   restoreEnabled: boolean;
+  storeType: EPageStoreType;
 };
 
 export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
-  const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled } = props;
+  const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,6 +60,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
         handleRestore={handleRestore}
         pageId={pageId}
         restoreEnabled={restoreEnabled}
+        storeType={storeType}
       />
     </div>
   );

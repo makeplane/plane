@@ -1,27 +1,46 @@
-// core helpers
-import { manualLogger } from "@/core/helpers/logger.js";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 // services
-import { UserService } from "@/core/services/user.service.js";
+import { UserService } from "@/core/services/user.service";
 
 const userService = new UserService();
 
 type Props = {
   cookie: string;
   userId: string;
+  workspaceSlug: string;
 };
 
 export const handleAuthentication = async (props: Props) => {
-  const { cookie, userId } = props;
+  const { cookie, userId, workspaceSlug } = props;
   // fetch current user info
   let response;
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    manualLogger.error("Failed to fetch current user:", error);
-    throw error;
+    handleError(error, {
+      errorType: "unauthorized",
+      message: "Failed to authenticate user",
+      component: "authentication",
+      operation: "fetch-current-user",
+      extraContext: {
+        userId,
+        workspaceSlug,
+      },
+      throw: true,
+    });
   }
   if (response.id !== userId) {
-    throw Error("Authentication failed: Token doesn't match the current user.");
+    handleError(null, {
+      errorType: "unauthorized",
+      message: "Authentication failed: Token doesn't match the current user.",
+      component: "authentication",
+      operation: "validate-user",
+      extraContext: {
+        userId,
+        workspaceSlug,
+      },
+      throw: true,
+    });
   }
 
   return {
