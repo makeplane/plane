@@ -17,15 +17,15 @@
   "dependencies": {
     "@plane/utils": "workspace:*",
     "intl-messageformat": "^10.7.11",
-    "mobx": "^6.13.5",
-    "mobx-react": "^9.1.0",
-    "lodash": "^4.17.21"
+    "mobx": "catalog:",
+    "mobx-react": "catalog:",
+    "lodash": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"
   }

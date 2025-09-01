@@ -6,21 +6,51 @@ settings:
 
 catalogs:
   default:
+    '@types/lodash':
+      specifier: 4.17.20
+      version: 4.17.20
     '@types/react':
       specifier: 18.3.1
       version: 18.3.1
     '@types/react-dom':
       specifier: 18.3.1
       version: 18.3.1
+    axios:
+      specifier: 1.11.0
+      version: 1.11.0
+    lodash:
+      specifier: 4.17.21
+      version: 4.17.21
+    lucide-react:
+      specifier: 0.469.0
+      version: 0.469.0
+    mobx:
+      specifier: 6.12.0
+      version: 6.12.0
+    mobx-react:
+      specifier: 9.1.1
+      version: 9.1.1
+    mobx-utils:
+      specifier: 6.0.8
+      version: 6.0.8
+    next:
+      specifier: 14.2.32
+      version: 14.2.32
     react:
       specifier: 18.3.1
       version: 18.3.1
     react-dom:
       specifier: 18.3.1
       version: 18.3.1
+    swr:
+      specifier: 2.2.4
+      version: 2.2.4
     tsup:
       specifier: 8.4.0
       version: 8.4.0
+    uuid:
+      specifier: 10.0.0
+      version: 10.0.0
 
 overrides:
   brace-expansion: 2.0.2
@@ -79,22 +109,22 @@ importers:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.5.6)
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       mobx:
-        specifier: ^6.12.0
-        version: 6.13.7
+        specifier: 'catalog:'
+        version: 6.12.0
       mobx-react:
-        specifier: ^9.1.1
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next:
-        specifier: 14.2.32
+        specifier: 'catalog:'
         version: 14.2.32(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
         specifier: ^0.2.1
@@ -115,11 +145,11 @@ importers:
         specifier: 0.33.5
         version: 0.33.5
       swr:
-        specifier: ^2.2.4
-        version: 2.3.3(react@18.3.1)
+        specifier: 'catalog:'
+        version: 2.2.4(react@18.3.1)
       uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
+        specifier: 'catalog:'
+        version: 10.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -131,7 +161,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: 18.16.1
@@ -176,7 +206,7 @@ importers:
         specifier: ^2.22.3
         version: 2.26.1(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       compression:
         specifier: 1.8.1
@@ -200,7 +230,7 @@ importers:
         specifier: ^5.4.1
         version: 5.6.1
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       morgan:
         specifier: 1.10.1
@@ -212,7 +242,7 @@ importers:
         specifier: ^11.2.2
         version: 11.3.0
       uuid:
-        specifier: ^10.0.0
+        specifier: 'catalog:'
         version: 10.0.0
       y-prosemirror:
         specifier: ^1.2.15
@@ -283,13 +313,13 @@ importers:
         version: 11.14.0(@types/react@18.3.1)(react@18.3.1)
       '@emotion/styled':
         specifier: ^11.11.0
-        version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
+        version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
       '@headlessui/react':
         specifier: ^1.7.13
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/material':
         specifier: ^5.14.1
-        version: 5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
         version: link:../../packages/constants
@@ -318,7 +348,7 @@ importers:
         specifier: ^2.11.8
         version: 2.11.8
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       clsx:
         specifier: ^2.0.0
@@ -333,25 +363,25 @@ importers:
         specifier: ^16.3.1
         version: 16.6.1
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lowlight:
         specifier: ^2.9.0
         version: 2.9.0
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       mobx:
-        specifier: ^6.10.0
-        version: 6.13.7
+        specifier: 'catalog:'
+        version: 6.12.0
       mobx-react:
-        specifier: ^9.1.1
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mobx-utils:
-        specifier: ^6.0.8
-        version: 6.1.1(mobx@6.13.7)
+        specifier: 'catalog:'
+        version: 6.0.8(mobx@6.12.0)
       next:
-        specifier: 14.2.32
+        specifier: 'catalog:'
         version: 14.2.32(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
         specifier: ^0.2.1
@@ -378,14 +408,14 @@ importers:
         specifier: 0.33.5
         version: 0.33.5
       swr:
-        specifier: ^2.2.2
-        version: 2.3.3(react@18.3.1)
+        specifier: 'catalog:'
+        version: 2.2.4(react@18.3.1)
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.6.0
       uuid:
-        specifier: ^9.0.0
-        version: 9.0.1
+        specifier: 'catalog:'
+        version: 10.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -397,7 +427,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: 18.14.1
@@ -475,7 +505,7 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       clsx:
         specifier: ^2.0.0
@@ -502,22 +532,22 @@ importers:
         specifier: ^2.12.0
         version: 2.25.0
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       mobx:
-        specifier: ^6.10.0
-        version: 6.13.7
+        specifier: 'catalog:'
+        version: 6.12.0
       mobx-react:
-        specifier: ^9.1.1
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mobx-utils:
-        specifier: ^6.0.8
-        version: 6.1.1(mobx@6.13.7)
+        specifier: 'catalog:'
+        version: 6.0.8(mobx@6.12.0)
       next:
-        specifier: 14.2.32
+        specifier: 'catalog:'
         version: 14.2.32(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
         specifier: ^0.2.1
@@ -565,8 +595,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
       swr:
-        specifier: ^2.1.3
-        version: 2.3.3(react@18.3.1)
+        specifier: 'catalog:'
+        version: 2.2.4(react@18.3.1)
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.6.0
@@ -574,8 +604,8 @@ importers:
         specifier: ^1.2.2
         version: 1.3.0(react@18.3.1)
       uuid:
-        specifier: ^9.0.0
-        version: 9.0.1
+        specifier: 'catalog:'
+        version: 10.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -587,7 +617,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: 18.16.1
@@ -768,7 +798,7 @@ importers:
         specifier: ^3.0.0
         version: 3.3.0
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       prosemirror-codemark:
         specifier: ^0.4.2
@@ -786,7 +816,7 @@ importers:
         specifier: ^0.8.10
         version: 0.8.10(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))
       uuid:
-        specifier: ^10.0.0
+        specifier: 'catalog:'
         version: 10.0.0
       y-indexeddb:
         specifier: ^9.0.12
@@ -896,14 +926,14 @@ importers:
         specifier: ^10.7.11
         version: 10.7.16
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       mobx:
-        specifier: ^6.13.5
-        version: 6.13.7
+        specifier: 'catalog:'
+        version: 6.12.0
       mobx-react:
-        specifier: ^9.1.0
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -912,7 +942,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
@@ -976,7 +1006,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       react:
         specifier: 'catalog:'
@@ -1028,7 +1058,7 @@ importers:
         specifier: workspace:*
         version: link:../types
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
     devDependencies:
       '@plane/eslint-config':
@@ -1047,8 +1077,8 @@ importers:
   packages/shared-state:
     dependencies:
       mobx:
-        specifier: ^6.13.5
-        version: 6.13.7
+        specifier: 'catalog:'
+        version: 6.12.0
       zod:
         specifier: ^3.22.2
         version: 3.25.76
@@ -1159,10 +1189,10 @@ importers:
         specifier: ^4.5.16
         version: 4.12.2(react@18.3.1)
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       react:
         specifier: 'catalog:'
@@ -1232,7 +1262,7 @@ importers:
         specifier: ^8.1.1
         version: 8.6.14(storybook@8.6.14(prettier@3.6.2))
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: ^20.5.2
@@ -1283,10 +1313,10 @@ importers:
         specifier: ^2.16.0
         version: 2.25.0
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
-        specifier: ^0.469.0
+        specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       react:
         specifier: 'catalog:'
@@ -1298,7 +1328,7 @@ importers:
         specifier: 1.259.0
         version: 1.259.0
       uuid:
-        specifier: ^10.0.0
+        specifier: 'catalog:'
         version: 10.0.0
     devDependencies:
       '@plane/eslint-config':
@@ -1308,7 +1338,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: 4.17.20
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
@@ -1571,8 +1601,8 @@ packages:
   '@emotion/sheet@1.4.0':
     resolution: {integrity: sha512-fTBW9/8r2w3dXWYM4HCB1Rdp8NLibOw2+XELH5m5+AkWiL/KqYX6dc0kKYlaYyKjrQ6ds33MCdMPEwgs2z1rqg==}
 
-  '@emotion/styled@11.14.1':
-    resolution: {integrity: sha512-qEEJt42DuToa3gurlH4Qqc1kVpNq8wO8cJtDzU46TjlzWjDlsVyevtYCRijVq3SrHsROS+gVQ8Fnea108GnKzw==}
+  '@emotion/styled@11.14.0':
+    resolution: {integrity: sha512-XxfOnXFffatap2IyCeJyNov3kiDQWoR08gPUQxvbL7fxKryGBKUZUkG6Hz48DZwVrJSVh9sJboyV1Ds4OW6SgA==}
     peerDependencies:
       '@emotion/react': ^11.0.0-rc.0
       '@types/react': '*'
@@ -2020,8 +2050,8 @@ packages:
   '@mui/core-downloads-tracker@5.18.0':
     resolution: {integrity: sha512-jbhwoQ1AY200PSSOrNXmrFCaSDSJWP7qk6urkTmIirvRXDROkqe+QwcLlUiw/PrREwsIF/vm3/dAXvjlMHF0RA==}
 
-  '@mui/material@5.18.0':
-    resolution: {integrity: sha512-bbH/HaJZpFtXGvWg3TsBWG4eyt3gah3E7nCNU8GLyRjVoWcA91Vm/T+sjHfUcwgJSw9iLtucfHBoq+qW/T30aA==}
+  '@mui/material@5.17.1':
+    resolution: {integrity: sha512-2B33kQf+GmPnrvXXweWAx+crbiUEsxCdCN979QDYnlH9ox4pd+0/IBriWLV+l6ORoBF60w39cWjFnJYGFdzXcw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@emotion/react': ^11.5.0
@@ -4111,9 +4141,6 @@ packages:
   caniuse-lite@1.0.30001735:
     resolution: {integrity: sha512-EV/laoX7Wq2J9TQlyIXRxTJqIw4sxfXS4OYgudGxBYRuTv0q7AM6yMEpU/Vo1I94thg9U6EZ2NfZx9GJq83u7w==}
 
-  caniuse-lite@1.0.30001739:
-    resolution: {integrity: sha512-y+j60d6ulelrNSwpPyrHdl+9mJnQzHBr08xm48Qno0nSk4h3Qojh+ziv2qE6rXf4k3tadF4o1J/1tAbVm1NtnA==}
-
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
 
@@ -5011,6 +5038,15 @@ packages:
 
   fdir@6.4.6:
     resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
+    peerDependencies:
+      picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
+
+  fdir@6.5.0:
+    resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
+    engines: {node: '>=12.0.0'}
     peerDependencies:
       picomatch: ^3 || ^4
     peerDependenciesMeta:
@@ -5985,11 +6021,11 @@ packages:
       react-native:
         optional: true
 
-  mobx-react@9.2.0:
-    resolution: {integrity: sha512-dkGWCx+S0/1mfiuFfHRH8D9cplmwhxOV5CkXMp38u6rQGG2Pv3FWYztS0M7ncR6TyPRQKaTG/pnitInoYE9Vrw==}
+  mobx-react@9.1.1:
+    resolution: {integrity: sha512-gVV7AdSrAAxqXOJ2bAbGa5TkPqvITSzaPiiEkzpW4rRsMhSec7C2NBCJYILADHKp2tzOAIETGRsIY0UaCV5aEw==}
     peerDependencies:
       mobx: ^6.9.0
-      react: ^16.8.0 || ^17 || ^18 || ^19
+      react: ^16.8.0 || ^17 || ^18
       react-dom: '*'
       react-native: '*'
     peerDependenciesMeta:
@@ -5998,13 +6034,13 @@ packages:
       react-native:
         optional: true
 
-  mobx-utils@6.1.1:
-    resolution: {integrity: sha512-ZR4tOKucWAHOdMjqElRl2BEvrzK7duuDdKmsbEbt2kzgVpuLuoYLiDCjc3QwWQl8CmOlxPgaZQpZ7emwNqPkIg==}
+  mobx-utils@6.0.8:
+    resolution: {integrity: sha512-fPNt0vJnHwbQx9MojJFEnJLfM3EMGTtpy4/qOOW6xueh1mPofMajrbYAUvByMYAvCJnpy1A5L0t+ZVB5niKO4g==}
     peerDependencies:
       mobx: ^6.0.0
 
-  mobx@6.13.7:
-    resolution: {integrity: sha512-aChaVU/DO5aRPmk1GX8L+whocagUUpBQqoPtJk+cm7UOXUk87J4PeWCh6nNmTTIfEhiR9DI/+FnA8dln/hTK7g==}
+  mobx@6.12.0:
+    resolution: {integrity: sha512-Mn6CN6meXEnMa0a5u6a5+RKrqRedHBhZGd15AWLk9O6uFY4KYHzImdt8JI8WODo1bjTSRnwXhJox+FCUZhCKCQ==}
 
   morgan@1.10.1:
     resolution: {integrity: sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==}
@@ -7332,10 +7368,10 @@ packages:
       '@swc/core': ^1.2.147
       webpack: '>=2'
 
-  swr@2.3.3:
-    resolution: {integrity: sha512-dshNvs3ExOqtZ6kJBaAsabhPdHyeY4P2cKwRCniDVifBMoG/SVI7tfLWqPXriVspf2Rg4tPzXJTnwaihIeFw2A==}
+  swr@2.2.4:
+    resolution: {integrity: sha512-njiZ/4RiIhoOlAaLYDqwz5qH/KZXVilRLvomrx83HjzCWTfa+InyfAjv05PSFxnmLzZkNO9ZfvgoqzAaEI4sGQ==}
     peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
 
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
@@ -8387,7 +8423,7 @@ snapshots:
 
   '@emotion/sheet@1.4.0': {}
 
-  '@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)':
+  '@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@emotion/babel-plugin': 11.13.5
@@ -8792,11 +8828,11 @@ snapshots:
 
   '@mui/core-downloads-tracker@5.18.0': {}
 
-  '@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@mui/core-downloads-tracker': 5.18.0
-      '@mui/system': 5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
+      '@mui/system': 5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
       '@mui/types': 7.2.24(@types/react@18.3.1)
       '@mui/utils': 5.17.1(@types/react@18.3.1)(react@18.3.1)
       '@popperjs/core': 2.11.8
@@ -8810,7 +8846,7 @@ snapshots:
       react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     optionalDependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.1)(react@18.3.1)
-      '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
+      '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
       '@types/react': 18.3.1
 
   '@mui/private-theming@5.17.1(@types/react@18.3.1)(react@18.3.1)':
@@ -8822,7 +8858,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.1
 
-  '@mui/styled-engine@5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)':
+  '@mui/styled-engine@5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@emotion/cache': 11.14.0
@@ -8832,13 +8868,13 @@ snapshots:
       react: 18.3.1
     optionalDependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.1)(react@18.3.1)
-      '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
+      '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
 
-  '@mui/system@5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)':
+  '@mui/system@5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@mui/private-theming': 5.17.1(@types/react@18.3.1)(react@18.3.1)
-      '@mui/styled-engine': 5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
+      '@mui/styled-engine': 5.18.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(react@18.3.1)
       '@mui/types': 7.2.24(@types/react@18.3.1)
       '@mui/utils': 5.17.1(@types/react@18.3.1)(react@18.3.1)
       clsx: 2.1.1
@@ -8847,7 +8883,7 @@ snapshots:
       react: 18.3.1
     optionalDependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.1)(react@18.3.1)
-      '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
+      '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1)
       '@types/react': 18.3.1
 
   '@mui/types@7.2.24(@types/react@18.3.1)':
@@ -11045,8 +11081,6 @@ snapshots:
 
   caniuse-lite@1.0.30001735: {}
 
-  caniuse-lite@1.0.30001739: {}
-
   capital-case@1.0.4:
     dependencies:
       no-case: 3.0.4
@@ -12116,6 +12150,10 @@ snapshots:
       format: 0.2.2
 
   fdir@6.4.6(picomatch@4.0.3):
+    optionalDependencies:
+      picomatch: 4.0.3
+
+  fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
 
@@ -13205,27 +13243,27 @@ snapshots:
 
   minipass@7.1.2: {}
 
-  mobx-react-lite@4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  mobx-react-lite@4.1.0(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      mobx: 6.13.7
+      mobx: 6.12.0
       react: 18.3.1
       use-sync-external-store: 1.5.0(react@18.3.1)
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
 
-  mobx-react@9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  mobx-react@9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      mobx: 6.13.7
-      mobx-react-lite: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mobx: 6.12.0
+      mobx-react-lite: 4.1.0(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
 
-  mobx-utils@6.1.1(mobx@6.13.7):
+  mobx-utils@6.0.8(mobx@6.12.0):
     dependencies:
-      mobx: 6.13.7
+      mobx: 6.12.0
 
-  mobx@6.13.7: {}
+  mobx@6.12.0: {}
 
   morgan@1.10.1:
     dependencies:
@@ -13272,7 +13310,7 @@ snapshots:
       '@next/env': 14.2.32
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001739
+      caniuse-lite: 1.0.30001735
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.3.1
@@ -14746,9 +14784,9 @@ snapshots:
       '@swc/counter': 0.1.3
       webpack: 5.101.3(@swc/core@1.13.3(@swc/helpers@0.5.17))(esbuild@0.25.0)
 
-  swr@2.3.3(react@18.3.1):
+  swr@2.2.4(react@18.3.1):
     dependencies:
-      dequal: 2.0.3
+      client-only: 0.0.1
       react: 18.3.1
       use-sync-external-store: 1.5.0(react@18.3.1)
 
@@ -15281,7 +15319,7 @@ snapshots:
   vite@7.0.0(@types/node@22.17.2)(jiti@1.21.7)(terser@5.43.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.0
-      fdir: 6.4.6(picomatch@4.0.3)
+      fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.50.0
