@@ -5,6 +5,7 @@ export type TIssueReaction = {
   id: string;
   issue: string;
   reaction: string;
+  display_name: string;
 };
 
 export interface IIssuePublicReaction {
