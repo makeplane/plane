@@ -116,9 +116,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
           description={t("project_page.empty_state.general.description")}
           assetPath={generalPageResolvedPath}
           primaryButton={{
-            text: isCreatingPage
-              ? t("project_page.empty_state.general.primary_button.loading")
-              : t("project_page.empty_state.general.primary_button.text"),
+            text: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
             onClick: () => {
               handleCreatePage();
               captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
@@ -135,9 +133,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
           description={t("project_page.empty_state.public.description")}
           assetPath={publicPageResolvedPath}
           primaryButton={{
-            text: isCreatingPage
-              ? t("project_page.empty_state.public.primary_button.loading")
-              : t("project_page.empty_state.public.primary_button.text"),
+            text: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
             onClick: () => {
               handleCreatePage();
               captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
@@ -153,9 +149,7 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
           description={t("project_page.empty_state.private.description")}
           assetPath={privatePageResolvedPath}
           primaryButton={{
-            text: isCreatingPage
-              ? t("project_page.empty_state.private.primary_button.loading")
-              : t("project_page.empty_state.private.primary_button.text"),
+            text: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
             onClick: () => {
               handleCreatePage();
               captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });

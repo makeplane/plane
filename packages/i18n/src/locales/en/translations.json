@@ -1994,24 +1994,21 @@
         "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
         "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
         "primary_button": {
-          "text": "Create your first page",
-          "loading": "Creating"
+          "text": "Create your first page"
         }
       },
       "private": {
         "title": "No private pages yet",
         "description": "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
         "primary_button": {
-          "text": "Create your first page",
-          "loading": "Creating"
+          "text": "Create your first page"
         }
       },
       "public": {
         "title": "No public pages yet",
         "description": "See pages shared with everyone in your project right here.",
         "primary_button": {
-          "text": "Create your first page",
-          "loading": "Creating"
+          "text": "Create your first page"
         }
       },
       "archived": {
