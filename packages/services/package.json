@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
   "main": "./dist/index.js",
@@ -27,7 +27,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "tsdown": "^0.14.2",
-    "typescript": "5.8.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

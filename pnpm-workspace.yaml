@@ -4,6 +4,14 @@ packages:
 - "!apps/api"
 - "!apps/proxy"
 
+catalog:
+  react: 18.3.1
+  react-dom: 18.3.1
+  "@types/react": 18.3.1
+  "@types/react-dom": 18.3.1
+  typescript: 5.8.3
+  tsdown: 0.14.2
+
 onlyBuiltDependencies:
 - turbo
 - sharp
