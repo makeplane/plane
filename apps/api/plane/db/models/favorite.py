@@ -15,8 +15,8 @@ class UserFavorite(WorkspaceBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites"
     )
-    entity_type = models.CharField(max_length=100)
-    entity_identifier = models.UUIDField(null=True, blank=True)
+    entity_type = models.CharField(max_length=100, db_index=True)
+    entity_identifier = models.UUIDField(null=True, blank=True, db_index=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     is_folder = models.BooleanField(default=False)
     sequence = models.FloatField(default=65535)
@@ -41,6 +41,12 @@ class UserFavorite(WorkspaceBaseModel):
         verbose_name_plural = "User Favorites"
         db_table = "user_favorites"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(
+                fields=["entity_type", "entity_identifier"],
+                name="user_favorite_entity_idx",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         if self._state.adding:

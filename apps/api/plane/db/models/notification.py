@@ -40,7 +40,9 @@ class Notification(BaseModel):
         db_table = "notifications"
         ordering = ("-created_at",)
         indexes = [
-            models.Index(fields=["receiver", "read_at"], name="receiver_read_at_idx"),
+            models.Index(
+                fields=["receiver", "read_at"], name="notification_entity_idx"
+            ),
         ]
 
     def __str__(self):

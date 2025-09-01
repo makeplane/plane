@@ -99,9 +99,13 @@ class PageLog(BaseModel):
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
-    entity_identifier = models.UUIDField(null=True, blank=True)
-    entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
-    entity_type = models.CharField(max_length=30, verbose_name="Entity Type", null=True, blank=True)
+    entity_identifier = models.UUIDField(null=True, blank=True, db_index=True)
+    entity_name = models.CharField(
+        max_length=30, verbose_name="Transaction Type", db_index=True
+    )
+    entity_type = models.CharField(
+        max_length=30, verbose_name="Entity Type", null=True, blank=True, db_index=True
+    )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )
@@ -112,6 +116,16 @@ class PageLog(BaseModel):
         verbose_name_plural = "Page Logs"
         db_table = "page_logs"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(
+                fields=["entity_type", "entity_identifier"],
+                name="page_log_entity_idx",
+            ),
+            models.Index(
+                fields=["entity_name", "entity_identifier"],
+                name="page_log_entity_identifier_idx",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.page.name} {self.entity_name}"
