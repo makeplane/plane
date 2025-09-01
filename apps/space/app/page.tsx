@@ -2,16 +2,21 @@
 
 import { observer } from "mobx-react";
 // components
-import { UserLoggedIn } from "@/components/account";
-import { LogoSpinner } from "@/components/common";
+import { UserLoggedIn } from "@/components/account/user-logged-in";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { AuthView } from "@/components/views";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/use-user";
 
 const HomePage = observer(() => {
-  const { data: currentUser, isAuthenticated, isLoading } = useUser();
+  const { data: currentUser, isAuthenticated, isInitializing } = useUser();
 
-  if (isLoading) return <LogoSpinner />;
+  if (isInitializing)
+    return (
+      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+        <LogoSpinner />
+      </div>
+    );
 
   if (currentUser && isAuthenticated) return <UserLoggedIn />;
 

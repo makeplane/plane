@@ -5,18 +5,19 @@ import { StoreContext } from "@/lib/store-context";
 // plane web types
 import { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 // types
-import { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
-import { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
-import { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
-import { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
-import { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IDraftIssues, IDraftIssuesFilter } from "@/store/issue/draft";
-import { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
-import { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
-import { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
-import { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/issue/workspace-draft";
+import type { ITeamIssues, ITeamIssuesFilter } from "@/plane-web/store/issue/team";
+import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project";
+import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
+import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
+import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
+import type { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IDraftIssues, IDraftIssuesFilter } from "@/store/issue/draft";
+import type { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
+import type { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace";
+import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/issue/workspace-draft";
 // constants
 
 type defaultIssueStore = {
@@ -75,6 +76,10 @@ export type TStoreIssues = {
   [EIssuesStoreType.EPIC]: defaultIssueStore & {
     issues: IProjectEpics;
     issuesFilter: IProjectEpicsFilter;
+  };
+  [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: defaultIssueStore & {
+    issues: ITeamProjectWorkItems;
+    issuesFilter: ITeamProjectWorkItemsFilter;
   };
 };
 
@@ -146,6 +151,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.projectEpics,
         issuesFilter: context.issue.projectEpicsFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
+      return merge(defaultStore, {
+        issues: context.issue.teamProjectWorkItems,
+        issuesFilter: context.issue.teamProjectWorkItemsFilter,
       }) as TStoreIssues[T];
     default:
       return merge(defaultStore, {

@@ -5,7 +5,7 @@ import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TInboxIssueStatus } from "@plane/types";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // constants
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";

@@ -7,11 +7,14 @@ import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink, DoubleCircleIcon, Tooltip } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
-import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
-import { IssueLabel, TIssueOperations } from "@/components/issues";
-// helper
+import { DateDropdown } from "@/components/dropdowns/date";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

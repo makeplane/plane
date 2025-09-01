@@ -4,7 +4,8 @@ import { EIssueServiceType, TIssue } from "@plane/types";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "./store";
+import { useIssueDetail } from "./store/use-issue-detail";
+import { useProject } from "./store/use-project";
 
 const useIssuePeekOverviewRedirection = (isEpic: boolean = false) => {
   // router

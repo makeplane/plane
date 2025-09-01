@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 // helpers
-import { cn } from "../../helpers";
-// hooks
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
+import { cn } from "../utils";
+// hooks
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   mode?: "primary" | "transparent" | "true-transparent";

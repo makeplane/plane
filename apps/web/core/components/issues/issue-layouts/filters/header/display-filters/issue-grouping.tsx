@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { TIssueGroupingFilters } from "@plane/types";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // constants
 
 type Props = {

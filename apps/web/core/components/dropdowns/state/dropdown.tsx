@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { WorkItemStateDropdownBase, TWorkItemStateDropdownBaseProps } from "./base";
 

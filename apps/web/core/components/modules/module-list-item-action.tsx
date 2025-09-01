@@ -21,14 +21,16 @@ import { IModule } from "@plane/types";
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 // helpers
 import { captureElementAndEvent, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useUserPermissions } from "@/hooks/store/user";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {

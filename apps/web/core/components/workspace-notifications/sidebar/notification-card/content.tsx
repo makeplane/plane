@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { TNotification } from "@plane/types";
+// plane imports
+import type { TNotification } from "@plane/types";
 import {
   convertMinutesToHoursMinutesString,
   renderFormattedDate,

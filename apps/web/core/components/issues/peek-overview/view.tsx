@@ -1,27 +1,22 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-// types
+// plane imports
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
-import {
-  IssuePeekOverviewHeader,
-  TPeekModes,
-  PeekOverviewIssueDetails,
-  PeekOverviewProperties,
-  TIssueOperations,
-  IssuePeekOverviewLoader,
-  IssuePeekOverviewError,
-  IssueDetailWidgets,
-} from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
-// store hooks
+// local imports
+import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
+import { IssueDetailWidgets } from "../issue-detail-widgets";
+import { IssuePeekOverviewError } from "./error";
+import { IssuePeekOverviewHeader, TPeekModes } from "./header";
+import { PeekOverviewIssueDetails } from "./issue-detail";
+import { IssuePeekOverviewLoader } from "./loader";
+import { PeekOverviewProperties } from "./properties";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -115,16 +110,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const peekOverviewIssueClassName = cn(
     !embedIssue
-      ? "fixed z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "absolute z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
-      "top-2 bottom-2 right-2 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
+      "top-0 bottom-0 right-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
       "inset-0 m-4 absolute": peekMode === "full-screen",
     }
   );
 
-  const shouldUsePortal = !embedIssue && peekMode === "full-screen";
+  const shouldUsePortal = !embedIssue;
 
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 

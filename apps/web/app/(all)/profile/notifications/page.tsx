@@ -3,10 +3,11 @@
 import useSWR from "swr";
 // components
 import { useTranslation } from "@plane/i18n";
-import { PageHead } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
-import { EmailNotificationForm } from "@/components/profile/notification";
-import { EmailSettingsLoader } from "@/components/ui";
+import { PageHead } from "@/components/core/page-title";
+import { EmailNotificationForm } from "@/components/profile/notification/email-notification-form";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
+import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 // services
 import { UserService } from "@/services/user.service";
 

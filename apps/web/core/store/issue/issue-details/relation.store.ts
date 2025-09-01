@@ -3,12 +3,12 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// Plane
+// plane imports
 import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } from "@plane/types";
 // components
-import { TRelationObject } from "@/components/issues";
+import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
-import { REVERSE_RELATIONS } from "@/plane-web/constants";
+import { REVERSE_RELATIONS } from "@/plane-web/constants/gantt-chart";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // services
 import { IssueRelationService } from "@/services/issue";
@@ -109,27 +109,23 @@ export class IssueRelationStore implements IIssueRelationStore {
 
   // actions
   fetchRelations = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      const response = await this.issueRelationService.listIssueRelations(workspaceSlug, projectId, issueId);
+    const response = await this.issueRelationService.listIssueRelations(workspaceSlug, projectId, issueId);
 
-      runInAction(() => {
-        Object.keys(response).forEach((key) => {
-          const relation_key = key as TIssueRelationTypes;
-          const relation_issues = response[relation_key];
-          const issues = relation_issues.flat().map((issue) => issue);
-          if (issues && issues.length > 0) this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issues);
-          set(
-            this.relationMap,
-            [issueId, relation_key],
-            issues && issues.length > 0 ? issues.map((issue) => issue.id) : []
-          );
-        });
+    runInAction(() => {
+      Object.keys(response).forEach((key) => {
+        const relation_key = key as TIssueRelationTypes;
+        const relation_issues = response[relation_key];
+        const issues = relation_issues.flat().map((issue) => issue);
+        if (issues && issues.length > 0) this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issues);
+        set(
+          this.relationMap,
+          [issueId, relation_key],
+          issues && issues.length > 0 ? issues.map((issue) => issue.id) : []
+        );
       });
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 
   createRelation = async (
@@ -139,38 +135,34 @@ export class IssueRelationStore implements IIssueRelationStore {
     relationType: TIssueRelationTypes,
     issues: string[]
   ) => {
-    try {
-      const response = await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
-        relation_type: relationType,
-        issues,
+    const response = await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
+      relation_type: relationType,
+      issues,
+    });
+
+    const reverseRelatedType = REVERSE_RELATIONS[relationType];
+
+    const issuesOfRelation = get(this.relationMap, [issueId, relationType]) ?? [];
+
+    if (response && response.length > 0)
+      runInAction(() => {
+        response.forEach((issue) => {
+          const issuesOfRelated = get(this.relationMap, [issue.id, reverseRelatedType]);
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
+          issuesOfRelation.push(issue.id);
+
+          if (!issuesOfRelated) {
+            set(this.relationMap, [issue.id, reverseRelatedType], [issueId]);
+          } else {
+            set(this.relationMap, [issue.id, reverseRelatedType], uniq([...issuesOfRelated, issueId]));
+          }
+        });
+        set(this.relationMap, [issueId, relationType], uniq(issuesOfRelation));
       });
 
-      const reverseRelatedType = REVERSE_RELATIONS[relationType];
-
-      const issuesOfRelation = get(this.relationMap, [issueId, relationType]) ?? [];
-
-      if (response && response.length > 0)
-        runInAction(() => {
-          response.forEach((issue) => {
-            const issuesOfRelated = get(this.relationMap, [issue.id, reverseRelatedType]);
-            this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issue]);
-            issuesOfRelation.push(issue.id);
-
-            if (!issuesOfRelated) {
-              set(this.relationMap, [issue.id, reverseRelatedType], [issueId]);
-            } else {
-              set(this.relationMap, [issue.id, reverseRelatedType], uniq([...issuesOfRelated, issueId]));
-            }
-          });
-          set(this.relationMap, [issueId, relationType], uniq(issuesOfRelation));
-        });
-
-      // fetching activity
-      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    // fetching activity
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return response;
   };
 
   /**

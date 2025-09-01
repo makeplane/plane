@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types
-import {
+import type {
   TIssue,
   TIssueAttachment,
   TIssueComment,
@@ -12,27 +12,40 @@ import {
 } from "@plane/types";
 // plane web store
 import {
-  IIssueActivityStore,
+  type IIssueActivityStore,
   IssueActivityStore,
-  IIssueActivityStoreActions,
-  TActivityLoader,
+  type IIssueActivityStoreActions,
+  type TActivityLoader,
 } from "@/plane-web/store/issue/issue-details/activity.store";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TIssueRelationTypes } from "@/plane-web/types";
-import { IIssueRootStore } from "../root.store";
-import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
-import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { IIssueRootStore } from "../root.store";
 import {
-  IIssueCommentReactionStore,
+  type IIssueAttachmentStore,
+  IssueAttachmentStore,
+  type IIssueAttachmentStoreActions,
+} from "./attachment.store";
+import {
+  type IIssueCommentStore,
+  IssueCommentStore,
+  type IIssueCommentStoreActions,
+  type TCommentLoader,
+} from "./comment.store";
+import {
+  type IIssueCommentReactionStore,
   IssueCommentReactionStore,
-  IIssueCommentReactionStoreActions,
+  type IIssueCommentReactionStoreActions,
 } from "./comment_reaction.store";
-import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
-import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
-import { IIssueReactionStore, IssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
-import { IIssueRelationStore, IssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
-import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
-import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
+import { type IIssueStore, IssueStore, type IIssueStoreActions } from "./issue.store";
+import { type IIssueLinkStore, IssueLinkStore, type IIssueLinkStoreActions } from "./link.store";
+import { type IIssueReactionStore, IssueReactionStore, type IIssueReactionStoreActions } from "./reaction.store";
+import { type IIssueRelationStore, IssueRelationStore, type IIssueRelationStoreActions } from "./relation.store";
+import { type IIssueSubIssuesStore, IssueSubIssuesStore, type IIssueSubIssuesStoreActions } from "./sub_issues.store";
+import {
+  type IIssueSubscriptionStore,
+  IssueSubscriptionStore,
+  type IIssueSubscriptionStoreActions,
+} from "./subscription.store";
 
 export type TPeekIssue = {
   workspaceSlug: string;
@@ -82,6 +95,7 @@ export interface IIssueDetail
   attachmentDeleteModalId: string | null;
   // computed
   isAnyModalOpen: boolean;
+  isPeekOpen: boolean;
   // helper actions
   getIsIssuePeeked: (issueId: string) => boolean;
   // actions
@@ -175,6 +189,7 @@ export abstract class IssueDetail implements IIssueDetail {
       lastWidgetAction: observable.ref,
       // computed
       isAnyModalOpen: computed,
+      isPeekOpen: computed,
       // action
       setPeekIssue: action,
       setIssueLinkData: action,
@@ -220,6 +235,10 @@ export abstract class IssueDetail implements IIssueDetail {
       !!this.isSubIssuesModalOpen ||
       !!this.attachmentDeleteModalId
     );
+  }
+
+  get isPeekOpen() {
+    return !!this.peekIssue;
   }
 
   // helper actions

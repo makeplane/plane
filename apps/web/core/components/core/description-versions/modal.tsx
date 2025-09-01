@@ -19,9 +19,10 @@ import {
 } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   activeVersionDescription: string | undefined;

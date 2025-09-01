@@ -12,7 +12,8 @@ import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
 export interface RowData {

@@ -1,11 +1,13 @@
 "use client";
 
 import { ReactNode } from "react";
-// components
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
+// components
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { getProfileActivePath } from "@/components/settings/helper";
+import { SettingsMobileNav } from "@/components/settings/mobile";
+// local imports
 import { ProfileSidebar } from "./sidebar";
 
 type Props = {

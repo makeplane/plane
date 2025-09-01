@@ -1,5 +1,5 @@
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TMovePageModalProps = {
   isOpen: boolean;

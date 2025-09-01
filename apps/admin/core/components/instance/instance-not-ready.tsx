@@ -13,7 +13,7 @@ export const InstanceNotReady: FC = () => (
       <div className="relative flex flex-col justify-center items-center space-y-4">
         <h1 className="text-3xl font-bold pb-3">Welcome aboard Plane!</h1>
         <Image src={PlaneTakeOffImage} alt="Plane Logo" />
-        <p className="font-medium text-base text-onboarding-text-400">
+        <p className="font-medium text-base text-custom-text-400">
           Get started by setting up your instance and workspace
         </p>
       </div>

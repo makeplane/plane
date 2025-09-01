@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 // plane editor
-import { EditorRefApi, getBinaryDataFromHTMLString } from "@plane/editor";
+import { type EditorRefApi, getBinaryDataFromHTMLString } from "@plane/editor";
 // plane types
 import { TDocumentPayload } from "@plane/types";
 // hooks

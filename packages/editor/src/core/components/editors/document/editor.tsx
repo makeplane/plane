@@ -75,6 +75,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     initialValue: value,
     mentionHandler,
     onChange,
+    embedHandler,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -90,6 +91,8 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      flaggedExtensions={flaggedExtensions}
+      disabledExtensions={disabledExtensions}
       isTouchDevice={!!isTouchDevice}
     />
   );

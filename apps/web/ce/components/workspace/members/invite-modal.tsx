@@ -6,10 +6,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
-// ui
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // components
-import { InvitationFields, InvitationModalActions } from "@/components/workspace/invite-modal";
+import { InvitationModalActions } from "@/components/workspace/invite-modal/actions";
+import { InvitationFields } from "@/components/workspace/invite-modal/fields";
 import { InvitationForm } from "@/components/workspace/invite-modal/form";
 // hooks
 import { useWorkspaceInvitationActions } from "@/hooks/use-workspace-invitation";

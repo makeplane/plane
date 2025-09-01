@@ -1,14 +1,15 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
-import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
-// components
-import { EditorMentionsRoot } from "@/components/editor";
+import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// store hooks
-import { useMember } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+// plane web imports
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
+import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler">,
@@ -57,7 +58,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       flaggedExtensions={richTextEditorExtensions.flagged}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
     />
   );

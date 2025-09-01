@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // local imports
 import { TWorkItemLabelSelectBaseProps, WorkItemLabelSelectBase } from "./base";
 

@@ -10,7 +10,7 @@ import { ISSUE_PRIORITIES } from "@plane/constants";
 import { EIssueServiceType, TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // ui
 // types
 // constants

@@ -21,7 +21,7 @@ import {
 // services
 import { IssueActivityService } from "@/services/issue";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 

@@ -24,11 +24,13 @@ out/
 .DS_Store
 *.pem
 .history
+tsconfig.tsbuildinfo
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 .pnpm-debug.log*
 
 # Local env files
@@ -60,6 +62,7 @@ node_modules/
 assets/dist/
 npm-debug.log
 yarn-error.log
+pnpm-debug.log
 
 # Editor directories and files
 .idea
@@ -75,10 +78,9 @@ package-lock.json
 
 # lock files
 package-lock.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
 
-.npmrc
+
+
 .secrets
 tmp/
 
@@ -95,3 +97,5 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+
+storybook-static

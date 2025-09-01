@@ -13,17 +13,18 @@ import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
-import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 

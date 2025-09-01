@@ -6,7 +6,7 @@ import { Logo } from "@plane/ui";
 // components
 import { calculateTimeAgo } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers
 
 type BlockProps = {

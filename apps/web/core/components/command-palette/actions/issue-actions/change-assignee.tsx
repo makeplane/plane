@@ -11,7 +11,8 @@ import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = { closePalette: () => void; issue: TIssue };
 

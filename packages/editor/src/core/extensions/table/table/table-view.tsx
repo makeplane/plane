@@ -3,9 +3,9 @@ import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 import { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
-import { icons } from "src/core/extensions/table/table/icons";
 import tippy, { Instance, Props } from "tippy.js";
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { icons } from "./icons";
 import { isCellSelection } from "./utilities/helpers";
 
 type ToolboxItem = {
@@ -146,7 +146,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -174,7 +174,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",

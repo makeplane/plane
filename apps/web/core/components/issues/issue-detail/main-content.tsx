@@ -3,33 +3,33 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
-// components
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import {
-  IssueActivity,
-  NameDescriptionUpdateStatus,
-  IssueReaction,
-  IssueParentDetail,
-  IssueTitleInput,
-  IssueDescriptionInput,
-  IssueDetailWidgets,
-  PeekOverviewProperties,
-} from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
-import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
+import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/issue-type-switcher";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local imports
+import { IssueDescriptionInput } from "../description-input";
+import { IssueDetailWidgets } from "../issue-detail-widgets";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { PeekOverviewProperties } from "../peek-overview/properties";
+import { IssueTitleInput } from "../title-input";
+import { IssueActivity } from "./issue-activity";
+import { IssueParentDetail } from "./parent";
+import { IssueReaction } from "./reactions";
 import { TIssueOperations } from "./root";
 // services init
 const workItemVersionService = new WorkItemVersionService();

@@ -3,7 +3,7 @@ import { Briefcase } from "lucide-react";
 import { Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   project: {

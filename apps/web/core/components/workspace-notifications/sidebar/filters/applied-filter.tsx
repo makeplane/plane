@@ -8,7 +8,7 @@ import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TAppliedFilters = {
   workspaceSlug: string;

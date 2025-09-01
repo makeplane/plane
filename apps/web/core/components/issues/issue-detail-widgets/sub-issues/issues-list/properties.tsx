@@ -6,13 +6,11 @@ import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-  DateRangeDropdown,
-  DateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { useProjectState } from "@/hooks/store/use-project-state";
