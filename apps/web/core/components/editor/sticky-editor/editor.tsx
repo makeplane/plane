@@ -15,7 +15,7 @@ import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<
-    ILiteTextEditorProps,
+    Omit<ILiteTextEditorProps, "extendedEditorProps">,
     "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
   > {
   workspaceSlug: string;
@@ -51,7 +51,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -79,6 +81,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
+        extendedEditorProps={{}}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
