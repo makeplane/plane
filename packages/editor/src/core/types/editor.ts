@@ -7,6 +7,7 @@ import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
 import { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
 import type {
   IMarking,
@@ -87,7 +88,7 @@ export type TCommandExtraProps = {
   };
   "external-embed": {
     src: string;
-    is_rich_card: boolean;
+    [EExternalEmbedAttributeNames.IS_RICH_CARD]: boolean;
   };
 };
 

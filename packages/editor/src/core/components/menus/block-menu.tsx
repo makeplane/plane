@@ -302,7 +302,8 @@ export const BlockMenu = (props: Props) => {
             return editor
               .chain()
               .insertExternalEmbed({
-                [EExternalEmbedAttributeNames.IS_RICH_CARD]: contentToInsert.attrs.is_rich_card,
+                [EExternalEmbedAttributeNames.IS_RICH_CARD]:
+                  contentToInsert.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD],
                 [EExternalEmbedAttributeNames.SOURCE]: contentToInsert.attrs.src,
                 pos: insertPos,
               })

@@ -39,12 +39,12 @@ export const ExternalEmbedExtensionConfig: ExternalEmbedExtension = Node.create(
   parseHTML() {
     return [
       {
-        tag: "external-embed",
+        tag: "external-embed-component",
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["external-embed", mergeAttributes(HTMLAttributes)];
+    return ["external-embed-component", mergeAttributes(HTMLAttributes)];
   },
 });

@@ -57,9 +57,10 @@ export const ExternalEmbedInputModal: React.FC<ExternalEmbedInputModalProps> = (
     <FloatingPortal>
       <div
         ref={refs.setFloating}
+        className="mt-1.5"
         style={{
           ...floatingStyles,
-          transform: `${floatingStyles.transform} translateY(6px)`,
+          zIndex: 99,
         }}
         {...getFloatingProps()}
         onPointerDown={(e) => e.stopPropagation()}

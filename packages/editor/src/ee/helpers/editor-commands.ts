@@ -38,16 +38,16 @@ export const insertInlineMath = ({ editor, range, latex }: { editor: Editor; ran
 export const insertExternalEmbed = ({
   editor,
   range,
-  is_rich_card = false,
+  [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCard,
   src,
 }: {
   editor: Editor;
   range?: Range;
-  is_rich_card?: boolean;
+  [EExternalEmbedAttributeNames.IS_RICH_CARD]: boolean;
   src?: string;
 }) =>
   editor
     .chain()
     .focus()
-    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: is_rich_card, pos: range, src })
+    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCard, pos: range, src })
     .run();

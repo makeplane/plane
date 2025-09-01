@@ -54,6 +54,8 @@ import {
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "@/plane-editor/helpers/editor-commands";
+// plane editor
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
 import { TCommandWithProps, TEditorCommands } from "@/types";
 
@@ -281,7 +283,11 @@ export const ExternalEmbedItem = (editor: Editor): EditorMenuItem<"external-embe
   isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED),
   command: (props) => {
     if (!props) return;
-    insertExternalEmbed({ editor, is_rich_card: props.is_rich_card });
+    insertExternalEmbed({
+      editor,
+      [EExternalEmbedAttributeNames.IS_RICH_CARD]: props[EExternalEmbedAttributeNames.IS_RICH_CARD],
+      [EExternalEmbedAttributeNames.SOURCE]: props[EExternalEmbedAttributeNames.SOURCE],
+    });
   },
   icon: FileCode2,
 });

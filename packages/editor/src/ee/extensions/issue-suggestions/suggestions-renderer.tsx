@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
 import { Editor } from "@tiptap/core";
 import { ReactRenderer, Range } from "@tiptap/react";
+import { useCallback, useEffect, useState } from "react";
 import tippy from "tippy.js";
 import { v4 as uuidv4 } from "uuid";
 // helpers

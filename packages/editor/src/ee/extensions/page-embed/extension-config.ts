@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { EPageAccess } from "@plane/constants";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export type PageEmbedExtensionAttributes = {
   entity_identifier?: string;
@@ -12,7 +13,7 @@ export type PageEmbedExtensionAttributes = {
 };
 
 export const PageEmbedExtensionConfig = Node.create({
-  name: "pageEmbedComponent",
+  name: ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT,
   group: "block",
   atom: true,
 

@@ -7,12 +7,12 @@ export enum EExternalEmbedEntityType {
 export enum EExternalEmbedAttributeNames {
   SOURCE = "src",
   ID = "id",
-  EMBED_DATA = "embed_data",
-  IS_RICH_CARD = "is_rich_card",
-  HAS_EMBED_FAILED = "has_embed_failed",
-  HAS_TRIED_EMBEDDING = "has_tried_embedding",
-  ENTITY_NAME = "entity_name",
-  ENTITY_TYPE = "entity_type",
+  EMBED_DATA = "data-embed-data",
+  IS_RICH_CARD = "data-is-rich-card",
+  HAS_EMBED_FAILED = "data-has-embed-failed",
+  HAS_TRIED_EMBEDDING = "data-has-tried-embedding",
+  ENTITY_NAME = "data-entity-name",
+  ENTITY_TYPE = "data-entity-type",
 }
 
 // Core Types with strict mapping

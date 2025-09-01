@@ -3,6 +3,7 @@ import { ReactNodeViewRenderer, NodeViewWrapper, Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // types
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { TPageEmbedConfig } from "@/types";
 // extension config
 import { PageEmbedExtensionAttributes, PageEmbedExtensionConfig } from "./extension-config";
@@ -148,7 +149,7 @@ export const PageEmbedExtension = (props: Props) =>
             // traverse the new document
             newState.doc.descendants((node, pos) => {
               // Only check our embed node and when it has an identifier.
-              if (node.type.name === "pageEmbedComponent" && node.attrs.entity_identifier) {
+              if (node.type.name === ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT && node.attrs.entity_identifier) {
                 const identifier = node.attrs.entity_identifier;
                 const currentCount = identifierCount.get(identifier) || 0;
                 identifierCount.set(identifier, currentCount + 1);

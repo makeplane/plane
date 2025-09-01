@@ -2,7 +2,9 @@
 import { FileCode2, Sigma, SquareRadical } from "lucide-react";
 import { TSlashCommandAdditionalOption } from "@/extensions";
 // types
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { CommandProps, IEditorProps, TExtensions } from "@/types";
+// plane editor
 import { ProBadge } from "../components/badges/pro-badge";
 import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "../helpers/editor-commands";
 import { EMBED_SEARCH_TERMS } from "./external-embed/constants";
@@ -62,7 +64,8 @@ const coreSlashCommandRegistry: {
       icon: <FileCode2 className="size-3.5" />,
       description: "Insert an Embed",
       searchTerms: EMBED_SEARCH_TERMS,
-      command: ({ editor, range }: CommandProps) => insertExternalEmbed({ editor, range, is_rich_card: false }),
+      command: ({ editor, range }: CommandProps) =>
+        insertExternalEmbed({ editor, range, [EExternalEmbedAttributeNames.IS_RICH_CARD]: false }),
       badge: flaggedExtensions?.includes("external-embed") ? <ProBadge /> : undefined,
       section: "general",
       pushAfter: "code",

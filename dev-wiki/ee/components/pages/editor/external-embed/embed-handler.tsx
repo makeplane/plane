@@ -35,7 +35,7 @@ type EmbedData = IframelyResponse | ErrorData | null;
 
 const useEmbedDataManager = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {
   // attributes
-  const { src, embed_data: storedEmbedData } = externalEmbedNodeView.node.attrs;
+  const { src, [EExternalEmbedAttributeNames.EMBED_DATA]: storedEmbedData } = externalEmbedNodeView.node.attrs;
   // derived values
   const { resolvedTheme } = useTheme();
   const { workspaceSlug } = useParams();
@@ -127,7 +127,11 @@ const useEmbedState = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {
     isEmbeddable: !embedAttrs[EExternalEmbedAttributeNames.HAS_EMBED_FAILED],
   });
 
-  const { src, is_rich_card, has_embed_failed } = embedAttrs;
+  const {
+    src,
+    [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCardView,
+    [EExternalEmbedAttributeNames.HAS_EMBED_FAILED]: isEmbedFailed,
+  } = embedAttrs;
 
   const handleDirectEmbedLoaded = useCallback(() => {
     setDirectEmbedState({ hasTriedEmbedding: true, isEmbeddable: true });
@@ -150,8 +154,8 @@ const useEmbedState = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {
   return {
     directEmbedState,
     src: src,
-    isRichCardView: is_rich_card,
-    isEmbedFailed: has_embed_failed,
+    isRichCardView: isRichCardView,
+    isEmbedFailed: isEmbedFailed,
     handleDirectEmbedLoaded,
     handleDirectEmbedError,
   };
@@ -238,7 +242,7 @@ const EmbedRenderer: React.FC<{
 // Main Entry Component - Simple orchestration
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
   observer((props) => {
-    const hasEmbedData = props.node.attrs.embed_data;
+    const hasEmbedData = props.node.attrs[EExternalEmbedAttributeNames.EMBED_DATA];
 
     return (
       <InViewportRenderer placeholder={<EmbedLoading showLoading={!hasEmbedData} />}>
@@ -279,7 +283,7 @@ const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((exter
 type UseTwitterThemeHandlerProps = {
   storedEmbedData: string | null;
   isThemeDark: boolean | undefined;
-  updateAttributes: (attrs: { embed_data: string }) => void;
+  updateAttributes: (attrs: { [EExternalEmbedAttributeNames.EMBED_DATA]: string }) => void;
 };
 const useTwitterThemeHandler = ({ storedEmbedData, isThemeDark, updateAttributes }: UseTwitterThemeHandlerProps) => {
   useEffect(() => {
@@ -310,7 +314,7 @@ const useTwitterThemeHandler = ({ storedEmbedData, isThemeDark, updateAttributes
         // Only update if there were changes
         if (updatedHtml !== parsedData.html) {
           const updatedData = { ...parsedData, html: updatedHtml };
-          updateAttributes({ embed_data: JSON.stringify(updatedData) });
+          updateAttributes({ [EExternalEmbedAttributeNames.EMBED_DATA]: JSON.stringify(updatedData) });
         }
       }
     } catch (error) {

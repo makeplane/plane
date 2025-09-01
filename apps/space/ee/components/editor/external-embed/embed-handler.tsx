@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane editor
-import { EExternalEmbedEntityType, ExternalEmbedNodeViewProps, TExternalEmbedBlockAttributes } from "@plane/editor";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, ExternalEmbedNodeViewProps } from "@plane/editor";
 // plane types
 import { IframelyResponse } from "@plane/types";
 // plane components
@@ -24,7 +24,12 @@ export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
 
 const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((props) => {
   const { node } = props;
-  const { src, embed_data: storedEmbedData, is_rich_card, entity_type, has_embed_failed } = node.attrs;
+  const {
+    src,
+    [EExternalEmbedAttributeNames.EMBED_DATA]: storedEmbedData,
+    [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCardView,
+    [EExternalEmbedAttributeNames.HAS_EMBED_FAILED]: isEmbedFailed,
+  } = node.attrs;
   // dervied values
   const { resolvedTheme } = useTheme();
   const isThemeDark = resolvedTheme?.startsWith("dark");
@@ -54,7 +59,7 @@ const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((props
   }
 
   // Handle direct iframe embed
-  if (!embedData?.html && entity_type === EExternalEmbedEntityType.EMBED && !has_embed_failed && !is_rich_card && src) {
+  if (!embedData?.html && [EExternalEmbedEntityType.EMBED] && !isEmbedFailed && !isRichCardView && src) {
     return (
       <div className="w-full h-[400px] rounded overflow-hidden my-4">
         <iframe src={src} width="100%" height="100%" frameBorder="0" allowFullScreen />
@@ -63,12 +68,12 @@ const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((props
   }
 
   // Handle rich card
-  if (embedData?.meta && (is_rich_card || !embedData.html) && src) {
+  if (embedData?.meta && (isRichCardView || !embedData.html) && src) {
     return <RichCard iframelyData={embedData} src={src} theme={theme} />;
   }
 
   // Handle HTML content (including Twitter embeds)
-  if (embedData?.html && !is_rich_card) {
+  if (embedData?.html && !isRichCardView) {
     return embedData.html.includes("<iframe") ? (
       <HTMLContent html={embedData.html} />
     ) : (
