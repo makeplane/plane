@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -27,8 +27,7 @@ export const PageEditorHeaderLogoPicker: React.FC<Props> = observer((props) => {
         "max-h-[56px] pointer-events-auto": isLogoSelected,
       })}
     >
-      <EmojiPicker
-        iconType="lucide"
+      <EmojiIconPicker
         isOpen={isLogoPickerOpen}
         handleToggle={(val) => setIsLogoPickerOpen(val)}
         className="flex items-center justify-center"

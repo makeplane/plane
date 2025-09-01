@@ -1,5 +1,5 @@
 // plane imports
-import { TLogoProps } from "@plane/types";
+import { TEmojiLogoProps } from "@plane/ui";
 import { sanitizeHTML } from "@plane/utils";
 // types
 import {
@@ -14,6 +14,7 @@ export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   "data-icon-color": undefined,
   "data-icon-name": undefined,
   "data-emoji-unicode": "128161",
+  "data-emoji-url": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
   "data-background": undefined,
   "data-block-type": "callout-component",
 };
@@ -26,12 +27,13 @@ export const getStoredLogo = (): TStoredLogoValue => {
   const fallBackValues: TStoredLogoValue = {
     "data-logo-in-use": "emoji",
     "data-emoji-unicode": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
+    "data-emoji-url": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
   };
 
   if (typeof window !== "undefined") {
     const storedData = sanitizeHTML(localStorage.getItem("editor-calloutComponent-logo") ?? "");
     if (storedData) {
-      let parsedData: TLogoProps;
+      let parsedData: TEmojiLogoProps;
       try {
         parsedData = JSON.parse(storedData);
       } catch (error) {
@@ -43,6 +45,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
         return {
           "data-logo-in-use": "emoji",
           "data-emoji-unicode": parsedData.emoji.value || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
+          "data-emoji-url": parsedData.emoji.url || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
         };
       }
       if (parsedData.in_use === "icon" && parsedData.icon?.name) {
@@ -58,7 +61,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
   return fallBackValues;
 };
 // function to update the stored logo on local storage
-export const updateStoredLogo = (value: TLogoProps): void => {
+export const updateStoredLogo = (value: TEmojiLogoProps): void => {
   if (typeof window === "undefined") return;
   localStorage.setItem("editor-calloutComponent-logo", JSON.stringify(value));
 };

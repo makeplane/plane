@@ -4,6 +4,7 @@ import { action, computed, makeObservable, observable, reaction, runInAction } f
 import { EPageAccess } from "@plane/constants";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 import { TChangeHandlerProps } from "@plane/ui";
+import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -442,7 +443,8 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       let logoValue = {};
       if (value?.type === "emoji")
         logoValue = {
-          value: value.value,
+          value: convertHexEmojiToDecimal(value.value.unified),
+          url: value.value.imageUrl,
         };
       else if (value?.type === "icon") logoValue = value.value;
 
