@@ -228,7 +228,7 @@ def transform_page_version(record: Dict) -> Dict:
 def transform_issue_description_version(record: Dict) -> Dict:
     """Transform issue description version record."""
     return {
-        "id": record["id"],
+        "id": str(record["id"]),
         "created_at": str(record["created_at"]) if record.get("created_at") else None,
         "issue_id": str(record["issue_id"]),
         "workspace_id": str(record["workspace_id"]),
