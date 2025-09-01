@@ -23,7 +23,9 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
   // editor flagging
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 

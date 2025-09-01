@@ -13,6 +13,10 @@ from plane.ee.views import (
     PagesLiveServerSubPagesViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
+    WorkspacePageCommentViewSet,
+    WorkspacePageCommentReactionViewSet,
+    ProjectPageCommentViewSet,
+    ProjectPageCommentReactionViewSet,
     ProjectPageUserViewSet,
 )
 
@@ -117,6 +121,50 @@ urlpatterns = [
         ),
         name="workspace-shared-page",
     ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/",
+        WorkspacePageCommentViewSet.as_view({"post": "create", "get": "list"}),
+        name="workspace-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/resolve/",
+        WorkspacePageCommentViewSet.as_view({"post": "resolve"}),
+        name="workspace-page-comments-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/un-resolve/",
+        WorkspacePageCommentViewSet.as_view({"post": "un_resolve"}),
+        name="workspace-page-comments-un-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/",
+        WorkspacePageCommentViewSet.as_view(
+            {"patch": "partial_update", "delete": "destroy", "get": "list"}
+        ),
+        name="workspace-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/restore/",
+        WorkspacePageCommentViewSet.as_view({"post": "restore"}),
+        name="workspace-page-comments-restore",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/replies/",
+        WorkspacePageCommentViewSet.as_view({"get": "replies"}),
+        name="workspace-page-comments-replies",
+    ),
+    # Comment Reactions
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/",
+        WorkspacePageCommentReactionViewSet.as_view({"post": "create"}),
+        name="workspace-page-comment-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        WorkspacePageCommentReactionViewSet.as_view({"delete": "destroy"}),
+        name="workspace-page-comment-reactions",
+    ),
+    ## End Comment Reactions
     ## EE project level
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/publish/",
@@ -127,6 +175,50 @@ urlpatterns = [
         MovePageEndpoint.as_view(),
         name="move-page",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/",
+        ProjectPageCommentViewSet.as_view({"post": "create", "get": "list"}),
+        name="project-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/",
+        ProjectPageCommentViewSet.as_view(
+            {"get": "list", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="project-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/resolve/",
+        ProjectPageCommentViewSet.as_view({"post": "resolve"}),
+        name="project-page-comments-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/un-resolve/",
+        ProjectPageCommentViewSet.as_view({"post": "un_resolve"}),
+        name="project-page-comments-un-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/restore/",
+        ProjectPageCommentViewSet.as_view({"post": "restore"}),
+        name="project-page-comments-restore",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/replies/",
+        ProjectPageCommentViewSet.as_view({"get": "replies"}),
+        name="project-page-comments-replies",
+    ),
+    # # Comment Reactions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/",
+        ProjectPageCommentReactionViewSet.as_view({"post": "create"}),
+        name="project-page-comment-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        ProjectPageCommentReactionViewSet.as_view({"delete": "destroy"}),
+        name="project-page-comment-reactions",
+    ),
+    ## End Comment
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/share/",
         ProjectPageUserViewSet.as_view({"post": "create", "get": "list"}),

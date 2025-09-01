@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import type { IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
+import type { IEditorProps, IEditorPropsExtended, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -19,6 +19,7 @@ type Props = {
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
+  extendedEditorProps?: IEditorPropsExtended;
   flaggedExtensions: IEditorProps["flaggedExtensions"];
   disabledExtensions: IEditorProps["disabledExtensions"];
 };
@@ -36,6 +37,7 @@ export const PageRenderer = (props: Props) => {
     isTouchDevice,
     tabIndex,
     titleEditor,
+    extendedEditorProps,
     flaggedExtensions,
     disabledExtensions,
   } = props;
@@ -78,7 +80,13 @@ export const PageRenderer = (props: Props) => {
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
             {editor.isEditable && !isTouchDevice && (
               <div>
-                {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+                {bubbleMenuEnabled && (
+                  <EditorBubbleMenu
+                    flaggedExtensions={flaggedExtensions}
+                    editor={editor}
+                    extendedEditorProps={extendedEditorProps}
+                  />
+                )}
                 <BlockMenu
                   editor={editor}
                   flaggedExtensions={flaggedExtensions}

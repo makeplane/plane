@@ -1,6 +1,6 @@
+// tiptap
 import type { Extensions } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -11,12 +11,12 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+// constants
+import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import type { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
+import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
@@ -52,8 +52,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     user,
     updatePageProperties,
     // additional props
-    extensionOptions,
-    isSmoothCursorEnabled = false,
+    extendedEditorProps,
   } = props;
 
   const extensions: Extensions = useMemo(() => {
@@ -98,9 +97,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       titleRef,
       updatePageProperties,
       user,
-      // additional props
-      extensionOptions,
-      isSmoothCursorEnabled,
+      extendedEditorProps,
     });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -117,58 +114,38 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
   return (
     <>
-      <RealtimeEventsHandler editor={editor} id={id} updatePageProperties={updatePageProperties} />
+      <DocumentEditorSideEffects
+        editor={editor}
+        id={id}
+        updatePageProperties={updatePageProperties}
+        extendedEditorProps={extendedEditorProps}
+      />
       <PageRenderer
         aiHandler={aiHandler}
         bubbleMenuEnabled={bubbleMenuEnabled}
         displayConfig={displayConfig}
         documentLoaderClassName={documentLoaderClassName}
+        disabledExtensions={disabledExtensions}
         editor={editor}
+        flaggedExtensions={flaggedExtensions}
         titleEditor={titleEditor}
         editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        extendedEditorProps={extendedEditorProps}
         id={id}
         isLoading={
           (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
         }
         isTouchDevice={!!isTouchDevice}
         tabIndex={tabIndex}
-        flaggedExtensions={flaggedExtensions}
-        disabledExtensions={disabledExtensions}
       />
     </>
   );
 };
 
 const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-  )
+  (props, ref) => <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
 );
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
 export { CollaborativeDocumentEditorWithRef };
-
-const RealtimeEventsHandler = ({ editor, id, updatePageProperties }) => {
-  const { users } = useEditorState({
-    editor,
-    selector: (ctx) => ({
-      users: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR)?.users || [],
-    }),
-  });
-
-  // Update page properties when collaborators change
-  useEffect(() => {
-    if (!users || !updatePageProperties) return;
-
-    const currentUsers = users;
-
-    const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
-      users: currentUsers,
-    };
-
-    updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);
-  }, [users, updatePageProperties, id, editor]);
-
-  return null;
-};

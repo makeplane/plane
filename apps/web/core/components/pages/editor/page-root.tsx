@@ -5,35 +5,34 @@ import { useSearchParams } from "next/navigation";
 import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-// components
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-import { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
-// services
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import { PageModals } from "@/plane-web/components/pages";
+import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-import { WorkspacePageVersionService } from "@/plane-web/services/page";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+// local imports
 import {
-  PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PageNavigationPaneRoot,
 } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
-import { PageEditorBody, TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
+import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchDescriptionBinary: () => Promise<any>;
+  fetchDescriptionBinary: () => Promise<ArrayBuffer>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
+  restoreVersion: (pageId: string, versionId: string) => Promise<void>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
 } & TEditorBodyHandlers;
 
@@ -49,8 +48,6 @@ type TPageRootProps = {
   workspaceSlug: string;
   customRealtimeEventHandlers?: TCustomEventHandlers;
 };
-
-const workspacePageVersionService = new WorkspacePageVersionService();
 
 export const PageRoot = observer((props: TPageRootProps) => {
   const {
@@ -70,8 +67,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
-  // search params
-  const searchParams = useSearchParams();
   // derived values
   const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
@@ -85,7 +80,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     hasConnectionFailed,
     updatePageDescription: handlers.updateDescription,
   });
-  // update query params
   const { updateQueryParams } = useQueryParams();
 
   const handleEditorReady = useCallback(
@@ -104,19 +98,44 @@ export const PageRoot = observer((props: TPageRootProps) => {
     }, 0);
   }, [isContentEditable, setEditorRef]);
 
+  // Get extensions and navigation logic from hook
+  const { editorExtensionHandlers, navigationPaneExtensions, handleOpenNavigationPane, isNavigationPaneOpen } =
+    usePagesPaneExtensions({
+      page,
+      editorRef,
+    });
+
+  // Get extended editor extensions configuration
+  const extendedEditorProps = useExtendedEditorProps({
+    workspaceSlug,
+    page,
+    storeType,
+    fetchEntity: handlers.fetchEntity,
+    getRedirectionLink: handlers.getRedirectionLink,
+    extensionHandlers: editorExtensionHandlers,
+    projectId,
+  });
+
+  const searchParams = useSearchParams();
+
   const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
 
-  const handleRestoreVersion = async (descriptionHTML: string) => {
-    if (version && isNestedPagesEnabled(workspaceSlug?.toString())) {
-      page.setVersionToBeRestored(version, descriptionHTML);
-      page.setRestorationStatus(true);
-      setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
-      await workspacePageVersionService.restoreVersion(workspaceSlug, page.id ?? "", version ?? "");
-    } else {
-      editorRef.current?.clearEditor();
-      editorRef.current?.setEditorValue(descriptionHTML);
-    }
-  };
+  const handleRestoreVersion = useCallback(
+    async (descriptionHTML: string) => {
+      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setRestorationStatus(true);
+        setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        if (page.id) {
+          await handlers.restoreVersion(page.id, version);
+        }
+      } else {
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(descriptionHTML);
+      }
+    },
+    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
+  );
 
   // reset editor ref on unmount
   useEffect(
@@ -125,19 +144,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     },
     [setEditorRef]
   );
-
-  const navigationPaneQueryParam = searchParams.get(
-    PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
-  ) as TPageNavigationPaneTab | null;
-  const isValidNavigationPaneTab =
-    !!navigationPaneQueryParam && PAGE_NAVIGATION_PANE_TAB_KEYS.includes(navigationPaneQueryParam);
-
-  const handleOpenNavigationPane = useCallback(() => {
-    const updatedRoute = updateQueryParams({
-      paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "outline" },
-    });
-    router.push(updatedRoute);
-  }, [router, updateQueryParams]);
 
   const handleCloseNavigationPane = useCallback(() => {
     const updatedRoute = updateQueryParams({
@@ -159,9 +165,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
         />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
-          isNavigationPaneOpen={isValidNavigationPaneTab}
+          isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
-          storeType={storeType}
         />
         <PageEditorBody
           config={config}
@@ -172,23 +177,27 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handleEditorReady={handleEditorReady}
           handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
-          isNavigationPaneOpen={isValidNavigationPaneTab}
+          isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
           projectId={projectId}
           storeType={storeType}
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
+          extendedEditorProps={extendedEditorProps}
         />
       </div>
       <PageNavigationPaneRoot
+        storeType={storeType}
         handleClose={handleCloseNavigationPane}
-        isNavigationPaneOpen={isValidNavigationPaneTab}
+        isNavigationPaneOpen={isNavigationPaneOpen}
         page={page}
         versionHistory={{
           fetchAllVersions: handlers.fetchAllVersions,
           fetchVersionDetails: handlers.fetchVersionDetails,
         }}
+        extensions={navigationPaneExtensions}
       />
+      <PageModals page={page} storeType={storeType} />
     </div>
   );
 });

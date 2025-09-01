@@ -11,7 +11,6 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
 import { ReasoningBlock } from "./reasoning";
-import { Thinking } from "./thinking";
 
 type TProps = {
   id: string;
@@ -26,7 +25,7 @@ export const AiMessage = observer((props: TProps) => {
   const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
   // store
   const { workspaceSlug } = useParams();
-  const { sendFeedback, activeChatId, isPiTyping } = usePiChat();
+  const { sendFeedback, activeChatId } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   // state

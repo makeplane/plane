@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
-import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { WikiPageSidebarListItemRoot } from "../../list-item-root";
 import { SectionContentProps } from "../types";
@@ -21,7 +20,7 @@ const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = ({
   const { pageId: currentPageId } = useParams();
 
   // Placeholder for items not currently visible
-  const renderPlaceholder = (pageId: string) => (
+  const renderPlaceholder = () => (
     <div className="flex items-center px-2 text-custom-text-200" style={{ height: "30px" }}>
       <Loader className="size-3 mr-2 animate-spin opacity-30" />
       <div className="h-2 bg-custom-background-80 rounded w-3/4 opacity-20" />
@@ -71,7 +70,7 @@ const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = ({
                 verticalOffset={200}
                 horizontalOffset={0}
                 defaultHeight="30px"
-                placeholderChildren={renderPlaceholder(pageId)}
+                placeholderChildren={renderPlaceholder()}
                 shouldRecordHeights={false}
                 defaultValue={false}
                 classNames="w-full"

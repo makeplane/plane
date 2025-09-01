@@ -1,3 +1,4 @@
+import type { JSONContent } from "../editor";
 import { EIssueCommentAccessSpecifier, EUpdateEntityType, EUpdateStatus } from "../enums";
 import {
   TIssueActivityIssueDetail,
@@ -53,7 +54,7 @@ export type TUpdateComment = {
   comment_reactions: any[];
   comment_stripped: string;
   description: string;
-  comment_json: object;
+  comment_json: JSONContent;
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;

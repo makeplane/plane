@@ -6,11 +6,10 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 // ui
 import { Tooltip } from "@plane/ui";
-// components
-import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-// constants
 // helper
 import { cn } from "@plane/utils";
+// components
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

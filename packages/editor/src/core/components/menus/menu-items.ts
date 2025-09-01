@@ -22,6 +22,7 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
+  MessageSquare,
   LinkIcon,
   Sigma,
   SquareRadical,
@@ -57,7 +58,7 @@ import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "@/plane-
 // plane editor
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 // types
-import { TCommandWithProps, TEditorCommands } from "@/types";
+import type { TCommandWithProps, TEditorCommands } from "@/types";
 
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
@@ -255,6 +256,17 @@ export const TextAlignItem = (editor: Editor): EditorMenuItem<"text-align"> => (
   icon: AlignCenter,
 });
 
+export const CommentItem = (editor: Editor): EditorMenuItem<"comment"> => ({
+  key: "comment",
+  name: "Comment",
+  isActive: () => editor.isActive(ADDITIONAL_EXTENSIONS.COMMENTS),
+  command: (props) => {
+    if (!props) return;
+    editor.chain().focus().setComment(props.commentId).run();
+  },
+  icon: MessageSquare,
+});
+
 export const BlockEquationItem = (editor: Editor): EditorMenuItem<"block-equation"> => ({
   key: "block-equation",
   name: "Block equation",
@@ -319,6 +331,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
+    CommentItem(editor),
     BlockEquationItem(editor),
     InlineEquationItem(editor),
     ExternalEmbedItem(editor),

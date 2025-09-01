@@ -20,8 +20,8 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
-  "disabledExtensions" | "flaggedExtensions" | "isSmoothCursorEnabled"
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -69,7 +69,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // store hooks
   const { getUserDetails } = useMember();
   // use editor mention
@@ -115,7 +117,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
           workspaceSlug,
         })}
-        isSmoothCursorEnabled={is_smooth_cursor_enabled}
         mentionHandler={{
           searchCallback: async (query) => {
             const res = await fetchMentions(query);
@@ -131,6 +132,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative", {
           "p-2": !editable,
         })}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        }}
         {...rest}
       />
       {showToolbar && editable && (

@@ -20,7 +20,6 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
-  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -32,7 +31,7 @@ import {
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
-import type { IEditorProps, TEmbedConfig } from "@/types";
+import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -52,7 +51,8 @@ type TArguments = Pick<
 > & {
   enableHistory: boolean;
   editable: boolean;
-} & Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions" | "isSmoothCursorEnabled">;
+  extendedEditorProps?: IEditorPropsExtended;
+};
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -66,9 +66,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     tabIndex,
     editable,
     // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   } = args;
 
   const extensions = [
@@ -124,14 +122,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       flaggedExtensions,
       fileHandler,
       // additional props
-      embedHandler,
-      extensionOptions,
+      extendedEditorProps,
     }),
   ];
-
-  if (isSmoothCursorEnabled) {
-    extensions.push(SmoothCursorExtension);
-  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

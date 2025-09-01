@@ -42,6 +42,7 @@ export interface IWorkspacePageStore {
   getCurrentWorkspaceFilteredPageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TWorkspacePage | undefined;
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
+  isCommentsEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
@@ -273,6 +274,15 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   isNestedPagesEnabled = computedFn((workspaceSlug: string) => {
     const { getFeatureFlag } = this.store.featureFlags;
     return getFeatureFlag(workspaceSlug, "NESTED_PAGES", false);
+  });
+
+  /**
+   * Returns true if comments in pages feature is enabled
+   * @returns boolean
+   */
+  isCommentsEnabled = computedFn((workspaceSlug: string) => {
+    const { getFeatureFlag } = this.store.featureFlags;
+    return getFeatureFlag(workspaceSlug, "PAGE_COMMENTS", false);
   });
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {

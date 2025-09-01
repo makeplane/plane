@@ -230,6 +230,23 @@ export class ProjectPage extends BasePage implements TProjectPage {
   }
 
   /**
+   * @description returns true if the current logged in user can comment on the page/reply to the comments
+   */
+  get canCurrentUserCommentOnPage() {
+    // Owner can always comment
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can comment if they have at least view access
+    if (this.hasSharedAccess) {
+      return this.canCommentWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const highestRole = this.getHighestRoleAcrossProjects();
+    return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+  }
+
+  /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {

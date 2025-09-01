@@ -85,6 +85,10 @@ const PageDetailsPage = observer(() => {
         if (!workspaceSlug) return;
         return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
       },
+      restoreVersion: async (pageId, versionId) => {
+        if (!workspaceSlug) return;
+        await workspacePageVersionService.restoreVersion(workspaceSlug.toString(), pageId, versionId);
+      },
       getRedirectionLink: (pageId) => {
         if (pageId) {
           return `/${workspaceSlug}/pages/${pageId}`;

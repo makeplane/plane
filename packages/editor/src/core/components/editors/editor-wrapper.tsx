@@ -14,7 +14,6 @@ type Props = IEditorProps & {
   children?: (editor: Editor) => React.ReactNode;
   editable: boolean;
   extensions: Extensions;
-  isSmoothCursorEnabled: boolean;
 };
 
 export const EditorWrapper: React.FC<Props> = (props) => {
@@ -43,9 +42,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     tabIndex,
     value,
     // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   } = props;
 
   const editor = useEditor({
@@ -71,9 +68,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     tabIndex,
     value,
     // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   });
 
   const editorContainerClassName = getEditorClassNames({

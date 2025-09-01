@@ -8,8 +8,9 @@ import { getEditorMenuItems } from "@/components/menus";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // types
-import type { EditorRefApi, TEditorCommands } from "@/types";
+import type { CoreEditorRefApi, EditorRefApi, TEditorCommands } from "@/types";
 // local imports
+import { getExtenedEditorRefHelpers } from "@/plane-editor/helpers/extended-editor-ref";
 import { getParagraphCount } from "./common";
 import { getExtensionStorage } from "./get-extension-storage";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
@@ -23,7 +24,7 @@ type TArgs = {
 export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
   const { editor, provider } = args;
 
-  return {
+  const coreHelpers: CoreEditorRefApi = {
     blur: () => editor?.commands.blur(),
     clearEditor: (emitUpdate = false) => {
       editor
@@ -325,4 +326,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       }
     },
   };
+
+  return { ...coreHelpers, ...getExtenedEditorRefHelpers(args) };
 };

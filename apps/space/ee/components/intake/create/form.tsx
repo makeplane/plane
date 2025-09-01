@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // plane types
 import { Controller, useFormContext } from "react-hook-form";
+import { type EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // plane ui
@@ -18,7 +19,7 @@ import { TFormData } from "./create-issue-modal";
 type TProps = {
   project: Partial<IProject>;
   isSubmitting: boolean;
-  descriptionEditorRef: React.RefObject<any>;
+  descriptionEditorRef: React.RefObject<EditorRefApi>;
   anchor: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };

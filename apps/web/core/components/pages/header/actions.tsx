@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane web components
+import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
@@ -32,6 +33,7 @@ export const PageHeaderActions: React.FC<Props> = observer((props) => {
       <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />
       <PageFavoriteControl page={page} />
+      <PageCommentControl page={page} storeType={storeType} />
       <PageShareControl page={page} storeType={storeType} />
       <PageOptionsDropdown page={page} storeType={storeType} />
     </div>

@@ -4,7 +4,6 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
 // types
 import { TUpdateComment, TUpdatesCommentMap } from "@plane/types";
 import { IUpdatesReactionStore } from "./reaction.store";

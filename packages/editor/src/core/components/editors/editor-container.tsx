@@ -6,7 +6,7 @@ import { cn } from "@plane/utils";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
-import { TDisplayConfig } from "@/types";
+import { type TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
 

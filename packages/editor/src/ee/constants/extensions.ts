@@ -2,6 +2,7 @@ export enum ADDITIONAL_EXTENSIONS {
   PAGE_EMBED_COMPONENT = "pageEmbedComponent",
   COLLABORATION_CURSOR = "collaborationCursor",
   ATTACHMENT = "attachmentComponent",
+  COMMENTS = "commentMark",
   MATHEMATICS = "mathematics",
   INLINE_MATH = "inlineMath",
   BLOCK_MATH = "blockMath",

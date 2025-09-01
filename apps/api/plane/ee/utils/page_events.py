@@ -18,3 +18,5 @@ class PageAction(str, Enum):
     RESTORED = "restored"
     SHARED = "shared"
     UNSHARED = "unshared"
+    RESOLVED_COMMENT = "resolved_comment"
+    UNRESOLVED_COMMENT = "unresolved_comment"

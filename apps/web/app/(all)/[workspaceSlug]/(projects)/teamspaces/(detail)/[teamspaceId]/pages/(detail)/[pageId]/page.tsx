@@ -86,7 +86,17 @@ const TeamspacePageDetailsPage = observer(() => {
         if (!workspaceSlug || !teamspaceId) return;
         return await teamspacePageVersionService.fetchVersionById(workspaceSlug, teamspaceId, pageId, versionId);
       },
-      getRedirectionLink: (pageId) => `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`,
+      restoreVersion: async (pageId, versionId) => {
+        if (!workspaceSlug || !teamspaceId) return;
+        return await teamspacePageVersionService.restoreVersion(workspaceSlug, teamspaceId, pageId, versionId);
+      },
+      getRedirectionLink: (pageId) => {
+        if (pageId) {
+          return `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
+        } else {
+          return `/${workspaceSlug}/teamspaces/${teamspaceId}/pages`;
+        }
+      },
       updateDescription: updateDescription ?? (async () => {}),
     }),
     [createPage, fetchEntityCallback, id, teamspaceId, updateDescription, workspaceSlug]

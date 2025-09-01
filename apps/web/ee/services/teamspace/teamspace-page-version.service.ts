@@ -45,4 +45,22 @@ export class TeamspacePageVersionService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Restore a version of a page for a teamspace
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @param versionId
+   * @returns
+   */
+  async restoreVersion(workspaceSlug: string, teamspaceId: string, pageId: string, versionId: string): Promise<void> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/versions/${versionId}/restore/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

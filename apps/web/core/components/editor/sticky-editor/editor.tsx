@@ -17,8 +17,8 @@ import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<
-    ILiteTextEditorProps,
-    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled"
+    Omit<ILiteTextEditorProps, "extendedEditorProps">,
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
   > {
   workspaceSlug: string;
   workspaceId: string;
@@ -53,7 +53,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // store hooks
   const {
     data: { is_smooth_cursor_enabled },
@@ -85,7 +87,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
-        isSmoothCursorEnabled={is_smooth_cursor_enabled}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />

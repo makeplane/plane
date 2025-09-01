@@ -85,7 +85,9 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
                 workspaceSlug: "",
               },
             }}
-            isSmoothCursorEnabled={false}
+            extendedEditorProps={{
+              isSmoothCursorEnabled: false,
+            }}
           />
         </div>
       </div>

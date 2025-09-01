@@ -16,3 +16,11 @@ from .workspace.share import WorkspacePageUserViewSet
 from .project.move import MovePageEndpoint
 from .project.share import ProjectPageUserViewSet
 from .project.publish import ProjectPagePublishEndpoint
+
+
+from .comment import (
+    WorkspacePageCommentViewSet,
+    WorkspacePageCommentReactionViewSet,
+    ProjectPageCommentViewSet,
+    ProjectPageCommentReactionViewSet,
+)

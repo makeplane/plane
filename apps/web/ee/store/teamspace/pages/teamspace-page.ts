@@ -68,6 +68,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
+      canCurrentUserCommentOnPage: computed,
       isContentEditable: computed,
       // actions
       fetchSubPages: action,
@@ -218,6 +219,13 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
+    return false;
+  }
+
+  /**
+   * @description returns true if the current logged in user can comment on the page/reply to the comments
+   */
+  get canCurrentUserCommentOnPage() {
     return false;
   }
 

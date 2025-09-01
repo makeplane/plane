@@ -6,6 +6,7 @@ import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-
 import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
+import { TCommentMarkAttributes } from "@/plane-editor/extensions/comments";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.PARAGRAPH).run();

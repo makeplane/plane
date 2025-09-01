@@ -1,4 +1,4 @@
-import { TLogoProps, TPaginationInfo } from "../common";
+import { TPaginationInfo } from "../common";
 import { TFileSignedURLResponse } from "../file";
 import { TIssue } from "../issues/issue";
 

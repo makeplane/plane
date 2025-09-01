@@ -7,12 +7,13 @@ import { useImperativeHandle } from "react";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
-import { SmoothCursorExtension } from "@/extensions";
 import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 // types
 import { EditorTitleRefApi } from "@/types/editor";
+import { IEditorPropsExtended } from "@/types";
+import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 
 type Props = {
   editable?: boolean;
@@ -24,7 +25,7 @@ type Props = {
   placeholder?: string;
   updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   id: string;
-  isSmoothCursorEnabled: boolean;
+  extendedEditorProps?: IEditorPropsExtended;
 };
 
 /**
@@ -36,12 +37,14 @@ export const useTitleEditor = (props: Props) => {
     editable = true,
     id,
     initialValue = "",
-    isSmoothCursorEnabled = false,
+    extendedEditorProps,
     extensions,
     provider,
     updatePageProperties,
     titleRef,
   } = props;
+
+  const { isSmoothCursorEnabled } = extendedEditorProps ?? {};
 
   const editor = useEditor(
     {

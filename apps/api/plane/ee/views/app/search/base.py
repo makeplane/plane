@@ -407,7 +407,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         except RequestError as e:
             log_exception(e)
             return Response(
-                {"error": "Invalid search request", "detail": str(e)},
+                {"error": "Invalid search request"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:

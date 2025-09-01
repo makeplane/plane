@@ -12,7 +12,7 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
@@ -60,7 +60,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
         description_html: formData.description_html ?? "<p></p>",
       });
     },
-    [workspaceSlug, project.id, handleUpdate]
+    [handleUpdate]
   );
 
   const { getWorkspaceBySlug } = useWorkspace();

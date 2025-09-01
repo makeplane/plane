@@ -13,7 +13,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled" | "embedHandler">,
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps" | "embedHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -57,7 +57,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
       })}
       flaggedExtensions={richTextEditorExtensions.flagged}
-      {...rest}
+      extendedEditorProps={{
+        isSmoothCursorEnabled: false,
+      }}
       embedHandler={{
         externalEmbedComponent: {
           widgetCallback: EmbedHandler,
@@ -66,7 +68,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
-      isSmoothCursorEnabled={false}
+      {...rest}
     />
   );
 });

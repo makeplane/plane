@@ -8,15 +8,15 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
 import { EditorMentionsRoot } from "../embeds/mentions";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type DocumentEditorWrapperProps = MakeOptional<
-  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
-  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
+  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user" | "extendedEditorProps">,
+  "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
   workspaceSlug: string;
@@ -47,7 +47,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -92,7 +94,16 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         },
         ...embedHandler,
       }}
-      isSmoothCursorEnabled={is_smooth_cursor_enabled}
+      extendedEditorProps={{
+        isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        embedHandler: {
+          issue: issueEmbedProps,
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
+          ...embedHandler,
+        },
+      }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

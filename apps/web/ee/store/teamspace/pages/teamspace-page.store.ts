@@ -25,6 +25,7 @@ export interface ITeamspacePageStore {
   getFilteredTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
   getPageById: (pageId: string) => TTeamspacePage | undefined;
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
+  isCommentsEnabled: (workspaceSlug: string) => boolean;
   // helper actions
   initTeamspacePagesFilters: (teamspaceId: string) => void;
   getTeamspacePagesFilters: (teamspaceId: string) => TPageFilters | undefined;
@@ -167,6 +168,12 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @returns boolean
    */
   isNestedPagesEnabled = computedFn(() => false);
+
+  /**
+   * Returns true if comments in pages feature is enabled
+   * @returns boolean
+   */
+  isCommentsEnabled = computedFn(() => false);
 
   /**
    * Initializes teamspace pages filters

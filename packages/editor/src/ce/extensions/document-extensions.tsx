@@ -2,10 +2,9 @@ import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { AnyExtension, Extensions } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
 // plane editor types
-import type { TEmbedConfig } from "@/plane-editor/types";
+import type { IEditorPropsExtended, TEmbedConfig } from "@/plane-editor/types";
 // types
 import type { IEditorProps, TExtensions, TUserDetails } from "@/types";
-
 export type TDocumentEditorAdditionalExtensionsProps = Pick<
   IEditorProps,
   "disabledExtensions" | "flaggedExtensions" | "fileHandler"
@@ -14,6 +13,7 @@ export type TDocumentEditorAdditionalExtensionsProps = Pick<
   isEditable: boolean;
   provider?: HocuspocusProvider;
   userDetails: TUserDetails;
+  extendedEditorProps?: IEditorPropsExtended;
 };
 
 export type TDocumentEditorAdditionalExtensionsRegistry = {

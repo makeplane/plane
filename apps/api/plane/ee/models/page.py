@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from plane.db.models import Page
-from .workspace import WorkspaceBaseModel
+from plane.db.models.workspace import WorkspaceBaseModel
 
 
 class PageUser(WorkspaceBaseModel):

@@ -28,11 +28,7 @@ export const HomePageHeader = observer(() => {
             </Link>
           </Tooltip>
         </div>
-        <InputBox
-          isFullScreen={true}
-          isProjectLevel
-          className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
-        />
+        <InputBox isFullScreen isProjectLevel className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full" />
       </div>
     </WithFeatureFlagHOC>
   );

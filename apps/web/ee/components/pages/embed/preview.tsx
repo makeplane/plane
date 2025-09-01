@@ -28,7 +28,10 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+    storeType,
+  });
 
   const { description_html, id, name, is_description_empty } = page;
 

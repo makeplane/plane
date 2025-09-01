@@ -569,6 +569,14 @@ def nested_page_update(
 
             data = {"users_and_access": values}
 
+        elif action == PageAction.RESOLVED_COMMENT:
+            comment_id = extra.get("comment_id")
+            data = {"comment_id": comment_id}
+
+        elif action == PageAction.UNRESOLVED_COMMENT:
+            comment_id = extra.get("comment_id")
+            data = {"comment_id": comment_id}
+
         payload = {
             "action": action,
             "descendants_ids": descendants_ids,

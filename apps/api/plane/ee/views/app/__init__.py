@@ -55,3 +55,10 @@ from plane.ee.views.app.dashboard import (
     WidgetListEndpoint,
     BulkWidgetEndpoint,
 )
+
+from plane.ee.views.app.page import (
+    WorkspacePageCommentViewSet,
+    WorkspacePageCommentReactionViewSet,
+    ProjectPageCommentViewSet,
+    ProjectPageCommentReactionViewSet,
+)

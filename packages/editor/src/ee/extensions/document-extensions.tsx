@@ -19,6 +19,7 @@ import { TExtensions } from "@/types";
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCursor } from "./collaboration-cursor";
+import { CommentsExtension } from "./comments";
 
 /**
  * Registry for slash commands
@@ -175,6 +176,22 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         isEditable,
       }),
   },
+  {
+    // Comment mark extension (for styling)
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("comments"),
+    getExtension: ({ extendedEditorProps, flaggedExtensions }) => {
+      if (!extendedEditorProps || !extendedEditorProps.commentConfig) return undefined;
+      const { onClick, onDelete, onRestore, onResolve, onUnresolve } = extendedEditorProps.commentConfig;
+      return CommentsExtension({
+        isFlagged: flaggedExtensions.includes("comments"),
+        onCommentClick: onClick,
+        onCommentDelete: onDelete,
+        onCommentRestore: onRestore,
+        onCommentResolve: onResolve,
+        onCommentUnresolve: onUnresolve,
+      });
+    },
+  },
 ];
 
 /**
@@ -184,10 +201,10 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
   const { disabledExtensions, flaggedExtensions } = props;
 
   // Filter enabled extensions and flatten the result
-  const extensions: Extensions = extensionRegistry
+  const documentExtensions: Extensions = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
     .map((config) => config.getExtension(props))
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
-  return extensions;
+  return documentExtensions;
 };

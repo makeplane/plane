@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { CORE_EXTENSIONS } from "@/constants/extension";
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
@@ -34,32 +33,28 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     forwardedRef,
     handleEditorReady,
     id,
+    mentionHandler,
     dragDropEnabled = true,
     isTouchDevice,
-    mentionHandler,
     onEditorFocus,
     placeholder,
     realtimeConfig,
     serverHandler,
     tabIndex,
     titleRef,
-    user,
     updatePageProperties,
-    // additional props
-    isSmoothCursorEnabled,
-    extensionOptions,
+    user,
+    extendedEditorProps,
   } = props;
 
-  // Server connection states
-  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
+  // shared state
+  const [isContentInIndexedDb, setIsContentInIndexedDb] = useState(false);
   const [hasServerSynced, setHasServerSynced] = useState(false);
-  // State to track if initial focus has been set
-  const [initialFocusSet, setInitialFocusSet] = useState(false);
-
-  // Create keyboard navigation extensions between editors
-  const { setTitleEditor, setMainEditor, titleNavigationExtension, mainNavigationExtension } = useEditorNavigation();
-  const [isContentInIndexedDb, setIsContentInIndexedDb] = useState(true);
+  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [isIndexedDbSynced, setIsIndexedDbSynced] = useState(false);
+
+  // Create navigation handlers
+  const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
 
   // Initialize Hocuspocus provider for real-time collaboration
   const provider = useMemo(
@@ -129,7 +124,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
 
   // Initialize main document editor
   const editor = useEditor({
-    embedHandler,
     disabledExtensions,
     id,
     editable,
@@ -157,8 +151,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         isEditable: editable,
         provider,
         userDetails: user,
+        extendedEditorProps,
       }),
-
       // Navigation extension for keyboard shortcuts
       mainNavigationExtension,
     ],
@@ -175,9 +169,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     placeholder,
     provider,
     tabIndex,
-    // additional props
-    isSmoothCursorEnabled,
-    extensionOptions,
+    extendedEditorProps,
   });
 
   // Use the new hook for realtime events
@@ -191,7 +183,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   // Initialize title editor
   const titleEditor = useTitleEditor({
     id,
-    isSmoothCursorEnabled,
     editable,
     provider,
     titleRef,
@@ -206,6 +197,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       // Navigation extension for keyboard shortcuts
       titleNavigationExtension,
     ],
+    extendedEditorProps,
   });
 
   // Connect editors for navigation once they're initialized
@@ -214,34 +206,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       setMainEditor(editor);
       setTitleEditor(titleEditor);
     }
-  }, [editor, titleEditor, setMainEditor, setTitleEditor]);
-
-  // Set initial focus based on title editor content
-  useEffect(() => {
-    // Ensure editors are initialized, sync has occurred, and initial focus hasn't been set
-    if (editor && titleEditor && (hasServerSynced || (isIndexedDbSynced && isContentInIndexedDb)) && !initialFocusSet) {
-      if (titleEditor.isEmpty) {
-        // Focus the title editor if it's empty
-        titleEditor.commands.focus("start");
-      } else {
-        if (editor.state.doc.firstChild?.type.name === CORE_EXTENSIONS.PARAGRAPH) {
-          // If the title editor is empty, focus the main editor at the start
-          editor.commands.focus("start");
-        } else {
-          // Otherwise, focus the title editor at the end
-          titleEditor.commands.focus("end");
-        }
-      }
-      // Mark initial focus as set to prevent re-running
-      setInitialFocusSet(true);
-    }
-  }, [editor, titleEditor, hasServerSynced, isIndexedDbSynced, initialFocusSet, isContentInIndexedDb]);
+  }, [editor, titleEditor]);
 
   return {
     editor,
     titleEditor,
-    hasServerConnectionFailed,
     hasServerSynced,
+    hasServerConnectionFailed,
     isContentInIndexedDb,
     isIndexedDbSynced,
   };

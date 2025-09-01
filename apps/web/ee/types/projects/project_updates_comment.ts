@@ -4,6 +4,7 @@ import {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
+  JSONContent,
 } from "@plane/types";
 import { TProjectUpdateReaction } from "./update_reaction";
 
@@ -25,7 +26,7 @@ export type TProjectUpdatesComment = {
   comment_reactions: any[];
   comment_stripped: string;
   description: string;
-  comment_json: object;
+  comment_json: JSONContent;
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;

@@ -273,8 +273,6 @@ class PageVersion(BaseModel):
     description_json = models.JSONField(default=dict, blank=True)
     sub_pages_data = models.JSONField(default=dict, blank=True)
 
-    sub_pages_data = models.JSONField(default=dict, blank=True)
-
     class Meta:
         verbose_name = "Page Version"
         verbose_name_plural = "Page Versions"

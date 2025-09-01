@@ -1,7 +1,9 @@
 import { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
 import { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
 import { MathematicsExtensionOptions } from "../extensions/mathematics/types";
+import { TCommentConfig } from "./comments";
 import type { TEmbedConfig } from "./issue-embed";
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 
 export type IEditorExtensionOptions = {
   [ADDITIONAL_EXTENSIONS.MATHEMATICS]?: Pick<MathematicsExtensionOptions, "onClick">;
@@ -11,5 +13,34 @@ export type IEditorExtensionOptions = {
 export type IEditorPropsExtended = {
   embedHandler?: TEmbedConfig;
   extensionOptions?: IEditorExtensionOptions;
+  commentConfig?: TCommentConfig;
   isSmoothCursorEnabled: boolean;
+};
+
+export type TExtendedEditorCommands = "comment";
+
+export type TExtendedCommandExtraProps = {
+  attachment: {
+    savedSelection: Selection | null;
+  };
+  "block-equation": {
+    latex: string;
+  };
+  "inline-equation": {
+    latex: string;
+  };
+  "external-embed": {
+    src: string;
+    [EExternalEmbedAttributeNames.IS_RICH_CARD]: boolean;
+  };
+  comment: {
+    commentId: string;
+  };
+};
+
+export type TExtendedEditorRefApi = {
+  removeComment: (commentId: string) => void;
+  setCommentMark: (params: { commentId: string; from: number; to: number }) => void;
+  resolveCommentMark: (commentId: string) => void;
+  unresolveCommentMark: (commentId: string) => void;
 };

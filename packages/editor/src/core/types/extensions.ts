@@ -9,4 +9,5 @@ export type TExtensions =
   | "nested-pages"
   | "external-embed"
   | "attachments"
+  | "comments"
   | "mathematics";

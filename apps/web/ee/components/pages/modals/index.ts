@@ -5,4 +5,5 @@ export * from "./publish-page-modal";
 export * from "./move-page-modal";
 export * from "./template-select-modal";
 export * from "./lock-page-modal";
-export * from "./multiple-page-delete-modal";
+export * from "./delete-multiple-pages-modal";
+export * from "./modals";

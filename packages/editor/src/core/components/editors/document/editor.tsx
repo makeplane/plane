@@ -37,8 +37,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     user,
     value,
     // additional props
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
@@ -86,9 +85,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     mentionHandler,
     onChange,
     // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -99,13 +96,14 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
 
   return (
     <PageRenderer
+      extendedEditorProps={extendedEditorProps}
       bubbleMenuEnabled={bubbleMenuEnabled}
+      disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
-      id={id}
       flaggedExtensions={flaggedExtensions}
-      disabledExtensions={disabledExtensions}
+      id={id}
       isTouchDevice={!!isTouchDevice}
     />
   );

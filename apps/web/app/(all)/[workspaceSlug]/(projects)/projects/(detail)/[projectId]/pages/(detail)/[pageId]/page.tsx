@@ -94,6 +94,15 @@ const PageDetailsPage = observer(() => {
           versionId
         );
       },
+      restoreVersion: async (pageId, versionId) => {
+        if (!workspaceSlug || !projectId) return;
+        await projectPageVersionService.restoreVersion(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          pageId,
+          versionId
+        );
+      },
       getRedirectionLink: (pageId) => {
         if (pageId) {
           return `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
@@ -117,8 +126,8 @@ const PageDetailsPage = observer(() => {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
-            workspaceSlug: workspaceSlug?.toString() ?? "",
             file,
+            workspaceSlug: workspaceSlug?.toString() ?? "",
             projectId: projectId?.toString() ?? "",
           });
           return asset_id;
@@ -136,7 +145,7 @@ const PageDetailsPage = observer(() => {
       projectId: projectId?.toString() ?? "",
       workspaceSlug: workspaceSlug?.toString() ?? "",
     }),
-    [workspaceSlug, projectId]
+    [projectId, workspaceSlug]
   );
 
   const customRealtimeEventHandlers: TCustomEventHandlers = useMemo(
@@ -207,7 +216,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (!page) return null;
+  if (!page || !workspaceSlug || !projectId) return null;
 
   return (
     <>
@@ -217,11 +226,11 @@ const PageDetailsPage = observer(() => {
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}
-            page={page}
             storeType={storeType}
+            page={page}
             webhookConnectionParams={webhookConnectionParams}
-            projectId={projectId?.toString()}
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
             customRealtimeEventHandlers={customRealtimeEventHandlers}
           />
           <IssuePeekOverview />

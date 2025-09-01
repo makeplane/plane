@@ -1,18 +1,21 @@
 import { Extensions } from "@tiptap/core";
 // ce imports
-import type { TCoreAdditionalExtensionsProps } from "src/ce/extensions";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type { TExternalEmbedConfig } from "@/types";
+import type { TCoreAdditionalExtensionsProps } from "src/ce/extensions";
 // local imports
 import { ExternalEmbedExtension } from "../external-embed/extension";
 import { MathematicsExtension } from "../mathematics/extension";
+import { SmoothCursorExtension } from "../smooth-cursor";
 
-type Props = TCoreAdditionalExtensionsProps & Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions">;
+type Props = TCoreAdditionalExtensionsProps & { extendedEditorProps?: IEditorPropsExtended };
 
 export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
-  const { flaggedExtensions, extensionOptions, disabledExtensions } = props;
+  const { flaggedExtensions, extendedEditorProps, disabledExtensions } = props;
+  const { extensionOptions } = extendedEditorProps ?? {};
+  const { embedHandler, isSmoothCursorEnabled } = extendedEditorProps ?? {};
   const extensions: Extensions = [];
   extensions.push(
     MathematicsExtension({
@@ -21,11 +24,14 @@ export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
     })
   );
   const widgetCallback: TExternalEmbedConfig["widgetCallback"] =
-    props.embedHandler?.externalEmbedComponent?.widgetCallback ?? (() => null);
+    embedHandler?.externalEmbedComponent?.widgetCallback ?? (() => null);
   if (!disabledExtensions?.includes("external-embed")) {
     extensions.push(
       ExternalEmbedExtension({ isFlagged: !!flaggedExtensions?.includes("external-embed"), widgetCallback })
     );
+  }
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
   }
   return extensions;
 };

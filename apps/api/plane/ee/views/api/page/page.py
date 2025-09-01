@@ -60,6 +60,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
 
         # First validate all pages
         for index, page_data in enumerate(request.data):
+            print(f"Processing page {index + 1}...")
             serializer = PageDetailSerializer(
                 data=page_data,
                 context={
