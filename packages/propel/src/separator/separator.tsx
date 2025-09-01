@@ -11,22 +11,16 @@ interface SeparatorProps extends React.ComponentProps<typeof SeparatorPrimitive>
 }
 
 const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive>, SeparatorProps>(
-  ({ orientation = "horizontal", ...props }, ref) => {
-    return (
-      <SeparatorPrimitive
-        ref={ref}
-        orientation={orientation}
-        data-slot="separator"
-        data-orientation={orientation}
-        className={clsx(
-          "bg-custom-border-200",
-          "shrink-0",
-          orientation === "horizontal" ? "h-px w-full" : "h-full w-px"
-        )}
-        {...props}
-      />
-    );
-  }
+  ({ orientation = "horizontal", ...props }, ref) => (
+    <SeparatorPrimitive
+      ref={ref}
+      orientation={orientation}
+      data-slot="separator"
+      data-orientation={orientation}
+      {...props}
+      className={clsx("bg-custom-border-200", "shrink-0", orientation === "horizontal" ? "h-px w-full" : "h-full w-px")}
+    />
+  )
 );
 
 Separator.displayName = "Separator";
