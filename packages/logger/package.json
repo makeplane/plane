@@ -1,6 +1,6 @@
 {
   "name": "@plane/logger",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
@@ -28,16 +28,15 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "express-winston": "^4.2.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/express": "^4.17.21",
-    "@types/node": "^22.5.4",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@types/node": "^20.14.9",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

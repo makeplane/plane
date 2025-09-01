@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -41,11 +41,11 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "14.2.30",
+    "next": "14.2.32",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
     "react-popper": "^2.3.0",
@@ -58,13 +58,12 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "4.17.20",
     "@types/node": "18.14.1",
     "@types/nprogress": "^0.2.0",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }

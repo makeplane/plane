@@ -1,6 +1,6 @@
 {
   "name": "@plane/types",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
   "files": [
@@ -27,15 +27,15 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/react": "18.3.11",
-    "@types/react-dom": "18.3.1",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }
