@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
@@ -16,7 +17,6 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -37,7 +37,6 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const { currentProjectDetails, loader } = useProject();
   const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
     usePageStore(storeType);
-  useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);
   // states
