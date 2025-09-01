@@ -84,7 +84,9 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
     const reactionUsers = (reactionIds?.[reaction] || [])
       .map((reactionId) => {
         const reactionDetails = getReactionById(reactionId);
-        return reactionDetails ? getUserDetails(reactionDetails.actor)?.display_name : null;
+        return reactionDetails
+          ? getUserDetails(reactionDetails?.actor)?.display_name || reactionDetails?.display_name
+          : null;
       })
       .filter((displayName): displayName is string => !!displayName);
 
