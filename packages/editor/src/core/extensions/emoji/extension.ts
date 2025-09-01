@@ -3,7 +3,7 @@ import { gitHubEmojis, shortcodeToEmoji } from "@tiptap/extension-emoji";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Emoji } from "./emoji";
-import suggestion from "./suggestion";
+import { emojiSuggestion } from "./suggestion";
 
 export const EmojiExtension = Emoji.extend({
   addStorage() {
@@ -25,6 +25,6 @@ export const EmojiExtension = Emoji.extend({
   },
 }).configure({
   emojis: gitHubEmojis,
-  suggestion: suggestion,
+  suggestion: emojiSuggestion,
   enableEmoticons: true,
 });

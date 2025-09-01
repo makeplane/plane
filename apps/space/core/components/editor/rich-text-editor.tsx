@@ -58,7 +58,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       flaggedExtensions={richTextEditorExtensions.flagged}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
     />
   );

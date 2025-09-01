@@ -104,7 +104,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
-
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
     const currentIssueIndex = filteredInboxIssueIds.findIndex((id) => id === currentInboxIssueId);

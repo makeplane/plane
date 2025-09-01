@@ -1,7 +1,7 @@
 import React from "react";
 import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
-import { Card, ECardSpacing } from "@plane/ui";
+import { Card, ECardSpacing } from "../../card";
 
 type Props = {
   dotColor?: string;

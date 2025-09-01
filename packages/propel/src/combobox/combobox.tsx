@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Command } from "../command/command";
 import { Popover } from "../popover/root";
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 
 export interface ComboboxOption {
   value: unknown;

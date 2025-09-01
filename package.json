@@ -5,16 +5,13 @@
   "version": "0.28.0",
   "license": "AGPL-3.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=18",
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
+    "fix:format": "turbo run fix:format",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format"

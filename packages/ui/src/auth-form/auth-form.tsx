@@ -60,7 +60,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   });
 
   const [passwordStrength, setPasswordStrength] = useState<E_PASSWORD_STRENGTH>(E_PASSWORD_STRENGTH.EMPTY);
-  const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const [_passwordsMatch, setPasswordsMatch] = useState(false);
 
   const handleInputChange = (field: keyof AuthFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
