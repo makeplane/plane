@@ -32,12 +32,15 @@ export const useEditor = (props: TEditorHookProps) => {
     onAssetChange,
     onChange,
     onEditorFocus,
-    embedHandler,
     onTransaction,
     placeholder,
     provider,
     tabIndex,
     value,
+    // additional props
+    embedHandler,
+    extensionOptions,
+    isSmoothCursorEnabled = false,
   } = props;
 
   const editor = useTiptapEditor(
@@ -64,7 +67,10 @@ export const useEditor = (props: TEditorHookProps) => {
           mentionHandler,
           placeholder,
           tabIndex,
+          // additional props
           embedHandler,
+          extensionOptions,
+          isSmoothCursorEnabled,
         }),
         ...extensions,
       ],
