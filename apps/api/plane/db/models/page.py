@@ -99,12 +99,10 @@ class PageLog(BaseModel):
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
-    entity_identifier = models.UUIDField(null=True, blank=True, db_index=True)
-    entity_name = models.CharField(
-        max_length=30, verbose_name="Transaction Type", db_index=True
-    )
+    entity_identifier = models.UUIDField(null=True, blank=True)
+    entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
     entity_type = models.CharField(
-        max_length=30, verbose_name="Entity Type", null=True, blank=True, db_index=True
+        max_length=30, verbose_name="Entity Type", null=True, blank=True
     )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
@@ -117,13 +115,14 @@ class PageLog(BaseModel):
         db_table = "page_logs"
         ordering = ("-created_at",)
         indexes = [
+            models.Index(fields=["entity_type"], name="pagelog_entity_type_idx"),
+            models.Index(fields=["entity_identifier"], name="pagelog_entity_id_idx"),
+            models.Index(fields=["entity_name"], name="pagelog_entity_name_idx"),
             models.Index(
-                fields=["entity_type", "entity_identifier"],
-                name="page_log_entity_idx",
+                fields=["entity_type", "entity_identifier"], name="pagelog_type_id_idx"
             ),
             models.Index(
-                fields=["entity_name", "entity_identifier"],
-                name="page_log_entity_identifier_idx",
+                fields=["entity_name", "entity_identifier"], name="pagelog_name_id_idx"
             ),
         ]
 

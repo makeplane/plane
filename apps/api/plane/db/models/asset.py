@@ -61,10 +61,8 @@ class FileAsset(BaseModel):
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
     )
-    entity_type = models.CharField(max_length=255, null=True, blank=True, db_index=True)
-    entity_identifier = models.CharField(
-        max_length=255, null=True, blank=True, db_index=True
-    )
+    entity_type = models.CharField(max_length=255, null=True, blank=True)
+    entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
     external_id = models.CharField(max_length=255, null=True, blank=True)
@@ -79,9 +77,12 @@ class FileAsset(BaseModel):
         db_table = "file_assets"
         ordering = ("-created_at",)
         indexes = [
+            models.Index(fields=["entity_type"], name="asset_entity_type_idx"),
             models.Index(
-                fields=["entity_type", "entity_identifier"],
-                name="file_asset_entity_idx",
+                fields=["entity_identifier"], name="asset_entity_identifier_idx"
+            ),
+            models.Index(
+                fields=["entity_type", "entity_identifier"], name="asset_entity_idx"
             ),
         ]
 
