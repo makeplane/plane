@@ -3,6 +3,7 @@ import {
   SlackConversationHistoryResponse,
   SlackMessageResponse,
   SlackTokenRefreshResponse,
+  SlackUserLookupByEmailResponse,
   SlackUserResponse,
   UnfurlMap,
 } from "../types";
@@ -79,7 +80,7 @@ export class SlackService {
     try {
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
-        throw new Error("Could not add bot to channel");
+        console.error("Could not add bot to channel", { channelId });
       }
 
       const payload: any = {
@@ -161,7 +162,7 @@ export class SlackService {
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
-        throw new Error("Could not add bot to channel");
+        console.error("Could not add bot to channel", { channelId });
       }
 
       // Use the user token to authenticate the request
@@ -211,7 +212,7 @@ export class SlackService {
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
         // If the bot is not in the channel, log it, but make the request anyway
-        console.log("Could not add bot to channel");
+        console.error("Could not add bot to channel", { channelId });
       }
 
       const response = await this.client.post("chat.postMessage", payload);
@@ -243,7 +244,7 @@ export class SlackService {
       // Check if bot is in channel
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
-        throw new Error("Could not add bot to channel");
+        console.error("Could not add bot to channel", { channelId });
       }
 
       const response = await this.client.post("chat.postMessage", {
@@ -315,6 +316,19 @@ export class SlackService {
       return res.data;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async userLookupByEmail(email: string): Promise<SlackUserLookupByEmailResponse> {
+    try {
+      const response = await this.client.get("users.lookupByEmail", {
+        params: { email },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 

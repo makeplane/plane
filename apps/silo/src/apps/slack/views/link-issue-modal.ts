@@ -90,7 +90,7 @@ export const createLinkIssueModalView = (
  */
 export const alreadyLinkedModalView = (
   workspaceSlug: string,
-  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>,
   states: ExState[],
   userMap: Map<string, string>,
   privateMetadata: any = {}

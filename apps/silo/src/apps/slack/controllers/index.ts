@@ -1,14 +1,14 @@
 import { Request, RequestHandler, Response } from "express";
-import { validate as uuidValidate } from "uuid";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   E_SLACK_ENTITY_TYPE,
   isUserMessage,
   SlackAuthState,
   SlackPlaneOAuthState,
-  SlackUserAuthState, TBlockSuggestionPayload,
+  SlackUserAuthState,
+  TBlockSuggestionPayload,
   TSlackCommandPayload,
-  TSlackPayload
+  TSlackPayload,
 } from "@plane/etl/slack";
 import {
   E_PLANE_WEBHOOK_ACTION,
@@ -30,6 +30,7 @@ import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { Store } from "@/worker/base";
 import { authenticateSlackRequestMiddleware, slackAuth } from "../auth/auth";
+import { isValidIssueUpdateActivity } from "../helpers/activity";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { convertToSlackOptions } from "../helpers/slack-options";
@@ -673,7 +674,6 @@ export default class SlackController {
   @Middleware(authenticateSlackRequestMiddleware as RequestHandler)
   async slackOptions(req: Request, res: Response) {
     try {
-
       const payload = JSON.parse(req.body.payload) as TBlockSuggestionPayload;
 
       if (payload.type === "block_suggestion" && payload.action_id && payload.action_id === ACTIONS.LINK_WORK_ITEM) {
@@ -712,7 +712,7 @@ export default class SlackController {
       const [projectId, fieldId] = values;
 
       const details = await getConnectionDetails(payload.team.id, {
-        id: payload.user.id
+        id: payload.user.id,
       });
       if (!details) {
         logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
@@ -727,14 +727,12 @@ export default class SlackController {
       }
 
       const formUtilsService = getFormUtilsService(credentials.target_access_token);
-      const optionsResponse = await formUtilsService.getOptionsForEntity(
-        {
-          slug: workspaceConnection.workspace_slug,
-          projectId: projectId,
-          typeIdentifier: fieldId,
-          searchText: payload.value,
-        }
-      );
+      const optionsResponse = await formUtilsService.getOptionsForEntity({
+        slug: workspaceConnection.workspace_slug,
+        projectId: projectId,
+        typeIdentifier: fieldId,
+        searchText: payload.value,
+      });
 
       const options = optionsResponse.map((option) => ({
         text: {
@@ -748,7 +746,6 @@ export default class SlackController {
       return res.status(200).json({
         options: options,
       });
-
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -757,8 +754,6 @@ export default class SlackController {
   @Post("/plane/events")
   async planeEvents(req: Request, res: Response) {
     try {
-      const isUUID = (id: string | null) => id && uuidValidate(id);
-
       const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
       const id = payload.data.id;
       const workspace = payload.data.workspace;
@@ -832,12 +827,7 @@ export default class SlackController {
             },
             Number(env.DEDUP_INTERVAL)
           );
-        } else if (
-          payload.activity.field &&
-          !payload.activity.field.includes("_id") &&
-          !isUUID(payload.activity.old_value) &&
-          !isUUID(payload.activity.new_value)
-        ) {
+        } else if (isValidIssueUpdateActivity(payload)) {
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,
             project_id: project,

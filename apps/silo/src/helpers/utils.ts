@@ -1,9 +1,11 @@
 import axios from "axios";
 import { parse, HTMLElement } from "node-html-parser";
+import { validate as uuidValidate } from "uuid";
 import { Client as PlaneClient } from "@plane/sdk";
 import { env } from "@/env";
 import { logger } from "@/logger";
 import { getValidCredentials } from "./credential";
+
 export const removeSpanAroundImg = (htmlContent: string): string => {
   // Parse the HTML content
   const root = parse(htmlContent);
@@ -100,6 +102,10 @@ export const createPlaneClient = async (workspaceId: string, userId: string, sou
     throw error;
   }
 };
+
+export const titleCase = (word: string) => word.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+export const isUUID = (id: string | null) => id && uuidValidate(id);
 
 export const invertStringMap = (map: Map<string, string>) => {
   const invertedMap = new Map<string, string>();

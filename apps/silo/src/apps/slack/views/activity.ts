@@ -60,7 +60,6 @@ export const createActivityLinkback = (activity: ActivityProps) => {
   for (const [_, actorActivities] of Object.entries(activitiesByActor)) {
     let changeText = "";
     const actorId = actorActivities[0].actorId;
-    const actorDisplayName = actorActivities[0].actorDisplayName;
 
     for (const activity of actorActivities) {
       const { field } = activity;
@@ -86,9 +85,11 @@ export const createActivityLinkback = (activity: ActivityProps) => {
     });
 
     const mutationContext = createSlackLinkbackMutationContext({
-      issue: {
-        updated_by: actorId,
-        created_by: actorId,
+      issueCtx: {
+        updatedBy: {
+          id: actorId,
+          display_name: actorActivities[0].actorDisplayName,
+        },
       },
       planeToSlackUserMap,
       workspaceSlug,

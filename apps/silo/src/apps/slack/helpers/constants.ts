@@ -79,5 +79,11 @@ export const INTAKE_STATUSES = [
   { id: 2, name: "Duplicate", emoji: "🔄" },
 ];
 
-
-export const IGNORED_FIELD_UPDATES = ["description", "attachment", "sort_order", "link"]
+export const IGNORED_FIELD_UPDATES = [
+  "description",
+  "description_html",
+  "attachment",
+  "sort_order",
+  "link",
+  "reaction",
+];

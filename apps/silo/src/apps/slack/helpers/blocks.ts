@@ -1,20 +1,26 @@
-import { ExIntakeIssue, IssueWithExpanded } from "@plane/sdk";
-
-import { getUserMarkdown } from "./user";
 
 export enum E_MUTATION_CONTEXT_ITEM_TYPE {
   WORK_ITEM = "work item",
-  INTAKE = "intake"
+  INTAKE = "intake",
 }
 
 export enum E_MUTATION_CONTEXT_FORMAT_TYPE {
   CREATION_ONLY = "creation-only",
   CREATION_AND_UPDATE = "creation-and-update",
-  UPDATE_ONLY = "update-only"
+  UPDATE_ONLY = "update-only",
 }
 
 export const createSlackLinkbackMutationContext = (params: {
-  issue: Pick<ExIntakeIssue | IssueWithExpanded<any>, "created_by" | "updated_by">;
+  issueCtx: {
+    createdBy?: {
+      id: string;
+      display_name: string;
+    };
+    updatedBy?: {
+      id: string;
+      display_name: string;
+    };
+  };
   planeToSlackUserMap: Map<string, string>;
   workspaceSlug: string;
   options?: {
@@ -23,7 +29,7 @@ export const createSlackLinkbackMutationContext = (params: {
     format?: E_MUTATION_CONTEXT_FORMAT_TYPE;
   };
 }) => {
-  const { issue, planeToSlackUserMap, workspaceSlug, options = {} } = params;
+  const { issueCtx, options = {} } = params;
   const {
     itemType = E_MUTATION_CONTEXT_ITEM_TYPE.WORK_ITEM,
     showUpdateInfo = false,
@@ -32,28 +38,26 @@ export const createSlackLinkbackMutationContext = (params: {
 
   // Handle update-only format
   if (format === E_MUTATION_CONTEXT_FORMAT_TYPE.UPDATE_ONLY) {
-    if (!issue.updated_by) {
+    if (!issueCtx.updatedBy) {
       return ""; // Return empty string if no update info available
     }
 
-    const updateUser = getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.updated_by);
-    return `*${updateUser} updated this ${itemType}*`;
+    const updateUser = issueCtx.updatedBy.display_name;
+    return `_${updateUser}_ updated this ${itemType}`;
   }
 
   // Determine the user to display (prefer created_by, fallback to updated_by)
-  const user = issue.created_by
-    ? getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.created_by)
-    : issue.updated_by
-      ? getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.updated_by)
+  const user = issueCtx.createdBy
+    ? issueCtx.createdBy.display_name
+    : issueCtx.updatedBy
+      ? issueCtx.updatedBy.display_name
       : "Unknown User";
 
-
-  let content = `*${user} ${itemType === E_MUTATION_CONTEXT_ITEM_TYPE.INTAKE ? "created" : "added"} this ${itemType}*`;
+  let content = `_${user}_ ${itemType === E_MUTATION_CONTEXT_ITEM_TYPE.INTAKE ? "created" : "added"} this ${itemType}`;
 
   // Add update information if requested and available
-  if (format === E_MUTATION_CONTEXT_FORMAT_TYPE.CREATION_AND_UPDATE && showUpdateInfo && issue.updated_by) {
-    const updateUser = getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.updated_by);
-    content += `\n*${updateUser} updated this ${itemType}*`;
+  if (format === E_MUTATION_CONTEXT_FORMAT_TYPE.CREATION_AND_UPDATE && showUpdateInfo && issueCtx.updatedBy) {
+    content += `\n_${issueCtx.updatedBy.display_name}_ updated this ${itemType}`;
   }
 
   return content;

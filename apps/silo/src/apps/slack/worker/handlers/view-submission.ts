@@ -14,7 +14,7 @@ import { getSlackContentParser } from "../../helpers/content-parser";
 import { createSlackFormParser } from "../../helpers/field-parser/field-parser";
 import { parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
 import { getSlackThreadUrl } from "../../helpers/urls";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
 import { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
 import {
   E_MESSAGE_ACTION_TYPES,
@@ -70,7 +70,7 @@ export const handleLinkWorkItemViewSubmission = async (
       linkWorkItemValues.workspaceSlug,
       linkWorkItemValues.projectId,
       linkWorkItemValues.issueId,
-      ["state", "project", "assignees", "labels"]
+      ["state", "project", "assignees", "labels", "created_by", "updated_by"]
     );
 
     // Check if the issue is already linked to a thread
@@ -399,7 +399,7 @@ async function createIntakeIssueFromViewSubmission(
     },
   });
 
-  const linkBack = createSlackIntakeLinkback(workspaceConnection.workspace_slug, issue, userMap, false);
+  const linkBack = createSlackIntakeLinkback(workspaceConnection.workspace_slug, issue, userMap, false, member);
 
   if (metadata.entityPayload.type === ENTITIES.SHORTCUT_PROJECT_SELECTION) {
     const payload = metadata.entityPayload as ShortcutActionPayload;
@@ -494,15 +494,20 @@ async function createWorkItemFromViewSubmission(
     workspaceConnection.workspace_slug,
     projectId,
     issueId,
-    ["state", "project", "assignees", "labels"]
+    ["state", "project", "assignees", "labels", "created_by", "updated_by"]
   );
 
   const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+    planeUsers: issueWithFields.assignees,
+    currentUserMap: userMap,
+    slackService,
+  });
 
   const linkBack = createSlackLinkback(
     workspaceConnection.workspace_slug,
     issueWithFields,
-    userMap,
+    enhancedUserMap,
     parsedData.data.enable_thread_sync ?? false
   );
 
@@ -724,7 +729,7 @@ async function processCustomFields(params: {
 }
 
 export const createIssueErrorBlocks = (
-  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>,
   channelName: string,
   threadLink: string,
   issueLink: string

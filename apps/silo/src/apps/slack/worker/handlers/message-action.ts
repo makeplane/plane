@@ -92,7 +92,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
       workspaceEntityConnections[0].workspace_slug,
       workspaceEntityConnections[0].project_id!,
       workspaceEntityConnections[0].issue_id!,
-      ["state", "project", "assignees", "labels"]
+      ["state", "project", "assignees", "labels", "created_by", "updated_by"]
     );
     const statesPromise = planeClient.state.list(
       workspaceEntityConnections[0].workspace_slug,

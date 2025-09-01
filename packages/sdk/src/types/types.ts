@@ -88,9 +88,11 @@ type IIsssue = {
 export type ExpandableFields = {
   state: ExState;
   project: ExProject;
-  assignees: ExUser[];
+  assignees: PlaneUser[];
   labels: ExIssueLabel[];
   type: ExIssueType;
+  created_by: PlaneUser | undefined;
+  updated_by: PlaneUser | undefined;
 }
 // Create a type that can handle both expanded and unexpanded fields
 export type IssueWithExpanded<T extends Array<keyof ExpandableFields>> = Omit<ExIssue, T[number]> &

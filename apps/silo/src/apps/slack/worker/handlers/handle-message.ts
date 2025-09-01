@@ -8,7 +8,7 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
 import { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
@@ -140,13 +140,19 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             workspaceConnection.workspace_slug,
             resource.projectIdentifier,
             Number(resource.issueKey),
-            ["state", "project", "assignees", "labels", "type"],
+            ["state", "project", "assignees", "labels", "type", "created_by", "updated_by"],
             true
           );
 
+          const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+            planeUsers: issue.assignees,
+            currentUserMap: userMap,
+            slackService,
+          });
+
           const hideActions = issue.type?.is_epic ?? false;
 
-          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false, hideActions);
+          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, enhancedUserMap, false, hideActions);
           unfurlMap[link.url] = {
             blocks: linkBack.blocks,
           };

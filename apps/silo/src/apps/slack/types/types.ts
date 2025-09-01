@@ -107,7 +107,7 @@ export type TSlackWorkItemOrIntakeModalParams = {
   showThreadSync?: boolean;
 
   // Work item to update
-  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels"]>>
+  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>>
   disableIssueType?: boolean;
 
   // Connection details
@@ -141,10 +141,14 @@ export type ActivityForSlack = {
       isArrayField: true;
       removed: string[];
       added: string[];
+      addedIdentifiers: string[];
+      removedIdentifiers: string[];
     }
     | {
       isArrayField: false;
       newValue: string;
       oldValue?: string;
+      newIdentifier?: string;
+      oldIdentifier?: string;
     }
   );

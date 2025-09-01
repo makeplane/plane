@@ -223,7 +223,7 @@ async function mapFieldToSlackBlock(
   field: FormField,
   projectId: string,
   metadata?: SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
-  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels"]>>
+  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>>
 ) {
   if (field.id === E_KNOWN_FIELD_KEY.DESCRIPTION_HTML && metadata) {
     if (workItem) {
@@ -268,7 +268,7 @@ async function getSlackBlocks(
   },
   type: "work-item" | "intake",
   metadata?: SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
-  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels"]>>
+  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>>
 ) {
   const { workspaceSlug, projectId, issueTypeId, accessToken } = params;
 

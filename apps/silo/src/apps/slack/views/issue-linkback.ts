@@ -1,13 +1,17 @@
 import { IssueWithExpanded } from "@plane/sdk";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
-import { createSlackLinkbackMutationContext, E_MUTATION_CONTEXT_FORMAT_TYPE, E_MUTATION_CONTEXT_ITEM_TYPE } from "../helpers/blocks";
+import {
+  createSlackLinkbackMutationContext,
+  E_MUTATION_CONTEXT_FORMAT_TYPE,
+  E_MUTATION_CONTEXT_ITEM_TYPE,
+} from "../helpers/blocks";
 import { ACTIONS } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
 
 export const createSlackLinkback = (
   workspaceSlug: string,
-  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>,
   userMap: Map<string, string>,
   isSynced: boolean,
   hideActions: boolean = false
@@ -25,28 +29,30 @@ export const createSlackLinkback = (
   });
 
   // Build markdown content for main section (fallback to mrkdwn for compatibility)
-  let sectionContent = `> Project: *${issue.project.name}*`;
+  let sectionContent = `> *Project*: ${issue.project.name}`;
 
   if (issue.state) {
-    sectionContent += `\n> State: *${issue.state.name}*`;
+    sectionContent += `\n> *State*: ${issue.state.name}`;
   }
 
   if (issue.priority && issue.priority !== "none") {
-    sectionContent += `\n> Priority: *${issue.priority}*`;
+    sectionContent += `\n> *Priority*: ${issue.priority}`;
   }
 
   if (issue.assignees.length > 0) {
     const assigneeLabel = issue.assignees.length > 1 ? "Assignees" : "Assignee";
     const assignee =
       issue.assignees.length > 1
-        ? issue.assignees.map((a) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, a.id)).join(", ")
-        : getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.assignees[0].id);
+        ? issue.assignees
+          .map((a) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, a.id, a.display_name))
+          .join(", ")
+        : getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.assignees[0].id, issue.assignees[0].display_name);
 
-    sectionContent += `\n> ${assigneeLabel}: *${assignee}*`;
+    sectionContent += `\n> *${assigneeLabel}*: ${assignee}`;
   }
 
   if (issue.target_date) {
-    sectionContent += `\n> Target Date: *${issue.target_date}*`;
+    sectionContent += `\n> *Target Date*: ${issue.target_date}`;
   }
 
   // Main section with issue details using mrkdwn for compatibility
@@ -65,7 +71,10 @@ export const createSlackLinkback = (
 
   // Build markdown content for creation/update info
   const mutationContext = createSlackLinkbackMutationContext({
-    issue,
+    issueCtx: {
+      createdBy: issue.created_by,
+      updatedBy: issue.updated_by,
+    },
     planeToSlackUserMap,
     workspaceSlug,
     options: {
