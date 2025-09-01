@@ -1662,7 +1662,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             ).annotate(is_epic=F("type__is_epic"))
-        ).first()
+        )
         
 
         if check_workspace_feature_flag(
