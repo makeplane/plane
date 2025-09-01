@@ -2,7 +2,6 @@ import * as React from "react";
 import { Separator as SeparatorPrimitive } from "@base-ui-components/react/separator";
 import { cn } from "../utils";
 
-
 interface SeparatorProps extends React.ComponentProps<typeof SeparatorPrimitive> {
   /**
    * The orientation of the separator
