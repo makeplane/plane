@@ -29,6 +29,9 @@ export const Logo: FC<Props> = (props) => {
   // destructuring the logo object
   const { in_use, emoji, icon } = logo;
 
+  // if no in_use value, return empty fragment
+  if (!in_use) return <></>;
+
   // derived values
   const value = in_use === "emoji" ? emoji?.value : icon?.name;
   const color = icon?.color;

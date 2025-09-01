@@ -2,36 +2,45 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { SmilePlus } from "lucide-react";
 // plane imports
+import type { EditorTitleRefApi } from "@plane/editor";
 import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { cn } from "@plane/utils";
+// plane web components
+import { PageTemplatePicker } from "@/plane-web/components/pages";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
+  isEditorContentEmpty: boolean;
+  isPageLoading: boolean;
   page: TPageInstance;
   projectId: string;
+  titleEditorRef: React.RefObject<EditorTitleRefApi>;
+  workspaceSlug: string;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { page } = props;
+  const { isEditorContentEmpty, isPageLoading, page, projectId, titleEditorRef, workspaceSlug } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // derived values
-  const { isContentEditable, logo_props, name, updatePageLogo } = page;
+  const { isContentEditable, logo_props, updatePageLogo } = page;
   const isLogoSelected = !!logo_props?.in_use;
-  const isTitleEmpty = !name || name.trim() === "";
 
   return (
     <>
       <div className="h-[48px] flex items-end text-left">
-        {!isLogoSelected && (
-          <div
-            className={cn("opacity-0 group-hover/page-header:opacity-100 transition-all duration-200", {
-              "opacity-100": isTitleEmpty,
-            })}
-          >
+        <div
+          className={cn(
+            "opacity-0 group-hover/page-header:opacity-100 flex items-center gap-1 transition-all duration-200",
+            {
+              "opacity-100": isEditorContentEmpty,
+            }
+          )}
+        >
+          {!isLogoSelected && (
             <EmojiIconPicker
               isOpen={isLogoPickerOpen}
               handleToggle={(val) => setIsLogoPickerOpen(val)}
@@ -62,8 +71,17 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
               }
               disabled={!isContentEditable}
             />
-          </div>
-        )}
+          )}
+          {isEditorContentEmpty && (
+            <PageTemplatePicker
+              isPageLoading={isPageLoading}
+              page={page}
+              projectId={projectId}
+              titleEditorRef={titleEditorRef}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
+        </div>
       </div>
       <PageEditorHeaderLogoPicker className="flex-shrink-0 w-full mt-2 flex" page={page} />
     </>

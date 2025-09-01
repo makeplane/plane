@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// document-editor
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
@@ -9,19 +10,23 @@ import {
   type TFileHandler,
   type TRealtimeConfig,
   type TServerHandler,
+  type EditorTitleRefApi,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+// plane ui
 import { ERowVariant, Row } from "@plane/ui";
-import { cn, generateRandomColor, hslToHex } from "@plane/utils";
+import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web types
@@ -30,20 +35,20 @@ import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
-import { PageEditorTitle } from "./title";
+// types
 
+// Add a CSS keyframe animation
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
 };
 
+// Define the structure of action-specific data
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   getRedirectionLink: (pageId?: string) => string;
@@ -63,7 +68,8 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
-
+  customRealtimeEventHandlers?: TCustomEventHandlers;
+  // Extended editor extensions configuration
   extendedEditorProps: TExtendedEditorExtensionsConfig;
 };
 
@@ -81,8 +87,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     webhookConnectionParams,
     projectId,
     workspaceSlug,
+    customRealtimeEventHandlers,
     extendedEditorProps,
   } = props;
+
+  // states
+  const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  // refs
+  const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -90,17 +103,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // derived values
   const {
     id: pageId,
-    name: pageTitle,
     isContentEditable,
-    updateTitle,
     editor: { editorRef, updateAssetsList },
+    setSyncingStatus,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
-    fetchEmbedSuggestions: handlers.fetchEntity,
-    workspaceSlug,
-  });
+  const isTitleEmpty = !page.name || page.name.trim() === "";
+
+  // Simple animation effect that triggers on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100); // Slightly longer delay for smoother coordination
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
@@ -114,6 +132,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation
   const { t } = useTranslation();
+
   // derived values
   const displayConfig: TDisplayConfig = useMemo(
     () => ({
@@ -123,6 +142,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     [fontSize, fontStyle, isFullWidth]
   );
+
+  // Use the new hook to handle page events
+  const { updatePageProperties } = useRealtimePageEvents({
+    storeType,
+    page,
+    getUserDetails,
+    customRealtimeEventHandlers,
+    handlers,
+  });
+
+  // Set syncing status on initial render
+  useEffect(() => {
+    setSyncingStatus("syncing");
+  }, [setSyncingStatus]);
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -143,14 +176,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, [handleConnectionStatus]);
+    setSyncingStatus("error");
+  }, [handleConnectionStatus, setSyncingStatus]);
+
+  const handleServerSynced = useCallback(() => {
+    setSyncingStatus("synced");
+  }, [setSyncingStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
+      onServerSynced: handleServerSynced,
     }),
-    [handleServerConnect, handleServerError]
+    [handleServerConnect, handleServerError, handleServerSynced]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -188,11 +227,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
+  if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
-      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -216,48 +256,61 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-        <div className="page-header-container group/page-header">
-          <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot page={page} projectId={projectId} />
-            <PageEditorTitle
-              editorRef={editorRef}
-              readOnly={!isContentEditable}
-              title={pageTitle}
-              updateTitle={updateTitle}
-            />
+        <div
+          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
+          style={{
+            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
+            animationDelay: "100ms",
+          }}
+        >
+          <div className="page-header-container group/page-header">
+            <div className={blockWidthClassName}>
+              <PageEditorHeaderRoot
+                isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
+                isPageLoading={isPageLoading}
+                page={page}
+                projectId={projectId}
+                titleEditorRef={titleEditorRef}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
           </div>
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={config.fileHandler}
+            handleEditorReady={handleEditorReady}
+            embedHandler={extendedEditorProps.embedHandler ?? {}}
+            ref={editorForwardRef}
+            titleRef={titleEditorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+            }}
+            onAssetChange={updateAssetsList}
+            onChange={(_json, html) => {
+              setIsDescriptionEmpty(isCommentEmpty(html));
+            }}
+            updatePageProperties={updatePageProperties}
+            pageRestorationInProgress={page.restoration.inProgress}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={documentEditorExtensions.disabled}
+            flaggedExtensions={documentEditorExtensions.flagged}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+            extendedEditorProps={extendedEditorProps}
+          />
         </div>
-        <CollaborativeDocumentEditorWithRef
-          editable={isContentEditable}
-          id={pageId}
-          fileHandler={config.fileHandler}
-          handleEditorReady={handleEditorReady}
-          ref={editorForwardRef}
-          containerClassName="h-full p-0 pb-64"
-          displayConfig={displayConfig}
-          mentionHandler={{
-            searchCallback: async (query) => {
-              const res = await fetchMentions(query);
-              if (!res) throw new Error("Failed in fetching mentions");
-              return res;
-            },
-            renderComponent: (props) => <EditorMentionsRoot {...props} />,
-            getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-          }}
-          embedHandler={{
-            issue: issueEmbedProps,
-          }}
-          realtimeConfig={realtimeConfig}
-          serverHandler={serverHandler}
-          user={userConfig}
-          disabledExtensions={documentEditorExtensions.disabled}
-          flaggedExtensions={documentEditorExtensions.flagged}
-          aiHandler={{
-            menu: getAIMenu,
-          }}
-          onAssetChange={updateAssetsList}
-          extendedEditorProps={extendedEditorProps}
-        />
       </div>
     </Row>
   );
