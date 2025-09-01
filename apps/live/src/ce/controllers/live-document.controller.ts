@@ -100,7 +100,7 @@ export class LiveDocumentController {
         res.status(200).json(documentLoaded);
       } catch (error) {
         // Error during server agent connection or conversion
-        manualLogger.error(`Error processing document ${documentId}:`, error);
+        manualLogger.error(error, `Error processing document ${documentId}:`);
 
         res.status(400).json({
           loaded: false,

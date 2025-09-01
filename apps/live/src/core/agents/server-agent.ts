@@ -169,11 +169,14 @@ export class ServerAgentManager {
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      manualLogger.error(`Transaction error for document ${documentId}: ${errorMessage}`, {
-        documentId,
-        error: error instanceof Error ? error.stack : errorMessage,
-        context,
-      });
+      manualLogger.error(
+        {
+          documentId,
+          error: error instanceof Error ? error.stack : errorMessage,
+          context,
+        },
+        `Transaction error for document ${documentId}: ${errorMessage}`
+      );
 
       // Notify about transaction failure if needed
       this.notifyTransactionFailure(documentId, errorMessage, res);
@@ -235,7 +238,7 @@ export class ServerAgentManager {
       manualLogger.info(`notified transaction success for ${documentId}:`);
       // res.status(200).json({ success: true });
     } catch (error) {
-      manualLogger.error(`Error notifying transaction success for ${documentId}:`, error);
+      manualLogger.error(error, `Error notifying transaction success for ${documentId}:`);
     }
   }
 
@@ -262,7 +265,7 @@ export class ServerAgentManager {
       //   })
       // );
     } catch (error) {
-      manualLogger.error(`Error notifying transaction failure for ${documentId}:`, error);
+      manualLogger.error(error, `Error notifying transaction failure for ${documentId}:`);
     }
   }
 
@@ -284,7 +287,7 @@ export class ServerAgentManager {
       manualLogger.info(`Released connection for document: ${documentId}`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      manualLogger.error(`Error releasing connection for document ${documentId}: ${errorMessage}`);
+      manualLogger.error(error, `Error releasing connection for document ${documentId}: ${errorMessage}`);
       // We still want to remove it from our map even if disconnect fails
       this.connections.delete(documentId);
     }
@@ -324,7 +327,7 @@ export class ServerAgentManager {
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupUnusedConnections().catch((error) => {
-        manualLogger.error("Error during connection cleanup:", error);
+        manualLogger.error(error, "Error during connection cleanup:");
       });
     }, CLEANUP_INTERVAL);
   }
@@ -390,7 +393,7 @@ export class ServerAgentManager {
           try {
             await serverAgentManager.checkAndReleaseIfNoClients(documentName);
           } catch (error) {
-            manualLogger.error(`Error checking client connections for ${documentName}:`, error);
+            manualLogger.error(error, `Error checking client connections for ${documentName}:`);
           }
         }, 100); // Small delay to ensure connection state is updated
       },
