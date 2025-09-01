@@ -32,8 +32,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
@@ -85,11 +85,11 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "18.15.3",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "keywords": [
     "editor",
