@@ -317,7 +317,7 @@ export const joinUrlPath = (...segments: string[]): string => {
   if (validSegments.length === 0) return "";
 
   // Process segments to normalize slashes
-  const processedSegments = validSegments.map((segment) => {
+  const processedSegments = validSegments.map((segment, index) => {
     let processed = segment;
 
     // Remove leading slashes from all segments except the first
@@ -326,8 +326,10 @@ export const joinUrlPath = (...segments: string[]): string => {
     }
 
     // Remove trailing slashes from all segments except the last
-    while (processed.endsWith("/")) {
-      processed = processed.substring(0, processed.length - 1);
+    if (index < validSegments.length - 1) {
+      while (processed.endsWith("/")) {
+        processed = processed.substring(0, processed.length - 1);
+      }
     }
 
     return processed;
