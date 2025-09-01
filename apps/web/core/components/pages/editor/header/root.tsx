@@ -16,7 +16,7 @@ type Props = {
   isEditorContentEmpty: boolean;
   isPageLoading: boolean;
   page: TPageInstance;
-  projectId: string;
+  projectId?: string;
   titleEditorRef: React.RefObject<EditorTitleRefApi>;
   workspaceSlug: string;
 };

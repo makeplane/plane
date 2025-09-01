@@ -65,7 +65,7 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
   customRealtimeEventHandlers?: TCustomEventHandlers;
