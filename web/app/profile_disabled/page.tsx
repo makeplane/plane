@@ -13,7 +13,6 @@ const ProfileSettingsPage = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser, userProfile } = useUser();
-
   if (!currentUser)
     return (
       <div className="grid h-full w-full place-items-center px-4 sm:px-0">
