@@ -6,6 +6,7 @@ import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
 import {
@@ -203,7 +204,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               control={control}
               name="logo_props"
               render={({ field: { value, onChange } }) => (
-                <CustomEmojiIconPicker
+                <EmojiPicker
+                  iconType="material"
                   closeOnSelect={false}
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
@@ -215,8 +217,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
                     if (val?.type === "emoji")
                       logoValue = {
-                        value: convertHexEmojiToDecimal(val.value.unified),
-                        url: val.value.imageUrl,
+                        value: val.value,
                       };
                     else if (val?.type === "icon") logoValue = val.value;
 
