@@ -428,9 +428,11 @@ class EpicViewSet(BaseViewSet):
             )
         # EE end
 
-        current_instance = json.dumps(EpicSerializer(epic).data, cls=DjangoJSONEncoder)
+        current_instance = json.dumps(
+            EpicDetailSerializer(epic).data, cls=DjangoJSONEncoder
+        )
 
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         serializer = EpicCreateSerializer(epic, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
