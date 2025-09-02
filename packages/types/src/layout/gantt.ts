@@ -1,7 +1,7 @@
 export enum EGanttBlockType {
   EPIC = "epic",
   PROJECT = "project",
-  ISSUE = "issue",
+  WORK_ITEM = "work_item",
 }
 export interface IGanttBlock {
   data: any;

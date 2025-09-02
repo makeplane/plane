@@ -5,6 +5,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
+import coreEnExtended from "../locales/en/core-extended.json";
 import coreEn from "../locales/en/core.json";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
@@ -17,7 +18,7 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
 export class TranslationStore {
   // Core translations that are always loaded
   private coreTranslations: ITranslations = {
-    en: coreEn,
+    en: merge({}, coreEn, coreEnExtended),
   };
   // List of translations for each language
   private translations: ITranslations = {};
