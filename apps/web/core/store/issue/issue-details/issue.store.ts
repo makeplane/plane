@@ -107,7 +107,7 @@ export class IssueStore implements IIssueStore {
       this.localDBIssueDescription = issueId;
     }
 
-    await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+    issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Work item not found");
 
