@@ -11,7 +11,7 @@ import {
   TFilterValue,
 } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
-import { getOperatorLabel, getValidOperatorsForType } from "@plane/utils";
+import { getOperatorLabel, getValidOperatorsForType, shouldNotifyChangeForValue } from "@plane/utils";
 // plane web imports
 import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 // local imports
@@ -80,6 +80,10 @@ export const FilterItem = observer(
     };
 
     const handleValueChange = (values: SingleOrArray<TFilterValue>) => {
+      if (!shouldNotifyChangeForValue(values)) {
+        filter.removeCondition(condition.id);
+        return;
+      }
       filter.updateCondition(condition.id, { value: values });
     };
 

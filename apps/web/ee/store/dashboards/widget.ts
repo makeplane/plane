@@ -12,6 +12,7 @@ import {
   TDashboardWidget,
   TDashboardWidgetConfig,
   TDashboardWidgetData,
+  TExternalDashboardWidgetFilterExpression,
 } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
@@ -41,6 +42,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
   chart_model: EWidgetChartModels | undefined;
   chart_type: EWidgetChartTypes | undefined;
   config: TDashboardWidgetConfig | undefined;
+  filters: TExternalDashboardWidgetFilterExpression | {} = {};
   created_at: Date | undefined;
   created_by: string | undefined;
   group_by: EWidgetXAxisProperty | null | undefined;
@@ -79,6 +81,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
     this.x_axis_property = widget.x_axis_property;
     this.y_axis_coord = widget.y_axis_coord === undefined ? 0 : widget.y_axis_coord;
     this.y_axis_metric = widget.y_axis_metric;
+    this.filters = widget.filters ?? {};
     // initialize helpers
     this.helpers = helpers;
     // initialize root store
@@ -88,6 +91,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       // observables
       isFetchingData: observable.ref,
       data: observable,
+      filters: observable,
       chart_model: observable.ref,
       chart_type: observable.ref,
       config: observable,
@@ -138,6 +142,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       x_axis_property: this.x_axis_property,
       y_axis_coord: this.y_axis_coord,
       y_axis_metric: this.y_axis_metric,
+      filters: this.filters,
     };
   }
 

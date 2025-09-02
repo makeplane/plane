@@ -280,16 +280,9 @@ def build_widget_chart(
                 conditions_id.append(When(id__in=nested_ids, then=Value(epic_id)))
                 conditions_name.append(When(id__in=nested_ids, then=Value(epic.name)))
 
-        combined_qs = (
-            Issue.issue_objects.filter(id__in=all_ids)
-            .annotate(
-                epic_id=Case(*conditions_id, output_field=UUIDField()),
-                epic_name=Case(*conditions_name, output_field=CharField()),
-            )
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-            )
+        combined_qs = Issue.issue_objects.filter(id__in=all_ids).annotate(
+            epic_id=Case(*conditions_id, output_field=UUIDField()),
+            epic_name=Case(*conditions_name, output_field=CharField()),
         )
 
         queryset = combined_qs

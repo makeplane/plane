@@ -68,7 +68,11 @@ export const FilterValueInput = observer(
     };
 
     const getDisplayContent = (): ReactNode => {
-      if (!filter.value || (Array.isArray(filter.value) && filter.value.length === 0)) {
+      if (
+        filter.value === null ||
+        filter.value === undefined ||
+        (Array.isArray(filter.value) && filter.value.length === 0)
+      ) {
         return EMPTY_VALUE;
       }
 
@@ -127,6 +131,28 @@ export const FilterValueInput = observer(
 
     switch (config.type) {
       case FILTER_TYPE.SELECT:
+        return (
+          <CustomSearchSelect
+            value={filter.value}
+            onChange={handleSelectChange}
+            options={formattedOptions}
+            customButtonClassName={cn("h-full w-full px-2 text-sm font-normal transition-all duration-300 ease-in-out")}
+            optionsClassName="w-56"
+            maxHeight="md"
+            multiple={false}
+            disabled={loading}
+            customButton={
+              <div className="flex items-center h-full overflow-hidden transition-all duration-200">
+                {getDisplayContent()}
+              </div>
+            }
+            defaultOpen={
+              filter.value === null ||
+              filter.value === undefined ||
+              (Array.isArray(filter.value) && filter.value.length === 0)
+            }
+          />
+        );
       case FILTER_TYPE.MULTI_SELECT:
         return (
           <CustomSearchSelect
@@ -146,6 +172,7 @@ export const FilterValueInput = observer(
             defaultOpen={!filter.value || (Array.isArray(filter.value) && filter.value.length === 0)}
           />
         );
+
       // TODO: Add date picker
       case FILTER_TYPE.DATE:
         return null;

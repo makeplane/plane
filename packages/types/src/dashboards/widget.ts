@@ -1,3 +1,5 @@
+import { LOGICAL_OPERATOR, TFilterExpression, TFilterValue } from "../rich-filters";
+
 export enum EWidgetChartModels {
   BASIC = "BASIC",
   STACKED = "STACKED",
@@ -59,26 +61,27 @@ export type TWidgetLineChartLineType = "solid" | "dashed";
 export type TWidgetTextAlignment = "left" | "center" | "right";
 export type TWidgetPieChartValuesType = "percentage" | "count";
 // bar chart
-export type TBarChartWidgetConfig = {
-  bar_color?: string;
-  color_scheme?: TWidgetChartColorScheme;
-  orientation?: TWidgetBarChartOrientation;
+
+export type TChartBaseConfig = {
   show_legends?: boolean;
   show_tooltip?: boolean;
+  color_scheme?: TWidgetChartColorScheme;
+  filters?: TExternalDashboardWidgetFilterExpression;
+};
+
+export type TBarChartWidgetConfig = TChartBaseConfig & {
+  bar_color?: string;
+  orientation?: TWidgetBarChartOrientation;
 };
 // line chart
-export type TLineChartWidgetConfig = {
-  color_scheme?: TWidgetChartColorScheme;
+export type TLineChartWidgetConfig = TChartBaseConfig & {
   line_color?: string;
   line_type?: TWidgetLineChartLineType;
   show_markers?: boolean;
   smoothing?: boolean;
-  show_legends?: boolean;
-  show_tooltip?: boolean;
 };
 // area chart
-export type TAreaChartWidgetConfig = {
-  color_scheme?: TWidgetChartColorScheme;
+export type TAreaChartWidgetConfig = TChartBaseConfig & {
   fill_color?: string;
   line_color?: string;
   line_type?: TWidgetLineChartLineType;
@@ -86,28 +89,21 @@ export type TAreaChartWidgetConfig = {
   show_border?: boolean;
   show_markers?: boolean;
   smoothing?: boolean;
-  show_legends?: boolean;
-  show_tooltip?: boolean;
 };
 // donut chart
-export type TDonutChartWidgetConfig = {
-  color_scheme?: TWidgetChartColorScheme;
+export type TDonutChartWidgetConfig = TChartBaseConfig & {
   center_value?: boolean;
   completed_color?: string;
-  show_legends?: boolean;
-  show_tooltip?: boolean;
 };
 // pie chart
-export type TPieChartWidgetConfig = {
-  color_scheme?: TWidgetChartColorScheme;
+export type TPieChartWidgetConfig = TChartBaseConfig & {
   group_thin_pieces?: boolean;
   minimum_threshold?: number;
   group_name?: string;
   show_values?: boolean;
   value_type?: TWidgetPieChartValuesType;
-  show_legends?: boolean;
-  show_tooltip?: boolean;
 };
+
 // text
 export type TNumberWidgetConfig = {
   text_alignment?: TWidgetTextAlignment;
@@ -140,6 +136,7 @@ export type TDashboardWidget = {
   x_axis_property: EWidgetXAxisProperty | null | undefined;
   y_axis_coord: number | undefined;
   y_axis_metric: EWidgetYAxisMetric | null | undefined;
+  filters: TExternalDashboardWidgetFilterExpression | null;
 };
 
 export type TDashboardWidgetsLayoutPayload = Pick<
@@ -157,3 +154,49 @@ export type TDashboardWidgetData = {
   data: TDashboardWidgetDatum[];
   schema: Record<string, string>;
 };
+
+// filters
+export type TDashboardWidgetFilterKeys =
+  | "assignee_id"
+  | "cycle_id"
+  | "module_id"
+  | "mention_id"
+  | "created_by_id"
+  | "label_id"
+  | "is_archived"
+  | "state_group"
+  | "state_id"
+  | "type_id"
+  // | "start_date"
+  // | "target_date"
+  | "is_draft"
+  | "priority";
+
+export type TExternalWidgetFieldOperator = "is" | "in" | "range";
+export const EXTERNAL_WIDGET_OPERATOR_SEPARATOR = "__";
+
+export type TExternalDashboardWidgetFilterAndGroup = {
+  [LOGICAL_OPERATOR.AND]: TExternalDashboardWidgetFilterExpression[];
+};
+
+export type TExternalDashboardWidgetFilterOrGroup = {
+  [LOGICAL_OPERATOR.OR]: TExternalDashboardWidgetFilterExpression[];
+};
+
+export type TExternalDashboardWidgetFilterNotGroup = {
+  [LOGICAL_OPERATOR.NOT]: TExternalDashboardWidgetFilterExpression;
+};
+
+export type TExternalDashboardWidgetFilterGroup =
+  | TExternalDashboardWidgetFilterAndGroup
+  | TExternalDashboardWidgetFilterOrGroup
+  | TExternalDashboardWidgetFilterNotGroup;
+
+export type TExternalDashboardWidgetFilterExpressionData =
+  | {
+      [key in TDashboardWidgetFilterKeys]?: TFilterValue;
+    }
+  | TExternalDashboardWidgetFilterGroup;
+
+export type TInternalDashboardWidgetFilterExpression = TFilterExpression<TDashboardWidgetFilterKeys>;
+export type TExternalDashboardWidgetFilterExpression = TExternalDashboardWidgetFilterExpressionData;
