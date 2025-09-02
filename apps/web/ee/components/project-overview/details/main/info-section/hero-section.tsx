@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -127,7 +129,8 @@ export const HeroSection = observer((props: THeroSection) => {
             control={control}
             name="logo_props"
             render={({ field: { value, onChange } }) => (
-              <CustomEmojiIconPicker
+              <EmojiPicker
+                iconType="material"
                 closeOnSelect={false}
                 isOpen={isOpen}
                 handleToggle={(val: boolean) => setIsOpen(val)}
@@ -139,8 +142,7 @@ export const HeroSection = observer((props: THeroSection) => {
 
                   if (val?.type === "emoji")
                     logoValue = {
-                      value: convertHexEmojiToDecimal(val.value.unified),
-                      url: val.value.imageUrl,
+                      value: val.value,
                     };
                   else if (val?.type === "icon") logoValue = val.value;
 

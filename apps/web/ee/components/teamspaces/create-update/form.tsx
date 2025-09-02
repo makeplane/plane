@@ -5,15 +5,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { EFileAssetType, EUserWorkspaceRoles, TTeamspace } from "@plane/types";
-import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
-import { cn, convertHexEmojiToDecimal, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
+import { Button, Input } from "@plane/ui";
+
+import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // store hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -91,7 +94,8 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
       <div className="space-y-3 p-5 pb-4">
         <h3 className="text-xl font-medium text-custom-text-200">{formData.id ? "Update" : "Create"} Teamspace</h3>
         <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
-          <CustomEmojiIconPicker
+          <EmojiPicker
+            iconType="material"
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
             className="flex items-center justify-center"
@@ -105,8 +109,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               let logoValue = {};
               if (val?.type === "emoji")
                 logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
+                  value: val.value,
                 };
               else if (val?.type === "icon") logoValue = val.value;
               handleFormDataChange("logo_props", {

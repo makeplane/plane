@@ -4,9 +4,9 @@ import { Controller, useFormContext } from "react-hook-form";
 import { FileText } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { TPageTemplateForm } from "@plane/types";
-import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
-import { convertHexEmojiToDecimal } from "@plane/utils";
+import { Input } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web imports
@@ -42,7 +42,8 @@ export const PageTemplatePageDetails: React.FC<Props> = observer((props) => {
           control={control}
           name="page.logo_props"
           render={({ field: { onChange, value } }) => (
-            <EmojiIconPicker
+            <EmojiPicker
+              iconType="lucide"
               isOpen={isEmojiIconPickerOpen}
               handleToggle={(val: boolean) => setIsEmojiIconPickerOpen(val)}
               className="grid place-items-center"
@@ -60,8 +61,7 @@ export const PageTemplatePageDetails: React.FC<Props> = observer((props) => {
                 let logoValue = {};
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
                 onChange({

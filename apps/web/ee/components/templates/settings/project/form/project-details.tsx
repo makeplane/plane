@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { TProjectTemplateForm } from "@plane/types";
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, Input, Logo, TextArea } from "@plane/ui";
-import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { Input, TextArea } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // plane web components
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
@@ -56,7 +58,8 @@ export const ProjectDetails = observer(() => {
             name="project.logo_props"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <CustomEmojiIconPicker
+              <EmojiPicker
+                iconType="material"
                 isOpen={isOpen}
                 handleToggle={(val: boolean) => setIsOpen(val)}
                 className="flex items-center justify-center"
@@ -71,8 +74,7 @@ export const ProjectDetails = observer(() => {
 
                   if (val?.type === "emoji")
                     logoValue = {
-                      value: convertHexEmojiToDecimal(val.value.unified),
-                      url: val.value.imageUrl,
+                      value: val.value,
                     };
                   else if (val?.type === "icon") logoValue = val.value;
 
