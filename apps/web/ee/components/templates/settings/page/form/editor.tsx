@@ -56,7 +56,6 @@ export const PageTemplateEditor = observer((props: Props) => {
         })
       }
       bubbleMenuEnabled
-      projectId={projectId}
       workspaceId={workspaceId}
       workspaceSlug={workspaceSlug}
     />
