@@ -919,6 +919,10 @@
     "add": {
       "success": "{entity} agregado correctamente",
       "failed": "Error al agregar {entity}"
+    },
+    "remove": {
+      "success": "{entity} eliminado correctamente",
+      "failed": "Error al eliminar {entity}"
     }
   },
   "epic": {
