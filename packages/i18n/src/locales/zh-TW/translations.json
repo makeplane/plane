@@ -918,6 +918,10 @@
     "add": {
       "success": "{entity} 新增成功",
       "failed": "新增 {entity} 時發生錯誤"
+    },
+    "remove": {
+      "success": "{entity} 刪除成功",
+      "failed": "刪除 {entity} 時發生錯誤"
     }
   },
   "epic": {

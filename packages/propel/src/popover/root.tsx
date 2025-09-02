@@ -8,6 +8,7 @@ export interface PopoverContentProps extends React.ComponentProps<typeof BasePop
   sideOffset?: BasePopover.Positioner.Props["sideOffset"];
   side?: TSide;
   containerRef?: React.RefObject<HTMLElement>;
+  positionerClassName?: string;
 }
 
 // PopoverContent component
@@ -19,6 +20,7 @@ const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
   align = "center",
   sideOffset = 8,
   containerRef,
+  positionerClassName,
   ...props
 }) {
   // side and align calculations
@@ -32,7 +34,7 @@ const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
 
   return (
     <PopoverPortal container={containerRef?.current}>
-      <PopoverPositioner side={finalSide} sideOffset={sideOffset} align={finalAlign}>
+      <PopoverPositioner side={finalSide} sideOffset={sideOffset} align={finalAlign} className={positionerClassName}>
         <BasePopover.Popup data-slot="popover-content" className={className} {...props}>
           {children}
         </BasePopover.Popup>

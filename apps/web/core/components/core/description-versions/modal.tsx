@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TDescriptionVersion } from "@plane/types";
 import {
   Avatar,
@@ -15,7 +16,6 @@ import {
   ModalCore,
   setToast,
   TOAST_TYPE,
-  Tooltip,
 } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components

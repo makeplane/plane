@@ -26,6 +26,8 @@
     "./tooltip": "./src/tooltip/index.ts",
     "./styles/fonts": "./src/styles/fonts/index.css",
     "./switch": "./src/switch/index.ts",
+    "./emoji-icon-picker": "./src/emoji-icon-picker/index.ts",
+    "./utils": "./src/utils/index.ts",
     "./accordion": "./src/accordion/index.ts",
     "./card": "./src/card/index.ts"
   },
@@ -36,12 +38,15 @@
     "@plane/types": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
+    "cmdk": "^1.1.1",
     "clsx": "^2.1.1",
+    "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "use-font-face-observer": "^1.3.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

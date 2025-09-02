@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
+import { observer } from "mobx-react";
 import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
@@ -13,6 +14,7 @@ import { ComboDropDown, Calendar } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
+import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -59,7 +61,7 @@ type Props = {
   customTooltipHeading?: string;
 };
 
-export const DateRangeDropdown: React.FC<Props> = (props) => {
+export const DateRangeDropdown: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const {
     buttonClassName,
@@ -95,6 +97,9 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>(value);
+  // hooks
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -160,13 +165,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         isActive={isOpen}
         tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
         tooltipContent={
-          customTooltipContent ?? (
-            <>
-              {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
-              {dateRange.from && dateRange.to ? " - " : ""}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
-            </>
-          )
+          <>
+            {customTooltipContent ?? (
+              <>
+                {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
+                {dateRange.from && dateRange.to ? " - " : ""}
+                {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
+              </>
+            )}
+          </>
         }
         showTooltip={showTooltip}
         variant={buttonVariant}
@@ -274,6 +281,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               disabled={disabledDays}
               showOutsideDays
               fixedWeeks
+              weekStartsOn={startOfWeek}
               initialFocus
             />
           </div>
@@ -281,4 +289,4 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       )}
     </ComboDropDown>
   );
-};
+});
