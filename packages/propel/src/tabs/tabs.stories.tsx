@@ -1,3 +1,4 @@
+import { ComponentProps } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Tabs } from "./tabs";
 
@@ -11,7 +12,7 @@ const tabOptions: TabOption[] = [
   { label: "Password", value: "password" },
 ];
 
-interface StoryProps extends React.ComponentProps<typeof Tabs> {
+interface StoryProps extends ComponentProps<typeof Tabs> {
   options: TabOption[];
 }
 
@@ -44,25 +45,28 @@ export const Basic: Story = {
     ],
   },
 
-  render: ({ defaultValue, options }) => (
-    <div className="w-[400px]">
-      <Tabs defaultValue={defaultValue}>
-        <Tabs.List>
+  render: ({ defaultValue, options }) => {
+    const safeDefault = options?.some((o) => o.value === defaultValue) ? defaultValue : options?.[0]?.value;
+    return (
+      <div className="w-[400px]">
+        <Tabs defaultValue={safeDefault}>
+          <Tabs.List>
+            {options.map((option) => (
+              <Tabs.Trigger key={option.value} value={option.value}>
+                {option.label}
+              </Tabs.Trigger>
+            ))}
+            <Tabs.Indicator />
+          </Tabs.List>
           {options.map((option) => (
-            <Tabs.Trigger key={option.value} value={option.value}>
-              {option.label}
-            </Tabs.Trigger>
+            <Tabs.Content key={option.value} value={option.value} className="p-4">
+              {option.label} content goes here
+            </Tabs.Content>
           ))}
-          <Tabs.Indicator />
-        </Tabs.List>
-        {options.map((option) => (
-          <Tabs.Content key={option.value} value={option.value} className="p-4">
-            {option.label} content goes here
-          </Tabs.Content>
-        ))}
-      </Tabs>
-    </div>
-  ),
+        </Tabs>
+      </div>
+    );
+  },
 };
 
 export const Sizes: Story = {
