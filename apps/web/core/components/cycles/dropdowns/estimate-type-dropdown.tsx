@@ -38,6 +38,6 @@ export const EstimateTypeDropdown = observer((props: TProps) => {
       </CustomSelect>
     </div>
   ) : showDefault ? (
-    <span className="capitalize">{cycleEstimateOptions.find((v) => v.value === value)?.label}</span>
+    <span className="capitalize">{cycleEstimateOptions.find((v) => v.value === value)?.label ?? value}</span>
   ) : null;
 });
