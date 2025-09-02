@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
+import { observer } from "mobx-react";
 import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
@@ -60,7 +61,7 @@ type Props = {
   customTooltipHeading?: string;
 };
 
-export const DateRangeDropdown: React.FC<Props> = (props) => {
+export const DateRangeDropdown: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const {
     buttonClassName,
@@ -286,4 +287,4 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       )}
     </ComboDropDown>
   );
-};
+});
