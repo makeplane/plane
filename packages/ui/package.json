@@ -38,6 +38,7 @@
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
