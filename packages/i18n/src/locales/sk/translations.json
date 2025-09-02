@@ -920,6 +920,10 @@
     "add": {
       "success": "{entity} bola úspešne pridaná",
       "failed": "Chyba pri pridávaní {entity}"
+    },
+    "remove": {
+      "success": "{entity} bola úspešne odstránená",
+      "failed": "Chyba pri odstrávaní {entity}"
     }
   },
   "epic": {

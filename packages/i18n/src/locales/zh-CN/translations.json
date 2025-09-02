@@ -919,6 +919,10 @@
     "add": {
       "success": "{entity}添加成功",
       "failed": "添加{entity}时出错"
+    },
+    "remove": {
+      "success": "{entity}删除成功",
+      "failed": "删除{entity}时出错"
     }
   },
   "epic": {

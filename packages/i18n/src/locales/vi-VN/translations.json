@@ -919,6 +919,10 @@
     "add": {
       "success": "Đã thêm {entity} thành công",
       "failed": "Đã xảy ra lỗi khi thêm {entity}"
+    },
+    "remove": {
+      "success": "Đã xóa {entity} thành công",
+      "failed": "Đã xảy ra lỗi khi xóa {entity}"
     }
   },
   "epic": {

@@ -920,6 +920,10 @@
     "add": {
       "success": "{entity}가 성공적으로 추가되었습니다",
       "failed": "{entity} 추가 중 오류 발생"
+    },
+    "remove": {
+      "success": "{entity}가 성공적으로 제거되었습니다",
+      "failed": "{entity} 제거 중 오류 발생"
     }
   },
   "epic": {

@@ -774,6 +774,10 @@
     "add": {
       "success": "{entity} added successfully",
       "failed": "Error adding {entity}"
+    },
+    "remove": {
+      "success": "{entity} removed successfully",
+      "failed": "Error removing {entity}"
     }
   },
   "epic": {
