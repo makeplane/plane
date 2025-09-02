@@ -632,7 +632,7 @@ importers:
         specifier: 0.10.5
         version: 0.10.5
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       bluebird:
         specifier: ^3.7.2
@@ -734,9 +734,6 @@ importers:
       '@types/marked':
         specifier: ^6.0.0
         version: 6.0.0
-      '@types/react':
-        specifier: 18.3.18
-        version: 18.3.18
       '@types/redis':
         specifier: ^4.0.11
         version: 4.0.11
@@ -1471,7 +1468,7 @@ importers:
         specifier: ^3.0.11
         version: 3.1.1(@babel/core@7.28.3)
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
       csv-string:
         specifier: ^4.1.1
@@ -1735,7 +1732,7 @@ importers:
   packages/sdk:
     dependencies:
       axios:
-        specifier: 1.11.0
+        specifier: 'catalog:'
         version: 1.11.0
     devDependencies:
       '@plane/eslint-config':

@@ -37,7 +37,7 @@
     "@types/pg": "^8.11.14",
     "@types/turndown": "^5.0.5",
     "amqplib": "^0.10.4",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bluebird": "^3.7.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -74,7 +74,6 @@
     "@types/express-winston": "^4.0.2",
     "@types/jest": "^29.5.14",
     "@types/marked": "^6.0.0",
-    "@types/react": "^18.3.11",
     "@types/redis": "^4.0.11",
     "adm-zip": "^0.5.16",
     "jest": "^30.0.5",
@@ -85,6 +84,6 @@
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }
