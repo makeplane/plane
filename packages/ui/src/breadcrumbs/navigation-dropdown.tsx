@@ -3,8 +3,8 @@
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
+import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, TContextMenuItem } from "../dropdowns";
-import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 

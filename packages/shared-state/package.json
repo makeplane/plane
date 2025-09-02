@@ -15,7 +15,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "mobx": "^6.13.5",
+    "mobx": "catalog:",
     "zod": "^3.22.2"
   },
   "devDependencies": {

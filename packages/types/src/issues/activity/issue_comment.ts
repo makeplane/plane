@@ -1,3 +1,4 @@
+import { JSONContent } from "../../editor";
 import { EIssueCommentAccessSpecifier } from "../../enums";
 import { TFileSignedURLResponse } from "../../file";
 import { IUserLite } from "../../users";
@@ -34,7 +35,7 @@ export type TIssueComment = {
   comment_reactions: any[];
   comment_stripped: string;
   comment_html: string;
-  comment_json: object;
+  comment_json: JSONContent;
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;

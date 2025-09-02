@@ -17,6 +17,7 @@ import { IssueActivityLoader } from "./loader";
 type TIssueActivityCommentRoot = {
   workspaceSlug: string;
   projectId: string;
+  isIntakeIssue: boolean;
   issueId: string;
   selectedFilters: TActivityFilters[];
   activityOperations: TCommentsOperations;
@@ -28,6 +29,7 @@ type TIssueActivityCommentRoot = {
 export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
   const {
     workspaceSlug,
+    isIntakeIssue,
     issueId,
     selectedFilters,
     activityOperations,
@@ -62,7 +64,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={!!showAccessSpecifier}
-            showCopyLinkOption
+            showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
             projectId={projectId}
           />

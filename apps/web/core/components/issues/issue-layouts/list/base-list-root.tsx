@@ -30,7 +30,6 @@ type ListStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.ARCHIVED
   | EIssuesStoreType.WORKSPACE_DRAFT
