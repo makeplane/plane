@@ -37,9 +37,8 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/lodash": "catalog:",
-    "@types/node": "^22.5.4",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "^9.0.8",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

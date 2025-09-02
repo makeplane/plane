@@ -57,11 +57,10 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/lodash": "catalog:",
-    "@types/node": "18.14.1",
-    "@types/nprogress": "^0.2.0",
+    "@types/node": "catalog:",
+    "@types/nprogress": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^9.0.1",
     "typescript": "catalog:"
   }
 }
