@@ -1,5 +1,5 @@
 import { addons } from "storybook/manager-api";
-import { create, themes } from "storybook/theming";
+import { create } from "storybook/theming";
 
 const planeTheme = create({
   base: "dark",
