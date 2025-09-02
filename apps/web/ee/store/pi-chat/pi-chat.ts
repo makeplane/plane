@@ -15,6 +15,7 @@ import {
   TAiModels,
   TChatHistory,
   TDialogue,
+  TExecuteActionResponse,
   TFocus,
   TInitPayload,
   TQuery,
@@ -35,7 +36,6 @@ export interface IPiChatStore {
   isAuthorized: boolean;
   favoriteChats: string[];
   isLoading: boolean;
-  isPiThinking: boolean;
   isPiTyping: boolean;
   isLoadingFavoriteChats: boolean;
   isPiChatDrawerOpen: boolean;
@@ -55,7 +55,7 @@ export interface IPiChatStore {
     isProjectChat: boolean,
     workspaceSlug: string,
     workspaceId: string | undefined
-  ) => Promise<string | undefined>;
+  ) => Promise<void>;
   getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
@@ -66,6 +66,7 @@ export interface IPiChatStore {
     workspaceId?: string,
     feedbackMessage?: string
   ) => Promise<void>;
+  executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<TExecuteActionResponse | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   setActiveModel: (model: TAiModels) => void;
   createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
@@ -76,6 +77,7 @@ export interface IPiChatStore {
   fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
   fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
   togglePiChatDrawer: (value?: boolean) => void;
+  regenerateAnswer: (chatId: string, token: string, workspaceId: string | undefined) => Promise<void>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -89,7 +91,6 @@ export class PiChatStore implements IPiChatStore {
   chatMap: Record<string, TChatHistory> = {};
   piThreads: string[] = [];
   projectThreads: string[] = [];
-  isPiThinkingMap: Record<string, boolean> = {};
   isPiTypingMap: Record<string, boolean> = {};
   isLoadingMap: Record<string, boolean> = {};
   favoriteChats: string[] = [];
@@ -110,7 +111,6 @@ export class PiChatStore implements IPiChatStore {
       projectThreads: observable,
       models: observable,
       activeModel: observable,
-      isPiThinkingMap: observable,
       isPiTypingMap: observable,
       isLoadingMap: observable,
       isAuthorized: observable,
@@ -120,7 +120,6 @@ export class PiChatStore implements IPiChatStore {
       isPiChatDrawerOpen: observable.ref,
       // computed
       activeChat: computed,
-      isPiThinking: computed,
       isPiTyping: computed,
       isLoading: computed,
       // actions
@@ -140,6 +139,7 @@ export class PiChatStore implements IPiChatStore {
       fetchRecentChats: action,
       fetchFavoriteChats: action,
       togglePiChatDrawer: action,
+      executeAction: action,
     });
 
     //services
@@ -151,10 +151,6 @@ export class PiChatStore implements IPiChatStore {
 
   get activeChat() {
     return this.chatMap[this.activeChatId];
-  }
-
-  get isPiThinking() {
-    return this.isPiThinkingMap[this.activeChatId] ?? false;
   }
 
   get isPiTyping() {
@@ -231,7 +227,8 @@ export class PiChatStore implements IPiChatStore {
     this.chatMap[newChatId] = {
       chat_id: newChatId,
       dialogue: [],
-      title: "",
+      dialogueMap: {},
+      title: "New Chat",
       last_modified: new Date().toISOString(),
       is_favorite: false,
       is_focus_enabled: focus.isInWorkspaceContext,
@@ -239,7 +236,47 @@ export class PiChatStore implements IPiChatStore {
       focus_project_id: focus.entityType === "project_id" ? focus.entityIdentifier : "",
       workspace_id: workspaceId,
     };
+
+    if (isProjectChat) {
+      this.projectThreads = [newChatId, ...this.projectThreads];
+    } else {
+      this.piThreads = [newChatId, ...this.piThreads];
+    }
+
     return newChatId;
+  };
+
+  buildPayload = (
+    chatId: string,
+    query: string,
+    focus: TFocus,
+    isProjectChat: boolean = false,
+    workspaceSlug: string,
+    workspaceId: string | undefined
+  ) => {
+    let payload: TQuery = {
+      chat_id: chatId,
+      query,
+      is_new: this.chatMap[chatId]?.dialogue.length === 0,
+      is_temp: false,
+      workspace_in_context: focus.isInWorkspaceContext,
+      source: ESource.WEB,
+      llm: this.activeModel?.id || "gpt-4.1",
+      context: this.userStore.data
+        ? {
+            first_name: this.userStore.data.first_name,
+            last_name: this.userStore.data.last_name,
+            email: this.userStore.data.email,
+          }
+        : {},
+      is_project_chat: isProjectChat,
+      workspace_slug: workspaceSlug,
+      workspace_id: workspaceId,
+    };
+    if (focus.isInWorkspaceContext) {
+      payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
+    }
+    return payload;
   };
 
   getTemplates = async (workspaceId: string | undefined) => {
@@ -248,13 +285,12 @@ export class PiChatStore implements IPiChatStore {
   };
 
   getStreamingAnswer = async (
+    token: string,
     isNewChat: boolean,
     chatId: string,
-    payload: TQuery,
     workspaceId: string | undefined,
-    callback: (property: "answer" | "reasoning", value: string) => void
+    newDialogue: TDialogue
   ) => {
-    const token = await this.piChatService.retrieveToken(payload);
     const url = `${PI_BASE_URL}/api/v1/chat/stream-answer/${token}`;
 
     const eventSource = new EventSource(url, {
@@ -264,9 +300,10 @@ export class PiChatStore implements IPiChatStore {
     // 🔹 Handles `delta` chunks
     eventSource.addEventListener("delta", (event: MessageEvent) => {
       try {
-        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
         const data = JSON.parse(event.data);
-        callback("answer", data.chunk);
+        if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
+        newDialogue.answer += data.chunk;
+        this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Delta parse error", e);
       }
@@ -276,15 +313,30 @@ export class PiChatStore implements IPiChatStore {
     eventSource.addEventListener("reasoning", (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
-        callback("reasoning", data.reasoning);
+        newDialogue.reasoning += data.reasoning;
+        this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Reasoning parse error", e);
+      }
+    });
+
+    // 🔹 Handles action event
+    eventSource.addEventListener("actions", () => {
+      try {
+        newDialogue.execution_status = {
+          actions_count: (newDialogue.execution_status?.actions_count ?? 0) + 1,
+          status: "pending",
+        };
+        this.updateDialogue(chatId, token, newDialogue);
+      } catch (e) {
+        console.error("Action parse error", e);
       }
     });
 
     // 🔹 Handles done event
     eventSource.addEventListener("done", async () => {
       eventSource.close();
+      if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
       this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
       if (isNewChat) {
@@ -302,6 +354,9 @@ export class PiChatStore implements IPiChatStore {
 
     eventSource.onerror = (err) => {
       console.error("SSE error:", err);
+      newDialogue.isPiThinking = false;
+      newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+      this.updateDialogue(chatId, token, newDialogue);
       eventSource.close();
     };
   };
@@ -324,79 +379,80 @@ export class PiChatStore implements IPiChatStore {
       llm: this.activeModel?.id,
       answer: "",
       reasoning: "",
+      isPiThinking: true,
+      execution_status: {
+        actions_count: 0,
+      },
     };
 
+    // Optimistically update conversation with user query
+    runInAction(() => {
+      this.isPiTypingMap[chatId] = true;
+      update(this.chatMap, chatId, (chat) => {
+        chat.dialogue = [...dialogueHistory, "latest"];
+        chat.dialogueMap["latest"] = newDialogue;
+        return chat; // same reference, mutated
+      });
+    });
+
+    // Api call here
+    const payload = this.buildPayload(chatId, query, focus, isProjectChat, workspaceSlug, workspaceId);
+    const token = await this.piChatService.retrieveToken(payload);
+    runInAction(() => {
+      update(this.chatMap, chatId, (chat) => {
+        chat.dialogue = [...dialogueHistory, token];
+        newDialogue.query_id = token;
+        chat.dialogueMap[token] = newDialogue;
+        return chat;
+      });
+    });
     try {
-      // Optimistically update conversation with user query
-      runInAction(() => {
-        this.isPiThinkingMap[chatId] = true;
-        this.isPiTypingMap[chatId] = true;
-        update(this.chatMap, chatId, (chat) => {
-          chat.dialogue = [...dialogueHistory, newDialogue];
-          return chat; // same reference, mutated
-        });
-
-        if (isNewChat) {
-          if (isProjectChat) {
-            this.projectThreads = [chatId, ...this.projectThreads];
-          } else {
-            this.piThreads = [chatId, ...this.piThreads];
-          }
-          update(this.chatMap, chatId, (chat) => {
-            chat.title = "New Chat";
-            chat.last_modified = new Date().toISOString();
-            return chat; // same reference, mutated
-          });
-        }
-      });
-
-      let payload: TQuery = {
-        chat_id: chatId,
-        query,
-        is_new: isNewChat,
-        is_temp: false,
-        workspace_in_context: focus.isInWorkspaceContext,
-        source: ESource.WEB,
-        llm: this.activeModel?.id || "gpt-4.1",
-        context: this.userStore.data
-          ? {
-              first_name: this.userStore.data.first_name,
-              last_name: this.userStore.data.last_name,
-              email: this.userStore.data.email,
-            }
-          : {},
-        is_project_chat: isProjectChat,
-        workspace_slug: workspaceSlug,
-        workspace_id: workspaceId,
-      };
-      if (focus.isInWorkspaceContext) {
-        payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
-      }
-
-      // Api call here
-      this.getStreamingAnswer(isNewChat, chatId, payload, workspaceId, (property, value) => {
-        newDialogue[property] += value;
-        runInAction(() => {
-          update(this.chatMap, chatId, (chat) => {
-            chat.dialogue = [...dialogueHistory, newDialogue];
-            return chat; // same reference, mutated
-          });
-        });
-      });
-
-      return newDialogue.answer;
+      this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
     } catch (e) {
       console.log(e);
       runInAction(() => {
+        newDialogue.isPiThinking = false;
         newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        update(this.chatMap, chatId, (chat) => {
-          chat.dialogue = [...dialogueHistory, newDialogue];
-          return chat; // same reference, mutated
-        });
-        this.isPiThinkingMap[chatId] = false;
+        this.updateDialogue(chatId, token, newDialogue);
         this.isPiTypingMap[chatId] = false;
       });
     }
+  };
+
+  regenerateAnswer = async (chatId: string, token: string, workspaceId: string | undefined) => {
+    // Optimistically update conversation with user query
+    const newDialogue: TDialogue = {
+      query: this.chatMap[chatId]?.dialogueMap[token]?.query,
+      llm: this.activeModel?.id,
+      answer: "",
+      reasoning: "",
+      isPiThinking: true,
+      query_id: token,
+    };
+    this.updateDialogue(chatId, token, newDialogue);
+    this.isPiTypingMap[chatId] = true;
+
+    try {
+      this.getStreamingAnswer(token, false, chatId, workspaceId, newDialogue);
+    } catch (e) {
+      console.log(e);
+      runInAction(() => {
+        newDialogue.isPiThinking = false;
+        newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+        this.updateDialogue(chatId, token, newDialogue);
+        this.isPiTypingMap[chatId] = false;
+      });
+    }
+  };
+
+  updateDialogue = (chatId: string, token: string, newDialogue: TDialogue) => {
+    runInAction(() => {
+      update(this.chatMap, chatId, (chat) => {
+        if (!chat) return;
+        chat.dialogueMap[token] = newDialogue;
+        return chat; // same reference, mutated
+      });
+    });
   };
 
   fetchChatById = async (chatId: string, workspaceId: string | undefined) => {
@@ -411,6 +467,15 @@ export class PiChatStore implements IPiChatStore {
         update(this.chatMap, chatId, (chat) => ({
           ...chat,
           ...response.results,
+          dialogue: response.results.dialogue.map((d) => d.query_id),
+          dialogueMap: response.results.dialogue.reduce(
+            (acc, d) => {
+              if (!d.query_id) return acc;
+              acc[d.query_id] = d;
+              return acc;
+            },
+            {} as Record<string, TDialogue>
+          ),
         }));
         this.isLoadingMap[chatId] = false;
       });
@@ -448,6 +513,7 @@ export class PiChatStore implements IPiChatStore {
         this.isLoadingThreads = false;
       });
     } catch (error) {
+      console.error(error);
       runInAction(() => {
         this.isLoadingThreads = false;
       });
@@ -518,11 +584,12 @@ export class PiChatStore implements IPiChatStore {
     workspaceId?: string,
     feedbackMessage?: string
   ) => {
-    const initialState = this.chatMap[chatId]?.dialogue?.[message_index]?.feedback;
+    const queryId = this.chatMap[chatId]?.dialogue?.[message_index];
+    const initialState = this.chatMap[chatId]?.dialogueMap?.[queryId]?.feedback;
     runInAction(() => {
       runInAction(() => {
-        if (this.chatMap[chatId]?.dialogue?.[message_index]) {
-          set(this.chatMap[chatId].dialogue[message_index], "feedback", feedback);
+        if (queryId) {
+          set(this.chatMap[chatId].dialogueMap[queryId], "feedback", feedback);
         }
       });
     });
@@ -537,8 +604,8 @@ export class PiChatStore implements IPiChatStore {
       return response;
     } catch (e) {
       runInAction(() => {
-        if (this.chatMap[chatId]?.dialogue?.[message_index]) {
-          set(this.chatMap[chatId].dialogue[message_index], "feedback", initialState);
+        if (queryId) {
+          set(this.chatMap[chatId].dialogueMap[queryId], "feedback", initialState);
         }
       });
       throw e;
@@ -574,6 +641,7 @@ export class PiChatStore implements IPiChatStore {
       });
       await this.piChatService.favoriteChat(chatId, workspaceId);
     } catch (e) {
+      console.error(e);
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => {
           chat.is_favorite = false;
@@ -596,6 +664,7 @@ export class PiChatStore implements IPiChatStore {
       });
       await this.piChatService.unfavoriteChat(chatId, workspaceId);
     } catch (e) {
+      console.error(e);
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => {
           chat.is_favorite = true;
@@ -617,6 +686,7 @@ export class PiChatStore implements IPiChatStore {
       });
       await this.piChatService.renameChat(chatId, title, workspaceId);
     } catch (e) {
+      console.error(e);
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => {
           chat.title = initialState;
@@ -653,5 +723,32 @@ export class PiChatStore implements IPiChatStore {
 
   togglePiChatDrawer = (value?: boolean) => {
     this.isPiChatDrawerOpen = value ?? !this.isPiChatDrawerOpen;
+  };
+
+  executeAction = async (
+    workspaceId: string,
+    chatId: string,
+    actionId: string
+  ): Promise<TExecuteActionResponse | undefined> => {
+    try {
+      const response = await this.piChatService.executeAction({
+        workspace_id: workspaceId,
+        chat_id: chatId,
+        message_id: actionId,
+      });
+      const newDialogue = {
+        ...this.chatMap[chatId].dialogueMap[actionId],
+        execution_status: {
+          actions_count: response.actions.length,
+          execution_status: "completed",
+        },
+      };
+      this.updateDialogue(chatId, actionId, newDialogue);
+
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 }

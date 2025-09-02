@@ -7,17 +7,29 @@ import {
   TQuery,
   TSearchQuery,
   TTemplate,
-  TChatHistory,
   TUserThreads,
   TAiModels,
   TInitPayload,
+  TAction,
+  TExecuteActionResponse,
+  TDialogue,
 } from "../types";
 
 type TTemplateResponse = {
   templates: TTemplate[];
 };
 type TChatHistoryResponse = {
-  results: TChatHistory;
+  results: {
+    chat_id: string;
+    dialogue: TDialogue[];
+    title: string;
+    last_modified: string;
+    is_favorite: boolean;
+    is_focus_enabled: boolean;
+    focus_workspace_id: string;
+    focus_project_id: string;
+    workspace_id?: string;
+  };
 };
 export type TUserThreadsResponse = {
   results: TUserThreads[];
@@ -32,6 +44,7 @@ type TTitleResponse = {
 type TAiModelsResponse = {
   models: TAiModels[];
 };
+
 export class PiChatService extends APIService {
   constructor() {
     super(PI_BASE_URL);
@@ -243,6 +256,15 @@ export class PiChatService extends APIService {
   // delete chat
   async destroyChat(chatId: string, workspaceSlug: string): Promise<void> {
     return this.delete(`/api/v1/chat/delete-chat/`, { chat_id: chatId, workspace_slug: workspaceSlug })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // execute action
+  async executeAction(data: TAction): Promise<TExecuteActionResponse> {
+    return this.post(`/api/v1/chat/execute-action/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -11,6 +11,13 @@ export enum ESource {
   WEB = "web",
 }
 
+export type TEntity = {
+  entity_type: string | undefined;
+  entity_url: string | undefined;
+  entity_name: string | undefined;
+  entity_id: string | undefined;
+};
+
 export type TQuery = {
   query: string;
   is_new: boolean;
@@ -55,17 +62,31 @@ export type TTemplate = {
   type;
 };
 
+export type TExecutionStatus = {
+  actions_count: number;
+  message?: string;
+  status?: string;
+  actions?: {
+    entity: TEntity;
+  }[];
+};
+
 export type TDialogue = {
+  query_id?: string;
+  answer_id?: string;
   query: string;
   answer?: string;
   llm?: string;
   feedback?: EFeedback;
   reasoning?: string;
+  isPiThinking: boolean;
+  execution_status?: TExecutionStatus;
 };
 
 export type TChatHistory = {
   chat_id: string;
-  dialogue: TDialogue[];
+  dialogue: string[];
+  dialogueMap: Record<string, TDialogue>;
   title: string;
   last_modified: string;
   is_favorite: boolean;
@@ -73,6 +94,24 @@ export type TChatHistory = {
   focus_workspace_id: string;
   focus_project_id: string;
   workspace_id?: string;
+};
+
+export type TAction = {
+  workspace_id: string;
+  chat_id: string;
+  message_id: string;
+};
+
+export type TExecuteActionResponse = {
+  status: string;
+  message: string;
+  actions: {
+    result: string;
+    message?: string;
+    entity?: TEntity;
+    success: boolean;
+    error?: string;
+  }[];
 };
 
 export type TUserThreads = {
