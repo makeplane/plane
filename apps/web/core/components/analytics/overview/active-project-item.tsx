@@ -1,7 +1,7 @@
 import { Briefcase } from "lucide-react";
 // plane package imports
-import { Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
 

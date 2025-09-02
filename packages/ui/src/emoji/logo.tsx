@@ -1,3 +1,5 @@
+"use client";
+
 import { Emoji } from "emoji-picker-react";
 import React, { FC } from "react";
 import useFontFaceObserver from "use-font-face-observer";

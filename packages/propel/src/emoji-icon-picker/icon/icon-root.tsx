@@ -1,20 +1,19 @@
-"use client";
-
-import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
-// icons
-import useFontFaceObserver from "use-font-face-observer";
-import { MATERIAL_ICONS_LIST } from "..";
-import { Input } from "../form-fields";
-import { InfoIcon } from "../icons";
-import { cn } from "../utils";
-// components
-// hooks
-// helpers
-import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
+import { InfoIcon, Search } from "lucide-react";
+import { cn } from "../../utils/classname";
+import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
+import { LucideIconsList } from "./lucide-root";
+import { MaterialIconList } from "./material-root";
 
-export const IconsList: React.FC<TIconsListProps> = (props) => {
-  const { defaultColor, onChange, searchDisabled = false } = props;
+type IconRootProps = {
+  onChange: (value: { name: string; color: string }) => void;
+  defaultColor: string;
+  searchDisabled?: boolean;
+  iconType: "material" | "lucide";
+};
+
+export const IconRoot: React.FC<IconRootProps> = (props) => {
+  const { defaultColor, onChange, searchDisabled = false, iconType } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
   const [showHexInput, setShowHexInput] = useState(false);
@@ -23,23 +22,12 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (DEFAULT_COLORS.includes(defaultColor.toLowerCase())) setShowHexInput(false);
+    if (DEFAULT_COLORS.includes(defaultColor.toLowerCase() ?? "")) setShowHexInput(false);
     else {
-      setHexValue(defaultColor.slice(1, 7));
+      setHexValue(defaultColor?.slice(1, 7) ?? "");
       setShowHexInput(true);
     }
   }, [defaultColor]);
-
-  const filteredArray = MATERIAL_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
-
-  const isMaterialSymbolsFontLoaded = useFontFaceObserver([
-    {
-      family: `Material Symbols Rounded`,
-      style: `normal`,
-      weight: `normal`,
-      stretch: `condensed`,
-    },
-  ]);
 
   return (
     <>
@@ -47,16 +35,23 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
         {!searchDisabled && (
           <div className="flex items-center px-2 py-[15px] w-full ">
             <div
-              className={`relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
+              className={cn(
+                "relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border",
+                {
+                  "border-custom-primary-100": isInputFocused,
+                  "border-transparent": !isInputFocused,
+                }
+              )}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
               <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
-              <Input
+
+              <input
                 placeholder="Search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="text-[1rem] border-none p-0 h-full w-full "
+                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 text-[1rem] border-none p-0 h-full w-full"
               />
             </div>
           </div>
@@ -72,7 +67,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
               />
               <span className="text-xs text-custom-text-300 flex-shrink-0">HEX</span>
               <span className="text-xs text-custom-text-200 flex-shrink-0 -mr-1">#</span>
-              <Input
+              <input
                 type="text"
                 value={hexValue}
                 onChange={(e) => {
@@ -80,8 +75,7 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="flex-grow pl-0 text-xs text-custom-text-200"
-                mode="true-transparent"
+                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 flex-grow pl-0 text-xs text-custom-text-200 rounded border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>
@@ -123,30 +117,11 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
         </div>
       </div>
       <div className="grid grid-cols-8 gap-1 px-2.5 justify-items-center mt-2">
-        {filteredArray.map((icon) => (
-          <button
-            key={icon.name}
-            type="button"
-            className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
-            onClick={() => {
-              onChange({
-                name: icon.name,
-                color: activeColor,
-              });
-            }}
-          >
-            {isMaterialSymbolsFontLoaded ? (
-              <span
-                style={{ color: activeColor }}
-                className="material-symbols-rounded !text-[1.25rem] !leading-[1.25rem]"
-              >
-                {icon.name}
-              </span>
-            ) : (
-              <span className="size-5 rounded animate-pulse bg-custom-background-80" />
-            )}
-          </button>
-        ))}
+        {iconType === "material" ? (
+          <MaterialIconList query={query} onChange={onChange} activeColor={activeColor} />
+        ) : (
+          <LucideIconsList query={query} onChange={onChange} activeColor={activeColor} />
+        )}
       </div>
     </>
   );
