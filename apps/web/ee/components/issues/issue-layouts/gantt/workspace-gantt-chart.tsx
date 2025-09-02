@@ -18,7 +18,7 @@ import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks"
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
+import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
@@ -74,11 +74,11 @@ export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
   const updateBlockDates = useCallback(
     async (updates: IBlockUpdateDependencyData[]): Promise<void> => {
       try {
-        const payload = updates.map((update) => ({
+        const payload: IBlockUpdateDependencyData[] = updates.map((update) => ({
           id: update.id,
           start_date: update.start_date,
           target_date: update.target_date,
-          project_id: update.meta?.project_id,
+          meta: update.meta,
         }));
         return await updateIssueDates(workspaceSlug.toString(), payload);
       } catch {
