@@ -13,6 +13,7 @@ import { ComboDropDown, Calendar } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
+import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -95,6 +96,9 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>(value);
+  // hooks
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -274,6 +278,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               disabled={disabledDays}
               showOutsideDays
               fixedWeeks
+              weekStartsOn={startOfWeek}
               initialFocus
             />
           </div>
