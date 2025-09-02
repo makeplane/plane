@@ -12,7 +12,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

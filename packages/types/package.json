@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "tsdown --watch",
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 36",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",

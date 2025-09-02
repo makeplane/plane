@@ -9,7 +9,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "tsdown --watch",
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 2",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
