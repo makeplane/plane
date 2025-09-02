@@ -1,4 +1,4 @@
-import { ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
+import { Client, ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
 import { GithubIssue, WebhookGitHubLabel, WebhookGitHubMilestone, WebhookGitHubUser } from "../types";
 import { ContentParser } from "../helpers/content-parser";
 
@@ -8,7 +8,10 @@ export const transformPlaneIssue = async (
   labels: ExIssueLabel[],
   owner: string,
   repo: string,
-  userMap: Record<string, WebhookGitHubUser>
+  userMap: Record<string, WebhookGitHubUser>,
+  planeClient: Client,
+  workspaceSlug: string,
+  projectId: string
 ): Promise<Partial<GithubIssue>> => {
   const githubIssueNumber = issue.links
     ?.find((link) => link.name === "Linked GitHub Issue")
@@ -38,6 +41,17 @@ export const transformPlaneIssue = async (
   // Convert the cleaned HTML to GitHub markdown using our ContentParser
   const githubBody = ContentParser.toMarkdown(cleanHtml, imgSrcPrefix);
 
+  let targetState: string | undefined = undefined;
+  if (issue.state) {
+    const states = (await planeClient.state.list(workspaceSlug, projectId)).results;
+    const issueState = states.find((state) => state.id === issue.state);
+    if (issueState?.group === "completed") {
+      targetState = "CLOSED";
+    } else {
+      targetState = "OPEN";
+    }
+  }
+
   return {
     id: parseInt(issue.external_id || "0"),
     number: parseInt(githubIssueNumber || "0"),
@@ -45,7 +59,7 @@ export const transformPlaneIssue = async (
     body: githubBody,
     owner: owner,
     repo: repo,
-    state: issue.state === "Done" ? "CLOSED" : "OPEN",
+    state: targetState,
     created_at: issue.created_at,
     assignees: assignees as string[],
     labels: ghLabels,

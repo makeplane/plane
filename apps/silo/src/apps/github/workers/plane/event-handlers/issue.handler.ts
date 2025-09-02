@@ -132,7 +132,17 @@ const createOrUpdateGitHubIssue = async (
   const repo = (entityConnection.entity_slug ?? "").split("/")[1];
   const issueImagePrefix = imagePrefix + workspaceConnection.workspace_id + "/" + credentials.user_id;
 
-  const transformedGithubIssue = await transformPlaneIssue(issue, issueImagePrefix, labels, owner, repo, userMap);
+  const transformedGithubIssue = await transformPlaneIssue(
+    issue,
+    issueImagePrefix,
+    labels,
+    owner,
+    repo,
+    userMap,
+    planeClient,
+    entityConnection.workspace_slug,
+    entityConnection.project_id ?? ""
+  );
 
   // Find the credentials for the user
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
