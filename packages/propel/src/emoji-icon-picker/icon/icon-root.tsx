@@ -35,7 +35,13 @@ export const IconRoot: React.FC<IconRootProps> = (props) => {
         {!searchDisabled && (
           <div className="flex items-center px-2 py-[15px] w-full ">
             <div
-              className={`relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
+              className={cn(
+                "relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border",
+                {
+                  "border-custom-primary-100": isInputFocused,
+                  "border-transparent": !isInputFocused,
+                }
+              )}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
