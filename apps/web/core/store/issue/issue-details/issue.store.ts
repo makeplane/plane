@@ -1,7 +1,7 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TBaseIssue, TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
@@ -64,6 +64,11 @@ export class IssueStore implements IIssueStore {
     this.draftWorkItemService = new WorkspaceDraftService();
   }
 
+  isEpic = computedFn((projectId: string, issue: Partial<TBaseIssue>) => {
+    if (issue.is_epic !== undefined) return issue.is_epic;
+    return this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) === issue.type_id;
+  });
+
   getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
     if (!issueId) return false;
 
@@ -118,10 +123,26 @@ export class IssueStore implements IIssueStore {
 
     // store handlers from issue detail
     // parent
-    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
+      // if typeId exists in epic projectEpics
+      if (
+        this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) ===
+        issue?.parent.type_id
+      ) {
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      } else {
+        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      }
     }
     // assignees
     // labels
@@ -188,6 +209,8 @@ export class IssueStore implements IIssueStore {
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,
+      customer_request_ids: issue?.customer_request_ids,
+      initiative_ids: issue?.initiative_ids,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
@@ -303,12 +326,23 @@ export class IssueStore implements IIssueStore {
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 
     // handle parent issue if exists
-    if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
+      if (this.isEpic(projectId, issue?.parent)) {
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      } else {
+        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      }
     }
-
     // add identifiers to map
     rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 

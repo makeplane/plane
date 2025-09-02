@@ -16,7 +16,6 @@ import {
 } from "@/components/issues/issue-layouts/filters";
 import { isFiltersApplied } from "@/components/issues/issue-layouts/utils";
 import { FilterIssueTypes } from "@/plane-web/components/issues/filters/issue-types";
-
 type TSubIssueFiltersProps = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   filters: IIssueFilterOptions;

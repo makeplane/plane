@@ -1,9 +1,12 @@
 # Django imports
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 # Module imports
 from plane.bgtasks.deletion_task import soft_delete_related_objects
+
+# Relative imports
+from .signals import post_bulk_create, post_bulk_update
 
 
 class TimeAuditModel(models.Model):
@@ -38,7 +41,39 @@ class UserAuditModel(models.Model):
         abstract = True
 
 
-class SoftDeletionQuerySet(models.QuerySet):
+class BulkOperationHooks:
+    def update(self, **kwargs):
+        """
+        Custom update method to trigger a signal with
+        all the updated objs on bulk update.
+        """
+        rows = super().update(**kwargs)
+        if rows:
+            post_bulk_update.send(sender=self.__class__, model=self.model, objs=self)
+        return rows
+
+    @transaction.atomic
+    def bulk_create(self, *args, **kwargs):
+        """
+        Custom bulk_create method to handle any pre operations
+        on the model instance and also trigger a signal with all the objs.
+        """
+        if len(args):
+            objs = args[0]
+        else:
+            objs = kwargs.get("objs")
+        for obj in objs:
+            if hasattr(obj, "pre_bulk_create"):
+                obj.pre_bulk_create()
+
+        objs = super().bulk_create(*args, **kwargs)
+
+        post_bulk_create.send(sender=self.__class__, model=self.model, objs=objs)
+
+        return objs
+
+
+class SoftDeletionQuerySet(BulkOperationHooks, models.QuerySet):
     def delete(self, soft=True):
         if soft:
             return self.update(deleted_at=timezone.now())

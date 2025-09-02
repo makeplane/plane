@@ -1,1 +1,1 @@
-export * from "ce/components/comments";
+export * from "./comment-block";

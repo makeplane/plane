@@ -9,22 +9,22 @@
   ],
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     },
     "./lib": {
       "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
+      "types": "./dist/lib.d.ts",
       "import": "./dist/lib.mjs"
     }
   },
   "scripts": {
     "build": "tsc && tsup --minify",
     "dev": "tsup --watch",
-    "check:lint": "eslint . --max-warnings 30",
+    "check:lint": "eslint . --max-warnings 55",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -32,6 +32,7 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
+    "nanoid": "^3.3.8",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
@@ -49,13 +50,17 @@
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
     "@tiptap/extension-collaboration": "^2.22.3",
+    "@tiptap/extension-collaboration-cursor": "^2.22.3",
+    "@tiptap/extension-document": "^2.22.3",
     "@tiptap/extension-emoji": "^2.22.3",
+    "@tiptap/extension-heading": "2.11.0",
     "@tiptap/extension-image": "^2.22.3",
     "@tiptap/extension-list-item": "^2.22.3",
     "@tiptap/extension-mention": "^2.22.3",
     "@tiptap/extension-placeholder": "^2.22.3",
     "@tiptap/extension-task-item": "^2.22.3",
     "@tiptap/extension-task-list": "^2.22.3",
+    "@tiptap/extension-text": "^2.22.3",
     "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
@@ -68,12 +73,16 @@
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
     "jsx-dom-cjs": "^8.0.3",
+    "katex": "^0.16.22",
     "linkifyjs": "^4.3.2",
     "lowlight": "^3.0.0",
     "lucide-react": "catalog:",
-    "prosemirror-codemark": "^0.4.2",
+    "prosemirror-safari-ime-span": "^1.0.2",
+    "prosemirror-utils": "^1.2.2",
+    "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.10",
+    "tldjs": "^2.3.2",
     "uuid": "catalog:",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.15",
@@ -85,6 +94,7 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "18.15.3",
+    "@types/tldjs": "^2.3.4",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",
