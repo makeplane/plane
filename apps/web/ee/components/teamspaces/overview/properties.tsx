@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { Tooltip } from "@plane/propel/tooltip";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
-import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, CustomEmojiIconPicker } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AvatarGroup, Avatar, LeadIcon, TeamsIcon } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components
