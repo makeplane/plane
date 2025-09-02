@@ -94,6 +94,15 @@ class FileAsset(BaseModel):
         verbose_name_plural = "File Assets"
         db_table = "file_assets"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["entity_type"], name="asset_entity_type_idx"),
+            models.Index(
+                fields=["entity_identifier"], name="asset_entity_identifier_idx"
+            ),
+            models.Index(
+                fields=["entity_type", "entity_identifier"], name="asset_entity_idx"
+            ),
+        ]
 
     def __str__(self):
         return str(self.asset)

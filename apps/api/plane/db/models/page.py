@@ -201,6 +201,17 @@ class PageLog(BaseModel):
         verbose_name_plural = "Page Logs"
         db_table = "page_logs"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["entity_type"], name="pagelog_entity_type_idx"),
+            models.Index(fields=["entity_identifier"], name="pagelog_entity_id_idx"),
+            models.Index(fields=["entity_name"], name="pagelog_entity_name_idx"),
+            models.Index(
+                fields=["entity_type", "entity_identifier"], name="pagelog_type_id_idx"
+            ),
+            models.Index(
+                fields=["entity_name", "entity_identifier"], name="pagelog_name_id_idx"
+            ),
+        ]
 
     def __str__(self):
         return f"{self.page.name} {self.entity_name}"
