@@ -1,3 +1,5 @@
+"use client";
+
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 // icons
