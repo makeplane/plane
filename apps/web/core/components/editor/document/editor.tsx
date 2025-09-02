@@ -13,7 +13,7 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { EditorMentionsRoot } from "../embeds/mentions";
 
 type DocumentEditorWrapperProps = MakeOptional<
-  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
+  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user" | "extendedEditorProps">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
@@ -45,7 +45,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -83,6 +85,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         issue: issueEmbedProps,
         ...embedHandler,
       }}
+      extendedEditorProps={{}}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

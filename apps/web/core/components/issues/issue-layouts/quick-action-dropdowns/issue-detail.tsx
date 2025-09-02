@@ -88,13 +88,10 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
 
   const isDeletingAllowed = isEditingAllowed;
 
-  const isDraftIssue = pathname?.includes("draft-issues") || false;
-
   const duplicateIssuePayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
-      is_draft: isDraftIssue ? false : issue.is_draft,
       sourceIssueId: issue.id,
     },
     ["id"]
@@ -137,7 +134,6 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
     isRestoringAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
-    isDraftIssue,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal: customDeleteAction,
@@ -220,7 +216,6 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.PROJECT}
-        isDraft={isDraftIssue}
         fetchIssueDetails={false}
       />
       {issue.project_id && workspaceSlug && (

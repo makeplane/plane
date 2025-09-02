@@ -272,12 +272,8 @@ export abstract class IssueDetail implements IIssueDetail {
   setIssueLinkData = (issueLinkData: TIssueLink | null) => (this.issueLinkData = issueLinkData);
 
   // issue
-  fetchIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    issueStatus: "DEFAULT" | "DRAFT" = "DEFAULT"
-  ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
     this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
