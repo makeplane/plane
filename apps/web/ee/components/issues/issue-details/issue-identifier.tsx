@@ -2,8 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemTypeEntity, IIssueType } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce components
 import {
@@ -68,7 +69,7 @@ export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) =>
   const issueType = getWorkItemTypeById ? getWorkItemTypeById(issueTypeId) : useIssueType(issueTypeId);
 
   return (
-    <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-left">
+    <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-start">
       <div className="flex flex-shrink-0">
         <IssueTypeLogo
           icon_props={issueType?.logo_props?.icon}

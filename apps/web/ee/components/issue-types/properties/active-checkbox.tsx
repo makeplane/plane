@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-// plane hooks
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { Checkbox, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { observer } from "mobx-react";
-// ui
-import { CircularProgressIndicator, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { getFileIcon } from "@/components/icons";
 // helpers

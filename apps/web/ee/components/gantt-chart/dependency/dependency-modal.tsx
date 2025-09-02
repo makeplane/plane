@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue } from "@plane/types";
-import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // hooks

@@ -7,7 +7,7 @@ import { common, createLowlight } from "lowlight";
 import { CopyIcon, CheckIcon } from "lucide-react";
 import { useState } from "react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 

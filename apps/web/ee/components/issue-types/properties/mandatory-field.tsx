@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, Checkbox, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AlertModalCore, Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

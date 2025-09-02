@@ -1,7 +1,7 @@
 import { CircleChevronRight, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type Props = {
   handleClose: () => void;

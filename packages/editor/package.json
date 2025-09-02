@@ -46,6 +46,7 @@
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@tiptap/core": "^2.22.3",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",

@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EUserProjectRoles } from "@plane/types";
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";

@@ -1,9 +1,10 @@
 import { FC } from "react";
 import Link from "next/link";
+import { Tooltip } from "@plane/propel/tooltip";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, CycleGroupIcon, getButtonStyling, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CycleGroupIcon, getButtonStyling } from "@plane/ui";
 // helpers
 import { findHowManyDaysLeft, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
 // hooks
@@ -30,14 +31,14 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
     <div className="flex items-center justify-between px-3 py-1.5 rounded border-[0.5px] border-custom-border-100 bg-custom-background-90">
       <div className="flex items-center gap-2 cursor-default">
         <CycleGroupIcon cycleGroup={currentCycleStatus} className="h-4 w-4" />
-        <Tooltip tooltipContent={cycle.name} position="top-left">
+        <Tooltip tooltipContent={cycle.name} position="top-start">
           <h3 className="break-words text-lg font-medium">{truncateText(cycle.name, 70)}</h3>
         </Tooltip>
         <Tooltip
           tooltipContent={`Start date: ${renderFormattedDate(cycle.start_date ?? "")} Due Date: ${renderFormattedDate(
             cycle.end_date ?? ""
           )}`}
-          position="top-left"
+          position="top-start"
         >
           <span className="flex gap-1 whitespace-nowrap rounded-sm text-custom-text-400 font-semibold text-sm leading-5">
             {`${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`}

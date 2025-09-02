@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, RotateCw, Trash2 } from "lucide-react";
 // plane imports
-import { ContextMenu, CustomMenu, DragHandle, TContextMenuItem, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ContextMenu, CustomMenu, DragHandle, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";

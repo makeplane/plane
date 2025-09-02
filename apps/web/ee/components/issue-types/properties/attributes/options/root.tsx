@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { GripVertical } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssuePropertyOptionCreateUpdateData } from "@plane/types";
-import { Sortable, Tooltip } from "@plane/ui";
+import { Sortable } from "@plane/ui";
 // plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 // local imports

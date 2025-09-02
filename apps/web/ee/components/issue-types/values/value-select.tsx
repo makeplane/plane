@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "lucide-react";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuePropertyType,
   EIssuePropertyValueError,
@@ -12,7 +13,7 @@ import {
   TPropertyValueVariant,
   TTextAttributeDisplayOptions,
 } from "@plane/types";
-import { Loader, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

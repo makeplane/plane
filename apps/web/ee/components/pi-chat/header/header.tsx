@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Home, PanelLeft, SquarePen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { BetaBadge, Breadcrumbs, Header as HeaderUI, PiIcon, Row, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { BetaBadge, Breadcrumbs, Header as HeaderUI, PiIcon, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";

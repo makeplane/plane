@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // plane imports
-import { Button, getButtonStyling, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

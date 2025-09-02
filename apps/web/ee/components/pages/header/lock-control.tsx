@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LockKeyhole, LockKeyholeOpen, FolderLock, FolderOpen } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // utils
 import { cn } from "@plane/utils";
 // hooks

@@ -4,11 +4,15 @@ import { useParams } from "next/navigation";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
-import { Loader, PiIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Loader, PiIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
+// plane-web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
+// local imports
 import { FeedbackModal } from "../input/feedback-modal";
 import { ReasoningBlock } from "./reasoning";
 

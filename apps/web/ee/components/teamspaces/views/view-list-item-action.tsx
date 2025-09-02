@@ -8,8 +8,9 @@ import {
   TEAMSPACE_VIEW_TRACKER_ELEMENTS,
   TEAMSPACE_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles, EViewAccess, TTeamspaceView } from "@plane/types";
-import { Tooltip, FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

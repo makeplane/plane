@@ -3,8 +3,9 @@
 import { FC } from "react";
 import { X } from "lucide-react";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
-import { PlaneAIIcon, Tooltip } from "@plane/ui";
+import { PlaneAIIcon } from "@plane/ui";
 // local-imports
 import { DuplicateIssueReadOnlyBlockRoot } from "./block-root";
 

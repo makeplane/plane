@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, TContextMenuItem, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";

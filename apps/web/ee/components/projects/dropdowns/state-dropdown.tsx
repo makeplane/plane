@@ -2,7 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { CustomSearchSelect, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomSearchSelect } from "@plane/ui";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { ProjectStateIcon } from "../../workspace-project-states";

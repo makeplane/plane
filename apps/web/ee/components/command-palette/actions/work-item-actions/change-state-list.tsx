@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon, Tooltip, Spinner } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { StateGroupIcon, Spinner } from "@plane/ui";
 // ce imports
 import {
   TChangeWorkItemStateListProps,
@@ -44,7 +45,7 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
               <Tooltip
                 key={state.id}
                 tooltipContent={<WorkFlowDisabledMessage parentStateId={currentStateId ?? ""} />}
-                position="right-top"
+                position="right-start"
                 className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
                 disabled={!isDisabled}
               >

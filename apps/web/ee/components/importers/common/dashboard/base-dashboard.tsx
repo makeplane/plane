@@ -6,10 +6,10 @@ import useSWR from "swr";
 import { Briefcase, CircleX, Info, Loader, RefreshCcw } from "lucide-react";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
-
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TImportJob, TLogoProps } from "@plane/types";
-import { Button, ModalCore, Tooltip } from "@plane/ui";
+import { Button, ModalCore } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

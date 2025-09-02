@@ -4,8 +4,8 @@ import { MutableRefObject, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-// ui
-import { Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 // helper
 import { cn } from "@plane/utils";
 // components

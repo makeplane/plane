@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Repeat } from "lucide-react";
 // plane imports
 import { usePlatformOS } from "@plane/hooks";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

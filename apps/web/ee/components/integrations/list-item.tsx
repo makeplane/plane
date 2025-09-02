@@ -2,8 +2,10 @@ import { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Info } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, Tooltip, BetaBadge } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Button, BetaBadge } from "@plane/ui";
 // plane web components
 import { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks

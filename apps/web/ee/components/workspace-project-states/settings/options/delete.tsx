@@ -3,8 +3,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
+// plane imports
 import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

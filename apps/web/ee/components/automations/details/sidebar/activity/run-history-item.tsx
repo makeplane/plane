@@ -4,7 +4,8 @@ import { Check, ChevronRight, CircleAlert, Clock, Dot } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Avatar, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar } from "@plane/ui";
 import {
   calculateTimeAgo,
   cn,

@@ -1,9 +1,11 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
-import { Avatar, Tooltip } from "@plane/ui";
-// helpers
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+// helpers
 import { useMember } from "@/hooks/store/use-member";
 import { TPageInstance } from "@/store/pages/base-page";
 

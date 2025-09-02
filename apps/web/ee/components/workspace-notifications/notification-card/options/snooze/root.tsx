@@ -7,7 +7,8 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { NotificationSnoozeModal } from "@/components/workspace-notifications/sidebar/notification-card/options/snooze/modal";

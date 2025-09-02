@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
-import { Input, Tooltip } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { usePropertyOptions } from "@/plane-web/hooks/store";

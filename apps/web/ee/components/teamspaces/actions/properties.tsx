@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { Avatar, AvatarGroup, LeadIcon, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar, AvatarGroup, LeadIcon } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

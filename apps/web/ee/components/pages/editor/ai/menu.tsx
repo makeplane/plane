@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ChevronRight, CornerDownRight, LucideIcon, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";

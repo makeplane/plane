@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 // plane imports
-import { Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -88,7 +89,7 @@ export const TeamspaceProjectBlock = observer((props: TeamspaceProjectBlockProps
               }}
               className={cn("w-full truncate cursor-pointer text-sm text-custom-text-100", {})}
             >
-              <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-left">
+              <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-start">
                 <p className="truncate mr-2">{projectDetails.name}</p>
               </Tooltip>
             </Link>
@@ -97,7 +98,7 @@ export const TeamspaceProjectBlock = observer((props: TeamspaceProjectBlockProps
               id={`project-${projectDetails.id}`}
               className={cn("w-full truncate cursor-not-allowed text-sm text-custom-text-100", {})}
             >
-              <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-left">
+              <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-start">
                 <p className="truncate">{projectDetails.name}</p>
               </Tooltip>
             </div>

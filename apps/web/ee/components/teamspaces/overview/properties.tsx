@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIconPicker } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, CustomEmojiIconPicker } from "@plane/ui";
 // plane utils
 import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
 // hooks

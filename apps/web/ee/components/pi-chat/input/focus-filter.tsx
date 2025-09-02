@@ -2,8 +2,10 @@ import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { EUserProjectRoles } from "@plane/types";
-import { CustomSelect, Loader, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomSelect, Loader, Logo, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";

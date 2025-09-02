@@ -4,8 +4,9 @@ import { ChevronDown, Info } from "lucide-react";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IState } from "@plane/types";
-import { Collapsible, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Collapsible, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";

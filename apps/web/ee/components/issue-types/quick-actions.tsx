@@ -6,8 +6,9 @@ import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueType } from "@plane/types";
-import { CustomMenu, setPromiseToast, TContextMenuItem, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomMenu, setPromiseToast, TContextMenuItem, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 

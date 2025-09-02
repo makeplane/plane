@@ -4,8 +4,9 @@ import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, IActiveCycle } from "@plane/types";
-import { Loader, PriorityIcon, Tooltip } from "@plane/ui";
+import { Loader, PriorityIcon } from "@plane/ui";
 import { generateWorkItemLink, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // constants
@@ -76,7 +77,7 @@ export const ActiveCyclePriorityIssues: FC<ActiveCyclePriorityIssuesProps> = obs
                     projectId={projectId}
                     textContainerClassName="text-xs text-custom-text-200"
                   />
-                  <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                  <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                     <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                   </Tooltip>
                 </div>

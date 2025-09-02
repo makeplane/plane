@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { IGanttBlock } from "@plane/types";
-import { Logo, Tooltip } from "@plane/ui";
+import { Logo } from "@plane/ui";
 import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -54,7 +55,7 @@ export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
             </div>
           </div>
         }
-        position="top-left"
+        position="top-start"
       >
         <div className="relative w-full overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100">
           {projectDetails?.name}

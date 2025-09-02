@@ -6,8 +6,8 @@ import { Check, ChevronDown, Info } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EEstimateSystem, TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
-import { Tooltip } from "@plane/ui";
 // helpers
 import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 

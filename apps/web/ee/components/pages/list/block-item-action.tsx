@@ -3,8 +3,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
-// ui
-import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar, FavoriteStar, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks

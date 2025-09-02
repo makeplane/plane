@@ -3,8 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
-// ui
-import { CustomMenu, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

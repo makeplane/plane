@@ -5,9 +5,9 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// types
-// ui
-import { PriorityIcon, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon } from "@plane/ui";
 // constants
 // helpers
 import {

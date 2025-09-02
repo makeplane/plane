@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
-import { Button, Checkbox, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Button, Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -65,7 +66,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <Tooltip
-          position="top-right"
+          position="top-end"
           className="mb-4 rounded-lg shadow"
           disabled={isBulkOpsEnabled}
           tooltipContent={<UpgradeToast />}

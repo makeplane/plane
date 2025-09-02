@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { webContents } from "@todesktop/client-core";
 import { observer } from "mobx-react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-// ui
-import { Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 

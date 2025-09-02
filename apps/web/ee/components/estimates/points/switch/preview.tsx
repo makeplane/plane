@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Info, MoveRight } from "lucide-react";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Tooltip } from "@plane/ui";
 import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers

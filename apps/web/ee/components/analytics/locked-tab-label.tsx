@@ -1,7 +1,8 @@
 import React from "react";
 import { Lock } from "lucide-react";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Tooltip, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 interface LockedTabLabelProps {

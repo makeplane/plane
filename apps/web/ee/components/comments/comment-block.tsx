@@ -2,8 +2,9 @@ import { FC, ReactNode, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssueComment } from "@plane/types";
-import { Avatar, Tooltip } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";

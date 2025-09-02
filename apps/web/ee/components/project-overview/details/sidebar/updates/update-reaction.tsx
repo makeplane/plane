@@ -2,9 +2,10 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { IUser } from "@plane/types";
-// components
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // components
 import { ReactionSelector } from "@/components/issues/issue-detail/reactions";

@@ -4,8 +4,10 @@ import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Ellipsis, Timer } from "lucide-react";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssueActivityComment } from "@plane/types";
-import { CustomMenu, Popover, Tooltip } from "@plane/ui";
+import { CustomMenu, Popover } from "@plane/ui";
 import {
   getFileURL,
   calculateTimeAgo,

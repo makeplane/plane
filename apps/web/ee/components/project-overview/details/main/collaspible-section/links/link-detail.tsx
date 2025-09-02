@@ -2,14 +2,13 @@
 
 import { FC } from "react";
 // hooks
-// ui
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// icons
-// types
-// helpers
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectLinks } from "@/plane-web/hooks/store";

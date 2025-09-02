@@ -1,6 +1,7 @@
 // plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Tooltip, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type TProps = {

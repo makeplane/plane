@@ -1,6 +1,7 @@
 "use client";
 
-import { CustomSearchSelect, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomSearchSelect } from "@plane/ui";
 // silo types
 import { TDropdown } from "@/plane-web/silo/types/ui";
 

@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
+import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
@@ -16,8 +17,8 @@ import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
 import { epicsTrackers } from "../trackers";
-import { EpicPropertiesRoot } from "./epics-properties";
 import { EpicsEmptyState } from "./empty-state";
+import { EpicPropertiesRoot } from "./epics-properties";
 
 export const EpicsRoot = observer(() => {
   // router

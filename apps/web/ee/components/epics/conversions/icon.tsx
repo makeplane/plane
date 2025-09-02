@@ -1,9 +1,10 @@
 "use client";
 import React, { FC } from "react";
 import { ArrowRight } from "lucide-react";
-import { EWorkItemConversionType } from "@plane/types";
 // plane imports
-import { EpicIcon, LayersIcon, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EWorkItemConversionType } from "@plane/types";
+import { EpicIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 interface ConvertWorkItemIconProps {

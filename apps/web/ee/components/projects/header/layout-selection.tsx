@@ -2,7 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { CustomMenu, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants

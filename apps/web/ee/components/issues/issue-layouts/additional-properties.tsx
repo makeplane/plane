@@ -3,7 +3,8 @@ import React, { FC, SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CustomerRequestIcon, CustomersIcon, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomerRequestIcon, CustomersIcon } from "@plane/ui";
 // components
 import type { TWorkItemLayoutAdditionalProperties } from "@/ce/components/issues/issue-layouts/additional-properties";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";

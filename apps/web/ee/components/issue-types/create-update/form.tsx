@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
 import { Info } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueType } from "@plane/types";
-import { Button, Input, TextArea, Tooltip } from "@plane/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { IssueTypeIconPicker } from "../common/icon-picker";

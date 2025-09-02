@@ -2,10 +2,11 @@
 
 import { CheckCircle, Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Button, ModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// helpers
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Button, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyTextToClipboard, csvDownload } from "@plane/utils";
+// helpers
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
