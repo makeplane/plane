@@ -21,9 +21,10 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
-// types
-// helper
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
+// plane web hooks
+import { useIssueType } from "@/plane-web/hooks/store";
+// local imports
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
@@ -55,6 +56,8 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
@@ -86,6 +89,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
+    issueTypeDetail,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,

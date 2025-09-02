@@ -1,0 +1,111 @@
+{
+  "name": "@plane/etl",
+  "version": "0.24.1",
+  "repository": "https://github.com/makeplane/plane-ee",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "private": true,
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    "./asana": {
+      "types": "./dist/asana/index.d.ts",
+      "import": "./dist/asana/index.js",
+      "require": "./dist/asana/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.js"
+    },
+    "./github": {
+      "types": "./dist/github/index.d.ts",
+      "import": "./dist/github/index.js",
+      "require": "./dist/github/index.js"
+    },
+    "./gitlab": {
+      "types": "./dist/gitlab/index.d.ts",
+      "import": "./dist/gitlab/index.js",
+      "require": "./dist/gitlab/index.js"
+    },
+    "./jira": {
+      "types": "./dist/jira/index.d.ts",
+      "import": "./dist/jira/index.js",
+      "require": "./dist/jira/index.js"
+    },
+    "./jira-server": {
+      "types": "./dist/jira-server/index.d.ts",
+      "import": "./dist/jira-server/index.js",
+      "require": "./dist/jira-server/index.js"
+    },
+    "./linear": {
+      "types": "./dist/linear/index.d.ts",
+      "import": "./dist/linear/index.js",
+      "require": "./dist/linear/index.js"
+    },
+    "./slack": {
+      "types": "./dist/slack/index.d.ts",
+      "import": "./dist/slack/index.js",
+      "require": "./dist/slack/index.js"
+    },
+    "./flatfile": {
+      "types": "./dist/flatfile/index.d.ts",
+      "import": "./dist/flatfile/index.js",
+      "require": "./dist/flatfile/index.js"
+    },
+    "./sentry": {
+      "types": "./dist/sentry/index.d.ts",
+      "import": "./dist/sentry/index.js",
+      "require": "./dist/sentry/index.js"
+    },
+    "./clickup": {
+      "types": "./dist/clickup/index.d.ts",
+      "import": "./dist/clickup/index.js",
+      "require": "./dist/clickup/index.js"
+    },
+    "./parser": {
+      "types": "./dist/parser/index.d.ts",
+      "import": "./dist/parser/index.js",
+      "require": "./dist/parser/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && NODE_OPTIONS='--max-old-space-size=4096' tsup --minify",
+    "dev": "tsup --watch",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 180",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+  },
+  "dependencies": {
+    "@flatfile/api": "^1.12.0",
+    "@linear/sdk": "^37.0.0",
+    "@octokit/auth-app": "^7.1.0",
+    "@octokit/rest": "^21.0.2",
+    "@plane/constants": "workspace:*",
+    "@plane/sdk": "workspace:*",
+    "@plane/types": "workspace:*",
+    "asana": "^3.0.11",
+    "axios": "1.11.0",
+    "csv-string": "^4.1.1",
+    "jira.js": "^4.0.1",
+    "marked": "^15.0.4",
+    "node-html-parser": "^6.1.13",
+    "tsup": "8.4.0",
+    "turndown": "^7.2.0",
+    "uuid": "^10.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@octokit/openapi-webhooks-types": "^8.3.0",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/marked": "^6.0.0",
+    "@types/node": "18.16.1",
+    "@types/uuid": "^9.0.8",
+    "@types/turndown": "^5.0.5"
+  }
+}

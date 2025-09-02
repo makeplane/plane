@@ -44,12 +44,15 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
             ...item.extraProps,
           })
         }
-        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-custom-text-100": isActive,
-        })}
+        className={cn(
+          "grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 transition-all duration-200 ease-in-out",
+          {
+            "bg-custom-background-80 text-custom-text-100": isActive,
+          }
+        )}
       >
         <item.icon
-          className={cn("size-4", {
+          className={cn("size-4 transition-transform duration-200", {
             "text-custom-text-100": isActive,
           })}
         />
