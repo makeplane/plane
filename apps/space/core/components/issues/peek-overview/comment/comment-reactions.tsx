@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
 import { cn } from "@plane/utils";
 // ui

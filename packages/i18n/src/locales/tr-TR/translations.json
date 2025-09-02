@@ -920,6 +920,10 @@
     "add": {
       "success": "{entity} başarıyla eklendi",
       "failed": "{entity} eklenirken hata oluştu"
+    },
+    "remove": {
+      "success": "{entity} başarıyla kaldırıldı",
+      "failed": "{entity} kaldırılırken hata oluştu"
     }
   },
   "epic": {

@@ -7,9 +7,19 @@ import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } fro
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
-import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes, Tooltip } from "@plane/ui";
-import { renderFormattedDate, getFileURL } from "@plane/utils";
+import {
+  Button,
+  CustomSelect,
+  Input,
+  TextArea,
+  TOAST_TYPE,
+  setToast,
+  CustomEmojiIconPicker,
+  EmojiIconPickerTypes,
+} from "@plane/ui";
+import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -343,7 +353,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 isMobile={isMobile}
                 tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
-                position="right-top"
+                position="right-start"
               >
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
               </Tooltip>
