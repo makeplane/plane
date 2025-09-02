@@ -5,7 +5,7 @@ import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, Triang
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";

@@ -918,6 +918,10 @@
     "add": {
       "success": "{entity} успішно додано",
       "failed": "Помилка під час додавання {entity}"
+    },
+    "remove": {
+      "success": "{entity} успішно видалено",
+      "failed": "Помилка під час видалення {entity}"
     }
   },
   "epic": {
