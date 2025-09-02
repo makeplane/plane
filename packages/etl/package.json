@@ -89,7 +89,7 @@
     "@plane/sdk": "workspace:*",
     "@plane/types": "workspace:*",
     "asana": "^3.0.11",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "csv-string": "^4.1.1",
     "jira.js": "^4.0.1",
     "marked": "^15.0.4",

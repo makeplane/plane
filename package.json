@@ -38,7 +38,7 @@
       "prosemirror-model": "1.25.3",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "sharp": "0.33.5",
+      "sharp": "catalog:",
       "@octokit/types": "13.8.0",
       "pbkdf2": "3.1.3"
     }

@@ -42,7 +42,7 @@
     "cmdk": "^1.1.1",
     "clsx": "^2.1.1",
     "frimousse": "^0.3.0",
-    "lucide-react": "^0.469.0",
+    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
