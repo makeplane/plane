@@ -24,7 +24,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
         )}
       >
         <Link
-          href={`/${workspaceSlug}/pages/${sectionType}`}
+          href={`/${workspaceSlug}/wiki/${sectionType}`}
           className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400")}
         >
           {sectionDetails.label}

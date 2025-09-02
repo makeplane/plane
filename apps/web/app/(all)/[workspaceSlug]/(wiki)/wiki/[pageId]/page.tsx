@@ -91,9 +91,9 @@ const PageDetailsPage = observer(() => {
       },
       getRedirectionLink: (pageId) => {
         if (pageId) {
-          return `/${workspaceSlug}/pages/${pageId}`;
+          return `/${workspaceSlug}/wiki/${pageId}`;
         } else {
-          return `/${workspaceSlug}/pages`;
+          return `/${workspaceSlug}/wiki`;
         }
       },
       updateDescription: updateDescription ?? (async () => {}),

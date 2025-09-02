@@ -82,7 +82,7 @@ export const PageListBlockItemAction: FC<Props> = observer((props) => {
       />
 
       {/* quick actions dropdown */}
-      <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/pages/${page.id}`} />
+      <WorkspacePageQuickActions parentRef={parentRef} page={page} pageLink={`${workspaceSlug}/wiki/${page.id}`} />
     </>
   );
 });

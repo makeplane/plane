@@ -286,7 +286,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
 
   getRedirectionLink = computedFn(() => {
     const { workspaceSlug } = this.rootStore.router;
-    return `/${workspaceSlug}/pages/${this.id}`;
+    return `/${workspaceSlug}/wiki/${this.id}`;
   });
 
   fetchSubPages = async () => {

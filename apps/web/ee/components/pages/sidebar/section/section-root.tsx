@@ -121,7 +121,7 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
           state: "SUCCESS",
         },
       });
-      const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+      const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
       router.push(pageId);
     } catch (err: any) {
       captureError({

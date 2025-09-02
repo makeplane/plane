@@ -84,7 +84,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
       <Link
         href={
           page.is_global
-            ? `/${workspaceSlug}/pages/${page.id}`
+            ? `/${workspaceSlug}/wiki/${page.id}`
             : `/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
         }
         target="_blank"

@@ -59,7 +59,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
           },
         });
         handleStateClear();
-        if (redirectionEnabled) router.push(`/${workspaceSlug}/pages/${pageData.id}`);
+        if (redirectionEnabled) router.push(`/${workspaceSlug}/wiki/${pageData.id}`);
       }
     } catch {
       captureError({

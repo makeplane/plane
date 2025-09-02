@@ -62,7 +62,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   );
 
   const isPageActive = useMemo(
-    () => pathname === `/${workspaceSlug}/pages/${page?.id}/`,
+    () => pathname === `/${workspaceSlug}/wiki/${page?.id}/`,
     [pathname, workspaceSlug, page?.id]
   );
 

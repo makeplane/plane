@@ -89,7 +89,7 @@ export const PageDetailsHeader = observer(() => {
                     <PageBreadcrumbItem
                       pageId={rootParentDetails.id}
                       storeType={EPageStoreType.WORKSPACE}
-                      href={`/${workspaceSlug}/pages/${rootParentDetails.id}`}
+                      href={`/${workspaceSlug}/wiki/${rootParentDetails.id}`}
                     />
                   </div>
                 )}
@@ -109,7 +109,7 @@ export const PageDetailsHeader = observer(() => {
                             >
                               <CustomMenu.MenuItem
                                 className="flex items-center gap-1 transition-colors duration-200 ease-in-out"
-                                onClick={() => router.push(`/${workspaceSlug}/pages/${parent.id}`)}
+                                onClick={() => router.push(`/${workspaceSlug}/wiki/${parent.id}`)}
                               >
                                 <PageBreadcrumbItem pageId={parent.id} storeType={EPageStoreType.WORKSPACE} showLogo />
                               </CustomMenu.MenuItem>

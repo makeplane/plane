@@ -69,7 +69,7 @@ export const WikiPageListBlock: FC<TPageListBlock> = observer((props) => {
         </>
       }
       title={getPageName(name)}
-      itemLink={`/${workspaceSlug}/pages/${pageId}`}
+      itemLink={`/${workspaceSlug}/wiki/${pageId}`}
       actionableItems={<PageListBlockItemAction workspaceSlug={workspaceSlug} page={page} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}

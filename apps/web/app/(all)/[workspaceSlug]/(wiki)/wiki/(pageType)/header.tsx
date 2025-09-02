@@ -58,7 +58,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
             state: "SUCCESS",
           },
         });
-        const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+        const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
