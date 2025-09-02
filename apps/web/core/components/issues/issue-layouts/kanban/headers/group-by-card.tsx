@@ -2,7 +2,7 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -58,9 +58,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const storeType = useIssueStoreType();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
-  const pathname = usePathname();
-
-  const isDraftIssue = pathname.includes("draft-issue");
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
@@ -97,7 +94,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           onClose={() => setIsOpen(false)}
           data={issuePayload}
           storeType={storeType}
-          isDraft={isDraftIssue}
         />
       )}
 

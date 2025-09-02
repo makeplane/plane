@@ -3,7 +3,7 @@
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
 import {
   ARCHIVABLE_STATE_GROUPS,
@@ -43,7 +43,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -71,13 +70,10 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
-  const isDraftIssue = pathname?.includes("draft-issues") || false;
-
   const duplicateIssuePayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
-      is_draft: isDraftIssue ? false : issue.is_draft,
       sourceIssueId: issue.id,
     },
     ["id"]
@@ -93,7 +89,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
-    isDraftIssue,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -141,7 +136,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.PROJECT}
-        isDraft={isDraftIssue}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal

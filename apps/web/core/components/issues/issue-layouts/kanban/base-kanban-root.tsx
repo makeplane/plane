@@ -34,7 +34,6 @@ export type KanbanStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
