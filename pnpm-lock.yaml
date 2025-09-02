@@ -3364,9 +3364,6 @@ packages:
   '@types/react@18.3.1':
     resolution: {integrity: sha512-V0kuGBX3+prX+DQ/7r2qsv1NsdfnCLnTgnRJ1pYnxykBhGMz+qj+box5lq7XsO5mtZsBqpjwwTu/7wszPfMBcw==}
 
-  '@types/react@18.3.11':
-    resolution: {integrity: sha512-r6QZ069rFTjrEYgFdOck1gK7FLVsgJE7tTz0pQBczlBNUhBNk0MQH4UbnFSwjpQLMkLzgqvBBa+qGpLje16eTQ==}
-
   '@types/reactcss@1.2.13':
     resolution: {integrity: sha512-gi3S+aUi6kpkF5vdhUsnkwbiSEIU/BEJyD7kBy2SudWBUuKmJk8AQKE0OVcQQeEy40Azh0lV6uynxlikYIJuwg==}
     peerDependencies:
@@ -10154,18 +10151,13 @@ snapshots:
 
   '@types/react-dom@18.3.1':
     dependencies:
-      '@types/react': 18.3.11
+      '@types/react': 18.3.1
 
   '@types/react-transition-group@4.4.12(@types/react@18.3.1)':
     dependencies:
       '@types/react': 18.3.1
 
   '@types/react@18.3.1':
-    dependencies:
-      '@types/prop-types': 15.7.15
-      csstype: 3.1.3
-
-  '@types/react@18.3.11':
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.1.3
