@@ -12,6 +12,8 @@ import { WorkItemEmbedExtension } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+// constants
+import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
@@ -27,6 +29,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     editable,
     editorClassName = "",
     editorProps,
+    extendedEditorProps,
     embedHandler,
     fileHandler,
     flaggedExtensions,
@@ -97,20 +100,23 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   if (!editor) return null;
 
   return (
-    <PageRenderer
-      aiHandler={aiHandler}
-      bubbleMenuEnabled={bubbleMenuEnabled}
-      displayConfig={displayConfig}
-      documentLoaderClassName={documentLoaderClassName}
-      editor={editor}
-      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-      id={id}
-      isTouchDevice={!!isTouchDevice}
-      isLoading={!hasServerSynced && !hasServerConnectionFailed}
-      tabIndex={tabIndex}
-      flaggedExtensions={flaggedExtensions}
-      disabledExtensions={disabledExtensions}
-    />
+    <>
+      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
+      <PageRenderer
+        aiHandler={aiHandler}
+        bubbleMenuEnabled={bubbleMenuEnabled}
+        displayConfig={displayConfig}
+        documentLoaderClassName={documentLoaderClassName}
+        editor={editor}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        id={id}
+        isTouchDevice={!!isTouchDevice}
+        isLoading={!hasServerSynced && !hasServerConnectionFailed}
+        tabIndex={tabIndex}
+        flaggedExtensions={flaggedExtensions}
+        disabledExtensions={disabledExtensions}
+      />
+    </>
   );
 };
 
