@@ -2,13 +2,14 @@ import React from "react";
 // helpers
 import { cn } from "../utils/classname";
 
-type Props = {
+type SkeletonProps = {
   children: React.ReactNode;
   className?: string;
+  ariaLabel?: string;
 };
 
-const Skeleton = ({ children, className = "" }: Props) => (
-  <div data-slot="skeleton" className={cn("animate-pulse", className)} role="status">
+const SkeletonRoot = ({ children, className = "", ariaLabel = "Loading content" }: SkeletonProps) => (
+  <div data-slot="skeleton" className={cn("animate-pulse", className)} role="status" aria-label={ariaLabel}>
     {children}
   </div>
 );
@@ -19,16 +20,17 @@ type ItemProps = {
   className?: string;
 };
 
-const Item: React.FC<ItemProps> = ({ height = "auto", width = "auto", className = "" }) => (
+const SkeletonItem: React.FC<ItemProps> = ({ height = "auto", width = "auto", className = "" }) => (
   <div
     data-slot="skeleton-item"
     className={cn("rounded-md bg-custom-background-80", className)}
-    style={{ height: height, width: width }}
+    style={{ height, width }}
   />
 );
 
-Skeleton.Item = Item;
+const Skeleton = Object.assign(SkeletonRoot, { Item: SkeletonItem });
 
-Skeleton.displayName = "plane-ui-skeleton";
+SkeletonRoot.displayName = "plane-ui-skeleton";
+SkeletonItem.displayName = "plane-ui-skeleton-item";
 
 export { Skeleton };
