@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Tabs } from "./tabs";
 
@@ -69,11 +68,16 @@ export const Basic: Story = {
 export const Sizes: Story = {
   render: ({ defaultValue, options }) => {
     const sizes = ["sm", "md", "lg"] as const;
+    const sizeLabels: Record<(typeof sizes)[number], string> = {
+      sm: "Small",
+      md: "Medium",
+      lg: "Large",
+    };
     return (
-      <div className="w-[400px]">
+      <div className="w-[400px] grid gap-4">
         {sizes.map((size) => (
-          <Fragment key={size}>
-            <div className="text-lg">{size}</div>
+          <div key={size} className="flex flex-col gap-2">
+            <div className="text-lg">{sizeLabels[size]}</div>
             <Tabs defaultValue={defaultValue}>
               <Tabs.List>
                 {options.map((option) => (
@@ -83,7 +87,7 @@ export const Sizes: Story = {
                 ))}
               </Tabs.List>
             </Tabs>
-          </Fragment>
+          </div>
         ))}
       </div>
     );
