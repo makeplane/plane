@@ -1,5 +1,16 @@
 import { useParams, usePathname } from "next/navigation";
-import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpToLine,
+  Building,
+  Cable,
+  CreditCard,
+  Shapes,
+  Timer,
+  ToyBrick,
+  Users,
+  Webhook,
+} from "lucide-react";
 import {
   EUserPermissionsLevel,
   GROUPED_WORKSPACE_SETTINGS,
@@ -8,7 +19,10 @@ import {
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
+import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
+// components
 import { SettingsSidebar } from "@/components/settings/sidebar";
+// hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
@@ -18,6 +32,16 @@ const ICONS = {
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
   webhooks: Webhook,
+  import: ArrowDownToLine,
+  worklogs: Timer,
+  teamspaces: TeamsIcon,
+  initiatives: InitiativeIcon,
+  customers: CustomersIcon,
+  templates: Shapes,
+  integrations: Cable,
+  project_states: ProjectStatesIcon,
+  applications: ToyBrick,
+  "plane-intelligence": PiIcon,
 };
 
 export const WorkspaceActionIcons = ({

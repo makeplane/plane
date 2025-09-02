@@ -1,0 +1,378 @@
+# documentation: https://docs.plane.so/self-hosting/methods/docker-compose
+# slogan: The open source project management tool
+# tags: plane,project-management,tool,open,source,api,nextjs,redis,postgresql,django,pm
+# logo: svgs/plane.svg
+
+x-plane-commercial: &plane
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.14.0}
+  APP_DOMAIN: ${SERVICE_URL_PLANE}
+  MACHINE_SIGNATURE: ${SERVICE_PASSWORD_64_MACHINESIGNATURE}
+  DEPLOY_PLATFORM: coolify
+  PRIME_HOST: https://prime.plane.so
+
+x-monitor-env: &monitor-env
+  SERVICE_HTTP_WEB: web:3000
+  SERVICE_HTTP_API: api:8000
+  SERVICE_HTTP_LIVE: live:3000
+  SERVICE_HTTP_PROXY: proxy:80
+  SERVICE_HTTP_MINIO: plane-minio:9090
+  SERVICE_TCP_REDIS: plane-redis:6379
+  SERVICE_TCP_POSTGRES: plane-db:5432
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
+  API_HOSTNAME: ${API_HOSTNAME:-http://api:8000}
+
+x-proxy-env: &proxy-env
+  SERVICE_FQDN_PLANE_80: /
+  SITE_ADDRESS: ":80"
+  CERT_EMAIL: ${CERT_EMAIL:-admin@example.com}
+  CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+  CERT_ACME_DNS: ${CERT_ACME_DNS}
+  BUCKET_NAME: ${BUCKET_NAME:-uploads}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-80}
+  LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
+
+x-pg-env: &pg-env
+  POSTGRES_USER: ${SERVICE_USER_POSTGRES}
+  POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  PGDATA: /var/lib/postgresql/data
+  DATABASE_URL: postgresql://${SERVICE_USER_POSTGRES}:${SERVICE_PASSWORD_POSTGRES}@${POSTGRES_HOST:-plane-db}/${POSTGRES_DB:-plane}
+  DB_URL: postgresql://${SERVICE_USER_POSTGRES}:${SERVICE_PASSWORD_POSTGRES}@${POSTGRES_HOST:-plane-db}/${POSTGRES_DB:-plane}
+
+x-rabbitmq-env: &rabbitmq-env
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_DEFAULT_USER: ${SERVICE_USER_RABBITMQ}
+  RABBITMQ_DEFAULT_PASS: ${SERVICE_PASSWORD_RABBITMQ}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+  AMQP_URL: amqp://${SERVICE_USER_RABBITMQ}:${SERVICE_PASSWORD_RABBITMQ}@${RABBITMQ_HOST:-plane-mq}:${RABBITMQ_PORT:-5672}/${RABBITMQ_VHOST:-plane}
+
+x-redis-env: &redis-env
+  REDIS_HOST: ${REDIS_HOST:-plane-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+  REDIS_URL: redis://${REDIS_HOST:-plane-redis}:${REDIS_PORT:-6379}/
+
+x-docstore-env: &docstore-env
+  USE_MINIO: ${USE_MINIO:-1}
+  USE_STORAGE_PROXY: ${USE_STORAGE_PROXY:-0}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  AWS_ACCESS_KEY_ID: ${SERVICE_USER_AWSACCESSKEYID}
+  AWS_SECRET_ACCESS_KEY: ${SERVICE_PASSWORD_AWSSECRETACCESSKEY}
+  AWS_REGION: ${AWS_REGION}
+  BUCKET_NAME: ${BUCKET_NAME:-uploads}
+  AWS_S3_BUCKET_NAME: ${BUCKET_NAME:-uploads}
+
+x-silo-env:
+  # App Envs
+  &silo-env
+  PORT: 3000
+  BATCH_SIZE: ${BATCH_SIZE:-60}
+  DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}
+  PG_SCHEMA: ${PG_SCHEMA:-silo}
+  APP_BASE_URL: ${SERVICE_URL_PLANE}
+  SILO_API_BASE_URL: ${SERVICE_URL_PLANE}
+  API_BASE_URL: http://api:8000
+  SILO_BASE_PATH: /silo
+  WEBHOOK_SECRET: ${WEBHOOK_SECRET:-plane-silo}
+  MQ_PREFETCH_COUNT: ${MQ_PREFETCH_COUNT:-10}
+
+  # Authentication
+  SILO_HMAC_SECRET_KEY: ${SERVICE_PASSWORD_64_SILOHMACSECRETKEY}
+  AES_SECRET_KEY: ${AES_SECRET_KEY:-wvRonyo2xksk00E2h0hAbR5pFETQwbBK}
+
+  # Feature Flag Envs
+  FEATURE_FLAG_SERVER_BASE_URL: ${FEATURE_FLAG_SERVER_BASE_URL}
+  FEATURE_FLAG_SERVER_AUTH_TOKEN: ${FEATURE_FLAG_SERVER_AUTH_TOKEN}
+
+  # Github Envs
+  GITHUB_APP_NAME: ${GITHUB_APP_NAME}
+  GITHUB_APP_ID: ${GITHUB_APP_ID}
+  GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+  GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+  GITHUB_PRIVATE_KEY: ${GITHUB_PRIVATE_KEY}
+
+  # Gitlab Envs
+  GITLAB_CLIENT_ID: ${GITLAB_CLIENT_ID}
+  GITLAB_CLIENT_SECRET: ${GITLAB_CLIENT_SECRET}
+
+  # Slack Envs
+  SLACK_CLIENT_ID: ${SLACK_CLIENT_ID}
+  SLACK_CLIENT_SECRET: ${SLACK_CLIENT_SECRET}
+
+x-app-env: &app-env
+  WEB_URL: ${SERVICE_URL_PLANE}
+  DEBUG: ${DEBUG:-0}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+  API_BASE_URL: http://api:8000
+  LIVE_BASE_URL: ${LIVE_BASE_URL:-http://live:3000}
+  LIVE_BASE_PATH: ${LIVE_BASE_PATH:-/live}
+  # Gunicorn Workers
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+  # Application secret
+  SECRET_KEY: ${SERVICE_PASSWORD_64_SECRETKEY}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  SSL_VERIFY: ${SSL_VERIFY:-1}
+  FEATURE_FLAG_SERVER_BASE_URL: ${FEATURE_FLAG_SERVER_BASE_URL:-http://monitor:8080}
+  PAYMENT_SERVER_BASE_URL: ${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
+  # Enternal Services Config
+  SILO_HMAC_SECRET_KEY: ${SERVICE_PASSWORD_64_SILOHMACSECRETKEY}
+  AES_SECRET_KEY: ${AES_SECRET_KEY:-wvRonyo2xksk00E2h0hAbR5pFETQwbBK}
+  # API key rate limit
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  # Force HTTPS for handling SSL Termination
+  MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  # Live Server Secret Key
+  LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY}
+
+x-live-env: &live-env
+  API_BASE_URL: http://api:8000
+  LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY}
+  IFRAMELY_URL: ${IFRAMELY_URL:-http://iframely:8061}
+
+x-outbox-poller-env: &outbox-poller-env
+  OUTBOX_POLLER_MEMORY_LIMIT_MB: ${OUTBOX_POLLER_MEMORY_LIMIT_MB:-512}
+  OUTBOX_POLLER_INTERVAL_MIN: ${OUTBOX_POLLER_INTERVAL_MIN:-0.25}
+  OUTBOX_POLLER_INTERVAL_MAX: ${OUTBOX_POLLER_INTERVAL_MAX:-2}
+  OUTBOX_POLLER_BATCH_SIZE: ${OUTBOX_POLLER_BATCH_SIZE:-250}
+  OUTBOX_POLLER_MEMORY_CHECK_INTERVAL: ${OUTBOX_POLLER_MEMORY_CHECK_INTERVAL:-30}
+  OUTBOX_POLLER_POOL_SIZE: ${OUTBOX_POLLER_POOL_SIZE:-4}
+  OUTBOX_POLLER_POOL_MIN_SIZE: ${OUTBOX_POLLER_POOL_MIN_SIZE:-2}
+  OUTBOX_POLLER_POOL_MAX_SIZE: ${OUTBOX_POLLER_POOL_MAX_SIZE:-10}
+  OUTBOX_POLLER_POOL_TIMEOUT: ${OUTBOX_POLLER_POOL_TIMEOUT:-30.0}
+  OUTBOX_POLLER_POOL_MAX_IDLE: ${OUTBOX_POLLER_POOL_MAX_IDLE:-300.0}
+  OUTBOX_POLLER_POOL_MAX_LIFETIME: ${OUTBOX_POLLER_POOL_MAX_LIFETIME:-3600}
+  OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT: ${OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT:-5.0}
+  OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL: ${OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL:-30}
+
+x-automation-consumer-env: &automation-consumer-env
+  AUTOMATION_EVENT_STREAM_QUEUE_NAME: ${AUTOMATION_EVENT_STREAM_QUEUE_NAME:-plane.event_stream.automations}
+  AUTOMATION_EVENT_STREAM_PREFETCH: ${AUTOMATION_EVENT_STREAM_PREFETCH:-10}
+  AUTOMATION_EXCHANGE_NAME: ${AUTOMATION_EXCHANGE_NAME:-plane.event_stream}
+  AUTOMATION_EVENT_TYPES: ${AUTOMATION_EVENT_TYPES:-issue.}
+
+services:
+  admin:
+    image: artifacts.plane.so/makeplane/admin-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    deploy:
+      replicas: ${ADMIN_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - api
+    - web
+
+  web:
+    image: artifacts.plane.so/makeplane/web-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    deploy:
+      replicas: ${WEB_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - api
+    - worker
+
+  space:
+    image: artifacts.plane.so/makeplane/space-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    deploy:
+      replicas: ${SPACE_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - api
+    - web
+
+  live:
+    image: artifacts.plane.so/makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    environment:
+      <<: [ *live-env, *redis-env ]
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - api
+    - web
+
+  monitor:
+    image: artifacts.plane.so/makeplane/monitor-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    volumes:
+    - "monitor_data:/app"
+    environment:
+      <<: [ *plane, *monitor-env ]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  api:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-api-ee.sh
+    environment:
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: ${API_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - api_logs:/code/plane/logs
+    depends_on:
+    - plane-db
+    - plane-redis
+
+  worker:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-worker.sh
+    environment:
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: ${WORKER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - worker_logs:/code/plane/logs
+    depends_on:
+    - api
+    - plane-db
+    - plane-redis
+
+  beat-worker:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-beat.sh
+    environment:
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: ${BEAT_WORKER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - beat_worker_logs:/code/plane/logs
+    depends_on:
+    - api
+    - plane-db
+    - plane-redis
+
+  migrator:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-migrator.sh
+    environment:
+      <<: [ *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - migrator_logs:/code/plane/logs
+    depends_on:
+    - plane-db
+    - plane-redis
+
+  plane-db:
+    image: postgres:15.7-alpine
+    command: postgres -c 'max_connections=1000'
+    environment:
+      <<: [ *pg-env ]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+
+  plane-redis:
+    image: valkey/valkey:7.2.5-alpine
+    environment:
+      <<: [ *redis-env ]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    environment:
+      <<: [ *rabbitmq-env ]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - rabbitmq_data:/var/lib/rabbitmq
+
+  plane-minio:
+    image: minio/minio:latest
+    command: server /export --console-address ":9090"
+    environment:
+      <<: [ *docstore-env ]
+      MINIO_ROOT_USER: ${SERVICE_USER_AWSACCESSKEYID}
+      MINIO_ROOT_PASSWORD: ${SERVICE_PASSWORD_AWSSECRETACCESSKEY}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+    - uploads:/export
+    - minio_data:/data
+
+  iframely:
+    image: artifacts.plane.so/makeplane/iframely:v1.2.0
+    deploy:
+      replicas: ${IFRAMELY_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+
+  silo:
+    image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    restart: unless-stopped
+    environment:
+      <<: [ *silo-env, *pg-env, *rabbitmq-env, *redis-env ]
+    deploy:
+      replicas: ${SILO_REPLICAS:-1}
+    depends_on:
+    - plane-redis
+    - plane-mq
+
+  automation-consumer:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-automation-consumer.sh
+    environment:
+      <<: [ *automation-consumer-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: ${AUTOMATION_CONSUMER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - plane-db
+    - plane-mq
+
+  outbox-poller:
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    command: ./bin/docker-entrypoint-outbox-poller.sh
+    environment:
+      <<: [ *outbox-poller-env, *plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+    deploy:
+      replicas: ${OUTBOX_POLLER_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - plane-db
+    - plane-mq
+
+  # Comment this if you already have a reverse proxy running
+  proxy:
+    image: artifacts.plane.so/makeplane/proxy-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    restart: unless-stopped
+    environment:
+      <<: [ *plane, *proxy-env ]
+    volumes:
+    - proxy_config:/config
+    - proxy_data:/data
+    depends_on:
+    - web
+    - api
+    - space
+    - admin
+    - live

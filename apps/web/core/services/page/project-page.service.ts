@@ -1,7 +1,6 @@
 // types
 import { API_BASE_URL } from "@plane/constants";
 import { TDocumentPayload, TPage } from "@plane/types";
-// helpers
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -57,7 +56,10 @@ export class ProjectPageService extends APIService {
     pageId: string,
     data: Pick<TPage, "access">
   ): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/access/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/access/`, {
+      ...data,
+      action: "all",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -126,16 +128,20 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async lock(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
+  async lock(workspaceSlug: string, projectId: string, pageId: string, recursive: boolean): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`, {
+      action: recursive ? "all" : "",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async unlock(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
+  async unlock(workspaceSlug: string, projectId: string, pageId: string, recursive: boolean): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`, {
+      action: recursive ? "all" : "",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -179,6 +185,37 @@ export class ProjectPageService extends APIService {
   async move(workspaceSlug: string, projectId: string, pageId: string, newProjectId: string): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/move/`, {
       new_project_id: newProjectId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchSubPages(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/sub-pages`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchParentPages(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/parent-pages`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchPagesByType(
+    workspaceSlug: string,
+    projectId: string,
+    type: string,
+    searchQuery?: string
+  ): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages`, {
+      params: { search: searchQuery, type },
     })
       .then((response) => response?.data)
       .catch((error) => {

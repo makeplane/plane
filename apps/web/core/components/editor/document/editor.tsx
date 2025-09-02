@@ -6,7 +6,9 @@ import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
@@ -60,6 +62,10 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     workspaceSlug,
   });
 
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
+
   return (
     <DocumentEditorWithRef
       ref={ref}
@@ -83,9 +89,21 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       }}
       embedHandler={{
         issue: issueEmbedProps,
+        externalEmbedComponent: {
+          widgetCallback: EmbedHandler,
+        },
         ...embedHandler,
       }}
-      extendedEditorProps={{}}
+      extendedEditorProps={{
+        isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        embedHandler: {
+          issue: issueEmbedProps,
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
+          ...embedHandler,
+        },
+      }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />
