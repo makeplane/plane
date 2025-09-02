@@ -56,6 +56,7 @@ class ExporterHistory(BaseModel):
         related_name="workspace_exporters",
     )
     filters = models.JSONField(blank=True, null=True)
+    rich_filters = models.JSONField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Exporter"
