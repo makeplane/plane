@@ -33,7 +33,7 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
   if (!epicDetail) return null;
 
   return (
-    <div className={cn("py-2 border-b border-custom-border-100 last:border-b-0", containerClassName)}>
+    <div className={cn("py-2", containerClassName)}>
       <div
         className={cn(
           "group/issue-type hover:bg-custom-background-90/60 rounded-md",
