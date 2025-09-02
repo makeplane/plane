@@ -38,6 +38,7 @@ export class WorkspaceIssues extends CoreWorkspaceIssues implements IWorkspaceIs
               id: update.id,
               start_date: currIssue.start_date ?? undefined,
               target_date: currIssue.target_date ?? undefined,
+              meta: update.meta ?? undefined,
             });
           }
 
@@ -47,7 +48,14 @@ export class WorkspaceIssues extends CoreWorkspaceIssues implements IWorkspaceIs
         }
       });
 
-      await this.workspaceService.updateWorkItemDates(workspaceSlug, updates);
+      const updatesPayload = updates.map((update) => ({
+        id: update.id,
+        start_date: update.start_date,
+        target_date: update.target_date,
+        project_id: update.meta?.project_id,
+      }));
+
+      await this.workspaceService.updateWorkItemDates(workspaceSlug, updatesPayload);
     } catch (e) {
       runInAction(() => {
         for (const update of issueDatesBeforeChange) {
