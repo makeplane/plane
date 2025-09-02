@@ -54,7 +54,6 @@ export interface MenuItemFactoryProps {
   isRestoringAllowed?: boolean;
   isInArchivableGroup?: boolean;
   issueTypeDetail?: { is_active?: boolean };
-  isDraftIssue?: boolean;
   // Action handlers
   setIssueToEdit: (issue: TIssue | undefined) => void;
   setCreateUpdateIssueModal: (open: boolean) => void;
@@ -368,10 +367,4 @@ export const useArchivedIssueMenuItems = (props: MenuItemFactoryProps): TContext
     ],
     [factory]
   );
-};
-
-export const useDraftIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
-  const factory = useMenuItemFactory(props);
-
-  return useMemo(() => [factory.createEditMenuItem(), factory.createDeleteMenuItem()], [factory]);
 };

@@ -138,7 +138,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.MODULE}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal

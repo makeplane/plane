@@ -70,6 +70,7 @@ export const SidebarQuickActions = observer(() => {
         onClose={() => setIsDraftIssueModalOpen(false)}
         data={workspaceDraftIssue ?? {}}
         onSubmit={() => removeWorkspaceDraftIssue()}
+        fetchIssueDetails={false}
         isDraft
       />
       <div className={cn("flex items-center justify-between gap-1 cursor-pointer", {})}>

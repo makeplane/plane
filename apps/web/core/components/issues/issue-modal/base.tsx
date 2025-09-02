@@ -95,12 +95,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      issueId,
-      isDraft ? "DRAFT" : "DEFAULT"
-    );
+    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
     if (response) setDescription(response?.description_html || "<p></p>");
   };
 

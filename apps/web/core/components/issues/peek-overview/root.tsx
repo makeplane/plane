@@ -64,7 +64,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           setError(false);
-          await fetchIssue(workspaceSlug, projectId, issueId, is_draft ? "DRAFT" : "DEFAULT");
+          await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
           setError(true);
           console.error("Error fetching the parent issue", error);
