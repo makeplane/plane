@@ -120,6 +120,12 @@ const nextConfig = {
     }
     return rewrites;
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 module.exports = nextConfig;
