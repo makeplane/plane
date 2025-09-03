@@ -115,23 +115,6 @@ class WorkspacePageSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         labels = validated_data.pop("labels", None)
-        projects = validated_data.pop("projects", None)
-
-        if projects is not None:
-            ProjectPage.objects.filter(page=instance).delete()
-            ProjectPage.objects.bulk_create(
-                [
-                    ProjectPage(
-                        workspace_id=instance.workspace_id,
-                        project_id=project,
-                        page_id=instance.id,
-                        created_by_id=instance.created_by_id,
-                        updated_by_id=instance.updated_by_id,
-                    )
-                    for project in projects
-                ],
-                batch_size=10,
-            )
 
         if labels is not None:
             PageLabel.objects.filter(page=instance).delete()

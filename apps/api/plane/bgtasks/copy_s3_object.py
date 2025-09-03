@@ -66,7 +66,7 @@ def update_description(entity, duplicated_assets, tags):
     return entity.description_html
 
 
-# Get the description binary and description from the live server
+# Get the description binary and json from the live server
 def sync_with_external_service(entity_name, description_html):
     try:
         data = {

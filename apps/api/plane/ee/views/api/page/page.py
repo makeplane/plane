@@ -1,9 +1,5 @@
 # Python imports
-import json
 from django.db import transaction
-
-# Django imports
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db.models import Q
@@ -14,11 +10,10 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers import PageSerializer, PageDetailSerializer
-from plane.db.models import Page, Project, ProjectPage, Workspace
+from plane.db.models import Page, Workspace
 from plane.ee.views.api.base import BaseServiceAPIView
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
-from plane.app.permissions import ProjectEntityPermission
 
 
 class WikiBulkOperationAPIView(BaseServiceAPIView):
