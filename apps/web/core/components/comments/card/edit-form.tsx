@@ -45,7 +45,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
   });
   const commentHTML = watch("comment_html");
 
-  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
+  const isEmpty = isCommentEmpty(commentHTML);
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard();
   const isSubmitButtonDisabled = isSubmitting || !isEditorReadyToDiscard;
   const isDisabled = isSubmitting || isEmpty || isSubmitButtonDisabled;

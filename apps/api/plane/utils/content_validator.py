@@ -200,13 +200,6 @@ def _compute_html_sanitization_diff(before_html: str, after_html: str):
 
 
 def validate_html_content(html_content: str):
-    """
-    Sanitize HTML content using nh3.
-    Returns a tuple: (is_valid, error_message, clean_html)
-    """
-    if not html_content:
-        return True, None, None
-
     # Size check - 10MB limit (consistent with binary validation)
     if len(html_content.encode("utf-8")) > MAX_SIZE:
         return False, "HTML content exceeds maximum size limit (10MB)", None
@@ -235,3 +228,4 @@ def validate_html_content(html_content: str):
     except Exception as e:
         log_exception(e)
         return False, "Failed to sanitize HTML", None
+

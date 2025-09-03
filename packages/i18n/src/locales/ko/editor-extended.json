@@ -1,0 +1,45 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "외부 파일을 업로드하려면 드래그 앤 드롭하세요"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "파일이 너무 큽니다.",
+        "description": "파일당 최대 크기는 {maxFileSize} MB입니다"
+      },
+      "unsupported_file_type": {
+        "title": "지원되지 않는 파일 형식입니다.",
+        "description": "지원되는 형식 보기"
+      },
+      "default": {
+        "title": "업로드 실패.",
+        "description": "문제가 발생했습니다. 다시 시도해 주세요."
+      }
+    },
+    "upgrade": {
+      "description": "이 첨부 파일을 보려면 플랜을 업그레이드하세요."
+    },
+    "aria": {
+      "click_to_upload": "첨부 파일을 업로드하려면 클릭하세요"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "임베드로 변환",
+      "convert_to_link": "링크로 변환",
+      "convert_to_richcard": "리치 카드로 변환"
+    },
+    "placeholder": {
+      "insert_embed": "YouTube 동영상, Figma 디자인 등 원하는 임베드 링크를 여기에 삽입하세요",
+      "link": "링크 입력 또는 붙여넣기"
+    },
+    "input_modal": {
+      "embed": "임베드",
+      "works_with_links": "YouTube, Figma, Google Docs 등과 함께 작동"
+    },
+    "error": {
+      "not_valid_link": "유효한 URL을 입력해 주세요."
+    }
+  }
+}
