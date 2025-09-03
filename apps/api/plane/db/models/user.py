@@ -11,8 +11,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-import re
-from django.core.exceptions import ValidationError
 
 # Module imports
 from plane.db.models import FileAsset
@@ -37,13 +35,6 @@ def get_mobile_default_onboarding():
     }
 
 
-def validate_name(value):
-    if not re.match(r"^[a-zA-Z0-9_\- ]+$", value):
-        raise ValidationError(
-            "name can only contain letters, numbers, hyphens (-), and underscores (_)"
-        )
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
@@ -55,10 +46,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # identity
     display_name = models.CharField(max_length=255, default="")
-    first_name = models.CharField(
-        max_length=255, blank=True, validators=[validate_name]
-    )
-    last_name = models.CharField(max_length=255, blank=True, validators=[validate_name])
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
     # avatar
     avatar = models.TextField(blank=True)
     avatar_asset = models.ForeignKey(
