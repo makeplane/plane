@@ -90,7 +90,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
       {userProjectsData ? (
         <>
           <div className="relative h-[110px]">
-            {currentUser?.id === userId && (
+            {/* Removing the edit button/link section {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
@@ -98,7 +98,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                   </span>
                 </Link>
               </div>
-            )}
+            )} */}
             <img
               src={
                 userData?.cover_image_url
