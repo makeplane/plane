@@ -151,7 +151,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 onChange(labelIds);
                 handleFormChange();
               }}
-              projectId={projectDetails?.id ?? undefined}
+              projectId={projectId ?? undefined}
               tabIndex={getIndex("label_ids")}
               createLabelEnabled={!!canCreateLabel}
             />

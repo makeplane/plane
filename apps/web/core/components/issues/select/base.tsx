@@ -91,14 +91,23 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
   };
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    if (query !== "" && e.key === "Escape") {
-      setQuery("");
-    }
-
-    if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && createLabelEnabled) {
+    const q = query.trim();
+    if (q !== "" && e.key === "Escape") {
       e.preventDefault();
-      await handleAddLabel(query);
+      e.stopPropagation();
+      setQuery("");
+      return;
+    }
+    if (
+      q !== "" &&
+      e.key === "Enter" &&
+      !e.nativeEvent.isComposing &&
+      createLabelEnabled &&
+      filteredOptions.length === 0 &&
+      !submitting
+    ) {
+      e.preventDefault();
+      await handleAddLabel(q);
     }
   };
   const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
@@ -118,12 +127,20 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
   }, [isDropdownOpen, isMobile]);
 
   const handleAddLabel = async (labelName: string) => {
-    if (!createLabel) return;
+    if (!createLabel || submitting) return;
+    const name = labelName.trim();
+    if (!name) return;
     setSubmitting(true);
-    const label = await createLabel({ name: labelName, color: getRandomLabelColor() });
-    onChange([...value, label.id]);
-    setQuery("");
-    setSubmitting(false);
+    try {
+      const existing = labelsList.find((l) => l.name.toLowerCase() === name.toLowerCase());
+      const idToAdd = existing ? existing.id : (await createLabel({ name, color: getRandomLabelColor() })).id;
+      onChange(Array.from(new Set([...value, idToAdd])));
+      setQuery("");
+    } catch (e) {
+      console.error("Failed to create label", e);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -266,7 +283,7 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
                       );
                   })
                 ) : submitting ? (
-                  <Loader className="animate-spin  h-3.5 w-3.5" />
+                  <Loader className="animate-spin h-3.5 w-3.5" />
                 ) : createLabelEnabled ? (
                   <p
                     onClick={() => {
