@@ -9,9 +9,6 @@ export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
 export const HEADER_GITHUB_ICON = "header_github_icon";
 
-export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
-export const HEADER_GITHUB_ICON = "header_github_icon";
-
 /**
  * ===========================================================================
  * Command palette tracker

@@ -8,7 +8,6 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { IProject, IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
