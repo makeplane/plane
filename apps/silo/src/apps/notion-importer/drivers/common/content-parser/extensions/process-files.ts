@@ -16,24 +16,39 @@ export interface NotionFileParserConfig {
 }
 
 export class NotionFileParserExtension implements IParserExtension {
-  constructor(readonly config: NotionFileParserConfig) {}
+  constructor(readonly config: NotionFileParserConfig) { }
 
   shouldParse(node: HTMLElement): boolean {
+    /*
+   * A tag can also exist in case of images, hence if we get to this case, we have to ignore it.
+    <a
+      href=""
+      ><img
+        style="width: 681.96875px"
+        src=""
+    /></a>
+    */
     // Only process anchor tags that are likely local file links
     const hasAnchorTag = node.tagName === "A" || node.rawTagName === "a";
+    const hasSingleImageChild = node.querySelector("img");
+
+    if (hasAnchorTag && hasSingleImageChild) {
+      return false;
+    }
+
     const isNotAnHTTPLink = !node.getAttribute("href")?.startsWith("http");
     const isNotAnHTMLPage = !node.getAttribute("href")?.endsWith(".html");
     return hasAnchorTag && isNotAnHTTPLink && isNotAnHTMLPage;
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
+
     if (node.tagName === "A" || node.rawTagName === "a") {
       const href = node.getAttribute("href");
       if (!href) return node;
 
       // Normalize the path - Notion uses relative paths with URL encoding
       const normalizedPath = this.normalizeFilePath(href);
-
 
       // Get the asset ID using the normalized path
       const assetInfo = JSON.parse(this.config.assetMap.get(normalizedPath) || "{}") as TAssetInfo;
