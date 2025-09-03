@@ -75,7 +75,7 @@ openfeature-sdk==0.7.0
 # graphql
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
-djangorestframework-simplejwt==5.4.0
+djangorestframework-simplejwt==5.5.1
 # firebase admin
 firebase-admin==6.6.0
 # oauth toolkit
