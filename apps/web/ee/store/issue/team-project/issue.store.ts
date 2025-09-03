@@ -1,6 +1,13 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { TIssue, TLoader, IssuePaginationOptions, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
+import {
+  TIssue,
+  TLoader,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+  ViewFlags,
+} from "@plane/types";
 // services
 import { TeamspaceWorkItemsService } from "@/plane-web/services/teamspace/teamspace-work-items.service";
 // base class
@@ -10,6 +17,7 @@ import { IIssueRootStore } from "@/store/issue/root.store";
 import { ITeamProjectWorkItemsFilter } from "./filter.store";
 
 export interface ITeamProjectWorkItems extends IBaseIssuesStore {
+  viewFlags: ViewFlags;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -48,6 +56,11 @@ export interface ITeamProjectWorkItems extends IBaseIssuesStore {
 }
 
 export class TeamProjectWorkItems extends BaseIssuesStore implements ITeamProjectWorkItems {
+  viewFlags = {
+    enableQuickAdd: false,
+    enableIssueCreation: false,
+    enableInlineEditing: true,
+  };
   // filter store
   teamspaceProjectWorkItemsFilterStore: ITeamProjectWorkItemsFilter;
   // service
