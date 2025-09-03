@@ -7,9 +7,10 @@ import { useParams, usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { DiceIcon, ContrastIcon, LayersIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
+import { Intake } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
