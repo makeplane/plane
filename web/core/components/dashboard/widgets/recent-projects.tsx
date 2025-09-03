@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+// import { Plus } from "lucide-react";
 // plane types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
@@ -100,7 +100,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
         {t("recent_projects")}
       </Link>
       <div className="mt-4 space-y-8">
-        {canCreateProject && (
+        {/* {canCreateProject && (
           <button
             type="button"
             className="group flex items-center gap-8"
@@ -118,7 +118,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
               {t("create_new_project")}
             </p>
           </button>
-        )}
+        )} */}
         {widgetStats.map((projectId) => (
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}

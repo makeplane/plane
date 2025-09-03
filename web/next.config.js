@@ -68,6 +68,11 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/profile/:path*",
+        destination: "/",
+        permanent: false,
+      },
     ];
   },
   async rewrites() {

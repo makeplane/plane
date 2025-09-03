@@ -30,7 +30,7 @@ export const SidebarProjectsList: FC = observer(() => {
   // states
 
   const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(isAllProjectsListOpenInLocalStorage === "true");
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  // const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);  
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -141,14 +141,14 @@ export const SidebarProjectsList: FC = observer(() => {
   }, [pathname]);
   return (
     <>
-      {workspaceSlug && (
+      {/* {workspaceSlug && (
         <CreateProjectModal
           isOpen={isProjectModalOpen}
           onClose={() => setIsProjectModalOpen(false)}
           setToFavorite={false}
           workspaceSlug={workspaceSlug.toString()}
         />
-      )}
+      )} */}
       <div
         ref={containerRef}
         className={cn({
@@ -194,20 +194,20 @@ export const SidebarProjectsList: FC = observer(() => {
               </Disclosure.Button>
               {!isCollapsed && (
                 <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
-                  {isAuthorizedUser && (
-                    <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
-                      <button
-                        type="button"
-                        className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                        onClick={() => {
-                          setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
-                          setIsProjectModalOpen(true);
-                        }}
-                      >
-                        <Plus className="size-3" />
-                      </button>
-                    </Tooltip>
-                  )}
+                  {/* {isAuthorizedUser && (
+                    // <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+                    //   <button
+                    //     type="button"
+                    //     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                    //     onClick={() => {
+                    //       setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
+                    //       setIsProjectModalOpen(true);
+                    //     }}
+                    //   >
+                    //     <Plus className="size-3" /> 
+                    //   </button>
+                    // </Tooltip>
+                  )} */}
                   <Disclosure.Button
                     as="button"
                     type="button"

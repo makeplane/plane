@@ -4,7 +4,7 @@ import { Fragment, Ref, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
+//import { usePopper } from "react-popper";
 // icons
 import { Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
 // ui
@@ -62,20 +62,20 @@ export const SidebarDropdown = observer(() => {
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // popper-js refs
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // popper-js init
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
+  // const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // // popper-js init
+  // const { styles, attributes } = usePopper(referenceElement, popperElement, {
+  //   placement: "right",
+  //   modifiers: [
+  //     {
+  //       name: "preventOverflow",
+  //       options: {
+  //         padding: 12,
+  //       },
+  //     },
+  //   ],
+  // });
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) =>
     updateUserProfile({
@@ -251,17 +251,17 @@ export const SidebarDropdown = observer(() => {
         )}
       </Menu>
       {!sidebarCollapsed && (
-        <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
-            <Avatar
-              name={currentUser?.display_name}
-              src={getFileURL(currentUser?.avatar_url ?? "")}
-              size={24}
-              shape="square"
-              className="!text-base"
-            />
-          </Menu.Button>
-          <Transition
+         <div className="relative flex-shrink-0">
+          <Avatar
+            name={currentUser?.display_name}
+            src={getFileURL(currentUser?.avatar_url ?? "")}
+            size={24}
+            shape="square"
+            className="!text-base"
+          />
+        </div> 
+      )}
+          {/* <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
@@ -313,7 +313,7 @@ export const SidebarDropdown = observer(() => {
             </Menu.Items>
           </Transition>
         </Menu>
-      )}
+      )} */}
     </div>
   );
 });
