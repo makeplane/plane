@@ -62,7 +62,7 @@ const Summary = observer((props: Props) => {
         key: "actual",
         showBg: true,
         color: colors.actual,
-        states: plotType === "burndown" ? ["started", "unstarted", "backlog", "cancelled"] : ["completed"],
+        states: plotType === "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
       },
       {
         group: "Started",
@@ -83,7 +83,7 @@ const Summary = observer((props: Props) => {
       {
         group: plotType !== "burndown" ? "Pending" : "Done",
         key: plotType !== "burndown" ? "pending" : "completed",
-        states: plotType !== "burndown" ? ["started", "unstarted", "backlog", "cancelled"] : ["completed"],
+        states: plotType !== "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
       },
       { group: "Unstarted", key: "unstarted", states: ["unstarted"] },
       { group: "Backlog", key: "backlog", states: ["backlog"] },
