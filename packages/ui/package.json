@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.28.0",
+  "version": "1.0.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [
