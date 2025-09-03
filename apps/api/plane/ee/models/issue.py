@@ -322,6 +322,7 @@ class EpicUserProperties(ProjectBaseModel):
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Epic User Property"
