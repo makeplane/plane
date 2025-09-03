@@ -5,7 +5,6 @@ import uuid
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
-import re
 
 # Third party imports
 from rest_framework import status
@@ -70,19 +69,6 @@ class UserEndpoint(BaseViewSet):
         return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
-        first_name = request.data.get("first_name")
-        last_name = request.data.get("last_name", None)
-
-        if not re.match(r"^[a-zA-Z0-9_\- ]+$", first_name) or (
-            not re.match(r"^[a-zA-Z0-9_\- ]+$", last_name) and not last_name == ""
-        ):
-            return Response(
-                {
-                    "error": "name can only contain letters, numbers, hyphens (-), and underscores (_)"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         return super().partial_update(request, *args, **kwargs)
 
     def deactivate(self, request):

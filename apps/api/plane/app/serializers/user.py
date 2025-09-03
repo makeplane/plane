@@ -7,16 +7,31 @@ from plane.utils.url import contains_url
 
 from .base import BaseSerializer
 
+# Django import
+import re
+
 
 class UserSerializer(BaseSerializer):
     def validate_first_name(self, value):
         if contains_url(value):
             raise serializers.ValidationError("First name cannot contain a URL.")
+
+        if not re.match(r"^[a-zA-Z0-9_\- ]+$", value):
+            raise serializers.ValidationError(
+                "first name can only contain letters, numbers, hyphens (-), and underscores (_)"
+            )
+
         return value
 
     def validate_last_name(self, value):
         if contains_url(value):
             raise serializers.ValidationError("Last name cannot contain a URL.")
+
+        if not re.match(r"^[a-zA-Z0-9_\- ]+$", value) and not value == "":
+            raise serializers.ValidationError(
+                "last name can only contain letters, numbers, hyphens (-), and underscores (_)"
+            )
+
         return value
 
     class Meta:
