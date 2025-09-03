@@ -41,7 +41,7 @@ export const ChatDeleteModal: React.FC<IChatDelete> = observer((props) => {
       });
     }
     if (activeChatId === chatId) {
-      router.push(`/${workspaceSlug}/pi-chat/new`);
+      router.push(`/${workspaceSlug}/pi-chat`);
     }
     setLoader(false);
     handleClose();

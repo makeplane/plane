@@ -36,7 +36,7 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
       {
         label: "Pi",
         icon: <PiIcon className="size-4" />,
-        href: `/${workspaceSlug}/pi-chat/new`,
+        href: `/${workspaceSlug}/pi-chat`,
         isActive: isAiPath,
         shouldRender: isAppRailFeatureEnabled("pi-chat"),
       },

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Info } from "lucide-react";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TEntity, TExecutionStatus } from "@/plane-web/types";
+import { TEntity, TActions, TExecutionStatus } from "@/plane-web/types";
 
 const ACTION_STATUS_ICON = {
   success: "✅",
@@ -12,7 +12,7 @@ const ACTION_STATUS_ICON = {
 };
 
 type TProps = {
-  execution_status: TExecutionStatus | undefined;
+  execution_status: TActions | undefined;
   isLatest: boolean | undefined;
   isPiThinking: boolean | undefined;
   workspaceId: string | undefined;
@@ -28,7 +28,7 @@ const ActionStatusBlock = (props: TProps) => {
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   const [actionStatus, setActionStatus] = useState<
     | {
-        status: string;
+        status: TExecutionStatus;
         message: string;
         entities: TEntity[];
       }

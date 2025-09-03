@@ -61,11 +61,11 @@ export type TTemplate = {
   id: string[];
   type;
 };
-
-export type TExecutionStatus = {
+export type TExecutionStatus = "pending" | "completed" | "failed" | "partial";
+export type TActions = {
   actions_count: number;
   message?: string;
-  status?: string;
+  status?: TExecutionStatus;
   actions?: {
     entity: TEntity;
   }[];
@@ -80,7 +80,7 @@ export type TDialogue = {
   feedback?: EFeedback;
   reasoning?: string;
   isPiThinking: boolean;
-  execution_status?: TExecutionStatus;
+  execution_status?: TActions;
 };
 
 export type TChatHistory = {
@@ -103,7 +103,7 @@ export type TAction = {
 };
 
 export type TExecuteActionResponse = {
-  status: string;
+  status: TExecutionStatus;
   message: string;
   actions: {
     result: string;

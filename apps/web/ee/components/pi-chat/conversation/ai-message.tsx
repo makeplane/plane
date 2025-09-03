@@ -34,7 +34,7 @@ export const AiMessage = observer((props: TProps) => {
   return (
     <div className="flex gap-4 mr-[50px]" id={id}>
       {/* Avatar */}
-      <div className="rounded-full flex flex-shrink-0 my-1">
+      <div className="rounded-full flex flex-shrink-0">
         <PiIcon className="size-5 text-custom-text-primary fill-current align-center" />
       </div>
       <div className="flex flex-col text-base break-words w-full">

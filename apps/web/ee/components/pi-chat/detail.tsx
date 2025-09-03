@@ -53,20 +53,22 @@ export const PiChatDetail = observer((props: TProps) => {
             )}
 
             {/* Scroll to bottom button */}
-            <button
-              onClick={() => scrollIntoViewHelper("observer-element")}
-              className={cn(
-                "absolute bottom-[164px] left-1/2 -translate-x-1/2 bg-custom-background-100 p-1 rounded-full shadow z-10 transition-all duration-300 opacity-0 text-custom-text-200 border border-custom-border-100",
-                {
-                  "opacity-100": hasMoreMessages,
-                }
-              )}
-            >
-              <ChevronDown size={20} />
-            </button>
+            {activeChatId && (
+              <button
+                onClick={() => scrollIntoViewHelper("observer-element")}
+                className={cn(
+                  "absolute bottom-[164px] left-1/2 -translate-x-1/2 bg-custom-background-100 p-1 rounded-full shadow z-10 transition-all duration-300 opacity-0 text-custom-text-200 border border-custom-border-100",
+                  {
+                    "opacity-100": hasMoreMessages,
+                  }
+                )}
+              >
+                <ChevronDown size={20} />
+              </button>
+            )}
             {/* Chat Input */}
             <InputBox
-              isProjectLevel
+              isProjectLevel={isProjectLevel}
               isFullScreen={isFullScreen}
               activeChatId={activeChatId}
               shouldRedirect={shouldRedirect}

@@ -79,7 +79,7 @@ export const Header = observer((props: THeaderProps) => {
                 <>
                   <Tooltip tooltipContent="Start a new chat" position="bottom">
                     <Link
-                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
+                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
                       tabIndex={-1}
                       className={cn(buttonClass)}
                     >

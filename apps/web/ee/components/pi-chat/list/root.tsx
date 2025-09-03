@@ -16,7 +16,7 @@ export const AllChats = observer(() => {
       <div className="flex justify-between w-full">
         <div className="font-semibold text-custom-text-300 text-xl">Chats</div>
         <Link
-          href={`/${workspaceSlug}/pi-chat/new`}
+          href={`/${workspaceSlug}/pi-chat`}
           className="flex items-center font-medium gap-2 text-custom-text-200 hover:text-custom-text-100 text-sm border border-custom-border-200 rounded-md px-2 py-1"
         >
           New chat

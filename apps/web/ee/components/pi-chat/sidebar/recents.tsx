@@ -23,7 +23,13 @@ const RecentChats = observer((props: TProps) => {
     <div className="flex flex-col space-y-2">
       <div className="text-sm font-semibold text-custom-text-400">Recents</div>
       <div className="flex flex-col gap-0.5">
-        {userThreads && userThreads.length > 0 ? (
+        {isLoading ? (
+          <Loader className="mx-auto w-full flex flex-col gap-2">
+            <Loader.Item width="100%" height="32px" />
+            <Loader.Item width="100%" height="32px" />
+            <Loader.Item width="100%" height="32px" />
+          </Loader>
+        ) : userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => (
             <SidebarItem
               key={thread.chat_id}
@@ -35,12 +41,6 @@ const RecentChats = observer((props: TProps) => {
               isFavorite={thread.is_favorite}
             />
           ))
-        ) : isLoading ? (
-          <Loader className="mx-auto w-full flex flex-col gap-2">
-            <Loader.Item width="100%" height="32px" />
-            <Loader.Item width="100%" height="32px" />
-            <Loader.Item width="100%" height="32px" />
-          </Loader>
         ) : (
           <div className="text-custom-text-400 text-sm">No threads available</div>
         )}

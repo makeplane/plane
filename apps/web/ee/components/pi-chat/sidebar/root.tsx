@@ -20,7 +20,7 @@ export const PiSidebar = observer(() => {
   const { workspaceSlug } = useParams();
   const { getWorkspaceBySlug } = useWorkspace();
 
-  const { isLoading: isLoadingFavoriteChats } = useSWR(
+  useSWR(
     workspaceSlug ? `PI_FAVORITE_CHATS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug as string)?.id || "") : null,
     {
@@ -42,9 +42,7 @@ export const PiSidebar = observer(() => {
       quickActions={<Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />}
     >
       {/* Favorites */}
-      {favoriteChats && favoriteChats.length > 0 && (
-        <FavoriteChats favoriteChats={favoriteChats} isLoading={isLoadingFavoriteChats} />
-      )}
+      {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}
       {/* History List */}
       <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} />
     </SidebarWrapper>

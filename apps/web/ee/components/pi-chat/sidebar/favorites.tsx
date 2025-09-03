@@ -9,7 +9,6 @@ import { SidebarItem } from "./sidebar-item";
 type TProps = {
   favoriteChats: TUserThreads[];
   isProjectLevel?: boolean;
-  isLoading?: boolean;
 };
 const FavoriteChats = observer((props: TProps) => {
   const { favoriteChats, isProjectLevel = false } = props;

@@ -37,7 +37,6 @@ export interface IPiChatStore {
   favoriteChats: string[];
   isLoading: boolean;
   isPiTyping: boolean;
-  isLoadingFavoriteChats: boolean;
   isPiChatDrawerOpen: boolean;
   // computed fn
   geUserThreads: () => TUserThreads[];
@@ -84,7 +83,6 @@ export class PiChatStore implements IPiChatStore {
   activeChatId = "";
   isNewChat: boolean = false;
   isLoadingThreads: boolean = false;
-  isLoadingFavoriteChats: boolean = false;
   models: TAiModels[] = [];
   activeModel: TAiModels | undefined = undefined;
   isAuthorized = true;
@@ -115,7 +113,6 @@ export class PiChatStore implements IPiChatStore {
       isLoadingMap: observable,
       isAuthorized: observable,
       isLoadingThreads: observable,
-      isLoadingFavoriteChats: observable,
       favoriteChats: observable,
       isPiChatDrawerOpen: observable.ref,
       // computed
@@ -492,7 +489,6 @@ export class PiChatStore implements IPiChatStore {
   };
 
   fetchUserThreads = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
-    const threads = isProjectChat ? this.projectThreads : this.piThreads;
     try {
       runInAction(() => {
         this.isLoadingThreads = true;
@@ -509,7 +505,11 @@ export class PiChatStore implements IPiChatStore {
             workspace_id: chat.workspace_id,
           }));
         });
-        threads.push(...response.results.map((chat) => chat.chat_id));
+        if (isProjectChat) {
+          this.projectThreads = response.results.map((chat) => chat.chat_id);
+        } else {
+          this.piThreads = response.results.map((chat) => chat.chat_id);
+        }
         this.isLoadingThreads = false;
       });
     } catch (error) {
@@ -613,7 +613,6 @@ export class PiChatStore implements IPiChatStore {
   };
 
   fetchFavoriteChats = async (workspaceId: string | undefined) => {
-    this.isLoadingFavoriteChats = true;
     const response = await this.piChatService.listFavoriteChats(workspaceId);
     runInAction(() => {
       response.forEach((chat) => {
@@ -625,7 +624,6 @@ export class PiChatStore implements IPiChatStore {
         }));
       });
       this.favoriteChats = response.map((chat) => chat.chat_id);
-      this.isLoadingFavoriteChats = false;
     });
   };
 

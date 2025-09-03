@@ -34,7 +34,7 @@ export const Toolbar: FC<Props> = observer((props) => {
     <div className="flex items-center justify-between gap-2 h-8 w-full">
       {/* New */}
       <Link
-        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
+        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
         className={cn(
           "flex items-center px-3 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
           {

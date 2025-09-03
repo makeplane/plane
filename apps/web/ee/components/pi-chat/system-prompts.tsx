@@ -4,7 +4,7 @@ import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { useRouter } from "next/navigation";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TTemplate } from "@/plane-web/types";
 
@@ -22,7 +22,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // router
   const { workspaceSlug, projectId } = useParams();
-  const router = useAppRouter();
+  const router = useRouter();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
 

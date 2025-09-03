@@ -9,7 +9,7 @@ import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { useRouter } from "next/navigation";
 // plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -17,6 +17,7 @@ import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { FocusFilter } from "./focus-filter";
+import { useAppRouter } from "@/hooks/use-app-router";
 import AudioRecorder from "./voice-input";
 
 type TEditCommands = {
@@ -29,10 +30,18 @@ type TProps = {
   activeChatId?: string;
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
+  showProgress?: boolean;
 };
 
 export const InputBox = observer((props: TProps) => {
-  const { className, activeChatId, shouldRedirect = true, isProjectLevel = false, isFullScreen = false } = props;
+  const {
+    className,
+    activeChatId,
+    shouldRedirect = true,
+    isProjectLevel = false,
+    showProgress = false,
+    isFullScreen = false,
+  } = props;
 
   // store hooks
   const {
@@ -47,7 +56,8 @@ export const InputBox = observer((props: TProps) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // router
   const { workspaceSlug, projectId, chatId: routeChatId } = useParams();
-  const router = useAppRouter();
+  const router = useRouter();
+  const routerWithProgress = useAppRouter();
   // derived values
   const chatFocus = activeChatId && getChatFocus(activeChatId);
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
@@ -95,7 +105,7 @@ export const InputBox = observer((props: TProps) => {
       }
       // Don't redirect if we are in the floating chat window
       if (shouldRedirect && !routeChatId)
-        router.push(
+        (showProgress ? routerWithProgress : router).push(
           joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat", activeChatIdRef.current)
         );
       getAnswer(
