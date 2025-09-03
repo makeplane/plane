@@ -278,6 +278,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                   name="last_name"
                   rules={{
                     validate: (value) => {
+                      if (value === "") return true;
                       if (!/^[a-zA-Z0-9 _-]+$/.test(value))
                         return "Last name can only contain letters, numbers, hyphens, and underscores.";
                       return true;
