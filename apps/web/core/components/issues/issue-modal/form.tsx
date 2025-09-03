@@ -66,7 +66,6 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   storeType: EIssuesStoreType;
-  convertToWorkItem?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {

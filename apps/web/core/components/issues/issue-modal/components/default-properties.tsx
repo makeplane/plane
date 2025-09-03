@@ -331,7 +331,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             }}
             projectId={projectId ?? undefined}
             issueId={isDraft ? undefined : id}
-            searchEpic
           />
         )}
       />
