@@ -1,22 +1,24 @@
 import { TPlacement, TSide, TAlign } from "../utils/placement";
 
-export enum EmojiIconPickerTypes {
-  EMOJI = "emoji",
-  ICON = "icon",
-}
+export const EmojiIconPickerTypes = {
+  EMOJI: "emoji",
+  ICON: "icon",
+} as const;
 
 export type TChangeHandlerProps =
   | {
-      type: EmojiIconPickerTypes.EMOJI;
+      type: typeof EmojiIconPickerTypes.EMOJI;
       value: string;
     }
   | {
-      type: EmojiIconPickerTypes.ICON;
+      type: typeof EmojiIconPickerTypes.ICON;
       value: {
         name: string;
         color: string;
       };
     };
+
+export type TEmojiIconPickerTypes = typeof EmojiIconPickerTypes.EMOJI | typeof EmojiIconPickerTypes.ICON;
 
 export type TCustomEmojiPicker = {
   isOpen: boolean;
@@ -25,7 +27,7 @@ export type TCustomEmojiPicker = {
   className?: string;
   closeOnSelect?: boolean;
   defaultIconColor?: string;
-  defaultOpen?: EmojiIconPickerTypes;
+  defaultOpen?: TEmojiIconPickerTypes;
   disabled?: boolean;
   dropdownClassName?: string;
   label: React.ReactNode;
