@@ -4,6 +4,8 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 7",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -57,6 +59,7 @@
     "@types/react-dom": "catalog:",
     "eslint-plugin-storybook": "^9.1.2",
     "storybook": "^9.1.2",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

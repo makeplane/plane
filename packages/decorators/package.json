@@ -11,8 +11,8 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc --noEmit && tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 1",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -27,7 +27,7 @@
     "@types/node": "^20.14.9",
     "@types/ws": "^8.5.10",
     "reflect-metadata": "^0.2.2",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

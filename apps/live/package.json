@@ -7,8 +7,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
-    "build": "tsc --noEmit && tsup",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "start": "node --env-file=.env dist/server.js",
     "check:lint": "eslint . --max-warnings 10",
     "check:types": "tsc --noEmit",
@@ -58,7 +58,7 @@
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "ws": "^8.18.3"
   }
