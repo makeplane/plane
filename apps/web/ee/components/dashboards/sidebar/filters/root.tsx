@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "lucide-react";
@@ -19,7 +19,7 @@ import {
   TIssuePriorities,
   TIssueType,
 } from "@plane/types";
-import { Avatar, CycleGroupIcon, DiceIcon, Loader, PriorityIcon } from "@plane/ui";
+import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon } from "@plane/ui";
 import {
   cn,
   getAssigneeFilterConfig,
@@ -40,6 +40,7 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
 
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 import { AddFilterButton } from "@/plane-web/components/rich-filters/add-filters-button";
@@ -47,7 +48,6 @@ import { FilterItem } from "@/plane-web/components/rich-filters/filter-item";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 import { withFilters } from "./with-filters";
-import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   filters: IFilterInstance<TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression> | null;
@@ -55,22 +55,20 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-const WidgetConfigSidebarFilters: React.FC<Props> = observer((props) => {
+const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
   const { filters, projectIds } = props;
+
   /**
    * store hooks
    */
 
-  const { getProjectLabels, fetchProjectLabels } = useLabel();
+  const { getProjectLabels } = useLabel();
   const { workspaceSlug } = useParams();
   const { getUserDetails } = useMember();
   const { getProjectById } = useProject();
-  const {
-    project: { getProjectMemberIds, fetchProjectMembers },
-  } = useMember();
-  const { getProjectCycleDetails, fetchAllCycles } = useCycle();
-  const { getProjectModuleDetails, fetchModules } = useModule();
-  const { getProjectIssueTypes, fetchAll } = useIssueTypes();
+  const { getProjectCycleDetails } = useCycle();
+  const { getProjectModuleDetails } = useModule();
+  const { getProjectIssueTypes } = useIssueTypes();
 
   /**
    * derived values
@@ -135,17 +133,12 @@ const WidgetConfigSidebarFilters: React.FC<Props> = observer((props) => {
   }, [
     workspaceSlug,
     projectIds,
-    fetchProjectLabels,
     getProjectLabels,
-    fetchProjectMembers,
-    getProjectMemberIds,
-    getUserDetails,
-    fetchAllCycles,
+    getProjectById,
     getProjectCycleDetails,
-    fetchModules,
     getProjectModuleDetails,
-    fetchAll,
     getProjectIssueTypes,
+    getUserDetails,
   ]);
 
   /**
@@ -306,4 +299,4 @@ const WidgetConfigSidebarFilters: React.FC<Props> = observer((props) => {
   );
 });
 
-export const EnhancedWidgetConfigSidebarFilters = withFilters(WidgetConfigSidebarFilters);
+export const WidgetConfigSidebarFilters = withFilters(WidgetConfigSidebarFiltersRoot);

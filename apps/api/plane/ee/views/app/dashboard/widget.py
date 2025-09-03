@@ -21,7 +21,10 @@ from plane.ee.utils.chart_validations import validate_chart_config
 from plane.ee.utils.widget_graph_plot import build_widget_chart
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import (
+    check_feature_flag,
+    check_workspace_feature_flag,
+)
 from plane.utils.filters.complex_filter import ComplexFilterBackend
 
 
@@ -275,12 +278,15 @@ class WidgetListEndpoint(BaseAPIView):
             project_id__in=dashboard_project_ids,
         )
 
-        # get the widget filter
-        if dashboard_widget.filters:
-            # use the complex filter backend using dashboard widget filters
-            issues = ComplexFilterBackend().filter_queryset(
-                request, issues, self, dashboard_widget.filters
-            )
+        if check_workspace_feature_flag(
+            FeatureFlag.DASHBOARD_WIDGET_FILTERS, slug, user_id=str(request.user.id)
+        ):
+            # get the widget filter
+            if dashboard_widget.filters:
+                # use the complex filter backend using dashboard widget filters
+                issues = ComplexFilterBackend().filter_queryset(
+                    request, issues, self, dashboard_widget.filters
+                )
 
         issues = (
             issues.filter(
