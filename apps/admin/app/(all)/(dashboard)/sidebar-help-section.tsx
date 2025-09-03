@@ -11,7 +11,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { DiscordIcon, GithubIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useTheme } from "@/hooks/store";
+import { useInstance, useTheme } from "@/hooks/store";
 // assets
 // eslint-disable-next-line import/order
 import packageJson from "package.json";
@@ -38,6 +38,7 @@ export const AdminSidebarHelpSection: FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
+  const { instance } = useInstance();
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
@@ -130,8 +131,20 @@ export const AdminSidebarHelpSection: FC = observer(() => {
                     </button>
                   );
               })}
+              {/* {instance?.latest_version && instance?.current_version != instance?.latest_version && (
+                <a
+                  href="https://docs.plane.so/docs/changelog"
+                  target="_blank"
+                  className="flex items-center gap-2 px-2 py-1 text-xs font-medium cursor-pointer transition-all border rounded border-custom-primary-100/30 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 text-custom-text-100"
+                  referrerPolicy="no-referrer"
+                >
+                  <RefreshCcw className="flex-shrink-0 h-3 w-3 text-custom-text-100" />
+                  <div>Updates available</div>
+                  <div className="flex-shrink-0 ml-auto animate-pulse bg-custom-primary-100 !w-2 !h-2 rounded-full" />
+                </a>
+              )} */}
             </div>
-            <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
+            <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{instance?.current_version}</div>
           </div>
         </Transition>
       </div>

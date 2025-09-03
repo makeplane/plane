@@ -1,0 +1,25 @@
+/* Inline math should break naturally like regular text */
+.node-inlineMath .katex {
+  display: inline !important;
+  white-space: normal !important;
+  vertical-align: baseline;
+  max-width: 100%;
+}
+
+.node-inlineMath .katex .katex-html {
+  display: inline !important;
+  white-space: normal !important;
+}
+
+.node-inlineMath .katex .base {
+  display: inline !important;
+  white-space: normal !important;
+}
+
+/* 
+  /* Allow the container to show overflowing content */
+.node-inlineMath .inline-flex {
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 1.5rem;
+}

@@ -9,17 +9,8 @@ import { useTranslation } from "@plane/i18n";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
-import {
-  Button,
-  CustomSelect,
-  Input,
-  TextArea,
-  TOAST_TYPE,
-  setToast,
-  CustomEmojiIconPicker,
-  EmojiIconPickerTypes,
-} from "@plane/ui";
-import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";

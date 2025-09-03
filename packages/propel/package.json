@@ -31,7 +31,8 @@
     "./emoji-icon-picker": "./src/emoji-icon-picker/index.ts",
     "./utils": "./src/utils/index.ts",
     "./accordion": "./src/accordion/index.ts",
-    "./card": "./src/card/index.ts"
+    "./card": "./src/card/index.ts",
+    "./emoji-icon-picker": "./src/emoji-icon-picker/index.ts"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",

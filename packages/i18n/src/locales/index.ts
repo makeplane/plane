@@ -3,6 +3,7 @@ export { default as enCore } from "./en/core.json";
 export { default as enTranslations } from "./en/translations.json";
 export { default as enAccessibility } from "./en/accessibility.json";
 export { default as enEditor } from "./en/editor.json";
+export { default as enCoreExtended } from "./en/core-extended.json";
 
 // Export locale data for all supported languages
 export const locales = {
