@@ -1,9 +1,8 @@
-import { RefObject } from "react";
 import type { IGanttBlock } from "@plane/types";
 
 type LeftDependencyDraggableProps = {
   block: IGanttBlock;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const LeftDependencyDraggable = (props: LeftDependencyDraggableProps) => <></>;

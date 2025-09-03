@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
@@ -69,7 +69,7 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <Tab.Group as={React.Fragment}>
+    <Tab.Group as={Fragment}>
       <div className="flex flex-col gap-14 overflow-y-auto p-6">
         <TotalInsights analyticsType="work-items" peekView={!fullScreen} />
         <CreatedVsResolved />

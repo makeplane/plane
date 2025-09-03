@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 // components
 import { cn } from "../utils";
 import { Popover } from "./popover";

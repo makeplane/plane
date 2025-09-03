@@ -1,6 +1,6 @@
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -66,7 +66,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
     >
       <>
         {customButton ? (
-          <Listbox.Button as={React.Fragment}>
+          <Listbox.Button as={Fragment}>
             <button
               ref={setReferenceElement}
               type="button"
@@ -79,7 +79,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
             </button>
           </Listbox.Button>
         ) : (
-          <Listbox.Button as={React.Fragment}>
+          <Listbox.Button as={Fragment}>
             <button
               ref={setReferenceElement}
               type="button"

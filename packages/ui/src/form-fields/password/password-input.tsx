@@ -1,5 +1,5 @@
 import { Eye, EyeClosed } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 

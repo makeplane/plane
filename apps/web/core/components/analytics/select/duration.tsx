@@ -1,5 +1,4 @@
 // plane package imports
-import React, { ReactNode } from "react";
 import { Calendar } from "lucide-react";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
@@ -12,7 +11,7 @@ type Props = TDropdownProps & {
   value: string | null;
   onChange: (val: (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number]["value"]) => void;
   //optional
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onClose?: () => void;

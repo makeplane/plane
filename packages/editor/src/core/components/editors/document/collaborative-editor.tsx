@@ -1,5 +1,5 @@
 import type { Extensions } from "@tiptap/core";
-import React, { useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -120,11 +120,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   );
 };
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-  )
-);
+const CollaborativeDocumentEditorWithRef = forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>((props, ref) => (
+  <CollaborativeDocumentEditor {...props} forwardedRef={ref} />
+));
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 

@@ -1,4 +1,4 @@
-import { MutableRefObject, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import {
@@ -38,7 +38,7 @@ export interface IKanBanSwimLanes {
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
   showEmptyGroup: boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   orderBy: TIssueOrderByOptions | undefined;
 }
 
@@ -157,7 +157,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
@@ -214,7 +214,7 @@ interface ISubGroup {
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 

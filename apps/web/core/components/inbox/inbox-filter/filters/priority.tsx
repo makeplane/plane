@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: FC<Props> = observer((props) => {
+export const FilterPriority: React.FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // hooks
   const { t } = useTranslation();

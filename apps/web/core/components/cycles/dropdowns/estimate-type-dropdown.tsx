@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { EEstimateSystem, TCycleEstimateType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";

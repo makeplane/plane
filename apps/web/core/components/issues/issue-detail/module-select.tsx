@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";

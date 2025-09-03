@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, FC } from "react";
+import { Fragment } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
@@ -33,7 +33,7 @@ const defaultValues: FormValues = {
 
 const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
-export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => {
+export const NotificationSnoozeModal: React.FC<TNotificationSnoozeModal> = (props) => {
   const { isOpen, onClose, onSubmit: handleSubmitSnooze } = props;
 
   const { workspaceSlug } = useParams();

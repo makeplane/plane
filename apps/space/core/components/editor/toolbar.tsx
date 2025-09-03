@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 // plane imports
 import { TOOLBAR_ITEMS, type ToolbarMenuItem, type EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/propel/tooltip";

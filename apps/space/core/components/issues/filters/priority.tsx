@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";

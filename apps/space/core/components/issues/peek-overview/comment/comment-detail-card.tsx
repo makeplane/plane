@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
@@ -168,7 +168,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </Menu.Button>
 
           <Transition
-            as={React.Fragment}
+            as={Fragment}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
             enterTo="transform opacity-100 scale-100"

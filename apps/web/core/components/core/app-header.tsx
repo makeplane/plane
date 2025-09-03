@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Row } from "@plane/ui";
@@ -8,8 +7,8 @@ import { Row } from "@plane/ui";
 import { ExtendedAppHeader } from "@/plane-web/components/common/extended-app-header";
 
 export interface AppHeaderProps {
-  header: ReactNode;
-  mobileHeader?: ReactNode;
+  header: React.ReactNode;
+  mobileHeader?: React.ReactNode;
 }
 
 export const AppHeader = observer((props: AppHeaderProps) => {

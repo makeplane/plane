@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -16,7 +16,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { WorkspaceInvitationsListItem } from "./invitations-list-item";
 import { WorkspaceMembersListItem } from "./members-list-item";
 
-export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
+export const WorkspaceMembersList: React.FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
   const { searchQuery, isAdmin } = props;
   const [showPendingInvites, setShowPendingInvites] = useState<boolean>(true);
 

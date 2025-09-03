@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";

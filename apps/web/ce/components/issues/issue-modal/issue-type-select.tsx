@@ -11,7 +11,7 @@ export type TIssueTypeDropdownVariant = "xs" | "sm";
 export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
   control: Control<T>;
   projectId: string | null;
-  editorRef?: React.MutableRefObject<EditorRefApi | null>;
+  editorRef?: React.RefObject<EditorRefApi | null>;
   disabled?: boolean;
   variant?: TIssueTypeDropdownVariant;
   placeholder?: string;

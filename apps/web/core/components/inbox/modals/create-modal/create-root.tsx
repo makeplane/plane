@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -51,7 +51,7 @@ export const defaultIssueData: Partial<TIssue> = {
   target_date: "",
 };
 
-export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
+export const InboxIssueCreateRoot: React.FC<TInboxIssueCreateRoot> = observer((props) => {
   const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
@@ -131,7 +131,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     };
   }, [formRef, modalContainerRef]);
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {

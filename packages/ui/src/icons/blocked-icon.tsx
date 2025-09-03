@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const BlockedIcon: React.FC<ISvgIcons> = ({ height = "24", width = "24", className = "", ...rest }) => (

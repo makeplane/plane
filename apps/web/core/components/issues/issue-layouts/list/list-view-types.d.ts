@@ -2,7 +2,7 @@ import { TPlacement } from "@plane/propel/utils/placement";
 import { TIssue } from "@plane/types";
 
 export interface IQuickActionProps {
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   issue: TIssue;
   handleDelete: () => Promise<void>;
   handleUpdate?: (data: TIssue) => Promise<void>;
@@ -24,7 +24,7 @@ export type TRenderQuickActions = ({
   portalElement,
 }: {
   issue: TIssue;
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   customActionButton?: React.ReactElement;
   placement?: TPlacement;
   portalElement?: HTMLDivElement | null;

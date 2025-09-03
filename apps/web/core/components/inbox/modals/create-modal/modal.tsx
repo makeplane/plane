@@ -1,6 +1,6 @@
 "use-client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 // plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -15,7 +15,7 @@ type TInboxIssueCreateModalRoot = {
   handleModalClose: () => void;
 };
 
-export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props) => {
+export const InboxIssueCreateModalRoot: React.FC<TInboxIssueCreateModalRoot> = (props) => {
   const { workspaceSlug, projectId, modalState, handleModalClose } = props;
   // states
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);

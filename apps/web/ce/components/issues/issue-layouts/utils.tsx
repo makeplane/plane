@@ -1,4 +1,3 @@
-import { FC } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
@@ -65,7 +64,7 @@ export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns):
 
 export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => undefined;
 
-export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
+export const SpreadSheetPropertyIconMap: Record<string, React.FC<ISvgIcons>> = {
   Users: Users,
   CalenderDays: CalendarDays,
   CalenderCheck2: CalendarCheck2,

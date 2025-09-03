@@ -1,4 +1,3 @@
-import React from "react";
 import AnalyticsWrapper from "../analytics-wrapper";
 import TotalInsights from "../total-insights";
 import CreatedVsResolved from "./created-vs-resolved";

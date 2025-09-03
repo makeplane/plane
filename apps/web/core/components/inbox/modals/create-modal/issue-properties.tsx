@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { LayoutPanelTop } from "lucide-react";
 // plane imports
@@ -28,7 +28,7 @@ type TInboxIssueProperties = {
   isVisible?: boolean;
 };
 
-export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) => {
+export const InboxIssueProperties: React.FC<TInboxIssueProperties> = observer((props) => {
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();

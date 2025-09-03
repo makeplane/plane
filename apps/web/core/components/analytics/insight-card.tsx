@@ -1,5 +1,5 @@
 // plane package imports
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { IAnalyticsResponseFields } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components

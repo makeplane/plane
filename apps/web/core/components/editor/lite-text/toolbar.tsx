@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor

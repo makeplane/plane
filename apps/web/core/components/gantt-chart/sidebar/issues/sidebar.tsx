@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import type { IBlockUpdateData } from "@plane/types";
@@ -23,7 +23,7 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement>;
   blockIds: string[];
   enableReorder: boolean;
   enableSelection: boolean;

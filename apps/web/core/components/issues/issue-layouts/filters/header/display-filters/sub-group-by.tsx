@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

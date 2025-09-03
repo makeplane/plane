@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // hooks
@@ -10,7 +9,7 @@ const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
 );
 
-export const InboxIssueAppliedFiltersLabel: FC = observer(() => {
+export const InboxIssueAppliedFiltersLabel: React.FC = observer(() => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getLabelById } = useLabel();

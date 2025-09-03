@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 // ui
 import { Copy } from "lucide-react";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";

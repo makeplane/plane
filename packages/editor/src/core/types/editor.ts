@@ -146,7 +146,7 @@ export type IEditorProps = {
   embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  forwardedRef?: React.ForwardedRef<EditorRefApi>;
   handleEditorReady?: (value: boolean) => void;
   id: string;
   initialValue: string;

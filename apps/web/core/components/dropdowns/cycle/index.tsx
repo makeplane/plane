@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +18,7 @@ import { TDropdownProps } from "../types";
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string | null) => void;

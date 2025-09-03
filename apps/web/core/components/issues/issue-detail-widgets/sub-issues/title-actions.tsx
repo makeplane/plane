@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -23,7 +23,7 @@ type TSubWorkItemTitleActionsProps = {
   projectId: string;
 };
 
-export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observer((props) => {
+export const SubWorkItemTitleActions: React.FC<TSubWorkItemTitleActionsProps> = observer((props) => {
   const { disabled, issueServiceType = EIssueServiceType.ISSUES, parentId, projectId } = props;
 
   // store hooks

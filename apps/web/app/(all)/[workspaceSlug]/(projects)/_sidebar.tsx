@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { SIDEBAR_WIDTH } from "@plane/constants";
@@ -13,7 +13,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
 
-export const ProjectAppSidebar: FC = observer(() => {
+export const ProjectAppSidebar: React.FC = observer(() => {
   // store hooks
   const {
     sidebarCollapsed,

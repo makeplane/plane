@@ -1,6 +1,5 @@
 import { Combobox } from "@headlessui/react";
 import { Check } from "lucide-react";
-import React from "react";
 // helpers
 import { cn } from "../../utils";
 // types

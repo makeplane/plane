@@ -37,7 +37,7 @@ export type TCreateSubWorkItemProps = {
 export type THandleTemplateChangeProps = {
   workspaceSlug: string;
   reset: UseFormReset<TIssue>;
-  editorRef: React.MutableRefObject<EditorRefApi | null>;
+  editorRef: React.RefObject<EditorRefApi | null>;
 };
 
 export type THandleProjectEntitiesFetchProps = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -40,7 +40,7 @@ export type KanbanStoreType =
   | EIssuesStoreType.EPIC;
 
 export interface IBaseKanBanLayout {
-  QuickActions: FC<IQuickActionProps>;
+  QuickActions: React.FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;

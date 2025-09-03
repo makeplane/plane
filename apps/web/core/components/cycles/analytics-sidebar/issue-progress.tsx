@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
@@ -54,7 +54,7 @@ export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | nul
   return updatedCycleDetails;
 };
 
-export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
+export const CycleAnalyticsProgress: React.FC<TCycleAnalyticsProgress> = observer((props) => {
   // props
   const { workspaceSlug, projectId, cycleId } = props;
   // router

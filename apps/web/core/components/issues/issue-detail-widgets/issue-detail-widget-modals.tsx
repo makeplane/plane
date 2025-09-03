@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -23,7 +22,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
+export const IssueDetailWidgetModals: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets } = props;
   // store hooks
   const {

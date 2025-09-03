@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 // react hook form
 import { Controller, FieldError, Control } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";

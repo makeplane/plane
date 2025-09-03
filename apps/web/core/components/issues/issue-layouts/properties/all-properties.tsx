@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, SyntheticEvent } from "react";
+import { useCallback, useMemo } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -238,7 +238,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const minDate = getDate(issue.start_date);
   const maxDate = getDate(issue.target_date);
 
-  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+  const handleEventPropagation = (e: React.SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };

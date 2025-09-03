@@ -1,5 +1,3 @@
-import * as React from "react";
-
 interface DashedCircleProps {
   center: number;
   radius: number;

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // hooks
@@ -22,7 +22,7 @@ export const CyclePeekOverview: React.FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle");
   // refs
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   // store hooks
   const { getCycleById, fetchCycleDetails, fetchArchivedCycleDetails } = useCycle();
   // derived values

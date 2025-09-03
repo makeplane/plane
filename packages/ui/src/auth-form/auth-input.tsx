@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "../form-fields/input";
 import { cn } from "../utils";
 

@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { INBOX_STATUS } from "@plane/constants";
@@ -10,7 +9,7 @@ import { Tag } from "@plane/ui";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { InboxStatusIcon } from "../../inbox-status-icon";
 
-export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
+export const InboxIssueAppliedFiltersStatus: React.FC = observer(() => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { t } = useTranslation();

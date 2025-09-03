@@ -1,5 +1,4 @@
 import { Switch } from "@headlessui/react";
-import * as React from "react";
 // helpers
 import { cn } from "../utils";
 

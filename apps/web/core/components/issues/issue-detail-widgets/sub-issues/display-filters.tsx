@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
@@ -23,7 +23,7 @@ type TSubIssueDisplayFiltersProps = {
   isEpic?: boolean;
 };
 
-export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer((props) => {
+export const SubIssueDisplayFilters: React.FC<TSubIssueDisplayFiltersProps> = observer((props) => {
   const {
     isEpic = false,
     displayProperties,

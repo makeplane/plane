@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { DragHandle } from "@plane/ui";
@@ -11,7 +10,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const WidgetItemDragHandle: FC<Props> = observer((props) => {
+export const WidgetItemDragHandle: React.FC<Props> = observer((props) => {
   const { isDragging } = props;
 
   return (

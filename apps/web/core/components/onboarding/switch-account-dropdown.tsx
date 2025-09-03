@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Menu, Transition } from "@headlessui/react";
 // ui
@@ -15,7 +15,7 @@ type TSwitchAccountDropdownProps = {
   fullName?: string;
 };
 
-export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((props) => {
+export const SwitchAccountDropdown: React.FC<TSwitchAccountDropdownProps> = observer((props) => {
   const { fullName } = props;
   // states
   const [showSwitchAccountModal, setShowSwitchAccountModal] = useState(false);

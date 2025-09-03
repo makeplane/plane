@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
@@ -19,7 +18,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const RelationActionButton: FC<Props> = observer((props) => {
+export const RelationActionButton: React.FC<Props> = observer((props) => {
   const { customButton, issueId, disabled = false, issueServiceType } = props;
   const { t } = useTranslation();
   // store hooks

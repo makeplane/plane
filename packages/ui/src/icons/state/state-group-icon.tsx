@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { EIconSize } from "@plane/constants";
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";

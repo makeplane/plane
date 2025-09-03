@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "../type";
 
 export const ModuleCancelledIcon: React.FC<ISvgIcons> = ({ width = "20", height = "20", className }) => (

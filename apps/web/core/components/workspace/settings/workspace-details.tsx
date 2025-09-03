@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
@@ -34,7 +34,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo_url: null,
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails: React.FC = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);

@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -17,7 +17,7 @@ import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modu
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
-export const ArchivedModulesHeader: FC = observer(() => {
+export const ArchivedModulesHeader: React.FC = observer(() => {
   // router
   const { projectId } = useParams();
   // refs

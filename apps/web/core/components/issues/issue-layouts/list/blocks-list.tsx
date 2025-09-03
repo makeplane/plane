@@ -1,4 +1,3 @@
-import { FC, MutableRefObject } from "react";
 // components
 import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks
@@ -15,14 +14,14 @@ interface Props {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
-  containerRef: MutableRefObject<HTMLDivElement | null>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
   selectionHelpers: TSelectionHelper;
   isEpic?: boolean;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export const IssueBlocksList: React.FC<Props> = (props) => {
   const {
     issueIds,
     issuesMap,

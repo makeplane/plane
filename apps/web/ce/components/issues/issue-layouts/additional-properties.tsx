@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 
 export type TWorkItemLayoutAdditionalProperties = {
@@ -6,4 +5,4 @@ export type TWorkItemLayoutAdditionalProperties = {
   issue: TIssue;
 };
 
-export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalProperties> = (props) => <></>;
+export const WorkItemLayoutAdditionalProperties: React.FC<TWorkItemLayoutAdditionalProperties> = () => <></>;

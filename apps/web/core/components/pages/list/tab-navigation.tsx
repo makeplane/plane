@@ -1,4 +1,3 @@
-import { FC } from "react";
 import Link from "next/link";
 // types
 import { TPageNavigationTabs } from "@plane/types";
@@ -27,7 +26,7 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
-export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
+export const PageTabNavigation: React.FC<TPageTabNavigation> = (props) => {
   const { workspaceSlug, projectId, pageType } = props;
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {

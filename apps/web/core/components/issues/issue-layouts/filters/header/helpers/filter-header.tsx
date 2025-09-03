@@ -1,4 +1,3 @@
-import React from "react";
 // lucide icons
 import { ChevronDown, ChevronUp } from "lucide-react";
 

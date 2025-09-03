@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
@@ -25,7 +25,7 @@ type Props = {
   issueId: string;
 };
 
-export const DraftIssueBlock: FC<Props> = observer((props) => {
+export const DraftIssueBlock: React.FC<Props> = observer((props) => {
   // props
   const { workspaceSlug, issueId } = props;
   // states

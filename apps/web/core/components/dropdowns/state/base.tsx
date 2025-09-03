@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { ChevronDown, Search } from "lucide-react";
@@ -21,7 +21,7 @@ import { StateOption } from "@/plane-web/components/workflow";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   filterAvailableStateIds?: boolean;

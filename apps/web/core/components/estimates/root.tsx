@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -23,7 +23,7 @@ type TEstimateRoot = {
   isAdmin: boolean;
 };
 
-export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
+export const EstimateRoot: React.FC<TEstimateRoot> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
   const { currentProjectDetails } = useProject();

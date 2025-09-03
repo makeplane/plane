@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // hooks
 import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
@@ -12,7 +11,7 @@ type TIssueLink = {
   activityId: string;
 };
 
-export const IssueLink: FC<TIssueLink> = (props) => {
+export const IssueLink: React.FC<TIssueLink> = (props) => {
   const { activityId } = props;
   // hooks
   const {

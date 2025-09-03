@@ -1,6 +1,6 @@
 import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -294,11 +294,11 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
   if (portal) {
-    modal = ReactDOM.createPortal(modal, portal);
+    modal = createPortal(modal, portal);
   } else {
     console.warn("Portal element #editor-portal not found. Rendering in document.body");
     if (typeof document !== "undefined" && document.body) {
-      modal = ReactDOM.createPortal(modal, document.body);
+      modal = createPortal(modal, document.body);
     }
   }
   return modal;

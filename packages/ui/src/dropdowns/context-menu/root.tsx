@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 // hooks
+import { createPortal } from "react-dom";
 import { usePlatformOS } from "../../hooks/use-platform-os";
 // helpers
 import { cn } from "../../utils";
@@ -12,7 +12,7 @@ export type TContextMenuItem = {
   customContent?: React.ReactNode;
   title?: string;
   description?: string;
-  icon?: React.FC<any>;
+  icon?: React.FC<React.ComponentProps<"svg">>;
   action: () => void;
   shouldRender?: boolean;
   closeOnClick?: boolean;
@@ -29,9 +29,9 @@ interface PortalProps {
 }
 
 export const Portal: React.FC<PortalProps> = ({ children, container }) => {
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
@@ -41,18 +41,18 @@ export const Portal: React.FC<PortalProps> = ({ children, container }) => {
   }
 
   const targetContainer = container || document.body;
-  return ReactDOM.createPortal(children, targetContainer);
+  return createPortal(children, targetContainer);
 };
 
 // Context for managing nested menus
-export const ContextMenuContext = React.createContext<{
+export const ContextMenuContext = createContext<{
   closeAllSubmenus: () => void;
   registerSubmenu: (closeSubmenu: () => void) => () => void;
   portalContainer?: Element | null;
 } | null>(null);
 
 type ContextMenuProps = {
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   items: TContextMenuItem[];
   portalContainer?: Element | null;
 };
@@ -73,11 +73,11 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
   const renderedItems = items.filter((item) => item.shouldRender !== false);
   const { isMobile } = usePlatformOS();
 
-  const closeAllSubmenus = React.useCallback(() => {
+  const closeAllSubmenus = useCallback(() => {
     submenuClosersRef.current.forEach((closeSubmenu) => closeSubmenu());
   }, []);
 
-  const registerSubmenu = React.useCallback((closeSubmenu: () => void) => {
+  const registerSubmenu = useCallback((closeSubmenu: () => void) => {
     submenuClosersRef.current.add(closeSubmenu);
     return () => {
       submenuClosersRef.current.delete(closeSubmenu);
@@ -164,7 +164,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
   }, [activeItemIndex, isOpen, renderedItems, setIsOpen]);
 
   // Custom handler for nested menu portal clicks
-  React.useEffect(() => {
+  useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -232,6 +232,6 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
 export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
   let contextMenu = <ContextMenuWithoutPortal {...props} />;
   const portal = document.querySelector("#context-menu-portal");
-  if (portal) contextMenu = ReactDOM.createPortal(contextMenu, portal);
+  if (portal) contextMenu = createPortal(contextMenu, portal);
   return contextMenu;
 };

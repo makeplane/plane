@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -54,7 +54,7 @@ export type TIssueDetailRoot = {
   is_archived?: boolean;
 };
 
-export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
+export const IssueDetailRoot: React.FC<TIssueDetailRoot> = observer((props) => {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router

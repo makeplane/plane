@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { USER_TRACKER_EVENTS } from "@plane/constants";
@@ -25,7 +25,7 @@ type Props = {
   invitations?: IWorkspaceMemberInvitation[];
 };
 
-export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
+export const OnboardingRoot: React.FC<Props> = observer(({ invitations = [] }) => {
   const [currentStep, setCurrentStep] = useState<TOnboardingStep>(EOnboardingSteps.PROFILE_SETUP);
   // store hooks
   const { data: user } = useUser();

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // plane imports
@@ -26,7 +26,7 @@ type TGroupItem = {
   handleExpand: (groupKey: TStateGroups) => void;
 };
 
-export const GroupItem: FC<TGroupItem> = observer((props) => {
+export const GroupItem: React.FC<TGroupItem> = observer((props) => {
   const {
     groupKey,
     groupedStates,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
 import { Rocket, Search } from "lucide-react";
@@ -88,10 +88,10 @@ export const ParentIssuesListModal: React.FC<Props> = ({
 
   return (
     <>
-      <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
+      <Transition.Root show={isOpen} as={Fragment} afterLeave={() => setSearchTerm("")} appear>
         <Dialog as="div" className="relative z-30" onClose={handleClose}>
           <Transition.Child
-            as={React.Fragment}
+            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -104,7 +104,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
 
           <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"

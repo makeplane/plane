@@ -1,10 +1,9 @@
 "use client";
 
-import { FC } from "react";
 // components
 import { Loader } from "@plane/ui";
 
-export const ProjectDetailsFormLoader: FC = () => (
+export const ProjectDetailsFormLoader: React.FC = () => (
   <>
     <div className="relative mt-6 h-44 w-full">
       <Loader>

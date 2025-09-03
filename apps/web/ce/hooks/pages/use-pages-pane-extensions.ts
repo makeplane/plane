@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type RefObject } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import type { EditorRefApi } from "@plane/editor";
 import {
@@ -13,7 +13,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageExtensionHookParams = {
   page: TPageInstance;
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
 };
 
 export const usePagesPaneExtensions = (_params: TPageExtensionHookParams) => {

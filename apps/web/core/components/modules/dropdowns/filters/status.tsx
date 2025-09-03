@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

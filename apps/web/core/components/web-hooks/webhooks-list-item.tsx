@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
@@ -16,7 +15,7 @@ interface IWebhookListItem {
   webhook: IWebhook;
 }
 
-export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
+export const WebhooksListItem: React.FC<IWebhookListItem> = (props) => {
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();

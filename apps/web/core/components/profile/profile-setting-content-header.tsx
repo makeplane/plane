@@ -1,12 +1,11 @@
 "use client";
-import React, { FC } from "react";
 
 type Props = {
   title: string;
   description?: string;
 };
 
-export const ProfileSettingContentHeader: FC<Props> = (props) => {
+export const ProfileSettingContentHeader: React.FC<Props> = (props) => {
   const { title, description } = props;
   return (
     <div className="flex flex-col gap-1 pb-4 border-b border-custom-border-100 w-full">

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -12,11 +12,11 @@ import { useMember } from "@/hooks/store/use-member";
 type TCommentBlock = {
   comment: TIssueComment;
   ends: "top" | "bottom" | undefined;
-  quickActions: ReactNode;
-  children: ReactNode;
+  quickActions: React.ReactNode;
+  children: React.ReactNode;
 };
 
-export const CommentBlock: FC<TCommentBlock> = observer((props) => {
+export const CommentBlock: React.FC<TCommentBlock> = observer((props) => {
   const { comment, ends, quickActions, children } = props;
   // refs
   const commentBlockRef = useRef<HTMLDivElement>(null);

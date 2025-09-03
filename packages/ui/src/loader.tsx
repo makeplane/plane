@@ -1,4 +1,3 @@
-import React from "react";
 // helpers
 import { cn } from "./utils";
 

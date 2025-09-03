@@ -1,7 +1,6 @@
 "use client";
 
 // ui
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -24,7 +23,7 @@ type TUserProfileHeader = {
   showProfileIssuesFilter?: boolean;
 };
 
-export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+export const UserProfileHeader: React.FC<TUserProfileHeader> = observer((props) => {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();

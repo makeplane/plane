@@ -1,5 +1,4 @@
 import { CircleDotDashed, Circle } from "lucide-react";
-import * as React from "react";
 
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
 import { ContrastIcon } from "./contrast-icon";

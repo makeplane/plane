@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_TRACKER_EVENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
@@ -17,7 +17,7 @@ type TStateUpdate = {
   handleClose: () => void;
 };
 
-export const StateUpdate: FC<TStateUpdate> = observer((props) => {
+export const StateUpdate: React.FC<TStateUpdate> = observer((props) => {
   const { state, updateStateCallback, shouldTrackEvents, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);

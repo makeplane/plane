@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IUser } from "@plane/types";
@@ -24,7 +24,7 @@ export type TIssueReaction = {
   className?: string;
 };
 
-export const IssueReaction: FC<TIssueReaction> = observer((props) => {
+export const IssueReaction: React.FC<TIssueReaction> = observer((props) => {
   const { workspaceSlug, projectId, issueId, currentUser, disabled = false, className = "" } = props;
   // hooks
   const {

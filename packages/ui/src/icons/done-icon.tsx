@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const DoneState: React.FC<ISvgIcons> = ({ width = "10", height = "11", className, color }) => (

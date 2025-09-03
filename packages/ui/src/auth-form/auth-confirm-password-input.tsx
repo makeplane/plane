@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { cn } from "@plane/utils";
 import { AuthInput } from "./auth-input";
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 // plane imports
 import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
 
@@ -79,7 +78,7 @@ export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
 
 // Error code messages
 const errorCodeMessages: {
-  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
 } = {
   // global
   [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {

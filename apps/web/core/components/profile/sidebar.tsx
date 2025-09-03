@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -33,7 +33,7 @@ type TProfileSidebar = {
   className?: string;
 };
 
-export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+export const ProfileSidebar: React.FC<TProfileSidebar> = observer((props) => {
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);

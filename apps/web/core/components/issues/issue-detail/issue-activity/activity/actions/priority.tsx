@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Signal } from "lucide-react";
 // hooks
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssuePriorityActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssuePriorityActivity: FC<TIssuePriorityActivity> = observer((props) => {
+export const IssuePriorityActivity: React.FC<TIssuePriorityActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

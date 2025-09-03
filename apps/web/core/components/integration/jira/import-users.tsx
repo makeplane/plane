@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import useSWR from "swr";
@@ -17,7 +16,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const JiraImportUsers: FC = () => {
+export const JiraImportUsers: React.FC = () => {
   const { workspaceSlug } = useParams();
   // form info
   const {

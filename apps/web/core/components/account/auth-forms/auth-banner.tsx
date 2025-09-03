@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { Info, X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -10,7 +9,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: FC<TAuthBanner> = (props) => {
+export const AuthBanner: React.FC<TAuthBanner> = (props) => {
   const { bannerData, handleBannerData } = props;
   // translation
   const { t } = useTranslation();

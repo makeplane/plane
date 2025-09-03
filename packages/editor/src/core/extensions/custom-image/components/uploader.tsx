@@ -1,5 +1,5 @@
 import { ImageIcon } from "lucide-react";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -136,7 +136,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId, isTouchDevice]);
 
   const onFileChange = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const filesList = e.target.files;
       if (!filesList) {

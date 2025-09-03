@@ -1,6 +1,6 @@
 import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
 import { EllipsisVertical } from "lucide-react";
-import React, { Fragment, Ref, useState } from "react";
+import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 // helpers
 import { cn } from "../utils";
@@ -41,7 +41,7 @@ export const Popover = (props: TPopover) => {
     <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
       <div ref={setReferenceElement} className={cn("w-full", buttonRefClassName)}>
         <HeadlessReactPopover.Button
-          ref={popoverButtonRef as Ref<HTMLButtonElement>}
+          ref={popoverButtonRef}
           className={cn(
             {
               "flex justify-center items-center text-base h-6 w-6 rounded transition-all bg-custom-background-90 hover:bg-custom-background-80":

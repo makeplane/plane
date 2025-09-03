@@ -1,12 +1,11 @@
 "use client";
 
-import { ReactNode } from "react";
 // helpers
 import { cn } from "@plane/utils";
 
 export interface ContentWrapperProps {
   className?: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const ContentWrapper = ({ className, children }: ContentWrapperProps) => (

@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 // plane imports
@@ -18,7 +17,7 @@ type TNotificationSidebarHeader = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
+export const NotificationSidebarHeader: React.FC<TNotificationSidebarHeader> = observer((props) => {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();

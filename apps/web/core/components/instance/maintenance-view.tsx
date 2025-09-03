@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import Image from "next/image";
 // ui
 import { Button } from "@plane/ui";
@@ -11,7 +10,7 @@ import { MaintenanceMessage } from "@/plane-web/components/instance";
 // images
 import maintenanceModeImage from "@/public/maintenance-mode.webp";
 
-export const MaintenanceView: FC = () => (
+export const MaintenanceView: React.FC = () => (
   <DefaultLayout>
     <div className="relative container mx-auto h-full w-full flex flex-col md:flex-row gap-2 items-center justify-center gap-y-5 bg-custom-background-100 text-center">
       <div className="relative w-full">

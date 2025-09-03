@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { Placement } from "@popperjs/core";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
@@ -197,7 +197,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       </Popover.Button>
       <Transition
         show={isOpen}
-        as={React.Fragment}
+        as={Fragment}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"
@@ -208,7 +208,7 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
         <Popover.Panel
           as="div"
           className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${className}`}
-          ref={setPopperElement as Ref<HTMLDivElement>}
+          ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
         >

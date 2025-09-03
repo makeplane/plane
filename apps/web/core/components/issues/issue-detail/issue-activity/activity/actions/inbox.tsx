@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { Intake } from "@plane/ui";
@@ -9,7 +8,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueInboxActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
+export const IssueInboxActivity: React.FC<TIssueInboxActivity> = observer((props) => {
   const { activityId, ends } = props;
   // hooks
   const {

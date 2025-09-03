@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import ReactDOM from "react-dom";
+import { preload } from "react-dom";
 
 // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#link-relpreload
 export const usePreloadResources = () => {
   useEffect(() => {
     const preloadItem = (url: string) => {
-      ReactDOM.preload(url, { as: "fetch", crossOrigin: "use-credentials" });
+      preload(url, { as: "fetch", crossOrigin: "use-credentials" });
     };
 
     const urls = [

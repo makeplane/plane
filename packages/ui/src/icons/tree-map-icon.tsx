@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const TreeMapIcon: React.FC<ISvgIcons> = ({ className = "", ...rest }) => (

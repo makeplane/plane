@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
 // plane imports
@@ -19,10 +19,10 @@ type TPageListBlock = {
   storeType: EPageStoreType;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock: React.FC<TPageListBlock> = observer((props) => {
   const { pageId, storeType } = props;
   // refs
-  const parentRef = useRef(null);
+  const parentRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const page = usePage({
     pageId,

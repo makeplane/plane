@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
@@ -27,7 +26,7 @@ export enum EErrorAlertType {
 }
 
 const errorCodeMessages: {
-  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
 } = {
   // admin
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {

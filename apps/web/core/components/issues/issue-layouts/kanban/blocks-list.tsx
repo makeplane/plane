@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
@@ -17,7 +16,7 @@ interface IssueBlocksListProps {
   canEditProperties: (projectId: string | undefined) => boolean;
   canDropOverIssue: boolean;
   canDragIssuesInCurrentGrouping: boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   isEpic?: boolean;
 }
 

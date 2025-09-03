@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
@@ -36,7 +35,7 @@ type TIssueTypeIdentifier = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => <></>);
+export const IssueTypeIdentifier: React.FC<TIssueTypeIdentifier> = observer((props) => <></>);
 
 type TIdentifierTextProps = {
   identifier: string;

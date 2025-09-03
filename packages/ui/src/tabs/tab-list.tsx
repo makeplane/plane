@@ -1,12 +1,11 @@
 import { Tab } from "@headlessui/react";
 import { LucideProps } from "lucide-react";
-import React, { FC } from "react";
 // helpers
 import { cn } from "../utils";
 
 export type TabListItem = {
   key: string;
-  icon?: FC<LucideProps>;
+  icon?: React.FC<LucideProps>;
   label?: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
@@ -21,7 +20,7 @@ type TTabListProps = {
   onTabChange?: (key: string) => void;
 };
 
-export const TabList: FC<TTabListProps> = ({
+export const TabList: React.FC<TTabListProps> = ({
   tabs,
   tabListClassName,
   tabClassName,

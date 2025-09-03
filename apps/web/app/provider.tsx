@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
@@ -23,7 +22,7 @@ const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: f
 const IntercomProvider = dynamic(() => import("@/lib/intercom-provider"), { ssr: false });
 
 export interface IAppProvider {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const ToastWithTheme = () => {
@@ -31,7 +30,7 @@ const ToastWithTheme = () => {
   return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
 };
 
-export const AppProvider: FC<IAppProvider> = (props) => {
+export const AppProvider: React.FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
   return (

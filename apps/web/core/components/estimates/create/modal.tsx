@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // plane imports
@@ -21,7 +21,7 @@ type TCreateEstimateModal = {
   handleClose: () => void;
 };
 
-export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) => {
+export const CreateEstimateModal: React.FC<TCreateEstimateModal> = observer((props) => {
   // props
   const { workspaceSlug, projectId, isOpen, handleClose } = props;
   // hooks

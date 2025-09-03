@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -31,7 +31,7 @@ type TWorkspaceDraftIssuesRoot = {
   workspaceSlug: string;
 };
 
-export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
+export const WorkspaceDraftIssuesRoot: React.FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
   const { workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

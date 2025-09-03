@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FC } from "react";
+import { useState } from "react";
 import { mutate } from "swr";
 // types
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
@@ -21,7 +21,7 @@ type Props = {
 
 const apiTokenService = new APITokenService();
 
-export const DeleteApiTokenModal: FC<Props> = (props) => {
+export const DeleteApiTokenModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, tokenId } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);

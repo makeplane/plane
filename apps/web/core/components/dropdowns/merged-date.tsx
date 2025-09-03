@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 // helpers
 import { formatDateRange, getDate } from "@plane/utils";

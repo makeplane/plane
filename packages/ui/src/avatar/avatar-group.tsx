@@ -1,5 +1,5 @@
-import React from "react";
 // ui
+import { Children, cloneElement, isValidElement } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "../utils";
@@ -35,13 +35,13 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   const { children, max = 2, showTooltip = true, size = "md" } = props;
 
   // calculate total length of avatars inside the group
-  const totalAvatars = React.Children.toArray(children).length;
+  const totalAvatars = Children.toArray(children).length;
 
   // if avatars are equal to max + 1, then we need to show the last avatar as well, if avatars are more than max + 1, then we need to show the count of the remaining avatars
   const maxAvatarsToRender = totalAvatars <= max + 1 ? max + 1 : max;
 
   // slice the children to the maximum number of avatars
-  const avatars = React.Children.toArray(children).slice(0, maxAvatarsToRender);
+  const avatars = Children.toArray(children).filter(isValidElement).slice(0, maxAvatarsToRender);
 
   // assign the necessary props from the AvatarGroup component to the Avatar components
   const avatarsWithUpdatedProps = avatars.map((avatar) => {
@@ -50,7 +50,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
       size,
     };
 
-    return React.cloneElement(avatar as React.ReactElement, updatedProps);
+    return cloneElement(avatar, updatedProps);
   });
 
   // get size details based on the size prop

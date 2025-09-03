@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, FormEvent } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
@@ -28,7 +28,7 @@ type TEstimatePointCreate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) => {
+export const EstimatePointCreate: React.FC<TEstimatePointCreate> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
@@ -68,7 +68,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     }
   };
 
-  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
+  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!workspaceSlug || !projectId) return;

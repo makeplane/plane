@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -9,7 +9,7 @@ interface ResizableSidebarProps {
   togglePeek: (value?: boolean) => void;
   isCollapsed?: boolean;
   width: number;
-  setWidth: Dispatch<SetStateAction<number>>;
+  setWidth: React.Dispatch<React.SetStateAction<number>>;
   defaultWidth?: number;
   minWidth?: number;
   maxWidth?: number;
@@ -19,8 +19,8 @@ interface ResizableSidebarProps {
   onWidthChange?: (width: number) => void;
   onCollapsedChange?: (collapsed: boolean) => void;
   className?: string;
-  children?: ReactElement;
-  extendedSidebar?: ReactElement;
+  children?: React.ReactElement;
+  extendedSidebar?: React.ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
   isAnySidebarDropdownOpen?: boolean;
   disablePeekTrigger?: boolean;
@@ -49,7 +49,7 @@ export function ResizableSidebar({
   const [isResizing, setIsResizing] = useState(false);
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
   // refs
-  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const initialWidthRef = useRef<number>(0);
   const initialMouseXRef = useRef<number>(0);
 

@@ -1,7 +1,6 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 
-export const EstimateSearch: FC = observer(() => {
+export const EstimateSearch: React.FC = observer(() => {
   // hooks
   const {} = {};
 

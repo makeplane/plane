@@ -17,7 +17,7 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    manualLogger.error("Failed to fetch current user:", error);
+    manualLogger.error({ err: error }, "Failed to fetch current user:");
     throw error;
   }
   if (response.id !== userId) {

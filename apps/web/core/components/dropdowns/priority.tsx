@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
@@ -23,7 +23,7 @@ import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WIT
 import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   highlightUrgent?: boolean;

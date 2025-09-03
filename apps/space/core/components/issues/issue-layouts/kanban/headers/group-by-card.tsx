@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
 // types
@@ -13,7 +12,7 @@ interface IHeaderGroupByCard {
   count: number;
 }
 
-export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard: React.FC<IHeaderGroupByCard> = observer((props) => {
   const { icon, title, count } = props;
 
   return (

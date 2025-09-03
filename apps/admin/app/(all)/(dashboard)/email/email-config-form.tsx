@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
@@ -27,7 +27,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   NONE: "No email security",
 };
 
-export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
+export const InstanceEmailForm: React.FC<IInstanceEmailForm> = (props) => {
   const { config } = props;
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);

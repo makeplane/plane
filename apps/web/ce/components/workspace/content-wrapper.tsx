@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { observer } from "mobx-react";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => (

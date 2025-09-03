@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
@@ -34,8 +34,8 @@ type TIssueDescriptionEditorProps = {
   issueName: string;
   issueId: string | undefined;
   descriptionHtmlData: string | undefined;
-  editorRef: React.MutableRefObject<EditorRefApi | null>;
-  submitBtnRef: React.MutableRefObject<HTMLButtonElement | null>;
+  editorRef: React.RefObject<EditorRefApi | null>;
+  submitBtnRef: React.RefObject<HTMLButtonElement | null>;
   gptAssistantModal: boolean;
   workspaceSlug: string;
   projectId: string | null;

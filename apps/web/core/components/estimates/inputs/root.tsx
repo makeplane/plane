@@ -1,4 +1,3 @@
-import { FC } from "react";
 // plane imports
 import { EEstimateSystem, TEstimateSystemKeys } from "@plane/types";
 // plane web imports
@@ -13,7 +12,7 @@ type TEstimateInputRootProps = {
   value?: string;
 };
 
-export const EstimateInputRoot: FC<TEstimateInputRootProps> = (props) => {
+export const EstimateInputRoot: React.FC<TEstimateInputRootProps> = (props) => {
   const { estimateType, handleEstimateInputValue, value } = props;
 
   switch (estimateType) {

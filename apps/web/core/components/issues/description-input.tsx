@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -23,7 +23,7 @@ const workspaceService = new WorkspaceService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
-  editorRef?: React.RefObject<EditorRefApi>;
+  editorRef?: React.RefObject<EditorRefApi | null>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -35,7 +35,7 @@ export type IssueDescriptionInputProps = {
   swrIssueDescription?: string | null | undefined;
 };
 
-export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
+export const IssueDescriptionInput: React.FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     containerClassName,
     editorRef,

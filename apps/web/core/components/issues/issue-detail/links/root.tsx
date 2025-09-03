@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports
 import { EIssueServiceType, TIssueLink } from "@plane/types";
@@ -24,7 +24,7 @@ export type TIssueLinkRoot = {
   disabled?: boolean;
 };
 
-export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
+export const IssueLinkRoot: React.FC<TIssueLinkRoot> = (props) => {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks

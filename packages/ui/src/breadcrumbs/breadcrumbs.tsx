@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import * as React from "react";
+import { Children, cloneElement, isValidElement, useEffect, useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "../utils";
 
@@ -20,9 +20,9 @@ export const BreadcrumbItemLoader = () => (
 );
 
 const Breadcrumbs = ({ className, children, onBack, isLoading = false }: BreadcrumbsProps) => {
-  const [isSmallScreen, setIsSmallScreen] = React.useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 640); // Adjust this value as per your requirement
     };
@@ -32,7 +32,8 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const childrenArray = React.Children.toArray(children);
+  const childrenArray = Children.toArray(children);
+  const lastChild = childrenArray[childrenArray.length - 1];
 
   return (
     <div className={cn("flex items-center overflow-hidden gap-0.5 flex-grow", className)}>
@@ -46,8 +47,8 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
                 </>
               );
             }
-            if (React.isValidElement<BreadcrumbItemProps>(child)) {
-              return React.cloneElement(child, {
+            if (isValidElement<BreadcrumbItemProps>(child)) {
+              return cloneElement(child, {
                 isLast: index === childrenArray.length - 1,
               });
             }
@@ -69,12 +70,12 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
           <div className="flex items-center gap-2.5 p-1">
             {isLoading ? (
               <BreadcrumbItemLoader />
-            ) : React.isValidElement(childrenArray[childrenArray.length - 1]) ? (
-              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement, {
+            ) : isValidElement<BreadcrumbItemProps>(lastChild) ? (
+              cloneElement(lastChild, {
                 isLast: true,
               })
             ) : (
-              childrenArray[childrenArray.length - 1]
+              lastChild
             )}
           </div>
         </>

@@ -1,9 +1,8 @@
 import { Placement } from "@popperjs/core";
-import { MutableRefObject, ReactNode } from "react";
 
 export type TPopoverButtonDefaultOptions = {
   // button and button styling
-  button?: ReactNode;
+  button?: React.ReactNode;
   buttonClassName?: string;
   buttonRefClassName?: string;
   disabled?: boolean;
@@ -16,16 +15,16 @@ export type TPopoverDefaultOptions = TPopoverButtonDefaultOptions & {
   // panel styling
   panelClassName?: string;
   popoverClassName?: string;
-  popoverButtonRef?: MutableRefObject<HTMLButtonElement | null>;
+  popoverButtonRef?: React.RefObject<HTMLButtonElement | null>;
 };
 
 export type TPopover = TPopoverDefaultOptions & {
   // children
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 export type TPopoverMenu<T> = TPopoverDefaultOptions & {
   data: T[];
   keyExtractor: (item: T, index: number) => string;
-  render: (item: T, index: number) => ReactNode;
+  render: (item: T, index: number) => React.ReactNode;
 };

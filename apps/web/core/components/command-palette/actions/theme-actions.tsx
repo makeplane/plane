@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -16,7 +16,7 @@ type Props = {
   closePalette: () => void;
 };
 
-export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
+export const CommandPaletteThemeActions: React.FC<Props> = observer((props) => {
   const { closePalette } = props;
   const { setTheme } = useTheme();
   // hooks

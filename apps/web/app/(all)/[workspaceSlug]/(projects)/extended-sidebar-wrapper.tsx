@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EXTENDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH } from "@plane/constants";
@@ -11,13 +10,13 @@ import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar
 
 type Props = {
   children: React.ReactNode;
-  extendedSidebarRef: React.RefObject<HTMLDivElement>;
+  extendedSidebarRef: React.RefObject<HTMLDivElement | null>;
   isExtendedSidebarOpened: boolean;
   handleClose: () => void;
   excludedElementId: string;
 };
 
-export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
+export const ExtendedSidebarWrapper: React.FC<Props> = observer((props) => {
   const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { storedValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);

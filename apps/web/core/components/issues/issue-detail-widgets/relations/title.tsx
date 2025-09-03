@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
@@ -18,7 +18,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
+export const RelationsCollapsibleTitle: React.FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hook

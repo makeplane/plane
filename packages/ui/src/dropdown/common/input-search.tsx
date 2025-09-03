@@ -1,6 +1,6 @@
 import { Combobox } from "@headlessui/react";
 import { Search } from "lucide-react";
-import React, { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 // helpers
 import { cn } from "../../utils";
 
@@ -15,7 +15,7 @@ interface IInputSearch {
   isMobile: boolean;
 }
 
-export const InputSearch: FC<IInputSearch> = (props) => {
+export const InputSearch: React.FC<IInputSearch> = (props) => {
   const { isOpen, query, updateQuery, inputIcon, inputContainerClassName, inputClassName, inputPlaceholder, isMobile } =
     props;
 

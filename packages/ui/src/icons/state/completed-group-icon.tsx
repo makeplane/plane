@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "../type";
 
 export const CompletedGroupIcon: React.FC<ISvgIcons> = ({

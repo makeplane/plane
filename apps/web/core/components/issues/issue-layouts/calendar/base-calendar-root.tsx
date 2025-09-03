@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -28,7 +28,7 @@ export type CalendarStoreType =
   | EIssuesStoreType.EPIC;
 
 interface IBaseCalendarRoot {
-  QuickActions: FC<IQuickActionProps>;
+  QuickActions: React.FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;

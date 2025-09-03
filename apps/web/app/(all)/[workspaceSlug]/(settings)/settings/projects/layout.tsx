@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // components
@@ -12,7 +12,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 const ProjectSettingsLayout = observer((props: Props) => {

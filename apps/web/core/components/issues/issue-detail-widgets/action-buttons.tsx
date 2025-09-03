@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -23,7 +22,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
+export const IssueDetailWidgetActionButtons: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();

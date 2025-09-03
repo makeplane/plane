@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
@@ -35,7 +35,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
+  const [previewEnabled, setPreviewEnabled] = useState(true);
   // derived values
   const projectId = !!routerProjectId ? routerProjectId?.toString() : undefined;
 

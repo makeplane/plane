@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, ReactNode } from "react";
+import { createContext } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
@@ -17,7 +17,7 @@ const AppRailContext = createContext<AppRailContextType | undefined>(undefined);
 export { AppRailContext };
 
 interface AppRailProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AppRailProvider = observer(({ children }: AppRailProviderProps) => {

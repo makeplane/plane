@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
@@ -24,7 +23,7 @@ type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOptions> = observer((props) => {
+export const NotificationSidebarHeaderOptions: React.FC<TNotificationSidebarHeaderOptions> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
   const { isMobile } = usePlatformOS();

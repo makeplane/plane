@@ -1,6 +1,5 @@
 "use client";
 
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -28,7 +27,7 @@ interface IssueBlockProps {
   groupId: string;
   subGroupId: string;
   displayProperties: IIssueDisplayProperties | undefined;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 interface IssueDetailsBlockProps {

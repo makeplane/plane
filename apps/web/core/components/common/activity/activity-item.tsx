@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 
 import { TProjectActivity } from "@/plane-web/types";
@@ -13,7 +12,7 @@ type TActivityItem = {
   ends?: "top" | "bottom" | undefined;
 };
 
-export const ActivityItem: FC<TActivityItem> = observer((props) => {
+export const ActivityItem: React.FC<TActivityItem> = observer((props) => {
   const { activity, showProject = true, ends } = props;
 
   if (!activity) return null;

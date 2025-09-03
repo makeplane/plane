@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
@@ -12,7 +11,7 @@ type TPlanFeatureDetailProps = {
   data: TPlanFeatureData;
 };
 
-export const PlanFeatureDetail: FC<TPlanFeatureDetailProps> = (props) => {
+export const PlanFeatureDetail: React.FC<TPlanFeatureDetailProps> = (props) => {
   const { subscriptionType, data } = props;
 
   if (data === null || data === undefined) {

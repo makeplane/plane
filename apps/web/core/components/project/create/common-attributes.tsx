@@ -1,4 +1,3 @@
-import { ChangeEvent } from "react";
 import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
 import { Info } from "lucide-react";
 // plane imports
@@ -29,7 +28,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
   const { t } = useTranslation();
 
-  const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (onChange: (...event: any[]) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isChangeInIdentifierRequired) {
       onChange(e);
       return;
@@ -39,7 +38,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
     onChange(e);
   };
 
-  const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
+  const handleIdentifierChange = (onChange: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const alphanumericValue = projectIdentifierSanitizer(value);
     setIsChangeInIdentifierRequired(false);

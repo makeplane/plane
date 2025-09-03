@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 
-export const StickySearch: FC = observer(() => {
+export const StickySearch: React.FC = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // hooks

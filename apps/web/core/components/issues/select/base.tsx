@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";

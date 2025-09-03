@@ -1,9 +1,8 @@
-import { FC } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 
 type TIssueLabelPill = { name?: string; color?: string };
 
-export const LabelActivityChip: FC<TIssueLabelPill> = (props) => {
+export const LabelActivityChip: React.FC<TIssueLabelPill> = (props) => {
   const { name, color } = props;
   return (
     <Tooltip tooltipContent={name}>

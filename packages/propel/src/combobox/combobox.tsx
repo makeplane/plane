@@ -1,4 +1,4 @@
-import * as React from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Command } from "../command/command";
 import { Popover } from "../popover/root";
 import { cn } from "../utils/classname";
@@ -61,10 +61,10 @@ interface ComboboxContextType {
   handleRemoveSelection: (valueToRemove: string) => void;
 }
 
-const ComboboxContext = React.createContext<ComboboxContextType | null>(null);
+const ComboboxContext = createContext<ComboboxContextType | null>(null);
 
 function useComboboxContext() {
-  const context = React.useContext(ComboboxContext);
+  const context = useContext(ComboboxContext);
   if (!context) {
     throw new Error("Combobox components must be used within a Combobox");
   }
@@ -84,16 +84,16 @@ function ComboboxComponent({
 }: ComboboxProps) {
   // Controlled/uncontrolled value
   const isControlledValue = value !== undefined;
-  const [internalValue, setInternalValue] = React.useState<string | string[]>(
+  const [internalValue, setInternalValue] = useState<string | string[]>(
     (isControlledValue ? (value as string | string[]) : defaultValue) ?? (multiSelect ? [] : "")
   );
 
   // Controlled/uncontrolled open state
   const isControlledOpen = openProp !== undefined;
-  const [internalOpen, setInternalOpen] = React.useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const open = isControlledOpen ? (openProp as boolean) : internalOpen;
 
-  const setOpen = React.useCallback(
+  const setOpen = useCallback(
     (nextOpen: boolean) => {
       if (!isControlledOpen) {
         setInternalOpen(nextOpen);
@@ -104,13 +104,13 @@ function ComboboxComponent({
   );
 
   // Update internal value when prop changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (isControlledValue) {
       setInternalValue(value as string | string[]);
     }
   }, [isControlledValue, value]);
 
-  const handleValueChange = React.useCallback(
+  const handleValueChange = useCallback(
     (newValue: string) => {
       if (multiSelect) {
         // Functional update to avoid stale closures
@@ -158,7 +158,7 @@ function ComboboxComponent({
     [multiSelect, isControlledValue, internalValue, maxSelections, onValueChange, setOpen]
   );
 
-  const handleRemoveSelection = React.useCallback(
+  const handleRemoveSelection = useCallback(
     (valueToRemove: string) => {
       if (!multiSelect) return;
 
@@ -178,7 +178,7 @@ function ComboboxComponent({
     [multiSelect, isControlledValue, internalValue, onValueChange]
   );
 
-  const contextValue = React.useMemo<ComboboxContextType>(
+  const contextValue = useMemo<ComboboxContextType>(
     () => ({
       value: internalValue,
       onValueChange,
@@ -268,12 +268,12 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
   const { handleValueChange, multiSelect, maxSelections, value: selectedValue } = useComboboxContext();
 
   const stringValue = value;
-  const isSelected = React.useMemo(() => {
+  const isSelected = useMemo(() => {
     if (!multiSelect) return false;
     return Array.isArray(selectedValue) ? (selectedValue as string[]).includes(stringValue) : false;
   }, [multiSelect, selectedValue, stringValue]);
 
-  const reachedMax = React.useMemo(() => {
+  const reachedMax = useMemo(() => {
     if (!multiSelect || !maxSelections) return false;
     const currentLength = Array.isArray(selectedValue) ? (selectedValue as string[]).length : 0;
     return currentLength >= maxSelections && !isSelected;

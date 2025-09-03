@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { TLogoProps } from "@plane/types";
 import { ISvgIcons } from "@plane/ui";
 import { getFileURL, truncateText } from "@plane/utils";
@@ -7,12 +6,12 @@ import { Logo } from "@/components/common/logo";
 type TSwitcherIconProps = {
   logo_props?: TLogoProps;
   logo_url?: string;
-  LabelIcon: FC<ISvgIcons>;
+  LabelIcon: React.FC<ISvgIcons>;
   size?: number;
   type?: "lucide" | "material";
 };
 
-export const SwitcherIcon: FC<TSwitcherIconProps> = ({
+export const SwitcherIcon: React.FC<TSwitcherIconProps> = ({
   logo_props,
   logo_url,
   LabelIcon,
@@ -40,11 +39,11 @@ type TSwitcherLabelProps = {
   logo_props?: TLogoProps;
   logo_url?: string;
   name?: string;
-  LabelIcon: FC<ISvgIcons>;
+  LabelIcon: React.FC<ISvgIcons>;
   type?: "lucide" | "material";
 };
 
-export const SwitcherLabel: FC<TSwitcherLabelProps> = (props) => {
+export const SwitcherLabel: React.FC<TSwitcherLabelProps> = (props) => {
   const { logo_props, name, LabelIcon, logo_url, type = "lucide" } = props;
   return (
     <div className="flex items-center gap-1 text-custom-text-200">

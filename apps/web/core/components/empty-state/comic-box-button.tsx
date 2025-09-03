@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, Ref, useState } from "react";
+import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // popper
@@ -64,7 +64,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
         <Popover.Panel className="fixed z-10" static>
           <div
             className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100 p-5 relative w-52 lg:w-60 xl:w-80"
-            ref={setPopperElement as Ref<HTMLDivElement>}
+            ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >

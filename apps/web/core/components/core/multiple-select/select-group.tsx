@@ -4,7 +4,7 @@ import { TSelectionHelper, useMultipleSelect } from "@/hooks/use-multiple-select
 
 type Props = {
   children: (helpers: TSelectionHelper) => React.ReactNode;
-  containerRef: React.MutableRefObject<HTMLElement | null>;
+  containerRef: React.RefObject<HTMLElement | null>;
   disabled?: boolean;
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };

@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 // constants
 import { cn } from "../utils";
 import { EModalPosition, EModalWidth } from "./constants";

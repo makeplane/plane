@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // plane imports
@@ -19,7 +18,7 @@ type OnboardingHeaderProps = {
   hasInvitations: boolean;
 };
 
-export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
+export const OnboardingHeader: React.FC<OnboardingHeaderProps> = observer((props) => {
   const { currentStep, updateCurrentStep, hasInvitations } = props;
   // store hooks
   const { data: user } = useUser();

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
 import { IState } from "@plane/types";
 import { Button, Popover, Input, TextArea } from "@plane/ui";
@@ -13,7 +13,7 @@ type TStateForm = {
   buttonTitle: string;
 };
 
-export const StateForm: FC<TStateForm> = (props) => {
+export const StateForm: React.FC<TStateForm> = (props) => {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
   // states
   const [formData, setFromData] = useState<Partial<IState> | undefined>(undefined);

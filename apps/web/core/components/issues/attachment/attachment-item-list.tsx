@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
@@ -26,7 +26,7 @@ type TIssueAttachmentItemList = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
+export const IssueAttachmentItemList: React.FC<TIssueAttachmentItemList> = observer((props) => {
   const {
     workspaceSlug,
     projectId,

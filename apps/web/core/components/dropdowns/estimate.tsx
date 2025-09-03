@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -20,7 +20,7 @@ import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onChange: (val: string | undefined) => void;

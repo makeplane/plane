@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
@@ -19,7 +19,7 @@ import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
 
-export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
+export const IssuePeekOverview: React.FC<IWorkItemPeekOverview> = observer((props) => {
   const {
     embedIssue = false,
     embedRemoveCurrentNotification,

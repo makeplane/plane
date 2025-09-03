@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -31,7 +31,7 @@ type Props = {
   displayProperties: IIssueDisplayProperties | undefined;
   nestingLevel: number;
   spacingLeft?: number;
-  containerRef: MutableRefObject<HTMLDivElement | null>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   selectionHelpers: TSelectionHelper;
   groupId: string;
   isDragAllowed: boolean;
@@ -42,7 +42,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot: FC<Props> = observer((props) => {
+export const IssueBlockRoot: React.FC<Props> = observer((props) => {
   const {
     issueId,
     issuesMap,

@@ -9,8 +9,8 @@ import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
 
 export const useGanttResizable = (
   block: IGanttBlock,
-  resizableRef: React.RefObject<HTMLDivElement>,
-  ganttContainerRef: React.RefObject<HTMLDivElement>,
+  resizableRef: React.RefObject<HTMLDivElement | null>,
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>,
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>
 ) => {
   // refs
@@ -19,8 +19,8 @@ export const useGanttResizable = (
     width: 0,
     offsetX: 0,
   });
-  const ganttContainerDimensions = useRef<DOMRect | undefined>();
-  const currMouseEvent = useRef<MouseEvent | undefined>();
+  const ganttContainerDimensions = useRef<DOMRect | undefined>(undefined);
+  const currMouseEvent = useRef<MouseEvent | undefined>(undefined);
   // states
   const { currentViewData, updateBlockPosition, setIsDragging, getUpdatedPositionAfterDrag } = useTimeLineChartStore();
   const [isMoving, setIsMoving] = useState<"left" | "right" | "move" | undefined>();

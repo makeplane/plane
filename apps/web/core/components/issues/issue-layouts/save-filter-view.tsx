@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
@@ -17,7 +17,7 @@ interface ISaveFilterView {
   trackerElement: string;
 }
 
-export const SaveFilterView: FC<ISaveFilterView> = (props) => {
+export const SaveFilterView: React.FC<ISaveFilterView> = (props) => {
   const { workspaceSlug, projectId, filterParams, trackerElement } = props;
 
   const [viewModal, setViewModal] = useState<boolean>(false);

@@ -1,4 +1,3 @@
-import React, { RefObject } from "react";
 import { observer } from "mobx-react";
 // hooks
 import type { IGanttBlock } from "@plane/types";
@@ -19,7 +18,7 @@ type Props = {
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
   enableDependency: boolean | ((blockId: string) => boolean);
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const ChartDraggable: React.FC<Props> = observer((props) => {

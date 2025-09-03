@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 // images
 import Image404 from "@/public/404.svg";

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -17,7 +17,7 @@ export type TProjectLinkDetail = {
   linkOperations: TLinkOperations;
 };
 
-export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
+export const ProjectLinkDetail: React.FC<TProjectLinkDetail> = observer((props) => {
   // props
   const { linkId, linkOperations } = props;
   // hooks

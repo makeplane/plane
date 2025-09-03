@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Lock, ChevronDown } from "lucide-react";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";

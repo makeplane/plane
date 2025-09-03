@@ -1,5 +1,4 @@
 "use client";
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
@@ -28,7 +27,7 @@ type Props = {
   isTrialAllowed: boolean;
 };
 
-export const PlanCheckoutButton: FC<Props> = observer((props) => {
+export const PlanCheckoutButton: React.FC<Props> = observer((props) => {
   const {
     planeName,
     planVariant,

@@ -1,7 +1,6 @@
 "use client";
 
 // react
-import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";

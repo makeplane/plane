@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
@@ -20,7 +20,7 @@ export type ActiveCycleProductivityProps = {
   cycle: ICycle | null;
 };
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
+export const ActiveCycleProductivity: React.FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // plane hooks
   const { t } = useTranslation();

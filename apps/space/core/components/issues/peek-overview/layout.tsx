@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
@@ -16,7 +16,7 @@ type TIssuePeekOverview = {
   handlePeekClose?: () => void;
 };
 
-export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
+export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) => {
   const { anchor, peekId, handlePeekClose } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -47,14 +47,13 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
     }
 
     issueDetailStore.setPeekId(null);
-    let queryParams: any = {
-      board,
-    };
+    let queryParams: Record<string, string> = {};
+    if (board) queryParams = { ...queryParams, board };
     if (priority && priority.length > 0) queryParams = { ...queryParams, priority: priority };
     if (state && state.length > 0) queryParams = { ...queryParams, state: state };
     if (labels && labels.length > 0) queryParams = { ...queryParams, labels: labels };
-    queryParams = new URLSearchParams(queryParams).toString();
-    router.push(`/issues/${anchor}?${queryParams}`);
+    const qs = new URLSearchParams(queryParams).toString();
+    router.push(`/issues/${anchor}?${qs}`);
   };
 
   useEffect(() => {

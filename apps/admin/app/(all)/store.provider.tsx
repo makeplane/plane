@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, createContext } from "react";
+import { createContext } from "react";
 // plane admin store
 import { RootStore } from "@/plane-admin/store/root.store";
 
@@ -23,7 +23,7 @@ function initializeStore(initialData = {}) {
 }
 
 export type StoreProviderProps = {
-  children: ReactNode;
+  children: React.ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialState?: any;
 };

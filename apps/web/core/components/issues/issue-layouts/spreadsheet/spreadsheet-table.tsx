@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -24,8 +24,8 @@ type Props = {
   quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   canEditProperties: (projectId: string | undefined) => boolean;
-  portalElement: React.MutableRefObject<HTMLDivElement | null>;
-  containerRef: MutableRefObject<HTMLTableElement | null>;
+  portalElement: React.RefObject<HTMLDivElement | null>;
+  containerRef: React.RefObject<HTMLTableElement | null>;
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];

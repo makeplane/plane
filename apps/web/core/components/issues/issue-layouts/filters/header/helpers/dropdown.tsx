@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 // icons
@@ -12,8 +12,8 @@ import { Button } from "@plane/ui";
 
 type Props = {
   children: React.ReactNode;
-  icon?: React.ReactNode;
-  miniIcon?: React.ReactNode;
+  icon?: React.ReactElement<React.ComponentProps<"svg">>;
+  miniIcon?: React.ReactElement<React.ComponentProps<"svg">>;
   title?: string;
   placement?: Placement;
   disabled?: boolean;
@@ -49,7 +49,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         }
         return (
           <>
-            <Popover.Button as={React.Fragment}>
+            <Popover.Button as={Fragment}>
               {menuButton ? (
                 <button role="button" ref={setReferenceElement}>
                   {menuButton}

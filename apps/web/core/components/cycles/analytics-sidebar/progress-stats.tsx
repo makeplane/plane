@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
@@ -250,7 +249,7 @@ type TCycleProgressStats = {
   noBackground?: boolean;
 };
 
-export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
+export const CycleProgressStats: React.FC<TCycleProgressStats> = observer((props) => {
   const {
     cycleId,
     plotType,

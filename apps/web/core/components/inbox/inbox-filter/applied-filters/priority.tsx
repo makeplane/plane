@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
@@ -10,7 +9,7 @@ import { PriorityIcon, Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
+export const InboxIssueAppliedFiltersPriority: React.FC = observer(() => {
   // hooks
   const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

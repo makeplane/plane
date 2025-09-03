@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -18,7 +17,7 @@ type TInboxIssueTitle = {
   isTitleLengthMoreThan255Character?: boolean;
 };
 
-export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
+export const InboxIssueTitle: React.FC<TInboxIssueTitle> = observer((props) => {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
   // hooks
   const { isMobile } = usePlatformOS();

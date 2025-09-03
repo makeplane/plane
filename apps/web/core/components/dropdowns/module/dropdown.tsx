@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
@@ -11,7 +10,7 @@ import { TDropdownProps } from "../types";
 import { ModuleDropdownBase } from "./base";
 
 type TModuleDropdownProps = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   projectId: string | undefined;

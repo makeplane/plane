@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 // plane utils
 import { calculateTimeAgo, cn, getIconForLink } from "@plane/utils";
 // plane ui
@@ -13,7 +12,7 @@ export type TLinkItemBlockProps = {
   onClick?: () => void;
 };
 
-export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
+export const LinkItemBlock: React.FC<TLinkItemBlockProps> = (props) => {
   // props
   const { title, url, createdAt, menuItems, onClick } = props;
   // icons

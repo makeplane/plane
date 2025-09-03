@@ -1,5 +1,4 @@
 "use client";
-import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
 import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
@@ -15,7 +14,7 @@ type IInstanceAIForm = {
 
 type AIFormValues = Record<TInstanceAIConfigurationKeys, string>;
 
-export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
+export const InstanceAIForm: React.FC<IInstanceAIForm> = (props) => {
   const { config } = props;
   // store
   const { updateInstanceConfigurations } = useInstance();

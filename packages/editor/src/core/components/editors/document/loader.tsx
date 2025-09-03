@@ -1,6 +1,6 @@
 // plane imports
+import { cn } from "@plane/propel/utils";
 import { Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
 
 type Props = {
   className?: string;

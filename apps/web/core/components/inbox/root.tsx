@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
@@ -23,7 +23,7 @@ type TInboxIssueRoot = {
   navigationTab?: EInboxIssueCurrentTab | undefined;
 };
 
-export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
+export const InboxIssueRoot: React.FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);

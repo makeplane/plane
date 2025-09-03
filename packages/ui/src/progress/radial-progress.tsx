@@ -1,10 +1,10 @@
-import React, { useState, useEffect, FC } from "react";
+import { useState, useEffect } from "react";
 
 interface IRadialProgressBar {
   progress: number;
 }
 
-export const RadialProgressBar: FC<IRadialProgressBar> = (props) => {
+export const RadialProgressBar: React.FC<IRadialProgressBar> = (props) => {
   const { progress } = props;
   const [circumference, setCircumference] = useState(0);
 

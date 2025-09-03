@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
@@ -15,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterState: FC<Props> = observer((props) => {
+export const FilterState: React.FC<Props> = observer((props) => {
   const { states, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

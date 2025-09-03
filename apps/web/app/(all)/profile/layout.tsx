@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 // components
 import { CommandPalette } from "@/components/command-palette";
 // wrappers
@@ -9,7 +8,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { ProfileLayoutSidebar } from "./sidebar";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 export default function ProfileSettingsLayout(props: Props) {

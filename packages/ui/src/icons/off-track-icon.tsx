@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const OffTrackIcon: React.FC<ISvgIcons> = ({ width = "16", height = "16" }) => (

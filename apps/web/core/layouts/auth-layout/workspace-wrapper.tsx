@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,11 +31,11 @@ import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
-  children: ReactNode;
+  children: React.ReactNode;
   isLoading?: boolean;
 }
 
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper: React.FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();

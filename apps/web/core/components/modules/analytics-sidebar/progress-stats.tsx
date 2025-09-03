@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
@@ -249,7 +248,7 @@ type TModuleProgressStats = {
   noBackground?: boolean;
 };
 
-export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) => {
+export const ModuleProgressStats: React.FC<TModuleProgressStats> = observer((props) => {
   const {
     moduleId,
     plotType,

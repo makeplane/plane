@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -52,7 +51,7 @@ const Titles = {
 
 const workSpaceService = new WorkspaceService();
 
-export const AuthHeader: FC<TAuthHeader> = observer((props) => {
+export const AuthHeader: React.FC<TAuthHeader> = observer((props) => {
   const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep } = props;
   // plane imports
   const { t } = useTranslation();

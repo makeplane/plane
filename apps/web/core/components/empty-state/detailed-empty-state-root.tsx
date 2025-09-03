@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
@@ -12,8 +11,8 @@ type EmptyStateSize = "sm" | "md" | "lg";
 
 type ButtonConfig = {
   text: string;
-  prependIcon?: React.ReactNode;
-  appendIcon?: React.ReactNode;
+  prependIcon?: React.ReactElement<React.ComponentProps<"svg">>;
+  appendIcon?: React.ReactElement<React.ComponentProps<"svg">>;
   onClick?: () => void;
   disabled?: boolean;
 };

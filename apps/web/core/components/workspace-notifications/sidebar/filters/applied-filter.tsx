@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
@@ -14,7 +13,7 @@ type TAppliedFilters = {
   workspaceSlug: string;
 };
 
-export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
+export const AppliedFilters: React.FC<TAppliedFilters> = observer((props) => {
   const { workspaceSlug } = props;
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();

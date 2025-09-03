@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 // plane imports
 import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";

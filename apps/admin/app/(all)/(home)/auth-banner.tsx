@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { Info, X } from "lucide-react";
 // plane constants
 import { TAdminAuthErrorInfo } from "@plane/constants";
@@ -8,7 +7,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAdminAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: FC<TAuthBanner> = (props) => {
+export const AuthBanner: React.FC<TAuthBanner> = (props) => {
   const { bannerData, handleBannerData } = props;
 
   if (!bannerData) return <></>;

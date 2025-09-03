@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import {
@@ -34,7 +34,7 @@ type Props = {
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
-export const WidgetItem: FC<Props> = observer((props) => {
+export const WidgetItem: React.FC<Props> = observer((props) => {
   // props
   const { widgetId, isLastChild, handleDrop, handleToggle } = props;
   const { workspaceSlug } = useParams();
@@ -59,7 +59,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        dragHandle: elementRef.current,
+        dragHandle: element,
         getInitialData: () => initialData,
         onDragStart: () => {
           setIsDragging(true);

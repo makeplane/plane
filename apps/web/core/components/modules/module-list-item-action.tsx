@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -37,10 +36,10 @@ import { ButtonAvatars } from "../dropdowns/member/avatar";
 type Props = {
   moduleId: string;
   moduleDetails: IModule;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction: React.FC<Props> = observer((props) => {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

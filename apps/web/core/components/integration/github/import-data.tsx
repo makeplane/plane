@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 import { IWorkspaceIntegration } from "@plane/types";
@@ -21,7 +20,7 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportData: FC<Props> = observer((props) => {
+export const GithubImportData: React.FC<Props> = observer((props) => {
   const { handleStepChange, integration, control, watch } = props;
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();

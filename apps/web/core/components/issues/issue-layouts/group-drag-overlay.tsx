@@ -34,7 +34,7 @@ export const GroupDragOverlay = (props: Props) => {
   // hooks
   const { t } = useTranslation();
   // refs
-  const messageContainerRef = useRef<HTMLDivElement>(null);
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
   const readableOrderBy = t(

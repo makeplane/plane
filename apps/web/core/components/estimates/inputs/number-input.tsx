@@ -1,11 +1,10 @@
-import { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 type TEstimateNumberInputProps = {
   value?: number;
   handleEstimateInputValue: (value: string) => void;
 };
 
-export const EstimateNumberInput: FC<TEstimateNumberInputProps> = (props) => {
+export const EstimateNumberInput: React.FC<TEstimateNumberInputProps> = (props) => {
   const { value, handleEstimateInputValue } = props;
 
   // i18n

@@ -17,7 +17,7 @@ type Props = {
   comment: TIssueComment;
   disabled: boolean;
   projectId?: string;
-  readOnlyEditorRef: React.RefObject<EditorRefApi>;
+  readOnlyEditorRef: React.RefObject<EditorRefApi | null>;
   showAccessSpecifier: boolean;
   workspaceId: string;
   workspaceSlug: string;

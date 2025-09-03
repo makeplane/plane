@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
@@ -28,7 +28,7 @@ const defaultValues: TLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) => {
+export const LinkCreateUpdateModal: React.FC<TLinkCreateEditModal> = observer((props) => {
   // props
   const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form

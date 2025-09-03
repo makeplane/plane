@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
@@ -23,7 +23,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
+export const IssueAttachmentActionButton: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);

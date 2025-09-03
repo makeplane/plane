@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const RelatedIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (

@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +14,7 @@ export type TFiltersDropdown = {
   filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[];
 };
 
-export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
+export const FiltersDropdown: React.FC<TFiltersDropdown> = observer((props) => {
   const { className, activeFilter, setActiveFilter, filters } = props;
   const { t } = useTranslation();
 

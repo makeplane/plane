@@ -1,5 +1,5 @@
 "use-client";
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -40,7 +40,7 @@ interface IPeekOverviewIssueDetails {
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
 }
 
-export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
+export const PeekOverviewIssueDetails: React.FC<IPeekOverviewIssueDetails> = observer((props) => {
   const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);

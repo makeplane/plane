@@ -1,5 +1,4 @@
-import * as React from "react";
-
+import { cloneElement, forwardRef } from "react";
 import { cn } from "../utils";
 import { getIconStyling, getButtonStyling, TButtonVariant, TButtonSizes } from "./helper";
 
@@ -9,12 +8,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   className?: string;
   loading?: boolean;
   disabled?: boolean;
-  appendIcon?: any;
-  prependIcon?: any;
+  appendIcon?: React.ReactElement<React.ComponentProps<"svg">>;
+  prependIcon?: React.ReactElement<React.ComponentProps<"svg">>;
   children: React.ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const {
     variant = "primary",
     size = "md",
@@ -33,9 +32,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => 
 
   return (
     <button ref={ref} type={type} className={cn(buttonStyle, className)} disabled={disabled || loading} {...rest}>
-      {prependIcon && <div className={buttonIconStyle}>{React.cloneElement(prependIcon, { strokeWidth: 2 })}</div>}
+      {prependIcon && <div className={buttonIconStyle}>{cloneElement(prependIcon, { strokeWidth: 2 })}</div>}
       {children}
-      {appendIcon && <div className={buttonIconStyle}>{React.cloneElement(appendIcon, { strokeWidth: 2 })}</div>}
+      {appendIcon && <div className={buttonIconStyle}>{cloneElement(appendIcon, { strokeWidth: 2 })}</div>}
     </button>
   );
 });

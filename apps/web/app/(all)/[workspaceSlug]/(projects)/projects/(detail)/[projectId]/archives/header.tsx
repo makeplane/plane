@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -45,7 +44,7 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   },
 };
 
-export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+export const ProjectArchivesHeader: React.FC<TProps> = observer((props: TProps) => {
   const { activeTab } = props;
   // router
   const router = useAppRouter();

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 import type { ILinkDetails, ModuleLink } from "@plane/types";
@@ -20,7 +20,7 @@ const defaultValues: ModuleLink = {
   url: "",
 };
 
-export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
+export const CreateUpdateModuleLinkModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, createLink, updateLink, data } = props;
   // form info
   const {

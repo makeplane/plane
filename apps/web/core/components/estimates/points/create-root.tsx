@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
@@ -17,7 +17,7 @@ type TEstimatePointCreateRoot = {
   estimateId: string | undefined;
   estimateType: TEstimateSystemKeys;
   estimatePoints: TEstimatePointsObject[];
-  setEstimatePoints: Dispatch<SetStateAction<TEstimatePointsObject[] | undefined>>;
+  setEstimatePoints: React.Dispatch<React.SetStateAction<TEstimatePointsObject[] | undefined>>;
   estimatePointError?: TEstimateTypeError;
   handleEstimatePointError?: (
     key: number,
@@ -28,7 +28,7 @@ type TEstimatePointCreateRoot = {
   ) => void;
 };
 
-export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
+export const EstimatePointCreateRoot: React.FC<TEstimatePointCreateRoot> = observer((props) => {
   // props
   const {
     workspaceSlug,

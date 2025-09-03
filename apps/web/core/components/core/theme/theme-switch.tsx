@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // plane imports
 import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -13,7 +12,7 @@ type Props = {
   onChange: (value: I_THEME_OPTION) => void;
 };
 
-export const ThemeSwitch: FC<Props> = (props) => {
+export const ThemeSwitch: React.FC<Props> = (props) => {
   const { value, onChange } = props;
   const { t } = useTranslation();
   return (

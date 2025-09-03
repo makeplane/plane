@@ -1,5 +1,5 @@
-import type { Content, JSONContent } from "@plane/types";
 import DOMPurify from "isomorphic-dompurify";
+import type { Content, JSONContent } from "@plane/types";
 
 /**
  * @description Adds space between camelCase words

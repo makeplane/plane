@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -36,7 +36,7 @@ type CycleOptionsProps = {
   currentCycleId?: string;
 };
 
-export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
+export const CycleOptions: React.FC<CycleOptionsProps> = observer((props) => {
   const { projectId, isOpen, referenceElement, placement, canRemoveCycle, currentCycleId } = props;
   // i18n
   const { t } = useTranslation();

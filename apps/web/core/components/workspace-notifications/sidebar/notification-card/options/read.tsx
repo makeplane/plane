@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
@@ -21,7 +20,7 @@ type TNotificationItemReadOption = {
   notification: INotification;
 };
 
-export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
+export const NotificationItemReadOption: React.FC<TNotificationItemReadOption> = observer((props) => {
   const { workspaceSlug, notification } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();

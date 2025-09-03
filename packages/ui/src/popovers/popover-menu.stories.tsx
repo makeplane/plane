@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 import { PopoverMenu } from "./popover-menu";
 
 const meta: Meta<typeof PopoverMenu> = {

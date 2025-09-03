@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
@@ -17,7 +17,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectInboxHeader: React.FC = observer(() => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router

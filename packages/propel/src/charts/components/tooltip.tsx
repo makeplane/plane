@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { Card, ECardSpacing } from "../../card";
@@ -14,7 +14,7 @@ type Props = {
   itemDotColors: Record<string, string>;
 };
 
-export const CustomTooltip = React.memo((props: Props) => {
+export const CustomTooltip = memo((props: Props) => {
   const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));

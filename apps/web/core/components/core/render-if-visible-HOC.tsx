@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from "react";
+import { useState, useRef, useEffect, createElement } from "react";
 import { cn } from "@plane/utils";
 
 type Props = {
   defaultHeight?: string;
   verticalOffset?: number;
   horizontalOffset?: number;
-  root?: MutableRefObject<HTMLElement | null>;
-  children: ReactNode;
-  as?: keyof JSX.IntrinsicElements;
+  root?: React.RefObject<HTMLElement | null>;
+  children: React.ReactNode;
+  as?: keyof React.JSX.IntrinsicElements;
   classNames?: string;
-  placeholderChildren?: ReactNode;
+  placeholderChildren?: React.ReactNode;
   defaultValue?: boolean;
   shouldRecordHeights?: boolean;
   useIdletime?: boolean;
@@ -80,7 +80,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   const style = isVisible || !shouldRecordHeights ? {} : { height: placeholderHeight.current, width: "100%" };
   const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
 
-  return React.createElement(as, { ref: intersectionRef, style, className }, child);
+  return createElement(as, { ref: intersectionRef, style, className }, child);
 };
 
 export default RenderIfVisible;

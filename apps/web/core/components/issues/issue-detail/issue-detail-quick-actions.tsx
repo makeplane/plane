@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { LinkIcon } from "lucide-react";
 // plane imports
@@ -29,7 +29,7 @@ type Props = {
   issueId: string;
 };
 
-export const IssueDetailQuickActions: FC<Props> = observer((props) => {
+export const IssueDetailQuickActions: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
 

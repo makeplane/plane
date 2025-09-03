@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // ui
@@ -18,7 +17,7 @@ type TIssueParentSiblingItem = {
   issueId: string;
 };
 
-export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((props) => {
+export const IssueParentSiblingItem: React.FC<TIssueParentSiblingItem> = observer((props) => {
   const { workspaceSlug, issueId } = props;
   // hooks
   const { getProjectById } = useProject();

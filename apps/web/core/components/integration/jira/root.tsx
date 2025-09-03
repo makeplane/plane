@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -34,7 +34,7 @@ import {
 const integrationWorkflowData: Array<{
   title: string;
   key: TJiraIntegrationSteps;
-  icon: any;
+  icon: React.FC<React.ComponentProps<"svg">>;
 }> = [
   {
     title: "Configure",
@@ -116,7 +116,7 @@ export const JiraImporterRoot: React.FC = () => {
           </div>
           <div className="flex h-full w-full items-center justify-center">
             {integrationWorkflowData.map((integration, index) => (
-              <React.Fragment key={integration.key}>
+              <Fragment key={integration.key}>
                 <button
                   type="button"
                   onClick={() => {
@@ -150,7 +150,7 @@ export const JiraImporterRoot: React.FC = () => {
                     {" "}
                   </div>
                 )}
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { Check, ChevronDown } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -22,7 +22,7 @@ type ToolbarButtonProps = {
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
+const ToolbarButton: React.FC<ToolbarButtonProps> = memo((props) => {
   const { item, isActive, executeCommand } = props;
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 
 import { useParams } from "next/navigation";
 
@@ -26,7 +26,7 @@ type Props = {
 // services
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
+export const GithubRepoDetails: React.FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
   const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(

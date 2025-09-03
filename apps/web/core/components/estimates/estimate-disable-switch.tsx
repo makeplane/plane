@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +15,7 @@ type TEstimateDisableSwitch = {
   isAdmin: boolean;
 };
 
-export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props) => {
+export const EstimateDisableSwitch: React.FC<TEstimateDisableSwitch> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // i18n
   const { t } = useTranslation();

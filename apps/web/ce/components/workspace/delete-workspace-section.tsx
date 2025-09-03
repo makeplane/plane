@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 // types
@@ -14,7 +14,7 @@ type TDeleteWorkspace = {
   workspace: IWorkspace | null;
 };
 
-export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => {
+export const DeleteWorkspaceSection: React.FC<TDeleteWorkspace> = observer((props) => {
   const { workspace } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);

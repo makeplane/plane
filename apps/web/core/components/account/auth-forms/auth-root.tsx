@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -32,7 +32,7 @@ type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot: React.FC<TAuthRoot> = observer((props) => {
   //router
   const searchParams = useSearchParams();
   // query params

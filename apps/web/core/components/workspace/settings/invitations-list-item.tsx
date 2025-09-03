@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, LinkIcon, Trash2 } from "lucide-react";
@@ -20,7 +20,7 @@ type Props = {
   invitationId: string;
 };
 
-export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
+export const WorkspaceInvitationsListItem: React.FC<Props> = observer((props) => {
   const { invitationId } = props;
   // router
   const { workspaceSlug } = useParams();

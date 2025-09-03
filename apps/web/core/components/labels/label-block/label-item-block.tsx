@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 // plane helpers
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
@@ -28,7 +28,7 @@ interface ILabelItemBlock {
   customMenuItems: ICustomMenuItem[];
   handleLabelDelete: (label: IIssueLabel) => void;
   isLabelGroup?: boolean;
-  dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
+  dragHandleRef: React.RefObject<HTMLButtonElement | null>;
   disabled?: boolean;
   draggable?: boolean;
 }

@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -27,7 +26,7 @@ export interface SidebarUserMenuItemProps {
   draftIssueCount: number;
 }
 
-export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props) => {
+export const SidebarUserMenuItem: React.FC<SidebarUserMenuItemProps> = observer((props) => {
   const { item, draftIssueCount } = props;
   // nextjs hooks
   const { workspaceSlug } = useParams();

@@ -1,9 +1,8 @@
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { cn } from "@plane/utils";
 
 type TProps = {
-  children: ReactNode;
+  children: React.ReactNode;
   size?: "lg" | "md";
 };
 export const SettingsContentWrapper = observer((props: TProps) => {

@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { FileText, Layers, Timer } from "lucide-react";
 // plane imports
 import { IProject } from "@plane/types";
@@ -9,10 +8,10 @@ export type TProperties = {
   property: string;
   title: string;
   description: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   isPro: boolean;
   isEnabled: boolean;
-  renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => ReactNode;
+  renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => React.ReactNode;
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";

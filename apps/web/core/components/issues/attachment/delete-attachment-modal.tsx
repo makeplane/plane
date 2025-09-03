@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane-i18n
 import { useTranslation } from "@plane/i18n";
@@ -23,7 +23,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
+export const IssueAttachmentDeleteModal: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const { isOpen, onClose, attachmentId, attachmentOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // states

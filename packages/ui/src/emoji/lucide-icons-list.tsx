@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // local imports
 import { LUCIDE_ICONS_LIST } from "..";
 import { Input } from "../form-fields";

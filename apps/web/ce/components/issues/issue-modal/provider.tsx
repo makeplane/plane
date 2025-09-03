@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ISearchIssueResponse, TIssue } from "@plane/types";

@@ -1,4 +1,4 @@
-import { RefObject, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // components
 import type { IBlockUpdateDependencyData } from "@plane/types";
@@ -21,7 +21,7 @@ type Props = {
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
   enableDependency: boolean;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
 };
 

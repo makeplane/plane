@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // components
@@ -14,7 +13,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const IssuesNavbarRoot: FC<Props> = observer((props) => {
+export const IssuesNavbarRoot: React.FC<Props> = observer((props) => {
   const { publishSettings } = props;
   // hooks
   const { project_details } = publishSettings;

@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // icons
@@ -18,7 +17,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListProjectGroupHeader: FC<Props> = observer((props) => {
+export const CycleListProjectGroupHeader: React.FC<Props> = observer((props) => {
   const { projectId, count, showCount = false, isExpanded = false } = props;
   // store hooks
   const { getProjectById } = useProject();

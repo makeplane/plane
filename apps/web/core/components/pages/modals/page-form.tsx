@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
@@ -43,7 +43,7 @@ export const PageForm: React.FC<Props> = (props) => {
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_PAGE, isMobile);
 
-  const handlePageFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handlePageFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);

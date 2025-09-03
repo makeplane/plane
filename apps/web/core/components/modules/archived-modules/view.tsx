@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
@@ -17,7 +16,7 @@ export interface IArchivedModulesView {
   projectId: string;
 }
 
-export const ArchivedModulesView: FC<IArchivedModulesView> = observer((props) => {
+export const ArchivedModulesView: React.FC<IArchivedModulesView> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedModuleIds, loader } = useModule();

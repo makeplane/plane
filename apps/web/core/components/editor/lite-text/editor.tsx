@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { forwardRef, useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane imports
@@ -44,7 +44,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const { t } = useTranslation();
   const {
     containerClassName,
@@ -84,12 +84,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+  function isRefObject<T>(ref: React.ForwardedRef<T>) {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+  const editorRef = isRefObject(ref) ? ref.current : null;
   return (
     <div
       className={cn(

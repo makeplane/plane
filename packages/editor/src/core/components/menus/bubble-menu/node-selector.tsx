@@ -1,6 +1,5 @@
 import { Editor } from "@tiptap/react";
 import { Check, ChevronDown } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -25,10 +24,10 @@ import { TEditorCommands } from "@/types";
 type Props = {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const BubbleMenuNodeSelector: FC<Props> = (props) => {
+export const BubbleMenuNodeSelector: React.FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
 
   const items: EditorMenuItem<TEditorCommands>[] = [

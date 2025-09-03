@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
@@ -34,7 +34,7 @@ const helpOptions = [
   },
 ];
 
-export const AdminSidebarHelpSection: FC = observer(() => {
+export const AdminSidebarHelpSection: React.FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store

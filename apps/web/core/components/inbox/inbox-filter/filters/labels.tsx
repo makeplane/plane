@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -18,7 +18,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterLabels: FC<Props> = observer((props) => {
+export const FilterLabels: React.FC<Props> = observer((props) => {
   const { labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

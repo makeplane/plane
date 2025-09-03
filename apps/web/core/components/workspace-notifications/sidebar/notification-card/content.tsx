@@ -1,4 +1,3 @@
-import { FC } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {
@@ -11,7 +10,7 @@ import {
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 
-export const NotificationContent: FC<{
+export const NotificationContent: React.FC<{
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;

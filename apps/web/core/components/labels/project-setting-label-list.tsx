@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports

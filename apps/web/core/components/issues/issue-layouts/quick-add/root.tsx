@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
@@ -19,7 +19,7 @@ import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
-  ref: React.RefObject<HTMLFormElement>;
+  ref: React.RefObject<HTMLFormElement | null>;
   isOpen: boolean;
   projectDetail: IProject;
   hasError: boolean;
@@ -37,7 +37,7 @@ type TQuickAddIssueRoot = {
   isQuickAddOpen?: boolean;
   layout: EIssueLayoutTypes;
   prePopulatedData?: Partial<TIssue>;
-  QuickAddButton?: FC<TQuickAddIssueButton>;
+  QuickAddButton?: React.FC<TQuickAddIssueButton>;
   customQuickAddButton?: React.ReactNode;
   containerClassName?: string;
   setIsQuickAddOpen?: (isOpen: boolean) => void;
@@ -49,7 +49,7 @@ const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
-export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
+export const QuickAddIssueRoot: React.FC<TQuickAddIssueRoot> = observer((props) => {
   const {
     isQuickAddOpen,
     layout,

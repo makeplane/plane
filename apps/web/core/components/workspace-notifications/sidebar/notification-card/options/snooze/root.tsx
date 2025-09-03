@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, FC, Fragment, SetStateAction } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
@@ -21,12 +21,12 @@ import { NotificationSnoozeModal } from "./modal";
 type TNotificationItemSnoozeOption = {
   workspaceSlug: string;
   notification: INotification;
-  setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
+  setIsSnoozeStateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   customSnoozeModal: boolean;
-  setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
+  setCustomSnoozeModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
+export const NotificationItemSnoozeOption: React.FC<TNotificationItemSnoozeOption> = observer((props) => {
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();

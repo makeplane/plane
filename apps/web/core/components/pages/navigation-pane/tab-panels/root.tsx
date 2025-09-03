@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { Tab } from "@headlessui/react";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
@@ -21,7 +21,7 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
   const { page, versionHistory } = props;
 
   return (
-    <Tab.Panels as={React.Fragment}>
+    <Tab.Panels as={Fragment}>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
         <Tab.Panel
           key={tab.key}

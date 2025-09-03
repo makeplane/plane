@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +18,7 @@ import { ModuleButtonContent } from "./button-content";
 import { ModuleOptions } from "./module-options";
 
 type TModuleDropdownBaseProps = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   getModuleById: (moduleId: string) => IModule | null;

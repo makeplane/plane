@@ -1,6 +1,5 @@
 "use-client";
 
-import { FC } from "react";
 // types
 import { TDeDupeIssue } from "@plane/types";
 
@@ -10,7 +9,7 @@ type TDuplicateModalRootProps = {
   handleDuplicateIssueModal: (value: boolean) => void;
 };
 
-export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
+export const DuplicateModalRoot: React.FC<TDuplicateModalRootProps> = (props) => {
   const { workspaceSlug, issues, handleDuplicateIssueModal } = props;
   return <></>;
 };

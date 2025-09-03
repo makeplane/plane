@@ -1,13 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
 import Link from "next/link";
 
 type Props = {
   isSignUp?: boolean;
 };
 
-export const TermsAndConditions: FC<Props> = (props) => {
+export const TermsAndConditions: React.FC<Props> = (props) => {
   const { isSignUp = false } = props;
   return (
     <span className="flex items-center justify-center py-6">

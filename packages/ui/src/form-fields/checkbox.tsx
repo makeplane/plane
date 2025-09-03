@@ -1,5 +1,5 @@
-import * as React from "react";
 // helpers
+import { forwardRef } from "react";
 import { cn } from "../utils";
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -8,7 +8,7 @@ export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElemen
   indeterminate?: boolean;
 }
 
-const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
+const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
   const {
     id,
     name,

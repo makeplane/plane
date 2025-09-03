@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 type TBanner = {
@@ -6,7 +5,7 @@ type TBanner = {
   message: string;
 };
 
-export const Banner: FC<TBanner> = (props) => {
+export const Banner: React.FC<TBanner> = (props) => {
   const { type, message } = props;
 
   return (

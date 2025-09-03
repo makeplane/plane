@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -172,7 +172,7 @@ export const GithubImporterRoot: React.FC = () => {
             </div>
             <div className="flex h-full w-full items-center justify-center">
               {integrationWorkflowData.map((integration, index) => (
-                <React.Fragment key={integration.key}>
+                <Fragment key={integration.key}>
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
@@ -198,7 +198,7 @@ export const GithubImporterRoot: React.FC = () => {
                       {" "}
                     </div>
                   )}
-                </React.Fragment>
+                </Fragment>
               ))}
             </div>
           </div>

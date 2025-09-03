@@ -1,10 +1,9 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TQuickAddIssueButton } from "../root";
 
-export const KanbanQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
+export const KanbanQuickAddIssueButton: React.FC<TQuickAddIssueButton> = observer((props) => {
   const { onClick, isEpic = false } = props;
   const { t } = useTranslation();
   return (

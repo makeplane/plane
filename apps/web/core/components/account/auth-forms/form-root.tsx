@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { EAuthModes, EAuthSteps } from "@plane/constants";

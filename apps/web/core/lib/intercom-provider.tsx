@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { Intercom, show, hide, onHide } from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 // store hooks
@@ -12,7 +12,7 @@ export type IntercomProviderProps = {
   children: React.ReactNode;
 };
 
-const IntercomProvider: FC<IntercomProviderProps> = observer((props) => {
+const IntercomProvider: React.FC<IntercomProviderProps> = observer((props) => {
   const { children } = props;
   // hooks
   const { data: user } = useUser();

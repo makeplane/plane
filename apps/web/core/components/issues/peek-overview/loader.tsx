@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";
@@ -11,7 +10,7 @@ type TIssuePeekOverviewLoader = {
   removeRoutePeekId: () => void;
 };
 
-export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
+export const IssuePeekOverviewLoader: React.FC<TIssuePeekOverviewLoader> = (props) => {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();

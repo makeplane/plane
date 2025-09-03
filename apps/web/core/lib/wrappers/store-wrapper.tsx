@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -11,10 +11,10 @@ import { useRouterParams } from "@/hooks/store/use-router-params";
 import { useUserProfile } from "@/hooks/store/user";
 
 type TStoreWrapper = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
-const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
+const StoreWrapper: React.FC<TStoreWrapper> = observer((props) => {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();

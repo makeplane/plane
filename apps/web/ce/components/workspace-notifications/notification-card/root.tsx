@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
@@ -15,7 +14,7 @@ type TNotificationCardListRoot = {
   workspaceId: string;
 };
 
-export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
+export const NotificationCardListRoot: React.FC<TNotificationCardListRoot> = observer((props) => {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();

@@ -1,16 +1,16 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 interface IContentOverflowWrapper {
-  children: ReactNode;
+  children: React.ReactNode;
   maxHeight?: number;
   gradientColor?: string;
   buttonClassName?: string;
   containerClassName?: string;
-  fallback?: ReactNode;
-  customButton?: ReactNode;
+  fallback?: React.ReactNode;
+  customButton?: React.ReactNode;
 }
 
 export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {

@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 // local components
 
 type TDeDupeButtonRoot = {
@@ -9,7 +8,4 @@ type TDeDupeButtonRoot = {
   label: string;
 };
 
-export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = (props) => {
-  const { workspaceSlug, isDuplicateModalOpen, label, handleOnClick } = props;
-  return <></>;
-};
+export const DeDupeButtonRoot: React.FC<TDeDupeButtonRoot> = () => <></>;

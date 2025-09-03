@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
@@ -13,7 +12,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
 
-export const NotificationFilter: FC = observer(() => {
+export const NotificationFilter: React.FC = observer(() => {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();

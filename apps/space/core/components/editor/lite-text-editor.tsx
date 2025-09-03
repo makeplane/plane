@@ -1,5 +1,5 @@
-import React from "react";
 // plane imports
+import { forwardRef } from "react";
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
@@ -28,7 +28,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
     anchor,
     containerClassName,
@@ -39,12 +39,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     workspaceId,
     ...rest
   } = props;
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+  function isRefObject<T>(ref: React.ForwardedRef<T>) {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+  const editorRef = isRefObject(ref) ? ref.current : null;
   const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
@@ -60,7 +60,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
         })}
         mentionHandler={{
-          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          renderComponent: EditorMentionsRoot,
         }}
         extendedEditorProps={{}}
         {...rest}

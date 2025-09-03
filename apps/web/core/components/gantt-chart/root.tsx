@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // components
 import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
@@ -31,7 +31,7 @@ type GanttChartRootProps = {
   isEpic?: boolean;
 };
 
-export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
+export const GanttChartRoot: React.FC<GanttChartRootProps> = observer((props) => {
   const {
     border = true,
     title,

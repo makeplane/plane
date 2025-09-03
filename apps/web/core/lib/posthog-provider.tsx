@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
@@ -19,10 +19,10 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
 
 export interface IPosthogWrapper {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
+const PostHogProvider: React.FC<IPosthogWrapper> = observer((props) => {
   const { children } = props;
   const { data: user } = useUser();
   const { currentWorkspace } = useWorkspace();

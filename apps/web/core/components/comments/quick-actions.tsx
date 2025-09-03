@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
 // plane imports
@@ -20,7 +20,7 @@ type TCommentCard = {
   showCopyLinkOption: boolean;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
+export const CommentQuickActions: React.FC<TCommentCard> = observer((props) => {
   const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();

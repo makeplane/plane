@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -22,7 +22,7 @@ type TCommentsWrapper = {
   showCopyLinkOption?: boolean;
 };
 
-export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
+export const CommentsWrapper: React.FC<TCommentsWrapper> = observer((props) => {
   const {
     entityId,
     activityOperations,

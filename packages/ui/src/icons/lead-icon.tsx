@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const LeadIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (

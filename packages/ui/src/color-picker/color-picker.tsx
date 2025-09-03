@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef } from "react";
 
 interface ColorPickerProps {
   value: string;
@@ -9,7 +9,7 @@ interface ColorPickerProps {
 export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   const { value, onChange, className = "" } = props;
   // refs
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // handlers
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {

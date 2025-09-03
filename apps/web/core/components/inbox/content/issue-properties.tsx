@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";

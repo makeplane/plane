@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -12,7 +11,7 @@ import { InboxIssueAppliedFiltersPriority } from "./priority";
 import { InboxIssueAppliedFiltersState } from "./state";
 import { InboxIssueAppliedFiltersStatus } from "./status";
 
-export const InboxIssueAppliedFilters: FC = observer(() => {
+export const InboxIssueAppliedFilters: React.FC = observer(() => {
   const { getAppliedFiltersCount } = useProjectInbox();
 
   if (getAppliedFiltersCount === 0) return <></>;

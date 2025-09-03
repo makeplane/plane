@@ -1,7 +1,5 @@
 "use client";
 
-import { FC } from "react";
-
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 
 export type TEstimatePointDelete = {
@@ -16,4 +14,4 @@ export type TEstimatePointDelete = {
   estimateSystem: TEstimateSystemKeys;
 };
 
-export const EstimatePointDelete: FC<TEstimatePointDelete> = () => <></>;
+export const EstimatePointDelete: React.FC<TEstimatePointDelete> = () => <></>;

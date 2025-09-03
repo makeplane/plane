@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, forwardRef, useCallback, useRef, useState } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 //types
 import type {
@@ -31,7 +31,7 @@ interface IKanbanGroup {
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 // Loader components

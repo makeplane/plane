@@ -1,8 +1,7 @@
-import { ReactNode } from "react";
 import { Metadata } from "next";
 
 interface ImageLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const metadata: Metadata = {

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { cn } from "../utils";
 import { ETagSize, ETagVariant, getTagStyle, TTagSize, TTagVariant } from "./helper";
 
@@ -9,7 +9,7 @@ export interface TagProps extends React.ComponentProps<"div"> {
   children: React.ReactNode;
 }
 
-const Tag = React.forwardRef<HTMLDivElement, TagProps>((props, ref) => {
+const Tag = forwardRef<HTMLDivElement, TagProps>((props, ref) => {
   const { variant = ETagVariant.OUTLINED, className = "", size = ETagSize.SM, children, ...rest } = props;
 
   const style = getTagStyle(variant, size);

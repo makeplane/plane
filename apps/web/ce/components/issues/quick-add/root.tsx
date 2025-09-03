@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane constants
@@ -32,7 +32,7 @@ export type TQuickAddIssueFormRoot = {
   isEpic: boolean;
 };
 
-export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
+export const QuickAddIssueFormRoot: React.FC<TQuickAddIssueFormRoot> = observer((props) => {
   const { isOpen, layout, projectId, hasError = false, setFocus, register, onSubmit, onClose, isEpic } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -50,7 +50,7 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
 
   if (!projectDetail) return <></>;
 
-  const QUICK_ADD_ISSUE_FORMS: Record<EIssueLayoutTypes, FC<TQuickAddIssueForm>> = {
+  const QUICK_ADD_ISSUE_FORMS: Record<EIssueLayoutTypes, React.FC<TQuickAddIssueForm>> = {
     [EIssueLayoutTypes.LIST]: ListQuickAddIssueForm,
     [EIssueLayoutTypes.KANBAN]: KanbanQuickAddIssueForm,
     [EIssueLayoutTypes.CALENDAR]: CalendarQuickAddIssueForm,

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { createContext, useContext } from "react";
 import { ERowVariant, Row } from "../row";
 import { cn } from "../utils";
 import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
@@ -11,7 +11,7 @@ export interface HeaderProps {
   showOnMobile?: boolean;
 }
 
-const HeaderContext = React.createContext<THeaderVariant | null>(null);
+const HeaderContext = createContext<THeaderVariant | null>(null);
 const Header = (props: HeaderProps) => {
   const {
     variant = EHeaderVariant.PRIMARY,
@@ -47,7 +47,7 @@ const LeftItem = (props: HeaderProps) => (
   </div>
 );
 const RightItem = (props: HeaderProps) => {
-  const variant = React.useContext(HeaderContext);
+  const variant = useContext(HeaderContext);
   if (variant === undefined) throw new Error("RightItem must be used within Header");
   return (
     <div

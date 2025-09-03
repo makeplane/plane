@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { DiceIcon } from "@plane/ui";
@@ -11,7 +10,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueModuleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) => {
+export const IssueModuleActivity: React.FC<TIssueModuleActivity> = observer((props) => {
   const { activityId, ends } = props;
   // hooks
   const {

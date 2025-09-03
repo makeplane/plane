@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // helpers
 import { EAuthModes } from "@/types/auth";
 
@@ -28,7 +27,7 @@ const Titles: TAuthHeaderDetails = {
   },
 };
 
-export const AuthHeader: FC<TAuthHeader> = (props) => {
+export const AuthHeader: React.FC<TAuthHeader> = (props) => {
   const { authMode } = props;
 
   const getHeaderSubHeader = (mode: EAuthModes | null): TAuthHeaderContent => {

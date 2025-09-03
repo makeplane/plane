@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +24,7 @@ type TCalendarQuickAddIssueActions = {
   isEpic?: boolean;
 };
 
-export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = observer((props) => {
+export const CalendarQuickAddIssueActions: React.FC<TCalendarQuickAddIssueActions> = observer((props) => {
   const { prePopulatedData, quickAddCallback, addIssuesToView, onOpen, isEpic = false } = props;
   const { t } = useTranslation();
   // router

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
@@ -48,7 +48,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   has_marketing_email_consent: true,
 };
 
-export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const ProfileSetupStep: React.FC<Props> = observer(({ handleStepChange }) => {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks

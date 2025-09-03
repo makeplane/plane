@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { RotateCcw } from "lucide-react";
 // hooks
@@ -12,7 +11,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueArchivedAtActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueArchivedAtActivity: FC<TIssueArchivedAtActivity> = observer((props) => {
+export const IssueArchivedAtActivity: React.FC<TIssueArchivedAtActivity> = observer((props) => {
   const { activityId, ends } = props;
   // hooks
   const {

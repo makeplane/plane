@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationTab } from "@plane/constants";
@@ -10,7 +9,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // constants
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-export const NotificationEmptyState: FC = observer(() => {
+export const NotificationEmptyState: React.FC = observer(() => {
   // plane imports
   const { t } = useTranslation();
   // derived values

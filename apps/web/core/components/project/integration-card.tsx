@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";

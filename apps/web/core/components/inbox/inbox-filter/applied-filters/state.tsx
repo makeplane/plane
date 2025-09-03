@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
@@ -9,7 +8,7 @@ import { StateGroupIcon, Tag } from "@plane/ui";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
-export const InboxIssueAppliedFiltersState: FC = observer(() => {
+export const InboxIssueAppliedFiltersState: React.FC = observer(() => {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getStateById } = useProjectState();

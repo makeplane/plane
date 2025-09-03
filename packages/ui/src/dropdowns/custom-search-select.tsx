@@ -1,6 +1,6 @@
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Info, Search } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 // plane imports
@@ -93,7 +93,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
         return (
           <>
             {customButton ? (
-              <Combobox.Button as={React.Fragment}>
+              <Combobox.Button as={Fragment}>
                 <button
                   ref={setReferenceElement}
                   type="button"
@@ -111,7 +111,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 </button>
               </Combobox.Button>
             ) : (
-              <Combobox.Button as={React.Fragment}>
+              <Combobox.Button as={Fragment}>
                 <button
                   ref={setReferenceElement}
                   type="button"

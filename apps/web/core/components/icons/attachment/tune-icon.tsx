@@ -1,5 +1,3 @@
-import React from "react";
-
 import type { Props } from "../types";
 
 export const TuneIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => (

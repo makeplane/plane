@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -57,7 +56,7 @@ export interface IKanBan {
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIndex?: number;

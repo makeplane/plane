@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
@@ -43,7 +43,7 @@ const defaultFromData: TFormData = {
   password: "",
 };
 
-export const InstanceSignInForm: FC = () => {
+export const InstanceSignInForm: React.FC = () => {
   // search params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;

@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 //
 import { cn } from "@plane/utils";
 
@@ -9,7 +8,7 @@ type TCountChip = {
   className?: string;
 };
 
-export const CountChip: FC<TCountChip> = (props) => {
+export const CountChip: React.FC<TCountChip> = (props) => {
   const { count, className = "" } = props;
 
   return (

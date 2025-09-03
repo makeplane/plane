@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 // components
 import { TranslationProvider } from "@plane/i18n";
@@ -9,10 +8,10 @@ import { StoreProvider } from "@/lib/store-provider";
 import { ToastProvider } from "@/lib/toast-provider";
 
 interface IAppProvider {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export const AppProvider: FC<IAppProvider> = (props) => {
+export const AppProvider: React.FC<IAppProvider> = (props) => {
   const { children } = props;
 
   return (

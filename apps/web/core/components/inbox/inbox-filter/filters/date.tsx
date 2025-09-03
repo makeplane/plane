@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import concat from "lodash/concat";
 import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
@@ -22,7 +22,7 @@ const isDate = (date: string) => {
   return datePattern.test(date);
 };
 
-export const FilterDate: FC<Props> = observer((props) => {
+export const FilterDate: React.FC<Props> = observer((props) => {
   const { filterKey, label, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

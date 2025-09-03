@@ -1,6 +1,5 @@
 import { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -12,11 +11,11 @@ import { EditorStateType } from "./root";
 type Props = {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editorState: EditorStateType;
 };
 
-export const BubbleMenuColorSelector: FC<Props> = (props) => {
+export const BubbleMenuColorSelector: React.FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen, editorState } = props;
 
   const activeTextColor = editorState.color;

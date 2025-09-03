@@ -1,6 +1,6 @@
 import { Combobox } from "@headlessui/react";
 import sortBy from "lodash/sortBy";
-import React, { FC, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -11,7 +11,7 @@ import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
 import { IMultiSelectDropdown } from "./dropdown";
 
-export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
+export const MultiSelectDropdown: React.FC<IMultiSelectDropdown> = (props) => {
   const {
     value,
     onChange,

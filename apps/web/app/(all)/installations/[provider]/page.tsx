@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 // ui
 import { LogoSpinner } from "@/components/common/logo-spinner";

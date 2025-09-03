@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -32,7 +32,7 @@ const moduleBurnDownChartOptions = [
   { value: "points", i18n_label: "points" },
 ];
 
-export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
+export const ModuleAnalyticsProgress: React.FC<TModuleAnalyticsProgress> = observer((props) => {
   // props
   const { workspaceSlug, projectId, moduleId } = props;
   // router

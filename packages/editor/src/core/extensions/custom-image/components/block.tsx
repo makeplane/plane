@@ -1,5 +1,5 @@
 import { NodeSelection } from "@tiptap/pm/state";
-import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
+import { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
