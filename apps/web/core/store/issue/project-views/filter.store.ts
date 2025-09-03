@@ -16,7 +16,7 @@ import {
 } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
-import { ViewService } from "@/plane-web/services";
+import { ViewService } from "@/services/view.service";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
 // types
