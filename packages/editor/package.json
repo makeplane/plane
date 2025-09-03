@@ -19,7 +19,8 @@
       "require": "./dist/lib.js",
       "types": "./dist/lib.d.ts",
       "import": "./dist/lib.mjs"
-    }
+    },
+    "./styles": "./dist/styles/index.css"
   },
   "scripts": {
     "build": "tsdown",

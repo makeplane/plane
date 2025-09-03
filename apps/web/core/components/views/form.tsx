@@ -176,7 +176,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   </>
                 </span>
               }
-              onChange={(val) => {
+              // TODO: fix types
+              onChange={(val: any) => {
                 let logoValue = {};
 
                 if (val?.type === "emoji")

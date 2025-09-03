@@ -1,13 +1,3 @@
-// styles
-// import "./styles/tailwind.css";
-import "./styles/variables.css";
-import "./styles/editor.css";
-import "./styles/table.css";
-import "./styles/github-dark.css";
-import "./styles/drag-drop.css";
-import "./styles/title-editor.css";
-import "./styles/equation.css";
-
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
