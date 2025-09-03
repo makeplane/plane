@@ -2,14 +2,8 @@ import { FC, ReactNode, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-<<<<<<< HEAD
-import { Tooltip } from "@plane/propel/tooltip";
-import { TIssueComment } from "@plane/types";
-import { Avatar } from "@plane/ui";
-=======
 import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
->>>>>>> 9e347db34f21916d6367d043aacb922e09b6ed58
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
