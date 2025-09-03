@@ -82,7 +82,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   };
 
   const commentHTML = watch("comment_html");
-  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
+  const isEmpty = isCommentEmpty(commentHTML);
 
   return (
     <div
