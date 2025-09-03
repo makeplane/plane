@@ -15,7 +15,7 @@ export const PiSidebar = observer(() => {
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // store
-  const { geUserThreads, geFavoriteChats, fetchFavoriteChats, isLoadingThreads } = usePiChat();
+  const { activeChatId, geUserThreads, geFavoriteChats, fetchFavoriteChats, isLoadingThreads } = usePiChat();
   const userThreads = geUserThreads();
   const { workspaceSlug } = useParams();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -44,7 +44,7 @@ export const PiSidebar = observer(() => {
       {/* Favorites */}
       {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}
       {/* History List */}
-      <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} />
+      <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} activeChatId={activeChatId} />
     </SidebarWrapper>
   );
 });

@@ -68,15 +68,14 @@ export const Header = observer((props: THeaderProps) => {
         <HeaderUI.RightItem>
           {isProjectLevel && (
             <div className="flex gap-2">
-              {!isFullScreen && (
-                <Tooltip tooltipContent="Start a new chat" position="left">
-                  <button className={cn(buttonClass)} onClick={() => initPiChat()}>
-                    <SquarePen className="flex-shrink-0 size-3.5" />
-                  </button>
-                </Tooltip>
-              )}
-              {isFullScreen && !isSidePanelOpen && (
-                <>
+              <>
+                {!isFullScreen ? (
+                  <Tooltip tooltipContent="Start a new chat" position="left">
+                    <button className={cn(buttonClass)} onClick={() => initPiChat()}>
+                      <SquarePen className="flex-shrink-0 size-3.5" />
+                    </button>
+                  </Tooltip>
+                ) : (
                   <Tooltip tooltipContent="Start a new chat" position="bottom">
                     <Link
                       href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
@@ -86,13 +85,15 @@ export const Header = observer((props: THeaderProps) => {
                       <SquarePen className="flex-shrink-0 size-3.5" />
                     </Link>
                   </Tooltip>
+                )}
+                {!isSidePanelOpen && (
                   <Tooltip tooltipContent="History" position="bottom">
                     <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
                       <PanelLeft className="size-3.5" />
                     </button>
                   </Tooltip>
-                </>
-              )}
+                )}
+              </>
             </div>
           )}
         </HeaderUI.RightItem>

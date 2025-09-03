@@ -14,16 +14,17 @@ import { Toolbar } from "./toolbar";
 type TProps = {
   isSidePanelOpen: boolean;
   isMobile?: boolean;
+  isFullScreen?: boolean;
   toggleSidePanel: (value: boolean) => void;
 };
 export const RightSidePanel = observer((props: TProps) => {
-  const { isSidePanelOpen, toggleSidePanel, isMobile = false } = props;
+  const { isSidePanelOpen, toggleSidePanel, isMobile = false, isFullScreen = false } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // router
   const { workspaceSlug } = useParams();
   // store
-  const { geUserThreadsByWorkspaceId, isLoadingThreads } = usePiChat();
+  const { activeChatId, geUserThreadsByWorkspaceId, isLoadingThreads } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = workspaceSlug && getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString());
@@ -40,8 +41,9 @@ export const RightSidePanel = observer((props: TProps) => {
         "h-full text-base rounded-none pb-0",
         "transform transition-all duration-300 ease-in-out",
         "shadow-lg z-20",
+        isFullScreen ? "md:relative" : "absolute right-0",
         isSidePanelOpen ? "translate-x-0 w-[260px]" : "px-0 translate-x-[100%] w-0",
-        isMobile ? "fixed top-0 right-0 h-full" : "absolute right-0 top-0 md:relative"
+        isMobile ? "fixed top-0 right-0 h-full" : "absolute right-0 top-0"
       )}
     >
       {/* Header */}
@@ -59,7 +61,13 @@ export const RightSidePanel = observer((props: TProps) => {
       <Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} isProjectLevel />
       {/* History */}
       <div className="flex-1 overflow-y-auto">
-        <RecentChats userThreads={filteredUserThread ?? []} isProjectLevel isLoading={isLoadingThreads} />
+        <RecentChats
+          userThreads={filteredUserThread ?? []}
+          isProjectLevel
+          isLoading={isLoadingThreads}
+          isFullScreen={isFullScreen}
+          activeChatId={activeChatId}
+        />
       </div>
     </Card>
   );

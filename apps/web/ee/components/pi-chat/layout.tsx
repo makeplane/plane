@@ -78,8 +78,12 @@ export const PiChatLayout = observer((props: TProps) => {
         {children}
       </div>
       {/* History */}
-      {isFullScreen && isProjectLevel && (
-        <RightSidePanel isSidePanelOpen={isSidePanelOpen} toggleSidePanel={toggleSidePanel} />
+      {isProjectLevel && (
+        <RightSidePanel
+          isSidePanelOpen={isSidePanelOpen}
+          toggleSidePanel={toggleSidePanel}
+          isFullScreen={isFullScreen}
+        />
       )}
     </div>
   );

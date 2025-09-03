@@ -14,9 +14,11 @@ type TProps = {
   userThreads: TUserThreads[];
   isProjectLevel?: boolean;
   isLoading?: boolean;
+  isFullScreen?: boolean;
+  activeChatId: string;
 };
 const RecentChats = observer((props: TProps) => {
-  const { userThreads, isProjectLevel = false, isLoading = false } = props;
+  const { userThreads, isProjectLevel = false, isLoading = false, isFullScreen = false, activeChatId } = props;
   const { workspaceSlug, chatId } = useParams();
 
   return (
@@ -33,12 +35,13 @@ const RecentChats = observer((props: TProps) => {
           uniqBy(userThreads, "chat_id").map((thread) => (
             <SidebarItem
               key={thread.chat_id}
-              isActive={chatId === thread.chat_id}
+              isActive={chatId === thread.chat_id || activeChatId === thread.chat_id}
               chatId={thread.chat_id}
               title={thread.title}
               workspaceSlug={workspaceSlug?.toString() || ""}
               isProjectLevel={isProjectLevel}
               isFavorite={thread.is_favorite}
+              isFullScreen={isFullScreen}
             />
           ))
         ) : (
