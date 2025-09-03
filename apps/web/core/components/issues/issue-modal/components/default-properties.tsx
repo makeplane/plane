@@ -42,7 +42,6 @@ type TIssueDefaultPropertiesProps = {
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
-  setLabelModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
@@ -58,8 +57,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     parentId,
     isDraft,
     handleFormChange,
-    setLabelModal,
-    setSelectedParentIssue,
+    setSelectedParentIssue
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -74,7 +72,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
@@ -147,15 +146,14 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <IssueLabelSelect
-              setIsOpen={setLabelModal}
               value={value}
               onChange={(labelIds) => {
                 onChange(labelIds);
                 handleFormChange();
               }}
-              projectId={projectId ?? undefined}
+              projectId={projectDetails?.id ?? undefined}
               tabIndex={getIndex("label_ids")}
-              createLabelEnabled={canCreateLabel}
+              createLabelEnabled={!!canCreateLabel}
             />
           </div>
         )}
@@ -333,6 +331,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             }}
             projectId={projectId ?? undefined}
             issueId={isDraft ? undefined : id}
+            searchEpic
           />
         )}
       />

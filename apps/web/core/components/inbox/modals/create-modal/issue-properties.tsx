@@ -89,7 +89,6 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* labels */}
       <div className="h-7">
         <IssueLabelSelect
-          setIsOpen={() => {}}
           value={data?.label_ids || []}
           onChange={(labelIds) => handleData("label_ids", labelIds)}
           projectId={projectId}

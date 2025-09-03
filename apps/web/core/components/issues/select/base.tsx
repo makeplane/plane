@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Component, Plus, Search, Tag } from "lucide-react";
+import { Check, Component, Loader, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -26,7 +27,7 @@ export type TWorkItemLabelSelectBaseProps = {
   onChange: (value: string[]) => void;
   onDropdownOpen?: () => void;
   placement?: Placement;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  createLabel?: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
   tabIndex?: number;
   value: string[];
 };
@@ -43,7 +44,7 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
     onChange,
     onDropdownOpen,
     placement,
-    setIsOpen,
+    createLabel,
     tabIndex,
     value,
   } = props;
@@ -55,6 +56,7 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -88,6 +90,17 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
     onChange(val);
   };
 
+  const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    if (query !== "" && e.key === "Escape") {
+      setQuery("");
+    }
+
+    if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && createLabelEnabled) {
+      e.preventDefault();
+      await handleAddLabel(query);
+    }
+  };
   const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -103,6 +116,15 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
       inputRef.current.focus();
     }
   }, [isDropdownOpen, isMobile]);
+
+  const handleAddLabel = async (labelName: string) => {
+    if (!createLabel) return;
+    setSubmitting(true);
+    const label = await createLabel({ name: labelName, color: getRandomLabelColor() });
+    onChange([...value, label.id]);
+    setQuery("");
+    setSubmitting(false);
+  };
 
   return (
     <Combobox
@@ -165,6 +187,7 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
+                onKeyDown={searchInputKeyDown}
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
@@ -242,21 +265,30 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
                         </div>
                       );
                   })
+                ) : submitting ? (
+                  <Loader className="animate-spin  h-3.5 w-3.5" />
+                ) : createLabelEnabled ? (
+                  <p
+                    onClick={() => {
+                      if (!query.length) return;
+                      handleAddLabel(query);
+                    }}
+                    className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                  >
+                    {/* TODO: translate here */}
+                    {query.length ? (
+                      <>
+                        + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                      </>
+                    ) : (
+                      t("label.create.type")
+                    )}
+                  </p>
                 ) : (
                   <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
                 )
               ) : (
                 <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
-              )}
-              {createLabelEnabled && (
-                <button
-                  type="button"
-                  className="flex items-center gap-2 w-full select-none rounded px-1 py-2 hover:bg-custom-background-80"
-                  onClick={() => setIsOpen(true)}
-                >
-                  <Plus className="h-3 w-3" aria-hidden="true" />
-                  <span className="whitespace-nowrap">{t("create_new_label")}</span>
-                </button>
               )}
             </div>
           </div>
