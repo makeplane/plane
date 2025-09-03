@@ -44,7 +44,7 @@ export const buildProjectTemplateBlueprint = (
     const projectGetterHelpers = projectTemplateFormGettersHelpers(project);
     return {
       workspaceId: params.workspaceId,
-      customPropertyValues: params.workItemListCustomPropertyValues[workItemId],
+      customPropertyValues: params.workItemListCustomPropertyValues[workItemId] ?? {},
       getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
       getWorkItemPropertyById: projectGetterHelpers.getCustomPropertyById,
       getStateById: projectGetterHelpers.getStateById,
