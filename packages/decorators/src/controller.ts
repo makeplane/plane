@@ -3,42 +3,40 @@ import type { WebSocket } from "ws";
 
 import "reflect-metadata";
 
-type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "ws";
+export type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "ws";
 
-interface ControllerInstance {
+type ControllerInstance = {
   [key: string]: unknown;
-}
+};
 
-interface ControllerConstructor {
+export type ControllerConstructor = {
   new (...args: unknown[]): ControllerInstance;
   prototype: ControllerInstance;
-}
+};
 
-export function registerControllers(
+export function registerController(
   router: Router,
-  controllers: ControllerConstructor[],
-  dependencies: any[] = []
+  Controller: ControllerConstructor,
+  dependencies: unknown[] = []
 ): void {
-  controllers.forEach((Controller) => {
-    // Create the controller instance with dependencies
-    const instance = new Controller(...dependencies);
+  // Create the controller instance with dependencies
+  const instance = new Controller(...dependencies);
 
-    // Determine if it's a WebSocket controller or REST controller by checking
-    // if it has any methods with the "ws" method metadata
-    const isWebsocket = Object.getOwnPropertyNames(Controller.prototype).some((methodName) => {
-      if (methodName === "constructor") return false;
-      return Reflect.getMetadata("method", instance, methodName) === "ws";
-    });
-
-    if (isWebsocket) {
-      // Register as WebSocket controller
-      // Pass the existing instance with dependencies to avoid creating a new instance without them
-      registerWebSocketController(router, Controller, instance);
-    } else {
-      // Register as REST controller - doesn't accept an instance parameter
-      registerRestController(router, Controller);
-    }
+  // Determine if it's a WebSocket controller or REST controller by checking
+  // if it has any methods with the "ws" method metadata
+  const isWebsocket = Object.getOwnPropertyNames(Controller.prototype).some((methodName) => {
+    if (methodName === "constructor") return false;
+    return Reflect.getMetadata("method", instance, methodName) === "ws";
   });
+
+  if (isWebsocket) {
+    // Register as WebSocket controller
+    // Pass the existing instance with dependencies to avoid creating a new instance without them
+    registerWebSocketController(router, Controller, instance);
+  } else {
+    // Register as REST controller - doesn't accept an instance parameter
+    registerRestController(router, Controller);
+  }
 }
 
 function registerRestController(router: Router, Controller: ControllerConstructor): void {
