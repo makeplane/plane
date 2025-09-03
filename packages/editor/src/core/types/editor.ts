@@ -6,7 +6,7 @@ import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
-import type { IEditorPropsExtended, TExtendedEditorCommands } from "@/plane-editor/types/editor-extended";
+import type { IEditorPropsExtended, TExtendedEditorCommands, ICollaborativeDocumentEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
@@ -178,6 +178,7 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
