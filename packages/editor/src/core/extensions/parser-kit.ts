@@ -6,7 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // plane editor imports
-import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
+import { PARSER_KIT_ADDITIONAL_EXTENSIONS } from "@/plane-editor/extensions/parser-kit";
 // extensions
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
@@ -21,9 +21,8 @@ import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
-import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
-export const CoreEditorExtensionsWithoutProps = [
+export const PARSER_KIT = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -99,7 +98,5 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,
-  ...CoreEditorAdditionalExtensionsWithoutProps,
+  ...PARSER_KIT_ADDITIONAL_EXTENSIONS,
 ];
-
-export const DocumentEditorExtensionsWithoutProps = [WorkItemEmbedExtensionConfig];

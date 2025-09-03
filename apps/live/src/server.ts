@@ -5,11 +5,11 @@ import expressWs from "express-ws";
 import helmet from "helmet";
 // hocuspocus server
 // helpers
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common.js";
+import { getAllDocumentFormatsFromHTMLString } from "@plane/editor/lib";
 
 export class Server {
   private app: any;
@@ -72,9 +72,8 @@ export class Server {
           });
           return;
         }
-        const { description, description_binary } = convertHTMLDocumentToAllFormats({
-          document_html: description_html,
-          variant,
+        const { description, description_binary } = getAllDocumentFormatsFromHTMLString({
+          descriptionHTML: description_html,
         });
         res.status(200).json({
           description,

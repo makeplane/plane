@@ -1,4 +1,5 @@
 import type { Editor, Range } from "@tiptap/core";
+import type { Level } from "@tiptap/extension-heading";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
@@ -12,7 +13,7 @@ export const setText = (editor: Editor, range?: Range) => {
   else editor.chain().focus().setNode(CORE_EXTENSIONS.PARAGRAPH).run();
 };
 
-export const toggleHeading = (editor: Editor, level: 1 | 2 | 3 | 4 | 5 | 6, range?: Range) => {
+export const toggleHeading = (editor: Editor, level: Level, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level }).run();
   else editor.chain().focus().toggleHeading({ level }).run();
 };
