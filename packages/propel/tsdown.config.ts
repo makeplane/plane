@@ -5,7 +5,7 @@ export default defineConfig({
     "src/accordion/index.ts",
     "src/avatar/index.ts",
     "src/card/index.ts",
-    "src/charts/**/index.ts",
+    "src/charts/*/index.ts",
     "src/combobox/index.ts",
     "src/command/index.ts",
     "src/dialog/index.ts",
@@ -21,4 +21,5 @@ export default defineConfig({
   outDir: "dist",
   format: ["esm", "cjs"],
   dts: true,
+  copy: ["src/styles"],
 });

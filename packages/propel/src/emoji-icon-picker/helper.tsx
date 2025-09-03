@@ -3,7 +3,7 @@ import { TPlacement, TSide, TAlign } from "../utils/placement";
 export const EmojiIconPickerTypes = {
   EMOJI: "emoji",
   ICON: "icon",
-};
+} as const;
 
 export type TChangeHandlerProps =
   | {
@@ -18,6 +18,8 @@ export type TChangeHandlerProps =
       };
     };
 
+export type TEmojiIconPickerTypes = typeof EmojiIconPickerTypes.EMOJI | typeof EmojiIconPickerTypes.ICON;
+
 export type TCustomEmojiPicker = {
   isOpen: boolean;
   handleToggle: (value: boolean) => void;
@@ -25,7 +27,7 @@ export type TCustomEmojiPicker = {
   className?: string;
   closeOnSelect?: boolean;
   defaultIconColor?: string;
-  defaultOpen?: typeof EmojiIconPickerTypes.EMOJI | typeof EmojiIconPickerTypes.ICON;
+  defaultOpen?: TEmojiIconPickerTypes;
   disabled?: boolean;
   dropdownClassName?: string;
   label: React.ReactNode;
