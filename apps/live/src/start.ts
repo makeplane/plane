@@ -1,11 +1,10 @@
-import { Server } from "./server";
 import { logger } from "@plane/logger";
+import { Server } from "./server";
 
 let server: Server;
 
 async function startServer() {
   server = new Server();
-
   try {
     await server.initialize();
     server.listen();
@@ -19,18 +18,26 @@ startServer();
 
 // Graceful shutdown on unhandled rejection
 process.on("unhandledRejection", async (err: any) => {
-  logger.info("Unhandled Rejection: ", err);
-  logger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
-  if (server) {
-    await server.destroy();
+  logger.error(`UNHANDLED REJECTION! 💥 Shutting down...`, err);
+  try {
+    if (server) {
+      await server.destroy();
+    }
+  } finally {
+    logger.info("Exiting process...");
+    process.exit(1);
   }
 });
 
 // Graceful shutdown on uncaught exception
 process.on("uncaughtException", async (err: any) => {
-  logger.info("Uncaught Exception: ", err);
-  logger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
-  if (server) {
-    await server.destroy();
+  logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`, err);
+  try {
+    if (server) {
+      await server.destroy();
+    }
+  } finally {
+    logger.info("Exiting process...");
+    process.exit(1);
   }
 });

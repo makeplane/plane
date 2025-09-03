@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
-import { logger } from "@plane/logger";
 import { Controller, Post } from "@plane/decorators";
+import { logger } from "@plane/logger";
 // types
 import { TConvertDocumentRequestBody } from "@/types";
 // utils
 import { convertHTMLDocumentToAllFormats } from "@/utils";
 
-@Controller("/collaboration")
+@Controller("/convert-document")
 export class ConvertDocumentController {
   @Post("/")
   handleConvertDocument(req: Request, res: Response) {

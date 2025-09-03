@@ -1,20 +1,20 @@
+import { Database } from "@hocuspocus/extension-database";
+import { Logger } from "@hocuspocus/extension-logger";
+import { Redis } from "@hocuspocus/extension-redis";
 import { Server, Hocuspocus } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
-import { Logger } from "@hocuspocus/extension-logger";
-import { Database } from "@hocuspocus/extension-database";
-import { Redis } from "@hocuspocus/extension-redis";
-import { logger } from "@plane/logger";
-import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
-// lib
-import { UserService } from "@/services/user.service";
-// extensions
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
-// editor types
+// plane imports
 import type { TUserDetails } from "@plane/editor";
-// types
-import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
+import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
+import { logger } from "@plane/logger";
+// lib
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
 // redis
 import { redisManager } from "@/redis";
+// services
+import { UserService } from "@/services/user.service";
+// types
+import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 
 export class HocusPocusServerManager {
   private static instance: HocusPocusServerManager | null = null;
@@ -56,7 +56,7 @@ export class HocusPocusServerManager {
       cookie = parsedToken.cookie;
     } catch (error) {
       // If token parsing fails, fallback to request headers
-      console.error("Token parsing failed, using request headers:", error);
+      logger.error("Token parsing failed, using request headers:", error);
     } finally {
       // If cookie is still not found, fallback to request headers
       if (!cookie) {
@@ -137,6 +137,11 @@ export class HocusPocusServerManager {
       return this.server;
     }
 
+    const redisClient = redisManager.getClient();
+    if (!redisClient) {
+      throw new Error("Redis client not initialized");
+    }
+
     this.server = Server.configure({
       name: this.serverName,
       onAuthenticate: this.onAuthenticate,
@@ -153,7 +158,7 @@ export class HocusPocusServerManager {
           store: this.onDatabaseStore,
         }),
         new Redis({
-          redis: redisManager.getClient(),
+          redis: redisClient,
         }),
       ],
       debounce: 10000,
