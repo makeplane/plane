@@ -1,8 +1,7 @@
 import { FileText, Layers } from "lucide-react";
 // plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
-import { Intake } from "@plane/ui";
+import { ContrastIcon, DiceIcon, LayersIcon, Intake } from "@plane/propel/icons";
 // components
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
