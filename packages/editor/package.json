@@ -22,8 +22,8 @@
     }
   },
   "scripts": {
-    "build": "tsc && tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 55",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -98,7 +98,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "keywords": [

@@ -12,8 +12,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup --minify",
+    "build": "tsdown --minify",
+    "dev": "tsdown --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
@@ -75,7 +75,7 @@
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

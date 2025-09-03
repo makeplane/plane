@@ -6,13 +6,18 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
-import { INTEGRATION_TRACKER_EVENTS, TUserConnection, USER_CONNECTION_PROVIDERS } from "@plane/constants";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import {
+  INTEGRATION_TRACKER_EVENTS,
+  TUserConnection,
+  USER_CONNECTION_PROVIDERS,
+  E_INTEGRATION_KEYS,
+} from "@plane/constants";
 import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUser } from "@/hooks/store/user"
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
+// plane web imports
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 import { useConnections } from "@/plane-web/hooks/store/integrations/use-connection";
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";

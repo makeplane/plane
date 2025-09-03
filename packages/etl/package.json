@@ -71,8 +71,8 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && NODE_OPTIONS='--max-old-space-size=4096' tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown --minify",
+    "dev": "tsdown --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --max-warnings 180",
     "check:types": "tsc --noEmit",
@@ -94,7 +94,7 @@
     "jira.js": "^4.0.1",
     "marked": "^15.0.4",
     "node-html-parser": "^6.1.13",
-    "tsup": "8.4.0",
+    "tsdown": "catalog:",
     "turndown": "^7.2.0",
     "uuid": "^10.0.0",
     "zod": "^3.24.1"

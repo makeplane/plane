@@ -4,10 +4,13 @@
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "check:lint": "eslint . --max-warnings 0",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "check:lint": "eslint . --max-warnings 2",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -19,7 +22,8 @@
     "intl-messageformat": "^10.7.11",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "lodash": "catalog:"
+    "lodash": "catalog:",
+    "react": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
@@ -27,6 +31,7 @@
     "@types/node": "^22.5.4",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "tsc --noEmit && tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 68",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -22,7 +27,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }
