@@ -667,15 +667,32 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(DynamicBaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = IssueReaction
-        fields = ["id", "actor", "issue", "reaction"]
+        fields = ["id", "actor", "issue", "reaction", "display_name"]
 
 
 class CommentReactionSerializer(BaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = CommentReaction
-        fields = "__all__"
+        fields = [
+            "id",
+            "actor",
+            "comment",
+            "reaction",
+            "display_name",
+            "deleted_at",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
         read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at"]
 
 
