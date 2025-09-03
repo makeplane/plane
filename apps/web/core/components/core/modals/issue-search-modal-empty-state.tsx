@@ -1,4 +1,3 @@
-import React from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";

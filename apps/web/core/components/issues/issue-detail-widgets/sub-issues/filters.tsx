@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -25,7 +25,7 @@ type TSubIssueFiltersProps = {
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
 };
 
-export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
+export const SubIssueFilters: React.FC<TSubIssueFiltersProps> = observer((props) => {
   const { handleFiltersUpdate, filters, memberIds, states, layoutDisplayFiltersOptions } = props;
 
   // states

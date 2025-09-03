@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
 // types

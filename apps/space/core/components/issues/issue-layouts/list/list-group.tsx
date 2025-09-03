@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
+import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
@@ -18,7 +18,7 @@ interface Props {
   group: IGroupByColumn;
   groupBy: TIssueGroupByOptions | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
-  containerRef: MutableRefObject<HTMLDivElement | null>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   getGroupIssueCount: (

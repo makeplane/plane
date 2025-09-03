@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
@@ -38,7 +38,7 @@ export type ActiveCycleStatsProps = {
   cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats: React.FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");

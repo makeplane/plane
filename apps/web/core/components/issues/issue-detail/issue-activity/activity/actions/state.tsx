@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { DoubleCircleIcon } from "@plane/ui";
@@ -11,7 +10,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueStateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
+export const IssueStateActivity: React.FC<TIssueStateActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

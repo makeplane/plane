@@ -1,5 +1,5 @@
 import { Extensions } from "@tiptap/core";
-import { forwardRef, MutableRefObject, useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -106,7 +106,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
 };
 
 const DocumentEditorWithRef = forwardRef<EditorRefApi, IDocumentEditorProps>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />
+  <DocumentEditor {...props} forwardedRef={ref} />
 ));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";

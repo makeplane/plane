@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { forwardRef, useRef } from "react";
 // helpers
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
 import { cn } from "../utils";
@@ -11,7 +11,7 @@ export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   className?: string;
 }
 
-const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
+const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
   const {
     id,
     name,

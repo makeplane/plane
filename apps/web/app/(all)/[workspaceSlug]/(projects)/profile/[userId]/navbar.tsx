@@ -1,5 +1,3 @@
-import React from "react";
-
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";

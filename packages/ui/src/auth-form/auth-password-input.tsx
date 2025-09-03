@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordStrength } from "@plane/utils";
 import { PasswordStrengthIndicator } from "../form-fields/password/indicator";
@@ -49,7 +49,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
   const passwordStrength = getPasswordStrength(value as string);
 
   // Notify parent of strength change
-  React.useEffect(() => {
+  useEffect(() => {
     onPasswordStrengthChange?.(passwordStrength);
   }, [passwordStrength, onPasswordStrengthChange]);
 

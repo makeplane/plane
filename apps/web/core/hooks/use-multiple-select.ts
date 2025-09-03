@@ -12,7 +12,7 @@ export type TEntityDetails = {
 };
 
 type Props = {
-  containerRef: React.MutableRefObject<HTMLElement | null>;
+  containerRef: React.RefObject<HTMLElement | null>;
   disabled: boolean;
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };

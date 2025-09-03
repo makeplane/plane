@@ -1,5 +1,5 @@
 import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection, useEditorState } from "@tiptap/react";
-import { FC, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -49,7 +49,7 @@ export type EditorStateType = {
     | undefined;
 };
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
+export const EditorBubbleMenu: React.FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);

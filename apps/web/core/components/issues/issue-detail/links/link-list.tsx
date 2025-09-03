@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType } from "@plane/types";
@@ -17,7 +16,7 @@ type TLinkList = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinkList: FC<TLinkList> = observer((props) => {
+export const LinkList: React.FC<TLinkList> = observer((props) => {
   // props
   const { issueId, linkOperations, disabled = false, issueServiceType } = props;
   // hooks

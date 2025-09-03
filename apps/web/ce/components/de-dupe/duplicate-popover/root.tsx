@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { TDeDupeIssue } from "@plane/types";
@@ -17,7 +16,4 @@ type TDeDupeIssuePopoverRootProps = {
   isIntakeIssue?: boolean;
 };
 
-export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer((props) => {
-  const {} = props;
-  return <></>;
-});
+export const DeDupeIssuePopoverRoot: React.FC<TDeDupeIssuePopoverRootProps> = observer(() => <></>);

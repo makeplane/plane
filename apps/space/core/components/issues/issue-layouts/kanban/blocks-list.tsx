@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 //types
 import { IIssueDisplayProperties } from "@plane/types";
@@ -10,7 +9,7 @@ interface IssueBlocksListProps {
   groupId: string;
   issueIds: string[];
   displayProperties: IIssueDisplayProperties | undefined;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {

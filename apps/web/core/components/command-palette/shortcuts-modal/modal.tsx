@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, Fragment } from "react";
+import { useState, Fragment } from "react";
 import { Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // components
@@ -13,7 +13,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ShortcutsModal: FC<Props> = (props) => {
+export const ShortcutsModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");

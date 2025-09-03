@@ -1,11 +1,10 @@
-import React, { FC } from "react";
 import { Row, ERowVariant } from "@plane/ui";
 
 interface IListContainer {
   children: React.ReactNode;
 }
 
-export const ListLayout: FC<IListContainer> = (props) => {
+export const ListLayout: React.FC<IListContainer> = (props) => {
   const { children } = props;
   return (
     <Row

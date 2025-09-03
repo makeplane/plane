@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -7,7 +6,7 @@ import { TDropdownProps } from "../types";
 import { ProjectDropdownBase } from "./base";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
   onClose?: () => void;

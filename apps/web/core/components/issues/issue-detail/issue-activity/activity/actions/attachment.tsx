@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
 // hooks
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueAttachmentActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((props) => {
+export const IssueAttachmentActivity: React.FC<TIssueAttachmentActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

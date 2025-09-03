@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
@@ -25,7 +25,7 @@ type TCommentCreate = {
 // services
 const fileService = new FileService();
 
-export const CommentCreate: FC<TCommentCreate> = observer((props) => {
+export const CommentCreate: React.FC<TCommentCreate> = observer((props) => {
   const {
     workspaceSlug,
     entityId,

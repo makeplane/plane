@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // local imports
@@ -14,7 +13,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) => {
+export const IssueAttachmentsCollapsibleContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // helper
   const attachmentHelpers = useAttachmentOperations(workspaceSlug, projectId, issueId, issueServiceType);

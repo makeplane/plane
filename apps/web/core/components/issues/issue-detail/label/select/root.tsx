@@ -1,4 +1,3 @@
-import { FC } from "react";
 // components
 import { TLabelOperations } from "../root";
 import { IssueLabelSelect } from "./label-select";
@@ -12,7 +11,7 @@ type TIssueLabelSelectRoot = {
   labelOperations: TLabelOperations;
 };
 
-export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
+export const IssueLabelSelectRoot: React.FC<TIssueLabelSelectRoot> = (props) => {
   const { workspaceSlug, projectId, issueId, values, labelOperations } = props;
 
   const handleLabel = async (_labelIds: string[]) => {

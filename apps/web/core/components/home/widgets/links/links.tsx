@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
@@ -15,7 +14,7 @@ export type TProjectLinkList = {
   workspaceSlug: string;
 };
 
-export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
+export const ProjectLinkList: React.FC<TProjectLinkList> = observer((props) => {
   // props
   const { linkOperations, workspaceSlug } = props;
   // hooks

@@ -1,5 +1,4 @@
 import range from "lodash/range";
-import React from "react";
 
 export const DropdownOptionsLoader = () => (
   <div className="flex flex-col gap-1 animate-pulse">

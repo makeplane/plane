@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -31,7 +31,7 @@ interface IIssueView {
   issueOperations: TIssueOperations;
 }
 
-export const IssueView: FC<IIssueView> = observer((props) => {
+export const IssueView: React.FC<IIssueView> = observer((props) => {
   const {
     workspaceSlug,
     projectId,

@@ -1,5 +1,5 @@
 // plane imports
-import { SyntheticEvent, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -37,7 +37,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
 
-  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+  const handleEventPropagation = (e: React.SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };

@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef } from "react";
 import { LegendProps } from "recharts";
 // plane imports
 import { TChartLegend } from "@plane/types";
@@ -31,7 +31,7 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
   };
 };
 
-const CustomLegend = React.forwardRef<
+const CustomLegend = forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
     Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &

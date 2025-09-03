@@ -1,7 +1,5 @@
 "use client";
 
-import { FC } from "react";
-
 // react-hook-form
 import { UseFormWatch } from "react-hook-form";
 // ui
@@ -14,7 +12,7 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportConfirm: FC<Props> = ({ handleStepChange, watch }) => (
+export const GithubImportConfirm: React.FC<Props> = ({ handleStepChange, watch }) => (
   <div className="mt-6">
     <h4 className="font-medium text-custom-text-200">
       You are about to import work items from {watch("github").full_name}. Click on {'"'}Confirm & Import{'" '}

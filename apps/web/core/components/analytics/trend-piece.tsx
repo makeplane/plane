@@ -1,5 +1,4 @@
 // plane package imports
-import React from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@plane/utils";
 // plane web components

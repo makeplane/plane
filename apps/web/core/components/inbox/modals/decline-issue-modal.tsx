@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // types
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";

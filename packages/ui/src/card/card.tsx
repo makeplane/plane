@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { cn } from "../utils";
 import {
   ECardDirection,
@@ -18,7 +18,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const {
     variant = ECardVariant.WITH_SHADOW,
     direction = ECardDirection.COLUMN,

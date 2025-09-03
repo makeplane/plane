@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
@@ -24,7 +23,7 @@ type Props = {
   projectId: string;
 };
 
-export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
+export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();

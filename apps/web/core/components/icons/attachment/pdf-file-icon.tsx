@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 // image
 import PDFFileIcon from "@/public/attachment/pdf-icon.png";

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { Row } from "../row";
 import { ERowVariant, TRowVariant } from "../row/helper";
 import { cn } from "../utils";
@@ -10,7 +10,7 @@ export interface ContentWrapperProps extends React.HTMLAttributes<HTMLDivElement
 }
 const DEFAULT_STYLE = "flex flex-col vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto";
 
-const ContentWrapper = React.forwardRef<HTMLDivElement, ContentWrapperProps>((props, ref) => {
+const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>((props, ref) => {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   return (

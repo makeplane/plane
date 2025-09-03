@@ -1,4 +1,3 @@
-import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -8,10 +7,10 @@ import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 import { useInstance } from "@/hooks/store/use-instance";
 
 type TInstanceWrapper = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
-export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
+export const InstanceWrapper: React.FC<TInstanceWrapper> = observer((props) => {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();

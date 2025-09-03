@@ -1,4 +1,3 @@
-import * as React from "react";
 import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
 import { TModuleLayoutOptions } from "@plane/types";
 import { cn } from "@plane/utils";

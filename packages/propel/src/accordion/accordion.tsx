@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Accordion as BaseAccordion } from "@base-ui-components/react";
 import { PlusIcon } from "lucide-react";
 

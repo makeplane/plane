@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import {
   GroupByColumnTypes,
@@ -110,7 +109,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   canEditProperties: (projectId: string | undefined) => boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
@@ -240,7 +239,7 @@ export interface IKanBanSwimLanes {
   enableQuickIssueCreate: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   canEditProperties: (projectId: string | undefined) => boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   orderBy: TIssueOrderByOptions | undefined;
 }
 

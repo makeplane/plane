@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { CalendarDays } from "lucide-react";
 // ui
 import { CustomSelect, CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";

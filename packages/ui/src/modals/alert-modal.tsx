@@ -1,5 +1,4 @@
 import { AlertTriangle, Info, LucideIcon } from "lucide-react";
-import React from "react";
 // components
 import { Button, TButtonVariant } from "../button";
 import { cn } from "../utils";

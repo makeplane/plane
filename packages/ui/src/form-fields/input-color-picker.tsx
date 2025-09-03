@@ -1,5 +1,5 @@
 import { Popover, Transition } from "@headlessui/react";
-import * as React from "react";
+import { Fragment, useState } from "react";
 import { ColorResult, SketchPicker } from "react-color";
 import { usePopper } from "react-popper";
 // helpers
@@ -21,8 +21,8 @@ export interface InputColorPickerProps {
 export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
   const { value, hasError, onChange, name, className, style, placeholder } = props;
 
-  const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "auto",
@@ -57,7 +57,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
           }
           return (
             <>
-              <Popover.Button as={React.Fragment}>
+              <Popover.Button as={Fragment}>
                 <Button
                   ref={setReferenceElement}
                   variant="neutral-primary"
@@ -85,7 +85,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
                 </Button>
               </Popover.Button>
               <Transition
-                as={React.Fragment}
+                as={Fragment}
                 enter="transition ease-out duration-200"
                 enterFrom="opacity-0 translate-y-1"
                 enterTo="opacity-100 translate-y-0"

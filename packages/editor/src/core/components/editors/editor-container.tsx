@@ -1,5 +1,5 @@
 import type { Editor } from "@tiptap/react";
-import { FC, ReactNode, useRef } from "react";
+import { useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -11,7 +11,7 @@ import { TDisplayConfig } from "@/types";
 import { LinkViewContainer } from "./link-view-container";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
   displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
@@ -19,10 +19,10 @@ type Props = {
   isTouchDevice: boolean;
 };
 
-export const EditorContainer: FC<Props> = (props) => {
+export const EditorContainer: React.FC<Props> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
   // refs
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target !== event.currentTarget) return;

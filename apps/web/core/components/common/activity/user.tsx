@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
@@ -12,7 +11,7 @@ type TUser = {
   customUserName?: string;
 };
 
-export const User: FC<TUser> = observer((props) => {
+export const User: React.FC<TUser> = observer((props) => {
   const { activity, customUserName } = props;
   // store hooks
   const { getUserDetails } = useMember();

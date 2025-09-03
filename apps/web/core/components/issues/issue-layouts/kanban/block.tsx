@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -45,13 +45,13 @@ interface IssueBlockProps {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
 }
 
 interface IssueDetailsBlockProps {
-  cardRef: React.RefObject<HTMLElement>;
+  cardRef: React.RefObject<HTMLDivElement | null>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -163,7 +163,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     isEpic = false,
   } = props;
 
-  const cardRef = useRef<HTMLAnchorElement | null>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -266,7 +266,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
           href={workItemLink}
-          ref={cardRef}
+          ref={cardRef as React.RefObject<HTMLAnchorElement | null>}
           className={cn(
             "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
             { "hover:cursor-pointer": isDragAllowed },

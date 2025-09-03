@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/core";
-import { DragEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // helpers
 import { EFileError, isFileValid } from "@/helpers/file";
 // plugins
@@ -120,7 +120,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
   }, []);
 
   const onDrop = useCallback(
-    async (e: DragEvent<HTMLDivElement>) => {
+    async (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDraggedInside(false);
       const filesList = e.dataTransfer.files;

@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, CircleDashed } from "lucide-react";
 import { ALL_ISSUES } from "@plane/constants";
@@ -26,7 +26,7 @@ interface TSubIssuesListGroupProps {
   spacingLeft?: number;
 }
 
-export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props) => {
+export const SubIssuesListGroup: React.FC<TSubIssuesListGroupProps> = observer((props) => {
   const {
     group,
     serviceType,

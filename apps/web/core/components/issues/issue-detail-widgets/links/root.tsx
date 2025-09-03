@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TIssueServiceType } from "@plane/types";
@@ -18,7 +17,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinksCollapsible: FC<Props> = observer((props) => {
+export const LinksCollapsible: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);

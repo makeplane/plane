@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // plane imports
@@ -22,11 +21,11 @@ import { PageActions } from "../dropdowns";
 
 type Props = {
   page: TPageInstance;
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   storeType: EPageStoreType;
 };
 
-export const BlockItemAction: FC<Props> = observer((props) => {
+export const BlockItemAction: React.FC<Props> = observer((props) => {
   const { page, parentRef, storeType } = props;
   // store hooks
   const { getUserDetails } = useMember();

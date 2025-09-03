@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -15,7 +14,7 @@ import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue
 import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import PlaneTakeOffImage from "@/public/plane-takeoff.png";
 
-export const InstanceNotReady: FC = () => {
+export const InstanceNotReady: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
 

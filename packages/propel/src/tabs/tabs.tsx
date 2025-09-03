@@ -1,33 +1,34 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
 
 type TabsCompound = React.ForwardRefExoticComponent<
-  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
+  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ComponentRef<typeof TabsPrimitive.Root>>
 > & {
   List: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
+    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ComponentRef<typeof TabsPrimitive.List>>
   >;
   Trigger: React.ForwardRefExoticComponent<
     React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
-        React.ElementRef<typeof TabsPrimitive.Tab>
+        React.ComponentRef<typeof TabsPrimitive.Tab>
       >
   >;
   Content: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.Panel> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Panel>>
+    React.ComponentProps<typeof TabsPrimitive.Panel> &
+      React.RefAttributes<React.ComponentRef<typeof TabsPrimitive.Panel>>
   >;
   Indicator: React.ForwardRefExoticComponent<React.ComponentProps<"div"> & React.RefAttributes<HTMLDivElement>>;
 };
 
-const TabsRoot = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Root>,
+const TabsRoot = forwardRef<
+  React.ComponentRef<typeof TabsPrimitive.Root>,
   React.ComponentProps<typeof TabsPrimitive.Root>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col w-full h-full", className)} {...props} ref={ref} />
 ));
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
+const TabsList = forwardRef<
+  React.ComponentRef<typeof TabsPrimitive.List>,
   React.ComponentProps<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
@@ -41,8 +42,8 @@ const TabsList = React.forwardRef<
   />
 ));
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Tab>,
+const TabsTrigger = forwardRef<
+  React.ComponentRef<typeof TabsPrimitive.Tab>,
   React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" }
 >(({ className, size = "md", ...props }, ref) => (
   <TabsPrimitive.Tab
@@ -64,8 +65,8 @@ const TabsTrigger = React.forwardRef<
   />
 ));
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Panel>,
+const TabsContent = forwardRef<
+  React.ComponentRef<typeof TabsPrimitive.Panel>,
   React.ComponentProps<typeof TabsPrimitive.Panel>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Panel
@@ -75,7 +76,7 @@ const TabsContent = React.forwardRef<
     ref={ref}
   />
 ));
-const TabsIndicator = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(({ className, ...props }, ref) => (
+const TabsIndicator = forwardRef<HTMLDivElement, React.ComponentProps<"div">>(({ className, ...props }, ref) => (
   <div
     className={cn(
       "absolute left-0 top-[50%] z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-sm bg-custom-background-100 shadow-sm transition-[width,transform] duration-200 ease-in-out",

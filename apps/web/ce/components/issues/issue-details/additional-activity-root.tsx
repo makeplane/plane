@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 
 export type TAdditionalActivityRoot = {
@@ -10,4 +9,4 @@ export type TAdditionalActivityRoot = {
   field: string | undefined;
 };
 
-export const AdditionalActivityRoot: FC<TAdditionalActivityRoot> = observer(() => <></>);
+export const AdditionalActivityRoot: React.FC<TAdditionalActivityRoot> = observer(() => <></>);

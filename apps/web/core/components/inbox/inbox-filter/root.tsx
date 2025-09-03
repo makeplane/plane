@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { ChevronDown, ListFilter } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/ui";
@@ -20,7 +19,7 @@ const largeButton = (
     <ChevronDown className="size-3" strokeWidth={2} />
   </div>
 );
-export const FiltersRoot: FC = () => {
+export const FiltersRoot: React.FC = () => {
   const windowSize = useSize();
 
   return (

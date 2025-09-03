@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
@@ -19,7 +19,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ProjectViewListItem: FC<Props> = observer((props) => {
+export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
   // refs
   const parentRef = useRef(null);

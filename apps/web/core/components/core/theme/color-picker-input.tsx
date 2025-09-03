@@ -1,5 +1,5 @@
 "use client";
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 // react-form
 import { ColorResult, SketchPicker } from "react-color";
 import {
@@ -31,7 +31,7 @@ type Props = {
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: FC<Props> = (props) => {
+export const ColorPickerInput: React.FC<Props> = (props) => {
   const { name, position = "left", watch, setValue, error, control } = props;
 
   const handleColorChange = (newColor: ColorResult) => {

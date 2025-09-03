@@ -1,4 +1,4 @@
-import { useEffect, FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
 // plane ui
@@ -28,7 +28,7 @@ enum EProjectCreationSteps {
   FEATURE_SELECTION = "FEATURE_SELECTION",
 }
 
-export const CreateProjectModal: FC<Props> = (props) => {
+export const CreateProjectModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug, data, templateId } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);

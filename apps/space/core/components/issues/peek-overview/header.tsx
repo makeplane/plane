@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Link2, MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
@@ -79,7 +79,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
             </Listbox.Button>
 
             <Transition
-              as={React.Fragment}
+              as={Fragment}
               enter="transition ease-out duration-100"
               enterFrom="transform opacity-0 scale-95"
               enterTo="transform opacity-100 scale-100"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // components
@@ -24,7 +24,7 @@ export type NavbarControlsProps = {
   publishSettings: PublishStore;
 };
 
-export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
+export const NavbarControls: React.FC<NavbarControlsProps> = observer((props) => {
   // props
   const { publishSettings } = props;
   // router

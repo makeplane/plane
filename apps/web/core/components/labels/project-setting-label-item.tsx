@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { X, Pencil } from "lucide-react";
 // types
@@ -15,7 +15,7 @@ import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 type Props = {
   label: IIssueLabel;
   handleLabelDelete: (label: IIssueLabel) => void;
-  setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>;
   isParentDragging?: boolean;
   isChild: boolean;
   isLastChild: boolean;

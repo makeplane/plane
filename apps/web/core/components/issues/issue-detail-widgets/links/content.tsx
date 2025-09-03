@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { TIssueServiceType } from "@plane/types";
 // components
 import { LinkList } from "../../issue-detail/links";
@@ -14,7 +13,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksCollapsibleContent: FC<Props> = (props) => {
+export const IssueLinksCollapsibleContent: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType } = props;
 
   // helper

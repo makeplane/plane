@@ -62,11 +62,11 @@ export const RecentActivityWidget: React.FC<TRecentWidgetProps> = observer((prop
     switch (activity.entity_name) {
       case "page":
       case "workspace_page":
-        return <RecentPage activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+        return <RecentPage activity={activity} parentRef={ref} workspaceSlug={workspaceSlug} />;
       case "project":
-        return <RecentProject activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+        return <RecentProject activity={activity} parentRef={ref} workspaceSlug={workspaceSlug} />;
       case "issue":
-        return <RecentIssue activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+        return <RecentIssue activity={activity} parentRef={ref} workspaceSlug={workspaceSlug} />;
       default:
         return <></>;
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Palette, Trash2 } from "lucide-react";
 // editor
 import type { EditorRefApi } from "@plane/editor";
@@ -29,7 +29,7 @@ export const StickyEditorToolbar: React.FC<Props> = (props) => {
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
   const [showColorPalette, setShowColorPalette] = useState(false);
-  const colorPaletteRef = React.useRef<HTMLDivElement>(null);
+  const colorPaletteRef = useRef<HTMLDivElement>(null);
   // Function to update active states
   const updateActiveStates = useCallback(() => {
     if (!editorRef) return;

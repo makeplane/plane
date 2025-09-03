@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
@@ -49,9 +48,9 @@ export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcru
               .map((item) => ({
                 key: item.key,
                 title: item.name,
-                customContent: <SwitcherLabel name={item.name} LabelIcon={item.icon as FC<ISvgIcons>} />,
+                customContent: <SwitcherLabel name={item.name} LabelIcon={item.icon as React.FC<ISvgIcons>} />,
                 action: () => router.push(item.href),
-                icon: item.icon as FC<ISvgIcons>,
+                icon: item.icon as React.FC<ISvgIcons>,
               }))}
             handleOnClick={() => {
               router.push(

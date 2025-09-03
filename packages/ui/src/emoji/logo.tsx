@@ -1,7 +1,6 @@
 "use client";
 
 import { Emoji } from "emoji-picker-react";
-import React, { FC } from "react";
 import useFontFaceObserver from "use-font-face-observer";
 // local imports
 import { LUCIDE_ICONS_LIST } from "..";
@@ -25,7 +24,7 @@ type Props = {
   type?: "lucide" | "material";
 };
 
-export const Logo: FC<Props> = (props) => {
+export const Logo: React.FC<Props> = (props) => {
   const { logo, size = 16, type = "material" } = props;
 
   // destructuring the logo object

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Matcher } from "react-day-picker";
 import { createPortal } from "react-dom";

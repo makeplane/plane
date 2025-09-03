@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
@@ -20,7 +19,7 @@ export type ActiveCycleProgressProps = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
-export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
+export const ActiveCycleProgress: React.FC<ActiveCycleProgressProps> = observer((props) => {
   const { handleFiltersUpdate, cycle } = props;
   // plane hooks
   const { t } = useTranslation();

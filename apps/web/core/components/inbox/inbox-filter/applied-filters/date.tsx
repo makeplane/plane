@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
@@ -15,7 +14,7 @@ type InboxIssueAppliedFiltersDate = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = observer((props) => {
+export const InboxIssueAppliedFiltersDate: React.FC<InboxIssueAppliedFiltersDate> = observer((props) => {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

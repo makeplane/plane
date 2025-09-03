@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { LayersIcon, SquareUser, Users } from "lucide-react";
@@ -21,7 +20,7 @@ type Props = {
   cycleDetails: ICycle;
 };
 
-export const CycleSidebarDetails: FC<Props> = observer((props) => {
+export const CycleSidebarDetails: React.FC<Props> = observer((props) => {
   const { projectId, cycleDetails } = props;
   // hooks
   const { getUserDetails } = useMember();

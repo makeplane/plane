@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ECreateOrJoinWorkspaceViews, EOnboardingSteps, IWorkspaceMemberInvitation } from "@plane/types";

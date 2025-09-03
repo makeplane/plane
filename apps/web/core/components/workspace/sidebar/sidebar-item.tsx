@@ -1,6 +1,5 @@
 // SidebarItemBase.tsx
 "use client";
-import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -20,11 +19,11 @@ import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/s
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
-  additionalRender?: (itemKey: string, workspaceSlug: string) => ReactNode;
+  additionalRender?: (itemKey: string, workspaceSlug: string) => React.ReactNode;
   additionalStaticItems?: string[];
 };
 
-export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, additionalStaticItems }) => {
+export const SidebarItemBase: React.FC<Props> = observer(({ item, additionalRender, additionalStaticItems }) => {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

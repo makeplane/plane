@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check } from "lucide-react";
@@ -25,7 +24,7 @@ const defaultValues = {
   use_case: "",
 };
 
-export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const UseCaseSetupStep: React.FC<Props> = observer(({ handleStepChange }) => {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info

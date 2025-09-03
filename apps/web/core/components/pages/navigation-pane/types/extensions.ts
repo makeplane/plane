@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -9,7 +8,7 @@ export interface INavigationPaneExtensionProps<T = any> {
 }
 
 export interface INavigationPaneExtensionComponent<T = any> {
-  (props: INavigationPaneExtensionProps<T>): ReactNode;
+  (props: INavigationPaneExtensionProps<T>): React.ReactNode;
 }
 
 export interface INavigationPaneExtension<T = any> {

@@ -7,7 +7,7 @@ import { TDocumentPayload } from "@plane/types";
 import useAutoSave from "@/hooks/use-auto-save";
 
 type TArgs = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
   fetchPageDescription: () => Promise<ArrayBuffer>;
   hasConnectionFailed: boolean;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;

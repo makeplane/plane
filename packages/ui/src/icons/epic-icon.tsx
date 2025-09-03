@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export type Props = {
   className?: string;
   width?: string | number;

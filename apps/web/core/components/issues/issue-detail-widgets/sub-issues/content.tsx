@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType } from "@plane/types";
 // components
@@ -21,7 +21,7 @@ type Props = {
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
-export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{

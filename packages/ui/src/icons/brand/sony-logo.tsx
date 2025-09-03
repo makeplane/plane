@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "../type";
 
 export const SonyLogo: React.FC<ISvgIcons> = ({ width = "44", height = "16", className, color = "currentColor" }) => (

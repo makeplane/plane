@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
 // eslint-disable-next-line import/order
@@ -15,7 +14,7 @@ type Props = {
   type?: "lucide" | "material";
 };
 
-export const Logo: FC<Props> = (props) => {
+export const Logo: React.FC<Props> = (props) => {
   const { logo, size = 16, type = "material" } = props;
 
   // destructuring the logo object

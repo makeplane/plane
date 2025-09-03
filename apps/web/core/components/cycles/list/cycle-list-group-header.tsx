@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { ChevronDown } from "lucide-react";
 // types
 import { TCycleGroups } from "@plane/types";
@@ -17,7 +16,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListGroupHeader: FC<Props> = (props) => {
+export const CycleListGroupHeader: React.FC<Props> = (props) => {
   const { type, title, count, showCount = false, isExpanded = false } = props;
   return (
     <Row className="flex items-center justify-between py-2.5">

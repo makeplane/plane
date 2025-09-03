@@ -44,7 +44,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
             }
             resolve(fetchedData);
           } catch (error) {
-            manualLogger.error("Error in fetching document", error);
+            manualLogger.error({ err: error }, "Error in fetching document");
           }
         });
       },
@@ -70,7 +70,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               });
             }
           } catch (error) {
-            manualLogger.error("Error in updating document:", error);
+            manualLogger.error({ err: error }, "Error in updating document:");
           }
         });
       },
@@ -89,8 +89,8 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
             redisClient.disconnect();
           }
           manualLogger.warn(
-            `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error
+            { err: error },
+            `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`
           );
           reject(error);
         });
@@ -103,8 +103,8 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
       });
     } catch (error) {
       manualLogger.warn(
-        `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-        error
+        { err: error },
+        `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`
       );
     }
   } else {

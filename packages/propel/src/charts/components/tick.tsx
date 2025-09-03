@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+
+import { memo } from "react";
 
 // Common classnames
 const AXIS_TICK_CLASSNAME = "fill-custom-text-300 text-sm";
 
-export const CustomXAxisTick = React.memo<any>(({ x, y, payload, getLabel }: any) => (
+export const CustomXAxisTick = memo<any>(({ x, y, payload, getLabel }: any) => (
   <g transform={`translate(${x},${y})`}>
     <text y={0} dy={16} textAnchor="middle" className={AXIS_TICK_CLASSNAME}>
       {getLabel ? getLabel(payload.value) : payload.value}
@@ -13,7 +14,7 @@ export const CustomXAxisTick = React.memo<any>(({ x, y, payload, getLabel }: any
 ));
 CustomXAxisTick.displayName = "CustomXAxisTick";
 
-export const CustomYAxisTick = React.memo<any>(({ x, y, payload }: any) => (
+export const CustomYAxisTick = memo<any>(({ x, y, payload }: any) => (
   <g transform={`translate(${x},${y})`}>
     <text dx={-10} textAnchor="middle" className={AXIS_TICK_CLASSNAME}>
       {payload.value}
@@ -23,7 +24,7 @@ export const CustomYAxisTick = React.memo<any>(({ x, y, payload }: any) => (
 
 CustomYAxisTick.displayName = "CustomYAxisTick";
 
-export const CustomRadarAxisTick = React.memo<any>(({ x, y, payload, getLabel, cx, cy, offset = 16 }: any) => {
+export const CustomRadarAxisTick = memo<any>(({ x, y, payload, getLabel, cx, cy, offset = 16 }: any) => {
   // Calculate direction vector from center to tick
   const dx = x - cx;
   const dy = y - cy;

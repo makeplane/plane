@@ -1,6 +1,5 @@
 "use client";
 
-import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
@@ -715,7 +714,7 @@ export const getBlockViewDetails = (
   const isBlockComplete = block?.start_date && block?.target_date;
 
   let message;
-  const blockStyle: CSSProperties = {
+  const blockStyle: React.CSSProperties = {
     backgroundColor,
   };
 
@@ -741,7 +740,7 @@ export const getBlockViewDetails = (
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+export const SpreadSheetPropertyIcon: React.FC<ISvgIcons & { iconKey: string }> = (props) => {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;

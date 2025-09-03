@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FC } from "react";
+import { useState } from "react";
 import range from "lodash/range";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -26,7 +26,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const WebhookSecretKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey: React.FC<Props> = observer((props) => {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);

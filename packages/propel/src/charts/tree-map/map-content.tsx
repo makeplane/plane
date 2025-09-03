@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { cloneElement, useMemo } from "react";
 // plane imports
 import { TBottomSectionConfig, TContentVisibility, TTopSectionConfig } from "@plane/types";
 import { cn } from "../../utils/classname";
@@ -210,7 +210,7 @@ export const CustomTreeMapContent: React.FC<any> = ({
               height={LAYOUT.ICON.SIZE}
               className={textClassName || "text-custom-text-300"}
             >
-              {React.cloneElement(icon, {
+              {cloneElement(icon, {
                 className: cn("size-4", icon?.props?.className),
                 "aria-hidden": true,
               })}

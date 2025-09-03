@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, memo } from "react";
+import { memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
@@ -13,7 +13,7 @@ export type TActivitySortRoot = {
   className?: string;
   iconClassName?: string;
 };
-export const ActivitySortRoot: FC<TActivitySortRoot> = memo((props) => (
+export const ActivitySortRoot: React.FC<TActivitySortRoot> = memo((props) => (
   <div
     className={cn(
       getButtonStyling("neutral-primary", "sm"),

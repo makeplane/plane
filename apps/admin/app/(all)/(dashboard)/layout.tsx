@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // components
@@ -13,10 +13,10 @@ import { AdminHeader } from "./header";
 import { AdminSidebar } from "./sidebar";
 
 type TAdminLayout = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
-const AdminLayout: FC<TAdminLayout> = (props) => {
+const AdminLayout: React.FC<TAdminLayout> = (props) => {
   const { children } = props;
   // router
   const router = useRouter();

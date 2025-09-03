@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
@@ -10,7 +9,7 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { IMonthView } from "../../views";
 import { getNumberOfDaysBetweenTwoDates } from "../../views/helpers";
 
-export const MonthChartView: FC<any> = observer(() => {
+export const MonthChartView: React.FC<any> = observer(() => {
   // chart hook
   const { currentViewData, renderView } = useTimeLineChartStore();
   const monthView: IMonthView = renderView;

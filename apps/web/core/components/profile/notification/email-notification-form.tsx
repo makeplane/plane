@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +18,7 @@ interface IEmailNotificationFormProps {
 // services
 const userService = new UserService();
 
-export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
+export const EmailNotificationForm: React.FC<IEmailNotificationFormProps> = (props) => {
   const { data } = props;
   const { t } = useTranslation();
   // form data

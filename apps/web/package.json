@@ -56,7 +56,6 @@
     "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
-    "react-markdown": "^8.0.7",
     "react-masonry-component": "^6.3.0",
     "react-pdf-html": "^2.1.2",
     "react-popper": "^2.3.0",

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 interface ProgressCircleProps {
   center: number;
   radius: number;

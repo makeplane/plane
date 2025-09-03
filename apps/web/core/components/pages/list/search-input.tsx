@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -10,7 +10,7 @@ type Props = {
   updateSearchQuery: (val: string) => void;
 };
 
-export const PageSearchInput: FC<Props> = (props) => {
+export const PageSearchInput: React.FC<Props> = (props) => {
   const { searchQuery, updateSearchQuery } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);

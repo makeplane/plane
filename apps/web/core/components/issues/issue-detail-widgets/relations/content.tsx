@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -35,7 +35,7 @@ export type TRelationObject = {
   placeholder: string;
 };
 
-export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
+export const RelationsCollapsibleContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // plane hooks
   const { t } = useTranslation();

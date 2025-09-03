@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { Metadata } from "next";
 // plane imports
 import { ADMIN_BASE_PATH } from "@plane/constants";
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const ASSET_PREFIX = ADMIN_BASE_PATH;
   return (
     <html lang="en">

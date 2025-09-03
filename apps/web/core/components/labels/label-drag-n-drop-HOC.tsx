@@ -1,6 +1,6 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -41,7 +41,7 @@ type Props = {
   children: (
     isDragging: boolean,
     isDroppingInLabel: boolean,
-    dragHandleRef: MutableRefObject<HTMLButtonElement | null>
+    dragHandleRef: React.RefObject<HTMLButtonElement | null>
   ) => React.ReactNode;
   onDrop: (
     draggingLabelId: string,

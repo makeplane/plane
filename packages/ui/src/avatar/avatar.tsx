@@ -1,4 +1,3 @@
-import React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers

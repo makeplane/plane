@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -9,7 +8,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const IssueDetailWidgetButton: FC<Props> = (props) => {
+export const IssueDetailWidgetButton: React.FC<Props> = (props) => {
   const { icon, title, disabled = false } = props;
   return (
     <div

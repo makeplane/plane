@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "../type";
 
 export const DolbyLogo: React.FC<ISvgIcons> = ({ width = "40", height = "16", className, color = "currentColor" }) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";

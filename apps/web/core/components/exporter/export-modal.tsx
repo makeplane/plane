@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import intersection from "lodash/intersection";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -59,9 +59,9 @@ export const Exporter: React.FC<Props> = observer((props) => {
     };
   });
 
-  const [value, setValue] = React.useState<string[]>([]);
-  const [multiple, setMultiple] = React.useState<boolean>(false);
-  const onChange = (val: any) => {
+  const [value, setValue] = useState<string[]>([]);
+  const [multiple, setMultiple] = useState<boolean>(false);
+  const onChange = (val: React.SetStateAction<string[]>) => {
     setValue(val);
   };
   const ExportCSVToMail = async () => {
@@ -98,7 +98,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-20"
@@ -107,7 +107,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
         }}
       >
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -121,7 +121,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center  sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

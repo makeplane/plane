@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import React, { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useCallback, useEffect } from "react";
 import { usePopper } from "react-popper";
 // helpers
 import { cn } from "../../utils";
@@ -52,13 +52,13 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
     ],
   });
 
-  const closeNestedMenu = React.useCallback(() => {
+  const closeNestedMenu = useCallback(() => {
     setIsNestedOpen(false);
     setActiveNestedIndex(0);
   }, []);
 
   // Register this nested menu with the main context
-  React.useEffect(() => {
+  useEffect(() => {
     if (contextMenuContext && hasNestedItems) {
       return contextMenuContext.registerSubmenu(closeNestedMenu);
     }
@@ -106,7 +106,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
   };
 
   // Handle keyboard navigation for nested items
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isNestedOpen || !hasNestedItems) return;
 

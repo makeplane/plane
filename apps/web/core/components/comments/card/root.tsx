@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -23,7 +23,7 @@ type TCommentCard = {
   projectId?: string;
 };
 
-export const CommentCard: FC<TCommentCard> = observer((props) => {
+export const CommentCard: React.FC<TCommentCard> = observer((props) => {
   const {
     workspaceSlug,
     comment,

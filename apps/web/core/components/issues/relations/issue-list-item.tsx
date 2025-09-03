@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // plane imports
@@ -37,7 +36,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueListItem: FC<Props> = observer((props) => {
+export const RelationIssueListItem: React.FC<Props> = observer((props) => {
   const {
     workspaceSlug,
     issueId,

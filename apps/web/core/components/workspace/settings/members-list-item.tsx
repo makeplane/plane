@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // plane imports
@@ -25,7 +24,7 @@ type Props = {
   memberDetails: (IWorkspaceMember | null)[];
 };
 
-export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
+export const WorkspaceMembersListItem: React.FC<Props> = observer((props) => {
   const { memberDetails } = props;
   const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useMemberColumns();
   // router

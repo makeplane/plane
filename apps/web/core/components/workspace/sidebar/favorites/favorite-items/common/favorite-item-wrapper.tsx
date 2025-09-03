@@ -1,15 +1,14 @@
 "use client";
-import React, { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 
 type Props = {
   children: React.ReactNode;
-  elementRef: React.RefObject<HTMLDivElement>;
+  elementRef: React.Ref<HTMLDivElement>;
   isMenuActive?: boolean;
 };
 
-export const FavoriteItemWrapper: FC<Props> = (props) => {
+export const FavoriteItemWrapper: React.FC<Props> = (props) => {
   const { children, elementRef, isMenuActive = false } = props;
   return (
     <>

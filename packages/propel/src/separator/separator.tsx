@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { Separator as SeparatorPrimitive } from "@base-ui-components/react/separator";
 import { cn } from "../utils";
 
@@ -10,7 +10,7 @@ interface SeparatorProps extends React.ComponentProps<typeof SeparatorPrimitive>
   orientation?: "horizontal" | "vertical";
 }
 
-const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive>, SeparatorProps>(
+const Separator = forwardRef<React.ComponentRef<typeof SeparatorPrimitive>, SeparatorProps>(
   ({ orientation = "horizontal", ...props }, ref) => (
     <SeparatorPrimitive
       ref={ref}

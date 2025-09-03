@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
@@ -38,7 +38,7 @@ type ListStoreType =
   | EIssuesStoreType.EPIC;
 
 interface IBaseListRoot {
-  QuickActions: FC<IQuickActionProps>;
+  QuickActions: React.FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   viewId?: string | undefined;

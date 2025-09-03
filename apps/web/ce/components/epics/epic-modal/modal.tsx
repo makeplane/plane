@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { TIssue } from "@plane/types";
 
 export interface EpicModalProps {
@@ -16,4 +15,4 @@ export interface EpicModalProps {
   isProjectSelectionDisabled?: boolean;
 }
 
-export const CreateUpdateEpicModal: FC<EpicModalProps> = (props) => <></>;
+export const CreateUpdateEpicModal: React.FC<EpicModalProps> = () => <></>;

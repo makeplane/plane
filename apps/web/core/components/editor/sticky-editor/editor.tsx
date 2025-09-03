@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { forwardRef, useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
@@ -34,7 +34,7 @@ interface StickyEditorWrapperProps
   handleDelete: () => void;
 }
 
-export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
+export const StickyEditor = forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
   const {
     containerClassName,
     workspaceSlug,
@@ -56,11 +56,11 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+  function isRefObject<T>(ref: React.ForwardedRef<T>) {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
   // derived values
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+  const editorRef = isRefObject(ref) ? ref.current : null;
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -79,7 +79,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
           workspaceSlug,
         })}
         mentionHandler={{
-          renderComponent: () => <></>,
+          renderComponent: () => null,
         }}
         extendedEditorProps={{}}
         containerClassName={cn(containerClassName, "relative")}

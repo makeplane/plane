@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useMemo } from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
 import { cn } from "../utils/classname";
 import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
@@ -7,7 +7,7 @@ type ITooltipProps = {
   tooltipHeading?: string;
   tooltipContent?: string | React.ReactNode | null;
   position?: TPlacement;
-  children: React.ReactElement;
+  children: React.ReactElement<Record<string, unknown>>;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
@@ -34,7 +34,7 @@ export function Tooltip(props: ITooltipProps) {
     closeDelay,
     isMobile = false,
   } = props;
-  const { finalSide, finalAlign } = React.useMemo(() => {
+  const { finalSide, finalAlign } = useMemo(() => {
     if (position) {
       const converted = convertPlacementToSideAndAlign(position);
       return { finalSide: converted.side, finalAlign: converted.align };

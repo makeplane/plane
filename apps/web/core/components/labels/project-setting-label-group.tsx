@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -19,7 +19,7 @@ type Props = {
   labelChildren: IIssueLabel[];
   handleLabelDelete: (label: IIssueLabel) => void;
   isUpdating: boolean;
-  setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>;
   isLastChild: boolean;
   onDrop: (
     draggingLabelId: string,

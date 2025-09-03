@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 // components
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-export const WorkspaceDraftEmptyState: FC = observer(() => {
+export const WorkspaceDraftEmptyState: React.FC = observer(() => {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks

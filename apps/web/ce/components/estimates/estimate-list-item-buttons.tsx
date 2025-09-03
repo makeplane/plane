@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pen, Trash } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
@@ -15,7 +14,7 @@ type TEstimateListItem = {
   onDeleteClick?: (estimateId: string) => void;
 };
 
-export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) => {
+export const EstimateListItemButtons: React.FC<TEstimateListItem> = observer((props) => {
   const { estimateId, isAdmin, isEditable, onDeleteClick } = props;
 
   if (!isAdmin || !isEditable) return <></>;

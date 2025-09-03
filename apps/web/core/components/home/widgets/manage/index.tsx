@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane types
 // plane ui
@@ -14,7 +13,7 @@ export type TProps = {
   handleOnClose?: () => void;
 };
 
-export const ManageWidgetsModal: FC<TProps> = observer((props) => {
+export const ManageWidgetsModal: React.FC<TProps> = observer((props) => {
   // props
   const { workspaceSlug, isModalOpen, handleOnClose } = props;
   const { t } = useTranslation();

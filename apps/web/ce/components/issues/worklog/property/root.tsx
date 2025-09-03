@@ -1,7 +1,5 @@
 "use client";
 
-import { FC } from "react";
-
 type TIssueWorklogProperty = {
   workspaceSlug: string;
   projectId: string;
@@ -9,4 +7,4 @@ type TIssueWorklogProperty = {
   disabled: boolean;
 };
 
-export const IssueWorklogProperty: FC<TIssueWorklogProperty> = () => <></>;
+export const IssueWorklogProperty: React.FC<TIssueWorklogProperty> = () => <></>;

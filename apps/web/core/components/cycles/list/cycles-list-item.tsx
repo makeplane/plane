@@ -1,5 +1,5 @@
 "use client";
-import { FC, MouseEvent, useRef } from "react";
+import { useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -29,7 +29,7 @@ type TCyclesListItem = {
   className?: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
+export const CyclesListItem: React.FC<TCyclesListItem> = observer((props) => {
   const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);
@@ -54,7 +54,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   const isActive = cycleStatus === "current";
 
   // handlers
-  const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+  const openCycleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -67,7 +67,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   };
 
   // handlers
-  const handleArchivedCycleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+  const handleArchivedCycleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     openCycleOverview(e);
   };
 

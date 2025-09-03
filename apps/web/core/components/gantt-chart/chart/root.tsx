@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -54,7 +54,7 @@ const timelineViewHelpers = {
   quarter: quarterView,
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
+export const ChartViewRoot: React.FC<ChartViewRootProps> = observer((props) => {
   const {
     border,
     title,

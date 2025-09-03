@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";

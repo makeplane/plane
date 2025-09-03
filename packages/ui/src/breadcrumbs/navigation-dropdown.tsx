@@ -1,8 +1,8 @@
 "use client";
 
 import { CheckIcon } from "lucide-react";
-import * as React from "react";
 // ui
+import { useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, TContextMenuItem } from "../dropdowns";
 import { cn } from "../utils";
@@ -18,7 +18,7 @@ type TBreadcrumbNavigationDropdownProps = {
 
 export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdownProps) => {
   const { selectedItemKey, navigationItems, navigationDisabled = false, handleOnClick, isLast = false } = props;
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   // derived values
   const selectedItem = navigationItems.find((item) => item.key === selectedItemKey);
   const selectedItemIcon = selectedItem?.icon ? (

@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // components
@@ -11,7 +10,7 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 import { ProfileSidebar } from "./sidebar";
 
 type Props = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 const ProfileSettingsLayout = observer((props: Props) => {

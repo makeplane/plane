@@ -23,7 +23,7 @@ const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
 };
 
 const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditorProps>((props, ref) => (
-  <LiteTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+  <LiteTextEditor {...props} forwardedRef={ref} />
 ));
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";

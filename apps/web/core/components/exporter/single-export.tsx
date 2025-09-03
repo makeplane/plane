@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FC } from "react";
+import { useState } from "react";
 // ui
 import { IExportData } from "@plane/types";
 import { Button } from "@plane/ui";
@@ -13,7 +13,7 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: FC<Props> = ({ service, refreshing }) => {
+export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
   const provider = service.provider;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading] = useState(false);

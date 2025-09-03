@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
@@ -18,7 +17,7 @@ export interface ICyclesView {
   projectId: string;
 }
 
-export const CyclesView: FC<ICyclesView> = observer((props) => {
+export const CyclesView: React.FC<ICyclesView> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();

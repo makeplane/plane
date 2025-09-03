@@ -1,4 +1,3 @@
-import React from "react";
 // plane imports
 import { AreaChart } from "@plane/propel/charts/area-chart";
 import { TChartData, TModuleCompletionChartDistribution } from "@plane/types";

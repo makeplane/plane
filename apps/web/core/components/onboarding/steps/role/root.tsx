@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Check, PenTool, Rocket, Monitor, RefreshCw, Layers } from "lucide-react";
@@ -34,7 +33,7 @@ const defaultValues = {
   role: "",
 };
 
-export const RoleSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const RoleSetupStep: React.FC<Props> = observer(({ handleStepChange }) => {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info

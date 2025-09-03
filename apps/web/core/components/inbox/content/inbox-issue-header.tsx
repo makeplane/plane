@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import {
   CircleCheck,
@@ -50,7 +50,7 @@ type TInboxIssueActionsHeader = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
+export const InboxIssueActionsHeader: React.FC<TInboxIssueActionsHeader> = observer((props) => {
   const {
     workspaceSlug,
     projectId,

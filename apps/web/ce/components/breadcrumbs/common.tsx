@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
 // local components
@@ -14,7 +13,7 @@ type TCommonProjectBreadcrumbProps = {
   isLast?: boolean;
 };
 
-export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (props) => {
+export const CommonProjectBreadcrumbs: React.FC<TCommonProjectBreadcrumbProps> = (props) => {
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
   return (
     <>

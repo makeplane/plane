@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -159,7 +159,7 @@ export const CommandModal: React.FC = observer(() => {
   );
 
   return (
-    <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
+    <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-30"
@@ -171,7 +171,7 @@ export const CommandModal: React.FC = observer(() => {
         }}
       >
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -185,7 +185,7 @@ export const CommandModal: React.FC = observer(() => {
         <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex items-center justify-center p-4 sm:p-6 md:p-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

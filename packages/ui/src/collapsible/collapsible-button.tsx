@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 import { DropdownIcon, ISvgIcons } from "../icons";
 import { cn } from "../utils";
 
@@ -13,7 +12,7 @@ type Props = {
   ChevronIcon?: React.FC<ISvgIcons>;
 };
 
-export const CollapsibleButton: FC<Props> = (props) => {
+export const CollapsibleButton: React.FC<Props> = (props) => {
   const {
     isOpen,
     title,

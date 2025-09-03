@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
 // plane imports
+import { memo } from "react";
 import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "../../utils/classname";
 
@@ -71,7 +71,7 @@ const PercentageText = ({
 );
 
 // Base Components
-const CustomBar = React.memo((props: TBarProps) => {
+const CustomBar = memo((props: TBarProps) => {
   const {
     opacity,
     fill,
@@ -118,7 +118,7 @@ const CustomBar = React.memo((props: TBarProps) => {
   );
 });
 
-const CustomBarLollipop = React.memo((props: TBarProps) => {
+const CustomBarLollipop = memo((props: TBarProps) => {
   const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage, dotted } = props;
 
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);

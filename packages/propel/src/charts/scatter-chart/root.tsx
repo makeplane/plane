@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import {
   CartesianGrid,
   ScatterChart as CoreScatterChart,
@@ -20,7 +20,7 @@ import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const ScatterChart = React.memo(<K extends string, T extends string>(props: TScatterChartProps<K, T>) => {
+export const ScatterChart = memo(<K extends string, T extends string>(props: TScatterChartProps<K, T>) => {
   const {
     data,
     scatterPoints,

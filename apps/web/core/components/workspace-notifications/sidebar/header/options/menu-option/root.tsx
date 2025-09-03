@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";
 // plane imports
@@ -17,8 +16,8 @@ export type TPopoverMenuOptions = {
   type: string;
   label?: string | undefined;
   isActive?: boolean | undefined;
-  prependIcon?: ReactNode | undefined;
-  appendIcon?: ReactNode | undefined;
+  prependIcon?: React.ReactNode | undefined;
+  appendIcon?: React.ReactNode | undefined;
   onClick?: (() => void) | undefined;
 };
 

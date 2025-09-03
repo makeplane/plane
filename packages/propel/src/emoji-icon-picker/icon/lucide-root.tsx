@@ -1,4 +1,3 @@
-import React from "react";
 import { LUCIDE_ICONS_LIST } from "../lucide-icons";
 
 type LucideIconsListProps = {

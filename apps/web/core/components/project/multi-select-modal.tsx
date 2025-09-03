@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";

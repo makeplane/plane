@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const SCROLL_BY = 3;
 
@@ -6,12 +6,12 @@ const AUTO_SCROLL_THRESHOLD = 15;
 const MAX_SPEED_THRESHOLD = 5;
 
 export const useAutoScroller = (
-  containerRef: RefObject<HTMLDivElement>,
+  containerRef: React.RefObject<HTMLDivElement | null>,
   shouldScroll = false,
   leftOffset = 0,
   topOffset = 0
 ) => {
-  const containerDimensions = useRef<DOMRect | undefined>();
+  const containerDimensions = useRef<DOMRect | undefined>(undefined);
   const intervalId = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const mousePosition = useRef<{ clientX: number; clientY: number } | undefined>(undefined);
 

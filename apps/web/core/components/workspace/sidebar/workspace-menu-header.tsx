@@ -1,4 +1,4 @@
-import { FC, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -19,7 +19,7 @@ export type SidebarWorkspaceMenuHeaderProps = {
   toggleWorkspaceMenu: (value: boolean) => void;
 };
 
-export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = observer((props) => {
+export const SidebarWorkspaceMenuHeader: React.FC<SidebarWorkspaceMenuHeaderProps> = observer((props) => {
   const { isWorkspaceMenuOpen, toggleWorkspaceMenu } = props;
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);

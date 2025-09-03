@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -16,7 +16,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "../dropdowns";
 
-export const ArchivedCyclesHeader: FC = observer(() => {
+export const ArchivedCyclesHeader: React.FC = observer(() => {
   // router
   const { projectId } = useParams();
   // refs

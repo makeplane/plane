@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
@@ -19,7 +19,7 @@ import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { TDropdownProps } from "../types";
 
 type Props = TDropdownProps & {
-  button?: ReactNode;
+  button?: React.ReactNode;
   currentProjectId?: string;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;

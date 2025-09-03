@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter, Search, X } from "lucide-react";
@@ -26,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
 // i18n
 
-export const ModuleViewHeader: FC = observer(() => {
+export const ModuleViewHeader: React.FC = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // router

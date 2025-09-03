@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ICircularProgressIndicator {
   size: number;
   percentage: number;

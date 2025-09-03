@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ModuleBacklogIcon } from "./backlog";
 import { ModuleCancelledIcon } from "./cancelled";
 import { ModuleCompletedIcon } from "./completed";

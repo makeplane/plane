@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Users } from "lucide-react";
@@ -9,7 +8,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props) => {
+export const IssueAssigneeActivity: React.FC<TIssueAssigneeActivity> = observer((props) => {
   const { activityId, ends, showIssue = true } = props;
   // hooks
   const {

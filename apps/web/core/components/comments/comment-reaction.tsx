@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,7 +16,7 @@ export type TProps = {
   activityOperations: TCommentsOperations;
 };
 
-export const CommentReactions: FC<TProps> = observer((props) => {
+export const CommentReactions: React.FC<TProps> = observer((props) => {
   const { comment, activityOperations, disabled = false } = props;
 
   const userReactions = activityOperations.userReactions(comment.id);

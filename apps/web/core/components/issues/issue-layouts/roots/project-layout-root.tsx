@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -38,7 +38,7 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
   }
 };
 
-export const ProjectLayoutRoot: FC = observer(() => {
+export const ProjectLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // hooks

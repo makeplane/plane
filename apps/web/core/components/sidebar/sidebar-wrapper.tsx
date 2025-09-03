@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -19,7 +19,7 @@ type TSidebarWrapperProps = {
   quickActions?: React.ReactNode;
 };
 
-export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
+export const SidebarWrapper: React.FC<TSidebarWrapperProps> = observer((props) => {
   const { children, title, quickActions } = props;
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();

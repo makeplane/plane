@@ -1,4 +1,4 @@
-import * as React from "react";
+import { forwardRef } from "react";
 import { cn } from "../utils";
 
 export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -7,7 +7,7 @@ export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonE
   compact?: boolean;
 }
 
-const OAuthButton = React.forwardRef<HTMLButtonElement, OAuthButtonProps>((props, ref) => {
+const OAuthButton = forwardRef<HTMLButtonElement, OAuthButtonProps>((props, ref) => {
   const { text, icon, compact = false, className = "", ...rest } = props;
 
   return (

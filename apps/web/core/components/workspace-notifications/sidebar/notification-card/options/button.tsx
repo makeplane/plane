@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
@@ -11,10 +10,10 @@ type TNotificationItemOptionButton = {
   tooltipContent?: string;
   buttonClassName?: string;
   callBack: () => void;
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
-export const NotificationItemOptionButton: FC<TNotificationItemOptionButton> = (props) => {
+export const NotificationItemOptionButton: React.FC<TNotificationItemOptionButton> = (props) => {
   const { tooltipContent = "", buttonClassName = "", children, callBack } = props;
   // hooks
   const { isMobile } = usePlatformOS();

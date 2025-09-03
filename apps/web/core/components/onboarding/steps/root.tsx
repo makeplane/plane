@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 // plane imports
 import { EOnboardingSteps, IWorkspaceMemberInvitation } from "@plane/types";
 // local components
@@ -16,7 +16,7 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-export const OnboardingStepRoot: FC<Props> = (props) => {
+export const OnboardingStepRoot: React.FC<Props> = (props) => {
   const { currentStep, invitations, handleStepChange } = props;
   // memoized step component mapping
   const stepComponents = useMemo(

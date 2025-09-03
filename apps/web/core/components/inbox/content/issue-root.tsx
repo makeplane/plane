@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -43,7 +43,7 @@ type Props = {
   inboxIssue: IInboxIssueStore;
   isEditable: boolean;
   isSubmitting: TNameDescriptionLoader;
-  setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
+  setIsSubmitting: React.Dispatch<React.SetStateAction<TNameDescriptionLoader>>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {

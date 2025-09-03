@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -16,7 +16,7 @@ type TProjectState = {
   projectId: string;
 };
 
-export const ProjectStateRoot: FC<TProjectState> = observer((props) => {
+export const ProjectStateRoot: React.FC<TProjectState> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // hooks
   const {

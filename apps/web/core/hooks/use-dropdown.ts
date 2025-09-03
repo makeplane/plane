@@ -6,7 +6,7 @@ import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "./use-platform-os";
 
 type TArguments = {
-  dropdownRef: React.RefObject<HTMLDivElement>;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
   inputRef?: React.RefObject<HTMLInputElement | null>;
   isOpen: boolean;
   onClose?: () => void;

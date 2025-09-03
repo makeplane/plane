@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 // plane imports
@@ -25,7 +25,7 @@ type TEstimatePointItemPreview = {
   handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
-export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
+export const EstimatePointItemPreview: React.FC<TEstimatePointItemPreview> = observer((props) => {
   const {
     workspaceSlug,
     projectId,

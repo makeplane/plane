@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "../type";
 import { DashedCircle } from "./dashed-circle";
 import { ProgressCircle } from "./progress-circle";

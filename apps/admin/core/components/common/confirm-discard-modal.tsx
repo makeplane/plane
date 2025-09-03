@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { Fragment } from "react";
 import Link from "next/link";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -17,10 +17,10 @@ export const ConfirmDiscardModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, onDiscardHref } = props;
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -33,7 +33,7 @@ export const ConfirmDiscardModal: React.FC<Props> = (props) => {
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-32">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

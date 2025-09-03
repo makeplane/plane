@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
@@ -62,7 +62,7 @@ export type PeekOverviewHeaderProps = {
   isSubmitting: TNameDescriptionLoader;
 };
 
-export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
+export const IssuePeekOverviewHeader: React.FC<PeekOverviewHeaderProps> = observer((props) => {
   const {
     peekMode,
     setPeekMode,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import {
@@ -32,7 +32,7 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteRoot: FC<Props> = observer((props) => {
+export const FavoriteRoot: React.FC<Props> = observer((props) => {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
@@ -57,7 +57,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        dragHandle: elementRef.current,
+        dragHandle: element,
         getInitialData: () => initialData,
         onDragStart: () => {
           setIsDragging(true);

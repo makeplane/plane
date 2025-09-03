@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const DiscordIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className }) => (

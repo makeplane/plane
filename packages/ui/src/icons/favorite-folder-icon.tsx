@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { ISvgIcons } from "./type";
 
 export const FavoriteFolderIcon: React.FC<ISvgIcons> = ({ className = "text-current", color = "#a3a3a3", ...rest }) => (

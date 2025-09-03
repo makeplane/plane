@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane types
@@ -18,7 +17,7 @@ type InboxIssueAppliedFiltersMember = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> = observer((props) => {
+export const InboxIssueAppliedFiltersMember: React.FC<InboxIssueAppliedFiltersMember> = observer((props) => {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

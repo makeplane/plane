@@ -1,7 +1,7 @@
 import { Menu } from "@headlessui/react";
 import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
-import * as React from "react";
-import ReactDOM from "react-dom";
+import { createContext, Fragment, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -25,9 +25,9 @@ interface PortalProps {
 }
 
 const Portal: React.FC<PortalProps> = ({ children, container, asChild = false }) => {
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
@@ -39,14 +39,14 @@ const Portal: React.FC<PortalProps> = ({ children, container, asChild = false })
   const targetContainer = container || document.body;
 
   if (asChild) {
-    return ReactDOM.createPortal(children, targetContainer);
+    return createPortal(children, targetContainer);
   }
 
-  return ReactDOM.createPortal(<div data-radix-portal="">{children}</div>, targetContainer);
+  return createPortal(<div data-radix-portal="">{children}</div>, targetContainer);
 };
 
 // Context for main menu to communicate with submenus
-const MenuContext = React.createContext<{
+const MenuContext = createContext<{
   closeAllSubmenus: () => void;
   registerSubmenu: (closeSubmenu: () => void) => () => void;
 } | null>(null);
@@ -79,22 +79,22 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     useCaptureForOutsideClick = false,
   } = props;
 
-  const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   // refs
-  const dropdownRef = React.useRef<HTMLDivElement | null>(null);
-  const submenuClosersRef = React.useRef<Set<() => void>>(new Set());
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const submenuClosersRef = useRef<Set<() => void>>(new Set());
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
   });
 
-  const closeAllSubmenus = React.useCallback(() => {
+  const closeAllSubmenus = useCallback(() => {
     submenuClosersRef.current.forEach((closeSubmenu) => closeSubmenu());
   }, []);
 
-  const registerSubmenu = React.useCallback((closeSubmenu: () => void) => {
+  const registerSubmenu = useCallback((closeSubmenu: () => void) => {
     submenuClosersRef.current.add(closeSubmenu);
     return () => {
       submenuClosersRef.current.delete(closeSubmenu);
@@ -106,7 +106,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     if (referenceElement) referenceElement.focus();
   };
 
-  const closeDropdown = React.useCallback(() => {
+  const closeDropdown = useCallback(() => {
     if (isOpen) {
       closeAllSubmenus();
       onMenuClose?.();
@@ -156,7 +156,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   useOutsideClickDetector(dropdownRef, closeDropdown, useCaptureForOutsideClick);
 
   // Custom handler for submenu portal clicks
-  React.useEffect(() => {
+  useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const isSubmenuClick = target.closest('[data-prevent-outside-click="true"]');
@@ -212,7 +212,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
   );
 
   if (portalElement) {
-    menuItems = ReactDOM.createPortal(menuItems, portalElement);
+    menuItems = createPortal(menuItems, portalElement);
   }
 
   return (
@@ -230,7 +230,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       {({ open }) => (
         <>
           {customButton ? (
-            <Menu.Button as={React.Fragment}>
+            <Menu.Button as={Fragment}>
               <button
                 ref={setReferenceElement}
                 type="button"
@@ -246,7 +246,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
           ) : (
             <>
               {ellipsis || verticalEllipsis ? (
-                <Menu.Button as={React.Fragment}>
+                <Menu.Button as={Fragment}>
                   <button
                     ref={setReferenceElement}
                     type="button"
@@ -262,7 +262,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   </button>
                 </Menu.Button>
               ) : (
-                <Menu.Button as={React.Fragment}>
+                <Menu.Button as={Fragment}>
                   <button
                     ref={setReferenceElement}
                     type="button"
@@ -293,10 +293,10 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
 };
 
 // SubMenu context for closing submenu from nested items
-const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(null);
+const SubMenuContext = createContext<{ closeSubmenu: () => void } | null>(null);
 
 // Hook to use submenu context
-const useSubMenu = () => React.useContext(SubMenuContext);
+const useSubMenu = () => useContext(SubMenuContext);
 
 // SubMenu implementation
 const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
@@ -309,12 +309,12 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
     placement = "right-start",
   } = props;
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [referenceElement, setReferenceElement] = React.useState<HTMLSpanElement | null>(null);
-  const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);
-  const submenuRef = React.useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const submenuRef = useRef<HTMLDivElement | null>(null);
 
-  const menuContext = React.useContext(MenuContext);
+  const menuContext = useContext(MenuContext);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement,
@@ -341,12 +341,12 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
     ],
   });
 
-  const closeSubmenu = React.useCallback(() => {
+  const closeSubmenu = useCallback(() => {
     setIsOpen(false);
   }, []);
 
   // Register this submenu with the main menu context
-  React.useEffect(() => {
+  useEffect(() => {
     if (menuContext) {
       return menuContext.registerSubmenu(closeSubmenu);
     }
@@ -369,7 +369,7 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
   };
 
   // Close submenu when clicking on other menu items
-  React.useEffect(() => {
+  useEffect(() => {
     const handleMenuItemClick = (e: Event) => {
       const target = e.target as HTMLElement;
       // Check if the click is on a menu item that's not part of this submenu

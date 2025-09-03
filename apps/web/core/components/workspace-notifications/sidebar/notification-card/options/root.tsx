@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -15,12 +14,12 @@ type TNotificationOption = {
   workspaceSlug: string;
   notificationId: string;
   isSnoozeStateModalOpen: boolean;
-  setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
+  setIsSnoozeStateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   customSnoozeModal: boolean;
-  setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
+  setCustomSnoozeModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const NotificationOption: FC<TNotificationOption> = observer((props) => {
+export const NotificationOption: React.FC<TNotificationOption> = observer((props) => {
   const {
     workspaceSlug,
     notificationId,

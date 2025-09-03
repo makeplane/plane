@@ -1,13 +1,12 @@
 "use client";
 
-import { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
 // local imports
 import type { TPopoverMenuOptions } from "./root";
 
-export const NotificationMenuOptionItem: FC<TPopoverMenuOptions> = observer((props) => {
+export const NotificationMenuOptionItem: React.FC<TPopoverMenuOptions> = observer((props) => {
   const { type, label = "", isActive, prependIcon, appendIcon, onClick } = props;
 
   if (type === "menu-item")

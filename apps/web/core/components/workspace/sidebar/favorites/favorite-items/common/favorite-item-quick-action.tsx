@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";
 // plane imports
@@ -10,14 +9,14 @@ import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {
-  ref: React.MutableRefObject<HTMLDivElement | null>;
+  ref: React.RefObject<HTMLDivElement | null>;
   isMenuActive: boolean;
   favorite: IFavorite;
   onChange: (value: boolean) => void;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
+export const FavoriteItemQuickAction: React.FC<Props> = observer((props) => {
   const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
   // translation
   const { t } = useTranslation();

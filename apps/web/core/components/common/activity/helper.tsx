@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import {
   Signal,
   RotateCcw,
@@ -30,7 +29,7 @@ import { store } from "@/lib/store-context";
 import { TProjectActivity } from "@/plane-web/types";
 
 type ActivityIconMap = {
-  [key: string]: ReactNode;
+  [key: string]: React.ReactNode;
 };
 export const iconsMap: ActivityIconMap = {
   priority: <Signal size={14} className="text-custom-text-200" />,
@@ -66,7 +65,9 @@ export const iconsMap: ActivityIconMap = {
   intake_view: <Intake className="h-3.5 w-3.5 text-custom-text-200" />,
 };
 
-export const messages = (activity: TProjectActivity): { message: string | ReactNode; customUserName?: string } => {
+export const messages = (
+  activity: TProjectActivity
+): { message: string | React.ReactNode; customUserName?: string } => {
   const activityType = activity.field;
   const newValue = activity.new_value;
   const oldValue = activity.old_value;

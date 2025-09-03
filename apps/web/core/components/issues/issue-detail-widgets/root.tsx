@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 // plane imports
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
@@ -18,7 +17,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgets: FC<Props> = (props) => {
+export const IssueDetailWidgets: React.FC<Props> = (props) => {
   const {
     workspaceSlug,
     projectId,

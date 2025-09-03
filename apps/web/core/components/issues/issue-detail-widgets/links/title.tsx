@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -17,7 +17,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
+export const IssueLinksCollapsibleTitle: React.FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled, issueServiceType } = props;
   // translation
   const { t } = useTranslation();

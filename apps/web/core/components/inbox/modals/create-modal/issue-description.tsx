@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -27,13 +26,13 @@ type TInboxIssueDescription = {
   workspaceId: string;
   data: Partial<TIssue>;
   handleData: (issueKey: keyof Partial<TIssue>, issueValue: Partial<TIssue>[keyof Partial<TIssue>]) => void;
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: React.RefObject<EditorRefApi | null>;
   onEnterKeyPress?: (e?: any) => void;
   onAssetUpload?: (assetId: string) => void;
 };
 
 // TODO: have to implement GPT Assistance
-export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
+export const InboxIssueDescription: React.FC<TInboxIssueDescription> = observer((props) => {
   const {
     containerClassName,
     workspaceSlug,

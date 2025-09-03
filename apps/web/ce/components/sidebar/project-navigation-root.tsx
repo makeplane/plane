@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // components
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 
@@ -9,7 +8,7 @@ type TProjectItemsRootProps = {
   projectId: string;
 };
 
-export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
+export const ProjectNavigationRoot: React.FC<TProjectItemsRootProps> = (props) => {
   const { workspaceSlug, projectId } = props;
   return <ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />;
 };

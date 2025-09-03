@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -13,14 +12,14 @@ import { IssueCreatorDisplay } from "@/plane-web/components/issues/issue-details
 import { IssueUser } from "../";
 
 type TIssueActivityBlockComponent = {
-  icon?: ReactNode;
+  icon?: React.ReactNode;
   activityId: string;
   ends: "top" | "bottom" | undefined;
-  children: ReactNode;
+  children: React.ReactNode;
   customUserName?: string;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
+export const IssueActivityBlockComponent: React.FC<TIssueActivityBlockComponent> = (props) => {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {

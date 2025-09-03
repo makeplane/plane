@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // hooks
 // ui
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
@@ -22,7 +21,7 @@ export type TIssueLinkDetail = {
   isNotAllowed: boolean;
 };
 
-export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
+export const IssueLinkDetail: React.FC<TIssueLinkDetail> = (props) => {
   // props
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks

@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 // plane imports
 import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@plane/constants";
 // components
@@ -13,7 +12,7 @@ export type TActivityFilterRoot = {
   isIntakeIssue?: boolean;
 };
 
-export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
+export const ActivityFilterRoot: React.FC<TActivityFilterRoot> = (props) => {
   const { selectedFilters, toggleFilter } = props;
 
   const filters: TActivityFilterOption[] = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).map(([key, value]) => {

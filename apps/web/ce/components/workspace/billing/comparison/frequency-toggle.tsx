@@ -1,4 +1,3 @@
-import { FC } from "react";
 // plane imports
 import { observer } from "mobx-react";
 import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
@@ -13,7 +12,7 @@ type TPlanFrequencyToggleProps = {
   setSelectedFrequency: (frequency: TBillingFrequency) => void;
 };
 
-export const PlanFrequencyToggle: FC<TPlanFrequencyToggleProps> = observer((props) => {
+export const PlanFrequencyToggle: React.FC<TPlanFrequencyToggleProps> = observer((props) => {
   const { subscriptionType, monthlyPrice, yearlyPrice, selectedFrequency, setSelectedFrequency } = props;
   // derived values
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);

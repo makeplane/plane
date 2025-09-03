@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 // image
 import FigmaFileIcon from "@/public/attachment/figma-icon.png";

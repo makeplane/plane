@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage } from "@plane/types";
@@ -22,7 +22,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const CreatePageModal: FC<Props> = (props) => {
+export const CreatePageModal: React.FC<Props> = (props) => {
   const {
     workspaceSlug,
     projectId,

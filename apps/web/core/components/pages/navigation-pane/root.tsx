@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { Fragment, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
@@ -106,7 +106,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (
-          <Tab.Group as={React.Fragment} selectedIndex={selectedIndex} onChange={handleTabChange}>
+          <Tab.Group as={Fragment} selectedIndex={selectedIndex} onChange={handleTabChange}>
             <PageNavigationPaneTabsList />
             <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
           </Tab.Group>

@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 // helpers
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";

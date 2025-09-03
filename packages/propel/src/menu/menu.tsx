@@ -1,20 +1,20 @@
-import * as React from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
 import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "../utils/classname";
 import { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
 // Context for main menu to communicate with submenus
-const MenuContext = React.createContext<{
+const MenuContext = createContext<{
   closeAllSubmenus: () => void;
   registerSubmenu: (closeSubmenu: () => void) => () => void;
 } | null>(null);
 
 // SubMenu context for closing submenu from nested items
-const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(null);
+const SubMenuContext = createContext<{ closeSubmenu: () => void } | null>(null);
 
 // Hook to use submenu context
-const useSubMenu = () => React.useContext(SubMenuContext);
+const useSubMenu = () => useContext(SubMenuContext);
 
 // SubMenu implementation
 const SubMenu: React.FC<TSubMenuProps> = (props) => {
@@ -84,15 +84,15 @@ function Menu(props: TMenuProps) {
     handleOpenChange = () => {},
   } = props;
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   // refs
-  const submenuClosersRef = React.useRef<Set<() => void>>(new Set());
+  const submenuClosersRef = useRef<Set<() => void>>(new Set());
 
-  const closeAllSubmenus = React.useCallback(() => {
+  const closeAllSubmenus = useCallback(() => {
     submenuClosersRef.current.forEach((closeSubmenu) => closeSubmenu());
   }, []);
 
-  const registerSubmenu = React.useCallback((closeSubmenu: () => void) => {
+  const registerSubmenu = useCallback((closeSubmenu: () => void) => {
     submenuClosersRef.current.add(closeSubmenu);
     return () => {
       submenuClosersRef.current.delete(closeSubmenu);
@@ -102,7 +102,7 @@ function Menu(props: TMenuProps) {
     setIsOpen(true);
   };
 
-  const closeDropdown = React.useCallback(() => {
+  const closeDropdown = useCallback(() => {
     if (isOpen) {
       closeAllSubmenus();
       onMenuClose?.();

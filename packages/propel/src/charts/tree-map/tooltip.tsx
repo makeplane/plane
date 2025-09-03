@@ -1,5 +1,5 @@
-import React from "react";
 // plane imports
+import { memo } from "react";
 import { Card, ECardSpacing } from "../../card";
 
 interface TreeMapTooltipProps {
@@ -7,7 +7,7 @@ interface TreeMapTooltipProps {
   payload: any[] | undefined;
 }
 
-export const TreeMapTooltip = React.memo(({ active, payload }: TreeMapTooltipProps) => {
+export const TreeMapTooltip = memo(({ active, payload }: TreeMapTooltipProps) => {
   if (!active || !payload || !payload[0]?.payload) return null;
 
   const data = payload[0].payload;

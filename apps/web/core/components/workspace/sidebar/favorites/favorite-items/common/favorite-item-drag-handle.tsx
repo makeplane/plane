@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -14,7 +13,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
+export const FavoriteItemDragHandle: React.FC<Props> = observer((props) => {
   const { sort_order, isDragging } = props;
   // store hooks
   const { isMobile } = usePlatformOS();

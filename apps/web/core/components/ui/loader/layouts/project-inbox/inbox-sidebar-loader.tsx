@@ -1,4 +1,3 @@
-import React from "react";
 import range from "lodash/range";
 
 export const InboxSidebarLoader = () => (

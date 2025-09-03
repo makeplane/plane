@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SyntheticEvent, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -143,7 +143,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+  const handleEventPropagation = (e: React.SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };

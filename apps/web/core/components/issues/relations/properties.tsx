@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { EIssueServiceType, TIssuePriorities, TIssueServiceType } from "@plane/types";
@@ -19,7 +18,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueProperty: FC<Props> = observer((props) => {
+export const RelationIssueProperty: React.FC<Props> = observer((props) => {
   const { workspaceSlug, issueId, disabled, issueOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks
   const {

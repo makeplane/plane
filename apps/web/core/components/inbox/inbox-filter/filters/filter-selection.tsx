@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // hooks
@@ -14,7 +14,7 @@ import { FilterPriority } from "./priority";
 import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
-export const InboxIssueFilterSelection: FC = observer(() => {
+export const InboxIssueFilterSelection: React.FC = observer(() => {
   // hooks
   const { isMobile } = usePlatformOS();
   const {

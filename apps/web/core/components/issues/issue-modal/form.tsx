@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -48,7 +48,7 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
-  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
+  issueTitleRef: React.RefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
@@ -70,7 +70,7 @@ export interface IssueFormProps {
   storeType: EIssuesStoreType;
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot: React.FC<IssueFormProps> = observer((props) => {
   const { t } = useTranslation();
   const {
     data,

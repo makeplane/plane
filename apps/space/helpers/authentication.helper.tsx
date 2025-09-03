@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Link from "next/link";
 // helpers
 import { SUPPORT_EMAIL } from "./common.helper";
@@ -83,11 +82,11 @@ export type TAuthErrorInfo = {
   type: EErrorAlertType;
   code: EAuthenticationErrorCodes;
   title: string;
-  message: ReactNode;
+  message: React.ReactNode;
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {

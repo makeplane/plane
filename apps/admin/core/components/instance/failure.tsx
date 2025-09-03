@@ -1,5 +1,4 @@
 "use client";
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -9,7 +8,7 @@ import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import InstanceFailureDarkImage from "@/public/instance/instance-failure-dark.svg";
 import InstanceFailureImage from "@/public/instance/instance-failure.svg";
 
-export const InstanceFailureView: FC = observer(() => {
+export const InstanceFailureView: React.FC = observer(() => {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;

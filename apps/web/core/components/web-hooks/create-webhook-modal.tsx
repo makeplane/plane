@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // types
 import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";

@@ -1,5 +1,4 @@
 "use client";
-import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
@@ -15,7 +14,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const ProjectAttributes: FC<Props> = (props) => {
+const ProjectAttributes: React.FC<Props> = (props) => {
   const { isMobile = false } = props;
   const { t } = useTranslation();
   const { control } = useFormContext<IProject>();

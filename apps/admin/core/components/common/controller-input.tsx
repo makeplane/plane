@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, Control } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";

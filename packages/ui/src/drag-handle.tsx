@@ -1,5 +1,5 @@
 import { MoreVertical } from "lucide-react";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 // helpers
 import { cn } from "./utils";
 

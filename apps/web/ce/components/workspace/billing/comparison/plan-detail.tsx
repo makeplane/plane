@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -29,7 +28,7 @@ type TPlanDetailProps = {
 const COMMON_BUTTON_STYLE =
   "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
 
-export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
+export const PlanDetail: React.FC<TPlanDetailProps> = observer((props) => {
   const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
   // plane hooks
   const { t } = useTranslation();

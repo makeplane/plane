@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
@@ -21,7 +21,7 @@ export type TBasePaidPlanCardProps = {
   renderActionButton: (price: TSubscriptionPrice) => React.ReactNode;
 };
 
-export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => {
+export const BasePaidPlanCard: React.FC<TBasePaidPlanCardProps> = observer((props) => {
   const {
     planVariant,
     features,

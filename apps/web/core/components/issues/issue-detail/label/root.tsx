@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
@@ -31,7 +31,7 @@ export type TLabelOperations = {
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
-export const IssueLabel: FC<TIssueLabel> = observer((props) => {
+export const IssueLabel: React.FC<TIssueLabel> = observer((props) => {
   const {
     workspaceSlug,
     projectId,

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 // icons
 import { SquareArrowOutUpRight } from "lucide-react";
 // plane internal packages

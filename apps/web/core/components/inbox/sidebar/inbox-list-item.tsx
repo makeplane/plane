@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -28,7 +27,7 @@ type InboxIssueListItemProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
+export const InboxIssueListItem: React.FC<InboxIssueListItemProps> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const searchParams = useSearchParams();
@@ -41,7 +40,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
   const issue = inboxIssue?.issue;
 
-  const handleIssueRedirection = (event: MouseEvent, currentIssueId: string | undefined) => {
+  const handleIssueRedirection = (event: React.MouseEvent<HTMLAnchorElement>, currentIssueId: string | undefined) => {
     if (selectedInboxIssueId === currentIssueId) event.preventDefault();
     setIsMobileSidebar(false);
   };

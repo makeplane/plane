@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +18,7 @@ import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
 import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
-export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
+export const InstanceProvider = observer(({ children }: { children: React.ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();
   const { fetchCurrentUser } = useUser();
   const { resolvedTheme } = useTheme();

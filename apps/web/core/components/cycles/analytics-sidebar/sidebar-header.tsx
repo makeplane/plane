@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -41,7 +41,7 @@ const defaultValues: Partial<ICycle> = {
 
 const cycleService = new CycleService();
 
-export const CycleSidebarHeader: FC<Props> = observer((props) => {
+export const CycleSidebarHeader: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
   // hooks
   const { allowPermissions } = useUserPermissions();

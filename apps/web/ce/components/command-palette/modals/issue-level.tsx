@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -19,7 +18,7 @@ export type TIssueLevelModalsProps = {
   issueId: string | undefined;
 };
 
-export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
+export const IssueLevelModals: React.FC<TIssueLevelModalsProps> = observer((props) => {
   const { projectId, issueId } = props;
   // router
   const { workspaceSlug, cycleId, moduleId } = useParams();

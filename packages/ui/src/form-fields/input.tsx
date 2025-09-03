@@ -1,5 +1,5 @@
-import * as React from "react";
 // helpers
+import { forwardRef } from "react";
 import { cn } from "../utils";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +10,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   autoComplete?: "on" | "off";
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     id,
     type,

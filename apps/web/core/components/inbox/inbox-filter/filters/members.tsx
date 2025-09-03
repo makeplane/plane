@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // plane types
@@ -23,7 +23,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMember: FC<Props> = observer((props: Props) => {
+export const FilterMember: React.FC<Props> = observer((props: Props) => {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

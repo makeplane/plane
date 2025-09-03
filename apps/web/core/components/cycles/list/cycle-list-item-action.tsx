@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -42,7 +42,7 @@ type Props = {
   projectId: string;
   cycleId: string;
   cycleDetails: ICycle;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
   isActive?: boolean;
 };
 
@@ -51,7 +51,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleListItemAction: FC<Props> = observer((props) => {
+export const CycleListItemAction: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
   // router
   const { projectId: routerProjectId } = useParams();
@@ -104,7 +104,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   );
 
   // handlers
-  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
@@ -141,7 +141,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
-  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
@@ -187,7 +187,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   }, [cycleDetails, reset]);
 
   // handlers
-  const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+  const openCycleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
     e.stopPropagation();
 

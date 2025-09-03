@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // hooks
@@ -21,7 +21,7 @@ export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, worksp
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
   // refs
-  const ref = React.useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { fetchModuleDetails, fetchArchivedModuleDetails } = useModule();
 

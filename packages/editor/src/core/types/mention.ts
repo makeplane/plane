@@ -20,6 +20,6 @@ export type TMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier
 
 export type TMentionHandler = {
   getMentionedEntityDetails?: (entity_identifier: string) => { display_name: string } | undefined;
-  renderComponent: (props: TMentionComponentProps) => React.ReactNode;
+  renderComponent: React.FC<TMentionComponentProps>;
   searchCallback?: (query: string) => Promise<TMentionSection[]>;
 };

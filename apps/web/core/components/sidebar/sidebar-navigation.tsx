@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -9,7 +8,7 @@ type TSidebarNavItem = {
   children?: React.ReactNode;
 };
 
-export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
+export const SidebarNavItem: React.FC<TSidebarNavItem> = (props) => {
   const { className, isActive, children } = props;
   return (
     <div

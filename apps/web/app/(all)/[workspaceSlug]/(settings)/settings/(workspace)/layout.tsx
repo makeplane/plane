@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // constants
@@ -16,10 +15,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
 export interface IWorkspaceSettingLayout {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
+const WorkspaceSettingLayout: React.FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();

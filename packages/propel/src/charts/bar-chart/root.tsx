@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { isValidElement, memo, useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
   Bar,
@@ -21,7 +21,7 @@ import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 import { barShapeVariants } from "./bar";
 
-export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
+export const BarChart = memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
     data,
     bars,
@@ -69,7 +69,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           shape={(shapeProps: any) => {
             const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
             const node = shapeVariant(shapeProps, bar, stackKeys);
-            return React.isValidElement(node) ? node : <>{node}</>;
+            return isValidElement(node) ? node : <>{node}</>;
           }}
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}

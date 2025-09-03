@@ -1,6 +1,6 @@
 import { Popover, Tab } from "@headlessui/react";
 import EmojiPicker from "emoji-picker-react";
-import React, { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -52,7 +52,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
   return (
     <Popover as="div" className={cn("relative", className)}>
       <>
-        <Popover.Button as={React.Fragment}>
+        <Popover.Button as={Fragment}>
           <button
             type="button"
             ref={setReferenceElement}

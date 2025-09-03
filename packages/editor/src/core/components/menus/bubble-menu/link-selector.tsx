@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/core";
 import { Check, Link, Trash2 } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -12,10 +12,10 @@ import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
 type Props = {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const BubbleMenuLinkSelector: FC<Props> = (props) => {
+export const BubbleMenuLinkSelector: React.FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
   // states
   const [error, setError] = useState(false);

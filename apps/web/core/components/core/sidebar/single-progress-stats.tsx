@@ -1,5 +1,3 @@
-import React from "react";
-
 type TSingleProgressStatsProps = {
   title: any;
   completed: number;

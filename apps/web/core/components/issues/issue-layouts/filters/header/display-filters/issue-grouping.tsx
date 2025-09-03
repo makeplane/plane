@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { TIssueGroupingFilters } from "@plane/types";
 // components
@@ -23,7 +23,7 @@ const ISSUE_FILTER_OPTIONS: {
 export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   const { selectedIssueType, handleUpdate, isEpic = false } = props;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
+  const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const activeIssueType = selectedIssueType ?? null;
 

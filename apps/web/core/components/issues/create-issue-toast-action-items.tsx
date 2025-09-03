@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // plane imports
@@ -15,7 +15,7 @@ type TCreateIssueToastActionItems = {
   isEpic?: boolean;
 };
 
-export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = observer((props) => {
+export const CreateIssueToastActionItems: React.FC<TCreateIssueToastActionItems> = observer((props) => {
   const { workspaceSlug, projectId, issueId, isEpic = false } = props;
   // state
   const [copied, setCopied] = useState(false);

@@ -44,7 +44,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
 };
 
 const RichTextEditorWithRef = forwardRef<EditorRefApi, IRichTextEditorProps>((props, ref) => (
-  <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+  <RichTextEditor {...props} forwardedRef={ref} />
 ));
 
 RichTextEditorWithRef.displayName = "RichTextEditorWithRef";

@@ -1,5 +1,5 @@
 import { Combobox } from "@headlessui/react";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 // helper
 import { cn } from "../../utils";
 import { IMultiSelectDropdownButton, ISingleSelectDropdownButton } from "../dropdown";

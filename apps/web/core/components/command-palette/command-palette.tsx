@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -33,7 +33,7 @@ import {
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
 
-export const CommandPalette: FC = observer(() => {
+export const CommandPalette: React.FC = observer(() => {
   // router params
   const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
   // store hooks

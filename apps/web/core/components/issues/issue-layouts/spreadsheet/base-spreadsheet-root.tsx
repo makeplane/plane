@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -24,7 +24,7 @@ export type SpreadsheetStoreType =
   | EIssuesStoreType.EPIC;
 
 interface IBaseSpreadsheetRoot {
-  QuickActions: FC<IQuickActionProps>;
+  QuickActions: React.FC<IQuickActionProps>;
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
   isCompletedCycle?: boolean;
   viewId?: string | undefined;

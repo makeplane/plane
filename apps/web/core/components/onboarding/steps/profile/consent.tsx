@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { Check } from "lucide-react";
 
 type Props = {
@@ -8,7 +7,7 @@ type Props = {
   handleChange: (checked: boolean) => void;
 };
 
-export const MarketingConsent: FC<Props> = ({ isChecked, handleChange }) => (
+export const MarketingConsent: React.FC<Props> = ({ isChecked, handleChange }) => (
   <div className="flex items-center justify-center gap-1.5">
     <button
       type="button"

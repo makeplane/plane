@@ -44,7 +44,7 @@ export class Server {
 
   private async setupHocusPocus() {
     this.hocuspocusServer = await getHocusPocusServer().catch((err) => {
-      manualLogger.error("Failed to initialize HocusPocusServer:", err);
+      manualLogger.error({ err }, "Failed to initialize HocusPocusServer:");
       process.exit(1);
     });
   }
@@ -58,7 +58,7 @@ export class Server {
       try {
         this.hocuspocusServer.handleConnection(ws, req);
       } catch (err) {
-        manualLogger.error("WebSocket connection error:", err);
+        manualLogger.error({ err }, "WebSocket connection error:");
         ws.close();
       }
     });
@@ -81,7 +81,7 @@ export class Server {
           description_binary,
         });
       } catch (error) {
-        manualLogger.error("Error in /convert-document endpoint:", error);
+        manualLogger.error({ err: error }, "Error in /convert-document endpoint:");
         res.status(500).json({
           message: `Internal server error.`,
         });
@@ -118,14 +118,14 @@ server.listen();
 
 // Graceful shutdown on unhandled rejection
 process.on("unhandledRejection", async (err: any) => {
-  manualLogger.info("Unhandled Rejection: ", err);
+  manualLogger.info({ err }, "Unhandled Rejection:");
   manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
   await server.destroy();
 });
 
 // Graceful shutdown on uncaught exception
 process.on("uncaughtException", async (err: any) => {
-  manualLogger.info("Uncaught Exception: ", err);
+  manualLogger.info({ err }, "Uncaught Exception:");
   manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
   await server.destroy();
 });

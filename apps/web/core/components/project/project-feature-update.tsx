@@ -1,6 +1,5 @@
 "use client";
 
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +17,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
+export const ProjectFeatureUpdate: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, onClose } = props;
   // store hooks
   const { t } = useTranslation();

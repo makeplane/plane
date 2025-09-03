@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -34,11 +34,11 @@ import { persistence } from "@/local-db/storage.sqlite";
 interface IProjectAuthWrapper {
   workspaceSlug: string;
   projectId: string;
-  children: ReactNode;
+  children: React.ReactNode;
   isLoading?: boolean;
 }
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
+export const ProjectAuthWrapper: React.FC<IProjectAuthWrapper> = observer((props) => {
   const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
   // plane hooks
   const { t } = useTranslation();

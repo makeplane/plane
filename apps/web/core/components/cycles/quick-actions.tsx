@@ -28,7 +28,7 @@ import { CycleDeleteModal } from "./delete-modal";
 import { CycleCreateUpdateModal } from "./modal";
 
 type Props = {
-  parentRef: React.RefObject<HTMLElement>;
+  parentRef: React.RefObject<HTMLElement | null>;
   cycleId: string;
   projectId: string;
   workspaceSlug: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/types";
@@ -39,7 +39,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; i18n_label: string }[]
   },
 ];
 
-export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
+export const InboxSidebar: React.FC<IInboxSidebarProps> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // router
   const router = useAppRouter();

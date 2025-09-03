@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react";
 import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 // types
@@ -38,7 +37,7 @@ export interface IKanBan {
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
-  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  scrollableContainerRef?: React.RefObject<HTMLDivElement | null>;
   showEmptyGroup?: boolean;
 }
 

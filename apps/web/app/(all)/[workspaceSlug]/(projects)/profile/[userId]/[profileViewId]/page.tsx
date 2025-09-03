@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core/page-title";

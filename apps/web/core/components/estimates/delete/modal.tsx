@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
@@ -19,7 +19,7 @@ type TDeleteEstimateModal = {
   handleClose: () => void;
 };
 
-export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) => {
+export const DeleteEstimateModal: React.FC<TDeleteEstimateModal> = observer((props) => {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks

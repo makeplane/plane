@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
@@ -26,7 +25,7 @@ type TIssueActivityCommentRoot = {
   sortOrder: E_SORT_ORDER;
 };
 
-export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
+export const IssueActivityCommentRoot: React.FC<TIssueActivityCommentRoot> = observer((props) => {
   const {
     workspaceSlug,
     isIntakeIssue,

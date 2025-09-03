@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useMemo, FC } from "react";
+import { useMemo, memo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Breadcrumbs } from "@plane/ui";
@@ -14,19 +14,19 @@ type Props = {
   isLast?: boolean;
 };
 
-const IconWrapper = React.memo(({ icon }: { icon: React.ReactNode }) => (
+const IconWrapper = memo(({ icon }: { icon: React.ReactNode }) => (
   <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>
 ));
 
 IconWrapper.displayName = "IconWrapper";
 
-const LabelWrapper = React.memo(({ label }: { label: ReactNode }) => (
+const LabelWrapper = memo(({ label }: { label: React.ReactNode }) => (
   <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
 ));
 
 LabelWrapper.displayName = "LabelWrapper";
 
-const BreadcrumbContent = React.memo(({ icon, label }: { icon?: React.ReactNode; label?: ReactNode }) => {
+const BreadcrumbContent = memo(({ icon, label }: { icon?: React.ReactNode; label?: React.ReactNode }) => {
   if (!icon && !label) return null;
 
   return (
@@ -39,13 +39,13 @@ const BreadcrumbContent = React.memo(({ icon, label }: { icon?: React.ReactNode;
 
 BreadcrumbContent.displayName = "BreadcrumbContent";
 
-const ItemWrapper = React.memo(({ children, ...props }: React.ComponentProps<typeof Breadcrumbs.ItemWrapper>) => (
+const ItemWrapper = memo(({ children, ...props }: React.ComponentProps<typeof Breadcrumbs.ItemWrapper>) => (
   <Breadcrumbs.ItemWrapper {...props}>{children}</Breadcrumbs.ItemWrapper>
 ));
 
 ItemWrapper.displayName = "ItemWrapper";
 
-export const BreadcrumbLink: FC<Props> = observer((props) => {
+export const BreadcrumbLink: React.FC<Props> = observer((props) => {
   const { href, label, icon, disableTooltip = false, isLast = false } = props;
   const { isMobile } = usePlatformOS();
 

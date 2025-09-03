@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
@@ -35,7 +35,7 @@ type TIssueAttachmentsDetail = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((props) => {
+export const IssueAttachmentsDetail: React.FC<TIssueAttachmentsDetail> = observer((props) => {
   // props
   const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks

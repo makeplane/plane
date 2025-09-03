@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -25,7 +25,7 @@ const defaultValues: Partial<IProject> = {
 type TDefaultSettingItemProps = {
   title: string;
   description: string;
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 const DefaultSettingItem: React.FC<TDefaultSettingItemProps> = ({ title, description, children }) => (

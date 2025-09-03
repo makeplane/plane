@@ -1,6 +1,5 @@
 "use client";
 
-import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
@@ -14,14 +13,14 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { User } from "./user";
 
 type TActivityBlockComponent = {
-  icon?: ReactNode;
+  icon?: React.ReactNode;
   activity: TWorkspaceBaseActivity;
   ends: "top" | "bottom" | undefined;
-  children: ReactNode;
+  children: React.ReactNode;
   customUserName?: string;
 };
 
-export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
+export const ActivityBlockComponent: React.FC<TActivityBlockComponent> = (props) => {
   const { icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();

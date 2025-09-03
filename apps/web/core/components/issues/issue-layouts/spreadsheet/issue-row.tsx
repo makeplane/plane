@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
@@ -37,11 +37,11 @@ interface Props {
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  portalElement: React.MutableRefObject<HTMLDivElement | null>;
+  portalElement: React.RefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
-  isScrolled: MutableRefObject<boolean>;
-  containerRef: MutableRefObject<HTMLTableElement | null>;
+  isScrolled: React.RefObject<boolean>;
+  containerRef: React.RefObject<HTMLTableElement | null>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -149,12 +149,12 @@ interface IssueRowDetailsProps {
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  portalElement: React.MutableRefObject<HTMLDivElement | null>;
+  portalElement: React.RefObject<HTMLDivElement | null>;
   nestingLevel: number;
   issueId: string;
-  isScrolled: MutableRefObject<boolean>;
+  isScrolled: React.RefObject<boolean>;
   isExpanded: boolean;
-  setExpanded: Dispatch<SetStateAction<boolean>>;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -217,7 +217,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   );
   if (!issueDetail) return null;
 
-  const handleToggleExpand = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleToggleExpand = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (nestingLevel >= 3) {

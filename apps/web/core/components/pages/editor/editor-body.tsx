@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
@@ -52,8 +52,8 @@ export type TEditorBodyHandlers = {
 type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
-  editorForwardRef: React.RefObject<EditorRefApi>;
-  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
+  editorForwardRef: React.RefObject<EditorRefApi | null>;
+  handleConnectionStatus: React.Dispatch<React.SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
@@ -241,7 +241,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               if (!res) throw new Error("Failed in fetching mentions");
               return res;
             },
-            renderComponent: (props) => <EditorMentionsRoot {...props} />,
+            renderComponent: EditorMentionsRoot,
             getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
           }}
           embedHandler={{

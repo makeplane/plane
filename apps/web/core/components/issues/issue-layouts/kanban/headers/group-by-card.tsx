@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
@@ -35,7 +35,7 @@ interface IHeaderGroupByCard {
   isEpic?: boolean;
 }
 
-export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard: React.FC<IHeaderGroupByCard> = observer((props) => {
   const {
     group_by,
     sub_group_by,
@@ -52,8 +52,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   } = props;
   const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
   // states
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // hooks
   const storeType = useIssueStoreType();
   // router
@@ -75,7 +75,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

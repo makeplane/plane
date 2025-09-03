@@ -1,5 +1,4 @@
 "use client";
-import React, { FC } from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import { ControlLink, Row } from "@plane/ui";
@@ -17,7 +16,7 @@ interface IListItemProps {
   appendTitleElement?: React.ReactNode;
   actionableItems?: React.ReactNode;
   isMobile?: boolean;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
   disableLink?: boolean;
   className?: string;
   itemClassName?: string;
@@ -29,7 +28,7 @@ interface IListItemProps {
   rightElementClassName?: string;
 }
 
-export const ListItem: FC<IListItemProps> = (props) => {
+export const ListItem: React.FC<IListItemProps> = (props) => {
   const {
     id,
     title,

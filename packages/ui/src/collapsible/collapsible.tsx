@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import React, { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export type TCollapsibleProps = {
   title: string | React.ReactNode;
@@ -12,7 +12,7 @@ export type TCollapsibleProps = {
   defaultOpen?: boolean;
 };
 
-export const Collapsible: FC<TCollapsibleProps> = (props) => {
+export const Collapsible: React.FC<TCollapsibleProps> = (props) => {
   const { title, children, buttonRef, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, X } from "lucide-react";

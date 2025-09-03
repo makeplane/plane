@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, FormState } from "react-hook-form";
 // plane imports
@@ -17,7 +16,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueTitleInputProps = {
   control: Control<TIssue>;
-  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
+  issueTitleRef: React.RefObject<HTMLInputElement | null>;
   formState: FormState<TIssue>;
   handleFormChange: () => void;
 };

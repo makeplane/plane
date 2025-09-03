@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
@@ -29,7 +29,7 @@ type TEstimatePointUpdate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
+export const EstimatePointUpdate: React.FC<TEstimatePointUpdate> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
@@ -69,16 +69,16 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   const handleEstimateInputValue = (value: string) => {
     if (value.length <= MAX_ESTIMATE_POINT_INPUT_LENGTH) {
       setEstimateInputValue(() => value);
-      handleEstimatePointError && handleEstimatePointError(value, undefined);
+      handleEstimatePointError?.(value, undefined);
     }
   };
 
-  const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
+  const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!workspaceSlug || !projectId) return;
 
-    handleEstimatePointError && handleEstimatePointError(estimateInputValue || "", undefined, "delete");
+    handleEstimatePointError?.(estimateInputValue || "", undefined, "delete");
 
     if (estimateInputValue) {
       const currentEstimateType: EEstimateSystem | undefined = estimateType;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
@@ -30,7 +30,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         }
         return (
           <>
-            <Popover.Button as={React.Fragment}>
+            <Popover.Button as={Fragment}>
               <Button ref={setReferenceElement} variant="neutral-primary" size="sm">
                 <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
                   <span>{title}</span>

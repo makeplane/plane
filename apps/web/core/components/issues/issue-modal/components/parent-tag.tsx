@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 import { X } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -37,7 +37,7 @@ import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
-export const AuthRoot: FC = observer(() => {
+export const AuthRoot: React.FC = observer(() => {
   // router params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;

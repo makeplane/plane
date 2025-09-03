@@ -29,7 +29,7 @@ export const updatePageDescription = async (
 
     await pageService.updateDescription(workspaceSlug, projectId, pageId, payload, cookie);
   } catch (error) {
-    manualLogger.error("Update error:", error);
+    manualLogger.error({ err: error }, "Update error:");
     throw error;
   }
 };
@@ -47,7 +47,7 @@ const fetchDescriptionHTMLAndTransform = async (
     const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
     return contentBinary;
   } catch (error) {
-    manualLogger.error("Error while transforming from HTML to Uint8Array", error);
+    manualLogger.error({ err: error }, "Error while transforming from HTML to Uint8Array");
     throw error;
   }
 };
@@ -74,7 +74,7 @@ export const fetchPageDescriptionBinary = async (
 
     return binaryData;
   } catch (error) {
-    manualLogger.error("Fetch error:", error);
+    manualLogger.error({ err: error }, "Fetch error:");
     throw error;
   }
 };
