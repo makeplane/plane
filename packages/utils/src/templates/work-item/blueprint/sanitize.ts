@@ -162,7 +162,7 @@ export const sanitizeCustomPropertyValues = (params: TSanitizeCustomPropertyValu
   return Object.keys(customPropertyValues).reduce<TIssuePropertyValues>((acc, propertyId) => {
     const property = getPropertyById(propertyId);
     if (property && property.id && property.is_active) {
-      acc[propertyId] = customPropertyValues[propertyId];
+      acc[propertyId] = customPropertyValues[propertyId] ?? [];
     }
     return acc;
   }, {});

@@ -152,7 +152,7 @@ export const WorkItemBlueprintListRoot = observer(<T extends FieldValues>(props:
     setSelectedWorkItem(workItem);
     // preload the custom property values
     if (workItemListCustomPropertyValues) {
-      setSelectedWorkItemCustomPropertyValues(workItemListCustomPropertyValues[workItem.id]);
+      setSelectedWorkItemCustomPropertyValues(workItemListCustomPropertyValues[workItem.id] ?? null);
     }
   };
 

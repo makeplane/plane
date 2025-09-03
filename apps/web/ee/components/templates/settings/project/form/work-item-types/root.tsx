@@ -36,7 +36,7 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
   // derived values
   const workItemTypes = watch("project.workitem_types");
   const workItemTypeIds = Object.keys(workItemTypes);
-  const defaultWorkItemTypeId = workItemTypeIds.find((workItemTypeId) => workItemTypes[workItemTypeId].is_default);
+  const defaultWorkItemTypeId = workItemTypeIds.find((workItemTypeId) => workItemTypes[workItemTypeId]?.is_default);
 
   // handlers
   const handleIssueTypeListToggle = (issueTypeId: string) => {

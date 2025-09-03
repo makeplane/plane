@@ -40,7 +40,7 @@ export const buildWorkItemTemplateBlueprint = (
       buildWorkItemBlueprint({
         ...rest,
         workItem: subWorkItem,
-        customPropertyValues: subWorkItemListCustomPropertyValues[subWorkItem.id],
+        customPropertyValues: subWorkItemListCustomPropertyValues[subWorkItem.id] ?? {},
       })
     ),
   };

@@ -248,7 +248,7 @@ const buildCustomPropertiesWithValuesBlueprint = (
 
     properties.push({
       ...customPropertyBlueprint,
-      values: customPropertyValues[propertyId],
+      values: customPropertyValues[propertyId] ?? [],
     });
   });
   return properties;

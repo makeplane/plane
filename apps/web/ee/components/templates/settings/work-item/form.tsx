@@ -20,9 +20,9 @@ import {
 import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
 // plane web imports
-import { useProject } from "@/hooks/store/use-project"
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 import { TemplateDetails } from "@/plane-web/components/templates/settings/common/form/template-details";
@@ -175,6 +175,7 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
       [watch, getProjectDefaultStateId, getProjectDefaultWorkItemTypeId, reset, defaultValueForReset]
     );
 
+    if (!workspaceSlug) return null;
     return (
       <>
         <DiscardModal
