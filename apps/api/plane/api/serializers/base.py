@@ -91,6 +91,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         "project_lead": UserLiteSerializer,
                         "state": StateLiteSerializer,
                         "created_by": UserLiteSerializer,
+                        "updated_by": UserLiteSerializer,
                         "issue": IssueSerializer,
                         "actor": UserLiteSerializer,
                         "owned_by": UserLiteSerializer,

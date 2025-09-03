@@ -17,8 +17,6 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
-          node-version: '18'
 
       - name: Get PR Branch version
         run: echo "PR_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV

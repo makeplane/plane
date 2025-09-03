@@ -21,6 +21,7 @@ export type TPage = {
   updated_by: string | undefined;
   workspace: string | undefined;
   logo_props: TLogoProps | undefined;
+  deleted_at: Date | undefined;
 } & TPageExtended;
 
 // page filters

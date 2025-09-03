@@ -916,6 +916,10 @@
     "add": {
       "success": "{entity} úspěšně přidána",
       "failed": "Chyba při přidávání {entity}"
+    },
+    "remove": {
+      "success": "{entity} úspěšně odebrána",
+      "failed": "Chyba při odebírání {entity}"
     }
   },
   "epic": {

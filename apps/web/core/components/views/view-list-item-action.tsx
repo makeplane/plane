@@ -5,8 +5,9 @@ import { Earth, Lock } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EViewAccess, IProjectView } from "@plane/types";
-import { Tooltip, FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

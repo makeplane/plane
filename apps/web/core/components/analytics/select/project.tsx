@@ -3,7 +3,9 @@
 import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // plane package imports
-import { CustomSearchSelect, Logo } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
+// components
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

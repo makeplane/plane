@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.28.0",
+  "version": "1.0.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [
@@ -12,8 +12,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
@@ -25,8 +25,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
@@ -38,12 +38,13 @@
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
-    "lodash": "^4.17.21",
-    "lucide-react": "^0.469.0",
+    "lodash": "catalog:",
+    "lucide-react": "catalog:",
     "react-color": "^2.19.3",
     "react-day-picker": "9.5.0",
     "react-popper": "^2.3.0",
@@ -66,16 +67,16 @@
     "@storybook/react": "^8.1.1",
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "catalog:",
     "@types/node": "^20.5.2",
-    "@types/react": "^18.3.11",
+    "@types/react": "catalog:",
     "@types/react-color": "^3.0.9",
-    "@types/react-dom": "^18.2.18",
+    "@types/react-dom": "catalog:",
     "autoprefixer": "^10.4.19",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

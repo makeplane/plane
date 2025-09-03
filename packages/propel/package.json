@@ -1,9 +1,11 @@
 {
   "name": "@plane/propel",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 7",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -14,19 +16,22 @@
     "build-storybook": "storybook build"
   },
   "exports": {
-    "./avatar": "./src/avatar/index.ts",
-    "./charts/*": "./src/charts/*/index.ts",
-    "./dialog": "./src/dialog/index.ts",
-    "./menu": "./src/menu/index.ts",
-    "./table": "./src/table/index.ts",
-    "./tabs": "./src/tabs/index.ts",
-    "./popover": "./src/popover/index.ts",
-    "./command": "./src/command/index.ts",
-    "./combobox": "./src/combobox/index.ts",
-    "./tooltip": "./src/tooltip/index.ts",
-    "./styles/fonts": "./src/styles/fonts/index.css",
-    "./card": "./src/card/index.ts",
-    "./switch": "./src/switch/index.ts"
+    "./accordion": "./dist/accordion/index.js",
+    "./avatar": "./dist/avatar/index.js",
+    "./card": "./dist/card/index.js",
+    "./charts/*": "./dist/charts/*/index.js",
+    "./combobox": "./dist/combobox/index.js",
+    "./command": "./dist/command/index.js",
+    "./dialog": "./dist/dialog/index.js",
+    "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
+    "./menu": "./dist/menu/index.js",
+    "./popover": "./dist/popover/index.js",
+    "./styles/fonts": "./dist/styles/fonts/index.css",
+    "./switch": "./dist/switch/index.js",
+    "./table": "./dist/table/index.js",
+    "./tabs": "./dist/tabs/index.js",
+    "./tooltip": "./dist/tooltip/index.js",
+    "./utils": "./dist/utils/index.js"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
@@ -35,22 +40,26 @@
     "@plane/types": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
+    "cmdk": "^1.1.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.469.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "frimousse": "^0.3.0",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "recharts": "^2.15.1",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "use-font-face-observer": "^1.3.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@storybook/react-vite": "^9.1.2",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "eslint-plugin-storybook": "^9.1.2",
     "storybook": "^9.1.2",
-    "typescript": "5.8.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

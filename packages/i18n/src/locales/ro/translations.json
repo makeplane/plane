@@ -916,6 +916,10 @@
     "add": {
       "success": "{entity} a fost adăugată cu succes",
       "failed": "Eroare la adăugarea {entity}"
+    },
+    "remove": {
+      "success": "{entity} a fost eliminată cu succes",
+      "failed": "Eroare la eliminarea {entity}"
     }
   },
   "epic": {
