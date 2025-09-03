@@ -45,7 +45,6 @@ export interface IProjectPageStore {
   // computed
   isAnyPageAvailable: boolean;
   canCurrentUserCreatePage: boolean;
-  currentContextPageIds: string[] | undefined;
   // helper actions
   getCurrentProjectPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectPageIds: (projectId: string) => string[];
@@ -65,7 +64,12 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
+  fetchPagesByType: (
+    workspaceSlug: string,
+    projectId: string,
+    pageType: string,
+    searchQuery?: string
+  ) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
   fetchPageDetails: (
     projectId: string,
@@ -147,7 +151,6 @@ export class ProjectPageStore implements IProjectPageStore {
       // computed
       isAnyPageAvailable: computed,
       canCurrentUserCreatePage: computed,
-      currentContextPageIds: computed,
       // helper actions
       updateFilters: action,
       clearAllFilters: action,
@@ -327,15 +330,6 @@ export class ProjectPageStore implements IProjectPageStore {
     const { getFeatureFlag } = this.store.featureFlags;
     return getFeatureFlag(workspaceSlug, "NESTED_PAGES", false);
   });
-
-  /**
-   * @description get the current project page ids for the current context
-   */
-  get currentContextPageIds() {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
-    return this.getCurrentProjectPageIds(projectId);
-  }
 
   /**
    * Returns true if comments in pages feature is enabled
@@ -603,9 +597,8 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  fetchPagesByType = async (pageType: string, searchQuery?: string) => {
+  fetchPagesByType = async (workspaceSlug: string, projectId: string, pageType: string, searchQuery?: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       const currentPageIds = this.getCurrentProjectPageIds(projectId);

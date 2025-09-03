@@ -9,7 +9,6 @@ import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { ProjectPagesListRoot } from "@/components/pages/list/root";
 import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -70,9 +69,7 @@ const ProjectPagesPage = observer(() => {
         pageType={currentPageType()}
         projectId={projectId.toString()}
         workspaceSlug={workspaceSlug.toString()}
-      >
-        <ProjectPagesListRoot pageType={currentPageType()} />
-      </ProjectPagesListView>
+      />
     </>
   );
 });

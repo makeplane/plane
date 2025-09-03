@@ -1,18 +1,26 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EPageAccess, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EPageAccess,
+  EUserPermissionsLevel,
+  PROJECT_PAGE_TRACKER_ELEMENTS,
+  PROJECT_PAGE_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, type TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles, type TPageNavigationTabs, TPage } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
+// helpers
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import useDebounce from "@/hooks/use-debounce";
 // plane web components
@@ -24,26 +32,30 @@ const storeType = EPageStoreType.PROJECT;
 
 type Props = {
   pageType: TPageNavigationTabs;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
-  const { pageType } = props;
-  const { workspaceSlug, projectId } = useParams();
+  const { pageType, workspaceSlug, projectId } = props;
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
+  // router
+  const router = useRouter();
 
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
+  const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
-  const pageStore = usePageStore(storeType);
   const {
     filters,
     fetchPagesByType,
     filteredPublicPageIds,
     filteredArchivedPageIds,
     filteredPrivatePageIds,
-    filteredSharedPageIds,
-  } = pageStore;
+    createPage,
+  } = usePageStore(storeType);
 
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
@@ -51,11 +63,13 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
     workspaceSlug && projectId ? `PROJECT_PAGES_${projectId}_${pageType}_${debouncedSearchQuery || ""}` : null,
-    workspaceSlug && projectId ? () => fetchPagesByType(pageType, debouncedSearchQuery) : null,
+    workspaceSlug && projectId
+      ? () => fetchPagesByType(workspaceSlug, projectId, pageType, debouncedSearchQuery)
+      : null,
     {
       revalidateOnFocus: true,
       revalidateIfStale: true,
-      dedupingInterval: 0, // Disable deduping to ensure fresh requests
+      dedupingInterval: 2000, // Disable deduping to ensure fresh requests
     }
   );
 
@@ -72,20 +86,10 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
         return filteredPrivatePageIds;
       case "archived":
         return filteredArchivedPageIds;
-      case "shared":
-        return filteredSharedPageIds;
       default:
         return [];
     }
-  }, [
-    pageType,
-    filteredPublicPageIds,
-    filteredPrivatePageIds,
-    filteredArchivedPageIds,
-    filteredSharedPageIds,
-    data,
-    debouncedSearchQuery,
-  ]);
+  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, debouncedSearchQuery]);
 
   // derived values - memoized for performance
   const hasProjectMemberLevelPermissions = useMemo(
@@ -93,21 +97,58 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     [allowPermissions]
   );
 
+  // handle page create
+  const handleCreatePage = async (pageAccess?: EPageAccess) => {
+    setIsCreatingPage(true);
+
+    const payload: Partial<TPage> = {
+      access: pageAccess || (pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC),
+    };
+
+    await createPage(payload)
+      .then((res) => {
+        captureSuccess({
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            id: res?.id,
+            state: "SUCCESS",
+          },
+        });
+        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        router.push(pageId);
+      })
+      .catch((err) => {
+        captureError({
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            state: "ERROR",
+          },
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        });
+      })
+      .finally(() => setIsCreatingPage(false));
+  };
+
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+
   const generalPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/onboarding/pages",
-  });
-  const privatePageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/private",
   });
   const publicPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/public",
   });
+  const privatePageResolvedPath = useResolvedAssetPath({
+    basePath: "/empty-state/pages/private",
+  });
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
-  });
-  const sharedPageResolvedPath = useResolvedAssetPath({
-    // todo - remove this and add a new asset for shared
-    basePath: "/empty-state/pages/public",
   });
   const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
   const resolvedNameFilterImage = useResolvedAssetPath({
@@ -118,66 +159,60 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
   if (isLoading) return <PageLoader />;
 
   // if no pages exist in the active page type
-  if (!pageIds || pageIds.length === 0) {
+  if (pageIds.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
-          title={t("project_pages.empty_state.public.title")}
-          description={t("project_pages.empty_state.public.description")}
+          title={t("project_page.empty_state.public.title")}
+          description={t("project_page.empty_state.public.description")}
           assetPath={publicPageResolvedPath}
           primaryButton={{
-            text: t("project_pages.empty_state.public.primary_button.text"),
+            text: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
             onClick: () => {
-              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
+              handleCreatePage();
+              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
             },
-            disabled: !hasProjectMemberLevelPermissions,
+            disabled: !canPerformEmptyStateActions || isCreatingPage,
           }}
         />
       );
     if (pageType === "private")
       return (
         <DetailedEmptyState
-          title={t("project_pages.empty_state.private.title")}
-          description={t("project_pages.empty_state.private.description")}
+          title={t("project_page.empty_state.private.title")}
+          description={t("project_page.empty_state.private.description")}
           assetPath={privatePageResolvedPath}
           primaryButton={{
-            text: t("project_pages.empty_state.private.primary_button.text"),
+            text: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
             onClick: () => {
-              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
+              handleCreatePage();
+              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
             },
-            disabled: !hasProjectMemberLevelPermissions,
+            disabled: !canPerformEmptyStateActions || isCreatingPage,
           }}
         />
       );
     if (pageType === "archived")
       return (
         <DetailedEmptyState
-          title={t("project_pages.empty_state.archived.title")}
-          description={t("project_pages.empty_state.archived.description")}
+          title={t("project_page.empty_state.archived.title")}
+          description={t("project_page.empty_state.archived.description")}
           assetPath={archivedPageResolvedPath}
         />
       );
-    if (pageType === "shared")
-      return (
-        <DetailedEmptyState
-          title="No shared pages"
-          description="Pages shared with you will appear here when someone shares them."
-          assetPath={sharedPageResolvedPath}
-        />
-      );
-
     // General empty state when no pages are found
     return (
       <DetailedEmptyState
-        title={t("project_pages.empty_state.general.title")}
-        description={t("project_pages.empty_state.general.description")}
+        title={t("project_page.empty_state.general.title")}
+        description={t("project_page.empty_state.general.description")}
         assetPath={generalPageResolvedPath}
         primaryButton={{
-          text: t("project_pages.empty_state.general.primary_button.text"),
+          text: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
           onClick: () => {
-            toggleCreatePageModal({ isOpen: true });
+            handleCreatePage();
+            captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
           },
-          disabled: !hasProjectMemberLevelPermissions,
+          disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
         }}
       />
     );
