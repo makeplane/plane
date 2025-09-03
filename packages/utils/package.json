@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 20",
     "check:types": "tsc --noEmit",

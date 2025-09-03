@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 30",
     "check:types": "tsc --noEmit",
