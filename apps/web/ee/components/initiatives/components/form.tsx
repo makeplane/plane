@@ -2,17 +2,19 @@ import { FC, useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
-import { cn, getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
+import { Button, Input, setToast, TOAST_TYPE, InitiativeIcon, EmojiIconPickerTypes } from "@plane/ui";
+import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
@@ -32,6 +34,8 @@ type Props = {
 
 export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const { initiativeDetail, formData, isSubmitting, handleFormDataChange, handleClose, handleFormSubmit } = props;
+  const [isOpen, setIsOpen] = useState(false);
+
   // router
   const { workspaceSlug } = useParams();
   // state
@@ -66,6 +70,8 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
 
   if (!workspaceSlug || !currentWorkspace || !formData) return null;
 
+  const logoValue = formData?.logo_props;
+
   return (
     <form
       onSubmit={(e) => {
@@ -85,7 +91,46 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         <h3 className="text-xl font-medium text-custom-text-200">
           {formData.id ? t("initiatives.update_initiative") : t("initiatives.create_initiative")}
         </h3>
-        <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
+        <div className="flex items-start gap-2 w-full">
+          <EmojiPicker
+            iconType="lucide"
+            isOpen={isOpen}
+            handleToggle={(val: boolean) => setIsOpen(val)}
+            className="flex items-center justify-center flex-shrink0"
+            buttonClassName="flex items-center justify-center"
+            label={
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+                <>
+                  {logoValue?.in_use ? (
+                    <Logo logo={logoValue} size={18} type="lucide" />
+                  ) : (
+                    <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+                  )}
+                </>
+              </span>
+            }
+            onChange={(val: any) => {
+              let logoValue = {};
+
+              if (val?.type === "emoji")
+                logoValue = {
+                  value: val.value,
+                };
+              else if (val?.type === "icon") logoValue = val.value;
+
+              handleFormDataChange("logo_props", {
+                in_use: val?.type,
+                [val?.type]: logoValue,
+              });
+              setIsOpen(false);
+            }}
+            defaultIconColor={logoValue?.in_use && logoValue?.in_use === "icon" ? logoValue?.icon?.color : undefined}
+            defaultOpen={
+              logoValue?.in_use && logoValue?.in_use === "emoji"
+                ? EmojiIconPickerTypes.EMOJI
+                : EmojiIconPickerTypes.ICON
+            }
+          />
           <div className="space-y-1 flew-grow w-full">
             <Input
               id="name"

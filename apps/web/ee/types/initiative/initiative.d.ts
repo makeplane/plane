@@ -6,6 +6,7 @@ import {
   InitiativeComment,
   TIssueActivityUserDetail,
   TIssueComment,
+  TLogoProps,
 } from "@plane/types";
 
 export type TInitiative = {
@@ -28,6 +29,7 @@ export type TInitiative = {
   lead: string | null;
   project_ids: string[] | null;
   epic_ids: string[] | null;
+  logo_props: TLogoProps | undefined;
 };
 
 export type TInitiativeProject = {

@@ -7,6 +7,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { ControlLink, InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme"
@@ -57,9 +58,13 @@ export const InitiativeBlock = observer((props: Props) => {
       title={initiative.name}
       itemLink={`/${workspaceSlug}/initiatives/${initiative.id}`}
       prependTitleElement={
-        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-custom-background-90">
-          <InitiativeIcon className="size-4 text-custom-text-300" />
-        </div>
+        <>
+          {initiative?.logo_props?.in_use ? (
+            <Logo logo={initiative?.logo_props} size={16} type="lucide" />
+          ) : (
+            <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+          )}
+        </>
       }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
