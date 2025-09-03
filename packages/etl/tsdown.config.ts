@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: [
@@ -19,6 +19,4 @@ export default defineConfig({
   dts: true,
   clean: true,
   minify: true,
-  splitting: true,
-  treeshake: true,
 });

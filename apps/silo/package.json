@@ -6,8 +6,8 @@
   "author": "engineering@plane.so",
   "type": "module",
   "scripts": {
+    "build": "tsdown",
     "dev": "nodemon --config \"./nodemon.json\"/",
-    "build": "rm -rf dist && tsc --noEmit && tsup --minify",
     "start": "node dist/start.cjs",
     "test": "jest",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
@@ -83,7 +83,7 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "tsup": "8.4.0",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

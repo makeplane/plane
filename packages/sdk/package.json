@@ -8,8 +8,8 @@
     "dist/**"
   ],
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsc --noEmit && tsup --minify",
+    "dev": "tsdown --watch",
+    "build": "tsdown --minify",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --max-warnings 26",
     "check:types": "tsc --noEmit",
@@ -24,7 +24,7 @@
     "@plane/types": "workspace:*",
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "tsup": "8.4.0",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }
