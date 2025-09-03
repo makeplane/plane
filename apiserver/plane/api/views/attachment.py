@@ -126,7 +126,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 disposition="attachment",
                 filename=asset.attributes.get("name"),
             )
-            return HttpResponseRedirect(presigned_url)
+            data = {
+                "url": presigned_url,
+                "type": asset.attributes.get("type"),
+                "name": asset.attributes.get("name"),
+            }
+            return Response(data, status=status.HTTP_200_OK)
 
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
