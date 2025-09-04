@@ -4,8 +4,8 @@ import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@pl
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store";
 

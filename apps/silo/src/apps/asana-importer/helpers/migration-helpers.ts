@@ -2,11 +2,11 @@
 // silo asana
 import { AsanaConfig, AsanaService, createAsanaService } from "@plane/etl/asana";
 // silo core
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { TImportJob, TWorkspaceCredential } from "@plane/types";
 // auth
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { asanaAuth } from "../auth/auth";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 export const createAsanaClient = (job: TImportJob<AsanaConfig>, credentials: TWorkspaceCredential): AsanaService => {
   const refreshTokenCallback = async ({

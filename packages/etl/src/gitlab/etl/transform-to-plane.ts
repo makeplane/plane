@@ -1,7 +1,7 @@
 import { ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabNote } from "../types";
-import { replaceIssueNumber, replaceMentionedGlUsers } from "../helpers";
 import { E_INTEGRATION_KEYS } from "@/core";
+import { replaceIssueNumber, replaceMentionedGlUsers } from "../helpers";
+import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabNote } from "../types";
 
 export const transformGitlabIssue = (
   issue: GitlabIssue,

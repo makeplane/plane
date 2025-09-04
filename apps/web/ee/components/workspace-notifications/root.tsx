@@ -1,7 +1,7 @@
-import { NotificationCardListRoot as NotificationCardListRootCe } from "ce/components/workspace-notifications/notification-card/root";
-import { TNotificationListRoot } from "ce/components/workspace-notifications/root";
 import { observer } from "mobx-react";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { NotificationCardListRoot as NotificationCardListRootCe } from "ce/components/workspace-notifications/notification-card/root";
+import { TNotificationListRoot } from "ce/components/workspace-notifications/root";
 import { NotificationCardListRoot as NotificationCardListRootEe } from "./notification-card/root";
 
 export const NotificationListRoot = observer((props: TNotificationListRoot) => {

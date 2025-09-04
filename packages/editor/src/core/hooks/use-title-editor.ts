@@ -11,9 +11,9 @@ import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 // types
-import { EditorTitleRefApi } from "@/types/editor";
-import { IEditorPropsExtended } from "@/types";
 import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
+import { IEditorPropsExtended } from "@/types";
+import { EditorTitleRefApi } from "@/types/editor";
 
 type Props = {
   editable?: boolean;

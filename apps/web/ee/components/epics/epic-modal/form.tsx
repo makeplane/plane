@@ -25,8 +25,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { EpicDefaultProperties } from "./components/default-properties";
 

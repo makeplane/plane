@@ -9,7 +9,7 @@ export const createProjectLinkback = (
   project: ExProject,
   members: PlaneUser[],
   userMap: Map<string, string>,
-  showLogo = false,
+  showLogo = false
 ) => {
   const blocks: any[] = [];
 
@@ -20,7 +20,10 @@ export const createProjectLinkback = (
   // Members (max 2 with + icon if more)
   if (project.total_members && project.total_members > 0) {
     if (members.length > 0) {
-      const memberText = members.slice(0, 2).map(member => getUserMarkdown(planeToSlackUserMap, workspaceSlug, member.id)).join(", ");
+      const memberText = members
+        .slice(0, 2)
+        .map((member) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, member.id))
+        .join(", ");
       const plusText = project.total_members > 2 ? ` and ${project.total_members - 2} more` : "";
       sectionContent += `\nMembers: *${memberText}${plusText}*`;
     }

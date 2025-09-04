@@ -41,11 +41,7 @@ export const AutomationDetailsMainContentTriggerRoot: React.FC<TProps> = observe
   );
 
   return (
-    <AutomationDetailsMainContentSectionWrapper
-      title={t("automations.trigger.label")}
-      icon={Zap}
-      iconVariant="filled"
-    >
+    <AutomationDetailsMainContentSectionWrapper title={t("automations.trigger.label")} icon={Zap} iconVariant="filled">
       {selectedTriggerNodeHandlerOption ? (
         <>
           <AutomationDetailsMainContentBlockWrapper

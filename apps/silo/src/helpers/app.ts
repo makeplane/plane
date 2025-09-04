@@ -21,7 +21,7 @@ export const isGitlabEnabled = function () {
 
 export const isSentryEnabled = function () {
   return env.SENTRY_CLIENT_ID && env.SENTRY_CLIENT_SECRET;
-}
+};
 
 export const isGithubEnterpriseEnabled = function () {
   return true;

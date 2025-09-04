@@ -28,8 +28,8 @@ import {
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useLabel } from "@/hooks/store/use-label"
 import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

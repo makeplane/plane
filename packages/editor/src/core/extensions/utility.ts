@@ -8,9 +8,9 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // prosemirror plugins
+import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 import { codemark } from "./code-mark";
 
-import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {

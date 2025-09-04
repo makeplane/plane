@@ -50,7 +50,9 @@ const CreateUpdateWorkItemBlueprintModalBase: React.FC<TCreateUpdateWorkItemBlue
   // context hooks
   const { setIssuePropertyValues } = useIssueModal();
   // derived values
-  const getProjectDefaultStateId = usePropsForAdditionalData ? props.getProjectDefaultStateId : getProjectDefaultStateIdFromStore;
+  const getProjectDefaultStateId = usePropsForAdditionalData
+    ? props.getProjectDefaultStateId
+    : getProjectDefaultStateIdFromStore;
   const getProjectDefaultWorkItemTypeId = usePropsForAdditionalData
     ? props.getProjectDefaultWorkItemTypeId
     : getProjectDefaultWorkItemTypeIdFromStore;

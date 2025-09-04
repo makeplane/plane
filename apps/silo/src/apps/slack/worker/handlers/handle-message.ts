@@ -152,11 +152,16 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
 
           const hideActions = issue.type?.is_epic ?? false;
 
-          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, enhancedUserMap, false, hideActions);
+          const linkBack = createSlackLinkback(
+            workspaceConnection.workspace_slug,
+            issue,
+            enhancedUserMap,
+            false,
+            hideActions
+          );
           unfurlMap[link.url] = {
             blocks: linkBack.blocks,
           };
-
         } else if (resource.type === "page") {
           const linkBack = await getPageLinkback(resource, details);
           if (!linkBack) return;
@@ -238,7 +243,11 @@ export const getPageLinkback = async (
         logger.error(`[SLACK] No project ID found for page`, { pageResource });
         return;
       }
-      page = await planeClient.page.getProjectPage(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
+      page = await planeClient.page.getProjectPage(
+        workspaceConnection.workspace_slug,
+        pageResource.projectId,
+        pageResource.pageId
+      );
       pageURL = getProjectPageUrl(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
       break;
     default:

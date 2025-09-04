@@ -184,11 +184,8 @@ export class ClickupAPIService {
       .then((response) => response.data.comments);
   }
 
-
   async getThreadedComments(commentId: string): Promise<TClickUpComment[]> {
-    return this.client
-      .get(`/comment/${commentId}/reply`)
-      .then((response) => response.data.comments);
+    return this.client.get(`/comment/${commentId}/reply`).then((response) => response.data.comments);
   }
 
   /**

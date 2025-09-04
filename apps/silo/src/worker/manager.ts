@@ -17,6 +17,7 @@ import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
 import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
 import { NotionDataMigrator } from "@/apps/notion-importer/worker";
+import { SentryPlaneWebhookHandler, SentryWebhookHandler } from "@/apps/sentry/worker/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { captureException, logger } from "@/logger";
@@ -24,7 +25,6 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
-import { SentryPlaneWebhookHandler, SentryWebhookHandler } from "@/apps/sentry/worker/worker";
 
 // It's 30 mins, but we want to be safe and set it to 25 minutes
 const MQ_CONSUMER_TIMEOUT = 25 * 60 * 1000; // 25 minutes

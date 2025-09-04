@@ -2,12 +2,12 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { Ban } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
-import { Ban } from "lucide-react";
 
 type TStateFormSelection = {
   title: string;

@@ -2,18 +2,18 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web components
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
-import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
-import { useTranslation } from "@plane/i18n";
 import { TImporterPATError } from "@/plane-web/types";
-import ErrorBanner from "../../ui/error-banner";
+import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
 import AsanaLogo from "@/public/services/asana.svg";
 import ImporterHeader from "../../header";
+import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks

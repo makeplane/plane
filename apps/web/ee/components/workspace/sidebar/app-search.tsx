@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 // ce imports
+import { cn } from "@plane/utils";
 import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/app-search";
 // helpers
-import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports

@@ -14,8 +14,8 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";

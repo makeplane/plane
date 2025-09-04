@@ -14,10 +14,10 @@ import {
 } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useLabel } from "@/hooks/store/use-label"
-import { useMember } from "@/hooks/store/use-member"
-import { useModule } from "@/hooks/store/use-module"
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

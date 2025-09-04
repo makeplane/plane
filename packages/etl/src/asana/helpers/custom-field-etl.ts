@@ -1,9 +1,9 @@
 // plane sdk
 import { EIssuePropertyRelationType, EIssuePropertyType, ExIssueProperty } from "@plane/sdk";
 // silo core
+import { AsanaCustomFieldType } from "@/asana/types";
 import { getTextPropertySettings } from "@/core";
 // types
-import { AsanaCustomFieldType } from "@/asana/types";
 
 export const CUSTOM_FIELD_ATTRIBUTES: Record<AsanaCustomFieldType, Partial<ExIssueProperty>> = {
   text: {

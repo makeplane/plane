@@ -1,5 +1,5 @@
-import { LinearAuth } from "./auth.service";
 import LinearService, { LinearProps } from "./api.service";
+import { LinearAuth } from "./auth.service";
 
 export const createLinearAuthService = (
   clientId: string = "",

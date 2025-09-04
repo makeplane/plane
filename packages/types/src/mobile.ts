@@ -1,5 +1,5 @@
-import { IUser } from "./users";
 import { IInstanceConfig } from "./instance";
+import { IUser } from "./users";
 import { IWorkspaceMemberInvitation } from "./workspace";
 
 // instance types

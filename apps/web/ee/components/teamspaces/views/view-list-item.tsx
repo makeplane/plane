@@ -12,8 +12,8 @@ import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
-import { TeamspaceViewListItemAction } from "./view-list-item-action";
 import { TeamspaceViewQuickActions } from "./quick-actions";
+import { TeamspaceViewListItemAction } from "./view-list-item-action";
 
 type Props = {
   teamspaceId: string;

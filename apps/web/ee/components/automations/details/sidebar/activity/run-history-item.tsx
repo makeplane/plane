@@ -1,5 +1,5 @@
-import { observer } from "mobx-react";
 import { differenceInSeconds } from "date-fns/differenceInSeconds";
+import { observer } from "mobx-react";
 import { Check, ChevronRight, CircleAlert, Clock, Dot } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports

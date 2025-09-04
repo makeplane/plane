@@ -72,9 +72,8 @@ const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
     }
   }, [modal, projectConnection]);
 
-  const appConnection = appConnectionIds && appConnectionIds.length > 0
-    ? getAppByConnectionId(appConnectionIds[0])
-    : undefined;
+  const appConnection =
+    appConnectionIds && appConnectionIds.length > 0 ? getAppByConnectionId(appConnectionIds[0]) : undefined;
 
   // Fetch Slack channels data (useSWR must be called unconditionally)
   const {

@@ -12,7 +12,7 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";

@@ -8,8 +8,8 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";

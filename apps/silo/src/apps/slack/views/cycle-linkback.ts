@@ -4,17 +4,11 @@ import { getPlaneLogoUrl } from "@/helpers/urls";
 import { ACTIONS } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
-export const createCycleLinkback = (
-  workspaceSlug: string,
-  project: ExProject,
-  cycle: ExCycle,
-  showLogo = false,
-) => {
+export const createCycleLinkback = (workspaceSlug: string, project: ExProject, cycle: ExCycle, showLogo = false) => {
   const blocks: any[] = [];
 
   // Build markdown content for main section
   let sectionContent = `Cycle: *${cycle.name}*`;
-
 
   // Project
   sectionContent += `\nProject: *${project.name}*`;

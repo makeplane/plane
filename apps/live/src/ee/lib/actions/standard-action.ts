@@ -1,7 +1,7 @@
-import { DocumentAction } from "@/ee/types/common";
-import { ActionRegistry } from "../registries/action-registry";
 import * as Y from "yjs";
 import { findAllElementsRecursive, deleteNode } from "@/core/utilities/xml-tree-utils";
+import { DocumentAction } from "@/ee/types/common";
+import { ActionRegistry } from "../registries/action-registry";
 
 // Define standard actions
 const removeNodeAction: DocumentAction = {

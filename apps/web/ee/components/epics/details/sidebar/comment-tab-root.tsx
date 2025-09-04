@@ -11,7 +11,7 @@ import { EIssueServiceType } from "@plane/types";
 import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";

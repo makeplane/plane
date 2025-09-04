@@ -9,7 +9,7 @@ export abstract class APIService {
     const { baseURL, apiToken, bearerToken } = options;
     const headers = {
       ...(apiToken && { "X-API-Key": apiToken }),
-      ...(bearerToken && { "Authorization": `Bearer ${bearerToken}` }),
+      ...(bearerToken && { Authorization: `Bearer ${bearerToken}` }),
     };
     this.axiosInstance = axios.create({
       baseURL,

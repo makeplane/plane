@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button, CircularProgressIndicator, setToast, TOAST_TYPE } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -10,7 +11,6 @@ import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-import
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
 import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 interface UploadedFile {
   file: File;

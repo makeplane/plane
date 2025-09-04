@@ -1,7 +1,7 @@
-import { DocumentHandler } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/page-handlers/handler-factory";
 
 import { HocusPocusServerContext, TDocumentTypes } from "@/core/types/common";
+import { DocumentHandler } from "@/core/types/document-handler";
 /**
  * Get a document handler based on the provided context criteria
  * @param documentType The primary document type

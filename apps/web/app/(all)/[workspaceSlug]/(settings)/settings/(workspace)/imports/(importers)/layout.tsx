@@ -8,8 +8,8 @@ import { ChevronLeft } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useUser } from "@/hooks/store/user"
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 
 type TImporterLayout = {
   children: ReactNode;

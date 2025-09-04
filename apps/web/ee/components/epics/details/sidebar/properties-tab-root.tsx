@@ -16,9 +16,9 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
 // helpers
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useMember } from "@/hooks/store/use-member"
-import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";

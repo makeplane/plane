@@ -24,9 +24,9 @@ import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

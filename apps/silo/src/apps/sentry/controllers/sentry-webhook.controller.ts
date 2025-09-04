@@ -85,7 +85,6 @@ export class SentryWebhookController {
             Number(env.DEDUP_INTERVAL)
           );
         }
-
       }
     } catch (error) {
       responseHandler(res, 500, error);

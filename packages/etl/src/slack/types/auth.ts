@@ -159,13 +159,15 @@ export type TSlackConnectionData = {
   name: string;
 };
 
-export type SlackUserLookupByEmailResponse = {
-  ok: true;
-  user: SlackUser;
-} | {
-  ok: false;
-  error: string;
-};
+export type SlackUserLookupByEmailResponse =
+  | {
+      ok: true;
+      user: SlackUser;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
 
 export type TAppConnection = {
   id: string;

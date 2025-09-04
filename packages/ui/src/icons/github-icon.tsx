@@ -60,7 +60,7 @@ export const GithubDarkIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24
         id="image0_18217_187055"
         width="512"
         height="512"
-       />
+      />
     </defs>
   </svg>
 );

@@ -13,8 +13,8 @@ import {
 // components
 import { SubIssuesActionButton, SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useMember } from "@/hooks/store/use-member"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TSubWorkItemsActionsProps = {

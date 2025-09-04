@@ -16,6 +16,7 @@ import { env } from "@/env";
 // silo engine
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getJobData, resetJobIfStarted, getJobCredentials, updateJobWithReport } from "@/helpers/job";
+import { getAPIClient } from "@/services/client";
 import { MQ, Store } from "@/worker/base";
 import { TBatch } from "@/worker/types";
 import { createAsanaClient } from "../helpers/migration-helpers";
@@ -28,7 +29,6 @@ import {
   getTransformedCustomFieldValues,
   getTransformedComments,
 } from "./transformers";
-import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
 

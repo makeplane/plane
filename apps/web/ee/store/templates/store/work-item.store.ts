@@ -210,7 +210,10 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
     const currentProjectWorkItemTemplates = this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
     if (currentProjectWorkItemTemplates.length === 0) return;
 
-    const defaultTypeBlueprint = buildWorkItemTypeBlueprint(defaultWorkItemType, this.rootStore.issueTypes.getIssueTypeById);
+    const defaultTypeBlueprint = buildWorkItemTypeBlueprint(
+      defaultWorkItemType,
+      this.rootStore.issueTypes.getIssueTypeById
+    );
 
     for (const template of currentProjectWorkItemTemplates) {
       const templateData = template.template_data;

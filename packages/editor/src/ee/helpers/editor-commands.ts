@@ -1,9 +1,9 @@
 import type { Editor, Range } from "@tiptap/core";
 // plane editor extensions
 import { type InsertAttachmentComponentProps } from "@/plane-editor/extensions/attachments/types";
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import { type TCommentMarkAttributes } from "../extensions/comments";
 // types
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 
 export const insertAttachment = ({
   editor,

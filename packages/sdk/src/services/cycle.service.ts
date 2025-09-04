@@ -7,14 +7,8 @@ export class CycleService extends APIService {
     super(options);
   }
 
-  async getCycle(
-    slug: string,
-    projectId: string,
-    cycleId: string,
-  ): Promise<ExCycle> {
-    return this.get(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/cycles/${cycleId}/`,
-    )
+  async getCycle(slug: string, projectId: string, cycleId: string): Promise<ExCycle> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

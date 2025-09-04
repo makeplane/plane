@@ -188,7 +188,9 @@ const buildProjectWorkItemTypesBlueprint = (
     // Build properties blueprint
     const properties: TProjectTemplate["template_data"]["workitem_types"][number]["properties"] = [];
     for (const property of workItemType.properties) {
-      const propertyBlueprint = property.id ? buildCustomPropertyBlueprint(property.id, getCustomPropertyById) : undefined;
+      const propertyBlueprint = property.id
+        ? buildCustomPropertyBlueprint(property.id, getCustomPropertyById)
+        : undefined;
       if (!propertyBlueprint) continue;
       properties.push(propertyBlueprint);
     }

@@ -1,6 +1,6 @@
 import { BasePageHandler } from "@/core/document-types/base-page/handlers";
-import { HocusPocusServerContext } from "@/core/types/common";
 import { SyncAgentService } from "@/core/services/sync-agent.service";
+import { HocusPocusServerContext } from "@/core/types/common";
 
 type SyncAgentConfig = Record<string, unknown>;
 

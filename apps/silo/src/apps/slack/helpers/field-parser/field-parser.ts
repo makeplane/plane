@@ -1,6 +1,12 @@
 import { getCreateIntakeFormFields, getCreateWorkItemFormFields } from "@/services/form-fields";
 import { E_KNOWN_FIELD_KEY, FormField } from "@/types/form/base";
-import { TFormParserContext, TParsedFormResult, TWorkItemFormResult, TIntakeFormResult, TFormType } from "../../types/fields";
+import {
+  TFormParserContext,
+  TParsedFormResult,
+  TWorkItemFormResult,
+  TIntakeFormResult,
+  TFormType,
+} from "../../types/fields";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { richTextBlockToMrkdwn } from "../parse-issue-form";
 import { removePrefixIfExists } from "../slack-options";
@@ -14,9 +20,8 @@ import { removePrefixIfExists } from "../slack-options";
  * the same assumption for the custom fields.
  */
 
-
 export class SlackFormParser {
-  constructor(private context: TFormParserContext) { }
+  constructor(private context: TFormParserContext) {}
 
   private readonly coreFieldParsers = {
     project: (data: any) => data?.selected_option?.value,
@@ -239,8 +244,6 @@ export class SlackFormParser {
 
     return issueTypeId;
   }
-
-
 }
 
 export const createSlackFormParser = (context: TFormParserContext) => new SlackFormParser(context);

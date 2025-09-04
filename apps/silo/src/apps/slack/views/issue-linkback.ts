@@ -44,8 +44,8 @@ export const createSlackLinkback = (
     const assignee =
       issue.assignees.length > 1
         ? issue.assignees
-          .map((a) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, a.id, a.display_name))
-          .join(", ")
+            .map((a) => getUserMarkdown(planeToSlackUserMap, workspaceSlug, a.id, a.display_name))
+            .join(", ")
         : getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.assignees[0].id, issue.assignees[0].display_name);
 
     sectionContent += `\n> *${assigneeLabel}*: ${assignee}`;

@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";

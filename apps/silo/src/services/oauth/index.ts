@@ -16,15 +16,12 @@ export function registerOAuthStrategies() {
   if (env.PRD_AGENT_CLIENT_ID && env.PRD_AGENT_CLIENT_SECRET) {
     strategyManager.registerStrategy(
       E_INTEGRATION_KEYS.PRD_AGENT,
-      new PlaneOAuthStrategy(env.PRD_AGENT_CLIENT_ID, env.PRD_AGENT_CLIENT_SECRET),
+      new PlaneOAuthStrategy(env.PRD_AGENT_CLIENT_ID, env.PRD_AGENT_CLIENT_SECRET)
     );
   }
 
   if (env.SENTRY_CLIENT_ID && env.SENTRY_CLIENT_SECRET && env.SENTRY_INTEGRATION_SLUG) {
-    strategyManager.registerStrategy(
-      E_INTEGRATION_KEYS.SENTRY,
-      new SentryOAuthStrategy(sentryAuth)
-    );
+    strategyManager.registerStrategy(E_INTEGRATION_KEYS.SENTRY, new SentryOAuthStrategy(sentryAuth));
   }
 
   strategyManager.registerStrategy(

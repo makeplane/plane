@@ -7,14 +7,8 @@ export class IssuePropertyService extends APIService {
     super(options);
   }
 
-  async fetch(
-    workspaceSlug: string,
-    projectId: string,
-    typeId: string
-  ): Promise<ExIssueProperty[]> {
-    return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/`
-    )
+  async fetch(workspaceSlug: string, projectId: string, typeId: string): Promise<ExIssueProperty[]> {
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error;
@@ -69,12 +63,7 @@ export class IssuePropertyService extends APIService {
       });
   }
 
-  async remove(
-    workspaceSlug: string,
-    projectId: string,
-    typeId: string,
-    propertyId: string
-  ): Promise<void> {
+  async remove(workspaceSlug: string, projectId: string, typeId: string, propertyId: string): Promise<void> {
     return this.delete(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/issue-properties/${propertyId}/`
     )

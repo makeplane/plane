@@ -1,4 +1,5 @@
 import { IUserLite } from "../users";
+import { IInstanceConfigExtended } from "./base-extended";
 import {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
@@ -9,7 +10,6 @@ import {
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
 // extended
-import { IInstanceConfigExtended } from "./base-extended";
 
 export type TProductType = "plane-ce" | "plane-one";
 

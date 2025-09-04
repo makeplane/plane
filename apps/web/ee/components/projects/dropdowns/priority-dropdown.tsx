@@ -10,13 +10,13 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { PriorityIcon } from "@plane/ui";
 // constants
 // helpers
+import { cn } from "@plane/utils";
 import {
   BACKGROUND_BUTTON_VARIANTS,
   BORDER_BUTTON_VARIANTS,
   BUTTON_VARIANTS_WITHOUT_TEXT,
 } from "@/components/dropdowns/constants";
 import { TDropdownProps } from "@/components/dropdowns/types";
-import { cn } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";

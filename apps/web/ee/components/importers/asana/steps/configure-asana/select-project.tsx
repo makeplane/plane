@@ -4,12 +4,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { AsanaProject } from "@plane/etl/asana";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type TConfigureAsanaSelectProject = {
   workspaceGid: string | undefined;

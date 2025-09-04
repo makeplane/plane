@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { createGitLabAuth } from "@plane/etl/gitlab";
+import { env } from "@/env";
 
 export const gitlabAuthService = createGitLabAuth({
   clientId: env.GITLAB_CLIENT_ID,

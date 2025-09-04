@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // ui
+import { ISearchIssueResponse } from "@plane/types";
 import { Checkbox } from "@plane/ui";
 // hooks
-import { ISearchIssueResponse } from "@plane/types";
 // plane web hooks
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 

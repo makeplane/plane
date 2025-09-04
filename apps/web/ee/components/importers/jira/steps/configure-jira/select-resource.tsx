@@ -4,12 +4,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { JiraResource } from "@plane/etl/jira";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type TConfigureJiraSelectResource = {
   value: string | undefined;

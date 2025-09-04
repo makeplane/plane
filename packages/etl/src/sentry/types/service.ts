@@ -29,7 +29,7 @@ export type SentryCreateFields = {
   priorities: string | "";
   labels: string[] | ""; // Can be empty string or array of strings
   state: string | "";
-  module: string | ""
+  module: string | "";
   cycle: string | "";
 };
 
@@ -89,7 +89,7 @@ export type SentryExternalLink = {
   serviceType: string;
   displayName: string;
   webUrl: string;
-}
+};
 
 export type SentryAlertFields = {
   name: "type" | "project_id" | "assignee_ids" | "state" | "labels";

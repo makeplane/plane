@@ -10,4 +10,4 @@ export const getPropertyChangeDropdownClassNames = (isDisabled: boolean) => {
     dropdownButtonClassName,
     errorClassName,
   };
-}
+};

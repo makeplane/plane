@@ -1,4 +1,3 @@
-
 export enum E_MUTATION_CONTEXT_ITEM_TYPE {
   WORK_ITEM = "work item",
   INTAKE = "intake",

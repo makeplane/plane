@@ -4,6 +4,7 @@ import {
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version2/models";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import {
   IPriorityConfig,
   IStateConfig,
@@ -15,7 +16,6 @@ import {
 
 import { ExIssueAttachment, ExState } from "@plane/sdk";
 import { TImportJob, TWorkspaceCredential } from "@plane/types";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 export const getTargetState = (job: TImportJob<JiraConfig>, sourceState: JiraState): ExState | undefined => {
   /* TODO: Gracefully handle the case */

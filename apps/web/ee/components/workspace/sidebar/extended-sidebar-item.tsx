@@ -16,8 +16,8 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 // local imports

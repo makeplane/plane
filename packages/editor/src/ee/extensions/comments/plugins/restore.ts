@@ -1,8 +1,8 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { ECommentAttributeNames, TCommentMarkAttributes } from "../types";
 
 const COMMENT_RESTORE_PLUGIN_KEY = new PluginKey("comment-restore-utility");

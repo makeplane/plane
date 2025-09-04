@@ -21,11 +21,9 @@ export const getProjectUrl = (workspaceSlug: string, projectId: string) =>
 export const getIntakeUrl = (workspaceSlug: string, projectId: string, issueId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${issueId}`;
 
-export const getPlaneLogoUrl = () =>
-  "https://media.docs.plane.so/logo/favicon-512x512.png";
+export const getPlaneLogoUrl = () => "https://media.docs.plane.so/logo/favicon-512x512.png";
 
-export const getPublishedPageUrl = (pageId: string) =>
-  `${env.SPACE_BASE_URL}/pages/${pageId}`;
+export const getPublishedPageUrl = (pageId: string) => `${env.SPACE_BASE_URL}/pages/${pageId}`;
 
 export const getProjectPageUrl = (workspaceSlug: string, projectId: string, pageId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;

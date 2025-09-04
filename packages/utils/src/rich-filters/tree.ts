@@ -8,8 +8,8 @@ import {
   TFilterValue,
 } from "@plane/types";
 // local imports
-import { getGroupChildren, isAndGroupNode, isNotGroupNode, isOrGroupNode } from "./types";
 import { getNegativeOperator } from "./operator";
+import { getGroupChildren, isAndGroupNode, isNotGroupNode, isOrGroupNode } from "./types";
 
 /**
  * Finds a node by its ID in the filter expression tree.

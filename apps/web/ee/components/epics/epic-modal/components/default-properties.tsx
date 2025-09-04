@@ -15,7 +15,7 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 // hooks
-import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

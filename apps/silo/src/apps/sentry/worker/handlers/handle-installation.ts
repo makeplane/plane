@@ -26,7 +26,7 @@ export class SentryInstallationHandler {
       logger.error("Failed to process Sentry installation webhook", {
         error,
         action: data.action,
-        installationId: data.installation.uuid
+        installationId: data.installation.uuid,
       });
     }
   }
@@ -43,7 +43,7 @@ export class SentryInstallationHandler {
 
       logger.info(`Successfully deleted workspace connection for uninstalled Sentry app`, {
         installationId: data.installation.uuid,
-        connectionId: connection.id
+        connectionId: connection.id,
       });
     }
   }

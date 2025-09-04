@@ -3,8 +3,8 @@ import { NodeViewWrapper } from "@tiptap/react";
 // types
 import { TExternalEmbedBlockAttributes } from "@/types";
 // components
-import { ExternalEmbedBlock } from "./block";
 import { ExternalEmbedExtension } from "../types";
+import { ExternalEmbedBlock } from "./block";
 
 export type ExternalEmbedNodeViewProps = Omit<NodeViewProps, "extension"> & {
   extension: ExternalEmbedExtension;

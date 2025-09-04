@@ -178,7 +178,6 @@ class IntegrationConnectionHelper {
     });
   }
 
-
   async updateWorkspaceEntityConnection({
     entity_connection_id,
     entity_data,

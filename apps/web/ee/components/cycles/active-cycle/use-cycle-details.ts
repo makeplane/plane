@@ -12,9 +12,9 @@ import {
   TCyclePlotType,
   TCycleEstimateSystemAdvanced,
 } from "@plane/types";
-import { useCycle } from "@/hooks/store/use-cycle"
-import { useIssues } from "@/hooks/store/use-issues"
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 import { formatActiveCycle } from "./formatter";
 
 interface IActiveCycleDetails {

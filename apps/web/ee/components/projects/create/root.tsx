@@ -15,10 +15,10 @@ import ProjectCommonAttributes from "@/components/project/create/common-attribut
 import ProjectCreateHeader from "@/components/project/create/header";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
-import { useUser } from "@/hooks/store/user"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";

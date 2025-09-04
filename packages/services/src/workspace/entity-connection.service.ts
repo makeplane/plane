@@ -1,7 +1,7 @@
-import { APIService } from "../api.service";
 import { API_BASE_URL } from "@plane/constants";
 // types
 import { TWorkspaceEntityConnection } from "@plane/types";
+import { APIService } from "../api.service";
 
 export class WorkspaceEntityConnectionService extends APIService {
   constructor(BASE_URL?: string) {

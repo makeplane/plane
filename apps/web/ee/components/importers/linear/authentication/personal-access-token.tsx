@@ -2,18 +2,18 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web components
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
-import { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
-import { useTranslation } from "@plane/i18n";
 import { TImporterPATError } from "@/plane-web/types";
-import ErrorBanner from "../../ui/error-banner";
+import { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
 import LinearLogo from "@/public/services/linear.svg";
 import ImporterHeader from "../../header";
+import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks

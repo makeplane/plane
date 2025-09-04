@@ -65,11 +65,7 @@ export class StaticFormFieldsService {
     };
   }
 
-  getLabelsField(
-    orderInFormFields: number,
-    required?: boolean,
-    visible?: boolean
-  ): SelectField {
+  getLabelsField(orderInFormFields: number, required?: boolean, visible?: boolean): SelectField {
     return {
       id: "labels",
       name: "Labels",
@@ -84,11 +80,7 @@ export class StaticFormFieldsService {
     };
   }
 
-  getStatesField(
-    orderInFormFields: number,
-    required?: boolean,
-    visible?: boolean
-  ): SelectField {
+  getStatesField(orderInFormFields: number, required?: boolean, visible?: boolean): SelectField {
     return {
       id: "state",
       name: "State",

@@ -551,7 +551,6 @@ export interface PageResource {
   pageId: string;
 }
 
-
 export interface UnfurlBlock {
   blocks: any[];
   thread_ts?: string;

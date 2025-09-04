@@ -18,8 +18,6 @@ import {
   TLogicalOperator,
 } from "@plane/types";
 // local imports
-import { FilterConfigManager, IFilterConfigManager } from "./config-manager";
-import { FilterInstanceHelper, IFilterInstanceHelper } from "./filter-helpers";
 import {
   addAndCondition,
   addOrCondition,
@@ -36,6 +34,8 @@ import {
   updateNodeInExpression,
   wrapInNotGroup,
 } from "@plane/utils";
+import { FilterConfigManager, IFilterConfigManager } from "./config-manager";
+import { FilterInstanceHelper, IFilterInstanceHelper } from "./filter-helpers";
 
 /**
  * Interface for a filter instance.

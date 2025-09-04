@@ -7,8 +7,8 @@ import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { IssueTypeLogo } from "./common/issue-type-logo";
-import { IssueTypeQuickActions } from "./quick-actions";
 import { IssuePropertiesRoot } from "./properties";
+import { IssueTypeQuickActions } from "./quick-actions";
 
 type TIssueTypeListItem = {
   issueTypeId: string;

@@ -5,7 +5,7 @@ import { Avatar, Table } from "@plane/ui";
 // helpers
 import { convertMinutesToHoursMinutesString, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";

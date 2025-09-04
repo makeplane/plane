@@ -103,7 +103,11 @@ export const createPlaneClient = async (workspaceId: string, userId: string, sou
   }
 };
 
-export const titleCase = (word: string) => word.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+export const titleCase = (word: string) =>
+  word
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 
 export const isUUID = (id: string | null) => id && uuidValidate(id);
 

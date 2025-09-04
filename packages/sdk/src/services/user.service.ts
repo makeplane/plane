@@ -1,12 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import {
-  ClientOptions,
-  PlaneUser,
-  UploadData,
-  UserCreatePayload,
-  UserResponsePayload,
-} from "@/types/types";
+import { ClientOptions, PlaneUser, UploadData, UserCreatePayload, UserResponsePayload } from "@/types/types";
 
 export type TTempPlaneUser = {
   id: string;
@@ -26,7 +20,7 @@ export class UserService extends APIService {
   async getAvatarUploadAvatar(
     name: string,
     size: number,
-    type: string,
+    type: string
   ): Promise<{
     upload_data: UploadData;
     asset_id: string;
@@ -55,15 +49,8 @@ export class UserService extends APIService {
       });
   }
 
-  async create(
-    workspaceSlug: string,
-    projectId: string,
-    payload: UserCreatePayload,
-  ): Promise<UserResponsePayload> {
-    return this.post(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`,
-      payload,
-    )
+  async create(workspaceSlug: string, projectId: string, payload: UserCreatePayload): Promise<UserResponsePayload> {
+    return this.post(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`, payload)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -85,9 +72,7 @@ export class UserService extends APIService {
   }
 
   async list(workspaceSlug: string, projectId: string): Promise<PlaneUser[]> {
-    return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`,
-    )
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response.data)
       .catch((error) => {
         console.log(error);

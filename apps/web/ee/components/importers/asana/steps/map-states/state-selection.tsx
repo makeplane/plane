@@ -3,13 +3,13 @@
 import { FC } from "react";
 // types
 import { AsanaSection } from "@plane/etl/asana";
+import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // silo types
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
-import { useTranslation } from "@plane/i18n";
 
 type TMapStatesSelection = {
   value: string | undefined;

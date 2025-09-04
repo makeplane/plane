@@ -32,7 +32,7 @@ export type TWorkItemFormResult = {
     projectId: string;
     formFields: FormField[];
   };
-}
+};
 
 export type TIntakeFormResult = {
   type: TFormType.INTAKE;
@@ -51,16 +51,16 @@ export type TIntakeFormResult = {
     projectId: string;
     formFields: FormField[];
   };
-}
+};
 
 export type TUnknownFormResult = {
   type: TFormType.UNKNOWN;
   success: false;
   error: string;
   callbackId: string;
-}
+};
 
 export type TFormParserContext = {
   workspaceSlug: string;
   accessToken: string;
-}
+};

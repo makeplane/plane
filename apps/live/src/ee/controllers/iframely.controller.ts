@@ -1,11 +1,11 @@
-import { Controller, Get } from "@plane/decorators";
-import type { Request, Response } from "express";
 import axios from "axios";
+import type { Request, Response } from "express";
+import { Controller, Get } from "@plane/decorators";
 // services
+import { handleAuthentication } from "@/core/lib/authentication";
 import { IframelyAPI } from "@/ee/services/iframely.service";
 // helpers
 import { env } from "@/env";
-import { handleAuthentication } from "@/core/lib/authentication";
 
 @Controller("/iframely")
 export class IframelyController {

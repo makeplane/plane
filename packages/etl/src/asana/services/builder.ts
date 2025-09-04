@@ -1,6 +1,6 @@
-import { AsanaAuth } from "./auth.service";
-import AsanaService from "./api.service";
 import { AsanaServiceProps } from "@/asana/types";
+import AsanaService from "./api.service";
+import { AsanaAuth } from "./auth.service";
 
 export const createAsanaAuthService = (clientId: string = "", clientSecret: string = "", callbackURL: string) => {
   if (!clientId || !clientSecret) {

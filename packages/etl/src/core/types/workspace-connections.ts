@@ -59,7 +59,7 @@ export type TGitlabWorkspaceConnectionData = {
 };
 
 // workspace connections
-export type TWorkspaceConnectionType = keyof typeof E_INTEGRATION_KEYS
+export type TWorkspaceConnectionType = keyof typeof E_INTEGRATION_KEYS;
 
 export type TWorkspaceConnection<TWorkspaceConnectionData extends object> = {
   id: string | undefined;

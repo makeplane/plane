@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { Briefcase } from "lucide-react";
 // components
+import { EConnectionType } from "@plane/etl/gitlab";
+import { useTranslation } from "@plane/i18n";
 import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
@@ -14,8 +16,6 @@ import { useGitlabIntegration } from "@/plane-web/hooks/store";
 import { TProjectMap } from "@/plane-web/types/integrations";
 // public images
 import GitlabLogo from "@/public/services/gitlab.svg";
-import { useTranslation } from "@plane/i18n";
-import { EConnectionType } from "@plane/etl/gitlab";
 
 type TEntityForm = {
   value: TProjectMap;

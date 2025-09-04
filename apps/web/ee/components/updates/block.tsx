@@ -9,7 +9,7 @@ import { EUpdateEntityType, EUserProjectRoles, EUserWorkspaceRoles, TUpdate, TUp
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { CommentList } from "./comments/comment-list";

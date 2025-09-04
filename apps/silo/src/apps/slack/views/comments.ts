@@ -38,7 +38,9 @@ export const createSlackCommentBlock = (commentProps: CommentProps) => {
       elements: [
         {
           type: "mrkdwn",
-          text: isUser ? "Synced from Plane" : `Commented from Plane by ${getUserMarkdown(userMap, workspaceSlug, createdById, createdByDisplayName)}`,
+          text: isUser
+            ? "Synced from Plane"
+            : `Commented from Plane by ${getUserMarkdown(userMap, workspaceSlug, createdById, createdByDisplayName)}`,
         },
       ],
     },

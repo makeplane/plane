@@ -11,9 +11,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
 // local imports
+import { JoinTeamspaceButton } from "../actions/join-teamspace";
 import { TeamProperties } from "../actions/properties";
 import { TeamQuickActions } from "../actions/quick-actions";
-import { JoinTeamspaceButton } from "../actions/join-teamspace";
 
 type TeamspaceListItemProps = {
   teamspaceId: string;

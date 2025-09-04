@@ -16,6 +16,7 @@ import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } 
 import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import { ITeamProjectWorkItemsFilter, TeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project";
+import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
 import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,
@@ -49,7 +50,6 @@ import {
   WorkspaceDraftIssues,
   WorkspaceDraftIssuesFilter,
 } from "./workspace-draft";
-import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;

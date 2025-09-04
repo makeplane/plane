@@ -8,7 +8,7 @@ import { ETemplateType } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getTemplateSettingsBasePath, getTemplateTypeI18nName, projectTemplateFormDataToData } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

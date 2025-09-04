@@ -9,7 +9,7 @@ import { ListLayout } from "@/components/core/list/list-root";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

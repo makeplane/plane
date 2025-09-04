@@ -1,7 +1,7 @@
+import { logger } from "@plane/logger";
+import { HocusPocusServerContext } from "@/core/types/common";
 import { DocumentHandler } from "@/core/types/document-handler";
 import { DebounceManager } from "./debounce";
-import { HocusPocusServerContext } from "@/core/types/common";
-import { logger } from "@plane/logger";
 
 /**
  * Manages title update operations for a single document

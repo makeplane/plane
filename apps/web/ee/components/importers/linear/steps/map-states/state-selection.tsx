@@ -3,11 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { LinearState } from "@plane/etl/linear";
+import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // silo ui components
 import { Dropdown } from "@/plane-web/components/importers/ui";
-import { useTranslation } from "@plane/i18n";
 
 type TMapStatesSelection = {
   value: string | undefined;

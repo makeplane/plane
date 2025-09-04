@@ -10,7 +10,7 @@ import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";

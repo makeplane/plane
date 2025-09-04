@@ -197,7 +197,7 @@ export class ClickUpPullService {
       if (comments.length === 0) {
         break;
       }
-      comments.reverse()
+      comments.reverse();
       for (const comment of comments) {
         // push the top level comment
         taskComments.push(comment);

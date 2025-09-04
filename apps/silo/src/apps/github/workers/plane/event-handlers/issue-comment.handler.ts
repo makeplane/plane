@@ -23,12 +23,12 @@ export const handleIssueCommentWebhook = async (
   // Store a key associated with the data in the store
   // If the key is present, then we need to requeue all that task and process them again
   if (payload && payload.id) {
-    // @ts-ignore
+    // @ts-expect-error
     const exist = await store.get(`silo:comment:${payload.id}`);
     if (exist) {
       logger.info("[PLANE][COMMENT] Event Processed Successfully, confirmed by target");
       // Remove the webhook from the store
-      // @ts-ignore
+      // @ts-expect-error
       await store.del(`silo:comment:${payload.id}`);
       return true;
     }

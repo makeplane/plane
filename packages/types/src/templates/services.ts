@@ -1,5 +1,5 @@
-import { PartialDeep } from "../utils";
 import { TBaseTemplateWithData } from "../templates/base";
+import { PartialDeep } from "../utils";
 
 export type ITemplateService<T extends TBaseTemplateWithData> = {
   list: () => Promise<T[]>;

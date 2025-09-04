@@ -1,5 +1,5 @@
-import { Controller, Get } from "@plane/decorators";
 import type { Request, Response } from "express";
+import { Controller, Get } from "@plane/decorators";
 
 @Controller("/health")
 export class HealthController {

@@ -8,9 +8,9 @@ import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { jiraAuth } from "../auth/auth";
-import { logger } from "@/logger";
 
 class JiraApiError extends Error {
   constructor(

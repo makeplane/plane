@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@plane/i18n";
 import { FC } from "react";
+import { useTranslation } from "@plane/i18n";
 
 export const EmptyState: FC = () => {
   const { t } = useTranslation();

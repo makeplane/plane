@@ -1,5 +1,5 @@
-import { BroadcastController } from "./broadcast.controller";
 import { CONTROLLERS as CEControllers } from "@/ce/controllers";
+import { BroadcastController } from "./broadcast.controller";
 import { IframelyController } from "./iframely.controller";
 
 export const CONTROLLERS = {

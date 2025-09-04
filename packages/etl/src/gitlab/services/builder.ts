@@ -1,5 +1,5 @@
-import { GitLabAuthService } from "./auth.service";
 import { GitLabService } from "./api.service";
+import { GitLabAuthService } from "./auth.service";
 
 export const createGitLabAuth = (props: {
   host?: string;

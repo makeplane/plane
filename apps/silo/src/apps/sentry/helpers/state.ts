@@ -7,9 +7,9 @@ export const getProjectStateMappings = async (
   planeClient: Client,
   workspaceConnection: TWorkspaceConnection,
   projectId: string
-): Promise<{ resolvedState: ExState, unresolvedState: ExState, isDefault: boolean } | null> => {
+): Promise<{ resolvedState: ExState; unresolvedState: ExState; isDefault: boolean } | null> => {
   if (workspaceConnection.config) {
-    const config = workspaceConnection.config as TSentryConfig
+    const config = workspaceConnection.config as TSentryConfig;
     const projectStateMappings = config.stateMappings?.find((mapping) => mapping.projectId === projectId);
 
     if (projectStateMappings) {
@@ -23,8 +23,12 @@ export const getProjectStateMappings = async (
 
   // Get project states for default configuration
   const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
-  const resolvedStates = states.results.filter((state) => state.group.toLowerCase() === EPlaneStates.COMPLETED).sort((a, b) => a.name.localeCompare(b.name));
-  const unresolvedStates = states.results.filter((state) => state.group.toLowerCase() === EPlaneStates.BACKLOG).sort((a, b) => a.name.localeCompare(b.name));
+  const resolvedStates = states.results
+    .filter((state) => state.group.toLowerCase() === EPlaneStates.COMPLETED)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const unresolvedStates = states.results
+    .filter((state) => state.group.toLowerCase() === EPlaneStates.BACKLOG)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const resolvedState = resolvedStates.length > 0 ? resolvedStates[0] : undefined;
   const unresolvedState = unresolvedStates.length > 0 ? unresolvedStates[0] : undefined;
@@ -38,4 +42,4 @@ export const getProjectStateMappings = async (
     unresolvedState: unresolvedState,
     isDefault: true,
   };
-}
+};

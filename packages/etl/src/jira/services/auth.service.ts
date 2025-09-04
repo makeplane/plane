@@ -1,5 +1,5 @@
-import { JiraAuthProps, JiraAuthState } from "@/jira/types";
 import axios from "axios";
+import { JiraAuthProps, JiraAuthState } from "@/jira/types";
 import { JIRA_SCOPES } from "../helpers";
 
 export type JiraTokenResponse = {

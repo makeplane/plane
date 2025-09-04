@@ -1,10 +1,10 @@
 import { Database } from "@hocuspocus/extension-database";
-import { catchAsync } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
-import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
 import { storePayload } from "@hocuspocus/server";
-import { extractTextFromHTML } from "./title-update/title-utils";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
 import { getDocumentHandler } from "../handlers/page-handlers";
+import { extractTextFromHTML } from "./title-update/title-utils";
 
 export const createDatabaseExtension = () => {
   return new Database({

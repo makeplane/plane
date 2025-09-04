@@ -47,57 +47,58 @@ export const createProjectSelectionModal = (
         emoji: true,
       },
     },
-    ...(showIntakeDropdown && selectedProject ? [
-      {
-        dispatch_action: true,
-        type: "input",
-        element: {
-          type: "static_select",
-          placeholder: {
-            type: "plain_text",
-            text: "Work Item or Intake",
-            emoji: true,
+    ...(showIntakeDropdown && selectedProject
+      ? [
+          {
+            dispatch_action: true,
+            type: "input",
+            element: {
+              type: "static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Work Item or Intake",
+                emoji: true,
+              },
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "Work Item",
+                    emoji: true,
+                  },
+                  value: `${selectedProject}.${E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM}`,
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "Intake",
+                    emoji: true,
+                  },
+                  value: `${selectedProject}.${E_ISSUE_OBJECT_TYPE_SELECTION.INTAKE}`,
+                },
+              ],
+              action_id: ACTIONS.ISSUE_OBJECT_TYPE_SELECTION,
+            },
+            label: {
+              type: "plain_text",
+              text: "Add as",
+              emoji: true,
+            },
           },
-          options: [
-            {
-              text: {
-                type: "plain_text",
-                text: "Work Item",
-                emoji: true,
-              },
-              value: `${selectedProject}.${E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM}`,
-            },
-            {
-              text: {
-                type: "plain_text",
-                text: "Intake",
-                emoji: true,
-              },
-              value: `${selectedProject}.${E_ISSUE_OBJECT_TYPE_SELECTION.INTAKE}`,
-            },
-          ],
-          action_id: ACTIONS.ISSUE_OBJECT_TYPE_SELECTION,
-        },
-        label: {
-          type: "plain_text",
-          text: "Add as",
-          emoji: true,
-        },
-      },
-    ] : []),
+        ]
+      : []),
     ...(error
       ? [
-        {
-          type: "context",
-          elements: [
-            {
-              type: "mrkdwn",
-              text: `:warning: *Error:* ${error}`,
-            },
-          ],
-        },
-      ]
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `:warning: *Error:* ${error}`,
+              },
+            ],
+          },
+        ]
       : []),
-
   ],
-})
+});

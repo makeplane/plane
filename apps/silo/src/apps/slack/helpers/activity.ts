@@ -29,16 +29,16 @@ const ACTIVITY_FORMATTERS: Record<string, ActivityFormatter> = {
     let changeText = `> *${fieldText}*:\n`;
 
     if (activity.addedIdentifiers?.length > 0) {
-      const addedUsers = activity.addedIdentifiers.map((id, index) =>
-        getUserMarkdown(userMap, workspaceSlug, id, activity.added[index])
-      ).join(", ");
+      const addedUsers = activity.addedIdentifiers
+        .map((id, index) => getUserMarkdown(userMap, workspaceSlug, id, activity.added[index]))
+        .join(", ");
       changeText += `>  - Added ${addedUsers}\n`;
     }
 
     if (activity.removedIdentifiers?.length > 0) {
-      const removedUsers = activity.removedIdentifiers.map((id, index) =>
-        getUserMarkdown(userMap, workspaceSlug, id, activity.removed[index])
-      ).join(", ");
+      const removedUsers = activity.removedIdentifiers
+        .map((id, index) => getUserMarkdown(userMap, workspaceSlug, id, activity.removed[index]))
+        .join(", ");
       changeText += `>  - Removed ${removedUsers}\n`;
     }
 
@@ -77,7 +77,6 @@ const ACTIVITY_FORMATTERS: Record<string, ActivityFormatter> = {
    * // "> *Priority*: High\n" (when setting new priority)
    */
   priority: ({ activity, fieldText }) => {
-
     if (activity.isArrayField) return "";
 
     const oldValue = activity.oldValue ? titleCase(activity.oldValue) : null;

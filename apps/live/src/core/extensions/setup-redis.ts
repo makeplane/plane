@@ -1,7 +1,7 @@
 // core helpers and utilities
 import { RedisManager } from "@/core/lib/redis-manager";
-import { CustomHocuspocusRedisExtension } from "./redis";
 import { shutdownManager } from "../shutdown-manager";
+import { CustomHocuspocusRedisExtension } from "./redis";
 
 /**
  * Sets up the Redis extension for HocusPocus using the RedisManager singleton

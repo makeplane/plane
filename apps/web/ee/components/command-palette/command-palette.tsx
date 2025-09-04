@@ -7,13 +7,13 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user"
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
-import { WikiCreatePageModal } from "@/plane-web/components/pages";
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals";
+import { WikiCreatePageModal } from "@/plane-web/components/pages";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params

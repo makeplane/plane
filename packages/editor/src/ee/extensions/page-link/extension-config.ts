@@ -1,6 +1,5 @@
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { mergeAttributes, Node } from "@tiptap/core";
-
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export const PageLinkExtensionConfig = Node.create({
   name: ADDITIONAL_EXTENSIONS.PAGE_LINK_COMPONENT,

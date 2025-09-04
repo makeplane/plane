@@ -6,8 +6,8 @@ import { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintF
 import { Avatar, AvatarGroup, CustomMenu, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { cn, getFileURL, TProjectBlueprintDetails } from "@plane/utils";
 // plane web imports
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";

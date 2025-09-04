@@ -1,5 +1,5 @@
-import { IInsightField } from "./common";
 import { TAnalyticsTabsExtended } from "@plane/types";
+import { IInsightField } from "./common";
 
 export const ANALYTICS_INSIGHTS_FIELDS_EXTENDED: Record<TAnalyticsTabsExtended, IInsightField[]> = {
   users: [

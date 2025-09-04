@@ -1,6 +1,6 @@
 // helpers
-import { TUserApplication, TWorkspaceAppInstallation } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { TUserApplication, TWorkspaceAppInstallation } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -86,20 +86,19 @@ export class ApplicationService extends APIService {
       });
   }
 
-    async getApplicationByClientId(clientId: string): Promise<Partial<TUserApplication> | undefined> {
-        return this.get(`/api/applications/${clientId}/`)
-            .then((res) => res?.data)
-            .catch((err) => {
-                throw err?.response?.data;
-            });
-    }
+  async getApplicationByClientId(clientId: string): Promise<Partial<TUserApplication> | undefined> {
+    return this.get(`/api/applications/${clientId}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
 
-    async getPublishedApplicationBySlug(workspaceSlug: string, appSlug: string): Promise<TUserApplication | undefined> {
-        return this.get(`/api/workspaces/${workspaceSlug}/published-applications/${appSlug}/`)
-            .then((res) => res?.data)
-            .catch((err) => {
-                throw err?.response?.data;
-            });
-    }
-
+  async getPublishedApplicationBySlug(workspaceSlug: string, appSlug: string): Promise<TUserApplication | undefined> {
+    return this.get(`/api/workspaces/${workspaceSlug}/published-applications/${appSlug}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
 }

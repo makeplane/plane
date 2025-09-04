@@ -1,6 +1,6 @@
-import { TeamspacePageService } from "@/ee/services/teamspace-page.service";
-import { HocusPocusServerContext } from "@/core/types/common";
 import { BasePageHandler } from "@/core/document-types/base-page/handlers";
+import { HocusPocusServerContext } from "@/core/types/common";
+import { TeamspacePageService } from "@/ee/services/teamspace-page.service";
 
 export interface TeamspacePageConfig {
   teamspaceId: string | undefined;

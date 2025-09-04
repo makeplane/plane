@@ -11,7 +11,7 @@ import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

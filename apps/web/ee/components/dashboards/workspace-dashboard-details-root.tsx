@@ -2,12 +2,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane web hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 import { useDashboards } from "@/plane-web/hooks/store";
 // local components
 import { DashboardsWidgetsListRoot } from "./details/root";
 import { DashboardsWidgetConfigSidebarRoot } from "./sidebar";
-import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-import { useProject } from "@/hooks/store/use-project";
 
 export const WorkspaceDashboardDetailsRoot = observer(() => {
   // navigation

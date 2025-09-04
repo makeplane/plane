@@ -1,8 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import { Button } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/ui";
 
 interface IRerunModalProps {
   onClose: () => void;

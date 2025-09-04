@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { createLinearAuthService } from "@plane/etl/linear";
+import { env } from "@/env";
 
 export const linearAuth = createLinearAuthService(
   env.LINEAR_CLIENT_ID,

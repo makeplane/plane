@@ -1,7 +1,7 @@
 // services
 import { BasePageService, IBasePageParams, IUpdateDescriptionParams } from "@/core/services/base-page.service";
 
-export type SyncAgentConfig = Record<string, unknown>
+export type SyncAgentConfig = Record<string, unknown>;
 
 export class SyncAgentService extends BasePageService {
   /**

@@ -12,7 +12,6 @@ export interface SentryWebhookHeaders {
 // Resource Types
 export type SentryHookResource = "installation" | "event_alert" | "issue" | "metric_alert" | "error" | "comment";
 
-
 // Installation Types
 export interface SentryInstallation {
   uuid: string;

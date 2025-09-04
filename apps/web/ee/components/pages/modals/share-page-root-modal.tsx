@@ -10,7 +10,7 @@ import { setToast, TOAST_TYPE, dismissToast } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // plane web hooks
 import { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";

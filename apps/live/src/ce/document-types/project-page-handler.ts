@@ -1,5 +1,5 @@
-import { ProjectPageService } from "@/core/services/project-page.service";
 import { BasePageHandler } from "@/core/document-types/base-page/handlers";
+import { ProjectPageService } from "@/core/services/project-page.service";
 import { HocusPocusServerContext } from "@/core/types/common";
 
 export interface ProjectPageConfig {

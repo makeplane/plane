@@ -1,9 +1,9 @@
-import { TPage } from "@plane/types";
 import * as Y from "yjs";
-import { ConditionRegistry } from "./registries/condition-registry";
-import { ActionRegistry } from "./registries/action-registry";
-import { RuleRegistry } from "./registries/rule-registry";
+import { TPage } from "@plane/types";
 import { findAllElementsRecursive } from "@/core/utilities/xml-tree-utils";
+import { ActionRegistry } from "./registries/action-registry";
+import { ConditionRegistry } from "./registries/condition-registry";
+import { RuleRegistry } from "./registries/rule-registry";
 import "./rules/standard-rule";
 import "./actions/standard-action";
 import "./conditions/standard-condition";

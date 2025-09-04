@@ -5,7 +5,13 @@ import { invertStringMap } from "@/helpers/utils";
 import { logger } from "@/logger";
 import { TSlackWorkspaceConnectionConfig } from "../types/types";
 
-export const getUserMarkdown = (planeToSlackUserMap: Map<string, string>, workspaceSlug: string, userId: string, displayName?: string, disableMention: boolean = false) => {
+export const getUserMarkdown = (
+  planeToSlackUserMap: Map<string, string>,
+  workspaceSlug: string,
+  userId: string,
+  displayName?: string,
+  disableMention: boolean = false
+) => {
   if (planeToSlackUserMap.has(userId) && !disableMention) {
     return `<@${planeToSlackUserMap.get(userId)}>`;
   }
@@ -36,9 +42,9 @@ export const getUserMapFromSlackWorkspaceConnection = (workspaceConnection: TWor
  * Enhance userMap by finding Slack users for Plane users who aren't mapped yet
  */
 export const enhanceUserMapWithSlackLookup = async (props: {
-  planeUsers: Array<{ id: string; email?: string; display_name: string }>,
-  currentUserMap: Map<string, string>, // slack -> plane mapping
-  slackService: SlackService,
+  planeUsers: Array<{ id: string; email?: string; display_name: string }>;
+  currentUserMap: Map<string, string>; // slack -> plane mapping
+  slackService: SlackService;
 }): Promise<Map<string, string>> => {
   const { planeUsers, currentUserMap, slackService } = props;
 
@@ -46,9 +52,7 @@ export const enhanceUserMapWithSlackLookup = async (props: {
   const enhancedMap = new Map(currentUserMap);
 
   // Find Plane users who aren't in the current userMap
-  const unmappedUsers = planeUsers.filter(user =>
-    user.email && !planeToSlackMap.has(user.id)
-  );
+  const unmappedUsers = planeUsers.filter((user) => user.email && !planeToSlackMap.has(user.id));
 
   if (unmappedUsers.length === 0) {
     return enhancedMap;
@@ -57,7 +61,6 @@ export const enhanceUserMapWithSlackLookup = async (props: {
   try {
     // Match unmapped Plane users with Slack users by email
     for (const planeUser of unmappedUsers) {
-
       if (!planeUser.email) {
         logger.warn("Skipping user lookup for user without email", { userId: planeUser.id });
         continue;

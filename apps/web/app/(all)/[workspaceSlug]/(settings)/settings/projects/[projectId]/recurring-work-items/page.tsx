@@ -11,7 +11,7 @@ import { EUserProjectRoles } from "@plane/types";
 import { PageHead } from "@/components/core/page-title";
 // store hooks
 import { SettingsHeading } from "@/components/settings/heading";
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";

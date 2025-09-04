@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
-import { responseHandler } from "@/helpers/response-handler";
-import { getAPIClient } from "@/services/client";
 import { TWorkspaceEntityConnection } from "@plane/types";
+import { responseHandler } from "@/helpers/response-handler";
+import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
 

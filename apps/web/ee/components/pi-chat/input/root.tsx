@@ -1,23 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import useSWR from "swr";
-import { ArrowUp, Disc, FileText, Loader } from "lucide-react";
+import { ArrowUp, Disc, FileText } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EditorRefApi, PiChatEditorWithRef } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useRouter } from "next/navigation";
 // plane web imports
+import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { FocusFilter } from "./focus-filter";
-import { useAppRouter } from "@/hooks/use-app-router";
 import AudioRecorder from "./voice-input";
 
 type TEditCommands = {

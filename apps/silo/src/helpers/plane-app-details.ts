@@ -1,8 +1,8 @@
+import { TAppKeys } from "@plane/etl/core";
 import { getAppSecretValue } from "@/db/query";
 import { logger } from "@/logger";
 import { Store } from "@/worker/base";
 import { getPlaneAppDetailsCacheKey } from "./cache-keys";
-import { TAppKeys } from "@plane/etl/core";
 
 type PlaneAppDetails = {
   planeAppId: string;

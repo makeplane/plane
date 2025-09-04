@@ -5,7 +5,6 @@ import {
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
 } from "jira.js/out/version2/models";
-import { fetchPaginatedData, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
 import {
   ImportedJiraUser,
   JiraComment,
@@ -17,6 +16,7 @@ import {
   JiraCustomFieldKeys,
   JiraV2Service,
 } from "..";
+import { fetchPaginatedData, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
 
 export async function pullUsers(client: JiraV2Service): Promise<ImportedJiraUser[]> {
   const jiraUsers = await client.getJiraUsers();

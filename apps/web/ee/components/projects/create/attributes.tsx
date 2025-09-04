@@ -15,8 +15,8 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 // local imports
-import { StateDropdown } from "../dropdowns/state-dropdown";
 import { MembersDropdown } from "../dropdowns/members-dropdown";
+import { StateDropdown } from "../dropdowns/state-dropdown";
 
 type Props = {
   workspaceSlug: string;

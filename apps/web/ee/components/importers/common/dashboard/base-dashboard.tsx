@@ -97,9 +97,13 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
   const isReRunDisabled = (job: any) => {
     if (!job || !job?.status) return true;
 
-    return ![E_JOB_STATUS.CREATED, E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.CANCELLED, E_JOB_STATUS.QUEUED].includes(
-      job?.status as E_JOB_STATUS
-    );
+    return ![
+      E_JOB_STATUS.CREATED,
+      E_JOB_STATUS.FINISHED,
+      E_JOB_STATUS.ERROR,
+      E_JOB_STATUS.CANCELLED,
+      E_JOB_STATUS.QUEUED,
+    ].includes(job?.status as E_JOB_STATUS);
   };
 
   const isCancelDisabled = (job: any) => {

@@ -4,7 +4,7 @@ import { StaticFormFieldsService } from "./static-fields";
 
 export const getCreateIntakeFormFields = async (
   slug: string,
-  projectId: string,
+  projectId: string
 ): Promise<CreateIntakeFormFieldsMetadata> => {
   const staticFieldsService = new StaticFormFieldsService();
 
@@ -17,6 +17,6 @@ export const getCreateIntakeFormFields = async (
   return {
     slug,
     fields,
-    projectId
+    projectId,
   };
 };

@@ -3,16 +3,16 @@ import { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
 // types
-import { HocusPocusServerContext } from "@/core/types/common";
 // editor extensions
 import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
 // handlers
 import { getDocumentHandler } from "@/core/handlers/page-handlers";
 // helpers
 import { generateTitleProsemirrorJson } from "@/core/helpers/generate-title-prosemirror-json";
-import { extractTextFromHTML } from "./title-update/title-utils";
-import { TitleUpdateManager } from "./title-update/title-update-manager";
+import { HocusPocusServerContext } from "@/core/types/common";
 import { broadcastMessageToPage } from "@/ee/lib/utils/broadcast-message";
+import { TitleUpdateManager } from "./title-update/title-update-manager";
+import { extractTextFromHTML } from "./title-update/title-utils";
 
 /**
  * Hocuspocus extension for synchronizing document titles

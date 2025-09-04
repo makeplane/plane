@@ -12,7 +12,7 @@ import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web components

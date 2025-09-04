@@ -1,13 +1,13 @@
-import { HocusPocusServerContext } from "@/core/types/common";
-import { BasePageService } from "@/core/services/base-page.service";
-import { logger } from "@plane/logger";
-import { TPage } from "@plane/types";
-import { DocumentHandler, HandlerDefinition } from "@/core/types/document-handler";
-import { handlerFactory } from "@/core/handlers/page-handlers/handler-factory";
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
 } from "@plane/editor/lib";
+import { logger } from "@plane/logger";
+import { TPage } from "@plane/types";
+import { handlerFactory } from "@/core/handlers/page-handlers/handler-factory";
+import { BasePageService } from "@/core/services/base-page.service";
+import { HocusPocusServerContext } from "@/core/types/common";
+import { DocumentHandler, HandlerDefinition } from "@/core/types/document-handler";
 
 /**
  * Base class for page handlers with factory integration

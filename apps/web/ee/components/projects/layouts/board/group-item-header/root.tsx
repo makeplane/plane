@@ -7,7 +7,7 @@ import { Maximize2, Minimize2, Plus } from "lucide-react";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";

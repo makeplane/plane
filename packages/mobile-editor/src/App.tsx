@@ -1,6 +1,6 @@
+import { MobileDocumentEditor } from "@/components/document-editor/document-editor";
 import { EditorWrapper } from "@/components/editor/editor-wrapper";
 import useQueryParams from "@/hooks/use-query-params";
-import { MobileDocumentEditor } from "@/components/document-editor/document-editor";
 import { TEditorVariant } from "@/types/editor";
 
 export const App = () => {

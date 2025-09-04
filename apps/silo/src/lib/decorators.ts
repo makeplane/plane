@@ -5,9 +5,9 @@
 import "reflect-metadata";
 import { RequestHandler } from "express";
 // external middlewares
-import { validateUserAuthentication } from "@/middleware/auth.middleware";
-import { checkIntegrationAvailability } from "@/helpers/app";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { checkIntegrationAvailability } from "@/helpers/app";
+import { validateUserAuthentication } from "@/middleware/auth.middleware";
 
 type Constructor = {
   new (...args: any[]): any;

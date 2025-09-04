@@ -13,8 +13,8 @@ import { renderFormattedDate } from "@plane/utils";
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
 // hooks
-import { useMember } from "@/hooks/store/use-member";
 import { useAnalytics } from "@/hooks/store/use-analytics";
+import { useMember } from "@/hooks/store/use-member";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 import { UserAvatarName } from "../user-avatar-name";

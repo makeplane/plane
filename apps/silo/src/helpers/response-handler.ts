@@ -1,5 +1,5 @@
-import { logger } from "@/logger";
 import { Response } from "express";
+import { logger } from "@/logger";
 
 const { APP_ENV } = process.env;
 

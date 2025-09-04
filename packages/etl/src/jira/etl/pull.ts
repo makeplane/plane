@@ -9,12 +9,6 @@ import {
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
-import {
-  fetchPaginatedData,
-  formatDateStringForHHMM,
-  OPTION_CUSTOM_FIELD_TYPES,
-  removeArrayObjSpaces,
-} from "../helpers";
 import { JiraService } from "@/jira/services";
 import {
   ImportedJiraUser,
@@ -26,6 +20,12 @@ import {
   JiraIssueFieldOptions,
   JiraCustomFieldKeys,
 } from "@/jira/types";
+import {
+  fetchPaginatedData,
+  formatDateStringForHHMM,
+  OPTION_CUSTOM_FIELD_TYPES,
+  removeArrayObjSpaces,
+} from "../helpers";
 
 export function pullUsers(users: string): ImportedJiraUser[] {
   const jiraUsersObject = CSV.parse(users, { output: "objects" });

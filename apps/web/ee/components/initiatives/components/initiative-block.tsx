@@ -10,7 +10,7 @@ import { cn } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

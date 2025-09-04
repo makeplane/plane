@@ -14,8 +14,8 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";

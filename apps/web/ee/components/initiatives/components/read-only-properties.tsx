@@ -1,6 +1,6 @@
 "use client";
-import { Briefcase, CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
+import { Briefcase, CalendarDays } from "lucide-react";
 // plane imports
 import { Avatar, EpicIcon } from "@plane/ui";
 import { getDate, getFileURL } from "@plane/utils";

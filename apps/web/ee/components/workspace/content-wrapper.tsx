@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 import { observer } from "mobx-react";
 // plane imports
 import { useParams, usePathname } from "next/navigation";
@@ -12,6 +11,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 // plane web imports
 import { AppRailRoot } from "@/plane-web/components/app-rail";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 // local imports
 import { PiChatFloatingBot } from "../pi-chat/floating-bot";
 

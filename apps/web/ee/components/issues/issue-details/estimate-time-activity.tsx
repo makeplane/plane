@@ -2,11 +2,11 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Triangle } from "lucide-react";
 // hooks
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import {
   IssueActivityBlockComponent,
   IssueLink,
 } from "@/components/issues/issue-detail/issue-activity/activity/actions";
-import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 

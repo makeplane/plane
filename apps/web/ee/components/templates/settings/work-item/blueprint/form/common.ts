@@ -63,8 +63,8 @@ export type TWorkItemBlueprintPropertiesBaseProps<T extends FieldValues> = {
   shouldLoadDefaultValues?: boolean;
 };
 
-export type TWorkItemBlueprintPropertiesWithMobxProps<T extends FieldValues> = TWorkItemBlueprintPropertiesBaseProps<T> &
-  TWorkItemBlueprintWithMobxData;
+export type TWorkItemBlueprintPropertiesWithMobxProps<T extends FieldValues> =
+  TWorkItemBlueprintPropertiesBaseProps<T> & TWorkItemBlueprintWithMobxData;
 
 export type TWorkItemBlueprintPropertiesWithAdditionalPropsProps<T extends FieldValues> =
   TWorkItemBlueprintPropertiesBaseProps<T> & TWorkItemBlueprintWithAdditionalPropsData;

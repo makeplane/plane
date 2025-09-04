@@ -11,8 +11,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
-import { TeamsOverviewSidebar } from "./sidebar/root";
 import { TeamsOverviewContent } from "./content";
+import { TeamsOverviewSidebar } from "./sidebar/root";
 
 type TTeamsOverviewRootProps = {
   teamspaceId: string;

@@ -1,10 +1,9 @@
 import React from "react";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useRouter } from "next/navigation";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TTemplate } from "@/plane-web/types";
 

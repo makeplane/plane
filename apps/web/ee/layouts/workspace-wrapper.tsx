@@ -29,9 +29,9 @@ import {
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;

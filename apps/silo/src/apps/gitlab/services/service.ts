@@ -1,7 +1,7 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createGitLabService } from "@plane/etl/gitlab";
-import { getAPIClient } from "@/services/client";
 import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
 

@@ -7,8 +7,7 @@ import { sentryAuth } from "../auth/auth";
 import { getRefreshTokenCallback } from "./auth";
 
 export const getSentryConnectionDetails = async (installationId: string) => {
-
-  const details = await getConnectionDetails(E_INTEGRATION_KEYS.SENTRY, installationId)
+  const details = await getConnectionDetails(E_INTEGRATION_KEYS.SENTRY, installationId);
 
   const { credential, workspaceConnection } = details;
 

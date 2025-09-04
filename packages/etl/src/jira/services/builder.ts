@@ -1,6 +1,6 @@
 import { JiraProps } from "@/jira/types";
-import { JiraAuth } from "./auth.service";
 import JiraService from "./api.service";
+import { JiraAuth } from "./auth.service";
 
 export const createJiraAuth = (
   clientId: string = "",

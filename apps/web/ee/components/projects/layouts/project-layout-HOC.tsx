@@ -14,9 +14,9 @@ import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loa
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useUserPermissions } from "@/hooks/store/user"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";

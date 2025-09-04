@@ -9,8 +9,8 @@ import {
   PriorityConfig,
   StateConfig,
 } from "@/asana/types";
-import { getFormattedDate } from "./date";
 import { E_IMPORTER_KEYS } from "@/core";
+import { getFormattedDate } from "./date";
 
 export const getTargetAttachments = (attachments: AsanaAttachment[]): Partial<ExIssueAttachment>[] => {
   if (!attachments) return [];

@@ -11,7 +11,7 @@ import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 

@@ -5,13 +5,13 @@ import { CalendarDays, Link2, Signal, Paperclip } from "lucide-react";
 import { LayersIcon, DoubleCircleIcon } from "@plane/ui";
 import type { ISvgIcons } from "@plane/ui/src/icons/type";
 // plane web imports
-import type { TProject } from "@/plane-web/types/projects";
 import { SpreadsheetIssueColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/issue-column";
 import { SpreadsheetLeadColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/lead-column";
 import { SpreadsheetMembersColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/members-column";
 import { SpreadsheetPriorityColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/priority-column";
 import { SpreadsheetStateColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/state-column";
 import { SpreadsheetUpdatedOnColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/updated-on-column";
+import type { TProject } from "@/plane-web/types/projects";
 
 export interface IProjectDisplayProperties {
   priority?: boolean;

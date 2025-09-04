@@ -1,6 +1,6 @@
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { SlackTokenRefreshResponse } from "@plane/etl/slack";
 import { getAPIClient } from "@/services/client";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 

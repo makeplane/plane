@@ -192,7 +192,6 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = observer((props
     if (isOpen) handleClose();
   });
 
-
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <CycleForm

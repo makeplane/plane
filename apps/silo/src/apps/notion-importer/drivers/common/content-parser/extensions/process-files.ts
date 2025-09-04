@@ -16,7 +16,7 @@ export interface NotionFileParserConfig {
 }
 
 export class NotionFileParserExtension implements IParserExtension {
-  constructor(readonly config: NotionFileParserConfig) { }
+  constructor(readonly config: NotionFileParserConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     /*
@@ -42,7 +42,6 @@ export class NotionFileParserExtension implements IParserExtension {
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
-
     if (node.tagName === "A" || node.rawTagName === "a") {
       const href = node.getAttribute("href");
       if (!href) return node;

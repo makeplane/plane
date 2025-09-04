@@ -1,8 +1,8 @@
 import type { Editor } from "@tiptap/core";
+import type { Slice } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import { find } from "linkifyjs";
-import type { Slice } from "@tiptap/pm/model";
 // plane editor imports
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 

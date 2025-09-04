@@ -1,6 +1,6 @@
 import { EIssuePropertyRelationType, EIssuePropertyType, ExIssueProperty } from "@plane/sdk";
-import { JiraCustomFieldKeys } from "../types/custom-fields";
 import { getTextPropertySettings } from "@/core";
+import { JiraCustomFieldKeys } from "../types/custom-fields";
 
 export const SUPPORTED_CUSTOM_FIELD_ATTRIBUTES: Record<JiraCustomFieldKeys, Partial<ExIssueProperty>> = {
   "com.atlassian.jira.plugin.system.customfieldtypes:textfield": {

@@ -89,18 +89,18 @@ export type FormField =
 export type FieldValue<T extends FormField> = T extends TextField
   ? string
   : T extends SelectField
-  ? string
-  : T extends RelationField
-  ? string
-  : T extends DateField
-  ? string
-  : T extends NumberField
-  ? number
-  : T extends BooleanField
-  ? boolean
-  : T extends FileUploadField
-  ? File[]
-  : never;
+    ? string
+    : T extends RelationField
+      ? string
+      : T extends DateField
+        ? string
+        : T extends NumberField
+          ? number
+          : T extends BooleanField
+            ? boolean
+            : T extends FileUploadField
+              ? File[]
+              : never;
 
 // Generic form state type
 export type FormState<T extends readonly FormField[]> = {

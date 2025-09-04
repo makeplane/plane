@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { getUserAuthScopes, getWorkspaceAuthScopes } from "../helpers";
 import {
   SlackAuthConfig,
   SlackAuthPayload,
@@ -9,7 +10,6 @@ import {
   SlackUserAuthPayload,
   SlackTokenRefreshResponse,
 } from "../types";
-import { getUserAuthScopes, getWorkspaceAuthScopes } from "../helpers";
 
 export class SlackAuthService {
   config: SlackAuthConfig;

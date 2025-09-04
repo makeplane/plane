@@ -1,9 +1,6 @@
 import { SentryIssue, SentryIssueWebhook } from "@plane/etl/sentry";
 import { ExIssue, ExState } from "@plane/sdk";
-import {
-  TWorkspaceConnection,
-  TWorkspaceEntityConnection
-} from "@plane/types";
+import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
@@ -22,7 +19,6 @@ import { ESentryEntityConnectionType, ISentryTaskHandler, TSentryServices } from
 export class SentryIssueHandler implements ISentryTaskHandler {
   private apiClient: APIClient = getAPIClient();
 
-
   /**
    * The handle task will evaluate if the Sentry issue should trigger
    * a Plane issue state update. It checks cache to prevent duplicate processing,
@@ -35,7 +31,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
       const shouldProcess = await this.shouldProcess(store, data);
       if (!shouldProcess) {
         logger.debug(`Sentry issue ${data.data.issue.id} already processed - skipping`, {
-          sentryIssueId: data.data.issue.id
+          sentryIssueId: data.data.issue.id,
         });
         return;
       }
@@ -44,7 +40,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
       const entityConnection = await this.getEntityConnection(data);
       if (!entityConnection) {
         logger.debug(`No entity connection found for Sentry issue ${data.data.issue.id}`, {
-          sentryIssueId: data.data.issue.id
+          sentryIssueId: data.data.issue.id,
         });
         return;
       }
@@ -54,7 +50,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     } catch (error) {
       logger.error("Failed to process Sentry issue webhook", {
         error,
-        sentryIssueId: data.data.issue.id
+        sentryIssueId: data.data.issue.id,
       });
     }
   }
@@ -65,7 +61,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
    */
   private async shouldProcess(store: Store, data: SentryIssueWebhook): Promise<boolean> {
     const cacheKey = `silo:sentry:issue:${data.data.issue.id}`; // TODO: Move to constants
-    return await store.get(cacheKey) === null;
+    return (await store.get(cacheKey)) === null;
   }
 
   /**
@@ -90,7 +86,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
         entityConnectionId: connection.id,
         hasEntityId: !!connection.entity_id,
         hasProjectId: !!connection.project_id,
-        hasIssueId: !!connection.issue_id
+        hasIssueId: !!connection.issue_id,
       });
       return null;
     }
@@ -102,15 +98,12 @@ export class SentryIssueHandler implements ISentryTaskHandler {
    * Processes the entity connection by gathering data and executing state sync.
    * Follows the pipeline: Get Connection → Get Services → Get Data → Sync States.
    */
-  private async processConnection(
-    store: Store,
-    entityConnection: TWorkspaceEntityConnection,
-  ): Promise<void> {
+  private async processConnection(store: Store, entityConnection: TWorkspaceEntityConnection): Promise<void> {
     // Get workspace connection and validate
     const workspaceConnection = await this.getWorkspaceConnection(entityConnection);
     if (!workspaceConnection) {
       logger.warn(`Failed to get workspace connection for entity connection ${entityConnection.id}`, {
-        entityConnectionId: entityConnection.id
+        entityConnectionId: entityConnection.id,
       });
       return;
     }
@@ -119,7 +112,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     const services = await this.getServices(workspaceConnection);
     if (!services) {
       logger.warn(`Failed to get services for workspace connection ${workspaceConnection.id}`, {
-        workspaceConnectionId: workspaceConnection.id
+        workspaceConnectionId: workspaceConnection.id,
       });
       return;
     }
@@ -128,7 +121,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     const issueData = await this.getIssueData(services, workspaceConnection, entityConnection);
     if (!issueData) {
       logger.warn(`Failed to get issue data for entity connection ${entityConnection.id}`, {
-        entityConnectionId: entityConnection.id
+        entityConnectionId: entityConnection.id,
       });
       return;
     }
@@ -150,7 +143,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
 
     if (!workspaceConnection?.connection_slug) {
       logger.warn(`Workspace connection missing connection_slug`, {
-        workspaceConnectionId: workspaceConnection?.id
+        workspaceConnectionId: workspaceConnection?.id,
       });
       return null;
     }
@@ -161,7 +154,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
 
     if (!credentials) {
       logger.warn(`No credentials found for workspace connection ${workspaceConnection.id}`, {
-        workspaceConnectionId: workspaceConnection.id
+        workspaceConnectionId: workspaceConnection.id,
       });
       return null;
     }
@@ -175,7 +168,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
    */
   private async getServices(workspaceConnection: TWorkspaceConnection): Promise<TSentryServices | null> {
     const { planeClient, sentryService } = await getSentryConnectionDetails(workspaceConnection.connection_id);
-    return (planeClient && sentryService) ? { planeClient, sentryService } : null;
+    return planeClient && sentryService ? { planeClient, sentryService } : null;
   }
 
   /**
@@ -187,7 +180,6 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     workspaceConnection: TWorkspaceConnection,
     entityConnection: TWorkspaceEntityConnection
   ) {
-
     // Fetch both issues in parallel
     const [planeIssue, sentryIssue] = await Promise.all([
       services.planeClient.issue.getIssue(
@@ -202,15 +194,19 @@ export class SentryIssueHandler implements ISentryTaskHandler {
       logger.warn(`Missing issue data`, {
         hasPlaneIssue: !!planeIssue,
         hasSentryIssue: !!sentryIssue,
-        entityConnectionId: entityConnection.id
+        entityConnectionId: entityConnection.id,
       });
       return null;
     }
 
-    const stateResult = await getProjectStateMappings(services.planeClient, workspaceConnection, entityConnection.project_id!);
+    const stateResult = await getProjectStateMappings(
+      services.planeClient,
+      workspaceConnection,
+      entityConnection.project_id!
+    );
     if (!stateResult) {
       logger.warn(`No resolved state found for project ${entityConnection.project_id}`, {
-        projectId: entityConnection.project_id
+        projectId: entityConnection.project_id,
       });
       return null;
     }
@@ -234,7 +230,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     const { resolvedState, unresolvedState } = stateMappings;
 
     const operations: Promise<unknown>[] = [];
-    let notificationMessage = '';
+    let notificationMessage = "";
 
     // Rule 1: Sentry is resolved but Plane is not in resolved state
     if (this.shouldMarkPlaneResolved(planeIssue, sentryIssue, resolvedState)) {
@@ -252,7 +248,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     else if (this.shouldMarkPlaneUnresolved(planeIssue, sentryIssue, resolvedState)) {
       if (!unresolvedState) {
         logger.warn(`No unresolved state found for project ${entityConnection.project_id}`, {
-          projectId: entityConnection.project_id
+          projectId: entityConnection.project_id,
         });
         return;
       }
@@ -269,14 +265,22 @@ export class SentryIssueHandler implements ISentryTaskHandler {
         )
       );
 
-      notificationMessage = sentryIssue.status === "resolvedInNextRelease"
-        ? getStatusDoneMessage(sentryIssue.title, sentryIssue.permalink, resolvedState.name)
-        : getStatusBacklogMessage(sentryIssue.title, sentryIssue.permalink, unresolvedState.name);
+      notificationMessage =
+        sentryIssue.status === "resolvedInNextRelease"
+          ? getStatusDoneMessage(sentryIssue.title, sentryIssue.permalink, resolvedState.name)
+          : getStatusBacklogMessage(sentryIssue.title, sentryIssue.permalink, unresolvedState.name);
     }
 
     // Execute operations if any state changes are needed
     if (operations.length > 0) {
-      await this.executeOperations(store, services, workspaceConnection, entityConnection, operations, notificationMessage);
+      await this.executeOperations(
+        store,
+        services,
+        workspaceConnection,
+        entityConnection,
+        operations,
+        notificationMessage
+      );
     }
   }
 
@@ -326,7 +330,7 @@ export class SentryIssueHandler implements ISentryTaskHandler {
     logger.info(`Successfully synced Sentry issue status to Plane`, {
       entityConnectionId: entityConnection.id,
       planeIssueId: entityConnection.issue_id,
-      sentryIssueId: entityConnection.entity_id
+      sentryIssueId: entityConnection.entity_id,
     });
   }
 }

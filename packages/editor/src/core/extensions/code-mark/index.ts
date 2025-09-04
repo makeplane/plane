@@ -1,9 +1,6 @@
 // taken from https://github.com/curvenote/editor/tree/main/packages/prosemirror-codemark
 import { type PluginSpec, Plugin } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
-import type { CodemarkState, CursorMetaTr, Options } from "./types";
-import { getMarkType, codeMarkPluginKey, safeResolve } from "./utils";
-import { createInputRule } from "./input-rules";
 import {
   onArrowLeft,
   onArrowRight,
@@ -13,6 +10,9 @@ import {
   stepOutside,
   stepOutsideNextTrAndPass,
 } from "./actions";
+import { createInputRule } from "./input-rules";
+import type { CodemarkState, CursorMetaTr, Options } from "./types";
+import { getMarkType, codeMarkPluginKey, safeResolve } from "./utils";
 
 function toDom(): Node {
   const span = document.createElement("span");

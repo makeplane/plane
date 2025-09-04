@@ -11,7 +11,6 @@ export type SentryServiceConfig = {
   refresh_callback: (access_token: string, refresh_token: string) => Promise<void>;
 };
 
-
 /**
  * Creates a SentryAuthService instance with config validation.
  *
@@ -20,10 +19,8 @@ export type SentryServiceConfig = {
  */
 export const createSentryAuth = (config: Partial<SentryAuthConfig>): SentryAuthService | undefined => {
   if (!config.clientId || !config.clientSecret || !config.integrationSlug || !config.baseUrl) {
-    console.error(
-      "[SENTRY] Client Id, Client Secret, and integration slug are required",
-    );
-    return
+    console.error("[SENTRY] Client Id, Client Secret, and integration slug are required");
+    return;
   }
   return new SentryAuthService(config as SentryAuthConfig);
 };
@@ -35,12 +32,16 @@ export const createSentryAuth = (config: Partial<SentryAuthConfig>): SentryAuthS
  * @returns SentryApiService instance or undefined if config is invalid
  */
 export const createSentryService = (config: Partial<SentryServiceConfig>): SentryApiService | undefined => {
-  if (!config.access_token || !config.refresh_token || !config.installation_id || !config.auth_service || !config.refresh_callback) {
-    console.error(
-      "[SENTRY] Cannot create service, config invalid"
-    )
-    return
+  if (
+    !config.access_token ||
+    !config.refresh_token ||
+    !config.installation_id ||
+    !config.auth_service ||
+    !config.refresh_callback
+  ) {
+    console.error("[SENTRY] Cannot create service, config invalid");
+    return;
   }
 
-  return new SentryApiService(config as SentryServiceConfig)
-}
+  return new SentryApiService(config as SentryServiceConfig);
+};

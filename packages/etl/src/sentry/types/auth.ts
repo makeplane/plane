@@ -3,14 +3,14 @@ export type SentryAuthConfig = {
   clientSecret: string;
   baseUrl: string;
   integrationSlug: string;
-}
+};
 
 export type SentryAuthState = {
   userId: string;
   workspaceId: string;
   workspaceSlug: string;
   planeAppInstallationId: string;
-}
+};
 
 export type SentryAuthTokenResponse = {
   id: string;
@@ -20,4 +20,4 @@ export type SentryAuthTokenResponse = {
   expiresAt: string;
   state: null;
   application: null;
-}
+};

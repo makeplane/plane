@@ -1,7 +1,7 @@
-import { TModuleStatus } from "./module";
+import { TChartData } from "./charts";
 import { TLogoProps } from "./common";
 import { TCycleGroups } from "./cycle";
-import { TChartData } from "./charts";
+import { TModuleStatus } from "./module";
 
 export type TAnalyticsTabsExtended = "users" | "projects" | "cycles" | "modules" | "intake";
 export type TAnalyticsGraphsExtended = "users" | "project-status" | "cycles" | "modules" | "intake";

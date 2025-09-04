@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { ConfigureAsanaSelectWorkspace, ConfigureAsanaSelectProject } from "@/plane-web/components/importers/asana";
@@ -12,7 +13,6 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
-import { useTranslation } from "@plane/i18n";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_ASANA];
 

@@ -11,8 +11,8 @@ import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // helpers
 // plane web components

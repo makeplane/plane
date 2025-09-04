@@ -5,13 +5,13 @@ import React, { useEffect, useRef, useState, memo, useCallback } from "react";
 // import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // components
-import { ExternalEmbedInputModal } from "./floating-input-modal";
 import { ExternalEmbedNodeViewProps } from "@/types";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { ExternalEmbedInputModal } from "./floating-input-modal";
 
 export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((externalEmbedProps) => {
   // states

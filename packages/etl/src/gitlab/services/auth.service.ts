@@ -1,5 +1,5 @@
-import axios from "axios";
 import crypto from "crypto";
+import axios from "axios";
 import { GitLabAuthConfig, GitLabAuthorizeState, GitLabAuthPayload, GitLabTokenResponse } from "../types/auth";
 
 const DEFAULT_SCOPES = ["api", "read_api", "read_user", "read_repository", "profile", "email"];

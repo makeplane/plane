@@ -42,7 +42,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
   chart_model: EWidgetChartModels | undefined;
   chart_type: EWidgetChartTypes | undefined;
   config: TDashboardWidgetConfig | undefined;
-  filters: TExternalDashboardWidgetFilterExpression | {} = {};
+  filters: TExternalDashboardWidgetFilterExpression = {};
   created_at: Date | undefined;
   created_by: string | undefined;
   group_by: EWidgetXAxisProperty | null | undefined;

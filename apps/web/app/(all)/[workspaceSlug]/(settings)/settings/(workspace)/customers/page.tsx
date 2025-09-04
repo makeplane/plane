@@ -15,8 +15,8 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user"
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/customers";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";

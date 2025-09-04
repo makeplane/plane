@@ -3,12 +3,7 @@ import { getModuleUrl, getPlaneLogoUrl } from "@/helpers/urls";
 import { ACTIONS } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
-export const createModuleLinkback = (
-  workspaceSlug: string,
-  project: ExProject,
-  module: ExModule,
-  showLogo = false,
-) => {
+export const createModuleLinkback = (workspaceSlug: string, project: ExProject, module: ExModule, showLogo = false) => {
   const blocks: any[] = [];
 
   // Status mapping without emojis for clean look

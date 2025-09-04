@@ -82,7 +82,7 @@ describe("ContentParser", () => {
       new ConfluenceFileParserExtension({
         ...config,
         context,
-        uuidGenerator: () => mockUUID
+        uuidGenerator: () => mockUUID,
       }),
       new NotionBlockColorParserExtension(),
       new NotionHighlightParserExtension(),

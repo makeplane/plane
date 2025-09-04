@@ -1,7 +1,9 @@
 // services
 import axios from "axios";
-import { Version2Client } from "jira.js/out/version2";
+import { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
+import { Board } from "jira.js/out/agile/models";
+import { Version2Client } from "jira.js/out/version2";
 import {
   CustomFieldContextOption,
   FieldDetails,
@@ -11,10 +13,8 @@ import {
   Project,
   User,
 } from "jira.js/out/version2/models";
-import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
-import { Paginated } from "jira.js";
-import { Board } from "jira.js/out/agile/models";
 import { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
+import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;
@@ -43,10 +43,10 @@ export class JiraV2Service {
   }
 
   async getJiraUsers(): Promise<JiraApiUser[]> {
-    // @ts-ignore
+    // @ts-expect-error
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
-      // @ts-ignore
+      // @ts-expect-error
       includeActive: true,
     })) as JiraApiUser[];
   }

@@ -1,6 +1,6 @@
+import { TPage } from "@plane/types";
 import { ActionCondition } from "@/plane-live/types/common";
 import { ConditionRegistry } from "../registries/condition-registry";
-import { TPage } from "@plane/types";
 
 export const isDeletedAndInDocument: ActionCondition = {
   name: "isDeletedAndInDocument",

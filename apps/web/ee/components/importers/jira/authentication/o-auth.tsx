@@ -2,10 +2,10 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const OAuth: FC = observer(() => {
   // states

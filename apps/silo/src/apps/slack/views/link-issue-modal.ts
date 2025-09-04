@@ -47,14 +47,14 @@ export const createLinkIssueModalView = (
   blocks: [
     ...(error
       ? [
-        {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: error,
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: error,
+            },
           },
-        },
-      ]
+        ]
       : []),
     {
       type: "input",
@@ -125,7 +125,7 @@ export const alreadyLinkedModalView = (
       },
     },
     {
-      type: "divider"
+      type: "divider",
     },
     {
       type: "section",
@@ -134,5 +134,5 @@ export const alreadyLinkedModalView = (
         text: `> <${getIssueUrlFromSequenceId(workspaceSlug, issue.project.identifier!, issue.sequence_id.toString())}|${issue.project.identifier}-${issue.sequence_id}>\n> ${issue.name}`,
       },
     },
-  ]
+  ],
 });

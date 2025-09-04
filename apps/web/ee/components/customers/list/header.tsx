@@ -9,9 +9,9 @@ import { Breadcrumbs, Button, CustomersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace"
-import { useUserPermissions } from "@/hooks/store/user"
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CustomerSearch } from "@/plane-web/components/customers/list";
 

@@ -3,6 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
@@ -16,7 +17,6 @@ import {
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations/gitlab";
-import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,

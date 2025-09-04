@@ -1,8 +1,8 @@
-import { env } from "@/env";
-import { captureException, logger } from "@/logger";
-import { createSlackAuth } from "@plane/etl/slack";
 import { isValidSlackRequest } from "@slack/bolt";
 import { NextFunction, Request, Response } from "express";
+import { createSlackAuth } from "@plane/etl/slack";
+import { env } from "@/env";
+import { captureException, logger } from "@/logger";
 
 export const slackAuth = createSlackAuth(
   env.SLACK_CLIENT_ID,

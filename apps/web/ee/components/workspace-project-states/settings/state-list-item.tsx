@@ -6,6 +6,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
+import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DropIndicator } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -27,7 +28,6 @@ import {
   TProjectStateGroupKey,
   TProjectStateIdsByGroup,
 } from "@/plane-web/types/workspace-project-states";
-import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
 
 type TProjectStateListItem = {
   workspaceSlug: string;

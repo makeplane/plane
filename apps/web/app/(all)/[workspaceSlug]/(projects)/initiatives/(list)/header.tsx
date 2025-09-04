@@ -11,7 +11,7 @@ import { Breadcrumbs, Button, Header, InitiativeIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web

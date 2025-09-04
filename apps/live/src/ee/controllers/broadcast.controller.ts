@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
-import * as Y from "yjs";
 import { v4 as uuidv4 } from "uuid";
+import * as Y from "yjs";
+import { Controller, Post } from "@plane/decorators";
 import {
   BroadcastPayloadUnion,
   CommonRealtimeFields,
@@ -8,13 +9,12 @@ import {
   type TDocumentEventsClient,
 } from "@plane/editor/lib";
 // decorators
-import { Controller, Post } from "@plane/decorators";
 // utilities
+import { serverAgentManager } from "@/core/agents/server-agent";
+import { manualLogger } from "@/core/helpers/logger";
 import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/core/utilities/xml-tree-utils";
 // logger
-import { manualLogger } from "@/core/helpers/logger";
 // agents
-import { serverAgentManager } from "@/core/agents/server-agent";
 // broadcast
 import { broadcastMessageToPage } from "@/ee/lib/utils/broadcast-message";
 

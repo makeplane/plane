@@ -1,5 +1,4 @@
 // plane imports
-import { isAndGroupNode, isOrGroupNode, isNotGroupNode, isConditionNode, isSingleValueOperator } from "@plane/utils";
 import {
   LOGICAL_OPERATOR,
   TAutomationConditionFilterExpressionData,
@@ -7,6 +6,7 @@ import {
   TAutomationConditionFilterProperty,
   TAutomationConditionFilterExpression,
 } from "@plane/types";
+import { isAndGroupNode, isOrGroupNode, isNotGroupNode, isConditionNode, isSingleValueOperator } from "@plane/utils";
 // local imports
 import { FilterAdapter } from "@/plane-web/store/rich-filters/adapter";
 
@@ -71,7 +71,10 @@ class AutomationConditionFilterAdapter extends FilterAdapter<
       return {
         field: expression.property,
         operator: expression.operator,
-        value: isSingleValueOperator(expression.operator) && Array.isArray(expression.value) ? expression.value[0] : expression.value,
+        value:
+          isSingleValueOperator(expression.operator) && Array.isArray(expression.value)
+            ? expression.value[0]
+            : expression.value,
       };
     } else {
       // It's a group node

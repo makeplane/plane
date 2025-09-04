@@ -8,7 +8,7 @@ import { EIssueServiceType } from "@plane/types";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

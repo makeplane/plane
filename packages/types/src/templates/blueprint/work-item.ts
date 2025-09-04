@@ -1,12 +1,12 @@
 // local imports
-import { EIssuePropertyType, TIssueProperty } from "../../work-item-types/work-item-properties";
 import { IIssueLabel } from "../../issues";
+import { TIssue } from "../../issues/issue";
+import { IModule } from "../../module";
 import { IState } from "../../state";
 import { IUserLite } from "../../users";
 import { CompleteOrEmpty } from "../../utils";
 import { TIssuePropertyOption, TIssueType } from "../../work-item-types";
-import { IModule } from "../../module";
-import { TIssue } from "../../issues/issue";
+import { EIssuePropertyType, TIssueProperty } from "../../work-item-types/work-item-properties";
 
 export type TWorkItemTypeBlueprint = Pick<TIssueType, "id" | "name" | "description" | "logo_props" | "is_epic">;
 

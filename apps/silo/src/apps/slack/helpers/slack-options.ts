@@ -13,7 +13,7 @@ export const removePrefixIfExists = (value: string): string => {
     return parts[parts.length - 1];
   }
   return value;
-}
+};
 
 /**
  * Truncates a name if it exceeds the max length, adding ellipsis as needed

@@ -14,8 +14,8 @@ import { AppliedFiltersList } from "@/components/issues/issue-layouts/filters";
 import { getAreFiltersEqual } from "@/components/issues/issue-layouts/utils";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useLabel } from "@/hooks/store/use-label"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";

@@ -1,7 +1,8 @@
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 
-const PiChatListLoader = () => Array.from({ length: 3 }).map((_, index) => (
+const PiChatListLoader = () =>
+  Array.from({ length: 3 }).map((_, index) => (
     <Loader
       key={index}
       className={cn(

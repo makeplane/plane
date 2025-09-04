@@ -25,7 +25,6 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
 
   const { slackService, entityConnection, workspaceConnection } = details;
 
-
   const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
 
   const activityBlocks = createActivityLinkback({

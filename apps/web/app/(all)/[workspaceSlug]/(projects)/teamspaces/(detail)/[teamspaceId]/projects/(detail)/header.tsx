@@ -12,7 +12,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";

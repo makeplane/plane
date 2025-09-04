@@ -102,7 +102,11 @@ export const handleLinkWorkItemViewSubmission = async (
       }
 
       const title = "Connected to Slack thread";
-      const link = getSlackThreadUrl(data.team.domain, metadata.entityPayload.channel.id, metadata.entityPayload.message?.ts ?? "");
+      const link = getSlackThreadUrl(
+        data.team.domain,
+        metadata.entityPayload.channel.id,
+        metadata.entityPayload.message?.ts ?? ""
+      );
 
       const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
 
@@ -659,11 +663,11 @@ async function createOrDeleteThreadConnection(
   projectId: string,
   issueId: string,
   entityData: {
-    channel: string,
+    channel: string;
     message: {
-      ts: string,
-      thread_ts: string,
-    }
+      ts: string;
+      thread_ts: string;
+    };
   },
   enableThreadSync: boolean
 ) {
@@ -717,13 +721,7 @@ async function processCustomFields(params: {
         payload = [{ value: value as string }];
       }
 
-      await planeClient.issuePropertyValue.create(
-        workspaceSlug,
-        projectId,
-        issueId,
-        propertyId,
-        { values: payload }
-      );
+      await planeClient.issuePropertyValue.create(workspaceSlug, projectId, issueId, propertyId, { values: payload });
     })
   );
 }

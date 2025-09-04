@@ -1,5 +1,5 @@
-import { TPage } from "@plane/types";
 import * as Y from "yjs";
+import { TPage } from "@plane/types";
 
 export type TAdditionalDocumentTypes = "teamspace_page" | "workspace_page" | "server_agent" | "sync_agent";
 

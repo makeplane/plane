@@ -1,6 +1,6 @@
 import { Client, ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
-import { GithubIssue, WebhookGitHubLabel, WebhookGitHubMilestone, WebhookGitHubUser } from "../types";
 import { ContentParser } from "../helpers/content-parser";
+import { GithubIssue, WebhookGitHubLabel, WebhookGitHubMilestone, WebhookGitHubUser } from "../types";
 
 export const transformPlaneIssue = async (
   issue: PlaneIssue,

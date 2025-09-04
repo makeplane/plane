@@ -11,8 +11,8 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 import { APPLICATION_DETAILS } from "@/constants/fetch-keys";
-import { useUserPermissions } from "@/hooks/store/user"
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ApplicationInstallationDetails } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";

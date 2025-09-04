@@ -1,6 +1,6 @@
-import { WorkspacePageService } from "@/ee/services/workspace-page.service";
-import { HocusPocusServerContext } from "@/core/types/common";
 import { BasePageHandler } from "@/core/document-types/base-page/handlers";
+import { HocusPocusServerContext } from "@/core/types/common";
+import { WorkspacePageService } from "@/ee/services/workspace-page.service";
 
 export interface WorkspacePageConfig {
   workspaceSlug: string | undefined;

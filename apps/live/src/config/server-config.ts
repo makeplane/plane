@@ -1,11 +1,11 @@
-import { env } from "@/env";
 import compression from "compression";
-import helmet from "helmet";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
+import helmet from "helmet";
 import { logger } from "@plane/logger";
 import { logger as loggerMiddleware } from "@/core/helpers/logger";
+import { env } from "@/env";
 
 /**
  * Configure server middleware

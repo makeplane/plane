@@ -6,7 +6,7 @@ import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ProjectAppliedFiltersList } from "@/components/project/applied-filters";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 // local imports
 import { TeamspaceProjectBlocksList } from "./block-list";

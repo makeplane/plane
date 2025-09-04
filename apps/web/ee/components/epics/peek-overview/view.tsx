@@ -1,5 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
@@ -17,7 +18,6 @@ import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
 import { EpicPeekOverviewHeader, TPeekModes } from "./header";
 import { EpicPeekOverviewLoader } from "./loader";
-import { createPortal } from "react-dom";
 
 interface IEpicView {
   workspaceSlug: string;

@@ -86,7 +86,11 @@ export class SentryApiService {
    * @param data - Update data containing new status
    * @returns Updated issue data or undefined if failed
    */
-  async updateIssue(orgSlug: string, issueId: string, data: { status: SentryIssueStatus }): Promise<SentryIssue | undefined> {
+  async updateIssue(
+    orgSlug: string,
+    issueId: string,
+    data: { status: SentryIssueStatus }
+  ): Promise<SentryIssue | undefined> {
     return this.client
       .put(`/organizations/${orgSlug}/issues/${issueId}/`, data)
       .then((res) => res.data)

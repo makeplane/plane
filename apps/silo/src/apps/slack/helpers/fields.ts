@@ -13,7 +13,6 @@ import { SlackBlockValue } from "../types/fields";
 import { extractRichTextElements } from "./parse-issue-form";
 import { convertToSlackOption, convertToSlackOptions, PlainTextOption } from "./slack-options";
 
-
 export const getSlackBlock = (projectId: string, field: FormField, currentValue?: SlackBlockValue) => {
   switch (field.type) {
     case "TEXT":
@@ -82,7 +81,11 @@ const getSelectBlock = (projectId: string, field: SelectField, currentValue?: Pl
     : getExternalSelectBlock(projectId, field, currentValue);
 };
 
-const getStaticSelectBlock = (projectId: string, field: SelectField, currentValue?: PlainTextOption[] | PlainTextOption) => {
+const getStaticSelectBlock = (
+  projectId: string,
+  field: SelectField,
+  currentValue?: PlainTextOption[] | PlainTextOption
+) => {
   const isMulti = field.isMulti;
   const elementType = isMulti ? "multi_static_select" : "static_select";
 
@@ -98,17 +101,11 @@ const getStaticSelectBlock = (projectId: string, field: SelectField, currentValu
       },
       ...(isMulti
         ? {
-          initial_options:
-            currentValue && Array.isArray(currentValue)
-              ? currentValue
-              : undefined,
-        }
+            initial_options: currentValue && Array.isArray(currentValue) ? currentValue : undefined,
+          }
         : {
-          initial_option:
-            currentValue && typeof currentValue === "object"
-              ? currentValue
-              : undefined,
-        }),
+            initial_option: currentValue && typeof currentValue === "object" ? currentValue : undefined,
+          }),
       options: field.options.map((option) => ({
         text: {
           type: "plain_text",
@@ -147,17 +144,11 @@ const getExternalSelectBlock = (
       },
       ...(isMulti
         ? {
-          initial_options:
-            currentValue && Array.isArray(currentValue)
-              ? currentValue
-              : undefined,
-        }
+            initial_options: currentValue && Array.isArray(currentValue) ? currentValue : undefined,
+          }
         : {
-          initial_option:
-            currentValue && typeof currentValue === "object"
-              ? currentValue
-              : undefined,
-        }),
+            initial_option: currentValue && typeof currentValue === "object" ? currentValue : undefined,
+          }),
       min_query_length: 3,
       action_id: `${projectId}.${field.id}`,
     },
@@ -205,9 +196,9 @@ const getCheckboxBlock = (field: BooleanField, currentValue?: boolean) => ({
         },
         description: field.helpText
           ? {
-            type: "plain_text",
-            text: field.helpText,
-          }
+              type: "plain_text",
+              text: field.helpText,
+            }
           : undefined,
         value: currentValue !== undefined ? currentValue.toString() : field.defaultValue || "false",
       },
@@ -221,7 +212,6 @@ const getCheckboxBlock = (field: BooleanField, currentValue?: boolean) => ({
   },
 });
 
-
 // Helper function to safely extract field values
 export const extractFieldValue = (value: unknown): string | PlainTextOption | PlainTextOption[] | undefined => {
   if (!value) return undefined;
@@ -229,30 +219,32 @@ export const extractFieldValue = (value: unknown): string | PlainTextOption | Pl
   // Handle array of objects with name property
   if (Array.isArray(value)) {
     if (value.length === 0) return undefined;
-    if (typeof value[0] === 'object' && value[0] && 'name' in value[0] && 'id' in value[0]) {
-      return convertToSlackOptions(value)
+    if (typeof value[0] === "object" && value[0] && "name" in value[0] && "id" in value[0]) {
+      return convertToSlackOptions(value);
     }
-    if (typeof value === 'object' && value && 'display_name' in value[0] && 'id' in value[0]) {
-      return value.map((val) => convertToSlackOption({
-        id: val.id as string,
-        name: val.display_name as string,
-      }))
+    if (typeof value === "object" && value && "display_name" in value[0] && "id" in value[0]) {
+      return value.map((val) =>
+        convertToSlackOption({
+          id: val.id as string,
+          name: val.display_name as string,
+        })
+      );
     }
     return value; // Assume it's already string[]
   }
 
   // Handle single object with name property
-  if (typeof value === 'object' && value && 'name' in value && 'id' in value) {
+  if (typeof value === "object" && value && "name" in value && "id" in value) {
     return convertToSlackOption({
       id: value.id as string,
       name: value.name as string,
-    })
+    });
   }
 
   // Handle direct string
-  if (typeof value === 'string') {
-    return value
+  if (typeof value === "string") {
+    return value;
   }
 
   return undefined;
-}
+};

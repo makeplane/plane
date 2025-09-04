@@ -1,6 +1,6 @@
 // helpers
-import { TApplicationCategory } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { TApplicationCategory } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

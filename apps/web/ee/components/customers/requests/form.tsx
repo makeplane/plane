@@ -13,7 +13,7 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";

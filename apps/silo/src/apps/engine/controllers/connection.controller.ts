@@ -1,7 +1,7 @@
+import { Request, Response } from "express";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
-import { Request, Response } from "express";
 
 const apiClient = getAPIClient();
 

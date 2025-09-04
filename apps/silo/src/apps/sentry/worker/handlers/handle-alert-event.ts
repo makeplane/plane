@@ -31,14 +31,18 @@ export class SentryAlertHandler implements ISentryTaskHandler {
       // Get workspace connection for this Sentry installation
       const connection = await this.getWorkspaceConnection(sentryEventAlert);
       if (!connection) {
-        logger.error("No workspace connection found for Sentry installation", { installationId: sentryEventAlert.installation.uuid });
+        logger.error("No workspace connection found for Sentry installation", {
+          installationId: sentryEventAlert.installation.uuid,
+        });
         return;
       }
 
       // Get authenticated services for API calls
       const services = await this.getServices(sentryEventAlert.installation.uuid);
       if (!services) {
-        logger.error("Failed to initialize services for Sentry installation", { installationId: sentryEventAlert.installation.uuid });
+        logger.error("Failed to initialize services for Sentry installation", {
+          installationId: sentryEventAlert.installation.uuid,
+        });
         return;
       }
 
@@ -58,13 +62,27 @@ export class SentryAlertHandler implements ISentryTaskHandler {
 
       // Setup entity connection and links for only work items
       if (alertSettings.type === "work_item") {
-        await this.setupEntityConnection(connection, alertSettings.projectId, createdIssue as ExIssue, sentryEventAlert);
-        await this.createBidirectionalLinks(services, connection, alertSettings.projectId, createdIssue as ExIssue, sentryEventAlert);
+        await this.setupEntityConnection(
+          connection,
+          alertSettings.projectId,
+          createdIssue as ExIssue,
+          sentryEventAlert
+        );
+        await this.createBidirectionalLinks(
+          services,
+          connection,
+          alertSettings.projectId,
+          createdIssue as ExIssue,
+          sentryEventAlert
+        );
       }
 
       logger.info(`[SENTRY] Alert Addressed Issue created successfully 🎉`);
     } catch (error) {
-      logger.error("Failed to process Sentry alert event", { error, installationId: sentryEventAlert.installation.uuid });
+      logger.error("Failed to process Sentry alert event", {
+        error,
+        installationId: sentryEventAlert.installation.uuid,
+      });
     }
   }
 
@@ -72,7 +90,9 @@ export class SentryAlertHandler implements ISentryTaskHandler {
    * Retrieves the workspace connection for the Sentry installation.
    * Returns the first connection found or null if none exist.
    */
-  private async getWorkspaceConnection(sentryEventAlert: SentryEventAlertWebhook): Promise<TWorkspaceConnection | null> {
+  private async getWorkspaceConnection(
+    sentryEventAlert: SentryEventAlertWebhook
+  ): Promise<TWorkspaceConnection | null> {
     const connections = await this.apiClient.workspaceConnection.listWorkspaceConnections({
       connection_type: E_INTEGRATION_KEYS.SENTRY,
       connection_id: sentryEventAlert.installation.uuid,
@@ -87,7 +107,7 @@ export class SentryAlertHandler implements ISentryTaskHandler {
    */
   private async getServices(installationUuid: string): Promise<TSentryServices | null> {
     const { planeClient, sentryService } = await getSentryConnectionDetails(installationUuid);
-    return (planeClient && sentryService) ? { planeClient, sentryService } : null;
+    return planeClient && sentryService ? { planeClient, sentryService } : null;
   }
 
   /**
@@ -104,8 +124,8 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     return {
       type: type?.value as string,
       projectId: projectId?.value as string,
-      assigneeIds: assigneeIds?.value as string[] || [],
-      labels: labels?.value as string[] || [],
+      assigneeIds: (assigneeIds?.value as string[]) || [],
+      labels: (labels?.value as string[]) || [],
       state: state?.value as string,
     };
   }
@@ -130,21 +150,14 @@ export class SentryAlertHandler implements ISentryTaskHandler {
 
     try {
       if (settings.type === "intake") {
-        const response = await services.planeClient.intake.create(
-          connection.workspace_slug,
-          settings.projectId,
-          { issue: issue as ExIssue }
-        );
+        const response = await services.planeClient.intake.create(connection.workspace_slug, settings.projectId, {
+          issue: issue as ExIssue,
+        });
         return response.issue;
       } else {
-        const response = await services.planeClient.issue.create(
-          connection.workspace_slug,
-          settings.projectId,
-          issue
-        );
+        const response = await services.planeClient.issue.create(connection.workspace_slug, settings.projectId, issue);
         return response;
       }
-
     } catch (error) {
       logger.error("Failed to create Plane issue", { error, projectId: settings.projectId });
       return null;
@@ -170,14 +183,11 @@ export class SentryAlertHandler implements ISentryTaskHandler {
 
     // If connection exists, update it with new Plane issue details
     if (existingConnections.length > 0) {
-      await this.apiClient.workspaceEntityConnection.updateWorkspaceEntityConnection(
-        existingConnections[0].id,
-        {
-          workspace_id: connection.workspace_id,
-          project_id: projectId,
-          issue_id: createdIssue.id,
-        }
-      );
+      await this.apiClient.workspaceEntityConnection.updateWorkspaceEntityConnection(existingConnections[0].id, {
+        workspace_id: connection.workspace_id,
+        project_id: projectId,
+        issue_id: createdIssue.id,
+      });
     } else {
       // Create new entity connection linking Plane and Sentry issues
       await this.apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
@@ -244,4 +254,3 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     }
   }
 }
-

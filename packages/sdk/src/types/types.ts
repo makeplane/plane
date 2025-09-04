@@ -93,11 +93,10 @@ export type ExpandableFields = {
   type: ExIssueType;
   created_by: PlaneUser | undefined;
   updated_by: PlaneUser | undefined;
-}
+};
 // Create a type that can handle both expanded and unexpanded fields
 export type IssueWithExpanded<T extends Array<keyof ExpandableFields>> = Omit<ExIssue, T[number]> &
   Pick<ExpandableFields, T[number]>;
-
 
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
@@ -208,7 +207,7 @@ export type ExIntakeIssue<T = ExIssue> = {
   issue: string;
   duplicate_to: string | null;
   extra: Record<string, any>;
-}
+};
 
 /* ----------------- Project Type --------------------- */
 type IProject = {
@@ -379,7 +378,7 @@ export type TInboxIssue = {
   issue: ExIssue;
   created_by: string;
   duplicate_issue_detail: any | undefined;
-}
+};
 
 export type TInboxIssuePaginationInfo = TPaginationInfo & {
   total_results: number;
@@ -388,7 +387,6 @@ export type TInboxIssuePaginationInfo = TPaginationInfo & {
 export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
   results: TInboxIssue[];
 };
-
 
 export interface Attachment {
   id: string;

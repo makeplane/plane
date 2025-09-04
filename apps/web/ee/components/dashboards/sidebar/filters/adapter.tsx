@@ -1,3 +1,4 @@
+import { toJS } from "mobx";
 import {
   COLLECTION_OPERATORS,
   EQUALITY_OPERATORS,
@@ -15,7 +16,6 @@ import {
 } from "@plane/types";
 import { isAndGroupNode, isConditionNode, isNotGroupNode, isOrGroupNode } from "@plane/utils";
 import { FilterAdapter } from "@/plane-web/store/rich-filters/adapter";
-import { toJS } from "mobx";
 
 export const createExternalFilterKey = (params: {
   property: string;

@@ -20,6 +20,7 @@ import {
   mapAsanaState,
 } from "@/asana/helpers";
 // types
+import { CUSTOM_FIELD_ATTRIBUTES } from "@/asana/helpers/custom-field-etl";
 import {
   AsanaCustomFieldSettings,
   AsanaEnumOption,
@@ -31,7 +32,6 @@ import {
   PriorityConfigSettings,
   StateConfig,
 } from "@/asana/types";
-import { CUSTOM_FIELD_ATTRIBUTES } from "@/asana/helpers/custom-field-etl";
 import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 
 export const transformTask = (

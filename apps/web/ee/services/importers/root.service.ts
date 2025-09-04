@@ -1,6 +1,6 @@
+import { API_BASE_URL } from "@plane/constants";
 import { IApiToken } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 

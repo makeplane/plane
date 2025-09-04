@@ -4,13 +4,13 @@ import {
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint, JiraService } from "@plane/etl/jira";
 import { ExIssueAttachment, ExState } from "@plane/sdk";
 import { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getAPIClient } from "@/services/client";
 import { jiraAuth } from "../auth/auth";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 export const getTargetState = (job: TImportJob<JiraConfig>, sourceState: JiraState): ExState | undefined => {
   /* TODO: Gracefully handle the case */

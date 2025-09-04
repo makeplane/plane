@@ -42,8 +42,7 @@ export enum EIssuePropertyRelationType {
   ISSUE = "ISSUE",
   USER = "USER",
 }
-export type TIssuePropertyRelationType =
-  keyof typeof EIssuePropertyRelationType;
+export type TIssuePropertyRelationType = keyof typeof EIssuePropertyRelationType;
 
 // Unique keys for issue property types
 export type TIssuePropertyTypeKeys =
@@ -51,10 +50,7 @@ export type TIssuePropertyTypeKeys =
   | `${EIssuePropertyType.RELATION}_${EIssuePropertyRelationType}`;
 
 // settings
-export type TTextSettingsDisplayOptions =
-  | "single-line"
-  | "multi-line"
-  | "readonly";
+export type TTextSettingsDisplayOptions = "single-line" | "multi-line" | "readonly";
 export type TTextSettings = {
   display_format: TTextSettingsDisplayOptions;
 };

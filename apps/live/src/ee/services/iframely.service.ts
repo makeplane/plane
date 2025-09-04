@@ -1,7 +1,7 @@
 // services
+import { IframelyResponse } from "@plane/types";
 import { APIService } from "@/core/services/api.service";
 // types
-import { IframelyResponse } from "@plane/types";
 // helpers
 import { env } from "@/env";
 

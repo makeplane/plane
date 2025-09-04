@@ -101,7 +101,13 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
     const [issue, states] = await Promise.all([issuePromise, statesPromise]);
 
-    modal = alreadyLinkedModalView(workspaceEntityConnections[0].workspace_slug, issue, states.results, userMap, metadata);
+    modal = alreadyLinkedModalView(
+      workspaceEntityConnections[0].workspace_slug,
+      issue,
+      states.results,
+      userMap,
+      metadata
+    );
   } else {
     modal = createLinkIssueModalView(metadata);
   }
