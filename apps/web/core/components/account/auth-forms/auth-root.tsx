@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
+import { Key } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // assets
@@ -142,6 +143,24 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       },
       enabled: config?.is_gitlab_enabled,
     },
+    {
+      id: "oidc",
+      text: `Continue with ${!!config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`,
+      icon: <Key height={18} width={18} />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_oidc_enabled,
+    },
+    {
+      id: "saml",
+      text: `Continue with ${!!config?.saml_provider_name ? config.saml_provider_name : "SAML"}`,
+      icon: <Key height={18} width={18} />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/saml/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_saml_enabled,
+    },
   ];
 
   return (
@@ -158,6 +177,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           currentAuthStep={authStep}
         />
 
+        {/* TODO: code splitting needed here */}
         {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
 
         <AuthFormRoot
