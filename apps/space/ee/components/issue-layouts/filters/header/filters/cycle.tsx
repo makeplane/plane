@@ -3,9 +3,10 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+import { CycleGroupIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // components
-import { Loader, CycleGroupIcon } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useCycle } from "@/hooks/store/use-cycle";

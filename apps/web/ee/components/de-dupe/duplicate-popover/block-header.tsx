@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
-import { ArchiveIcon, Checkbox } from "@plane/ui";
+import { Checkbox } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal } from "@/components/issues/archive-issue-modal";

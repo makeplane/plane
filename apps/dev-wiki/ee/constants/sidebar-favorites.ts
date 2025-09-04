@@ -1,7 +1,7 @@
 import { Briefcase, FileText, Layers, LucideIcon, LayoutGrid } from "lucide-react";
 // plane imports
+import { ContrastIcon, DiceIcon, FavoriteFolderIcon, ISvgIcons } from "@plane/propel/icons";
 import { IFavorite } from "@plane/types";
-import { ContrastIcon, DiceIcon, FavoriteFolderIcon, ISvgIcons } from "@plane/ui";
 
 export const FAVORITE_ITEM_ICONS: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
   page: FileText,

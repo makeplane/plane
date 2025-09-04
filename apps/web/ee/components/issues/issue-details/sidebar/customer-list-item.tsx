@@ -4,8 +4,8 @@ import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomersIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 // hooks

@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
 // ui
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 

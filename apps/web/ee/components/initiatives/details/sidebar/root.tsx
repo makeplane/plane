@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Activity } from "lucide-react";
-import { CommentFillIcon, InfoFillIcon } from "@plane/ui";
+import { CommentFillIcon,InfoFillIcon } from "@plane/propel/icons";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web

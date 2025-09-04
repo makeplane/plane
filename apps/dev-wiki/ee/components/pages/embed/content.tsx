@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import { EPageAccess } from "@plane/constants";
 import { TPageEmbedConfig } from "@plane/editor";
+import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { TPage } from "@plane/types";
-import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // utils
 import { cn } from "@plane/utils";
 // components

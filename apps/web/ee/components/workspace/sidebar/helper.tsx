@@ -7,7 +7,7 @@ import {
   PiChatLogo,
   TeamsIcon,
   UserActivityIcon,
-} from "@plane/ui";
+} from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 export const getSidebarNavigationItemIcon = (key: string, className: string = "") => {

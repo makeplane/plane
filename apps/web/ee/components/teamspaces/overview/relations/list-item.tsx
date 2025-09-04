@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { ERelationType, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
+import { PriorityIcon,StateGroupIcon } from "@plane/propel/icons";
 import { TTeamspaceDependencyWorkItem } from "@plane/types";
-import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar,AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";

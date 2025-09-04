@@ -9,7 +9,8 @@ import { Briefcase, PieChart, ChartNoAxesCombined, MonitorSmartphone, Download }
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
+import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

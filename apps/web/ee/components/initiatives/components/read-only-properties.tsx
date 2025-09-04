@@ -2,7 +2,8 @@
 import { observer } from "mobx-react";
 import { Briefcase, CalendarDays } from "lucide-react";
 // plane imports
-import { Avatar, EpicIcon } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
+import { Avatar } from "@plane/ui";
 import { getDate, getFileURL } from "@plane/utils";
 // core components
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";

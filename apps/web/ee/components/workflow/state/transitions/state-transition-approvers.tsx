@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IStateTransition } from "@plane/types";
-import { InfoIcon } from "@plane/ui";
 // components
 import { AppliedMembersFilters } from "@/components/issues/issue-layouts/filters";
 // hooks

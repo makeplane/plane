@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, ChevronRightIcon, FileText, Layers } from "lucide-react";
 // ui
-import { LayersIcon, ContrastIcon } from "@plane/ui";
+import { LayersIcon,ContrastIcon } from "@plane/propel/icons";
 
 type TTeamQuickLink = {
   key: string;

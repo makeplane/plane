@@ -27,7 +27,7 @@ import {
 // editor
 import { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
 // ui
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 // helpers
 import { convertRemToPixel } from "@/helpers/common.helper";
 

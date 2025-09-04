@@ -1,5 +1,4 @@
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import {
   BasicAreaChartIcon,
   BasicBarChartIcon,
@@ -14,7 +13,8 @@ import {
   ProgressDonutChartIcon,
   StackedAreaChartIcon,
   StackedBarChartIcon,
-} from "@plane/ui";
+} from "@plane/propel/icons";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 
 type Props = {
   chartModel: EWidgetChartModels;

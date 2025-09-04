@@ -7,14 +7,13 @@ import { Rss } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { InitiativeIcon, ScopeIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption, EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
 import {
   BreadcrumbNavigationDropdown,
   BreadcrumbNavigationSearchDropdown,
   Breadcrumbs,
   Header,
-  InitiativeIcon,
-  ScopeIcon,
 } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

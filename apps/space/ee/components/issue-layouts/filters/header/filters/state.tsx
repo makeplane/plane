@@ -4,7 +4,8 @@ import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // components
-import { Loader, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Loader } from "@plane/ui";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 import { FilterHeader, FilterOption } from "../helpers";

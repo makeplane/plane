@@ -4,9 +4,9 @@ import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import {
-  ArchiveIcon,
   CustomMenu,
   FavoriteStar,
   setPromiseToast,

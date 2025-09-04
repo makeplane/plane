@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { ContrastIcon,DiceIcon,LayersIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";

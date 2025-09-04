@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { UpdatesIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { setPromiseToast, UpdatesIcon, ToggleSwitch } from "@plane/ui";
+import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 // store hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";

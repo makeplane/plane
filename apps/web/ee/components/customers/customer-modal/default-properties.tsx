@@ -11,8 +11,9 @@ import {
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
+import { CustomersIcon } from "@plane/propel/icons";
 import { EFileAssetType, TCustomerPayload } from "@plane/types";
-import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { CustomSearchSelect,Input,setToast,TOAST_TYPE } from "@plane/ui";
 // utils
 import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";

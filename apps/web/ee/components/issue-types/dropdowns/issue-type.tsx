@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
+import { LayersIcon } from "@plane/propel/icons";
 import { IIssueType } from "@plane/types";
-import { CustomSearchSelect, LayersIcon, Loader } from "@plane/ui";
+import { CustomSearchSelect, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TIssueTypeDropdownVariant } from "@/ce/components/issues/issue-modal";

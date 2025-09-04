@@ -1,5 +1,5 @@
+import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/propel/icons";
 import { EUpdateStatus } from "@plane/types";
-import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { capitalizeFirstLetter, cn, generateIconColors } from "@plane/utils";
 
 export const StatusOptions = {

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
 // local imports
 import { AutomationDetailsMainContentBlockWrapper } from "../common/block-wrapper";
 import { AutomationDetailsMainContentSectionWrapper } from "../common/section-wrapper";

@@ -1,7 +1,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { CustomersIcon, CustomSearchSelect } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import { CustomSearchSelect } from "@plane/ui";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { useCustomers } from "@/plane-web/hooks/store";
 

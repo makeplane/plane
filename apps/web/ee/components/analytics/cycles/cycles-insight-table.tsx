@@ -6,8 +6,9 @@ import useSWR from "swr";
 import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { CycleGroupIcon, TCycleGroups } from "@plane/propel/icons";
 import { CycleInsightColumns } from "@plane/types";
-import { CycleGroupIcon, Logo, TCycleGroups } from "@plane/ui";
+import { Logo } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";

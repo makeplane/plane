@@ -13,9 +13,10 @@ import {
   Users,
 } from "lucide-react";
 // plane imports
+import { ArchiveIcon, ContrastIcon, CustomersIcon, DiceIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IUserLite } from "@plane/types";
-import { ArchiveIcon, Avatar, ContrastIcon, CustomersIcon, DiceIcon, DoubleCircleIcon, Intake } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   calculateTimeAgo,
   getFileURL,

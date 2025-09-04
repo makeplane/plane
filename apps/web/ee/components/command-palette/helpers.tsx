@@ -1,5 +1,6 @@
 import { FileText, LayoutGrid } from "lucide-react";
 // plane imports
+import { InitiativeIcon,TeamsIcon } from "@plane/propel/icons";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -8,7 +9,6 @@ import {
   IWorkspaceTeamspaceSearchResult,
 } from "@plane/types";
 // plane web imports
-import { InitiativeIcon, TeamsIcon } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 import { commandGroups as commandGroupsCE, TCommandGroups } from "@/ce/components/command-palette/helpers";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";

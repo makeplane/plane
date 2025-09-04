@@ -3,8 +3,9 @@ import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { LayersIcon } from "@plane/propel/icons";
 import { EIssueServiceType, EIssuesStoreType, TIssue, TSubIssueOperations } from "@plane/types";
-import { getButtonStyling, LayersIcon } from "@plane/ui";
+import { getButtonStyling } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";

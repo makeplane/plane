@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { Database } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import { Button,setToast,TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";

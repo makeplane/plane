@@ -3,10 +3,10 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// ui
+import { LayersIcon } from "@plane/propel/icons";
 // types
 import { TStateAnalytics } from "@plane/types";
-// ui
-import { LayersIcon } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web

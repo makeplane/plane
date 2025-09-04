@@ -4,7 +4,8 @@ import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 import { EditorRefApi } from "@plane/editor";
 
 // store types
-import { TContextMenuItem, ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { TContextMenuItem } from "@plane/ui";
 import { TPageActions } from "@/components/pages";
 import { TPageOperations } from "@/hooks/use-page-operations";
 // plane web hooks

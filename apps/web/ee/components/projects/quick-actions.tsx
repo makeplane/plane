@@ -2,9 +2,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings, Trash2 } from "lucide-react";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // plane imports
-import { ArchiveIcon, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { DeleteProjectModal } from "@/components/project/delete-project-modal";

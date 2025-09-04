@@ -6,8 +6,8 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
+import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { PriorityIcon } from "@plane/ui";
 // constants
 // helpers
 import { cn } from "@plane/utils";

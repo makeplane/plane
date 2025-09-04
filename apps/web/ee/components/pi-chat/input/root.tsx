@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { ArrowUp, Disc, FileText } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EditorRefApi, PiChatEditorWithRef } from "@plane/editor";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { ContrastIcon,DiceIcon,LayersIcon } from "@plane/propel/icons";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

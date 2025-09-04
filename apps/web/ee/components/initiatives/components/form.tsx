@@ -3,8 +3,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { InitiativeIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, setToast, TOAST_TYPE, InitiativeIcon, EmojiIconPickerTypes } from "@plane/ui";
+import { Button,Input,setToast,TOAST_TYPE,EmojiIconPickerTypes } from "@plane/ui";
 import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

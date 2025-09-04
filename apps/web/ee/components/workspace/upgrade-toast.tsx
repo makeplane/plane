@@ -1,4 +1,4 @@
-import { PlaneLogo } from "@plane/ui";
+import { PlaneLogo } from "@plane/propel/icons";
 
 export const UpgradeToast: React.FC = () => (
   <div className="flex gap-2 px-2">

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Briefcase, Link, Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { EpicIcon } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
 import { InitiativeActionButton } from "./action-button";
 import { InitiativeAttachmentActionButton } from "./attachment-button";
 import { InitiativeLinksActionButton } from "./link-button";

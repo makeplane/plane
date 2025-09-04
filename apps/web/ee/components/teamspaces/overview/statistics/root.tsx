@@ -8,7 +8,8 @@ import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE, TreeMapIcon } from "@plane/ui";
+import { TreeMapIcon } from "@plane/propel/icons";
+import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";

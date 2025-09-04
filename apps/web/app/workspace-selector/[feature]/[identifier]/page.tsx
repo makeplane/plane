@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services

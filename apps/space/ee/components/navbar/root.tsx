@@ -3,7 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Logo, PhotoFilterIcon } from "@plane/ui";
+import { PhotoFilterIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/ui";
 // hooks
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store

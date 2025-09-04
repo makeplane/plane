@@ -7,7 +7,8 @@ import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
-import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyPageIcon } from "@plane/propel/icons";
+import { AlertModalCore, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

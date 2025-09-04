@@ -7,13 +7,13 @@ import { LayersIcon, PanelRight, Rss } from "lucide-react";
 import { EInitiativeNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
+import { InitiativeIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption } from "@plane/types";
 import {
   BreadcrumbNavigationDropdown,
   BreadcrumbNavigationSearchDropdown,
   Breadcrumbs,
   Header,
-  InitiativeIcon,
   TContextMenuItem,
 } from "@plane/ui";
 import { cn } from "@plane/utils";

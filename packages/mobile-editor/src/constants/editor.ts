@@ -22,7 +22,7 @@ import {
 // editor
 import { TEditorCommands, TEditorFontStyle } from "@plane/editor";
 // ui
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 
 type TEditorTypes = "lite" | "document";
 

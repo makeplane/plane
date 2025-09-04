@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 // plane editor
 import type { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
 // plane ui
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 // ce hooks
 import type { TIssueEmbedHookProps } from "@/ce/hooks/use-editor-embed";
 // plane web components

@@ -6,8 +6,9 @@ import { observer } from "mobx-react";
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
+import { EmptyPageIcon } from "@plane/propel/icons";
 // ui
-import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

@@ -2,8 +2,9 @@ import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { CircleMinus, PencilIcon } from "lucide-react";
 // plane imports
+import { PriorityIcon,StateGroupIcon } from "@plane/propel/icons";
 import { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
-import { Avatar, AvatarGroup, CustomMenu, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar,AvatarGroup,CustomMenu } from "@plane/ui";
 import { cn, getFileURL, TProjectBlueprintDetails } from "@plane/utils";
 // plane web imports
 import { useMember } from "@/hooks/store/use-member";

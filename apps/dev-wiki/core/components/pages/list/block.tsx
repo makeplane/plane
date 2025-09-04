@@ -4,9 +4,10 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FileText, Loader } from "lucide-react";
-import { TPageNavigationTabs } from "@plane/types";
 // plane imports
-import { Logo, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { RestrictedPageIcon } from "@plane/propel/icons";
+import { TPageNavigationTabs } from "@plane/types";
+import { Logo, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // components

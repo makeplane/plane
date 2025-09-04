@@ -4,7 +4,8 @@ import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // components
-import { Loader, DiceIcon } from "@plane/ui";
+import { DiceIcon } from "@plane/propel/icons";
+import { Loader } from "@plane/ui";
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useModule } from "@/hooks/store/use-module";

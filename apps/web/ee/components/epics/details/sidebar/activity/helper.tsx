@@ -11,8 +11,8 @@ import {
   Type,
   Users,
 } from "lucide-react";
+import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/propel/icons";
 import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";

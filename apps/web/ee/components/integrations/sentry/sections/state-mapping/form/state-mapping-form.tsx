@@ -1,8 +1,9 @@
 import { FC, useMemo, useCallback } from "react";
 import useSWR from "swr";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
-import { CustomSearchSelect, Logo, Loader, StateGroupIcon } from "@plane/ui";
+import { CustomSearchSelect, Logo, Loader } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";

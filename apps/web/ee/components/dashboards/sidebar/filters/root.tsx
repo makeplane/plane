@@ -7,6 +7,7 @@ import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "
  * plane imports
  */
 
+import { CycleGroupIcon,DiceIcon,PriorityIcon } from "@plane/propel/icons";
 import {
   ICycle,
   IIssueLabel,
@@ -19,7 +20,7 @@ import {
   TIssuePriorities,
   TIssueType,
 } from "@plane/types";
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   cn,
   getAssigneeFilterConfig,

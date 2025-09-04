@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import type { TPageEmbedConfig } from "@plane/editor";
+import { EmptyPageIcon,RestrictedPageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 // hooks

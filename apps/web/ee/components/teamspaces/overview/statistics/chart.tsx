@@ -5,8 +5,9 @@ import { useParams } from "next/navigation";
 import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
+import { TreeMapIcon } from "@plane/propel/icons";
 import { TreeMapItem } from "@plane/types";
-import { Avatar, Button, Loader, Logo, TreeMapIcon } from "@plane/ui";
+import { Avatar, Button, Loader, Logo } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";

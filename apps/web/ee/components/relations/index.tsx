@@ -1,7 +1,7 @@
 import { useParams } from "next/navigation";
 import { CircleDot, CopyPlus, XCircle } from "lucide-react";
 // Plane
-import { RelatedIcon } from "@plane/ui";
+import { RelatedIcon } from "@plane/propel/icons";
 import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "@/ce/components/relations";
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";

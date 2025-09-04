@@ -4,7 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { Loader, ArchiveIcon, Logo } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { Loader, Logo } from "@plane/ui";
 // plane web imports
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
 

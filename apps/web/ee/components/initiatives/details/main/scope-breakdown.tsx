@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CircularProgressIndicator, ControlLink, Loader, ScopeIcon } from "@plane/ui";
+import { ScopeIcon } from "@plane/propel/icons";
+import { CircularProgressIndicator,ControlLink,Loader } from "@plane/ui";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";

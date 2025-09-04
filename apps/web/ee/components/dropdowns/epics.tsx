@@ -7,8 +7,9 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { EpicIcon } from "@plane/propel/icons";
 import { TWorkspaceEpicsSearchParams } from "@plane/types";
-import { ComboDropDown, EpicIcon } from "@plane/ui";
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { DropdownButton } from "@/components/dropdowns/buttons";

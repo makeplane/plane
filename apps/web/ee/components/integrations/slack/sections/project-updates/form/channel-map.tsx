@@ -6,7 +6,7 @@ import { ArrowRight, Hash, Briefcase } from "lucide-react";
 // Plane components
 import { SlackConversation } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
-import { PlaneLogo } from "@plane/ui";
+import { PlaneLogo } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 

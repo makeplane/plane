@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
 // plane imports
-import { UserActivityIcon } from "@plane/propel/icons";
+import { PiChatLogo, UserActivityIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { PiChatLogo } from "@plane/ui";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports

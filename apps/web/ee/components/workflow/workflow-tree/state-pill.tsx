@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";
 // hooks

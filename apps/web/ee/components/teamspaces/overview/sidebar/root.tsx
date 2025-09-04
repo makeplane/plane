@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
+import { CommentFillIcon,InfoFillIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
+import { Tabs } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

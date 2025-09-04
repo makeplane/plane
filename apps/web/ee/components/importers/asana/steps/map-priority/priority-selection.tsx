@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { AsanaEnumOption } from "@plane/etl/asana";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types

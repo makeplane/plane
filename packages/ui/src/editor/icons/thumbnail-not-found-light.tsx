@@ -1,5 +1,5 @@
 import React from "react";
-import { ISvgIcons } from "../../icons/type";
+import { ISvgIcons } from "@plane/propel/icons";
 
 export const ThumbnailNotFoundLight: React.FC<ISvgIcons> = ({ className, width = 96, height = 56 }) => (
   <svg

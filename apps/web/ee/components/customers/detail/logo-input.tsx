@@ -2,7 +2,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { PencilIcon } from "lucide-react";
 // plane imports
-import { CustomersIcon, Input } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 
 type TProps = {

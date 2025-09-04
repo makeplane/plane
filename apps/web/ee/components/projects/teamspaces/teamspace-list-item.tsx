@@ -6,6 +6,7 @@ import { CircleMinus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
 import {
   AlertModalCore,
@@ -15,7 +16,6 @@ import {
   Logo,
   setToast,
   Table,
-  TeamsIcon,
   TOAST_TYPE,
 } from "@plane/ui";
 import { getFileURL } from "@plane/utils";

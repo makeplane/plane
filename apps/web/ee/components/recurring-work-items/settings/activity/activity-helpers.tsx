@@ -3,19 +3,19 @@ import { observer } from "mobx-react";
 import { ArrowRightLeft, CalendarIcon, ClockIcon, MessageSquare, Signal, Tag, Users } from "lucide-react";
 // plane imports
 import {
+  DiceIcon,
+  DoubleCircleIcon,
+  RecurringWorkItemFailureIcon,
+  RecurringWorkItemIcon,
+  RecurringWorkItemSuccessIcon,
+} from "@plane/propel/icons";
+import {
   ERecurringWorkItemRunLogStatus,
   TBaseActivityVerbs,
   TRecurringWorkItemActivity,
   TRecurringWorkItemActivityKeys,
   TRecurringWorkItemActivityVerbs,
 } from "@plane/types";
-import {
-  DiceIcon,
-  DoubleCircleIcon,
-  RecurringWorkItemFailureIcon,
-  RecurringWorkItemIcon,
-  RecurringWorkItemSuccessIcon,
-} from "@plane/ui";
 import { cn, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // root store
 import { store } from "@/lib/store-context";

@@ -1,4 +1,4 @@
-import { ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { Badge } from "./badge";
 
 export const ArchivedBadge: React.FC = () => (

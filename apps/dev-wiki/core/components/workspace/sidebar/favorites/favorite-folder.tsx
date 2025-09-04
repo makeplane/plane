@@ -20,8 +20,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { FavoriteFolderIcon } from "@plane/propel/icons";
 import { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { CustomMenu, Tooltip, DropIndicator, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

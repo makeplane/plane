@@ -2,7 +2,8 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, DropdownIcon } from "@plane/ui";
+import { DropdownIcon } from "@plane/propel/icons";
+import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { CustomerWorkItem } from "@/plane-web/components/customers";
 

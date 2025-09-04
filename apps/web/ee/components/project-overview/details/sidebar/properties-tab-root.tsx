@@ -7,9 +7,10 @@ import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { DoubleCircleIcon,InitiativeIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
-import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
+import { Button } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";

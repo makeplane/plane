@@ -4,10 +4,11 @@ import { useParams } from "next/navigation";
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // plane editor
 import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
-// plane types
+// plane imports
+import { PriorityIcon } from "@plane/propel/icons";
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
-import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components

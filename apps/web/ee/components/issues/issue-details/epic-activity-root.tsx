@@ -2,8 +2,8 @@ import { FC } from "react";
 
 import { observer } from "mobx-react";
 import { ArrowRightLeft } from "lucide-react";
+import { EpicIcon } from "@plane/propel/icons";
 import { TIssueActivity } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 

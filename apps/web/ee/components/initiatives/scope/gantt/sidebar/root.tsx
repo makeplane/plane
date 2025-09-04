@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // plane
 import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { EpicIcon } from "@plane/propel/icons";
 import { EGanttBlockType } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
 // hooks
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";

@@ -5,9 +5,10 @@ import { Database, Paperclip } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LayersIcon } from "@plane/propel/icons";
 import { CustomerService } from "@plane/services";
 import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
+import { Button, EModalPosition, EModalWidth, Input, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";

@@ -7,7 +7,8 @@ import useSWR from "swr";
 // plane imports
 import { TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { BarIcon, Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
+import { BarIcon } from "@plane/propel/icons";
+import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { TClickUpStatus } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
 // silo ui components
 import { capitalizeFirstLetter } from "@plane/utils";
 import { Dropdown } from "@/plane-web/components/importers/ui";

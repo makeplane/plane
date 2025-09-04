@@ -3,9 +3,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TStateAnalytics } from "@plane/types";
-import { InfoIcon } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web

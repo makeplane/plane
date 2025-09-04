@@ -1,8 +1,8 @@
 // types
 import { FC } from "react";
+import { CustomerRequestIcon, CustomersIcon, ISvgIcons } from "@plane/propel/icons";
 import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
-import { CustomerRequestIcon, CustomersIcon, ISvgIcons } from "@plane/ui";
 import {
   SpreadSheetPropertyIconMap as CeSpreadSheetPropertyIconMap,
   SPREADSHEET_COLUMNS as CE_SPREAD_SHEET_COLUMNS,

@@ -4,8 +4,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
+import { InfoIcon } from "@plane/propel/icons";
 import { TStateAnalytics } from "@plane/types";
-import { InfoIcon } from "@plane/ui";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
 // plane editor
 import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
+// plane imports
+import { PriorityIcon } from "@plane/propel/icons";
 import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-// plane ui
-import { PriorityIcon } from "@plane/ui";
 // ce hooks
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pages";

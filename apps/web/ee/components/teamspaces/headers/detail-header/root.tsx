@@ -6,19 +6,9 @@ import { useParams } from "next/navigation";
 import { Rss, FileText, Layers, Loader as Spinner, Briefcase } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { TeamsIcon, LayersIcon, ContrastIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
-import {
-  Breadcrumbs,
-  BreadcrumbNavigationDropdown,
-  Logo,
-  TeamsIcon,
-  LayersIcon,
-  ContrastIcon,
-  TContextMenuItem,
-  Header,
-  Loader,
-} from "@plane/ui";
+import { Breadcrumbs, BreadcrumbNavigationDropdown, Logo, TContextMenuItem, Header, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

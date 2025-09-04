@@ -4,8 +4,9 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { InitiativeIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
-import { EmojiIconPickerTypes, InitiativeIcon } from "@plane/ui";
+import { EmojiIconPickerTypes } from "@plane/ui";
 // plane web components
 import { Logo } from "@/components/common/logo";
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";

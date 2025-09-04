@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TContextMenuItem, ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { TContextMenuItem } from "@plane/ui";
 // components
 import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks

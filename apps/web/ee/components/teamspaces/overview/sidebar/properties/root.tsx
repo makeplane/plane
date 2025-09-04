@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Briefcase, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
+import { ContrastIcon, LayersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ContrastIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

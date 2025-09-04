@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { CircleUserRound, SignalHigh, Tag, Users } from "lucide-react";
 // plane imports
+import { DoubleCircleIcon, LayersIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { IUserLite, TAutomationConditionFilterProperty, TFilterConfig } from "@plane/types";
-import { Avatar, DoubleCircleIcon, LayersIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
   getCreatedByFilterConfig,

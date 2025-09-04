@@ -2,8 +2,7 @@
 import { FC } from "react";
 import { CalendarDays, Link2, Signal, Paperclip } from "lucide-react";
 // plane imports
-import { LayersIcon, DoubleCircleIcon } from "@plane/ui";
-import type { ISvgIcons } from "@plane/ui/src/icons/type";
+import { LayersIcon, DoubleCircleIcon , type ISvgIcons } from "@plane/propel/icons";
 // plane web imports
 import { SpreadsheetIssueColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/issue-column";
 import { SpreadsheetLeadColumn } from "@/plane-web/components/projects/layouts/spreadsheet/columns/lead-column";

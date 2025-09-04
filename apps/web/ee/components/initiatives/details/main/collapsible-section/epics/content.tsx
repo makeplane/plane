@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { EpicIcon } from "@plane/propel/icons";
 import { GroupByColumnTypes } from "@plane/types";
-import { Button, EpicIcon, getButtonStyling } from "@plane/ui";
+import { Button,getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";

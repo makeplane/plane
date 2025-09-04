@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

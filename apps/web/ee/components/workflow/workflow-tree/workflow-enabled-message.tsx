@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { DoubleCircleIcon } from "@plane/ui";
+import { DoubleCircleIcon } from "@plane/propel/icons";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { WorkflowTree } from "./workflow-tree";

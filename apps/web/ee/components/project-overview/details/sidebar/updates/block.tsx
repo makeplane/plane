@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/propel/icons";
 import { EUpdateStatus, EUserProjectRoles } from "@plane/types";
-import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

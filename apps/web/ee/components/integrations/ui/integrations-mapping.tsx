@@ -2,8 +2,9 @@ import { ReactNode } from "react";
 import Image, { StaticImageData } from "next/image";
 import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { PlaneLogo } from "@plane/propel/icons";
 import { IProject } from "@plane/types";
-import { Button, Logo, PlaneLogo } from "@plane/ui";
+import { Button, Logo } from "@plane/ui";
 
 type TIntegrationsMappingProps = {
   entityName: string | ReactNode;

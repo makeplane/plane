@@ -6,7 +6,8 @@ import { PlusIcon } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { CustomerDropDown } from "@/plane-web/components/customers";

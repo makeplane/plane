@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
+import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/propel/icons";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // helpers

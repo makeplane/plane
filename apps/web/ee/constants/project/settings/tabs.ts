@@ -1,8 +1,7 @@
 // plane types
 import { EUserPermissions } from "@plane/constants";
-// ui
+import { EpicIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
 // ce constants
 import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project";
 // icons

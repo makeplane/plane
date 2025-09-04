@@ -3,8 +3,9 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { EpicIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
-import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
+import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { cn, generateWorkItemLink, getProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";

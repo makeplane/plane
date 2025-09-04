@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ISvgIcons } from "../../icons/type";
+import { ISvgIcons } from "@plane/propel/icons";
 export const AccessDeniedLight: React.FC<ISvgIcons> = ({ className, width = 90, height = 54 }) => (
   <svg
     width={width}

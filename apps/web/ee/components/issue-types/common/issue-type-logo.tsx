@@ -1,7 +1,8 @@
 import { FC } from "react";
 // plane imports
+import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { TLogoProps } from "@plane/types";
-import { EpicIcon, LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
+import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { cn, generateIconColors } from "@plane/utils";
 
 export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";

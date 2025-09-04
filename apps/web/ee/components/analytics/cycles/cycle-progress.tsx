@@ -5,8 +5,8 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/propel/icons";
 import { ICycleProgressData, IChartResponse, TChartData, TCycleGroups } from "@plane/types";
-import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";

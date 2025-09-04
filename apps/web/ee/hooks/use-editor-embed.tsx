@@ -7,7 +7,8 @@ import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } fr
 // plane types
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
-import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components

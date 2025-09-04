@@ -4,8 +4,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { RssIcon } from "lucide-react";
+import { EpicIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
 // components
 import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks

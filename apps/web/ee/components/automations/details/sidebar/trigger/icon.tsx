@@ -1,6 +1,6 @@
 import { MessageCircle, Users } from "lucide-react";
 import { TAutomationTriggerIconKey } from "@plane/constants";
-import { DoubleCircleIcon, LayersIcon } from "@plane/ui";
+import { DoubleCircleIcon,LayersIcon } from "@plane/propel/icons";
 
 type Props = {
   iconKey: TAutomationTriggerIconKey;

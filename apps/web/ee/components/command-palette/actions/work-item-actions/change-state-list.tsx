@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { StateGroupIcon, Spinner } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // ce imports
 import {
   TChangeWorkItemStateListProps,

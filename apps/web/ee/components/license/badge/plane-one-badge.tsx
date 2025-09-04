@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { PlaneOneIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { PlaneOneIcon } from "@plane/ui";
 import { getSubscriptionName } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";

@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
-import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { EmptyPageIcon,RestrictedPageIcon } from "@plane/propel/icons";
+import { setToast,TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

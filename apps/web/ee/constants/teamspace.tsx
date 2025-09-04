@@ -8,8 +8,8 @@ import {
   ETeamspaceScope,
   EProgressXAxisKeys,
 } from "@plane/constants";
+import { TeamsIcon } from "@plane/propel/icons";
 import { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
-import { TeamsIcon } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 // store

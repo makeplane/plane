@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { ChevronRight } from "lucide-react";
 // plane imports
-import { PlaneAIIcon } from "@plane/ui";
+import { PlaneAIIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {

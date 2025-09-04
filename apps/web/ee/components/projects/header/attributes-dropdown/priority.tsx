@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web constants

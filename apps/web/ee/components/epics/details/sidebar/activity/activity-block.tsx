@@ -1,8 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { LayersIcon } from "@plane/propel/icons";
 import { EIssueServiceType, TBaseActivityVerbs } from "@plane/types";
-import { LayersIcon } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers

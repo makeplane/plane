@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
+import { LeadIcon } from "@plane/propel/icons";
+import { Avatar,CustomMenu,setPromiseToast } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks

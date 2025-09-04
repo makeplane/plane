@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { InitiativeIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // component
-import { InitiativeIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";

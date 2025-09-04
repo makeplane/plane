@@ -4,8 +4,9 @@ import { useTheme } from "next-themes";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { PlaneLogo } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
-import { setToast, TOAST_TYPE, PlaneLogo } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useIntake } from "@/plane-web/hooks/store/use-intake";

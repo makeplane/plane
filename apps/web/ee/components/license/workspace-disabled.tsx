@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { EUserPermissionsLevel } from "@plane/constants";
+import { PlaneLockup } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { AlertModalCore, Button, PlaneLockup } from "@plane/ui";
+import { AlertModalCore, Button } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

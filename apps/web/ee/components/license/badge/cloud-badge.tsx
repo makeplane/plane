@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // plane imports
 import { LICENSE_TRACKER_EVENTS } from "@plane/constants";
+import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
 import { captureView } from "@/helpers/event-tracker.helper";

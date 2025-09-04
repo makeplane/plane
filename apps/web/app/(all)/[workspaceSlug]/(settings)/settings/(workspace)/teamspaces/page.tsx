@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { setPromiseToast, TeamsIcon, ToggleSwitch, Tooltip } from "@plane/ui";
+import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";

@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { InitiativeIcon } from "@plane/ui";
+import { InitiativeIcon } from "@plane/propel/icons";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 

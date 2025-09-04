@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TStateTransitionMap } from "@plane/types";
-import { ApproverIcon, WorkflowIcon } from "@plane/ui";
+import { ApproverIcon,WorkflowIcon } from "@plane/propel/icons";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 

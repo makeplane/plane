@@ -6,8 +6,9 @@ import useSWR from "swr";
 import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { ModuleInsightColumns } from "@plane/types";
-import { Logo, ModuleStatusIcon } from "@plane/ui";
+import { Logo } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";

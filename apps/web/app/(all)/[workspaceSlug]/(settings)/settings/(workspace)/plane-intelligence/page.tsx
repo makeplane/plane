@@ -10,8 +10,9 @@ import {
   PLANE_INTELLIGENCE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PiIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { PiIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { setPromiseToast, ToggleSwitch } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";

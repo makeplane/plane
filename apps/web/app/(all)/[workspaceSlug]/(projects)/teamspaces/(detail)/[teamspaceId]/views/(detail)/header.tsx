@@ -8,6 +8,8 @@ import { Layers, Lock } from "lucide-react";
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { TeamsIcon } from "@plane/propel/icons";
 // types
 import {
   EIssuesStoreType,
@@ -19,7 +21,7 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, Loader } from "@plane/ui";
 // components
 import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

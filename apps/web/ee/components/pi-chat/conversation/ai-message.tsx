@@ -4,7 +4,8 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 // plane imports
 import { PI_BASE_URL } from "@plane/constants";
-import { Loader, PiIcon } from "@plane/ui";
+import { PiIcon } from "@plane/propel/icons";
+import { Loader } from "@plane/ui";
 // plane-web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";

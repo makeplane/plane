@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { JiraStatus } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 

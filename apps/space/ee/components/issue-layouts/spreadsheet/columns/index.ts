@@ -10,9 +10,8 @@ import {
   Tag,
   Users,
 } from "lucide-react";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon,ISvgIcons } from "@plane/propel/icons";
 import { IIssueDisplayProperties } from "@plane/types";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
-import { ISvgIcons } from "@plane/ui/src/icons/type";
 import { IIssue } from "@/types/issue";
 import {
   SpreadsheetAssigneeColumn,

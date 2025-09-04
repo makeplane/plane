@@ -4,9 +4,10 @@ import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // plane imports
+import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, IActiveCycle } from "@plane/types";
-import { Loader, PriorityIcon } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { generateWorkItemLink, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // constants

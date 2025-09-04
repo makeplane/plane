@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, DropdownIcon } from "@plane/ui";
+import { DropdownIcon } from "@plane/propel/icons";
+import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type TChildProps = {
