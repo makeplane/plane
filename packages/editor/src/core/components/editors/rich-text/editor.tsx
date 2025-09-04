@@ -17,6 +17,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     extensions: externalExtensions = [],
     fileHandler,
     flaggedExtensions,
+    extendedEditorProps,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -30,11 +31,12 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
         disabledExtensions,
         fileHandler,
         flaggedExtensions,
+        extendedEditorProps,
       }),
     ];
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions, extendedEditorProps]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
