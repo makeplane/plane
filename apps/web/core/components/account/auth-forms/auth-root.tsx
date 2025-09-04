@@ -56,7 +56,13 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   // derived values
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_oidc_enabled ||
+        config?.is_saml_enabled)) ||
+    false;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
