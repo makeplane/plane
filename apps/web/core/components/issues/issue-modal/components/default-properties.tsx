@@ -57,7 +57,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     parentId,
     isDraft,
     handleFormChange,
-    setSelectedParentIssue
+    setSelectedParentIssue,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
