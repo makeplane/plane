@@ -19,7 +19,7 @@ export class WorkspacePageService extends APIService {
   }
 
   async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/pages`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/`, {
       params: { search: searchQuery, type },
     })
       .then((response) => response?.data)
@@ -159,7 +159,7 @@ export class WorkspacePageService extends APIService {
   }
 
   async fetchSubPages(workspaceSlug: string, pageId: string): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/sub-pages`)
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/sub-pages/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
