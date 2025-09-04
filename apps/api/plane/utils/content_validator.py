@@ -64,6 +64,17 @@ def validate_binary_data(data):
     return True, None
 
 
+EE_CUSTOM_TAGS = {
+    "issue-embed-component",
+    "external-embed",
+    "external-embed-component",
+    "page-embed-component",
+    "page-link-component",
+    "attachment-component",
+    "inline-math-component",
+    "block-math-component",
+}
+
 # Combine custom components and editor-specific nodes into a single set of tags
 CUSTOM_TAGS = {
     # editor node/tag names
@@ -72,7 +83,62 @@ CUSTOM_TAGS = {
     "input",
     "image-component",
 }
-ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS
+
+ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS | EE_CUSTOM_TAGS
+
+EE_ATTRIBUTES = {
+    "*": {
+        "data-comment-id",
+        "data-comment-resolved",
+    },
+    # issue-embed-component (from editor extension and migrations)
+    "issue-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+        "sequence_id",
+        "title",
+    },
+    # external embed variants (generic)
+    "external-embed-component": {
+        "src",
+        "id",
+        "data-embed-data",
+        "data-is-rich-card",
+        "data-entity-name",
+        "data-entity-type",
+        "data-has-embed-failed",
+        "data-has-tried-embedding",
+    },
+    # page-related components (no concrete usages found; allow common identifiers)
+    "page-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+    },
+    "page-link-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+    },
+    # attachment (generic)
+    "attachment-component": {
+        "id",
+        "src",
+        "data-name",
+        "data-file-size",
+        "data-file-type",
+    },
+    # math components (generic)
+    "inline-math-component": {"latex", "id"},
+    "block-math-component": {"latex", "id"},
+}
 
 # Merge nh3 defaults with all attributes used across our custom components
 ATTRIBUTES = {
@@ -151,6 +217,11 @@ ATTRIBUTES = {
     "input": {"type", "checked"},
 }
 
+
+for k, v in EE_ATTRIBUTES.items():
+    ATTRIBUTES.setdefault(k, set()).update(v)
+
+
 SAFE_PROTOCOLS = {"http", "https", "mailto", "tel"}
 
 
@@ -204,6 +275,13 @@ def _compute_html_sanitization_diff(before_html: str, after_html: str):
 
 
 def validate_html_content(html_content: str):
+    """
+    Sanitize HTML content using nh3.
+    Returns a tuple: (is_valid, error_message, clean_html)
+    """
+    if not html_content:
+        return True, None, None
+
     # Size check - 10MB limit (consistent with binary validation)
     if len(html_content.encode("utf-8")) > MAX_SIZE:
         return False, "HTML content exceeds maximum size limit (10MB)", None
@@ -232,4 +310,3 @@ def validate_html_content(html_content: str):
     except Exception as e:
         log_exception(e)
         return False, "Failed to sanitize HTML", None
-
