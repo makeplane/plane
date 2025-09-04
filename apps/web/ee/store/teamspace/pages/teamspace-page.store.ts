@@ -49,6 +49,7 @@ export interface ITeamspacePageStore {
   // CRUD actions
   createPage: (data: Partial<TPage>) => Promise<TPage>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
   getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   // page sharing actions
@@ -342,6 +343,65 @@ export class TeamspacePageStore implements ITeamspacePageStore {
 
     if (shouldSync) {
       await this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId);
+    }
+  };
+
+  /**
+   * @description move a page internally within the project hierarchy
+   * @param {string} pageId - The ID of the page to move
+   * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
+   */
+  movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    try {
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      runInAction(() => {
+        // Handle parent_id changes and update sub_pages_count accordingly
+        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
+          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
+        }
+
+        // Apply all updates to the page instance
+        Object.keys(updatePayload).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
+        });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        pageInstance.updated_at = new Date();
+      });
+
+      await pageInstance.update(updatePayload);
+    } catch (error) {
+      console.error("Unable to move page internally", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Helper method to update sub_pages_count when moving pages between parents
+   * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
+   * @param {string | null} newParentId - The new parent ID (can be null for root pages)
+   * @private
+   */
+  private updateParentSubPageCounts = (oldParentId: string | null, newParentId: string | null) => {
+    // Decrement count for old parent (if it exists)
+    if (oldParentId) {
+      const oldParentPageInstance = this.getPageById(oldParentId);
+      if (oldParentPageInstance) {
+        const newCount = Math.max(0, (oldParentPageInstance.sub_pages_count ?? 1) - 1);
+        oldParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+
+    // Increment count for new parent (if it exists)
+    if (newParentId) {
+      const newParentPageInstance = this.getPageById(newParentId);
+      if (newParentPageInstance) {
+        const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
+        newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
     }
   };
 

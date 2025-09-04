@@ -38,7 +38,7 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
   const itemContentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug, projectId, pageId: currentPageIdParam } = useParams();
   // store hooks
-  const { getPageById, isNestedPagesEnabled } = usePageStore(storeType);
+  const { getPageById, isNestedPagesEnabled, movePageInternally } = usePageStore(storeType);
   const page = usePage({
     pageId,
     storeType,
@@ -243,7 +243,8 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
             updatePayload.access = targetAccess;
           }
 
-          droppedPageDetails.update(updatePayload);
+          // Use the store method instead of direct update
+          movePageInternally(droppedPageId, updatePayload);
         },
         canDrop: ({ source }) => {
           if (
@@ -286,6 +287,7 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
     isNestedPagesEnabled,
     workspaceSlug,
     sectionType,
+    movePageInternally,
   ]);
 
   if (!page) return null;

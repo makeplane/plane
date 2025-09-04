@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,7 @@ import {
   PROJECT_PAGE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, type TPageNavigationTabs, TPage } from "@plane/types";
+import { EUserProjectRoles, type TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -40,6 +41,9 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
   const { pageType, workspaceSlug, projectId } = props;
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
+  const [isRootDropping, setIsRootDropping] = useState(false);
+  // refs
+  const rootDropRef = useRef<HTMLDivElement>(null);
   // router
   const router = useRouter();
 
@@ -55,6 +59,9 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     filteredArchivedPageIds,
     filteredPrivatePageIds,
     createPage,
+    movePageInternally,
+    getPageById,
+    isNestedPagesEnabled,
   } = usePageStore(storeType);
 
   // Debounce the search query to avoid excessive API calls
@@ -137,6 +144,73 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+
+  // Root level drop target
+  useEffect(() => {
+    const element = rootDropRef.current;
+    if (!element) return;
+
+    return dropTargetForElements({
+      element,
+      onDragEnter: () => setIsRootDropping(true),
+      onDragLeave: () => setIsRootDropping(false),
+      onDrop: ({ location, source }) => {
+        setIsRootDropping(false);
+
+        // Only handle drops that are ONLY on the root container (not on individual pages)
+        if (location.current.dropTargets.length !== 1) return;
+
+        const { id: droppedPageId } = source.data as TPageDragPayload;
+        const droppedPageDetails = getPageById(droppedPageId);
+        if (!droppedPageDetails) return;
+
+        // Move to root level (no parent)
+        const updatePayload: { parent_id: string | null; access?: EPageAccess } = {
+          parent_id: null,
+        };
+
+        // Update access based on current section
+        let targetAccess: EPageAccess | undefined;
+        if (pageType === "public") {
+          targetAccess = EPageAccess.PUBLIC;
+        } else if (pageType === "private") {
+          targetAccess = EPageAccess.PRIVATE;
+        }
+
+        if (targetAccess && droppedPageDetails.access !== targetAccess) {
+          updatePayload.access = targetAccess;
+        }
+
+        movePageInternally(droppedPageId, updatePayload);
+      },
+      canDrop: ({ source }) => {
+        // Don't allow drops if user doesn't have permissions or in archived section
+        if (!hasProjectMemberLevelPermissions || pageType === "archived") {
+          return false;
+        }
+
+        const { id: droppedPageId } = source.data as TPageDragPayload;
+        const sourcePage = getPageById(droppedPageId);
+        if (!sourcePage) return false;
+
+        return (
+          sourcePage.canCurrentUserEditPage &&
+          sourcePage.isContentEditable &&
+          isNestedPagesEnabled(workspaceSlug) &&
+          !sourcePage.archived_at &&
+          // For shared pages, only the owner can move them
+          (!sourcePage.is_shared || sourcePage.isCurrentUserOwner)
+        );
+      },
+    });
+  }, [
+    hasProjectMemberLevelPermissions,
+    pageType,
+    getPageById,
+    isNestedPagesEnabled,
+    workspaceSlug,
+    movePageInternally,
+  ]);
 
   const generalPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/onboarding/pages",
@@ -239,7 +313,12 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+    <div
+      ref={rootDropRef}
+      className={`size-full overflow-y-scroll vertical-scrollbar scrollbar-sm ${
+        isRootDropping ? "bg-custom-background-80" : ""
+      }`}
+    >
       {pageIds.map((pageId) => (
         <PageListBlockRoot
           key={pageId}
