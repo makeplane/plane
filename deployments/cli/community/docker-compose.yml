@@ -157,7 +157,7 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: any
+        condition: on-failure
     volumes:
       - logs_migrator:/code/plane/logs
     environment:
