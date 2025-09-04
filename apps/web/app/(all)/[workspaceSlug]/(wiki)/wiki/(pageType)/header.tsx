@@ -97,7 +97,13 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
                 />
               }
             />
-            <Breadcrumbs.Item component={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label={`${pageType === "public" ? "Workspace" : capitalizeFirstLetter(pageType)} pages`}
+                />
+              }
+            />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>

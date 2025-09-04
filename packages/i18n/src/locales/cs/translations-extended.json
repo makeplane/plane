@@ -476,8 +476,8 @@
         }
       },
       "public": {
-        "title": "Zatím žádné veřejné stránky",
-        "description": "Zde uvidíte stránky sdílené se všemi ve vašem workspace.",
+        "title": "Zatím žádné stránky pracovního prostoru",
+        "description": "Zde uvidíte stránky sdílené se všemi ve vašem pracovním prostoru.",
         "primary_button": {
           "text": "Vytvořit svou první stránku"
         }

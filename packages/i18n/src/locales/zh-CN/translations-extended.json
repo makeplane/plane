@@ -475,7 +475,7 @@
         }
       },
       "public": {
-        "title": "还没有公共页面",
+        "title": "还没有工作空间页面",
         "description": "在这里查看与工作空间中所有人共享的页面。",
         "primary_button": {
           "text": "创建您的第一个页面"

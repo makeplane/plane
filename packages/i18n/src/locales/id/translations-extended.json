@@ -476,8 +476,8 @@
         }
       },
       "public": {
-        "title": "Belum ada halaman publik",
-        "description": "Lihat halaman yang dibagikan dengan semua orang di workspace Anda di sini.",
+        "title": "Belum ada halaman ruang kerja",
+        "description": "Lihat halaman yang dibagikan dengan semua orang di ruang kerja Anda di sini.",
         "primary_button": {
           "text": "Buat halaman pertama Anda"
         }

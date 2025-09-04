@@ -474,8 +474,8 @@
         }
       },
       "public": {
-        "title": "Nessuna pagina pubblica ancora",
-        "description": "Vedi le pagine condivise con tutti nel tuo workspace proprio qui.",
+        "title": "Nessuna pagina dello spazio di lavoro ancora",
+        "description": "Vedi le pagine condivise con tutti nel tuo spazio di lavoro proprio qui.",
         "primary_button": {
           "text": "Crea la tua prima pagina"
         }

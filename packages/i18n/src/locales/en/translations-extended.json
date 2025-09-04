@@ -514,7 +514,7 @@
         }
       },
       "public": {
-        "title": "No public pages yet",
+        "title": "No workspace pages yet",
         "description": "See pages shared with everyone in your workspace right here.",
         "primary_button": {
           "text": "Create your first page"

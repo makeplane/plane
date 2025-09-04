@@ -491,7 +491,7 @@
         }
       },
       "public": {
-        "title": "Henüz herkese açık sayfa yok",
+        "title": "Henüz çalışma alanı sayfası yok",
         "description": "Çalışma alanınızdaki herkesle paylaşılan sayfaları burada görün.",
         "primary_button": {
           "text": "İlk sayfanızı oluşturun"

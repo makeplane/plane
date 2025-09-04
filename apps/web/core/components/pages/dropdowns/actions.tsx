@@ -70,6 +70,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
   const { access, archived_at, canCurrentUserChangeAccess, canCurrentUserDeletePage, canCurrentUserDuplicatePage } =
     page;
 
+  const isProjectPage = page.project_ids && page.project_ids.length > 0;
   // Base menu items that are common across all implementations
   const baseMenuItems: (TContextMenuItem & { key: TPageActions })[] = useMemo(
     () => [
@@ -81,7 +82,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           });
           pageOperations.toggleAccess();
         },
-        title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+        title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },

@@ -466,8 +466,8 @@
         }
       },
       "public": {
-        "title": "Chưa có trang công khai",
-        "description": "Xem các trang được chia sẻ với mọi người trong workspace của bạn ngay tại đây.",
+        "title": "Chưa có trang không gian làm việc",
+        "description": "Xem các trang được chia sẻ với mọi người trong không gian làm việc của bạn ngay tại đây.",
         "primary_button": {
           "text": "Tạo trang đầu tiên của bạn"
         }
@@ -674,7 +674,7 @@
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu"
       },
-      "plane-intelligence": { 
+      "plane-intelligence": {
         "title": "Plane Intelligence",
         "heading": "Plane Intelligence",
         "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."

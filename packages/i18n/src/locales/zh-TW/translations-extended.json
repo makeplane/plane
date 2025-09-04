@@ -476,7 +476,7 @@
         }
       },
       "public": {
-        "title": "還沒有公開頁面",
+        "title": "還沒有工作空間頁面",
         "description": "在這裡查看與工作空間中的每個人共享的頁面。",
         "primary_button": {
           "text": "創建您的第一個頁面"

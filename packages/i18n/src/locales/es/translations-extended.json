@@ -475,7 +475,7 @@
         }
       },
       "public": {
-        "title": "Aún no hay Pages públicas",
+        "title": "Aún no hay Pages de espacio de trabajo",
         "description": "Ve las Pages compartidas con todos en tu espacio de trabajo aquí mismo.",
         "primary_button": {
           "text": "Crea tu primera Page"

@@ -483,8 +483,8 @@
         }
       },
       "public": {
-        "title": "Zatiaľ žiadne verejné stránky",
-        "description": "Pozrite si stránky zdieľané so všetkými vo vašom vorkspejse práve tu.",
+        "title": "Zatiaľ žiadne stránky pracovného priestoru",
+        "description": "Pozrite si stránky zdieľané so všetkými vo vašom pracovnom priestore práve tu.",
         "primary_button": {
           "text": "Vytvorte svoju prvú stránku"
         }

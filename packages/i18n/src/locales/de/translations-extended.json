@@ -476,8 +476,8 @@
         }
       },
       "public": {
-        "title": "Noch keine öffentlichen Seiten",
-        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Workspace geteilt werden.",
+        "title": "Noch keine Arbeitsbereich-Seiten",
+        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Arbeitsbereich geteilt werden.",
         "primary_button": {
           "text": "Erstellen Sie Ihre erste Seite"
         }
