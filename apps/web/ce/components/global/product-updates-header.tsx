@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { PlaneLogo } from "@plane/ui";
+import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // package.json

@@ -1,5 +1,5 @@
 import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-react";
-import { ArchiveIcon, ContrastIcon, UserActivityIcon } from "@plane/ui";
+import { ArchiveIcon, ContrastIcon, UserActivityIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 export const getSidebarNavigationItemIcon = (key: string, className: string = "") => {

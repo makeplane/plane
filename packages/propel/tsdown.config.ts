@@ -10,6 +10,7 @@ export default defineConfig({
     "src/command/index.ts",
     "src/dialog/index.ts",
     "src/emoji-icon-picker/index.ts",
+    "src/icons/index.ts",
     "src/menu/index.ts",
     "src/popover/index.ts",
     "src/switch/index.ts",

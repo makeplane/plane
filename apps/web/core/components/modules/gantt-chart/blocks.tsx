@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ModuleStatusIcon } from "@plane/ui";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";

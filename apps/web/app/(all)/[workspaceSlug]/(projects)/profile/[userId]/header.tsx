@@ -8,8 +8,9 @@ import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { UserActivityIcon } from "@plane/propel/icons";
 import { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
+import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
