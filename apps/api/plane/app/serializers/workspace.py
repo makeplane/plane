@@ -71,6 +71,31 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         ]
 
 
+class WorkspaceUserMeSerializer(DynamicBaseSerializer):
+    owner = UserLiteSerializer(read_only=True)
+    total_members = serializers.IntegerField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    logo_url = serializers.CharField(read_only=True)
+    current_plan = serializers.CharField(read_only=True)
+    role = serializers.IntegerField(read_only=True)
+    is_on_trial = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Workspace
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "owner",
+            "logo_url",
+            "role",
+            "is_on_trial",
+        ]
+
+
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
@@ -88,6 +113,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
     draft_issue_count = serializers.IntegerField(read_only=True)
+    active_cycles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMember
@@ -199,6 +225,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
+    is_epic = serializers.SerializerMethodField()
 
     class Meta:
         model = Issue
@@ -212,6 +239,7 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
             "sequence_id",
             "project_id",
             "project_identifier",
+            "is_epic",
         ]
 
     def get_project_identifier(self, obj):
@@ -224,6 +252,9 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
                 "id", flat=True
             )
         )
+
+    def get_is_epic(self, obj):
+        return obj.type.is_epic if obj.type else False
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
@@ -239,6 +270,12 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         ).values_list("member", flat=True)
 
         return members
+
+
+class WorkspacePageRecentVisitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Page
+        fields = ["id", "name", "logo_props", "owned_by"]
 
 
 class PageRecentVisitSerializer(serializers.ModelSerializer):
@@ -274,6 +311,7 @@ def get_entity_model_and_serializer(entity_type):
         "issue": (Issue, IssueRecentVisitSerializer),
         "page": (Page, PageRecentVisitSerializer),
         "project": (Project, ProjectRecentVisitSerializer),
+        "workspace_page": (Page, WorkspacePageRecentVisitSerializer),
     }
     return entity_map.get(entity_type, (None, None))
 

@@ -1,4 +1,5 @@
 import { TIssue } from "./issues/issue";
+import { IExtendedIssueDisplayProperties, TExtendedIssueOrderByOptions } from "./view-props-extended";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -45,7 +46,8 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | TExtendedIssueOrderByOptions;
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
 
@@ -111,7 +113,7 @@ export interface IIssueDisplayFilterOptions {
   sub_issue?: boolean;
   type?: TIssueGroupingFilters;
 }
-export interface IIssueDisplayProperties {
+export interface IIssueDisplayProperties extends IExtendedIssueDisplayProperties {
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;

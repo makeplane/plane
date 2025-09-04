@@ -1,3 +1,4 @@
+// tiptap
 import type { Extensions } from "@tiptap/core";
 import React, { useMemo } from "react";
 // plane imports
@@ -39,6 +40,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     dragDropEnabled = true,
     isTouchDevice,
     mentionHandler,
+    pageRestorationInProgress,
     onAssetChange,
     onChange,
     onEditorFocus,
@@ -47,7 +49,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     realtimeConfig,
     serverHandler,
     tabIndex,
+    titleRef,
     user,
+    updatePageProperties,
   } = props;
 
   const extensions: Extensions = useMemo(() => {
@@ -65,31 +69,35 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   }, [externalExtensions, embedHandler.issue]);
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
-    disabledExtensions,
-    editable,
-    editorClassName,
-    editorProps,
-    embedHandler,
-    extensions,
-    fileHandler,
-    flaggedExtensions,
-    forwardedRef,
-    handleEditorReady,
-    id,
-    dragDropEnabled,
-    isTouchDevice,
-    mentionHandler,
-    onAssetChange,
-    onChange,
-    onEditorFocus,
-    onTransaction,
-    placeholder,
-    realtimeConfig,
-    serverHandler,
-    tabIndex,
-    user,
-  });
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
+    useCollaborativeEditor({
+      disabledExtensions,
+      editable,
+      editorClassName,
+      editorProps,
+      embedHandler,
+      extensions,
+      fileHandler,
+      flaggedExtensions,
+      forwardedRef,
+      handleEditorReady,
+      id,
+      dragDropEnabled,
+      isTouchDevice,
+      mentionHandler,
+      onAssetChange,
+      onChange,
+      onEditorFocus,
+      onTransaction,
+      placeholder,
+      realtimeConfig,
+      serverHandler,
+      tabIndex,
+      titleRef,
+      updatePageProperties,
+      user,
+      extendedEditorProps,
+    });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -97,33 +105,44 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
+
+  if (!isIndexedDbSynced) {
+    return null;
+  }
 
   return (
     <>
-      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
+      <DocumentEditorSideEffects
+        editor={editor}
+        id={id}
+        updatePageProperties={updatePageProperties}
+        extendedEditorProps={extendedEditorProps}
+      />
       <PageRenderer
         aiHandler={aiHandler}
         bubbleMenuEnabled={bubbleMenuEnabled}
         displayConfig={displayConfig}
         documentLoaderClassName={documentLoaderClassName}
-        editor={editor}
-        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-        id={id}
-        isTouchDevice={!!isTouchDevice}
-        isLoading={!hasServerSynced && !hasServerConnectionFailed}
-        tabIndex={tabIndex}
-        flaggedExtensions={flaggedExtensions}
         disabledExtensions={disabledExtensions}
+        editor={editor}
+        flaggedExtensions={flaggedExtensions}
+        titleEditor={titleEditor}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        extendedEditorProps={extendedEditorProps}
+        id={id}
+        isLoading={
+          (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
+        }
+        isTouchDevice={!!isTouchDevice}
+        tabIndex={tabIndex}
       />
     </>
   );
 };
 
 const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-  )
+  (props, ref) => <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
 );
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";

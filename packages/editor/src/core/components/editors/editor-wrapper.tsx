@@ -32,16 +32,17 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    handleEditorReady,
     mentionHandler,
     onChange,
     onEditorFocus,
     onTransaction,
-    handleEditorReady,
     autofocus,
     placeholder,
     tabIndex,
     value,
-    embedHandler,
+    // additional props
+    extendedEditorProps,
   } = props;
 
   const editor = useEditor({
@@ -54,6 +55,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    handleEditorReady,
     id,
     isTouchDevice,
     initialValue,
@@ -61,12 +63,12 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     onChange,
     onEditorFocus,
     onTransaction,
-    handleEditorReady,
     autofocus,
     placeholder,
     tabIndex,
     value,
-    embedHandler,
+    // additional props
+    extendedEditorProps,
   });
 
   const editorContainerClassName = getEditorClassNames({
