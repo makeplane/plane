@@ -19,7 +19,7 @@ export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
   const { pageId } = useParams();
 
   // derived values
-  const sectionsList: TPageNavigationTabs[] = ["public", "private", "shared", "archived"];
+  const sectionsList: TPageNavigationTabs[] = ["public", "shared", "private", "archived"];
   // Current page ID (without UUID validation to keep it simple)
   const currentPageId = pageId ? pageId.toString() : undefined;
 
