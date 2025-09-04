@@ -7,8 +7,8 @@ import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
+import { DiscordIcon, GithubIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { DiscordIcon, GithubIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance, useTheme } from "@/hooks/store";

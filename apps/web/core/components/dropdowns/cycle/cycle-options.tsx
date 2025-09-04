@@ -11,9 +11,9 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
+import { ContrastIcon, CycleGroupIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // ui
-import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { usePlatformOS } from "@/hooks/use-platform-os";

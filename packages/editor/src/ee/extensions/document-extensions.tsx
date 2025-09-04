@@ -2,7 +2,7 @@ import { AnyExtension, Extensions } from "@tiptap/core";
 import { FileText, Paperclip } from "lucide-react";
 // core imports
 // plane imports
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
 // helpers

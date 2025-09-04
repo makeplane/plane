@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
+import { ContrastIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
+import {  InitiativeIcon, TeamsIcon } from "@plane/ui";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
 // local imports

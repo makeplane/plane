@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
+import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";

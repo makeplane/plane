@@ -44,6 +44,7 @@
     "@hocuspocus/provider": "^2.15.0",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
