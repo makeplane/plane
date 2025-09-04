@@ -16,7 +16,7 @@ export interface NotionFileParserConfig {
 }
 
 export class NotionFileParserExtension implements IParserExtension {
-  constructor(readonly config: NotionFileParserConfig) {}
+  constructor(readonly config: NotionFileParserConfig) { }
 
   shouldParse(node: HTMLElement): boolean {
     /*
@@ -30,15 +30,9 @@ export class NotionFileParserExtension implements IParserExtension {
     */
     // Only process anchor tags that are likely local file links
     const hasAnchorTag = node.tagName === "A" || node.rawTagName === "a";
-    const hasSingleImageChild = node.querySelector("img");
-
-    if (hasAnchorTag && hasSingleImageChild) {
-      return false;
-    }
-
-    const isNotAnHTTPLink = !node.getAttribute("href")?.startsWith("http");
-    const isNotAnHTMLPage = !node.getAttribute("href")?.endsWith(".html");
-    return hasAnchorTag && isNotAnHTTPLink && isNotAnHTMLPage;
+    const isImage = this.isImage(node.getAttribute("href") || "");
+    const isFile = this.isNonHTMLFile(node.getAttribute("href") || "");
+    return hasAnchorTag && isFile && !isImage;
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
@@ -68,6 +62,22 @@ export class NotionFileParserExtension implements IParserExtension {
     }
 
     return node;
+  }
+
+  protected isImage(href: string): boolean {
+    return (
+      href?.endsWith(".png") ||
+      href?.endsWith(".jpg") ||
+      href?.endsWith(".jpeg") ||
+      href?.endsWith(".gif") ||
+      href?.endsWith(".svg") ||
+      href?.endsWith(".webp")
+    );
+  }
+
+  protected isNonHTMLFile(href: string): boolean {
+    const parts = href.split(".");
+    return !href.startsWith("http") && parts.length > 1 && parts[parts.length - 1] !== "html";
   }
 
   protected getFileSource(node: HTMLElement): string {
