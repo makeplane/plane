@@ -35,6 +35,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       x: undefined,
       y: 10,
     },
+    customTicks,
     showTooltip = true,
     customTooltipContent,
   } = props;
@@ -65,6 +66,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           key={bar.key}
           dataKey={bar.key}
           stackId={bar.stackId}
+          fill={typeof bar.fill === "function" ? "#000000" : bar.fill}
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           shape={(shapeProps: any) => {
             const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
@@ -96,7 +98,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.x || CustomXAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickLine={false}
             axisLine={false}
             label={{
@@ -118,7 +123,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               dx: yAxis.dx ?? -16,
               className: AXIS_LABEL_CLASSNAME,
             }}
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.y || CustomYAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />

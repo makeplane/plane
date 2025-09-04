@@ -70,6 +70,10 @@ export type TBarItem<T extends string> = {
 export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {
   bars: TBarItem<T>[];
   barSize?: number;
+  customTicks?: {
+    x?: React.ComponentType<any>;
+    y?: React.ComponentType<any>;
+  };
 };
 
 // ============================================================
