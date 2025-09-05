@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -13,7 +14,7 @@ import {
   TModulePlotType,
   TStateGroups,
 } from "@plane/types";
-import { Avatar, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";

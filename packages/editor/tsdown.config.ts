@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["src/index.ts", "src/lib.ts"],
@@ -6,9 +6,6 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   clean: true,
-  external: ["react", "react-dom"],
-  injectStyle: true,
-  splitting: true,
-  treeshake: true,
-  minify: true,
+  sourcemap: true,
+  copy: ["src/styles"],
 });

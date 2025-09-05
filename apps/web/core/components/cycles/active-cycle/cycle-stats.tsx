@@ -8,10 +8,11 @@ import { CalendarCheck } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Loader, PriorityIcon, Avatar } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";

@@ -7,8 +7,9 @@ import { ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
-import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
+import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";

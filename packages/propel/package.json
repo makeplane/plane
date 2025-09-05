@@ -4,6 +4,8 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 7",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -14,22 +16,23 @@
     "build-storybook": "storybook build"
   },
   "exports": {
-    "./avatar": "./src/avatar/index.ts",
-    "./charts/*": "./src/charts/*/index.ts",
-    "./dialog": "./src/dialog/index.ts",
-    "./menu": "./src/menu/index.ts",
-    "./table": "./src/table/index.ts",
-    "./tabs": "./src/tabs/index.ts",
-    "./popover": "./src/popover/index.ts",
-    "./command": "./src/command/index.ts",
-    "./combobox": "./src/combobox/index.ts",
-    "./tooltip": "./src/tooltip/index.ts",
-    "./styles/fonts": "./src/styles/fonts/index.css",
-    "./switch": "./src/switch/index.ts",
-    "./emoji-icon-picker": "./src/emoji-icon-picker/index.ts",
-    "./utils": "./src/utils/index.ts",
-    "./accordion": "./src/accordion/index.ts",
-    "./card": "./src/card/index.ts"
+    "./accordion": "./dist/accordion/index.js",
+    "./avatar": "./dist/avatar/index.js",
+    "./card": "./dist/card/index.js",
+    "./charts/*": "./dist/charts/*/index.js",
+    "./combobox": "./dist/combobox/index.js",
+    "./command": "./dist/command/index.js",
+    "./dialog": "./dist/dialog/index.js",
+    "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
+    "./icons": "./dist/icons/index.js",
+    "./menu": "./dist/menu/index.js",
+    "./popover": "./dist/popover/index.js",
+    "./styles/fonts": "./dist/styles/fonts/index.css",
+    "./switch": "./dist/switch/index.js",
+    "./table": "./dist/table/index.js",
+    "./tabs": "./dist/tabs/index.js",
+    "./tooltip": "./dist/tooltip/index.js",
+    "./utils": "./dist/utils/index.js"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
@@ -59,6 +62,7 @@
     "@types/react-dom": "catalog:",
     "eslint-plugin-storybook": "9.1.2",
     "storybook": "9.1.2",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

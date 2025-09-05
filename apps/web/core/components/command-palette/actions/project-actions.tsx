@@ -9,7 +9,7 @@ import {
   PROJECT_PAGE_TRACKER_ELEMENTS,
   PROJECT_VIEW_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { DiceIcon } from "@plane/ui";
+import { DiceIcon } from "@plane/propel/icons";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // ui

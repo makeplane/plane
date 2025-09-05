@@ -3,9 +3,10 @@
 import React, { FC } from "react";
 import { ChevronDown } from "lucide-react";
 // types
+import { CycleGroupIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // icons
-import { Row, CycleGroupIcon } from "@plane/ui";
+import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

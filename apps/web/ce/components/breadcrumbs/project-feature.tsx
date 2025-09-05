@@ -4,7 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { BreadcrumbNavigationDropdown, Breadcrumbs, ISvgIcons } from "@plane/ui";
+import { ISvgIcons } from "@plane/propel/icons";
+import { BreadcrumbNavigationDropdown, Breadcrumbs } from "@plane/ui";
 // components
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";

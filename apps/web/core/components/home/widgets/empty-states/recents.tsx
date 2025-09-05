@@ -1,6 +1,6 @@
 import { Briefcase, FileText, History } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
 
 const getDisplayContent = (type: string) => {
   switch (type) {

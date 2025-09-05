@@ -20,7 +20,7 @@ catalog:
   "@types/react": 18.3.11
   "@types/react-dom": 18.3.1
   typescript: 5.8.3
-  tsup: 8.4.0
+  tsdown: 0.14.2
   uuid: 10.0.0
 
 onlyBuiltDependencies:

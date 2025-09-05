@@ -17,7 +17,6 @@ export * from "./emoji";
 export * from "./favorite-star";
 export * from "./form-fields";
 export * from "./header";
-export * from "./icons";
 export * from "./link";
 export * from "./loader";
 export * from "./modals";

@@ -20,9 +20,9 @@ import {
   MessageSquareIcon,
   UsersIcon,
 } from "lucide-react";
+import { BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, EpicIcon, Intake } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueActivity } from "@plane/types";
-import { BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake, EpicIcon } from "@plane/ui";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
