@@ -51,10 +51,6 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     setIsRestoring(true);
     await handleRestore(versionDetails?.description_html ?? "<p></p>")
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
-        });
         handleClose();
       })
       .catch(() =>
