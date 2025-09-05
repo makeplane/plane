@@ -25,6 +25,7 @@ export type ExternalEmbedExtensionStorage = {
   posToInsert: { from: number; to: number };
   url: string;
   openInput: boolean;
+  isPasteDialogOpen: boolean;
 };
 
 export type ExternalEmbedExtension = ProseMirrorNode<ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage>;

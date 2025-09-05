@@ -5,6 +5,8 @@ import type { EditorView } from "@tiptap/pm/view";
 import { find } from "linkifyjs";
 // plane editor imports
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export const EXTERNAL_EMBED_PASTE_PLUGIN_KEY = new PluginKey("externalEmbedPastePlugin");
 
@@ -28,19 +30,15 @@ export const createExternalEmbedPastePlugin = (options: { isFlagged: boolean; ed
         const isWebUrl = link?.href.startsWith("http") || link?.href.startsWith("www");
 
         if (link?.href && isEmpty && !isFlagged && isWebUrl) {
-          const { from, to } = view.state.selection;
+          const urlText = link.href;
+          const to = from + urlText.length;
 
-          options.editor
-            .chain()
-            .insertExternalEmbed({
-              [EExternalEmbedAttributeNames.IS_RICH_CARD]: false,
-              [EExternalEmbedAttributeNames.SOURCE]: link.href,
-              pos: { from, to },
-            })
-            .createParagraphNear()
-            .run();
-
-          return true;
+          const storage = getExtensionStorage(options.editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+          if (storage) {
+            storage.url = urlText;
+            storage.isPasteDialogOpen = true;
+            storage.posToInsert = { from, to };
+          }
         }
 
         return false;

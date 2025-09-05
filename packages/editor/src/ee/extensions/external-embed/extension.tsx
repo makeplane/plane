@@ -35,6 +35,7 @@ export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
         posToInsert: { from: 0, to: 0 },
         url: "",
         openInput: false,
+        isPasteDialogOpen: false,
       };
     },
 
