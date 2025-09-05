@@ -1118,6 +1118,11 @@
     "connected_slack_workspaces": "Các workspace Slack đã kết nối",
     "connected_on": "Đã kết nối vào {date}",
     "disconnect_workspace": "Ngắt kết nối workspace {name}",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Nhận thông báo trong tin nhắn trực tiếp Slack cho các cập nhật quan trọng, lời nhắc và cảnh báo chỉ dành cho bạn."
+      }
+    },
     "project_updates": {
       "title": "Cập Nhật Dự Án",
       "description": "Cấu hình thông báo cập nhật dự án cho các dự án của bạn",

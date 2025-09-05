@@ -2,7 +2,7 @@ import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { PlaneWebhookPayload } from "@plane/sdk";
 import { Store } from "@/worker/base";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
 import { createActivityLinkback } from "../../views/activity";
 
@@ -25,7 +25,7 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
 
   const { slackService, entityConnection, workspaceConnection } = details;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
   const activityBlocks = createActivityLinkback({
     activities,

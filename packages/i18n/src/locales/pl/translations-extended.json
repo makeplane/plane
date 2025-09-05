@@ -1128,6 +1128,11 @@
     "connected_slack_workspaces": "Połączone workspejsy Slack",
     "connected_on": "Połączono {date}",
     "disconnect_workspace": "Odłącz workspace {name}",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Otrzymuj powiadomienia w prywatnych wiadomościach Slack dla ważnych aktualizacji, przypomnień i alertów tylko dla Ciebie."
+      }
+    },
     "project_updates": {
       "title": "Aktualizacje Projektu",
       "description": "Skonfiguruj powiadomienia o aktualizacjach projektów dla swoich projektów",

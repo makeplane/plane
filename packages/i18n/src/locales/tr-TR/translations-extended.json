@@ -1143,6 +1143,11 @@
     "connected_slack_workspaces": "Bağlı Slack workspaceleri",
     "connected_on": "{date} tarihinde bağlandı",
     "disconnect_workspace": "{name} workspaceini bağlantıdan kes",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Önemli güncellemeler, hatırlatmalar ve sadece size özel uyarılar için Slack direkt mesajlarında bildirim alın."
+      }
+    },
     "project_updates": {
       "title": "Proje Güncellemeleri",
       "description": "Projeleriniz için proje güncelleme bildirimlerini yapılandırın",

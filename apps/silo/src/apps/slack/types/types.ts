@@ -1,4 +1,4 @@
-import { ISlackChannel, ISlackUser, SlackService, TSlackPayload } from "@plane/etl/slack";
+import { ISlackChannel, ISlackUser, SlackService, TSlackPayload, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { IssueWithExpanded, PlaneActivity, Client as PlaneClient } from "@plane/sdk";
 import { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { ENTITIES } from "../helpers/constants";
@@ -67,6 +67,9 @@ export type TSlackWorkspaceConnectionConfig = {
     planeUserId: string;
     slackUser: string;
   }[];
+  alertsConfig?: {
+    dmAlerts?: Record<string, TSlackUserAlertsConfig>;
+  };
 };
 
 export type TSlackConnectionDetails = {
@@ -82,6 +85,13 @@ export type SlackPrivateMetadata<T extends keyof EntityPayloadMapping = keyof En
   entityType: T;
   entityPayload: EntityPayloadMapping[T];
 };
+
+export enum E_SLACK_WORKER_EVENTS {
+  PROJECT_UPDATE = "project_update",
+  ISSUE_COMMENT = "issue_comment",
+  ISSUE = "issue",
+  DM_ALERT = "dm_alert",
+}
 
 // export type SlackPrivateMetadata<T extends string> =
 //   | {

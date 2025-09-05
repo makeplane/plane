@@ -1128,6 +1128,11 @@
     "connected_slack_workspaces": "Propojené Slack workspaces",
     "connected_on": "Propojeno dne {date}",
     "disconnect_workspace": "Odpojit {name} workspace",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Získejte upozornění v soukromých zprávách Slack pro důležité aktualizace, připomenutí a výstrahy jen pro vás."
+      }
+    },
     "project_updates": {
       "title": "Aktualizace Projektu",
       "description": "Nakonfigurujte oznámení o aktualizacích projektů pro vaše projekty",

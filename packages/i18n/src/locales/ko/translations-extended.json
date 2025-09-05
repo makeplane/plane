@@ -1128,6 +1128,11 @@
     "connected_slack_workspaces": "연결된 슬랙 워크스페이스",
     "connected_on": "{date}에 연결됨",
     "disconnect_workspace": "{name} 워크스페이스 연결 해제",
+    "alerts": {
+      "dm_alerts": {
+        "title": "중요한 업데이트, 리마인더, 알림을 슬랙 다이렉트 메시지로 받아보세요."
+      }
+    },
     "project_updates": {
       "title": "프로젝트 업데이트",
       "description": "프로젝트의 업데이트 알림을 구성하세요",

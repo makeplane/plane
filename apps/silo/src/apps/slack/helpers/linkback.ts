@@ -1,6 +1,6 @@
 import { TSlackConnectionDetails } from "../types/types";
 import { createSlackLinkback } from "../views/issue-linkback";
-import { enhanceUserMapWithSlackLookup, getUserMapFromSlackWorkspaceConnection } from "./user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "./user";
 
 type TRefreshLinkbackProps = {
   details: TSlackConnectionDetails;
@@ -21,7 +21,7 @@ export const refreshLinkback = async (props: TRefreshLinkbackProps) => {
     "updated_by",
   ]);
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
   const enhancedUserMap = await enhanceUserMapWithSlackLookup({
     planeUsers: issue.assignees,
     currentUserMap: userMap,

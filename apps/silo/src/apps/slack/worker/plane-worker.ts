@@ -2,7 +2,9 @@ import { PlaneWebhookPayload } from "@plane/sdk";
 import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
+import { E_SLACK_WORKER_EVENTS } from "../types/types";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";
+import { handleDMAlertWebhook } from "./plane-webhook-handlers/handle-dm-alerts";
 import { handleIssueWebhook } from "./plane-webhook-handlers/handle-issue-webhook";
 import { handleProjectUpdateWebhook } from "./plane-webhook-handlers/handle-project-updates";
 
@@ -25,14 +27,17 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
 
     try {
       switch (data.event) {
-        case "issue":
+        case E_SLACK_WORKER_EVENTS.ISSUE:
           await handleIssueWebhook(data);
           break;
-        case "issue_comment":
+        case E_SLACK_WORKER_EVENTS.ISSUE_COMMENT:
           await handleIssueCommentWebhook(data);
           break;
-        case "project_update":
+        case E_SLACK_WORKER_EVENTS.PROJECT_UPDATE:
           await handleProjectUpdateWebhook(data);
+          break;
+        case E_SLACK_WORKER_EVENTS.DM_ALERT:
+          await handleDMAlertWebhook(data);
           break;
         default:
           break;

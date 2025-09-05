@@ -3,7 +3,7 @@ import { PlaneWebhookPayload } from "@plane/sdk";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { enhanceUserMapWithSlackLookup, getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { createSlackLinkback } from "../../views/issue-linkback";
 
 const apiClient = getAPIClient();
@@ -45,7 +45,7 @@ export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) =
     ["state", "project", "assignees", "labels", "created_by", "updated_by"]
   );
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
   const enhancedUserMap = await enhanceUserMapWithSlackLookup({
     planeUsers: issue.assignees,
     currentUserMap: userMap,

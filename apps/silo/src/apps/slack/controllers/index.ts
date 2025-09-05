@@ -9,6 +9,7 @@ import {
   TBlockSuggestionPayload,
   TSlackCommandPayload,
   TSlackPayload,
+  TSlackUserAlertsConfig,
 } from "@plane/etl/slack";
 import {
   E_PLANE_WEBHOOK_ACTION,
@@ -34,6 +35,14 @@ import { isValidIssueUpdateActivity } from "../helpers/activity";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { convertToSlackOptions } from "../helpers/slack-options";
+import {
+  extractSlackDMAlertsFromWebhook,
+  extractSlackDMAlertConfigForPlaneUser,
+  setSlackDMAlert,
+  setSlackUserAlertsConfig,
+} from "../services/alerts";
+import { E_SLACK_WORKER_EVENTS } from "../types/types";
+
 const apiClient = getAPIClient();
 
 @EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
@@ -421,6 +430,84 @@ export default class SlackController {
     }
   }
 
+  @Get("/user/alerts-config/:workspaceId/:userId")
+  @useValidateUserAuthentication()
+  async getUserAlertsConfig(req: Request, res: Response) {
+    /*
+     * This endpoint is responsible for fetching the alert configuration
+     * for the given user, stored in the workspace connection.
+     */
+
+    try {
+      const { workspaceId, userId } = req.params;
+      if (!workspaceId || !userId) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId and userId to be present.",
+        });
+      }
+
+      const workspaceConnections = await integrationConnectionHelper.getWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
+
+      if (workspaceConnections.length === 0) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace connection to be present.",
+        });
+      }
+
+      const workspaceConnection = workspaceConnections[0];
+
+      const userAlertsConfig = extractSlackDMAlertConfigForPlaneUser(workspaceConnection, userId);
+
+      return res.json(userAlertsConfig);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/user/alerts-config/:workspaceId/:userId")
+  @useValidateUserAuthentication()
+  async setUserAlertsConfig(req: Request, res: Response) {
+    /*
+     * This endpoint is responsible for setting the alert configuration
+     * for the given user, stored in the workspace connection.
+     */
+
+    try {
+      const { workspaceId, userId } = req.params;
+      const payload = req.body as TSlackUserAlertsConfig;
+
+      if (!workspaceId || !userId || !payload) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspaceId, userId and payload to be present.",
+        });
+      }
+
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnection || workspaceConnection.length === 0) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace connection to be present.",
+        });
+      }
+
+      const updatedConfig = setSlackUserAlertsConfig(workspaceConnection[0], userId, payload);
+
+      await apiClient.workspaceConnection.updateWorkspaceConnection(workspaceConnection[0].id, {
+        config: updatedConfig,
+      });
+
+      return res.json(updatedConfig);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
   @Get("/user/status/:workspaceId/:userId")
   @useValidateUserAuthentication()
   async getUserConnectionStatus(req: Request, res: Response) {
@@ -767,12 +854,60 @@ export default class SlackController {
         payload: payload,
       });
 
+      // ================= DM ALERTS =================
+      // Filter alerts from the current webhook payload
+      if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE || payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
+        try {
+          const alerts = extractSlackDMAlertsFromWebhook(payload);
+          if (alerts.activities.length > 0) {
+            const issueCommentId = payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT ? payload.data.id : undefined;
+            const issueId = issue || id;
+            const store = Store.getInstance();
+
+            // Set the alert in the store and get the stored key
+            await setSlackDMAlert(
+              store,
+              {
+                workspace_id: workspace,
+                project_id: project,
+                issue_id: issueId,
+                issue_comment_id: issueCommentId,
+              },
+              alerts
+            );
+
+            // We are assuming that the key is going to be unique for each entity
+            integrationTaskManager.registerStoreTask(
+              {
+                route: "plane-slack-webhook",
+                jobId: payload.event,
+                type: E_SLACK_WORKER_EVENTS.DM_ALERT,
+              },
+              {
+                id: id,
+                event: E_SLACK_WORKER_EVENTS.DM_ALERT,
+                workspace: workspace,
+                project: project,
+                issue: issueId,
+                issue_comment: issueCommentId,
+                actor_display_name: actor?.display_name ?? undefined,
+              },
+              Number(env.DEDUP_INTERVAL)
+            );
+          }
+        } catch (error) {
+          logger.error(`[SLACK] [PLANE_EVENTS] Error setting DM alert`, {
+            error: error,
+          });
+        }
+      }
+
       if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
         integrationTaskManager.registerStoreTask(
           {
             route: "plane-slack-webhook",
             jobId: payload.event,
-            type: "issue_comment",
+            type: E_SLACK_WORKER_EVENTS.ISSUE_COMMENT,
           },
           {
             id: id,
@@ -816,11 +951,11 @@ export default class SlackController {
             {
               route: "plane-slack-webhook",
               jobId: payload.event,
-              type: "project_update",
+              type: E_SLACK_WORKER_EVENTS.PROJECT_UPDATE,
             },
             {
               id,
-              event: "project_update",
+              event: E_SLACK_WORKER_EVENTS.PROJECT_UPDATE,
               workspace,
               project,
               issue,
@@ -850,7 +985,7 @@ export default class SlackController {
             {
               route: "plane-slack-webhook",
               jobId: payload.event,
-              type: "issue",
+              type: E_SLACK_WORKER_EVENTS.ISSUE,
             },
             {
               id,

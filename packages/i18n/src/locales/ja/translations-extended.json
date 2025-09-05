@@ -1127,6 +1127,11 @@
     "connected_slack_workspaces": "接続済みSlackワークスペース",
     "connected_on": "{date}に接続",
     "disconnect_workspace": "{name}ワークスペースを切断",
+    "alerts": {
+      "dm_alerts": {
+        "title": "重要な更新、リマインダー、あなた専用のアラートについて、SlackのDMで通知を受け取ります。"
+      }
+    },
     "project_updates": {
       "title": "プロジェクトアップデート",
       "description": "プロジェクトのアップデート通知を設定します",

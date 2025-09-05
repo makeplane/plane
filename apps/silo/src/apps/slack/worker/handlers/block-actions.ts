@@ -15,7 +15,7 @@ import {
   TSlackWorkItemOrIntakeModalParams,
 } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
-import { createCommentModal } from "../../views/create-comment-modal";
+import { createReplyCommentModal } from "../../views/comments";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
@@ -66,6 +66,8 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return await handleUpdateWorkItemAction(data, details);
       case ACTIONS.ASSIGN_TO_ME:
         return await handleAssignToMeButtonAction(data, details);
+      case ACTIONS.CREATE_REPLY_COMMENT:
+        return await handleCreateReplyCommentAction(data, details);
       case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
         return await handleOverflowActions(data, details);
       case ACTIONS.LINKBACK_CREATE_COMMENT:
@@ -104,6 +106,7 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
   }
 };
 
+/**@deprecated */
 async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
@@ -141,6 +144,7 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TS
   }
 }
 
+/**@deprecated */
 async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type === "static_select") {
     const selection = data.actions[0].selected_option;
@@ -217,7 +221,7 @@ async function handleCreateCommentAction(data: TBlockActionPayload, details: TSl
   const value = data.actions[0].selected_option.value;
   const values = value.split(".");
   if (values.length === 2) {
-    const modal = createCommentModal({
+    const modal = createReplyCommentModal({
       type: data.type,
       user: data.user,
       response_url: data.response_url,
@@ -258,6 +262,49 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload, details: TSl
       message_ts: data.container.message_ts,
     });
     await slackService.openModal(data.trigger_id, modal);
+  }
+}
+
+async function handleCreateReplyCommentAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+
+  const value = data.actions[0].value;
+  const values = value.split(".");
+  if (values.length === 2) {
+    const { slackService } = details;
+
+    const replyCommentBlocks = data.message?.blocks || [];
+
+    // Remove the actions from the blocks
+    const blocks = replyCommentBlocks
+      .map((block) => {
+        if (block.type === "actions") {
+          return null;
+        }
+        return block;
+      })
+      .filter(Boolean);
+
+    const modal = createReplyCommentModal(
+      {
+        type: data.type,
+        user: data.user,
+        response_url: data.response_url,
+        actions: data.actions,
+        message: {
+          thread_ts: data.message?.thread_ts || data.container.message_ts,
+        },
+        value: data.actions[0].value,
+        channel: data.channel,
+        message_ts: data.container.message_ts,
+      },
+      blocks
+    );
+
+    const response = await slackService.openModal(data.trigger_id, modal);
+    logger.info("Response from create comment modal", { response });
+  } else {
+    logger.error("Invalid values for create comment action", { values });
   }
 }
 

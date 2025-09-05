@@ -1126,6 +1126,11 @@
     "connected_slack_workspaces": "Spazi di lavoro Slack connessi",
     "connected_on": "Connesso su {date}",
     "disconnect_workspace": "Disconnetti {name} workspace",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Ricevi notifiche nei messaggi diretti di Slack per aggiornamenti importanti, promemoria e avvisi solo per te."
+      }
+    },
     "project_updates": {
       "title": "Aggiornamenti Progetto",
       "description": "Configura notifiche di aggiornamenti di progetto per i tuoi progetti",

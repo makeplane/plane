@@ -183,6 +183,10 @@ export type TAppConnection = {
   updatedAt: string;
 };
 
+export type TSlackUserAlertsConfig = {
+  isEnabled: boolean;
+}
+
 export type TUserConnectionStatus = {
   isConnected: boolean;
 };

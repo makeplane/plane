@@ -1,6 +1,7 @@
 import { PlaneWebhookPayloadBase, ExIssue, ExIssueComment } from "@plane/sdk";
-import { getIssueUrlFromSequenceId } from "@/helpers/urls";
-import { isUUID, titleCase } from "@/helpers/utils";
+import { getIssueUrlFromSequenceId, getUserProfileUrl } from "@/helpers/urls";
+import { titleCase, isUUID } from "@/helpers/utils";
+import { ESlackDMAlertActivityAction } from "../types/alerts";
 import { ActivityForSlack } from "../types/types";
 import { getUserMarkdown } from "./user";
 
@@ -171,6 +172,24 @@ export const formatActivityValue = (
     return formatSingleFieldDefault(context);
   }
 };
+
+export const getAssigneeDmAlertText = (
+  workspaceSlug: string,
+  actorDisplayName: string,
+  action: ESlackDMAlertActivityAction,
+  workItemHyperlink: string
+) =>
+  `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> ${action} you as assignee from work item ${workItemHyperlink}`;
+
+export const getCommentDmAlertText = (workspaceSlug: string, actorDisplayName: string, workItemHyperlink: string) =>
+  `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> mentioned you in the comment of work item ${workItemHyperlink}`;
+
+export const getIssueDescriptionDmAlertText = (
+  workspaceSlug: string,
+  actorDisplayName: string,
+  workItemHyperlink: string
+) =>
+  `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> mentioned you in the description of work item ${workItemHyperlink}`;
 
 export const isValidIssueUpdateActivity = (payload: PlaneWebhookPayloadBase<ExIssue | ExIssueComment>) =>
   payload.activity.field &&

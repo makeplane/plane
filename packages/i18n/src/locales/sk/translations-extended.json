@@ -1135,6 +1135,11 @@
     "connected_slack_workspaces": "Pripojené Slack vorkspejsy",
     "connected_on": "Pripojené {date}",
     "disconnect_workspace": "Odpojiť {name} vorkspejs",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Dostávajte upozornenia v súkromných správach Slack pre dôležité aktualizácie, pripomenutia a upozornenia len pre vás."
+      }
+    },
     "project_updates": {
       "title": "Aktualizácie Projektu",
       "description": "Nakonfigurujte notifikácie o aktualizáciách projektov pre vaše projekty",

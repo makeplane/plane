@@ -18,7 +18,7 @@ export const getUserMarkdown = (
   return `<${getUserProfileUrl(workspaceSlug, userId)}|${displayName ?? "Plane User"}>`;
 };
 
-export const getUserMapFromSlackWorkspaceConnection = (workspaceConnection: TWorkspaceConnection) => {
+const getSlackToPlaneUserMap = (workspaceConnection: TWorkspaceConnection, inverted = false) => {
   if (!workspaceConnection?.config) {
     throw new Error("Invalid workspace connection or missing config");
   }
@@ -32,12 +32,20 @@ export const getUserMapFromSlackWorkspaceConnection = (workspaceConnection: TWor
   const userMap = new Map<string, string>();
   config.userMap?.forEach((user) => {
     if (user?.slackUser && user?.planeUserId) {
-      userMap.set(user.slackUser, user.planeUserId);
+      if (inverted) {
+        userMap.set(user.planeUserId, user.slackUser);
+      } else {
+        userMap.set(user.slackUser, user.planeUserId);
+      }
     }
   });
   return userMap;
 };
 
+export const getPlaneToSlackUserMapFromWC = (workspaceConnection: TWorkspaceConnection) =>
+  getSlackToPlaneUserMap(workspaceConnection, true);
+export const getSlackToPlaneUserMapFromWC = (workspaceConnection: TWorkspaceConnection) =>
+  getSlackToPlaneUserMap(workspaceConnection, false);
 /**
  * Enhance userMap by finding Slack users for Plane users who aren't mapped yet
  */

@@ -3,8 +3,8 @@ import { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
 import { logger } from "@/logger";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { getSlackMarkdownFromPlaneHtml } from "../../helpers/parse-plane-resources";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
-import { createSlackCommentBlock } from "../../views/comments";
+import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
+import { createSyncedSlackCommentBlock } from "../../views/comments";
 
 export const handleIssueCommentWebhook = async (payload: PlaneWebhookPayload) => {
   await handleCommentSync(payload);
@@ -50,7 +50,7 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
 
   const channel = slackData.channel;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
   const markdown = await getSlackMarkdownFromPlaneHtml({
     workspaceConnection,
     html: commentData.comment_html,
@@ -68,7 +68,7 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
     }
   }
 
-  const commentBlocks = createSlackCommentBlock({
+  const commentBlocks = createSyncedSlackCommentBlock({
     comment: markdown,
     createdById: commentData.actor,
     createdByDisplayName: displayName,

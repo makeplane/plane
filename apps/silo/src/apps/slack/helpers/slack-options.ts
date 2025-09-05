@@ -51,3 +51,11 @@ export const convertToSlackOptions = (
   }>,
   prefix?: string
 ): Array<PlainTextOption> => data.map((point) => convertToSlackOption(point, prefix));
+
+/**
+ * Formats work item display info into Slack hyperlink markdown
+ * @param displayText - Display text
+ * @param url - URL
+ * @returns Slack-formatted hyperlink string
+ */
+export const createSlackHyperlinkMarkdown = (displayText: string, url: string): string => `<${url}|${displayText}>`;

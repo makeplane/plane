@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { SlackConversation, TSlackConfig, TSlackConnectionData, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import { SlackConversation, TSlackConfig, TSlackConnectionData, TSlackProjectUpdatesConfig, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
@@ -40,6 +40,8 @@ export interface ISlackStore extends IntegrationBaseStore {
   deleteProjectConnection: (id: string) => Promise<void>;
   fetchUserConnectionStatus: (workspaceId?: string) => Promise<void>;
   fetchSlackChannels: (connectionId: string) => Promise<SlackConversation[]>;
+  fetchUserAlertsConfig: () => Promise<TSlackUserAlertsConfig>;
+  setUserAlertsConfig: (payload: TSlackUserAlertsConfig) => Promise<TSlackUserAlertsConfig>;
   connectApp: () => Promise<string>;
   disconnectApp: (connectionId: string) => Promise<void>;
   connectUser: (workspaceId?: string, workspaceSlug?: string, profileRedirect?: boolean) => Promise<string>;
@@ -286,6 +288,31 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       ["projectConnections", workspaceId],
       this.projectConnections[workspaceId].filter((pc) => pc.id !== id)
     );
+  };
+
+  /**
+   * @description fetch the user alerts config
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  fetchUserAlertsConfig = async (): Promise<TSlackUserAlertsConfig> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    const userId = this.rootStore.user.data?.id;
+    if (!workspaceId || !userId) throw new Error("Workspace ID and User ID are required");
+    const response = await this.service.getUserAlertsConfig(workspaceId, userId);
+    return response;
+  };
+
+  /**
+   * @description set the user alerts config
+   * @param { TSlackUserAlertsConfig } payload - The user alerts config
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  setUserAlertsConfig = async (payload: TSlackUserAlertsConfig): Promise<TSlackUserAlertsConfig> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    const userId = this.rootStore.user.data?.id;
+    if (!workspaceId || !userId) throw new Error("Workspace ID and User ID are required");
+    const response = await this.service.setUserAlertsConfig(workspaceId, userId, payload);
+    return response;
   };
 
   /**

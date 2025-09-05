@@ -9,6 +9,7 @@ export enum E_KNOWN_FIELD_KEY {
   NAME = "name",
   PRIORITY = "priority",
   TYPE_ID = "type_id",
+  ASSIGNEE_IDS = "assignee_ids",
 }
 
 // Conditional visibility rules

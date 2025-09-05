@@ -1127,6 +1127,11 @@
     "connected_slack_workspaces": "Workspace-uri Slack conectate",
     "connected_on": "Conectat pe {date}",
     "disconnect_workspace": "Deconectează workspace-ul {name}",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Primește notificări în mesajele directe Slack pentru actualizări importante, memento-uri și alerte doar pentru tine."
+      }
+    },
     "project_updates": {
       "title": "Actualizări Proiect",
       "description": "Configurează notificări de actualizări ale proiectelor pentru proiectele tale",

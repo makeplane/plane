@@ -14,11 +14,13 @@ export const createSlackLinkback = (
   issue: IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>,
   userMap: Map<string, string>,
   isSynced: boolean,
-  hideActions: boolean = false
+  hideActions: boolean = false,
+  isUnfurled: boolean = false
 ) => {
   const blocks: any[] = [];
 
   const planeToSlackUserMap = invertStringMap(userMap);
+  const quote = !isUnfurled ? "> " : "";
 
   blocks.push({
     type: "section",
@@ -29,14 +31,14 @@ export const createSlackLinkback = (
   });
 
   // Build markdown content for main section (fallback to mrkdwn for compatibility)
-  let sectionContent = `> *Project*: ${issue.project.name}`;
+  let sectionContent = `${quote}*Project*: ${issue.project.name}`;
 
   if (issue.state) {
-    sectionContent += `\n> *State*: ${issue.state.name}`;
+    sectionContent += `\n${quote}*State*: ${issue.state.name}`;
   }
 
   if (issue.priority && issue.priority !== "none") {
-    sectionContent += `\n> *Priority*: ${issue.priority}`;
+    sectionContent += `\n${quote}*Priority*: ${issue.priority}`;
   }
 
   if (issue.assignees.length > 0) {
@@ -48,11 +50,11 @@ export const createSlackLinkback = (
             .join(", ")
         : getUserMarkdown(planeToSlackUserMap, workspaceSlug, issue.assignees[0].id, issue.assignees[0].display_name);
 
-    sectionContent += `\n> *${assigneeLabel}*: ${assignee}`;
+    sectionContent += `\n${quote}*${assigneeLabel}*: ${assignee}`;
   }
 
   if (issue.target_date) {
-    sectionContent += `\n> *Target Date*: ${issue.target_date}`;
+    sectionContent += `\n${quote}*Target Date*: ${issue.target_date}`;
   }
 
   // Main section with issue details using mrkdwn for compatibility

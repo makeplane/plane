@@ -8,7 +8,7 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { enhanceUserMapWithSlackLookup, getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
@@ -81,7 +81,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
-    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+    const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
       userMap,
@@ -124,7 +124,7 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
 
     const { workspaceConnection, planeClient, slackService } = details;
 
-    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+    const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const unfurlMap: UnfurlMap = {};
 
@@ -157,7 +157,8 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             issue,
             enhancedUserMap,
             false,
-            hideActions
+            hideActions,
+            true
           );
           unfurlMap[link.url] = {
             blocks: linkBack.blocks,

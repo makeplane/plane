@@ -213,28 +213,15 @@ export const updateUserMap = async (
   }
 };
 
-/*
- From plane sometimes we need to perform actions on behalf of a user or bot,
- when required to perform on behalf of a user, provide the planeUserId,
-*/
-export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
-  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-    workspace_id: payload.workspace,
-    project_id: payload.project,
-    issue_id: payload.id,
-  });
-
-  if (!entityConnection) {
-    return;
-  }
-
-  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
-    entityConnection.workspace_connection_id
-  );
-  if (!workspaceConnection) {
-    return;
-  }
-
+/**
+ * Common helper to create Slack and Plane services from workspace connection
+ * Handles user vs bot credential resolution and service instantiation
+ */
+const getSlackConnectionServices = async (
+  workspaceConnection: TWorkspaceConnection,
+  planeUserId: string | null,
+  logContext: string
+) => {
   let credentials: TWorkspaceCredential | null = null;
   let isUser = false;
 
@@ -263,10 +250,8 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
     !credentials.source_refresh_token ||
     !credentials.target_access_token
   ) {
-    logger.info(
-      `[SLACK] [GET_CONNECTION_DETAILS_FOR_ISSUE] Credentials not found for entity connection ${entityConnection.id}`
-    );
-    return;
+    logger.info(`[SLACK] [${logContext}] Credentials not found for workspace connection ${workspaceConnection.id}`);
+    return null;
   }
 
   const refreshHandler = getRefreshCredentialHandler(
@@ -286,10 +271,78 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
   const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.SLACK);
 
   return {
-    workspaceConnection,
-    entityConnection,
     slackService,
     planeClient,
     isUser,
+    credentials,
+  };
+};
+
+export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
+  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: payload.workspace,
+    project_id: payload.project,
+    issue_id: payload.id,
+  });
+
+  if (!entityConnection) {
+    logger.info(`[SLACK] Entity connection not found for issue ${payload.id}`);
+    return;
+  }
+
+  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
+    entityConnection.workspace_connection_id
+  );
+
+  if (!workspaceConnection) {
+    logger.info(`[SLACK] Workspace connection not found for entity connection ${entityConnection.id}`);
+    return;
+  }
+
+  const services = await getSlackConnectionServices(
+    workspaceConnection,
+    planeUserId,
+    // Just a log context, not used anywhere, no need to move to a constant
+    "GET_CONNECTION_DETAILS_FOR_ISSUE"
+  );
+
+  if (!services) {
+    logger.info(`[SLACK] Services not found for entity connection ${entityConnection.id}`);
+    return;
+  }
+
+  return {
+    workspaceConnection,
+    entityConnection,
+    ...services,
+  };
+};
+
+export const getConnectionDetailsForWorkspace = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
+  const workspaceConnection = await integrationConnectionHelper.getWorkspaceConnection({
+    workspace_id: payload.workspace,
+    connection_type: E_INTEGRATION_KEYS.SLACK,
+  });
+
+  if (!workspaceConnection) {
+    logger.info(`[SLACK] Workspace connection not found for workspace ${payload.workspace}`);
+    return;
+  }
+
+  const services = await getSlackConnectionServices(
+    workspaceConnection,
+    planeUserId,
+    // Just a log context, not used anywhere, no need to move to a constant
+    "GET_CONNECTION_DETAILS_FOR_WORKSPACE"
+  );
+
+  if (!services) {
+    logger.info(`[SLACK] Services not found for workspace ${payload.workspace}`);
+    return;
+  }
+
+  return {
+    workspaceConnection,
+    ...services,
   };
 };

@@ -1128,6 +1128,11 @@
     "connected_slack_workspaces": "Workspace Slack terhubung",
     "connected_on": "Terhubung pada {date}",
     "disconnect_workspace": "Putuskan workspace {name}",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Dapatkan notifikasi di pesan langsung Slack untuk pembaruan penting, pengingat, dan peringatan khusus untuk Anda."
+      }
+    },
     "project_updates": {
       "title": "Pembaruan Proyek",
       "description": "Konfigurasikan notifikasi pembaruan proyek untuk proyek Anda",

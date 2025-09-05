@@ -1,3 +1,4 @@
+import { TSlackDMAlertKeyProps } from "@/apps/slack/types/alerts";
 import { EOAuthGrantType } from "@/types/oauth";
 
 export const getTokenCacheKey = (
@@ -30,3 +31,18 @@ export const IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY = (jobId: string) => `silo:i
 
 export const SILO_FORM_OPTIONS_CACHE_KEY = (slug: string, projectId: string, typeIdentifier: string) =>
   `silo:form_options_${slug}_${projectId}_${typeIdentifier}`;
+
+export const getSlackDMAlertKey = ({
+  workspace_id,
+  project_id,
+  issue_id,
+  issue_comment_id,
+}: TSlackDMAlertKeyProps): string => {
+  let key = `silo:slack:alert:dm:${workspace_id}:${project_id}:${issue_id}`;
+
+  if (issue_comment_id) {
+    key += `:${issue_comment_id}`;
+  }
+
+  return key;
+};

@@ -1127,6 +1127,11 @@
     "connected_slack_workspaces": "已连接的 Slack 工作区",
     "connected_on": "连接于 {date}",
     "disconnect_workspace": "断开 {name} 工作区连接",
+    "alerts": {
+      "dm_alerts": {
+        "title": "在 Slack 私信中接收重要更新、提醒和专属警报的通知。"
+      }
+    },
     "project_updates": {
       "title": "项目更新",
       "description": "配置项目的更新通知",

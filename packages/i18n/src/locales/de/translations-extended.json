@@ -1123,6 +1123,11 @@
     "connected_slack_workspaces": "Verbundene Slack-Workspaces",
     "connected_on": "Verbunden am {date}",
     "disconnect_workspace": "{name}-Workspace trennen",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Erhalten Sie Benachrichtigungen in Slack-Direktnachrichten für wichtige Updates, Erinnerungen und Benachrichtigungen nur für Sie."
+      }
+    },
     "project_updates": {
       "title": "Projekt-Updates",
       "description": "Konfigurieren Sie Projekt-Update-Benachrichtigungen für Ihre Projekte",

@@ -6,7 +6,7 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
@@ -65,7 +65,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
   const { slackService, planeClient, workspaceConnection } = details;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
   const metadata = {
     type: "message_action",

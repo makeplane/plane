@@ -1,4 +1,6 @@
+import { parse } from "node-html-parser";
 import { ExIssue } from "@plane/sdk";
+import { E_MENTION_COMPONENT_ATTRIBUTES } from "./constants";
 
 export interface IssueReference {
   sequence: number;
@@ -81,4 +83,20 @@ const createPlaneIssueReference = (issue: string): IssueReference => {
     identifier,
     sequence: parseInt(sequence),
   };
+};
+
+
+/**
+ * Extracts user mentions from HTML using mention-component tags
+ * @param html - HTML string containing mention components
+ * @returns Array of unique user IDs mentioned in the HTML
+ */
+export const extractUserMentionFromHtml = (html: string): string[] => {
+  const root = parse(html);
+  const mentionComponents = root.querySelectorAll(E_MENTION_COMPONENT_ATTRIBUTES.TAG);
+  const mentionedUserIds = mentionComponents
+    .map((component) => component.getAttribute(E_MENTION_COMPONENT_ATTRIBUTES.ENTITY_IDENTIFIER))
+    .filter((id) => id !== undefined);
+
+  return [...new Set(mentionedUserIds)];
 };

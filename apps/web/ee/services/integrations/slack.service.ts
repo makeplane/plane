@@ -4,6 +4,7 @@ import {
   SlackAuthState,
   SlackUserAuthState,
   TAppConnection,
+  TSlackUserAlertsConfig,
   TSlackConfig,
   TSlackConnectionData,
   TSlackProjectUpdatesConfig,
@@ -196,4 +197,35 @@ export class SlackIntegrationService {
       .catch((error) => {
         throw error?.response?.data;
       });
+
+  /**
+   * @description get the user alerts config
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  async getUserAlertsConfig(workspaceId: string, userId: string): Promise<TSlackUserAlertsConfig> {
+    return this.axiosInstance
+      .get(`/api/slack/user/alerts-config/${workspaceId}/${userId}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description set the user alerts config
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { TSlackUserAlertsConfig } payload
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  async setUserAlertsConfig(workspaceId: string, userId: string, payload: TSlackUserAlertsConfig): Promise<TSlackUserAlertsConfig> {
+    return this.axiosInstance
+      .post(`/api/slack/user/alerts-config/${workspaceId}/${userId}`, payload)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

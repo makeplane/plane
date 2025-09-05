@@ -5,7 +5,7 @@ import { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { logger } from "@/logger";
 import { getPlaneContentParser } from "./content-parser";
-import { getUserMapFromSlackWorkspaceConnection } from "./user";
+import { getPlaneToSlackUserMapFromWC } from "./user";
 
 export enum EPlaneURLSegments {
   PROJECTS = "projects",
@@ -142,12 +142,12 @@ type TSlackMarkdownFromPlaneHtmlParams = {
 export const getSlackMarkdownFromPlaneHtml = async (params: TSlackMarkdownFromPlaneHtmlParams) => {
   const { workspaceConnection, html } = params;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const planeToSlackUserMap = getPlaneToSlackUserMapFromWC(workspaceConnection);
 
   const parser = getPlaneContentParser({
     appBaseUrl: env.APP_BASE_URL,
     workspaceSlug: workspaceConnection.workspace_slug,
-    userMap,
+    userMap: planeToSlackUserMap,
   });
   const parsedHtml = await parser.toPlaneHtml(html);
   const turndown = new TurndownService({
