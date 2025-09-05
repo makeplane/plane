@@ -535,16 +535,23 @@ export const formatDateRange = (
 // Duration Helpers
 /**
  * @returns {string} formatted duration in human readable format
- * @description Converts seconds to human readable duration format (e.g., "1 hr 20 min 5 sec")
+ * @description Converts seconds to human readable duration format (e.g., "1 hr 20 min 5 sec" or "122.30 ms")
  * @param {number} seconds - The duration in seconds
  * @example formatDuration(3665) // "1 hr 1 min 5 sec"
  * @example formatDuration(125) // "2 min 5 sec"
  * @example formatDuration(45) // "45 sec"
+ * @example formatDuration(0.1223094) // "122.31 ms"
  */
 export const formatDuration = (seconds: number | undefined | null): string => {
   // Return "N/A" if seconds is not a valid number
   if (!isNumber(seconds) || seconds === null || seconds === undefined || seconds < 0) {
     return "N/A";
+  }
+
+  // If less than 1 second, show in ms (2 decimal places)
+  if (seconds < 1) {
+    const ms = seconds * 1000;
+    return `${ms.toFixed(2)} ms`;
   }
 
   // Round to nearest second
@@ -559,7 +566,7 @@ export const formatDuration = (seconds: number | undefined | null): string => {
   const parts: string[] = [];
 
   if (hours > 0) {
-    parts.push(`${hours} hr${hours !== 1 ? "" : ""}`); // Always use "hr" for consistency
+    parts.push(`${hours} hr`);
   }
 
   if (minutes > 0) {

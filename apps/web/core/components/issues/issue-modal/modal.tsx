@@ -27,6 +27,7 @@ export interface IssuesModalProps {
   };
   isProjectSelectionDisabled?: boolean;
   templateId?: string;
+  isConversionOperation?: boolean;
   allowedProjectIds?: string[];
 }
 

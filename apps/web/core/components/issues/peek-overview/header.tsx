@@ -9,7 +9,7 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType, TNameDescriptionLoader } from "@plane/types";
+import { EIssuesStoreType, EWorkItemConversionType, TNameDescriptionLoader } from "@plane/types";
 import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // helpers
@@ -20,6 +20,9 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
+import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // local imports
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
@@ -224,6 +227,13 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction
+              workItemId={issueId}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={disabled || isArchived}
+            />
+          </WithFeatureFlagHOC>
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
