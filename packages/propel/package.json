@@ -27,7 +27,8 @@
     "./styles/fonts": "./src/styles/fonts/index.css",
     "./switch": "./src/switch/index.ts",
     "./accordion": "./src/accordion/index.ts",
-    "./card": "./src/card/index.ts"
+    "./card": "./src/card/index.ts",
+    "./skeleton": "./src/skeleton/index.ts"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
