@@ -1,16 +1,37 @@
-import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-
-export const MaintenanceMessage = observer(() => {
-  // hooks
-  const { t } = useTranslation();
+export const MaintenanceMessage = () => {
+  const linkMap = [
+    {
+      key: "mail_to",
+      label: "Contact Support",
+      value: "mailto:support@plane.so",
+    },
+  ];
 
   return (
-    <h1 className="text-base font-medium text-custom-text-100 text-left">
-      {t(
-        "self_hosted_maintenance_message.plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start"
-      )}{" "}
-      {t("self_hosted_maintenance_message.choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure")}
-    </h1>
+    <>
+      <div className="flex flex-col gap-2.5">
+        <h1 className="text-xl font-semibold text-custom-text-100 text-left">
+          &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
+        </h1>
+        <span className="text-base font-medium text-custom-text-200 text-left">
+          One or more services might have failed to start. Please check your container logs to identify and resolve the
+          issue.
+        </span>
+      </div>
+      <div className="flex items-center justify-start gap-6 mt-1">
+        {linkMap.map((link) => (
+          <div key={link.key}>
+            <a
+              href={link.value}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-custom-primary-100 hover:underline text-sm"
+            >
+              {link.label}
+            </a>
+          </div>
+        ))}
+      </div>
+    </>
   );
-});
+};

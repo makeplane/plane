@@ -1,1 +1,1 @@
-export const MaintenanceMessage = () => <></>;
+export * from "ce/components/instance/maintenance-message";
