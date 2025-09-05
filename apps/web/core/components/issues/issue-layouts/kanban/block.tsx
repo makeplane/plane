@@ -51,7 +51,7 @@ interface IssueBlockProps {
 }
 
 interface IssueDetailsBlockProps {
-  cardRef: React.RefObject<HTMLDivElement | null>;
+  cardRef: React.RefObject<HTMLAnchorElement | null>;
   issue: TIssue;
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -163,7 +163,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     isEpic = false,
   } = props;
 
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLAnchorElement | null>(null);
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -266,7 +266,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
           href={workItemLink}
-          ref={cardRef as React.RefObject<HTMLAnchorElement | null>}
+          ref={cardRef}
           className={cn(
             "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
             { "hover:cursor-pointer": isDragAllowed },
