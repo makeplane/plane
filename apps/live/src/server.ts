@@ -22,23 +22,24 @@ export class Server {
 
   constructor() {
     this.app = express();
+    expressWs(this.app);
+    this.setupMiddleware();
     this.router = express.Router();
     this.app.set("port", process.env.PORT || 3000);
     this.app.use(process.env.LIVE_BASE_PATH || "/live", this.router);
-    expressWs(this.app);
-    this.setupMiddleware();
     this.setupRoutes();
+    this.setupNotFoundHandler();
   }
 
   public async initialize(): Promise<void> {
     try {
-      redisManager.initialize();
+      await redisManager.initialize();
       logger.info("Redis setup completed");
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("HocusPocus setup completed");
     } catch (error) {
-      logger.error("Failed to setup Redis:", error);
+      logger.error("Failed to initialize live server dependencies:", error);
       throw error;
     }
   }
@@ -55,6 +56,9 @@ export class Server {
     this.app.use(express.urlencoded({ extended: true }));
     // cors middleware
     this.app.use(cors());
+  }
+
+  private setupNotFoundHandler() {
     this.app.use((_req: Request, res: Response) => {
       res.status(404).json({
         message: "Not Found",
