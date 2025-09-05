@@ -6,7 +6,9 @@ import { logger } from "@plane/logger";
 
 @Controller("/collaboration")
 export class CollaborationController {
-  constructor(private readonly hocusPocusServer: Hocuspocus) {}
+  constructor(private readonly hocusPocusServer: Hocuspocus) {
+    this.hocusPocusServer = hocusPocusServer;
+  }
 
   @WebSocket("/")
   handleConnection(ws: any, req: Request) {

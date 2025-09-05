@@ -68,7 +68,7 @@ export class Server {
 
   private setupRoutes() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    CONTROLLERS.forEach((controller) => registerController(this.router, controller as any));
+    CONTROLLERS.forEach((controller) => registerController(this.router, controller as any, [this.hocuspocusServer]));
   }
 
   public listen() {
