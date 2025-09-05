@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,6 +13,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
+import { useViewMenuItems } from "@/plane-web/components/views/helper";
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 
@@ -46,34 +46,17 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      action: () => setUpdateViewModal(true),
-      title: t("edit"),
-      icon: Pencil,
-      shouldRender: isOwner,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: ExternalLink,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: LinkIcon,
-    },
-    {
-      key: "delete",
-      action: () => setDeleteViewModal(true),
-      title: t("delete"),
-      icon: Trash2,
-      shouldRender: isOwner || isAdmin,
-    },
-  ];
+  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+    isOwner,
+    isAdmin,
+    setDeleteViewModal,
+    setCreateUpdateViewModal: setUpdateViewModal,
+    handleOpenInNewTab,
+    handleCopyText,
+    isLocked: view.is_locked,
+    workspaceSlug,
+    viewId: view.id,
+  });
 
   return (
     <>

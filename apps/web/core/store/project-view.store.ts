@@ -2,7 +2,7 @@ import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EViewAccess, IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters } from "@plane/types";
+import { IProjectView, TViewFilters } from "@plane/types";
 // constants
 // helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
@@ -41,25 +41,6 @@ export interface IProjectViewStore {
   // favorites actions
   addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
-  // publish
-  publishView: (
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string,
-    data: TPublishViewSettings
-  ) => Promise<TPublishViewDetails | undefined>;
-  fetchPublishDetails: (
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string
-  ) => Promise<TPublishViewDetails | undefined>;
-  updatePublishedView: (
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string,
-    data: Partial<TPublishViewSettings>
-  ) => Promise<void>;
-  unPublishView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
 }
 
 export class ProjectViewStore implements IProjectViewStore {
@@ -101,6 +82,9 @@ export class ProjectViewStore implements IProjectViewStore {
     this.rootStore = _rootStore;
     // services
     this.viewService = new ViewService();
+
+    this.createView = this.createView.bind(this);
+    this.updateView = this.updateView.bind(this);
   }
 
   /**
@@ -213,19 +197,15 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param data
    * @returns Promise<IProjectView>
    */
-  createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
+  async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> {
     const response = await this.viewService.createView(workspaceSlug, projectId, getValidatedViewFilters(data));
 
     runInAction(() => {
       set(this.viewMap, [response.id], response);
     });
 
-    if (data.access === EViewAccess.PRIVATE) {
-      await this.updateViewAccess(workspaceSlug, projectId, response.id, EViewAccess.PRIVATE);
-    }
-
     return response;
-  };
+  }
 
   /**
    * Updates a view details of specific view and updates it in the store
@@ -235,29 +215,22 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param data
    * @returns Promise<IProjectView>
    */
-  updateView = async (
+  async updateView(
     workspaceSlug: string,
     projectId: string,
     viewId: string,
     data: Partial<IProjectView>
-  ): Promise<IProjectView> => {
+  ): Promise<IProjectView> {
     const currentView = this.getViewById(viewId);
-
-    const promiseRequests = [];
-    promiseRequests.push(this.viewService.patchView(workspaceSlug, projectId, viewId, data));
 
     runInAction(() => {
       set(this.viewMap, [viewId], { ...currentView, ...data });
     });
 
-    if (data.access !== undefined && data.access !== currentView.access) {
-      promiseRequests.push(this.updateViewAccess(workspaceSlug, projectId, viewId, data.access));
-    }
-
-    const [response] = await Promise.all(promiseRequests);
+    const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
 
     return response;
-  };
+  }
 
   /**
    * Deletes a view and removes it from the viewMap object
@@ -273,75 +246,6 @@ export class ProjectViewStore implements IProjectViewStore {
         if (this.rootStore.favorite.entityMap[viewId]) this.rootStore.favorite.removeFavoriteFromStore(viewId);
       });
     });
-  };
-
-  /** Locks view
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  lockView = async (workspaceSlug: string, projectId: string, viewId: string) => {
-    try {
-      const currentView = this.getViewById(viewId);
-      if (currentView?.is_locked) return;
-      runInAction(() => {
-        set(this.viewMap, [viewId, "is_locked"], true);
-      });
-      await this.viewService.lockView(workspaceSlug, projectId, viewId);
-    } catch (error) {
-      console.error("Failed to lock the view in view store", error);
-      runInAction(() => {
-        set(this.viewMap, [viewId, "is_locked"], false);
-      });
-    }
-  };
-
-  /**
-   * unlocks View
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  unLockView = async (workspaceSlug: string, projectId: string, viewId: string) => {
-    try {
-      const currentView = this.getViewById(viewId);
-      if (!currentView?.is_locked) return;
-      runInAction(() => {
-        set(this.viewMap, [viewId, "is_locked"], false);
-      });
-      await this.viewService.unLockView(workspaceSlug, projectId, viewId);
-    } catch (error) {
-      console.error("Failed to unlock view in view store", error);
-      runInAction(() => {
-        set(this.viewMap, [viewId, "is_locked"], true);
-      });
-    }
-  };
-
-  /**
-   * Updates View access
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @param access
-   * @returns
-   */
-  updateViewAccess = async (workspaceSlug: string, projectId: string, viewId: string, access: EViewAccess) => {
-    const currentView = this.getViewById(viewId);
-    const currentAccess = currentView?.access;
-    try {
-      runInAction(() => {
-        set(this.viewMap, [viewId, "access"], access);
-      });
-      await this.viewService.updateViewAccess(workspaceSlug, projectId, viewId, access);
-    } catch (error) {
-      console.error("Failed to update Access for view", error);
-      runInAction(() => {
-        set(this.viewMap, [viewId, "access"], currentAccess);
-      });
-    }
   };
 
   /**
@@ -392,93 +296,6 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
-    }
-  };
-
-  /**
-   * Publishes View to the Public
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  publishView = async (workspaceSlug: string, projectId: string, viewId: string, data: TPublishViewSettings) => {
-    try {
-      const response = (await this.viewService.publishView(
-        workspaceSlug,
-        projectId,
-        viewId,
-        data
-      )) as TPublishViewDetails;
-      runInAction(() => {
-        set(this.viewMap, [viewId, "anchor"], response?.anchor);
-      });
-
-      return response;
-    } catch (error) {
-      console.error("Failed to publish view", error);
-    }
-  };
-
-  /**
-   * fetches Published Details
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  fetchPublishDetails = async (workspaceSlug: string, projectId: string, viewId: string) => {
-    try {
-      const response = (await this.viewService.getPublishDetails(
-        workspaceSlug,
-        projectId,
-        viewId
-      )) as TPublishViewDetails;
-      runInAction(() => {
-        set(this.viewMap, [viewId, "anchor"], response?.anchor);
-      });
-      return response;
-    } catch (error) {
-      console.error("Failed to fetch published view details", error);
-    }
-  };
-
-  /**
-   * updates already published view
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  updatePublishedView = async (
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string,
-    data: Partial<TPublishViewSettings>
-  ) => {
-    try {
-      return await this.viewService.updatePublishedView(workspaceSlug, projectId, viewId, data);
-    } catch (error) {
-      console.error("Failed to update published view details", error);
-    }
-  };
-
-  /**
-   * un publishes the view
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  unPublishView = async (workspaceSlug: string, projectId: string, viewId: string) => {
-    try {
-      const response = await this.viewService.unPublishView(workspaceSlug, projectId, viewId);
-      runInAction(() => {
-        set(this.viewMap, [viewId, "anchor"], null);
-      });
-      return response;
-    } catch (error) {
-      console.error("Failed to unPublish view", error);
     }
   };
 }

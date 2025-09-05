@@ -18,7 +18,7 @@ import {
   TProjectMembership,
 } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";
