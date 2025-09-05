@@ -16,7 +16,6 @@ import type {
   TDocumentEventEmitter,
   TDocumentEventsServer,
   TEditorAsset,
-  TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -162,7 +161,6 @@ export type IEditorProps = {
   editable: boolean;
   editorClassName?: string;
   editorProps?: EditorProps;
-  embedHandler?: TEmbedConfig;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
@@ -194,7 +192,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -210,7 +207,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
-  embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 };

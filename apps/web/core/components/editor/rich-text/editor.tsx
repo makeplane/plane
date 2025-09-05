@@ -81,9 +81,6 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
-      embedHandler={{
-        externalEmbedComponent: { widgetCallback: EmbedHandler },
-      }}
       extendedEditorProps={{
         isSmoothCursorEnabled: is_smooth_cursor_enabled,
         embedHandler: {

@@ -25,6 +25,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     editable,
     editorClassName = "",
     editorProps,
+    extendedEditorProps,
     extensions,
     id,
     initialValue,
@@ -41,8 +42,6 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
-    // additional props
-    extendedEditorProps,
   } = props;
 
   const editor = useEditor({
@@ -51,6 +50,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     editorClassName,
     editorProps,
     enableHistory: true,
+    extendedEditorProps,
     extensions,
     fileHandler,
     flaggedExtensions,
@@ -67,8 +67,6 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
-    // additional props
-    extendedEditorProps,
   });
 
   const editorContainerClassName = getEditorClassNames({

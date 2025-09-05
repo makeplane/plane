@@ -99,21 +99,23 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       projectId={projectId?.toString()}
       workspaceId={workspaceDetails?.id ?? ""}
       workspaceSlug={workspaceSlug?.toString() ?? ""}
-      embedHandler={{
-        page: {
-          widgetCallback: ({ pageId: pageIdFromNode }) => {
-            const pageDetails = subPagesDetails.find((page) => page.id === pageIdFromNode);
-            return (
-              <PageEmbedCardRoot
-                embedPageId={pageIdFromNode}
-                previewDisabled
-                storeType={storeType}
-                pageDetails={pageDetails}
-                isDroppable={false}
-              />
-            );
+      extendedEditorProps={{
+        embedHandler: {
+          page: {
+            widgetCallback: ({ pageId: pageIdFromNode }) => {
+              const pageDetails = subPagesDetails.find((page) => page.id === pageIdFromNode);
+              return (
+                <PageEmbedCardRoot
+                  embedPageId={pageIdFromNode}
+                  previewDisabled
+                  storeType={storeType}
+                  pageDetails={pageDetails}
+                  isDroppable={false}
+                />
+              );
+            },
+            workspaceSlug: workspaceSlug.toString(),
           },
-          workspaceSlug: workspaceSlug.toString(),
         },
       }}
     />

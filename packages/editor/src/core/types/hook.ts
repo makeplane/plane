@@ -8,6 +8,7 @@ type TCoreHookProps = Pick<
   | "disabledExtensions"
   | "editorClassName"
   | "editorProps"
+  | "extendedEditorProps"
   | "extensions"
   | "flaggedExtensions"
   | "handleEditorReady"
@@ -29,7 +30,6 @@ export type TEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
     | "value"
-    | "extendedEditorProps"
   > & {
     editable: boolean;
     enableHistory: boolean;
@@ -51,10 +51,7 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
   > &
-  Pick<
-    ICollaborativeDocumentEditorProps,
-    "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user" | "extendedEditorProps"
-  > & {
+  Pick<ICollaborativeDocumentEditorProps, "dragDropEnabled" | "realtimeConfig" | "serverHandler" | "user"> & {
     titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
     updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   };

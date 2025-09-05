@@ -26,7 +26,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     editable,
     editorClassName = "",
     editorProps = {},
-    embedHandler,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
@@ -44,7 +44,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     titleRef,
     updatePageProperties,
     user,
-    extendedEditorProps,
   } = props;
 
   // shared state
@@ -125,6 +124,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   // Initialize main document editor
   const editor = useEditor({
     disabledExtensions,
+    extendedEditorProps,
     id,
     editable,
     editorProps,
@@ -145,13 +145,12 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        embedConfig: embedHandler,
+        extendedEditorProps,
         fileHandler,
         flaggedExtensions,
         isEditable: editable,
         provider,
         userDetails: user,
-        extendedEditorProps,
       }),
       // Navigation extension for keyboard shortcuts
       mainNavigationExtension,
@@ -169,7 +168,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     placeholder,
     provider,
     tabIndex,
-    extendedEditorProps,
   });
 
   // Use the new hook for realtime events

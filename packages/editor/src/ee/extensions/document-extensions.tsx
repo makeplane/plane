@@ -1,20 +1,20 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
 import { FileText, Paperclip } from "lucide-react";
-// core imports
+// ce imports
+import {
+  TDocumentEditorAdditionalExtensionsProps,
+  TDocumentEditorAdditionalExtensionsRegistry,
+} from "src/ce/extensions";
 // plane imports
-import { LayersIcon } from "@plane/propel/icons";
+import { LayersIcon } from "@plane/ui";
 // extensions
-import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
+import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
 // types
 import { TExtensions } from "@/types";
-import {
-  TDocumentEditorAdditionalExtensionsProps,
-  TDocumentEditorAdditionalExtensionsRegistry,
-} from "src/ce/extensions";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
@@ -51,9 +51,9 @@ const slashCommandRegistry: {
     // Page embed slash command
     isEnabled: (disabledExtensions, flaggedExtensions) =>
       !disabledExtensions.includes("nested-pages") && !flaggedExtensions.includes("nested-pages"),
-    getOption: ({ embedConfig }) => {
+    getOption: ({ extendedEditorProps }) => {
       // Only enable if page config with createCallback exists
-      const pageConfig = embedConfig?.page;
+      const pageConfig = extendedEditorProps.embedHandler?.page;
       if (!pageConfig?.createCallback) return null;
 
       const createCallback = pageConfig.createCallback;
@@ -122,10 +122,24 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
+    // Page embed extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    getExtension: ({ extendedEditorProps }) => {
+      const workItemEmbedConfig = extendedEditorProps.embedHandler?.issue;
+
+      // Only enable if widget callback exists
+      if (!workItemEmbedConfig) return undefined;
+
+      return WorkItemEmbedExtension({
+        widgetCallback: workItemEmbedConfig.widgetCallback,
+      });
+    },
+  },
+  {
     // Work item embed suggestions extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
-    getExtension: ({ embedConfig }) => {
-      const issueConfig = embedConfig?.issue;
+    getExtension: ({ extendedEditorProps }) => {
+      const issueConfig = extendedEditorProps.embedHandler?.issue;
       const searchCallback = issueConfig?.searchCallback;
 
       // Only enable if search callback exists
@@ -151,8 +165,8 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // Page embed extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
-    getExtension: ({ embedConfig }) => {
-      const pageConfig = embedConfig?.page;
+    getExtension: ({ extendedEditorProps }) => {
+      const pageConfig = extendedEditorProps.embedHandler?.page;
 
       // Only enable if widget callback exists
       if (!pageConfig) return undefined;

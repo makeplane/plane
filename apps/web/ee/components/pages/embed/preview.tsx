@@ -169,17 +169,19 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   displayConfig={{
                     fontSize: "small-font",
                   }}
-                  embedHandler={{
-                    page: {
-                      widgetCallback: ({ pageId: pageIdFromNode }) => (
-                        <PageEmbedCardRoot
-                          embedPageId={pageIdFromNode}
-                          previewDisabled
-                          storeType={storeType}
-                          isDroppable={false}
-                        />
-                      ),
-                      workspaceSlug: workspaceSlug.toString(),
+                  extendedEditorProps={{
+                    embedHandler: {
+                      page: {
+                        widgetCallback: ({ pageId: pageIdFromNode }) => (
+                          <PageEmbedCardRoot
+                            embedPageId={pageIdFromNode}
+                            previewDisabled
+                            storeType={storeType}
+                            isDroppable={false}
+                          />
+                        ),
+                        workspaceSlug: workspaceSlug.toString(),
+                      },
                     },
                   }}
                   projectId={projectId?.toString() ?? ""}

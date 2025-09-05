@@ -58,12 +58,12 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       })}
       flaggedExtensions={richTextEditorExtensions.flagged}
       extendedEditorProps={{
-        isSmoothCursorEnabled: false,
-      }}
-      embedHandler={{
-        externalEmbedComponent: {
-          widgetCallback: EmbedHandler,
+        embedHandler: {
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
         },
+        isSmoothCursorEnabled: false,
       }}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] py-2 overflow-hidden"

@@ -73,19 +73,19 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             mentionHandler={{
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
             }}
-            embedHandler={{
-              issue: {
-                widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
-              },
-              externalEmbedComponent: {
-                widgetCallback: EmbedHandler,
-              },
-              page: {
-                widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
-                workspaceSlug: "",
-              },
-            }}
             extendedEditorProps={{
+              embedHandler: {
+                issue: {
+                  widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
+                },
+                externalEmbedComponent: {
+                  widgetCallback: EmbedHandler,
+                },
+                page: {
+                  widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
+                  workspaceSlug: "",
+                },
+              },
               isSmoothCursorEnabled: false,
             }}
           />

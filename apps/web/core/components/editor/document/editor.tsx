@@ -1,6 +1,12 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { DocumentEditorWithRef, type EditorRefApi, type IDocumentEditorProps, type TFileHandler } from "@plane/editor";
+import {
+  DocumentEditorWithRef,
+  IEditorPropsExtended,
+  type EditorRefApi,
+  type IDocumentEditorProps,
+  type TFileHandler,
+} from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -15,10 +21,10 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { EditorMentionsRoot } from "../embeds/mentions";
 
 type DocumentEditorWrapperProps = MakeOptional<
-  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user" | "extendedEditorProps">,
+  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "user" | "extendedEditorProps">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
-  embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -37,7 +43,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const {
     containerClassName,
     editable,
-    embedHandler,
+    extendedEditorProps,
     workspaceSlug,
     workspaceId,
     projectId,
@@ -61,7 +67,6 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     projectId,
     workspaceSlug,
   });
-
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
@@ -87,13 +92,6 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         renderComponent: EditorMentionsRoot,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
-      embedHandler={{
-        issue: issueEmbedProps,
-        externalEmbedComponent: {
-          widgetCallback: EmbedHandler,
-        },
-        ...embedHandler,
-      }}
       extendedEditorProps={{
         isSmoothCursorEnabled: is_smooth_cursor_enabled,
         embedHandler: {
@@ -101,8 +99,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
           externalEmbedComponent: {
             widgetCallback: EmbedHandler,
           },
-          ...embedHandler,
+          ...extendedEditorProps?.embedHandler,
         },
+        ...extendedEditorProps,
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

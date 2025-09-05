@@ -23,7 +23,7 @@
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc && tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 55",
     "check:types": "tsc --noEmit",

@@ -1,14 +1,10 @@
-// tiptap
-import type { Extensions } from "@tiptap/core";
-import React, { useMemo } from "react";
+import React from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-// extensions
-import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -24,14 +20,13 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     bubbleMenuEnabled = true,
     containerClassName,
     documentLoaderClassName,
-    extensions: externalExtensions = [],
+    extensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
     editorProps,
     extendedEditorProps,
-    embedHandler,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
@@ -54,20 +49,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     updatePageProperties,
   } = props;
 
-  const extensions: Extensions = useMemo(() => {
-    const allExtensions = [...externalExtensions];
-
-    if (embedHandler?.issue) {
-      allExtensions.push(
-        WorkItemEmbedExtension({
-          widgetCallback: embedHandler.issue.widgetCallback,
-        })
-      );
-    }
-
-    return allExtensions;
-  }, [externalExtensions, embedHandler.issue]);
-
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
     useCollaborativeEditor({
@@ -75,7 +56,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       editable,
       editorClassName,
       editorProps,
-      embedHandler,
+      extendedEditorProps,
       extensions,
       fileHandler,
       flaggedExtensions,
@@ -96,7 +77,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       titleRef,
       updatePageProperties,
       user,
-      extendedEditorProps,
     });
 
   const editorContainerClassNames = getEditorClassNames({

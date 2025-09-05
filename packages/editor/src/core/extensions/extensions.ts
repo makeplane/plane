@@ -26,10 +26,8 @@ import {
   TableRow,
   UtilityExtension,
 } from "@/extensions";
-// helpers
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
-import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type { IEditorProps } from "@/types";
 // local imports
@@ -47,11 +45,10 @@ type TArguments = Pick<
   | "mentionHandler"
   | "placeholder"
   | "tabIndex"
-  | "embedHandler"
+  | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
-  extendedEditorProps?: IEditorPropsExtended;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -65,7 +62,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     placeholder,
     tabIndex,
     editable,
-    // additional props
     extendedEditorProps,
   } = args;
 
@@ -119,10 +115,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      extendedEditorProps,
       flaggedExtensions,
       fileHandler,
-      // additional props
-      extendedEditorProps,
     }),
   ];
 
