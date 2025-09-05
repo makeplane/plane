@@ -14,8 +14,7 @@ export const MaintenanceMessage = () => {
           &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
         </h1>
         <span className="text-base font-medium text-custom-text-200 text-left">
-          One or more services might have failed to start. Please check your container logs to identify and resolve the
-          issue.
+          Some services might have failed to start. Please check your container logs to identify and resolve the issue.
         </span>
       </div>
       <div className="flex items-center justify-start gap-6 mt-1">
