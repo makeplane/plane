@@ -6,7 +6,7 @@ import {
   TDocumentEditorAdditionalExtensionsRegistry,
 } from "src/ce/extensions";
 // plane imports
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } from "@/extensions";
 // helpers
