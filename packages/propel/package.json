@@ -18,6 +18,7 @@
   "exports": {
     "./accordion": "./dist/accordion/index.js",
     "./avatar": "./dist/avatar/index.js",
+    "./calendar": "./dist/calendar/index.js",
     "./card": "./dist/card/index.js",
     "./charts/*": "./dist/charts/*/index.js",
     "./combobox": "./dist/combobox/index.js",
@@ -29,6 +30,7 @@
     "./popover": "./dist/popover/index.js",
     "./skeleton": "./dist/skeleton/index.js",
     "./styles/fonts": "./dist/styles/fonts/index.css",
+    "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
     "./switch": "./dist/switch/index.js",
     "./table": "./dist/table/index.js",
     "./tabs": "./dist/tabs/index.js",
@@ -47,6 +49,7 @@
     "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
     "react": "catalog:",
+    "react-day-picker": "9.5.0",
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.3.1",
