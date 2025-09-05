@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 1431",
+    "check:lint": "eslint . --max-warnings 1233",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",

@@ -9,7 +9,7 @@ import { EpicIcon } from "@plane/propel/icons";
 // types
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Button,Checkbox,Loader } from "@plane/ui";
+import { Button, Checkbox, Loader } from "@plane/ui";
 // helpers
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // hooks

@@ -7,9 +7,9 @@ import { Loader as Spinner, X } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ApproverIcon,LayersIcon,WorkflowIcon } from "@plane/propel/icons";
+import { ApproverIcon, LayersIcon, WorkflowIcon } from "@plane/propel/icons";
 import { TWorkflowChangeHistory, TWorkflowChangeHistoryKeys } from "@plane/types";
-import { getButtonStyling,Loader } from "@plane/ui";
+import { getButtonStyling, Loader } from "@plane/ui";
 import { cn, getWorkflowChangeHistoryKey } from "@plane/utils";
 // helpers
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";

@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { DoubleCircleIcon,InitiativeIcon } from "@plane/propel/icons";
+import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
 // types
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // components

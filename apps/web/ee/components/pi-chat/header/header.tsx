@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { BetaBadge,Breadcrumbs,Header as HeaderUI,Row } from "@plane/ui";
+import { BetaBadge, Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";

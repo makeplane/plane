@@ -185,7 +185,7 @@ export type TAppConnection = {
 
 export type TSlackUserAlertsConfig = {
   isEnabled: boolean;
-}
+};
 
 export type TUserConnectionStatus = {
   isConnected: boolean;

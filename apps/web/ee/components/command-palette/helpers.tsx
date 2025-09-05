@@ -1,6 +1,6 @@
 import { FileText, LayoutGrid } from "lucide-react";
 // plane imports
-import { InitiativeIcon,TeamsIcon } from "@plane/propel/icons";
+import { InitiativeIcon, TeamsIcon } from "@plane/propel/icons";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,

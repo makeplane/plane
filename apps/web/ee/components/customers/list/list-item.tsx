@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CustomerRequestIcon,CustomersIcon } from "@plane/propel/icons";
+import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getFileURL } from "@plane/utils";
 // components

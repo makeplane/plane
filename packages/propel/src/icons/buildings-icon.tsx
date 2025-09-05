@@ -3,7 +3,15 @@ import * as React from "react";
 import { ISvgIcons } from "./type";
 
 export const BuildingsIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
-  <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="21"
+    height="20"
+    viewBox="0 0 21 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    {...rest}
+  >
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"

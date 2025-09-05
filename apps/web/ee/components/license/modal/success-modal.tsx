@@ -7,12 +7,7 @@ import { CheckCircle } from "lucide-react";
 import { PlaneIcon, PlaneOneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import {
-  EModalWidth,
-  ModalCore,
-  getSubscriptionTextColor,
-  getSuccessModalVariantStyle,
-} from "@plane/ui";
+import { EModalWidth, ModalCore, getSubscriptionTextColor, getSuccessModalVariantStyle } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 // plane web constants
 import {

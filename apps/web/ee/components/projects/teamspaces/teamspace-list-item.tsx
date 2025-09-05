@@ -8,16 +8,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
-import {
-  AlertModalCore,
-  Avatar,
-  AvatarGroup,
-  CustomMenu,
-  Logo,
-  setToast,
-  Table,
-  TOAST_TYPE,
-} from "@plane/ui";
+import { AlertModalCore, Avatar, AvatarGroup, CustomMenu, Logo, setToast, Table, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

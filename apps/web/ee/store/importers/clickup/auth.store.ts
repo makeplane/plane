@@ -3,7 +3,7 @@ import unset from "lodash/unset";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { TClickUpAuthState } from "@plane/etl/clickup";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
+import { TServiceAuthConfiguration } from "@plane/etl/core";
 // plane web services
 import { ClickUpAuthService } from "@/plane-web/services/importers/clickup/auth.service";
 // store types

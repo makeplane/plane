@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Activity } from "lucide-react";
 // plane imports
-import { CommentFillIcon,InfoFillIcon,UpdatesIcon } from "@plane/propel/icons";
+import { CommentFillIcon, InfoFillIcon, UpdatesIcon } from "@plane/propel/icons";
 import { EUpdateEntityType } from "@plane/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

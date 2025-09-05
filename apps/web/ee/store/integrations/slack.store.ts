@@ -2,7 +2,13 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { SlackConversation, TSlackConfig, TSlackConnectionData, TSlackProjectUpdatesConfig, TSlackUserAlertsConfig } from "@plane/etl/slack";
+import {
+  SlackConversation,
+  TSlackConfig,
+  TSlackConnectionData,
+  TSlackProjectUpdatesConfig,
+  TSlackUserAlertsConfig,
+} from "@plane/etl/slack";
 import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";

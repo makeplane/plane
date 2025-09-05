@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const SlackIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className, color }) => (
+export const SlackIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className }) => (
   <svg
     width={width}
     height={height}

@@ -49,7 +49,7 @@ export class Store extends EventEmitter {
         this.reconnecting = false;
         console.log("Successfully reconnected to Redis");
         return true;
-      } catch (error) {
+      } catch (_error) {
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         console.log(`Attempting to reconnect to Redis [${attemptCount}]...`);
       }
@@ -80,7 +80,7 @@ export class Store extends EventEmitter {
         await this.initializeConnection();
         logger.info(`Redis Store connected successfully 📚🫙🫙`);
         return;
-      } catch (error) {
+      } catch (_error) {
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         console.log(`Attempting to connect to Redis [${attemptCount}]...`);
       }

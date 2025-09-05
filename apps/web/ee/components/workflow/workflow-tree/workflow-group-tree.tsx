@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ApproverIcon,WorkflowIcon } from "@plane/propel/icons";
+import { ApproverIcon, WorkflowIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TIssueGroupByOptions } from "@plane/types";
 import { cn } from "@plane/utils";

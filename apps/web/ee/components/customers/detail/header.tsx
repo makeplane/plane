@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 import { CustomersIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs,Header,BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

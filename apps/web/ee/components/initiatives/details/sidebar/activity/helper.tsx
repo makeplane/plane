@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { AlignLeft, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
-import { EpicIcon,InitiativeIcon } from "@plane/propel/icons";
+import { EpicIcon, InitiativeIcon } from "@plane/propel/icons";
 import { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";

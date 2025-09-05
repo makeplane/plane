@@ -85,7 +85,6 @@ const createPlaneIssueReference = (issue: string): IssueReference => {
   };
 };
 
-
 /**
  * Extracts user mentions from HTML using mention-component tags
  * @param html - HTML string containing mention components

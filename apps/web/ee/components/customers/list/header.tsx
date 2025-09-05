@@ -6,7 +6,7 @@ import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constan
 import { useTranslation } from "@plane/i18n";
 import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Breadcrumbs,Button } from "@plane/ui";
+import { Breadcrumbs, Button } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

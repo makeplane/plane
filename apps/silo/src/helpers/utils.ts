@@ -90,9 +90,11 @@ export const uploadFile = async ({ url, data }: UploadFileParams): Promise<boole
   }
 };
 
-
-export const encapsulateInQuoteBlock = (text: string) => text.split("\n").map((line) => `> ${line}`).join("\n")
-
+export const encapsulateInQuoteBlock = (text: string) =>
+  text
+    .split("\n")
+    .map((line) => `> ${line}`)
+    .join("\n");
 
 export const createPlaneClient = async (workspaceId: string, userId: string, source: string): Promise<PlaneClient> => {
   try {

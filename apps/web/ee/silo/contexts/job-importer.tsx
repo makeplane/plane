@@ -21,6 +21,7 @@ export type TImporterCreateContext<T> = {
 
 export const ImporterSyncJobContext = createContext<TImporterCreateContext<any>>({} as TImporterCreateContext<any>);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type TImporterSyncJobContextProvider<T> = {
   importerType: TImporterKeys;
   children: ReactNode;

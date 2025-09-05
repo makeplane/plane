@@ -7,7 +7,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TeamsIcon } from "@plane/propel/icons";
-import { Button,Checkbox,EModalPosition,EModalWidth,ModalCore } from "@plane/ui";
+import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, truncateText } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

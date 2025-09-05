@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
-import { LeadIcon,TeamsIcon } from "@plane/propel/icons";
-import { AvatarGroup,Avatar } from "@plane/ui";
+import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
+import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components

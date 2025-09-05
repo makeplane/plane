@@ -16,7 +16,7 @@ export interface NotionFileParserConfig {
 }
 
 export class NotionFileParserExtension implements IParserExtension {
-  constructor(readonly config: NotionFileParserConfig) { }
+  constructor(readonly config: NotionFileParserConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     /*

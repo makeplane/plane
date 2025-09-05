@@ -72,11 +72,12 @@ export class Estimate extends CeEstimate implements IEstimate {
         estimate_points: payload,
       });
       runInAction(() => {
-        estimate?.points &&
+        if (estimate?.points) {
           estimate?.points.map((estimatePoint) => {
             if (estimatePoint.id)
               set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
           });
+        }
       });
 
       return estimate;
@@ -105,7 +106,7 @@ export class Estimate extends CeEstimate implements IEstimate {
         runInAction(() => {
           this.name = estimate?.name;
           this.type = estimate?.type;
-          estimate?.points &&
+          if (estimate?.points) {
             estimate?.points.map((estimatePoint) => {
               if (estimatePoint.id)
                 this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
@@ -113,6 +114,7 @@ export class Estimate extends CeEstimate implements IEstimate {
                   value: estimatePoint.value,
                 });
             });
+          }
         });
       }
 

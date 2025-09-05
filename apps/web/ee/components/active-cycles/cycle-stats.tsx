@@ -13,7 +13,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, IActiveCycle } from "@plane/types";
 // ui
-import { Avatar,Loader } from "@plane/ui";
+import { Avatar, Loader } from "@plane/ui";
 // components
 import {
   cn,

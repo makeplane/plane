@@ -3,7 +3,6 @@ import axios, { AxiosInstance } from "axios";
 import {
   SlackAuthState,
   SlackUserAuthState,
-  TAppConnection,
   TSlackUserAlertsConfig,
   TSlackConfig,
   TSlackConnectionData,
@@ -220,7 +219,11 @@ export class SlackIntegrationService {
    * @param { TSlackUserAlertsConfig } payload
    * @returns { Promise<TSlackUserAlertsConfig> }
    */
-  async setUserAlertsConfig(workspaceId: string, userId: string, payload: TSlackUserAlertsConfig): Promise<TSlackUserAlertsConfig> {
+  async setUserAlertsConfig(
+    workspaceId: string,
+    userId: string,
+    payload: TSlackUserAlertsConfig
+  ): Promise<TSlackUserAlertsConfig> {
     return this.axiosInstance
       .post(`/api/slack/user/alerts-config/${workspaceId}/${userId}`, payload)
       .then((res) => res.data)

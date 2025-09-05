@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { JiraResource, JiraProject, JiraStatus, ILabelConfig, JiraPriority } from "@plane/etl/jira";
+import { JiraResource, JiraProject, JiraStatus, JiraPriority } from "@plane/etl/jira";
 // plane web services
 import { IAdditionalUsersResponse } from "@plane/types";
 import { JiraServerDataService } from "@/plane-web/services/importers/jira-server/data.service";

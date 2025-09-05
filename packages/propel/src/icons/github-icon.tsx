@@ -27,7 +27,7 @@ export const GithubIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", c
   </svg>
 );
 
-export const GithubDarkIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className, color }) => (
+export const GithubDarkIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className, color = "#fff" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -35,8 +35,9 @@ export const GithubDarkIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24
     height={height}
     fill="none"
     viewBox="0 0 40 40"
+    className={className}
   >
-    <circle cx="20" cy="20" r="20" fill="#fff" />
+    <circle cx="20" cy="20" r="20" fill={color} />
     <mask
       id="mask0_18217_187055"
       width="40"

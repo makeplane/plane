@@ -10,7 +10,7 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon,ISvgIcons } from "@plane/propel/icons";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/propel/icons";
 import { IIssueDisplayProperties } from "@plane/types";
 import { IIssue } from "@/types/issue";
 import {

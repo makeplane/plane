@@ -5,7 +5,7 @@ import { ChevronDown, MoveRight, Trash2 } from "lucide-react";
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ApproverIcon } from "@plane/propel/icons";
-import { Collapsible,setToast,TOAST_TYPE,AlertModalCore,Button } from "@plane/ui";
+import { Collapsible, setToast, TOAST_TYPE, AlertModalCore, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

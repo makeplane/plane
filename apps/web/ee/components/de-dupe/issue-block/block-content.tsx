@@ -3,7 +3,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { PriorityIcon,StateGroupIcon } from "@plane/propel/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TDeDupeIssue } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // hooks

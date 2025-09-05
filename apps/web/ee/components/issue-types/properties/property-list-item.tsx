@@ -18,7 +18,7 @@ import {
   TIssuePropertyPayload,
   TOperationMode,
 } from "@plane/types";
-import { Button,TOAST_TYPE,setPromiseToast,setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

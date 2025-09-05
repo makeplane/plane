@@ -6,7 +6,7 @@ import { ArchiveRestore } from "lucide-react";
 // plane imports
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { ArchiveIcon } from "@plane/propel/icons";
-import { TOAST_TYPE,setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications/sidebar/notification-card/options";
 // helpers

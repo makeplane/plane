@@ -11,7 +11,7 @@ import {
 } from "@plane/constants";
 
 // ui
-import { ContrastIcon,DiceIcon,EpicIcon,LayersIcon,TeamsIcon } from "@plane/propel/icons";
+import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, TeamsIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/ui";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
