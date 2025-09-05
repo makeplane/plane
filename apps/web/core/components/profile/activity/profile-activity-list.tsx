@@ -12,7 +12,7 @@ import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // hooks
-import { useUser } from "@/hooks/store/user";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 // services
 import { UserService } from "@/services/user.service";
 const userService = new UserService();
@@ -28,7 +28,7 @@ type Props = {
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser } = useUserProfile();
 
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({

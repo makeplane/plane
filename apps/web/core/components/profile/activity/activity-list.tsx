@@ -10,8 +10,8 @@ import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/acti
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // hooks
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser } from "@/hooks/store/user";
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -22,7 +22,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";

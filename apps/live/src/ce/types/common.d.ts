@@ -1,1 +1,1 @@
-export type TAdditionalDocumentTypes = never;
+export type TAdditionalDocumentTypes = string;

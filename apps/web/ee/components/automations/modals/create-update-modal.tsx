@@ -1,0 +1,163 @@
+import { useEffect } from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { EAutomationScope, TAutomation } from "@plane/types";
+import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web hooks
+import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
+
+type Props = {
+  data?: Partial<TAutomation>;
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const defaultValues: Partial<TAutomation> = {
+  name: "",
+  description: "",
+  scope: EAutomationScope.WORK_ITEM,
+};
+
+export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, onClose } = props;
+  // app router
+  const router = useAppRouter();
+  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
+  const workspaceSlug = workspaceSlugParam?.toString();
+  const projectId = projectIdParam?.toString();
+  // store hooks
+  const {
+    getAutomationById,
+    projectAutomations: { canCurrentUserCreateAutomation, createAutomation },
+  } = useAutomations();
+  // form info
+  const {
+    control,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+  } = useForm<TAutomation>({
+    defaultValues,
+  });
+  // derived value
+  const isEditing = !!data?.id;
+  // translation
+  const { t } = useTranslation();
+
+  const handleClose = () => {
+    onClose();
+  };
+
+  const handleCreate = async (payload: Partial<TAutomation>) => {
+    if (!canCurrentUserCreateAutomation) return;
+    const res = await createAutomation(workspaceSlug, projectId, payload);
+    if (res?.redirectionLink) {
+      router.push(res?.redirectionLink);
+    }
+  };
+
+  const handleUpdate = async (payload: Partial<TAutomation>) => {
+    if (!isEditing || !data?.id) return;
+    const automation = getAutomationById(data.id);
+    await automation?.update(payload);
+  };
+
+  const handleFormSubmit = async (payload: Partial<TAutomation>) => {
+    try {
+      if (isEditing) {
+        await handleUpdate(payload);
+      } else {
+        await handleCreate(payload);
+      }
+      handleClose();
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: isEditing ? "Failed to update automation" : "Failed to create automation",
+        message: error?.error || "Something went wrong. Please try again.",
+      });
+    }
+  };
+
+  // update form values from pre-defined data
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        ...defaultValues,
+        ...data,
+      });
+    }
+  }, [data, isOpen, reset]);
+
+  return (
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <div className="space-y-5 p-5">
+          <h3 className="text-xl font-medium text-custom-text-200">
+            {isEditing ? t("automations.create_modal.heading.update") : t("automations.create_modal.heading.create")}
+          </h3>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Controller
+                name="name"
+                control={control}
+                rules={{
+                  required: t("automations.create_modal.title.required_error"),
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    type="text"
+                    placeholder={t("automations.create_modal.title.placeholder")}
+                    className="w-full px-2 py-1.5 text-base"
+                    value={value}
+                    onChange={onChange}
+                    hasError={Boolean(errors?.name)}
+                    autoFocus
+                    maxLength={255}
+                  />
+                )}
+              />
+              <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            </div>
+            <div>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    placeholder={t("automations.create_modal.description.placeholder")}
+                    className="w-full text-base resize-none min-h-24"
+                    hasError={Boolean(errors?.description)}
+                    value={value ?? ""}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+            {isEditing
+              ? isSubmitting
+                ? t("common.updating")
+                : t("automations.create_modal.submit_button.update")
+              : isSubmitting
+                ? t("common.creating")
+                : t("automations.create_modal.submit_button.create")}
+          </Button>
+        </div>
+      </form>
+    </ModalCore>
+  );
+});
