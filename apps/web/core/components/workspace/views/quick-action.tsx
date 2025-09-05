@@ -4,7 +4,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { IWorkspaceView } from "@plane/types";
 import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -30,7 +29,6 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
