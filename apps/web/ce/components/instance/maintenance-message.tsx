@@ -15,6 +15,7 @@ export const MaintenanceMessage = () => {
         </h1>
         <span className="text-base font-medium text-custom-text-200 text-left">
           Some services might have failed to start. Please check your container logs to identify and resolve the issue.
+          If you&apos;re stuck, reach out to our support team for more help.
         </span>
       </div>
       <div className="flex items-center justify-start gap-6 mt-1">
