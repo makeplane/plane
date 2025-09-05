@@ -14,7 +14,7 @@ type TProps = {
   userThreads: TUserThreads[];
   isProjectLevel?: boolean;
   isLoading?: boolean;
-  isFullScreen?: boolean;
+  isFullScreen: boolean;
   activeChatId: string;
 };
 const RecentChats = observer((props: TProps) => {

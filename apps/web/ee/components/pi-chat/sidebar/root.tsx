@@ -44,7 +44,12 @@ export const PiSidebar = observer(() => {
       {/* Favorites */}
       {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}
       {/* History List */}
-      <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} activeChatId={activeChatId} />
+      <RecentChats
+        userThreads={filteredUserThread ?? []}
+        isLoading={isLoadingThreads}
+        activeChatId={activeChatId}
+        isFullScreen
+      />
     </SidebarWrapper>
   );
 });
