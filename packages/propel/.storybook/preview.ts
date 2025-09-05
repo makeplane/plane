@@ -1,11 +1,14 @@
 import type { Preview } from "@storybook/react-vite";
 import "@plane/tailwind-config/global.css";
 
-const preview: Preview = {
-  parameters: {
-    controls: {
-      matchers: {},
-    },
+const parameters: Preview["parameters"] = {
+  controls: {
+    matchers: {},
   },
+};
+
+const preview: Preview = {
+  parameters,
+  tags: ["autodocs"],
 };
 export default preview;
