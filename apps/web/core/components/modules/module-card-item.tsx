@@ -16,17 +16,10 @@ import {
   MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { LayersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IModule } from "@plane/types";
-import {
-  Card,
-  FavoriteStar,
-  LayersIcon,
-  LinearProgressIndicator,
-  TOAST_TYPE,
-  Tooltip,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Card, FavoriteStar, LinearProgressIndicator, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

@@ -33,7 +33,7 @@
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "sharp": "0.33.5"
+      "sharp": "catalog:"
     }
   },
   "packageManager": "pnpm@10.12.1",

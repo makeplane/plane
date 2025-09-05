@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc --noEmit && tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 20",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -26,21 +26,21 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
-    "lodash": "^4.17.21",
-    "lucide-react": "^0.469.0",
+    "lodash": "catalog:",
+    "lucide-react": "catalog:",
     "react": "catalog:",
     "tailwind-merge": "^2.5.5",
     "tlds": "1.259.0",
-    "uuid": "^10.0.0"
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "4.17.20",
+    "@types/lodash": "catalog:",
     "@types/node": "^22.5.4",
     "@types/react": "catalog:",
     "@types/uuid": "^9.0.8",
-    "tsup": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

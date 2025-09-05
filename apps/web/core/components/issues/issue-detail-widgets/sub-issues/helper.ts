@@ -46,7 +46,10 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             type: TOAST_TYPE.SUCCESS,
             title: t("common.link_copied"),
             message: t("entity.link_copied_to_clipboard", {
-              entity: t("epic.label", { count: 1 }),
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items", { count: 1 })
+                  : t("issue.label", { count: 1 }),
             }),
           });
         });
@@ -77,7 +80,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
                   ? t("common.sub_work_items")
-                  : t("issue.label", { count: 2 }),
+                  : t("issue.label", { count: issueIds.length }),
             }),
           });
         } catch {
@@ -88,7 +91,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
                   ? t("common.sub_work_items")
-                  : t("issue.label", { count: 2 }),
+                  : t("issue.label", { count: issueIds.length }),
             }),
           });
         }
@@ -169,7 +172,12 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
-            message: t("sub_work_item.remove.success"),
+            message: t("entity.remove.success", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items")
+                  : t("issue.label", { count: 1 }),
+            }),
           });
           captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
@@ -185,7 +193,12 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("sub_work_item.remove.error"),
+            message: t("entity.remove.failed", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items")
+                  : t("issue.label", { count: 1 }),
+            }),
           });
         }
       },
@@ -208,7 +221,12 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("issue.delete.error"),
+            message: t("entity.delete.failed", {
+              entity:
+                issueServiceType === EIssueServiceType.ISSUES
+                  ? t("common.sub_work_items")
+                  : t("issue.label", { count: 1 }),
+            }),
           });
         }
       },

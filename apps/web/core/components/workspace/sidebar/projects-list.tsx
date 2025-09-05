@@ -10,7 +10,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";

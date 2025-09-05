@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TDescriptionVersion } from "@plane/types";
 import {
   Avatar,
@@ -15,7 +16,6 @@ import {
   ModalCore,
   setToast,
   TOAST_TYPE,
-  Tooltip,
 } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
@@ -131,13 +131,14 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
         {/* End header */}
         {/* Version description */}
         <div className="mt-4 pb-4">
-          {activeVersionDescription ? (
+          {activeVersionId && activeVersionDescription ? (
             <RichTextEditor
+              key={activeVersionId}
               editable={false}
               containerClassName="p-0 !pl-0 border-none"
               editorClassName="pl-0"
-              id={activeVersionId ?? ""}
-              initialValue={activeVersionDescription ?? "<p></p>"}
+              id={activeVersionId}
+              initialValue={activeVersionDescription}
               projectId={projectId}
               ref={editorRef}
               workspaceId={workspaceId}

@@ -1,6 +1,6 @@
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { RecentStickyIcon } from "@plane/ui";
+import { RecentStickyIcon } from "@plane/propel/icons";
 
 export const StickiesEmptyState = () => {
   const { t } = useTranslation();

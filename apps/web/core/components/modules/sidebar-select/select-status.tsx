@@ -6,9 +6,10 @@ import React from "react";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { DoubleCircleIcon } from "@plane/propel/icons";
 import { IModule } from "@plane/types";
 // ui
-import { CustomSelect, DoubleCircleIcon } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 // types
 // common
 // constants
