@@ -5,10 +5,10 @@ import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// components
+import { LinkContainer } from "@/plane-editor/components/link-container";
 // types
 import { TDisplayConfig } from "@/types";
-// components
-import { LinkViewContainer } from "./link-view-container";
 
 type Props = {
   children: ReactNode;
@@ -95,7 +95,7 @@ export const EditorContainer: FC<Props> = (props) => {
         )}
       >
         {children}
-        {!isTouchDevice && <LinkViewContainer editor={editor} containerRef={containerRef} />}
+        {!isTouchDevice && <LinkContainer editor={editor} containerRef={containerRef} />}
       </div>
     </>
   );
