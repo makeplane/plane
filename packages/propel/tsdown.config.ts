@@ -13,6 +13,7 @@ export default defineConfig({
     "src/icons/index.ts",
     "src/menu/index.ts",
     "src/popover/index.ts",
+    "src/skeleton/index.ts",
     "src/switch/index.ts",
     "src/table/index.ts",
     "src/tabs/index.ts",
