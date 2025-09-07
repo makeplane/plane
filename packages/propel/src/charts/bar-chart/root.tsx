@@ -19,7 +19,7 @@ import { TBarChartProps } from "@plane/types";
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
-import { barShapeVariants } from "./bar";
+import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
 
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
@@ -66,7 +66,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           key={bar.key}
           dataKey={bar.key}
           stackId={bar.stackId}
-          fill={typeof bar.fill === "function" ? "#000000" : bar.fill}
+          fill={typeof bar.fill === "function" ? DEFAULT_BAR_FILL_COLOR : bar.fill}
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           shape={(shapeProps: any) => {
             const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
