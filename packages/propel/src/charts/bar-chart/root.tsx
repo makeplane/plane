@@ -53,7 +53,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       keys.push(bar.key);
       labels[bar.key] = bar.label;
       // For tooltip, we need a string color. If fill is a function, use a default color
-      colors[bar.key] = typeof bar.fill === "function" ? "#000000" : bar.fill;
+      colors[bar.key] = typeof bar.fill === "function" ? DEFAULT_BAR_FILL_COLOR : bar.fill;
     }
 
     return { stackKeys: keys, stackLabels: labels, stackDotColors: colors };
