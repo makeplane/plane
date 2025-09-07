@@ -35,6 +35,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
     customTicks,
     legend,
     showTooltip = true,
+    customTooltipContent,
   } = props;
   // states
   const [activeLine, setActiveLine] = useState<string | null>(null);
@@ -155,17 +156,20 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
               wrapperStyle={{
                 pointerEvents: "auto",
               }}
-              content={({ active, label, payload }) => (
-                <CustomTooltip
-                  active={active}
-                  activeKey={activeLine}
-                  label={label}
-                  payload={payload}
-                  itemKeys={itemKeys}
-                  itemLabels={itemLabels}
-                  itemDotColors={itemDotColors}
-                />
-              )}
+              content={({ active, label, payload }) => {
+                if (customTooltipContent) return customTooltipContent({ active, label, payload });
+                return (
+                  <CustomTooltip
+                    active={active}
+                    activeKey={activeLine}
+                    label={label}
+                    payload={payload}
+                    itemKeys={itemKeys}
+                    itemLabels={itemLabels}
+                    itemDotColors={itemDotColors}
+                  />
+                );
+              }}
             />
           )}
           {renderLines}
