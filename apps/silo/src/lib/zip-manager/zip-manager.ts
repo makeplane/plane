@@ -1,6 +1,6 @@
 import { logger } from "@/logger";
 import { Store } from "@/worker/base";
-import { extractZipTableOfContents, extractDirectoryFromZip, extractFileFromZip } from "./extractor";
+import { extractZipTableOfContents, extractDirectoryFromZip, extractFileFromZip, extractCentralDirectoryData } from "./extractor";
 import { StorageProvider } from "./storage-provider";
 import { TZipFileNode } from "./types";
 import { ZipStream } from "./zip-stream";
@@ -114,7 +114,7 @@ export class ZipManager {
     if (!this.zipStream) {
       throw new Error("Manager not initialized");
     }
-
-    return extractFileFromZip(this.zipStream, filePath);
+    const { centralDirData, entriesCount } = await extractCentralDirectoryData(this.zipStream);
+    return extractFileFromZip(centralDirData, entriesCount, this.zipStream, filePath);
   }
 }

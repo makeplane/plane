@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosHeaders } from "axios";
 // types
+import { wait } from "@/helpers/delay";
 import HMACSigner from "@/helpers/hmac-sign";
 import { logger } from "@/logger";
 import { ClientOptions } from "@/types";
@@ -45,9 +46,31 @@ export abstract class APIService {
 
     this.axiosInstance.interceptors.response.use(
       (response) => response,
-      (error) => {
+      async (error) => {
         if (error.response && error.response.status === 401) {
           logger.error("401 error");
+        }
+        if (
+          error.response.status === 502 ||
+          error.response.status === 503 ||
+          error.response.status === 504 ||
+          error.code === "ECONNRESET"
+        ) {
+          // Initialize retry count if not present
+          const retryCount = (error.config.__retryCount || 0) + 1;
+          const maxRetries = 10;
+
+          if (retryCount <= maxRetries) {
+            // Add retry count to config for tracking
+            error.config.__retryCount = retryCount;
+            logger.info(`Retrying request (attempt ${retryCount}/${maxRetries})...`);
+            // Here we have to wait for retry after 20 seconds
+            await wait(20000);
+            return this.axiosInstance(error.config);
+          } else {
+            logger.error(`Max retry attempts (${maxRetries}) reached, failing request`);
+            return Promise.reject(new Error(`Request failed after ${maxRetries} retry attempts`));
+          }
         }
         return Promise.reject(error);
       }

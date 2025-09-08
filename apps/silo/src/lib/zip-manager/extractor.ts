@@ -28,32 +28,28 @@ const ATTACHMENT_MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
  */
 export async function extractZipTableOfContents(zipStream: ZipStream): Promise<string[]> {
   try {
-    const fileSize = zipStream.size;
-
-    // Find the end of central directory record
-    const endOfCentralDirData = await findEndOfCentralDirectory(zipStream, fileSize);
-
-    // Extract central directory information
-    const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(
-      endOfCentralDirData.chunk,
-      endOfCentralDirData.offset
-    );
-
-    logger.info(`Central directory: offset=${centralDirOffset}, size=${centralDirSize}, entries=${entriesCount}`);
-
-    // Read the central directory data
-    await zipStream.seek(centralDirOffset);
-    const centralDirData = await zipStream.read(centralDirSize);
+    const { centralDirData, entriesCount } = await extractCentralDirectoryData(zipStream);
 
     // Parse all entries from the central directory
     const entries = parseCentralDirectoryEntries(centralDirData, entriesCount);
-
     logger.info(`Found ${entries.length} entries in ZIP`);
     return entries;
   } catch (error) {
     logger.error("Failed to extract ZIP table of contents:", error);
     throw error;
   }
+}
+
+export async function extractCentralDirectoryData(zipStream: ZipStream) {
+  const fileSize = zipStream.size;
+  const endOfCentralDirData = await findEndOfCentralDirectory(zipStream, fileSize);
+  const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(
+    endOfCentralDirData.chunk,
+    endOfCentralDirData.offset
+  );
+  await zipStream.seek(centralDirOffset);
+  const centralDirData = await zipStream.read(centralDirSize);
+  return { centralDirData, entriesCount };
 }
 
 /**
@@ -66,25 +62,15 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
  * @param targetFileName - Name of the file to extract from the ZIP
  * @returns Promise resolving to a Buffer containing the file contents
  */
-export async function extractFileFromZip(zipStream: ZipStream, targetFileName: string): Promise<Buffer> {
+export async function extractFileFromZip(
+  centralDirData: Buffer,
+  entriesCount: number,
+  zipStream: ZipStream,
+  targetFileName: string
+): Promise<Buffer> {
   logger.info(`Extracting file from zip: ${targetFileName}`);
 
   try {
-    const fileSize = zipStream.size;
-
-    // Find the end of central directory record (reusing the helper function)
-    const endOfCentralDirData = await findEndOfCentralDirectory(zipStream, fileSize);
-
-    // Extract central directory information (reusing the helper function)
-    const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(
-      endOfCentralDirData.chunk,
-      endOfCentralDirData.offset
-    );
-
-    // Read the central directory
-    await zipStream.seek(centralDirOffset);
-    const centralDirData = await zipStream.read(centralDirSize);
-
     // Find the specific file entry in the central directory
     const fileEntry = findFileEntryInCentralDirectory(centralDirData, entriesCount, targetFileName);
 
@@ -97,7 +83,7 @@ export async function extractFileFromZip(zipStream: ZipStream, targetFileName: s
 
     return fileData;
   } catch (error) {
-    logger.error("Failed to extract file from ZIP:", error);
+    logger.warn("Failed to extract file from ZIP:", error);
     throw error;
   }
 }
@@ -116,6 +102,8 @@ export async function extractDirectoryFromZip(
     return extractedFiles;
   }
 
+  const { centralDirData, entriesCount } = await extractCentralDirectoryData(zipStream);
+
   for (const childNode of directoryNode.children) {
     if (childNode.type === EZipNodeType.FILE) {
       // We need to check for the ignored file types and accepted file types
@@ -128,7 +116,7 @@ export async function extractDirectoryFromZip(
 
       // If the file is not ignored, we need to extract the content
       try {
-        const fileContent = await extractFileFromZip(zipStream, childNode.path);
+        const fileContent = await extractFileFromZip(centralDirData, entriesCount, zipStream, childNode.path);
         extractedFiles.set(childNode.path, fileContent);
       } catch (error) {
         logger.error(`Failed to extract file ${childNode.path}:`, error);

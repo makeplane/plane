@@ -25,3 +25,4 @@ from plane.ee.views.api.page import (
 )
 
 from .epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint
+from .asset import ImportAssetEndpoint

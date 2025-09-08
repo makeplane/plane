@@ -76,8 +76,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     const { id: jobId, workspace_slug } = job;
     // Get the map of the page and asset ids from the store
     const [pageMap, assetMap] = await Promise.all([
-      this.retrieveMap(this.store, fileId, ENotionImporterKeyType.PAGE),
-      this.retrieveMap(this.store, fileId, ENotionImporterKeyType.ASSET),
+      this.retrieveMap(this.store, jobId, fileId, ENotionImporterKeyType.PAGE),
+      this.retrieveMap(this.store, jobId, fileId, ENotionImporterKeyType.ASSET),
     ]);
 
     const parser = zipDriver.getContentParser({
@@ -139,8 +139,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     type: EZipDriverType
   ): Promise<void> {
     if (directoryNodes.length === 0) {
-      await this.decrementLeafNodeCounter(fileId);
-      const leafNodeCount = await this.getLeafNodeCounter(fileId);
+      await this.decrementLeafNodeCounter(job.id, fileId);
+      const leafNodeCount = await this.getLeafNodeCounter(job.id, fileId);
 
       if (leafNodeCount === 0 || leafNodeCount === null) {
         // We can conclude that we have finished processing the first phase
@@ -220,9 +220,9 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       description_html: parsedContent,
       logo_props: emojiPayload
         ? {
-            emoji: emojiPayload.emoji,
-            in_use: "emoji",
-          }
+          emoji: emojiPayload.emoji,
+          in_use: "emoji",
+        }
         : undefined,
     };
   }

@@ -14,4 +14,4 @@ const KEY_PREFIX = "SILO_NOTION_IMPORTER";
  * @param id Primary identifier (usually fileId)
  * @param subId Optional secondary identifier (like pageId, assetId, etc.)
  */
-export const getKey = (fileId: string, type: ENotionImporterKeyType): string => `${KEY_PREFIX}_${type}_${fileId}`;
+export const getKey = (jobId: string, fileId: string, type: ENotionImporterKeyType): string => `${KEY_PREFIX}_${jobId}_${type}_${fileId}`;

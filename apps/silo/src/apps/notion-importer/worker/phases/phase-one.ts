@@ -125,7 +125,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
           })
         );
 
-        if (pageMap.size > 0) await this.setCacheObjects(fileId, ENotionImporterKeyType.PAGE, pageMap);
+        if (pageMap.size > 0) await this.setCacheObjects(job.id, fileId, ENotionImporterKeyType.PAGE, pageMap);
         return pageMap;
       }
 
@@ -184,13 +184,14 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
         const parsed = mimetics.parse(content);
         // Upload the asset and get the asset id
         const assetId = await protect(
-          client.assets.uploadAsset.bind(client.assets),
+          apiClient.asset.uploadAsset.bind(apiClient.asset),
           job.workspace_slug,
           new File([content], node.name, {
             type: parsed?.mime,
           }),
           node.name,
-          content.length
+          content.length,
+          job.initiator_id,
         );
 
         const assetInfo: TAssetInfo = {
@@ -209,7 +210,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
       }
     }
 
-    if (result.size > 0) await this.setCacheObjects(fileId, ENotionImporterKeyType.ASSET, result);
+    if (result.size > 0) await this.setCacheObjects(job.id, fileId, ENotionImporterKeyType.ASSET, result);
   }
 
   /**
@@ -228,12 +229,12 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     type: EZipDriverType
   ): Promise<void> {
     if (!directoryNodes.length) {
-      await this.decrementLeafNodeCounter(fileId);
-      const leafNodeCount = await this.getLeafNodeCounter(fileId);
+      await this.decrementLeafNodeCounter(job.id, fileId);
+      const leafNodeCount = await this.getLeafNodeCounter(job.id, fileId);
 
       if (!leafNodeCount) {
         // We can conclude that we have finished processing the first phase
-        await this.deleteLeafNodeCounter(fileId);
+        await this.deleteLeafNodeCounter(job.id, fileId);
 
         // Schedule a job for phase 2 import
         const data: TNotionMigratorData = { fileId, type }; // For type assertion
