@@ -157,8 +157,8 @@ class ModuleSerializer(BaseSerializer):
     """
     Comprehensive module serializer with work item metrics and member management.
 
-    Provides complete module data including work item counts by status, member relationships,
-    and progress tracking for feature-based project organization.
+    Provides complete module data including work item counts by status, member
+    relationships, and progress tracking for feature-based project organization.
     """
 
     members = serializers.ListField(
