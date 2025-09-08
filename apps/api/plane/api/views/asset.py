@@ -282,8 +282,9 @@ class UserServerAssetEndpoint(BaseAPIView):
     def post(self, request):
         """Generate presigned URL for user server asset upload.
 
-        Create a presigned URL for uploading user profile assets (avatar or cover image) using server credentials.
-        This endpoint generates the necessary credentials for direct S3 upload with server-side authentication.
+        Create a presigned URL for uploading user profile assets
+        (avatar or cover image) using server credentials. This endpoint generates the
+        necessary credentials for direct S3 upload with server-side authentication.
         """
         # get the asset key
         name = request.data.get("name")
