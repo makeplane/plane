@@ -3,9 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ArchiveIcon, ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

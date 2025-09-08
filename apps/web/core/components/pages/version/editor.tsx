@@ -9,10 +9,13 @@ import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
   versionDetails: TPageVersion | undefined;
+  storeType: EPageStoreType;
 };
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {

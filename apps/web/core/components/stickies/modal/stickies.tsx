@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 // plane ui
-import { RecentStickyIcon } from "@plane/ui";
+import { RecentStickyIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // components

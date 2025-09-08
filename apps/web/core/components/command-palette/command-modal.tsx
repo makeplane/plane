@@ -16,8 +16,9 @@ import {
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LayersIcon } from "@plane/propel/icons";
 import { IWorkspaceSearchResults } from "@plane/types";
-import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // components
 import {

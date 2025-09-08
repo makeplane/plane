@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ComboDropDown, ContrastIcon } from "@plane/ui";
+import { ContrastIcon } from "@plane/propel/icons";
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

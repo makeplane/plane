@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 
 export const AuthHeader = () => (
   <div className="flex items-center justify-between gap-6 w-full flex-shrink-0 sticky top-0">

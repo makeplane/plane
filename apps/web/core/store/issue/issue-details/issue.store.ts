@@ -5,18 +5,13 @@ import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
-import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+import { IssueArchiveService, WorkspaceDraftService, IssueService } from "@/services/issue";
 // types
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
   // actions
-  fetchIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    issueStatus?: "DEFAULT" | "DRAFT"
-  ) => Promise<TIssue>;
+  fetchIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -52,7 +47,7 @@ export class IssueStore implements IIssueStore {
   issueService;
   epicService;
   issueArchiveService;
-  issueDraftService;
+  draftWorkItemService;
 
   constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
@@ -66,7 +61,7 @@ export class IssueStore implements IIssueStore {
     this.issueService = new IssueService(serviceType);
     this.epicService = new IssueService(EIssueServiceType.EPICS);
     this.issueArchiveService = new IssueArchiveService(serviceType);
-    this.issueDraftService = new IssueDraftService();
+    this.draftWorkItemService = new WorkspaceDraftService();
   }
 
   getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
@@ -93,7 +88,7 @@ export class IssueStore implements IIssueStore {
   });
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueStatus = "DEFAULT") => {
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const query = {
       expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
@@ -112,9 +107,7 @@ export class IssueStore implements IIssueStore {
       this.localDBIssueDescription = issueId;
     }
 
-    if (issueStatus === "DRAFT")
-      issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
-    else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+    issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Work item not found");
 

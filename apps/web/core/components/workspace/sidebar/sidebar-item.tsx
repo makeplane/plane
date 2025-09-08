@@ -7,6 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
@@ -47,13 +48,13 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
-  const itemHref = item.key === "your_work" ? `/${slug}${item.href}${data?.id}/` : `/${slug}${item.href}`;
-  const isActive = itemHref === pathname;
+  const itemHref =
+    item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
 
   return (
     <Link href={itemHref} onClick={handleLinkClick}>
-      <SidebarNavItem isActive={isActive}>
+      <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>
         <div className="flex items-center gap-1.5 py-[1px]">
           {icon}
           <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>

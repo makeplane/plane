@@ -122,7 +122,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       text: `${OauthButtonContent} with GitHub`,
       icon: (
         <Image
-          src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
+          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
           height={18}
           width={18}
           alt="GitHub Logo"

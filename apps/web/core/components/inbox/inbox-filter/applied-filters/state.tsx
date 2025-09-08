@@ -4,7 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon, Tag } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useProjectState } from "@/hooks/store/use-project-state";

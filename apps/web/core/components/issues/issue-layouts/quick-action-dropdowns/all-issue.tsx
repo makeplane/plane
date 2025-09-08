@@ -118,7 +118,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.GLOBAL}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
