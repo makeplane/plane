@@ -5,13 +5,12 @@ from django.utils import timezone
 import json
 
 # Django imports
-from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 # Module imports

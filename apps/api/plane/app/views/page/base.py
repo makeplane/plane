@@ -1,6 +1,5 @@
 # Python imports
 import json
-import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
