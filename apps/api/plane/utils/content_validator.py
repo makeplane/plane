@@ -84,6 +84,8 @@ ATTRIBUTES = {
         "aria-label",
         "aria-hidden",
         "style",
+        "start",
+        "type",
         # common editor data-* attributes seen in stored HTML
         # (wildcards like data-* are NOT supported by nh3; we add known keys
         # here and dynamically include all data-* seen in the input below)
