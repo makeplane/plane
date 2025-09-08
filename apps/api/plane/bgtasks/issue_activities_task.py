@@ -34,6 +34,14 @@ from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 
 
+def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
+    if not data:
+        return set()
+    if primary_key in data:
+        return {str(x) for x in data.get(primary_key, [])}
+    return {str(x) for x in data.get(fallback_key, [])}
+
+
 # Track Changes in name
 def track_name(
     requested_data,
@@ -308,26 +316,10 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set(
-        [
-            str(lab)
-            for lab in (
-                requested_data["label_ids"]
-                if "label_ids" in requested_data
-                else requested_data.get("labels", [])
-            )
-        ]
-    )
-    current_labels = set(
-        [
-            str(lab)
-            for lab in (
-                current_instance["label_ids"]
-                if "label_ids" in current_instance
-                else current_instance.get("labels", [])
-            )
-        ]
-    )
+
+    # Labels
+    requested_labels = extract_ids(requested_data, "label_ids", "labels")
+    current_labels = extract_ids(current_instance, "label_ids", "labels")
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -392,25 +384,9 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = (
-        set([str(asg) for asg in (
-            requested_data.get("assignee_ids") 
-            if "assignee_ids" in requested_data 
-            else requested_data.get("assignees", [])
-        )]) 
-        if requested_data is not None 
-        else set()
-    )
-
-    current_assignees = (
-        set([str(asg) for asg in (
-            current_instance.get("assignee_ids") 
-            if "assignee_ids" in current_instance 
-            else current_instance.get("assignees", [])
-        )]) 
-        if current_instance is not None 
-        else set()
-    )
+    # Assignees
+    requested_assignees = extract_ids(requested_data, "assignee_ids", "assignees")
+    current_assignees = extract_ids(current_instance, "assignee_ids", "assignees")
 
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
