@@ -116,15 +116,22 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("parent_id") != requested_data.get("parent_id"):
+    current_parent_id = current_instance.get("parent_id") or current_instance.get(
+        "parent"
+    )
+    requested_parent_id = requested_data.get("parent_id") or requested_data.get(
+        "parent"
+    )
+
+    if current_parent_id != requested_parent_id:
         old_parent = (
-            Issue.objects.filter(pk=current_instance.get("parent_id")).first()
-            if current_instance.get("parent_id") is not None
+            Issue.objects.filter(pk=current_parent_id).first()
+            if current_parent_id is not None
             else None
         )
         new_parent = (
-            Issue.objects.filter(pk=requested_data.get("parent_id")).first()
-            if requested_data.get("parent_id") is not None
+            Issue.objects.filter(pk=requested_parent_id).first()
+            if requested_parent_id is not None
             else None
         )
 
@@ -193,9 +200,12 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("state_id") != requested_data.get("state_id"):
-        new_state = State.objects.get(pk=requested_data.get("state_id", None))
-        old_state = State.objects.get(pk=current_instance.get("state_id", None))
+    current_state_id = current_instance.get("state_id") or current_instance.get("state")
+    requested_state_id = requested_data.get("state_id") or requested_data.get("state")
+
+    if current_state_id != requested_state_id:
+        new_state = State.objects.get(pk=requested_state_id)
+        old_state = State.objects.get(pk=current_state_id)
 
         issue_activities.append(
             IssueActivity(
@@ -298,8 +308,26 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
-    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
+    requested_labels = set(
+        [
+            str(lab)
+            for lab in (
+                requested_data["label_ids"]
+                if "label_ids" in requested_data
+                else requested_data.get("labels", [])
+            )
+        ]
+    )
+    current_labels = set(
+        [
+            str(lab)
+            for lab in (
+                current_instance["label_ids"]
+                if "label_ids" in current_instance
+                else current_instance.get("labels", [])
+            )
+        ]
+    )
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -365,13 +393,22 @@ def track_assignees(
     epoch,
 ):
     requested_assignees = (
-        set([str(asg) for asg in requested_data.get("assignee_ids", [])])
-        if requested_data is not None
+        set([str(asg) for asg in (
+            requested_data.get("assignee_ids") 
+            if "assignee_ids" in requested_data 
+            else requested_data.get("assignees", [])
+        )]) 
+        if requested_data is not None 
         else set()
     )
+
     current_assignees = (
-        set([str(asg) for asg in current_instance.get("assignee_ids", [])])
-        if current_instance is not None
+        set([str(asg) for asg in (
+            current_instance.get("assignee_ids") 
+            if "assignee_ids" in current_instance 
+            else current_instance.get("assignees", [])
+        )]) 
+        if current_instance is not None 
         else set()
     )
 
@@ -631,6 +668,11 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        # External endpoint keys
+        "parent": track_parent,
+        "state": track_state,
+        "assignees": track_assignees,
+        "labels": track_labels,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
