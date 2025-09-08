@@ -70,7 +70,7 @@ export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((ex
         )}
         onClick={handleEmbedButtonClick}
       >
-        <FileCode2 className="size-4" />
+        <FileCode2 className="size-4 shrink-0" />
 
         <div className="text-base font-medium">
           {"Insert your preferred embed link here, such as YouTube video, Figma design, etc."}
