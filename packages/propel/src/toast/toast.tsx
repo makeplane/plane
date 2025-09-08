@@ -1,10 +1,10 @@
-import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 import * as React from "react";
+import { Toast as BaseToast } from "@base-ui-components/react/toast";
+import clsx from "clsx";
+import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 // helper
-import clsx from "clsx";
 
 export enum TOAST_TYPE {
   SUCCESS = "success",
