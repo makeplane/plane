@@ -23,6 +23,7 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
   name: ADDITIONAL_EXTENSIONS.COMMENTS,
   excludes: "",
   exitable: true,
+  inclusive: false,
 
   addStorage() {
     return {

@@ -29,7 +29,7 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
       {
         label: "Wiki",
         icon: <WikiIcon className="size-4" />,
-        href: `/${workspaceSlug}/pages`,
+        href: `/${workspaceSlug}/wiki`,
         isActive: isWikiPath,
         shouldRender: isAppRailFeatureEnabled("wiki"),
       },
