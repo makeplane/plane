@@ -55,7 +55,20 @@ export class Server {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     // cors middleware
-    this.app.use(cors());
+    this.setupCors();
+  }
+
+  private setupCors() {
+    const allowedOrigins =
+      process.env.CORS_ALLOWED_ORIGINS === "*" ? "*" : process.env.CORS_ALLOWED_ORIGINS?.split(",") || [];
+    this.app.use(
+      cors({
+        origin: allowedOrigins,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+      })
+    );
   }
 
   private setupNotFoundHandler() {
