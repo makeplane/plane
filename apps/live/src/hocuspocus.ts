@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 import type { TUserDetails } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
+// env
+import { env } from "@/env";
 // lib
 import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
 // redis
@@ -21,7 +23,7 @@ export class HocusPocusServerManager {
   private server: Hocuspocus | null = null;
   private isInitialized: boolean = false;
   // server options
-  private serverName = process.env.HOSTNAME || uuidv4();
+  private serverName = env.HOSTNAME || uuidv4();
 
   private constructor() {
     // Private constructor to prevent direct instantiation

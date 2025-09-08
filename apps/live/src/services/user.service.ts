@@ -1,11 +1,11 @@
 // types
 import type { IUser } from "@plane/types";
 // services
-import { API_BASE_URL, APIService } from "@/services/api.service";
+import { APIService } from "@/services/api.service";
 
 export class UserService extends APIService {
   constructor() {
-    super(API_BASE_URL);
+    super();
   }
 
   currentUserConfig() {

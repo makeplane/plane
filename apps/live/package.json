@@ -20,6 +20,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.49.0",
     "@hocuspocus/extension-database": "^2.15.0",
     "@hocuspocus/extension-logger": "^2.15.0",
     "@hocuspocus/extension-redis": "^2.15.0",
@@ -45,7 +46,8 @@
     "uuid": "catalog:",
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
-    "yjs": "^13.6.20"
+    "yjs": "^13.6.20",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

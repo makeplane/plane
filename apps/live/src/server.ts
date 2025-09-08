@@ -9,6 +9,8 @@ import { registerController } from "@plane/decorators";
 import { logger, loggerMiddleware } from "@plane/logger";
 // controllers
 import { CONTROLLERS } from "@/controllers";
+// env
+import { env } from "@/env";
 // hocuspocus server
 import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
@@ -25,8 +27,8 @@ export class Server {
     expressWs(this.app);
     this.setupMiddleware();
     this.router = express.Router();
-    this.app.set("port", process.env.PORT || 3000);
-    this.app.use(process.env.LIVE_BASE_PATH || "/live", this.router);
+    this.app.set("port", env.PORT || 3000);
+    this.app.use(env.LIVE_BASE_PATH, this.router);
     this.setupRoutes();
     this.setupNotFoundHandler();
   }

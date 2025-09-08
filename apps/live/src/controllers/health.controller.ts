@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { Controller, Get } from "@plane/decorators";
+import { env } from "@/env";
 
 @Controller("/health")
 export class HealthController {
@@ -8,7 +9,7 @@ export class HealthController {
     res.status(200).json({
       status: "OK",
       timestamp: new Date().toISOString(),
-      version: process.env.APP_VERSION || "1.0.0",
+      version: env.APP_VERSION,
     });
   }
 }

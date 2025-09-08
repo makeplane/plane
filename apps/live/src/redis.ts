@@ -1,5 +1,6 @@
 import Redis from "ioredis";
 import { logger } from "@plane/logger";
+import { env } from "./env";
 
 export class RedisManager {
   private static instance: RedisManager;
@@ -33,9 +34,9 @@ export class RedisManager {
   }
 
   private getRedisUrl(): string {
-    const redisUrl = process.env.REDIS_URL?.trim();
-    const redisHost = process.env.REDIS_HOST?.trim();
-    const redisPort = process.env.REDIS_PORT?.trim();
+    const redisUrl = env.REDIS_URL;
+    const redisHost = env.REDIS_HOST;
+    const redisPort = env.REDIS_PORT;
 
     if (redisUrl) {
       return redisUrl;
