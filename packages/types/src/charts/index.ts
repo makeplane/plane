@@ -52,8 +52,8 @@ export type TAxisChartProps<K extends string, T extends string> = TBaseChartProp
     y?: number;
   };
   customTicks?: {
-    x?: React.ComponentType<any>;
-    y?: React.ComponentType<any>;
+    x?: React.ComponentType<unknown>;
+    y?: React.ComponentType<unknown>;
   };
 };
 
