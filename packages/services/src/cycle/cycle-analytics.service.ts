@@ -28,7 +28,7 @@ export class CycleAnalyticsService extends APIService {
     analytic_type: string = "points"
   ): Promise<TCycleDistribution | TCycleEstimateDistribution> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/analytics?type=${analytic_type}`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/analytics/?type=${analytic_type}`
     )
       .then((res) => res?.data)
       .catch((err) => {

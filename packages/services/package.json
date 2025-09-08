@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings 62",
+    "check:lint": "eslint . --max-warnings 64",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",

@@ -1,0 +1,62 @@
+export const EMBED_SEARCH_TERMS = [
+  "embed",
+  "link",
+  "url",
+  "iframe",
+  "video",
+  "audio",
+  "richcard",
+  // Video platforms
+  "youtube",
+  "vimeo",
+  "loom",
+  "wistia",
+  "twitch",
+  "dailymotion",
+  // Design & collaboration tools
+  "figma",
+  "miro",
+  "canva",
+  "whimsical",
+  "lucidchart",
+  "draw.io",
+  // Code & development
+  "codepen",
+  "codesandbox",
+  "github",
+  "gist",
+  "replit",
+  "stackblitz",
+  // Music & audio
+  "spotify",
+  "soundcloud",
+  "apple music",
+  "bandcamp",
+  // Social media
+  "twitter",
+  "x",
+  "instagram",
+  "linkedin",
+  "tiktok",
+  "facebook",
+  // Documents & productivity
+  "google docs",
+  "google sheets",
+  "google slides",
+  "notion",
+  "airtable",
+  "typeform",
+  // Maps & location
+  "google maps",
+  "mapbox",
+  // Creative portfolios
+  "dribbble",
+  "behance",
+  "artstation",
+  // Other popular platforms
+  "calendly",
+  "hubspot",
+  "mailchimp",
+  "stripe",
+  "paypal",
+];
