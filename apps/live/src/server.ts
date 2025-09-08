@@ -62,7 +62,9 @@ export class Server {
 
   private setupCors() {
     const allowedOrigins =
-      process.env.CORS_ALLOWED_ORIGINS === "*" ? "*" : process.env.CORS_ALLOWED_ORIGINS?.split(",") || [];
+      process.env.CORS_ALLOWED_ORIGINS === "*"
+        ? "*"
+        : process.env.CORS_ALLOWED_ORIGINS?.split(",")?.map((s) => s.trim()) || [];
     this.app.use(
       cors({
         origin: allowedOrigins,
