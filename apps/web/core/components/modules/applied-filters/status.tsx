@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/ui";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 // constants
 
 type Props = {

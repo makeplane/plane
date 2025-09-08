@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ArchiveIcon, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
@@ -54,7 +55,6 @@ export interface MenuItemFactoryProps {
   isRestoringAllowed?: boolean;
   isInArchivableGroup?: boolean;
   issueTypeDetail?: { is_active?: boolean };
-  isDraftIssue?: boolean;
   // Action handlers
   setIssueToEdit: (issue: TIssue | undefined) => void;
   setCreateUpdateIssueModal: (open: boolean) => void;
@@ -368,10 +368,4 @@ export const useArchivedIssueMenuItems = (props: MenuItemFactoryProps): TContext
     ],
     [factory]
   );
-};
-
-export const useDraftIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
-  const factory = useMenuItemFactory(props);
-
-  return useMemo(() => [factory.createEditMenuItem(), factory.createDeleteMenuItem()], [factory]);
 };

@@ -48,6 +48,9 @@ export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
   const versionsCount = versions?.length ?? 0;
   const activeVersionDetails = versions?.find((version) => version.id === activeVersionId);
   const activeVersionIndex = versions?.findIndex((version) => version.id === activeVersionId);
+  const activeVersionDescription = activeVersionResponse
+    ? (activeVersionResponse.description_html ?? "<p></p>")
+    : undefined;
 
   const handleNavigation = useCallback(
     (direction: "prev" | "next") => {
@@ -64,7 +67,7 @@ export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
   return (
     <>
       <DescriptionVersionsModal
-        activeVersionDescription={activeVersionResponse?.description_html ?? "<p></p>"}
+        activeVersionDescription={activeVersionDescription}
         activeVersionDetails={activeVersionDetails}
         handleClose={() => {
           setIsModalOpen(false);

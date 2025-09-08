@@ -1,7 +1,6 @@
 import React from "react";
 import { Avatar as AvatarPrimitive } from "@base-ui-components/react/avatar";
-// utils
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 
 export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 

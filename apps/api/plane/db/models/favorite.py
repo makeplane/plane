@@ -41,6 +41,15 @@ class UserFavorite(WorkspaceBaseModel):
         verbose_name_plural = "User Favorites"
         db_table = "user_favorites"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["entity_type"], name="fav_entity_type_idx"),
+            models.Index(
+                fields=["entity_identifier"], name="fav_entity_identifier_idx"
+            ),
+            models.Index(
+                fields=["entity_type", "entity_identifier"], name="fav_entity_idx"
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         if self._state.adding:

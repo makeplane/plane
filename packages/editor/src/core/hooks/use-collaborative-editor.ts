@@ -20,7 +20,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     editable,
     editorClassName = "",
     editorProps = {},
-    embedHandler,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
@@ -80,8 +80,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   );
 
   const editor = useEditor({
-    embedHandler,
     disabledExtensions,
+    extendedEditorProps,
     id,
     editable,
     editorProps,
@@ -99,7 +99,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        embedConfig: embedHandler,
+        extendedEditorProps,
         fileHandler,
         flaggedExtensions,
         isEditable: editable,

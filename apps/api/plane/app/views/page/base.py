@@ -198,6 +198,7 @@ class PageViewSet(BaseViewSet):
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         project = Project.objects.get(pk=project_id)
+        track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         """
         if the role is guest and guest_view_all_features is false and owned by is not
@@ -230,13 +231,14 @@ class PageViewSet(BaseViewSet):
             ).values_list("entity_identifier", flat=True)
             data = PageDetailSerializer(page).data
             data["issue_ids"] = issue_ids
-            recent_visited_task.delay(
-                slug=slug,
-                entity_name="page",
-                entity_identifier=pk,
-                user_id=request.user.id,
-                project_id=project_id,
-            )
+            if track_visit:
+                recent_visited_task.delay(
+                    slug=slug,
+                    entity_name="page",
+                    entity_identifier=pk,
+                    user_id=request.user.id,
+                    project_id=project_id,
+                )
             return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN], model=Page, creator=True)

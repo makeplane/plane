@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
 
 type ITooltipProps = {
   tooltipHeading?: string;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent?: string | React.ReactNode | null;
   position?: TPlacement;
   children: React.ReactElement;
   disabled?: boolean;
@@ -61,7 +61,7 @@ export function Tooltip(props: ITooltipProps) {
             render={
               <BaseTooltip.Popup>
                 {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
-                {tooltipContent}
+                {tooltipContent && tooltipContent}
               </BaseTooltip.Popup>
             }
           />

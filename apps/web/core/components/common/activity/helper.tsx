@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 // components
-import { ArchiveIcon, DoubleCircleIcon, ContrastIcon, DiceIcon, Intake } from "@plane/ui";
+import { ArchiveIcon, DoubleCircleIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
 import { TProjectActivity } from "@/plane-web/types";
 

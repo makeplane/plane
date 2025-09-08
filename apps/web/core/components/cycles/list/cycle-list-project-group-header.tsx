@@ -4,9 +4,11 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // icons
-import { Row, Logo } from "@plane/ui";
+import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
+// components
+import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 
 type Props = {

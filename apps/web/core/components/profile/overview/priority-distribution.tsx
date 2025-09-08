@@ -44,7 +44,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
                   key: "count",
                   label: "Count",
                   stackId: "bar-one",
-                  fill: (payload) => priorityColors[payload.key as keyof typeof priorityColors],
+                  fill: (payload: any) => priorityColors[payload.key as keyof typeof priorityColors], // TODO: fix types
                   textClassName: "",
                   showPercentage: false,
                   showTopBorderRadius: () => true,

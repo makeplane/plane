@@ -918,6 +918,10 @@
     "add": {
       "success": "{entity} adicionado com sucesso",
       "failed": "Erro ao adicionar {entity}"
+    },
+    "remove": {
+      "success": "{entity} removido com sucesso",
+      "failed": "Erro ao remover {entity}"
     }
   },
   "epic": {
