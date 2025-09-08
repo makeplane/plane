@@ -19,7 +19,7 @@ import { TBarChartProps } from "@plane/types";
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
-import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
+import { barShapeVariants } from "./bar";
 
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
@@ -53,7 +53,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       keys.push(bar.key);
       labels[bar.key] = bar.label;
       // For tooltip, we need a string color. If fill is a function, use a default color
-      colors[bar.key] = typeof bar.fill === "function" ? DEFAULT_BAR_FILL_COLOR : bar.fill;
+      colors[bar.key] = typeof bar.fill === "function" ? bar.fill(bar) : bar.fill;
     }
 
     return { stackKeys: keys, stackLabels: labels, stackDotColors: colors };
@@ -66,7 +66,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           key={bar.key}
           dataKey={bar.key}
           stackId={bar.stackId}
-          fill={typeof bar.fill === "function" ? DEFAULT_BAR_FILL_COLOR : bar.fill}
+          fill={typeof bar.fill === "function" ? bar.fill(bar) : bar.fill}
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           shape={(shapeProps: any) => {
             const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
