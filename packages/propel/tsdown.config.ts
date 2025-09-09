@@ -6,6 +6,7 @@ export default defineConfig({
     "src/avatar/index.ts",
     "src/card/index.ts",
     "src/charts/*/index.ts",
+    "src/collapsible/index.ts",
     "src/combobox/index.ts",
     "src/command/index.ts",
     "src/dialog/index.ts",

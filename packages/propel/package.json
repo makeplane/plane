@@ -20,6 +20,7 @@
     "./avatar": "./dist/avatar/index.js",
     "./card": "./dist/card/index.js",
     "./charts/*": "./dist/charts/*/index.js",
+    "./collapsible": "./dist/collapsible/index.js",
     "./combobox": "./dist/combobox/index.js",
     "./command": "./dist/command/index.js",
     "./dialog": "./dist/dialog/index.js",
