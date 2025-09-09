@@ -220,9 +220,9 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       description_html: parsedContent,
       logo_props: emojiPayload
         ? {
-          emoji: emojiPayload.emoji,
-          in_use: "emoji",
-        }
+            emoji: emojiPayload.emoji,
+            in_use: "emoji",
+          }
         : undefined,
     };
   }

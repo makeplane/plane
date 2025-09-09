@@ -191,7 +191,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
           }),
           node.name,
           content.length,
-          job.initiator_id,
+          job.initiator_id
         );
 
         const assetInfo: TAssetInfo = {

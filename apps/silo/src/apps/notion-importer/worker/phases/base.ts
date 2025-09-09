@@ -247,7 +247,12 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param type - The type of objects to set
    * @param objects - The map of objects to set
    */
-  async setCacheObjects(jobId: string, fileId: string, type: ENotionImporterKeyType, objects: Map<string, string>): Promise<void> {
+  async setCacheObjects(
+    jobId: string,
+    fileId: string,
+    type: ENotionImporterKeyType,
+    objects: Map<string, string>
+  ): Promise<void> {
     const key = getKey(jobId, fileId, type);
     const ttl = 60 * 60 * 4; // 4 hours
     await this.store.setMap(key, objects, ttl);
@@ -375,7 +380,12 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param keyType - The type of map to retrieve
    * @returns The map
    */
-  async retrieveMap(store: Store, jobId: string, fileId: string, keyType: ENotionImporterKeyType): Promise<Map<string, string>> {
+  async retrieveMap(
+    store: Store,
+    jobId: string,
+    fileId: string,
+    keyType: ENotionImporterKeyType
+  ): Promise<Map<string, string>> {
     const mapKey = getKey(jobId, fileId, keyType);
     try {
       const map = await store.getMap(mapKey);

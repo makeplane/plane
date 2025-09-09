@@ -13,7 +13,6 @@ import { WorkItemStateDropdownBase } from "@/components/dropdowns/state/base";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { WorkItemLabelSelectBase } from "@/components/issues/select/base";
-import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 // hooks
@@ -68,8 +67,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
     projectId,
     usePropsForAdditionalData,
   } = props;
-  // states
-  const [isCreateLabelModalOpen, setIsCreateLabelModalOpen] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -78,8 +75,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
   const {
     control,
     formState: { errors },
-    watch,
-    setValue,
   } = useFormContext<T>();
   // derived values
   const projectDetails = usePropsForAdditionalData
@@ -101,7 +96,7 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
     disabled: !projectId,
   };
   const commonLabelDropdownProps = {
-    setIsOpen: setIsCreateLabelModalOpen,
+    createLabel: createLabel,
     projectId: projectId || undefined,
     createLabelEnabled: allowLabelCreation,
     buttonClassName: cn(COMMON_BUTTON_CLASS_NAME, {
@@ -124,17 +119,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
   if (!projectId) return null;
   return (
     <>
-      {allowLabelCreation && createLabel && (
-        <CreateLabelModal
-          createLabel={createLabel}
-          isOpen={isCreateLabelModalOpen}
-          handleClose={() => setIsCreateLabelModalOpen(false)}
-          onSuccess={(response) => {
-            const currentLabelIds = watch(fieldPaths.labelIds) || [];
-            setValue(fieldPaths.labelIds, [...currentLabelIds, response.id] as PathValue<T, FieldPath<T>>);
-          }}
-        />
-      )}
       <div className="space-y-3 pt-3 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           {/* State */}

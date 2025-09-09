@@ -118,4 +118,3 @@ export class AssetApiService extends APIService {
       });
   }
 }
-

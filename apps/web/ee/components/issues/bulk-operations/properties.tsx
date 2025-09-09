@@ -20,7 +20,6 @@ import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
-import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useLabel } from "@/hooks/store/use-label";
@@ -56,8 +55,6 @@ const defaultValues: TBulkIssueProperties = {
 
 export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
   const { snapshot } = props;
-  // states
-  const [createLabelModal, setCreateLabelModal] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane imports
@@ -74,7 +71,6 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     isWorkItemTypeEnabledForProject,
     getIssueTypeIdsWithMandatoryProperties,
   } = useIssueTypes();
-  const { createLabel } = useLabel();
   // derived values
   const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
   const isCyclesEnabled = !!projectDetails?.cycle_view;
@@ -252,18 +248,11 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             control={control}
             render={({ field: { onChange, value } }) => (
               <>
-                <CreateLabelModal
-                  createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId?.toString())}
-                  isOpen={createLabelModal}
-                  handleClose={() => setCreateLabelModal(false)}
-                  onSuccess={(res) => onChange([...value, res.id])}
-                />
                 <div className="h-6">
                   <IssueLabelSelect
                     value={value}
                     projectId={projectId.toString()}
                     onChange={onChange}
-                    setIsOpen={() => setCreateLabelModal(true)}
                     buttonContainerClassName="text-custom-text-300 "
                     placement="top-start"
                   />

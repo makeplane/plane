@@ -1,6 +1,11 @@
 import { logger } from "@/logger";
 import { Store } from "@/worker/base";
-import { extractZipTableOfContents, extractDirectoryFromZip, extractFileFromZip, extractCentralDirectoryData } from "./extractor";
+import {
+  extractZipTableOfContents,
+  extractDirectoryFromZip,
+  extractFileFromZip,
+  extractCentralDirectoryData,
+} from "./extractor";
 import { StorageProvider } from "./storage-provider";
 import { TZipFileNode } from "./types";
 import { ZipStream } from "./zip-stream";

@@ -16,11 +16,9 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
-import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -77,7 +75,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
   } = props;
 
   // states
-  const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
@@ -100,7 +97,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const { createLabel } = useLabel();
 
   const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
 
@@ -261,17 +257,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      {projectId && (
-        <CreateLabelModal
-          createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId)}
-          isOpen={labelModal}
-          handleClose={() => setLabelModal(false)}
-          onSuccess={(response) => {
-            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
-            handleFormChange();
-          }}
-        />
-      )}
       <div className="flex gap-2 bg-transparent">
         <div className="rounded-lg w-full">
           <form
@@ -356,7 +341,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
                   parentId={watch("parent_id")}
                   isDraft={false}
                   handleFormChange={handleFormChange}
-                  setLabelModal={setLabelModal}
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>
