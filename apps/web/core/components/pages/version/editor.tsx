@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
-import { TPageVersion } from "@plane/types";
+import type { JSONContent, TPageVersion } from "@plane/types";
+import { isJSONContentEmpty } from "@plane/utils";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
@@ -77,7 +78,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       </div>
     );
 
-  const description = versionDetails?.description_json;
+  const description = isJSONContentEmpty(versionDetails?.description_json as JSONContent)
+    ? versionDetails?.description_html
+    : versionDetails?.description_json;
+
   if (!description) return null;
 
   return (
