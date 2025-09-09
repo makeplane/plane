@@ -22,6 +22,7 @@ export default defineConfig({
     "src/table/index.ts",
     "src/tabs/index.ts",
     "src/toast/index.ts",
+    "src/toolbar/index.ts",
     "src/tooltip/index.ts",
     "src/utils/index.ts",
   ],
