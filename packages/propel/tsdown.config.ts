@@ -5,6 +5,7 @@ export default defineConfig({
     "src/accordion/index.ts",
     "src/animated-counter/index.ts",
     "src/avatar/index.ts",
+    "src/button/index.ts",
     "src/calendar/index.ts",
     "src/card/index.ts",
     "src/charts/*/index.ts",
