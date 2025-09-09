@@ -5,13 +5,12 @@ from django.utils import timezone
 import json
 
 # Django imports
-from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 # Module imports
@@ -341,13 +340,20 @@ class ProjectViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, pk=None):
         # try:
-        if not ProjectMember.objects.filter(
+        is_workspace_admin = WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=20
+        ).exists()
+
+        is_project_admin = ProjectMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             project_id=pk,
             role=20,
             is_active=True,
-        ).exists():
+        ).exists()
+
+        # Return error for if the user is neither workspace admin nor project admin
+        if not is_project_admin and not is_workspace_admin:
             return Response(
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,

@@ -30,14 +30,30 @@ class ProjectBasePermission(BasePermission):
                 is_active=True,
             ).exists()
 
-        ## Only Project Admins can update project attributes
-        return ProjectMember.objects.filter(
+        is_project_admin = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
             role=Admin,
             project_id=view.project_id,
             is_active=True,
         ).exists()
+
+        is_project_member = ProjectMember.objects.filter(
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            project_id=view.project_id,
+            is_active=True,
+        ).exists()
+
+        is_user_workspace_admin = WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role=Admin,
+            is_active=True,
+        ).exists()
+
+        ## Only project admins or workspace admin who is part of the project can access
+        return is_project_admin or (is_project_member and is_user_workspace_admin)
 
 
 class ProjectMemberPermission(BasePermission):
