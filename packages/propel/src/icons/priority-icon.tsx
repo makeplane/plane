@@ -12,27 +12,34 @@ interface IPriorityIcon {
   withContainer?: boolean;
 }
 
+const priorityClasses = {
+  urgent: "bg-red-600/20 text-red-600 border-red-600",
+  high: "bg-orange-500/20 text-orange-500 border-orange-500",
+  medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
+  low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
+  none: "bg-custom-background-80 text-custom-text-200 border-custom-border-300",
+};
+
+export const priorityBlockClasses: Record<TIssuePriorities, string> = {
+  urgent: "bg-red-500/10 border border-red-500/30",
+  high: "bg-orange-500/10 border border-orange-500/30",
+  medium: "bg-yellow-500/10 border border-yellow-500/30",
+  low: "bg-blue-500/10 border border-blue-500/30",
+  none: "bg-gray-500/10 border border-gray-500/30",
+};
+
+const icons = {
+  urgent: AlertCircle,
+  high: SignalHigh,
+  medium: SignalMedium,
+  low: SignalLow,
+  none: Ban,
+};
+
 export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
-  const priorityClasses = {
-    urgent: "bg-red-600/20 text-red-600 border-red-600",
-    high: "bg-orange-500/20 text-orange-500 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
-    none: "bg-custom-background-80 text-custom-text-200 border-custom-border-300",
-  };
-
-  // get priority icon
-  const icons = {
-    urgent: AlertCircle,
-    high: SignalHigh,
-    medium: SignalMedium,
-    low: SignalLow,
-    none: Ban,
-  };
   const Icon = icons[priority ?? "none"];
-
   if (!Icon) return null;
 
   return (
