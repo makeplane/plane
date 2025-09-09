@@ -882,7 +882,8 @@
     "in_progress": "Sedang berlangsung",
     "planned": "Direncanakan",
     "paused": "Dijedaikan",
-    "no_of": "Jumlah {entity}"
+    "no_of": "Jumlah {entity}",
+    "resolved": "Terselesaikan"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -2485,7 +2486,6 @@
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
   },
   "no_of": "Jumlah {entity}",
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {

@@ -881,7 +881,8 @@
     "in_progress": "In corso",
     "planned": "Pianificato",
     "paused": "In pausa",
-    "no_of": "N. di {entity}"
+    "no_of": "N. di {entity}",
+    "resolved": "Risolto"
   },
   "chart": {
     "x_axis": "Asse X",
@@ -2489,7 +2490,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane non si è avviato. Questo potrebbe essere dovuto al fatto che uno o più servizi Plane non sono riusciti ad avviarsi.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Scegli View Logs da setup.sh e dai log Docker per essere sicuro."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {
