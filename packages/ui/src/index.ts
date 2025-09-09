@@ -2,7 +2,6 @@ export * from "./avatar";
 export * from "./badge";
 export * from "./breadcrumbs";
 export * from "./button";
-export * from "./calendar";
 export * from "./card";
 export * from "./collapsible";
 export * from "./color-picker";

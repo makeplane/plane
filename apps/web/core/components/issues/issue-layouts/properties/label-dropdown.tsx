@@ -277,7 +277,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                     </Combobox.Option>
                   ))
                 ) : submitting ? (
-                  <Loader className="spin  h-3.5 w-3.5" />
+                  <Loader className="animate-spin h-3.5 w-3.5" />
                 ) : canCreateLabel ? (
                   <p
                     onClick={() => {
