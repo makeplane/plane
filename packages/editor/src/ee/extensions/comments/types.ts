@@ -38,8 +38,6 @@ export enum ECommentMarkCSSClasses {
   BASE = "comment-mark",
   ACTIVE = "comment-mark--active",
   RESOLVED = "comment-mark--resolved",
-  HOVER = "bg-[#FFBF66]/40",
-  UNDERLINE = "underline decoration-[#FFBF66] decoration-2 underline-offset-2",
   BACKGROUND = "bg-[#FFBF66]/25",
 }
 

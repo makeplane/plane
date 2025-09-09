@@ -14,7 +14,6 @@ import {
   TCommentMarkOptions,
   TCommentMarkStorage,
   ECommentMarkCSSClasses,
-  TCommentMarkAttributes,
   ECommentAttributeNames,
   DEFAULT_COMMENT_ATTRIBUTES,
 } from "./types";
@@ -71,7 +70,7 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
       mergeAttributes(HTMLAttributes, {
         class: isResolved
           ? `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.RESOLVED}`
-          : `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.ACTIVE} relative cursor-pointer transition-all duration-200 ease-out ${ECommentMarkCSSClasses.BACKGROUND} ${ECommentMarkCSSClasses.UNDERLINE}`,
+          : `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.ACTIVE} relative cursor-pointer transition-all duration-200 ease-out ${ECommentMarkCSSClasses.BACKGROUND} hover:bg-[#FFBF66]/40`,
       }),
       0,
     ];

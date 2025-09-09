@@ -30,6 +30,7 @@ export interface ICommentStore {
   // computed methods
   getCommentById: (commentId: string) => TCommentInstance | undefined;
   getCommentsByParentId: (parentId: string) => TCommentInstance[];
+  getLatestReplyByParentId: (parentId: string) => TCommentInstance | undefined;
   // computed properties
   baseComments: TCommentInstance[];
   filteredBaseComments: TCommentInstance[];
@@ -138,9 +139,16 @@ export class CommentStore implements ICommentStore {
     if (!parentComment) return [];
 
     const allCommentsInThread = Array.from(this.comments.values()).filter((comment) => comment.parent_id === threadId);
-    console.log("asome", allCommentsInThread);
 
     return allCommentsInThread.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  });
+
+  getLatestReplyByParentId = computedFn((threadId: string): TCommentInstance | undefined => {
+    const replies = this.getCommentsByParentId(threadId);
+    if (replies.length === 0) return undefined;
+
+    // Return the latest reply (last in the sorted array)
+    return replies[replies.length - 1];
   });
 
   get baseComments(): TCommentInstance[] {
@@ -302,6 +310,13 @@ export class CommentStore implements ICommentStore {
     // Make API call first - no optimistic updates for creation
     const comment = await this.commentService.create({ pageId, config, data });
 
+    if (data.parent_id) {
+      const parentCommentInstance = this.getCommentById(data.parent_id);
+      if (parentCommentInstance && parentCommentInstance.total_replies) {
+        parentCommentInstance.total_replies++;
+      }
+    }
+
     runInAction(() => {
       if (comment.id) {
         this.comments.set(comment.id, new CommentInstance(this, comment));
@@ -342,33 +357,56 @@ export class CommentStore implements ICommentStore {
 
   resolveComment = async (commentId: string): Promise<void> => {
     const { pageId, config } = this.getPageContext();
+    const commentInstance = this.comments.get(commentId);
 
-    // Make API call first - no optimistic updates
-    await this.commentService.resolve({ pageId, config, commentId });
+    if (!commentInstance) {
+      throw new Error(`Comment with ID ${commentId} not found`);
+    }
 
     runInAction(() => {
-      const comment = this.comments.get(commentId);
-      if (comment) {
-        comment.is_resolved = true;
-        comment.resolved_at = new Date().toISOString();
-        comment.resolved_by = this.rootStore.user.data?.id || null;
-      }
+      commentInstance.is_resolved = true;
+      commentInstance.resolved_at = new Date().toISOString();
+      commentInstance.resolved_by = this.rootStore.user.data?.id || null;
+    });
+
+    await this.commentService.resolve({ pageId, config, commentId }).catch((error) => {
+      console.error("Failed to resolve comment:", error);
+      runInAction(() => {
+        commentInstance.is_resolved = false;
+        commentInstance.resolved_at = null;
+        commentInstance.resolved_by = null;
+      });
+      throw error;
     });
   };
 
   unresolveComment = async (commentId: string): Promise<void> => {
     const { pageId, config } = this.getPageContext();
+    const commentInstance = this.comments.get(commentId);
+    if (!commentInstance) {
+      throw new Error(`Comment with ID ${commentId} not found`);
+    }
 
-    // Make API call first - no optimistic updates
-    await this.commentService.unresolve({ pageId, config, commentId });
+    const oldValues = {
+      is_resolved: commentInstance.is_resolved,
+      resolved_at: commentInstance.resolved_at,
+      resolved_by: commentInstance.resolved_by,
+    };
 
     runInAction(() => {
-      const comment = this.comments.get(commentId);
-      if (comment) {
-        comment.is_resolved = false;
-        comment.resolved_at = null;
-        comment.resolved_by = null;
-      }
+      commentInstance.is_resolved = false;
+      commentInstance.resolved_at = null;
+      commentInstance.resolved_by = null;
+    });
+
+    await this.commentService.unresolve({ pageId, config, commentId }).catch((error) => {
+      console.error("Failed to unresolve comment:", error);
+      runInAction(() => {
+        commentInstance.is_resolved = oldValues.is_resolved;
+        commentInstance.resolved_at = oldValues.resolved_at;
+        commentInstance.resolved_by = oldValues.resolved_by;
+      });
+      throw error;
     });
   };
 

@@ -94,7 +94,7 @@ export const PageThreadCommentItem = observer(
         data-thread-id={comment.id}
         key={comment.id}
         className={cn(
-          `relative w-full p-1.5 flex-col flex gap-1 border-b border-custom-border-200 cursor-pointer transition-all duration-200 bg-custom-background-100 hover:bg-custom-background-90 group`,
+          `relative w-full p-3 px-[4px] flex-col flex gap-1 cursor-pointer transition-all duration-200 bg-custom-background-100 hover:bg-custom-background-90 group animate-comment-item`,
           {
             "bg-custom-background-90": isSelected,
           }
@@ -105,9 +105,9 @@ export const PageThreadCommentItem = observer(
       >
         {/* Reference Text Quote */}
         {referenceText && (
-          <div className="flex gap-1 p-1 rounded bg-custom-background-90">
+          <div className="flex gap-1 p-[4px] rounded bg-custom-background-90">
             <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-            <p className="flex-1 text-xs text-custom-text-300 leading-4">{referenceText}</p>
+            <p className="flex-1 text-sm text-custom-text-300 leading-4">{referenceText}</p>
           </div>
         )}
 
@@ -127,13 +127,14 @@ export const PageThreadCommentItem = observer(
           <PageCommentThreadReplyList page={page} threadId={comment.id} showReplies={showReplies} />
 
           {/* Action Bar */}
-          {page.canCurrentUserCommentOnPage && (
+          {page.canCurrentUserCommentOnPage && !showReplyBox && (
             <div className="flex items-center h-8">
               <button
+                type="button"
                 onClick={handleReplyToggle}
-                className="h-6 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-[1.02] active:scale-[0.98]"
+                className="h-6 rounded transition-colors hover:bg-custom-background-90"
               >
-                <span className="text-xs font-medium text-custom-primary-100 transition-colors duration-200 ease hover:text-custom-primary-200">
+                <span className="text-xs font-medium text-custom-primary-100 transition-colors hover:text-custom-primary-200">
                   Reply
                 </span>
               </button>
@@ -147,7 +148,7 @@ export const PageThreadCommentItem = observer(
               workspaceSlug={workspaceSlug?.toString() || ""}
               workspaceId={workspaceId}
               editable
-              placeholder="Reply to comment..."
+              placeholder="Reply to comment"
               isReply
               autoFocus
               isSubmitting={isSubmittingReply}

@@ -3,8 +3,6 @@ import { MessageSquare } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback } from "react";
 // plane imports
 import { cn } from "@plane/utils";
-// constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 type Props = {
   editor: Editor;
@@ -42,7 +40,6 @@ export const BubbleMenuCommentSelector: FC<Props> = (props) => {
           "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
           {
             "bg-custom-background-80": isOpen,
-            "text-custom-text-100": editor.isActive(ADDITIONAL_EXTENSIONS.COMMENTS),
           }
         )}
         onClick={(e) => {

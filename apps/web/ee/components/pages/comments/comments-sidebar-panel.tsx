@@ -81,21 +81,25 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
     };
   }, [page.comments, scrollToItem]);
 
-  // Auto-scroll to selected thread
+  // Auto-scroll to selected thread - wait for data to load first
   useEffect(() => {
-    if (selectedThreadId) {
-      scrollToItem(selectedThreadId);
+    if (selectedThreadId && !isLoading && !isEmpty) {
+      // Data is loaded, scroll to the selected thread
+      scrollToItem(selectedThreadId, { highlight: true });
     }
-  }, [selectedThreadId, scrollToItem]);
+  }, [selectedThreadId, scrollToItem, isLoading, isEmpty]);
 
   if (isLoading && isEmpty && !page.comments.pendingScrollToComment) {
     return <PageCommentThreadLoader />;
   }
 
   return (
-    <div className="w-[361px] h-full bg-custom-background-100 border-l border-custom-border-200 flex flex-col">
+    <div
+      ref={scrollContainerRef}
+      className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col"
+    >
       {/* Header */}
-      <div className="flex-shrink-0 p-3 border-b border-custom-border-200">
+      <div className="flex-shrink-0 pb-3">
         <div className="flex justify-between items-start w-full">
           <h2 className="text-custom-text-100 text-base font-medium leading-6">Comments</h2>
           <PageCommentFilterControls filters={commentsFilters} onFilterChange={updateCommentFilters} />
@@ -103,34 +107,32 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-1.5 pt-0 sidebar-scroll-container">
-          {/* New Comment Section */}
-          <PageCommentCreationHandler
-            page={page}
-            workspaceConfig={{
-              workspaceSlug: workspaceSlug?.toString() || "",
-              workspaceId,
-            }}
-            pendingComment={pendingComment}
-            handlers={{
-              ...handlers,
-              onScrollToElement: scrollToElement,
-            }}
-          />
+      <div className="flex-1 space-y-3">
+        {/* New Comment Section */}
+        <PageCommentCreationHandler
+          page={page}
+          workspaceConfig={{
+            workspaceSlug: workspaceSlug?.toString() || "",
+            workspaceId,
+          }}
+          pendingComment={pendingComment}
+          handlers={{
+            ...handlers,
+            onScrollToElement: scrollToElement,
+          }}
+        />
 
-          {/* Comments List or Empty State */}
-          {filteredBaseComments.length === 0 ? (
-            <PageCommentsEmptyState hasComments={baseComments.length > 0} />
-          ) : (
-            <PageCommentsThreadList
-              comments={filteredBaseComments}
-              page={page}
-              selectedThreadId={selectedThreadId}
-              onSetItemRef={setItemRef}
-            />
-          )}
-        </div>
+        {/* Comments List or Empty State */}
+        {filteredBaseComments.length === 0 ? (
+          <PageCommentsEmptyState hasComments={baseComments.length > 0} />
+        ) : (
+          <PageCommentsThreadList
+            comments={filteredBaseComments}
+            page={page}
+            selectedThreadId={selectedThreadId}
+            onSetItemRef={setItemRef}
+          />
+        )}
       </div>
     </div>
   );

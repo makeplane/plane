@@ -1,4 +1,4 @@
-export type TPageNavigationPaneTab = "outline" | "info" | "assets";
+export type TPageNavigationPaneTab = "outline" | "info" | "assets" | "comments";
 
 export const PAGE_NAVIGATION_PANE_TABS_LIST: Record<
   TPageNavigationPaneTab,
@@ -18,6 +18,10 @@ export const PAGE_NAVIGATION_PANE_TABS_LIST: Record<
   assets: {
     key: "assets",
     i18n_label: "page_navigation_pane.tabs.assets.label",
+  },
+  comments: {
+    key: "comments",
+    i18n_label: "page_navigation_pane.tabs.comments.label",
   },
 };
 

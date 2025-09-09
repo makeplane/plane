@@ -88,12 +88,11 @@ export const useNewComment = ({ page, onCreateCommentMark }: UseNewCommentProps)
       if (currentSelection) {
         handleCommentMarkCreation(currentSelection, newComment.id);
       }
-
-      resetCommentState(pendingComment, onPendingCommentCancel);
     } catch (error) {
       console.error("Failed to create comment:", error);
     } finally {
       setIsSubmittingComment(false);
+      resetCommentState(pendingComment, onPendingCommentCancel);
     }
   };
 

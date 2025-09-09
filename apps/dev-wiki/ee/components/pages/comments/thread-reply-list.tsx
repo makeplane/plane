@@ -4,6 +4,7 @@ import useSWR from "swr";
 
 import { TPageInstance } from "@/store/pages/base-page";
 import { PageCommentDisplay } from "./comment-display";
+import { PageCommentReplyLoadingSkeleton } from "./reply-loading-skeleton";
 
 type ThreadRepliesProps = {
   threadId: string;
@@ -12,12 +13,14 @@ type ThreadRepliesProps = {
 };
 
 export const PageCommentThreadReplyList: React.FC<ThreadRepliesProps> = observer(({ threadId, showReplies, page }) => {
-  // Fetch thread comments when showReplies is true
+  const { fetchThreadComments, getCommentsByParentId, getLatestReplyByParentId } = page.comments;
+
+  // Only fetch thread comments when showReplies is true (user clicked to expand)
   const { isLoading } = useSWR(
     showReplies && threadId ? `THREAD-COMMENTS-${threadId}` : null,
     async () => {
       if (!threadId) return [];
-      page.comments.fetchThreadComments(threadId);
+      await fetchThreadComments(threadId);
     },
     {
       revalidateOnFocus: true,
@@ -26,27 +29,25 @@ export const PageCommentThreadReplyList: React.FC<ThreadRepliesProps> = observer
     }
   );
 
-  if (!showReplies) return null;
+  const replies = getCommentsByParentId(threadId);
+  const latestReply = getLatestReplyByParentId(threadId);
+  const parentComment = page.comments.getCommentById(threadId);
 
-  const replies = page.comments.getCommentsByParentId(threadId);
-  console.log(replies);
+  const repliesToShow = showReplies ? replies : latestReply ? [latestReply] : [];
 
   return (
     <div className="overflow-hidden animate-expand">
-      {isLoading && replies.length === 0 ? (
-        <div className="flex items-center justify-center py-3">
-          <div className="text-xs text-custom-text-300">Loading replies...</div>
-        </div>
-      ) : (
-        replies.map((reply) => (
-          <div key={reply.id} className="relative w-full">
+      {isLoading && <PageCommentReplyLoadingSkeleton commentReplyCount={(parentComment?.total_replies || 1) - 1} />}
+      {repliesToShow.map((reply, index) => (
+        <div key={reply.id} className="relative w-full">
+          {(index > 0 || parentComment?.total_replies === 1) && (
             <div className="size-6 relative flex items-center justify-center">
               <div aria-hidden className="pointer-events-none h-5 w-0.5 bg-custom-border-300" />
             </div>
-            <PageCommentDisplay page={page} comment={reply} isParent={false} />
-          </div>
-        ))
-      )}
+          )}
+          <PageCommentDisplay page={page} comment={reply} isParent={false} />
+        </div>
+      ))}
     </div>
   );
 });

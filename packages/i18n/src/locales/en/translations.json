@@ -2419,6 +2419,13 @@
           "title": "Missing images",
           "description": "Add images to see them here."
         }
+      },
+      "comments": {
+        "label": "Comments",
+        "empty_state": {
+          "title": "No comments",
+          "description": "Add comments to see them here."
+        }
       }
     },
     "open_button": "Open navigation pane",

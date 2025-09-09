@@ -46,7 +46,7 @@ export const PageCommentUserInfo = observer(({ userId, size = "sm", className = 
         </div>
       </div>
       <div className="flex flex-col justify-center items-start gap-px flex-1">
-        <div className="text-custom-text-100 text-xs font-medium">{memberDetails?.member.display_name}</div>
+        <div className="text-custom-text-100 text-xs font-medium truncate">{memberDetails?.member.display_name}</div>
         {timestamp && <PageCommentTimestampDisplay timestamp={timestamp} />}
       </div>
     </div>

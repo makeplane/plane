@@ -1,5 +1,6 @@
 @import "@plane/propel/styles/fonts";
 @import "@plane/editor/styles";
+@import "./animations.css";
 
 @tailwind base;
 @tailwind components;

@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, CircleCheck, Edit, MoreHorizontal, RotateCcw, Trash2 } from "lucide-react";
+import { CircleCheck, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import type { JSONContent } from "@plane/types";
-import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
@@ -49,12 +49,6 @@ export const PageCommentDisplay = observer(
           },
         });
 
-        // Success - show toast and exit editing mode
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Comment updated successfully.",
-        });
         setIsEditing(false);
       },
       [comment.id, page.comments]
@@ -121,28 +115,19 @@ export const PageCommentDisplay = observer(
         {
           key: "edit",
           action: () => setIsEditing(true),
-          title: "Edit comment",
-          icon: Edit,
+          title: "Edit",
+          icon: Pencil,
           shouldRender: !isEditing,
-        },
-        {
-          key: "resolve",
-          action: () => handleResolve({ stopPropagation: () => {} } as React.MouseEvent),
-          title: comment.is_resolved ? "Unresolve comment" : "Resolve comment",
-          icon: comment.is_resolved ? RotateCcw : Check,
-          shouldRender: showResolveButton,
-          className: comment.is_resolved ? "" : "text-green-600",
         },
         {
           key: "delete",
           action: () => setDeleteCommentModal(true),
-          title: "Delete comment",
+          title: "Delete",
           icon: Trash2,
           shouldRender: true,
-          className: "text-red-500",
         },
       ],
-      [comment.is_resolved, handleResolve, isEditing, showResolveButton]
+      [isEditing]
     );
 
     return (
@@ -151,59 +136,57 @@ export const PageCommentDisplay = observer(
         <div className="flex items-center gap-1 pr-1 relative w-full">
           <PageCommentUserInfo userId={comment.created_by} size="sm" timestamp={comment.created_at} />
 
-          {/* Action Buttons */}
-          <div className="absolute right-1 top-0 flex items-center gap-1 p-1 bg-custom-background-100 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {showResolveButton &&
-              (comment.is_resolved ? (
-                <button
+          {/* Action Buttons - Always Visible */}
+          <div className="absolute right-0 top-0 flex items-center gap-1">
+            {showResolveButton && (
+              <Tooltip
+                tooltipContent={comment.is_resolved ? "Mark as unresolved" : "Mark as resolved"}
+                position="bottom"
+                className="text-xs"
+              >
+                <div
                   onClick={handleResolve}
-                  className="p-1 rounded transition-all duration-200 ease active:scale-95"
-                  aria-label="Unresolve comment"
+                  className="size-5 flex items-center justify-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors cursor-pointer"
                 >
-                  <CircleCheck className="size-4 text-green-600" />
-                </button>
-              ) : (
-                <button
-                  onClick={handleResolve}
-                  className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95"
-                  aria-label="Resolve comment"
-                >
-                  <CircleCheck className="size-4 text-custom-text-300 transition-colors duration-200 ease" />
-                </button>
-              ))}
+                  <CircleCheck
+                    className={cn(
+                      "size-4 p-[1.5px]",
+                      comment.is_resolved
+                        ? "size-5 fill-custom-text-300 text-custom-background-100 hover:text-custom-background-90"
+                        : "text-custom-text-300"
+                    )}
+                  />
+                </div>
+              </Tooltip>
+            )}
 
-            <CustomMenu
-              customButton={
-                <button
-                  className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95"
-                  aria-label="More options"
-                >
-                  <MoreHorizontal className="w-3.5 h-3.5 text-custom-text-300 transition-colors duration-200 ease" />
-                </button>
-              }
-              placement="bottom-end"
-              closeOnSelect
-              portalElement={document.body}
-              optionsClassName="z-[60]"
-            >
-              {menuItems.map((item) => {
-                if (item.shouldRender === false) return null;
-                return (
-                  <CustomMenu.MenuItem
-                    key={item.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      item.action?.();
-                    }}
-                    className={cn(`flex items-center gap-2`, item.className)}
-                  >
-                    {item.icon && <item.icon className="size-3.5" />}
-                    {item.title}
-                  </CustomMenu.MenuItem>
-                );
-              })}
-            </CustomMenu>
+            <div className="size-5 flex items-center justify-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors">
+              <CustomMenu
+                placement="bottom-end"
+                closeOnSelect
+                ellipsis
+                portalElement={document.body}
+                optionsClassName="z-[60]"
+              >
+                {menuItems.map((item) => {
+                  if (item.shouldRender === false) return null;
+                  return (
+                    <CustomMenu.MenuItem
+                      key={item.key}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        item.action?.();
+                      }}
+                      className={cn(`flex items-center gap-2`, item.className)}
+                    >
+                      {item.icon && <item.icon className="size-3" />}
+                      {item.title}
+                    </CustomMenu.MenuItem>
+                  );
+                })}
+              </CustomMenu>
+            </div>
           </div>
         </div>
 

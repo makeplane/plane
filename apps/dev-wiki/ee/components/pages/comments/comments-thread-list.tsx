@@ -12,18 +12,26 @@ export type CommentsListProps = {
 };
 
 export const PageCommentsThreadList = observer(
-  ({ comments, page, selectedThreadId, onSetItemRef }: CommentsListProps) => (
-    <div className="space-y-3 py-3 animate-stagger-comments">
-      {comments.map((comment) => (
-        <PageThreadCommentItem
-          key={comment.id}
-          ref={onSetItemRef(comment.id)}
-          comment={comment}
-          page={page}
-          isSelected={selectedThreadId === comment.id}
-          referenceText={comment.reference_stripped}
-        />
-      ))}
-    </div>
-  )
+  ({ comments, page, selectedThreadId, onSetItemRef }: CommentsListProps) => {
+    const commentsFilters = page.comments.commentsFilters;
+    const isFiltering =
+      commentsFilters && (!commentsFilters.showAll || !commentsFilters.showActive || !commentsFilters.showResolved);
+
+    return (
+      <div
+        className={`divide-y divide-custom-border-300 ${isFiltering ? "animate-smooth-comments" : "animate-stagger-comments"}`}
+      >
+        {comments.map((comment) => (
+          <PageThreadCommentItem
+            key={comment.id}
+            ref={onSetItemRef(comment.id)}
+            comment={comment}
+            page={page}
+            isSelected={selectedThreadId === comment.id}
+            referenceText={comment.reference_stripped}
+          />
+        ))}
+      </div>
+    );
+  }
 );

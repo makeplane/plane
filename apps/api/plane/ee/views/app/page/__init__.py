@@ -11,16 +11,16 @@ from .workspace.base import (
     WorkspacePageRestoreEndpoint,
 )
 from .workspace.share import WorkspacePageUserViewSet
+from .workspace.comment import (
+    WorkspacePageCommentViewSet,
+    WorkspacePageCommentReactionViewSet,
+)
 
 # project level
 from .project.move import MovePageEndpoint
 from .project.share import ProjectPageUserViewSet
 from .project.publish import ProjectPagePublishEndpoint
-
-
-from .comment import (
-    WorkspacePageCommentViewSet,
-    WorkspacePageCommentReactionViewSet,
+from .project.comment import (
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
 )

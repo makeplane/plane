@@ -44,11 +44,6 @@ export const CommentList = observer((props: TProps) => {
             description: newComment,
           });
           setNewComment("");
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Comment created successfully.",
-          });
           return comment;
         } catch (error) {
           setToast({
@@ -62,11 +57,6 @@ export const CommentList = observer((props: TProps) => {
         try {
           if (!workspaceSlug || !projectId || data === undefined) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, commentId, data);
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Comment updated successfully.",
-          });
         } catch (error) {
           setToast({
             title: "Error!",

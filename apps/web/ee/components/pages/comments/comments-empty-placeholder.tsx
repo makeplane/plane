@@ -12,7 +12,7 @@ export function PageCommentsEmptyState({ hasComments }: CommentsEmptyStateProps)
     : "Select text in the editor and add a comment to get started.";
 
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-3">
+    <div className="h-full flex flex-col items-center justify-center space-y-3 animate-fade-in-up">
       <MessageCircle className="size-8 text-custom-text-300" />
       <div className="text-center">
         <h4 className="text-sm font-medium text-custom-text-200">{title}</h4>

@@ -6,6 +6,7 @@ import {
 
 // EE-specific navigation pane extension data types
 export type TCommentsNavigationExtensionData = TCommentConfig & {
+  selectedCommentId?: string;
   pendingComment?: {
     selection: { from: number; to: number };
     referenceText?: string;

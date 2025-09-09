@@ -4,14 +4,14 @@ import { observer } from "mobx-react";
 // components
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // plane web components
+import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
+// plane web components
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
-// plane web components
-import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
 // local imports
 import { PageArchivedBadge } from "./archived-badge";
 import { PageCopyLinkControl } from "./copy-link-control";

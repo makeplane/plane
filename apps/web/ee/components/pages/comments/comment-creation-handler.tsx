@@ -108,8 +108,6 @@ export const PageCommentCreationHandler = observer(
           asset_ids: data.uploadedAssetIds,
         });
       }
-
-      onPendingCommentCancel?.();
     };
 
     if (!showCommentBox || !page.canCurrentUserCommentOnPage) {
@@ -117,27 +115,38 @@ export const PageCommentCreationHandler = observer(
     }
 
     return (
-      <div ref={newCommentBoxRef} className="overflow-hidden my-4 animate-expand-down space-y-3 group">
-        {/* Reference Text Quote */}
+      <div ref={newCommentBoxRef} className="overflow-hidden my-4 animate-expand-down space-y-3 group px-[4px]">
+        {/* Reference Text Quote with Overlay Cancel Button */}
         {referenceText && (
-          <div className="flex gap-1 p-1 rounded bg-custom-background-90">
+          <div className="relative flex gap-1 p-[4px] rounded bg-custom-background-90">
             <div className="w-0.5 self-stretch rounded-sm bg-[#FFBF66]" />
-            <p className="flex-1 text-xs text-custom-text-300 leading-4">{referenceText}</p>
+            <p className="flex-1 text-sm text-custom-text-300 leading-4 pr-6">{referenceText}</p>
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={isSubmittingComment}
+              className="absolute top-0.75 right-1 p-1 rounded transition-all duration-200 ease hover:bg-custom-background-80 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed z-10"
+              aria-label="Cancel new comment"
+            >
+              <X className="size-3 text-custom-text-300" />
+            </button>
           </div>
         )}
 
-        {/* Cancel Button */}
-        <div className="flex items-center justify-end pr-1 -mt-1">
-          <button
-            type="button"
-            onClick={handleCancel}
-            disabled={isSubmittingComment}
-            className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-            aria-label="Cancel new comment"
-          >
-            <X className="size-3.5 text-custom-text-300" />
-          </button>
-        </div>
+        {/* Cancel Button for when there's no reference text */}
+        {!referenceText && (
+          <div className="flex items-center justify-end pr-1 -mt-1">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={isSubmittingComment}
+              className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+              aria-label="Cancel new comment"
+            >
+              <X className="size-3.5 text-custom-text-300" />
+            </button>
+          </div>
+        )}
 
         <PageCommentForm
           workspaceSlug={workspaceSlug}

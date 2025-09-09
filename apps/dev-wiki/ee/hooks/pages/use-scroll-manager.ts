@@ -34,7 +34,7 @@ export const useScrollManager = <T = string>(containerRef: React.RefObject<HTMLE
         targetElement.classList.add("bg-custom-background-90", "transition-all", "duration-300");
         setTimeout(() => {
           targetElement.classList.remove("bg-custom-background-90", "transition-all", "duration-300");
-        }, 2000);
+        }, 5000);
       }
 
       setTimeout(() => {

@@ -47,11 +47,6 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "comments" },
       });
       router.push(updatedRoute);
-      // scroll to comment
-      const threadElement = document.querySelector(`[data-thread-id="${commentId}"]`);
-      if (threadElement) {
-        threadElement.scrollIntoView({ behavior: "smooth" });
-      }
     },
     [router, updateQueryParams]
   );
@@ -140,6 +135,7 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
       component: PageCommentsNavigationExtension,
       width: 361,
       data: {
+        selectedCommentId,
         pendingComment,
         onPendingCommentCancel,
         onClick: onCommentClick,

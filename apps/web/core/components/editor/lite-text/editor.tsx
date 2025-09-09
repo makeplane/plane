@@ -35,6 +35,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
   showToolbar?: boolean;
   issue_id?: string;
   parentClassName?: string;
+  editorClassName?: string;
 } & (
     | {
         editable: false;
@@ -64,6 +65,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
+    editorClassName = "",
     ...rest
   } = props;
   // states
@@ -135,6 +137,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         extendedEditorProps={{
           isSmoothCursorEnabled: is_smooth_cursor_enabled,
         }}
+        editorClassName={editorClassName}
         {...rest}
       />
       {showToolbar && editable && (

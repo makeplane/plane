@@ -1,15 +1,14 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { MessageCircle } from "lucide-react";
-// plane imports
-import { Tooltip } from "@plane/ui";
-import { cn } from "@plane/utils";
-// hooks
-import { useQueryParams } from "@/hooks/use-query-params";
+import { Tooltip } from "@plane/propel/tooltip";
+import { cn } from "@plane/ui";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+// hooks
+import { usePaneTabToggle } from "@/plane-web/hooks/use-pane-tab-toggle";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -19,48 +18,25 @@ type TPageCommentControlProps = {
 };
 
 export const PageCommentControl: React.FC<TPageCommentControlProps> = observer((props) => {
-  const { page: _page, storeType } = props;
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { updateQueryParams } = useQueryParams();
+  const { storeType } = props;
   const { workspaceSlug } = useParams();
   const { isCommentsEnabled: canShowComments } = usePageStore(storeType);
-
-  const isCommentsOpen = searchParams.get("paneTab") === "comments";
+  const { isActive, toggle } = usePaneTabToggle("comments");
 
   if (!canShowComments(workspaceSlug.toString())) return null;
 
-  const handleCommentsClick = () => {
-    let newRoute: string;
-    if (isCommentsOpen) {
-      // If comments are open, remove the paneTab parameter to close
-      newRoute = updateQueryParams({
-        paramsToRemove: ["paneTab"],
-      });
-    } else {
-      // If comments are closed, set paneTab to comments to open
-      newRoute = updateQueryParams({
-        paramsToAdd: { paneTab: "comments" },
-      });
-    }
-
-    router.push(newRoute);
-  };
-
   return (
-    <Tooltip tooltipContent={isCommentsOpen ? "Close comments" : "Open comments"} position="bottom">
+    <Tooltip tooltipContent={isActive ? "Close comments" : "Open comments"} position="bottom">
       <button
         type="button"
-        onClick={handleCommentsClick}
+        onClick={toggle}
         className={cn(
-          "flex-shrink-0 size-6 grid place-items-center rounded transition-colors duration-200 ease",
-          isCommentsOpen
-            ? "text-custom-text-100 bg-custom-background-80"
-            : "text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
+          "flex items-center justify-center h-6 w-6 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors duration-200",
+          { "bg-custom-background-80 text-custom-text-100": isActive }
         )}
-        aria-label={isCommentsOpen ? "Close comments" : "Open comments"}
+        aria-label={isActive ? "Close comments" : "Open comments"}
       >
-        <MessageCircle className="size-3.5" />
+        <MessageCircle className="h-3.5 w-3.5" />
       </button>
     </Tooltip>
   );

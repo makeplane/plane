@@ -20,8 +20,7 @@ export const PageCommentThreadLoader = () => (
         <Loader className="space-y-4">
           {/* Comment Thread 1 */}
           <div className="space-y-3 p-1.5 border-b border-custom-border-200">
-            {/* Reference text quote skeleton */}
-            <div className="flex gap-1 p-1 rounded bg-custom-background-90">
+            <div className="flex gap-1 p-[4px] rounded bg-custom-background-90">
               <Loader.Item width="2px" height="16px" />
               <Loader.Item width="85%" height="12px" />
             </div>

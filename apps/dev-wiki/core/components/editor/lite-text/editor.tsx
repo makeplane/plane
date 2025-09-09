@@ -1,26 +1,27 @@
 import React, { useState } from "react";
-// plane imports
+// plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
+// plane imports
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
+// components
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
+import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-// store hooks
-import { useMember, useUserProfile } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+// import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-import { EditorMentionsRoot } from "../embeds";
-// components
-import { IssueCommentToolbar } from "./toolbar";
 const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
-  "disabledExtensions" | "flaggedExtensions" | "isSmoothCursorEnabled"
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -34,7 +35,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
   showToolbar?: boolean;
   issue_id?: string;
   parentClassName?: string;
-  autofocus?: boolean;
+  editorClassName?: string;
 } & (
     | {
         editable: false;
@@ -64,13 +65,15 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
-    autofocus = false,
+    editorClassName = "",
     ...rest
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // store hooks
   const { getUserDetails } = useMember();
   // use editor mention
@@ -82,9 +85,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         issue_id,
       }),
   });
-  const {
-    data: { is_smooth_cursor_enabled },
-  } = useUserProfile();
+  // const {
+  //   data: { is_smooth_cursor_enabled },
+  // } = useUserProfile();
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -93,7 +96,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn(
@@ -117,8 +119,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
           workspaceSlug,
         })}
-        autofocus={autofocus}
-        isSmoothCursorEnabled={is_smooth_cursor_enabled}
         mentionHandler={{
           searchCallback: async (query) => {
             const res = await fetchMentions(query);
@@ -134,6 +134,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative", {
           "p-2": !editable,
         })}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: false,
+        }}
+        editorClassName={editorClassName}
         {...rest}
       />
       {showToolbar && editable && (

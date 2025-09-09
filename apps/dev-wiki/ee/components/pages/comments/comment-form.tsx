@@ -168,13 +168,6 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
       setOriginalContent(currentContent);
 
       // Only show success toast for new comments - existing comments are handled by parent
-      if (!comment) {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Comment created successfully.",
-        });
-      }
     } catch (error) {
       console.error("Failed to submit comment:", error);
 
@@ -241,6 +234,7 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onFormSubmit)(e);
         }}
+        className={cn(isReply || !comment ? "border border-custom-border-200 rounded p-2" : "")}
       >
         <Controller
           name="description"
@@ -277,6 +271,7 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
               showToolbarInitially
               placeholder={placeholder}
               parentClassName="!border-none !p-0"
+              // editorClassName="!text-base"
               displayConfig={{ fontSize: "small-font" }}
             />
           )}
@@ -292,24 +287,24 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
               onClick={handleSubmit(onFormSubmit)}
               disabled={isDisabled}
               className={cn(
-                `group rounded border border-green-500 bg-green-500/20 p-1.5 shadow-sm duration-300`,
-                isDisabled ? "cursor-not-allowed opacity-50" : "hover:bg-green-500"
+                "group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300",
+                isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
               )}
             >
               <Check
                 className={cn(
-                  `h-2.5 w-2.5 text-green-500 duration-300`,
-                  isDisabled ? "text-green-400" : "group-hover:text-white"
+                  "size-2.5 text-green-500 duration-300",
+                  isEmpty ? "text-black" : "group-hover:text-white"
                 )}
               />
             </button>
           )}
           <button
             type="button"
-            className="group rounded border border-red-500 bg-red-500/20 p-1.5 shadow-sm duration-300 hover:bg-red-500"
+            className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
             onClick={handleCancel}
           >
-            <X className="h-2.5 w-2.5 text-red-500 duration-300 group-hover:text-white" />
+            <X className="size-3 text-red-500 duration-300 group-hover:text-white" />
           </button>
         </div>
       )}

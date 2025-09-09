@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { JSONContent } from "@plane/types";
+import { type JSONContent } from "@plane/types";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type NewCommentSelection = {
@@ -28,12 +28,15 @@ export const useNewComment = ({ page, onCreateCommentMark }: UseNewCommentProps)
       : newCommentSelection;
 
   const createNewComment = async (
-    data: { comment_html: string; comment_json: JSONContent },
+    data: { description: { description_html: string; description_json: JSONContent } },
     selection: NewCommentSelection | null
   ) =>
     await page.comments.createComment({
-      comment_html: data.comment_html,
-      comment_json: data.comment_json,
+      description: {
+        description_html: data.description.description_html,
+        description_json: data.description.description_json,
+        description_stripped: selection?.referenceText || undefined,
+      },
       reference_stripped: selection?.referenceText || undefined,
     });
 
@@ -66,7 +69,7 @@ export const useNewComment = ({ page, onCreateCommentMark }: UseNewCommentProps)
   };
 
   const handleAddComment = async (params: {
-    data: { comment_html: string; comment_json: JSONContent };
+    data: { description: { description_html: string; description_json: JSONContent } };
     pendingComment?: {
       selection: { from: number; to: number };
       referenceText?: string;
@@ -85,12 +88,11 @@ export const useNewComment = ({ page, onCreateCommentMark }: UseNewCommentProps)
       if (currentSelection) {
         handleCommentMarkCreation(currentSelection, newComment.id);
       }
-
-      resetCommentState(pendingComment, onPendingCommentCancel);
     } catch (error) {
       console.error("Failed to create comment:", error);
     } finally {
       setIsSubmittingComment(false);
+      resetCommentState(pendingComment, onPendingCommentCancel);
     }
   };
 
