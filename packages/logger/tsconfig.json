@@ -1,9 +1,9 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "NodeNext",
     "target": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -11,8 +11,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "experimentalDecorators": true,
-    "sourceMap": true
+    "experimentalDecorators": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

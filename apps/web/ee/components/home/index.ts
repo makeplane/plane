@@ -1,1 +1,1 @@
-export * from "ce/components/home";
+export * from "./peek-overviews";

@@ -19,15 +19,16 @@ import { PageOrderByDropdown } from "../list/order-by";
 import { PageSearchInput } from "../list/search-input";
 import { PageTabNavigation } from "../list/tab-navigation";
 
+const storeType = EPageStoreType.PROJECT;
+
 type Props = {
   pageType: TPageNavigationTabs;
   projectId: string;
-  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
-export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
-  const { pageType, projectId, storeType, workspaceSlug } = props;
+export const ProjectPagesListHeaderRoot: React.FC<Props> = observer((props) => {
+  const { pageType, projectId, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks
   const { filters, updateFilters, clearAllFilters } = usePageStore(storeType);
