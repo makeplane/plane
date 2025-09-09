@@ -1,9 +1,6 @@
 # Python imports
 import uuid
 
-# Django imports
-from django.utils import timezone
-
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,6 +12,7 @@ from plane.ee.models import WorkitemTemplate
 from plane.ee.bgtasks.template_task import create_subworkitems
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.db.models import Issue
 
 
 class SubWorkitemTemplateEndpoint(BaseAPIView):
@@ -32,6 +30,18 @@ class SubWorkitemTemplateEndpoint(BaseAPIView):
             return Response(
                 {"error": "Template ID is required"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the workitem is present or not
+
+        if not Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            id=workitem_id,
+        ).exists():
+            return Response(
+                {"error": "Workitem not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         # Get the workitem template
