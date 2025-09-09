@@ -41,8 +41,8 @@
       }
     </style>
   </head>
-  <body bgcolor="#ffffff" text="#3b3f44" link="#006399" yahoo="fix" style="background-color: #f7f9ff; margin: 20px">
-    <div style="width: 600px; table-layout: fixed; height: 100%; margin-left: auto; margin-right: auto">
+  <body bgcolor="#F4F5F5" text="#3b3f44" link="#006399" yahoo="fix" style="background-color: #F4F5F5; margin: 20px">
+    <div style="width: 600px; table-layout: fixed; height: 100%; margin-left: auto; margin-right: auto; background-color: #FFFFFF;padding: 40px">
       <!-- Header -->
       <div>
         <table style="width: 600px" cellspacing="0">
@@ -56,17 +56,14 @@
         </table>
       </div>
       <!-- Body -->
-      <div style="color: #1f2d5c; padding: 30px; border-radius: 4px; background-color: #fcfcfd; max-width: 100%">
+      <div style="color: #1f2d5c; padding: 30px; border-radius: 4px; background-color: #F4F5F5; max-width: 100%">
         <div>
           <table style="width: 100%">
             <tr>
               <td>
-                <p style="font-size: 1.2rem; color: #1f2d5c; font-weight: 600; margin-bottom: 10px">
-                  Page Shared with You
-                </p>
                 <p style="font-size: 1rem; font-weight: 500; color: #1f2d5c; line-height: 28px">
-                  <span style="font-weight: 700">{{shared_by_name}}</span> shared a page with you in the
-                  <span style="font-weight: 600">{{ workspace }}</span> workspace.
+                  <span style="font-weight: 700">{{shared_by_name}}</span> has shared a page with you to {{page_access}} in the
+                  <span style="font-weight: 600">{{workspace}}</span> workspace.
                 </p>
               </td>
             </tr>
@@ -83,67 +80,17 @@
               margin-bottom: 20px;
             "
           >
-            <h3 style="font-size: 1.1rem; color: #1f2d5c; font-weight: 600; margin: 0 0 15px 0">{{page_name}}</h3>
-            <div style="margin-bottom: 8px">
-              <span style="font-size: 0.8rem; color: #80838d; margin-right: 8px">Permission:</span>
-              <span style="font-size: 0.8rem; color: #1f2d5c; font-weight: 500">{{page_access}}</span>
-            </div>
-            <div>
-              <span style="font-size: 0.8rem; color: #80838d; margin-right: 8px">Workspace:</span>
-              <a href="{{ workspace_url }}" style="color: #3a5bc7; text-decoration: none">
-                <span style="font-size: 0.8rem; color: #1f2d5c; font-weight: 500">{{workspace}}</span>
-              </a>
-            </div>
+            <h3 style="font-size: 1.1rem; color: #1f2d5c; font-weight: 600; margin: 0 0 10px 0">{{page_name}}</h3>
           </div>
 
-          <!-- Sharing Information -->
-          <div
-            style="
-              background-color: #f0f9ff;
-              border-radius: 8px;
-              border: 1px solid #bae6fd;
-              padding: 20px;
-              margin-bottom: 20px;
-            "
-          >
-            <div style="margin-bottom: 15px">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  background-color: #3e63dd;
-                  border-radius: 50%;
-                  text-align: center;
-                  line-height: 40px;
-                  vertical-align: middle;
-                  float: left;
-                  margin-right: 12px;
-                "
-              >
-                <span style="color: white; font-weight: 600; font-size: 16px; vertical-align: middle"
-                  >{{shared_by_name|first}}</span
-                >
-              </div>
-              <div style="margin-left: 52px">
-                <p style="font-size: 0.9rem; color: #1f2d5c; font-weight: 600; margin: 0 0 4px 0">{{shared_by_name}}</p>
-                <p style="font-size: 0.8rem; color: #80838d; margin: 0">Shared this page with you</p>
-              </div>
-              <div style="clear: both"></div>
-            </div>
-            <p style="font-size: 0.9rem; color: #525252; line-height: 24px; margin: 0">
-              You now have access to view and collaborate on this page. Click the button below to open the page in
-              Plane.
-            </p>
-          </div>
-        </div>
         <a href="{{ page_url }}" style="text-decoration: none">
           <div
             style="
               max-width: min-content;
               white-space: nowrap;
-              background-color: #3e63dd;
+              background-color: #005C8F;
               padding: 10px 15px;
-              border: 1px solid #2f4ba8;
+              border: 1px solid #005C8F;
               border-radius: 4px;
               margin-top: 15px;
               cursor: pointer;
@@ -161,27 +108,28 @@
           <td>
             <div style="font-size: 0.8rem; color: #1c2024">
               This email was sent to
-              <a href="mailto:{{shared_to.email}}" style="color: #3a5bc7; font-weight: 500; text-decoration: none"
+              <a href="mailto:{{shared_to.email}}" style="color: #005C8F; font-weight: 500; text-decoration: none"
                 >{{ shared_to.email }}.</a
               >
               If you'd rather not receive this kind of email,
-              <a href="{{ page_url }}" style="color: #3a5bc7; text-decoration: none"
+              <a href="{{ page_url }}" style="color: #005C8F; text-decoration: none"
                 >you can manage your page notifications</a
               >
               or
-              <a href="{{ email_preference_url }}" style="color: #3a5bc7; text-decoration: none"
+              <a
+                href="https://app.plane.so/{{workspace}}/settings/account/notifications/"
+                style="color: #005C8F; text-decoration: none"
                 >manage your email preferences</a
               >.
               <!-- Github | LinkedIn | Twitter -->
-              <div style="margin-top: 60px; float: right">
+              <div style="margin-top: 40px; float: right">
                 <a href="https://github.com/makeplane" target="_blank" style="margin-left: 10px; text-decoration: none">
                   <img
-                    src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-                    alt="GitHub"
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/github_32px.png"
                     width="25"
                     height="25"
                     border="0"
-                    style="display: inline-block; border-radius: 4px"
+                    style="display: inline-block"
                   />
                 </a>
                 <a
@@ -190,12 +138,11 @@
                   style="margin-left: 10px; text-decoration: none"
                 >
                   <img
-                    src="https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg"
-                    alt="LinkedIn"
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/linkedin_32px.png"
                     width="25"
                     height="25"
                     border="0"
-                    style="display: inline-block; border-radius: 4px"
+                    style="display: inline-block"
                   />
                 </a>
                 <a
@@ -204,12 +151,11 @@
                   style="margin-left: 10px; text-decoration: none"
                 >
                   <img
-                    src="https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc7275.png"
-                    alt="Twitter"
+                    src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/twitter_32px.png"
                     width="25"
                     height="25"
                     border="0"
-                    style="display: inline-block; border-radius: 4px"
+                    style="display: inline-block"
                   />
                 </a>
               </div>
