@@ -1,7 +1,14 @@
+# Python imports
 import json
 
+# Django imports
 from django.utils import timezone
 
+# Third party imports
+from rest_framework import status
+from rest_framework.response import Response
+
+# Module imports
 from plane.db.models import Page
 from plane.ee.models import PageUser
 from plane.ee.views.base import BaseViewSet
@@ -10,9 +17,7 @@ from plane.app.serializers import PageUserSerializer
 from plane.ee.permissions.page import WorkspacePagePermission
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.page_update import PageAction, nested_page_update
-
-from rest_framework import status
-from rest_framework.response import Response
+from plane.bgtasks.extended.share_page_notification import share_page_notification
 
 
 class WorkspacePageUserViewSet(BaseViewSet):
@@ -120,7 +125,13 @@ class WorkspacePageUserViewSet(BaseViewSet):
                 user_id=user_id,
                 extra=json.dumps({"user_ids": list(deleted_user_ids)}),
             )
-
+        if new_user_ids:
+            share_page_notification.delay(
+                page_id=page_id,
+                user_id=user_id,
+                newly_shared_user_ids=list(new_user_ids),
+                slug=slug,
+            )
         return Response(status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
