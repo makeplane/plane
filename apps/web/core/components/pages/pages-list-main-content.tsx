@@ -34,8 +34,8 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { currentProjectDetails, loader } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
+  const { currentProjectDetails } = useProject();
+  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters, loader } =
     usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);
