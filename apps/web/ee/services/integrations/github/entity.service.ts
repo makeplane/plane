@@ -19,10 +19,13 @@ export class GithubEntityService {
    */
   fetchEntityConnections = async (
     workspaceId: string,
-    workspaceConnectionId: string
+    workspaceConnectionId: string,
+    entityType?: string
   ): Promise<TGithubEntityConnection[] | undefined> =>
     await this.axiosInstance
-      .get(`/api/entity-connections/${workspaceId}/${workspaceConnectionId}`)
+      .get(`/api/entity-connections/${workspaceId}/${workspaceConnectionId}`, {
+        params: { entityType },
+      })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

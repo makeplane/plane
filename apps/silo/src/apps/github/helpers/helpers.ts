@@ -30,11 +30,15 @@ export const getConnectionDetails = async (props: {
   }
 
   // Get the entity connection for the given repository
-  const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+  let entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: props.credentials.workspace_id!,
     entity_type: props.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
     entity_id: props.repositoryId.toString(),
   });
+
+  if (entityConnections.length > 0) {
+    entityConnections = entityConnections.filter((entityConnection) => entityConnection?.type === null);
+  }
 
   // Parse the config for the workspace connection
   const verifiedWorkspaceConnection = verifyWorkspaceConnection(

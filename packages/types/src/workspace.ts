@@ -288,7 +288,7 @@ export type TWorkspaceUserConnection = TWorkspaceConnection & {
 
 export type TWorkspaceEntityConnection<TConnectionConfig = object> = {
   id: string;
-  type: string;
+  type: string | null;
   workspace_connection_id: string;
   workspace_id: string;
   workspace_slug: string;

@@ -15,11 +15,15 @@ export const getConnectionDetailsForPlane = async (
   project: string,
   isEnterprise: boolean
 ): Promise<PlaneConnectionDetails> => {
-  const entityConnectionArray = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+  let entityConnectionArray = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: workspace,
     entity_type: isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
     project_id: project,
   });
+
+  if (entityConnectionArray.length > 0) {
+    entityConnectionArray = entityConnectionArray.filter((entityConnection) => entityConnection?.type === null);
+  }
 
   if (!entityConnectionArray || entityConnectionArray.length === 0) {
     throw new Error("Entity connection not found");

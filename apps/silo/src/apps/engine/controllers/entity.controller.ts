@@ -1,9 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TWorkspaceEntityConnection } from "@plane/types";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
+
+export const ENTITY_TYPE_FOR_DUPLICATE_CHECK = [E_INTEGRATION_KEYS.GITHUB, E_INTEGRATION_KEYS.GITHUB_ENTERPRISE];
 
 const apiClient = getAPIClient();
 
@@ -15,16 +18,28 @@ export class EntityConnectionController {
     try {
       const { workspaceId, workspaceConnectionId } = req.params;
 
+      const { entityType, types } = req.query;
+
       if (!workspaceId || !workspaceConnectionId) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId, and workspaceConnectionId to be present.",
         });
       }
 
-      const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+      const isEntityTypeForDuplicateCheck = ENTITY_TYPE_FOR_DUPLICATE_CHECK.includes(entityType as E_INTEGRATION_KEYS);
+
+      let entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
         workspace_connection_id: workspaceConnectionId,
         workspace_id: workspaceId,
+        entity_type: entityType as string | undefined,
       });
+
+      if (isEntityTypeForDuplicateCheck) {
+        const connectionTypes = types ? ((types as string)?.split(",") as string[]) : [];
+        entityConnections = entityConnections.filter(
+          (entityConnection) => connectionTypes.includes(entityConnection?.type || "") || !entityConnection?.type
+        );
+      }
 
       return res.status(200).send(entityConnections);
     } catch (error) {

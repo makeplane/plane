@@ -98,7 +98,8 @@ export class GithubEntityStore implements IGithubEntityStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceConnectionId) return;
 
-      const response = await this.service.fetchEntityConnections(workspaceId, workspaceConnectionId);
+      const entityType = this.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
+      const response = await this.service.fetchEntityConnections(workspaceId, workspaceConnectionId, entityType);
 
       if (response) {
         runInAction(() => {
