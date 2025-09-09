@@ -10,8 +10,8 @@ export type InsightCardProps = {
 };
 
 const InsightCard = (props: InsightCardProps) => {
-  const { data, label, isLoading } = props;
-  const { count } = data || {};
+  const { data, label, isLoading = false } = props;
+  const count = data?.count ?? 0;
 
   return (
     <div className="flex flex-col gap-3">
