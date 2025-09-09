@@ -92,7 +92,6 @@ const TotalInsights: React.FC<{
           isLoading={isLoading}
           data={totalInsightsData?.[item.key]}
           label={getInsightLabel(analyticsType, item, isEpic, t)}
-          versus={selectedDurationLabel}
         />
       ))}
     </div>
