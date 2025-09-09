@@ -32,9 +32,9 @@
     "./switch": "./dist/switch/index.js",
     "./table": "./dist/table/index.js",
     "./tabs": "./dist/tabs/index.js",
+    "./toast": "./dist/toast/index.js",
     "./tooltip": "./dist/tooltip/index.js",
-    "./utils": "./dist/utils/index.js",
-    "./toast": "./dist/toast/index.js"
+    "./utils": "./dist/utils/index.js"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
