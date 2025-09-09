@@ -20,6 +20,7 @@
     "./avatar": "./dist/avatar/index.js",
     "./card": "./dist/card/index.js",
     "./charts/*": "./dist/charts/*/index.js",
+    "./collapsible": "./dist/collapsible/index.js",
     "./combobox": "./dist/combobox/index.js",
     "./command": "./dist/command/index.js",
     "./dialog": "./dist/dialog/index.js",
@@ -33,8 +34,7 @@
     "./table": "./dist/table/index.js",
     "./tabs": "./dist/tabs/index.js",
     "./tooltip": "./dist/tooltip/index.js",
-    "./utils": "./dist/utils/index.js",
-    "./collapsible": "./dist/collapsible/index.js"
+    "./utils": "./dist/utils/index.js"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
