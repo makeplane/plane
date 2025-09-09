@@ -86,13 +86,14 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
 
   return (
     <PageRenderer
+      extendedEditorProps={extendedEditorProps}
       bubbleMenuEnabled={bubbleMenuEnabled}
+      disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
-      id={id}
       flaggedExtensions={flaggedExtensions}
-      disabledExtensions={disabledExtensions}
+      id={id}
       isTouchDevice={!!isTouchDevice}
     />
   );

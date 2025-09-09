@@ -1,7 +1,9 @@
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
-// hooks
+// ui
 import { ISearchIssueResponse } from "@plane/types";
+import { Checkbox } from "@plane/ui";
+// hooks
 // plane web hooks
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
@@ -27,7 +29,7 @@ export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props
       }
     >
       <div className="flex items-center gap-2">
-        <input type="checkbox" checked={canDeleteIssueIds} readOnly />
+        <Checkbox checked={canDeleteIssueIds} readOnly />
         <span
           className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
           style={{
