@@ -25,6 +25,8 @@
     "./command": "./dist/command/index.js",
     "./dialog": "./dist/dialog/index.js",
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
+    "./emoji-reaction": "./dist/emoji-reaction/index.js",
+    "./emoji-reaction-picker": "./dist/emoji-reaction-picker/index.js",
     "./icons": "./dist/icons/index.js",
     "./menu": "./dist/menu/index.js",
     "./popover": "./dist/popover/index.js",
