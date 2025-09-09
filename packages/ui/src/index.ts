@@ -3,7 +3,6 @@ export * from "./badge";
 export * from "./beta";
 export * from "./breadcrumbs";
 export * from "./button";
-export * from "./calendar";
 export * from "./card";
 export * from "./collapsible";
 export * from "./color-picker";

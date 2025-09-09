@@ -5,7 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
-import { Button, Calendar } from "@plane/ui";
+import { Calendar } from "@plane/propel/calendar";
+import { Button } from "@plane/ui";
 
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 import { DateFilterSelect } from "./date-filter-select";
