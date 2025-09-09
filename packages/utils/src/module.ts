@@ -5,6 +5,15 @@ import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions }
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
+const collator = new Intl.Collator("en-US", { numeric: true, sensitivity: "base" });
+
+/**
+ * @description performs natural sorting of strings (handles numbers within strings correctly)
+ * @param {string} a - first string to compare
+ * @param {string} b - second string to compare
+ * @returns {number} - comparison result (-1, 0, or 1)
+ */
+const naturalSort = (a: string, b: string): number => collator.compare(a, b);
 /**
  * @description orders modules based on their status
  * @param {IModule[]} modules
@@ -15,8 +24,8 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
   let orderedModules: IModule[] = [];
   if (modules.length === 0 || !orderByKey) return [];
 
-  if (orderByKey === "name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]);
-  if (orderByKey === "-name") orderedModules = sortBy(modules, [(m) => m.name.toLowerCase()]).reverse();
+  if (orderByKey === "name") orderedModules = [...modules].sort((a, b) => naturalSort(a.name, b.name));
+  if (orderByKey === "-name") orderedModules = [...modules].sort((a, b) => naturalSort(b.name, a.name));
   if (["progress", "-progress"].includes(orderByKey))
     orderedModules = sortBy(modules, [
       (m) => {
@@ -24,13 +33,9 @@ export const orderModules = (modules: IModule[], orderByKey: TModuleOrderByOptio
         if (isNaN(progress)) progress = 0;
         return orderByKey === "progress" ? progress : -progress;
       },
-      "name",
     ]);
   if (["issues_length", "-issues_length"].includes(orderByKey))
-    orderedModules = sortBy(modules, [
-      (m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues),
-      "name",
-    ]);
+    orderedModules = sortBy(modules, [(m) => (orderByKey === "issues_length" ? m.total_issues : !m.total_issues)]);
   if (orderByKey === "target_date") orderedModules = sortBy(modules, [(m) => m.target_date]);
   if (orderByKey === "-target_date") orderedModules = sortBy(modules, [(m) => !m.target_date]);
   if (orderByKey === "created_at") orderedModules = sortBy(modules, [(m) => m.created_at]);
