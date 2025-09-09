@@ -29,6 +29,7 @@
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
     "./icons": "./dist/icons/index.js",
     "./menu": "./dist/menu/index.js",
+    "./pill": "./dist/pill/index.js",
     "./popover": "./dist/popover/index.js",
     "./scrollarea": "./dist/scrollarea/index.js",
     "./skeleton": "./dist/skeleton/index.js",

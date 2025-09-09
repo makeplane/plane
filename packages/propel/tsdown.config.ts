@@ -15,6 +15,7 @@ export default defineConfig({
     "src/emoji-icon-picker/index.ts",
     "src/icons/index.ts",
     "src/menu/index.ts",
+    "src/pill/index.ts",
     "src/popover/index.ts",
     "src/scrollarea/index.ts",
     "src/skeleton/index.ts",
