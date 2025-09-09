@@ -32,6 +32,7 @@
     "./switch": "./dist/switch/index.js",
     "./table": "./dist/table/index.js",
     "./tabs": "./dist/tabs/index.js",
+    "./toolbar": "./dist/toolbar/index.js",
     "./tooltip": "./dist/tooltip/index.js",
     "./utils": "./dist/utils/index.js"
   },
