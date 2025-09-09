@@ -1,0 +1,461 @@
+import set from "lodash/set";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { computedFn } from "mobx-utils";
+// plane imports
+import { TLoader, TPageFilters, TPage } from "@plane/types";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
+// plane web services
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
+// services
+import { TTeamspacePage, TeamspacePage } from "./teamspace-page";
+
+export interface ITeamspacePageStore {
+  // observables
+  loaderMap: Record<string, TLoader>; // teamspaceId -> loader
+  fetchedMap: Record<string, boolean>; // teamspaceId -> fetched
+  pageMap: Record<string, Record<string, TTeamspacePage>>; // teamspaceId -> pageId -> page
+  filtersMap: Record<string, TPageFilters>; // teamspaceId -> filters
+  // computed functions
+  getTeamspacePagesLoader: (teamspaceId: string) => TLoader | undefined;
+  getTeamspacePagesFetchedStatus: (teamspaceId: string) => boolean | undefined;
+  getTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
+  getFilteredTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
+  getPageById: (pageId: string) => TTeamspacePage | undefined;
+  isNestedPagesEnabled: (workspaceSlug: string) => boolean;
+  isCommentsEnabled: (workspaceSlug: string) => boolean;
+  // helper actions
+  initTeamspacePagesFilters: (teamspaceId: string) => void;
+  getTeamspacePagesFilters: (teamspaceId: string) => TPageFilters | undefined;
+  updateFilters: <T extends keyof TPageFilters>(
+    teamspaceId: string,
+    filterKey: T,
+    filterValue: TPageFilters[T]
+  ) => void;
+  clearAllFilters: (teamspaceId: string) => void;
+  // fetch actions
+  fetchTeamspacePages: (workspaceSlug: string, teamspaceId: string, loader?: TLoader) => Promise<TPage[] | undefined>;
+  fetchPageDetails: (
+    teamspaceId: string,
+    pageId: string,
+    options?: {
+      trackVisit?: boolean;
+      loader?: TLoader;
+      shouldFetchSubPages?: boolean;
+    }
+  ) => Promise<TPage | undefined>;
+  // CRUD actions
+  createPage: (data: Partial<TPage>) => Promise<TPage>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
+  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePage | undefined>;
+  removePageInstance: (pageId: string) => void;
+  // page sharing actions
+  fetchPageSharedUsers: (pageId: string) => Promise<void>;
+  bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
+}
+
+export class TeamspacePageStore implements ITeamspacePageStore {
+  // observables
+  loaderMap: Record<string, TLoader> = {}; // teamspaceId -> loader
+  fetchedMap: Record<string, boolean> = {}; // teamspaceId -> fetched
+  pageMap: Record<string, Record<string, TTeamspacePage>> = {}; // teamspaceId -> pageId -> page
+  filtersMap: Record<string, TPageFilters> = {}; // teamspaceId -> filters
+  // root store
+  rootStore;
+  // services
+  teamspacePageService;
+  pageShareService;
+
+  constructor(_rootStore: RootStore) {
+    makeObservable(this, {
+      // observables
+      loaderMap: observable,
+      fetchedMap: observable,
+      pageMap: observable,
+      filtersMap: observable,
+      // computed
+      flattenedPages: computed,
+      // helper actions
+      initTeamspacePagesFilters: action,
+      updateFilters: action,
+      clearAllFilters: action,
+      // fetch actions
+      fetchTeamspacePages: action,
+      fetchPageDetails: action,
+      // CRUD actions
+      createPage: action,
+      removePage: action,
+      // page sharing actions
+      fetchPageSharedUsers: action,
+      bulkUpdatePageSharedUsers: action,
+    });
+    // root store
+    this.rootStore = _rootStore;
+    // services
+    this.teamspacePageService = new TeamspacePageService();
+    this.pageShareService = new PageShareService();
+  }
+  get flattenedPages() {
+    return Object.values(this.pageMap).reduce(
+      (result, teamPages) => ({
+        ...result,
+        ...teamPages,
+      }),
+      {}
+    );
+  }
+
+  /**
+   * Returns teamspace loader
+   * @param teamspaceId
+   * @returns TLoader | undefined
+   */
+  getTeamspacePagesLoader = computedFn((teamspaceId: string) => this.loaderMap[teamspaceId] ?? undefined);
+
+  /**
+   * Returns teamspace fetched map
+   * @param teamspaceId
+   * @returns boolean | undefined
+   */
+  getTeamspacePagesFetchedStatus = computedFn((teamspaceId: string) => this.fetchedMap[teamspaceId] ?? undefined);
+
+  /**
+   * Returns teamspace page ids
+   * @param teamspaceId
+   * @returns string[] | undefined
+   */
+  getTeamspacePageIds = computedFn((teamspaceId: string) => {
+    if (!this.fetchedMap[teamspaceId]) return undefined;
+    const teamspacePagesList = filterPagesByPageType("public", Object.values(this.pageMap[teamspaceId] ?? {}));
+    const teamspacePageIds = teamspacePagesList.map((page) => page.id).filter(Boolean) as string[];
+    return teamspacePageIds;
+  });
+
+  /**
+   * Returns filtered teamspace page ids
+   * @param teamspaceId
+   * @returns string[] | undefined
+   */
+  getFilteredTeamspacePageIds = computedFn((teamspaceId: string) => {
+    if (!this.fetchedMap[teamspaceId]) return undefined;
+    const teamspacePages = filterPagesByPageType("public", Object.values(this.pageMap[teamspaceId] ?? {}));
+    const teamspaceFilters = this.getTeamspacePagesFilters(teamspaceId);
+    if (!teamspacePages || teamspacePages.length === 0) return [];
+    // helps to filter pages based on the teamspaceId, searchQuery and filters
+    let filteredPages = teamspacePages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(teamspaceFilters.searchQuery.toLowerCase()) &&
+        !page.parent_id &&
+        shouldFilterPage(page, teamspaceFilters.filters)
+    );
+    filteredPages = orderPages(filteredPages, teamspaceFilters.sortKey, teamspaceFilters.sortBy);
+    const filteredPageIds = filteredPages.map((page) => page.id).filter(Boolean) as string[];
+    return filteredPageIds;
+  });
+
+  /**
+   * Returns page details by id
+   * @param teamspaceId
+   * @param pageId
+   * @returns TTeamspacePage | undefined
+   */
+  getPageById = computedFn((pageId: string) => this.flattenedPages[pageId]);
+
+  /**
+   * Returns true if nested pages feature is enabled
+   * @returns boolean
+   */
+  isNestedPagesEnabled = computedFn(() => false);
+
+  /**
+   * Returns true if comments in pages feature is enabled
+   * @returns boolean
+   */
+  isCommentsEnabled = computedFn(() => false);
+
+  /**
+   * Initializes teamspace pages filters
+   * @param teamspaceId
+   */
+  initTeamspacePagesFilters = (teamspaceId: string) => {
+    set(this.filtersMap, [teamspaceId], {
+      filters: {},
+      searchQuery: "",
+      sortKey: "updated_at",
+      sortBy: "desc",
+    });
+  };
+
+  /**
+   * Returns teamspace filters
+   * @param teamspaceId
+   * @returns TPageFilters
+   */
+  getTeamspacePagesFilters = computedFn((teamspaceId: string) => {
+    if (!this.filtersMap[teamspaceId]) {
+      this.initTeamspacePagesFilters(teamspaceId);
+    }
+    return this.filtersMap[teamspaceId];
+  });
+
+  /**
+   * Updates the filter
+   * @param teamspaceId
+   * @param filterKey
+   * @param filterValue
+   */
+  updateFilters = <T extends keyof TPageFilters>(teamspaceId: string, filterKey: T, filterValue: TPageFilters[T]) => {
+    runInAction(() => {
+      set(this.filtersMap, [teamspaceId, filterKey], filterValue);
+    });
+  };
+
+  /**
+   * Clears all the filters
+   * @param teamspaceId
+   */
+  clearAllFilters = (teamspaceId: string) =>
+    runInAction(() => {
+      set(this.filtersMap, [teamspaceId, "filters"], {});
+    });
+
+  /**
+   * Fetches pages for current teamspace
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @returns Promise<TTeamspacePage[]> | undefined
+   */
+  fetchTeamspacePages = async (workspaceSlug: string, teamspaceId: string, loader: TLoader = "init-loader") => {
+    try {
+      if (this.getTeamspacePagesFetchedStatus(teamspaceId)) {
+        loader = "mutation";
+      }
+      set(this.loaderMap, teamspaceId, loader);
+      // Fetch pages
+      await this.teamspacePageService.fetchAll(workspaceSlug, teamspaceId).then((response) => {
+        runInAction(() => {
+          response.forEach((page) => {
+            if (page?.id) {
+              const pageInstance = page;
+              set(page, "description_html", this.getPageById(page.id)?.description_html);
+              const existingInstance = this.getPageById(page.id);
+              if (existingInstance) {
+                existingInstance.mutateProperties(pageInstance);
+              } else {
+                set(this.pageMap, [teamspaceId, page.id], new TeamspacePage(this.rootStore, pageInstance));
+              }
+            }
+          });
+          set(this.fetchedMap, teamspaceId, true);
+          set(this.loaderMap, teamspaceId, "loaded");
+        });
+        return response;
+      });
+    } catch {
+      // Reset loader and fetched status if fetching fails
+      set(this.fetchedMap, teamspaceId, false);
+      set(this.loaderMap, teamspaceId, "loaded");
+      return undefined;
+    }
+  };
+
+  /**
+   * Fetches page details for a specific page
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @returns Promise<TTeamspacePage>
+   */
+  fetchPageDetails: ITeamspacePageStore["fetchPageDetails"] = async (
+    teamspaceId,
+    pageId,
+    options
+  ): Promise<TTeamspacePage | undefined> => {
+    let loader: TLoader = options?.loader ?? "init-loader";
+    const trackVisit = options?.trackVisit ?? true;
+    try {
+      const { workspaceSlug } = this.rootStore.router;
+      if (!workspaceSlug) return;
+
+      if (this.getTeamspacePagesFetchedStatus(teamspaceId)) {
+        loader = "mutation";
+      }
+      set(this.loaderMap, teamspaceId, loader);
+      await this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId, trackVisit).then((response) => {
+        runInAction(() => {
+          if (response?.id) {
+            const existingInstance = this.getPageById(pageId);
+            if (existingInstance) {
+              existingInstance.mutateProperties(response);
+            } else {
+              set(this.pageMap, [teamspaceId, pageId], new TeamspacePage(this.rootStore, response));
+            }
+          }
+          set(this.loaderMap, teamspaceId, "loaded");
+        });
+        return response;
+      });
+    } catch {
+      set(this.loaderMap, teamspaceId, "loaded");
+      return undefined;
+    }
+  };
+
+  /**
+   * Creates a new page for a specific teamspace and adds it to the store
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param data
+   * @returns Promise<TPage>
+   */
+  createPage = async (data: Partial<TPage>): Promise<TPage> => {
+    const { workspaceSlug, teamspaceId } = this.rootStore.router;
+    const response = await this.teamspacePageService.create(workspaceSlug ?? "", teamspaceId ?? "", data);
+    runInAction(() => {
+      if (response?.id && teamspaceId) {
+        set(this.pageMap, [teamspaceId, response.id], new TeamspacePage(this.rootStore, response));
+      }
+    });
+    return response;
+  };
+
+  /**
+   * Deletes a page and removes it from the pageMap object
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @returns
+   */
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
+    const { workspaceSlug, teamspaceId } = this.rootStore.router;
+    if (!workspaceSlug || !teamspaceId) return undefined;
+    const currentPage = this.getPageById(pageId);
+
+    runInAction(() => {
+      if (pageId) {
+        currentPage.mutateProperties({ deleted_at: new Date() });
+      }
+      if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
+    });
+
+    if (shouldSync) {
+      await this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId);
+    }
+  };
+
+  /**
+   * @description move a page internally within the project hierarchy
+   * @param {string} pageId - The ID of the page to move
+   * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
+   */
+  movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    try {
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      runInAction(() => {
+        // Handle parent_id changes and update sub_pages_count accordingly
+        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
+          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
+        }
+
+        // Apply all updates to the page instance
+        Object.keys(updatePayload).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
+        });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        pageInstance.updated_at = new Date();
+      });
+
+      await pageInstance.update(updatePayload);
+    } catch (error) {
+      console.error("Unable to move page internally", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Helper method to update sub_pages_count when moving pages between parents
+   * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
+   * @param {string | null} newParentId - The new parent ID (can be null for root pages)
+   * @private
+   */
+  private updateParentSubPageCounts = (oldParentId: string | null, newParentId: string | null) => {
+    // Decrement count for old parent (if it exists)
+    if (oldParentId) {
+      const oldParentPageInstance = this.getPageById(oldParentId);
+      if (oldParentPageInstance) {
+        const newCount = Math.max(0, (oldParentPageInstance.sub_pages_count ?? 1) - 1);
+        oldParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+
+    // Increment count for new parent (if it exists)
+    if (newParentId) {
+      const newParentPageInstance = this.getPageById(newParentId);
+      if (newParentPageInstance) {
+        const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
+        newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+  };
+
+  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
+    const pageInstance = this.getPageById(pageId);
+    if (pageInstance) {
+      return pageInstance;
+    } else {
+      const { workspaceSlug, teamspaceId } = this.rootStore.router;
+      if (!workspaceSlug || !teamspaceId) return;
+      const page = await this.fetchPageDetails(teamspaceId, pageId);
+      if (page) {
+        return new TeamspacePage(this.rootStore, page);
+      }
+    }
+  };
+
+  removePageInstance = (pageId: string) => {
+    const page = this.getPageById(pageId);
+    if (page && page.team) {
+      delete this.pageMap[page.team][pageId];
+    }
+  };
+
+  // page sharing actions
+  fetchPageSharedUsers = async (pageId: string) => {
+    const { workspaceSlug, projectId } = this.rootStore.router;
+    if (!workspaceSlug || !pageId) return;
+
+    if (projectId) {
+      const sharedUsers = await this.pageShareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
+      // Update page instance with shared users
+      const page = this.getPageById(pageId);
+      if (page && sharedUsers) {
+        page.updateSharedUsers(sharedUsers);
+      }
+    } else {
+      const sharedUsers = await this.pageShareService.getWorkspacePageSharedUsers(workspaceSlug, pageId);
+      // Update page instance with shared users
+      const page = this.getPageById(pageId);
+      if (page && sharedUsers) {
+        page.updateSharedUsers(sharedUsers);
+      }
+    }
+  };
+
+  bulkUpdatePageSharedUsers = async (pageId: string, sharedUsers: TPageSharedUser[]) => {
+    const { workspaceSlug, projectId } = this.rootStore.router;
+    if (!workspaceSlug || !pageId) return;
+
+    if (projectId) {
+      await this.pageShareService.bulkUpdateProjectPageSharedUsers(workspaceSlug, projectId, pageId, sharedUsers);
+    } else {
+      await this.pageShareService.bulkUpdateWorkspacePageSharedUsers(workspaceSlug, pageId, sharedUsers);
+    }
+  };
+}
