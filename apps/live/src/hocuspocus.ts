@@ -3,14 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 // env
 import { env } from "@/env";
 // extensions
-import { extensions } from "@/extensions";
+import { getExtensions } from "@/extensions";
 // lib
 import { onAuthenticate, onStateless } from "@/lib/auth";
 
 export class HocusPocusServerManager {
   private static instance: HocusPocusServerManager | null = null;
   private server: Hocuspocus | null = null;
-  private isInitialized: boolean = false;
   // server options
   private serverName = env.HOSTNAME || uuidv4();
 
@@ -32,7 +31,7 @@ export class HocusPocusServerManager {
    * Initialize and configure the HocusPocus server
    */
   public async initialize(): Promise<Hocuspocus> {
-    if (this.isInitialized && this.server) {
+    if (this.server) {
       return this.server;
     }
 
@@ -40,11 +39,10 @@ export class HocusPocusServerManager {
       name: this.serverName,
       onAuthenticate: onAuthenticate,
       onStateless: onStateless,
-      extensions,
+      extensions: getExtensions(),
       debounce: 10000,
     });
 
-    this.isInitialized = true;
     return this.server;
   }
 
@@ -53,13 +51,6 @@ export class HocusPocusServerManager {
    */
   public getServer(): Hocuspocus | null {
     return this.server;
-  }
-
-  /**
-   * Check if the server has been initialized
-   */
-  public isServerInitialized(): boolean {
-    return this.isInitialized;
   }
 
   /**

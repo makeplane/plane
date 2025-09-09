@@ -20,7 +20,7 @@ export class Server {
   private app: Express;
   private router: Router;
   private hocuspocusServer: Hocuspocus | null = null;
-  private serverInstance: any;
+  private httpServer: any;
 
   constructor() {
     this.app = express();
@@ -89,7 +89,7 @@ export class Server {
   }
 
   public listen() {
-    this.serverInstance = this.app.listen(this.app.get("port"), () => {
+    this.httpServer = this.app.listen(this.app.get("port"), () => {
       logger.info(`Plane Live server has started at port ${this.app.get("port")}`);
     });
   }
@@ -105,9 +105,9 @@ export class Server {
     await redisManager.disconnect();
     logger.info("Redis connection closed gracefully.");
 
-    if (this.serverInstance) {
+    if (this.httpServer) {
       // Close the Express server
-      this.serverInstance.close(() => {
+      this.httpServer.close(() => {
         logger.info("Express server closed gracefully.");
       });
     } else {

@@ -59,6 +59,10 @@ export const onAuthenticate = async ({ requestHeaders, context, token }: any) =>
   }
 };
 
+/**
+ * Broadcast the client event to all the clients so that they can update their state
+ * @param param0
+ */
 export const onStateless = async ({ payload, document }: any) => {
   // broadcast the client event (derived from the server event) to all the clients so that they can update their state
   const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
