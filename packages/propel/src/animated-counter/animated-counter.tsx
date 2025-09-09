@@ -54,7 +54,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, classNa
             "animate-[slideOut_0.25s_ease-out_forwards]",
             direction === "up" && "[--slide-out-dir:-100%]",
             direction === "down" && "[--slide-out-dir:100%]",
-            sizeClass,
+            sizeClass
           )}
           style={{
             animation:
