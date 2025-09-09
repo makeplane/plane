@@ -119,10 +119,8 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
   protected getProjectRole = computedFn((workspaceSlug: string, projectId: string): EUserPermissions | undefined => {
     if (!workspaceSlug || !projectId) return undefined;
     const projectRole = this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
-    console.log("projectRole", projectRole);
     if (!projectRole) return undefined;
     const workspaceRole = this.workspaceUserInfo?.[workspaceSlug]?.role;
-    console.log("workspaceRole", workspaceRole);
     if (workspaceRole === EUserWorkspaceRoles.ADMIN) return EUserPermissions.ADMIN;
     else return projectRole;
   });
