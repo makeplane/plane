@@ -11,6 +11,7 @@ export default defineConfig({
     "src/collapsible/index.ts",
     "src/combobox/index.ts",
     "src/command/index.ts",
+    "src/context-menu/index.ts",
     "src/dialog/index.ts",
     "src/emoji-icon-picker/index.ts",
     "src/icons/index.ts",

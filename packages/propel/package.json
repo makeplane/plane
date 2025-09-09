@@ -25,6 +25,7 @@
     "./collapsible": "./dist/collapsible/index.js",
     "./combobox": "./dist/combobox/index.js",
     "./command": "./dist/command/index.js",
+    "./context-menu": "./dist/context-menu/index.js",
     "./dialog": "./dist/dialog/index.js",
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
     "./icons": "./dist/icons/index.js",
