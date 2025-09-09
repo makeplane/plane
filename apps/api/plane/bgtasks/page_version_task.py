@@ -61,24 +61,11 @@ def page_version(page_id, existing_instance, user_id):
 
         # Create a version if description_html is updated
         if current_instance.get("description_html") != page.description_html:
-<<<<<<< HEAD
-            # Create a new page version
-            PageVersion.objects.create(
-                page_id=page_id,
-                workspace_id=page.workspace_id,
-                description_html=page.description_html,
-                description_binary=page.description_binary,
-                owned_by_id=user_id,
-                last_saved_at=page.updated_at,
-                description_json=page.description,
-                description_stripped=page.description_stripped,
-=======
             # Fetch the latest page version
             page_version = (
                 PageVersion.objects.filter(page_id=page_id)
                 .order_by("-last_saved_at")
                 .first()
->>>>>>> c8e30d1afe2725a7914c8d0ca408ad8010105935
             )
 
             # Get the latest page version if it exists and is owned by the user
