@@ -444,11 +444,11 @@ def nested_page_update(
             ).delete()
             # delete the page version history
             PageVersion.objects.filter(
-                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+                page_id__in=descendants_ids, workspace__slug=slug
             ).delete()
             # shared pages
             PageUser.objects.filter(
-                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+                page_id__in=descendants_ids, workspace__slug=slug
             ).delete()
             DeployBoard.objects.filter(
                 entity_identifier__in=descendants_ids,

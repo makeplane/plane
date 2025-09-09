@@ -18,6 +18,7 @@ from plane.ee.views import (
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
     ProjectPageUserViewSet,
+    ProjectPageRestoreEndpoint,
 )
 
 
@@ -166,6 +167,11 @@ urlpatterns = [
     ),
     ## End Comment Reactions
     ## EE project level
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/restore/",
+        ProjectPageRestoreEndpoint.as_view(),
+        name="project-page-restore",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/publish/",
         ProjectPagePublishEndpoint.as_view(),

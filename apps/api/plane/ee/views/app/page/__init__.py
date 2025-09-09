@@ -20,6 +20,8 @@ from .workspace.comment import (
 from .project.move import MovePageEndpoint
 from .project.share import ProjectPageUserViewSet
 from .project.publish import ProjectPagePublishEndpoint
+from .project.restore import ProjectPageRestoreEndpoint
+
 from .project.comment import (
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
