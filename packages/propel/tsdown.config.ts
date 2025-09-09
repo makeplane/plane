@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: [
     "src/accordion/index.ts",
+    "src/animated-counter/index.ts",
     "src/avatar/index.ts",
     "src/calendar/index.ts",
     "src/card/index.ts",

@@ -17,6 +17,7 @@
   },
   "exports": {
     "./accordion": "./dist/accordion/index.js",
+    "./animated-counter": "./dist/animated-counter/index.js",
     "./avatar": "./dist/avatar/index.js",
     "./calendar": "./dist/calendar/index.js",
     "./card": "./dist/card/index.js",
