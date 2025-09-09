@@ -41,12 +41,6 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
 
-# Permission Mappings
-Admin = 20
-Member = 15
-Guest = 5
-
-
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
@@ -111,7 +105,10 @@ class ProjectViewSet(BaseViewSet):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=Guest
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -119,7 +116,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=Member
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -194,7 +194,10 @@ class ProjectViewSet(BaseViewSet):
         )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=Guest
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -202,7 +205,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=Member
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -255,7 +261,9 @@ class ProjectViewSet(BaseViewSet):
 
             # Add the user as Administrator to the project
             _ = ProjectMember.objects.create(
-                project_id=serializer.data["id"], member=request.user, role=Admin
+                project_id=serializer.data["id"],
+                member=request.user,
+                role=ROLE.ADMIN.value,
             )
             # Also create the issue property for the user
             _ = IssueUserProperty.objects.create(
@@ -268,7 +276,7 @@ class ProjectViewSet(BaseViewSet):
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member_id=serializer.data["project_lead"],
-                    role=Admin,
+                    role=ROLE.ADMIN.value,
                 )
                 # Also create the issue property for the user
                 IssueUserProperty.objects.create(
@@ -347,14 +355,17 @@ class ProjectViewSet(BaseViewSet):
     def partial_update(self, request, slug, pk=None):
         # try:
         is_workspace_admin = WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=Admin
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.ADMIN.value,
         ).exists()
 
         is_project_admin = ProjectMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             project_id=pk,
-            role=Admin,
+            role=ROLE.ADMIN.value,
             is_active=True,
         ).exists()
 
@@ -414,13 +425,16 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         if (
             WorkspaceMember.objects.filter(
-                member=request.user, workspace__slug=slug, is_active=True, role=Admin
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.ADMIN.value,
             ).exists()
             or ProjectMember.objects.filter(
                 member=request.user,
                 workspace__slug=slug,
                 project_id=pk,
-                role=Admin,
+                role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
         ):
