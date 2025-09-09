@@ -4,6 +4,7 @@ export default defineConfig({
   entry: [
     "src/accordion/index.ts",
     "src/avatar/index.ts",
+    "src/button/index.ts",
     "src/card/index.ts",
     "src/charts/*/index.ts",
     "src/combobox/index.ts",

@@ -18,6 +18,7 @@
   "exports": {
     "./accordion": "./dist/accordion/index.js",
     "./avatar": "./dist/avatar/index.js",
+    "./button": "./dist/button/index.js",
     "./card": "./dist/card/index.js",
     "./charts/*": "./dist/charts/*/index.js",
     "./combobox": "./dist/combobox/index.js",
