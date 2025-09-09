@@ -27,6 +27,7 @@
     "./icons": "./dist/icons/index.js",
     "./menu": "./dist/menu/index.js",
     "./popover": "./dist/popover/index.js",
+    "./scrollarea": "./dist/scrollarea/index.js",
     "./skeleton": "./dist/skeleton/index.js",
     "./styles/fonts": "./dist/styles/fonts/index.css",
     "./switch": "./dist/switch/index.js",
