@@ -131,6 +131,12 @@ def track_parent(
         "parent"
     )
 
+    # Validate UUIDs before database queries
+    if current_parent_id is not None and not is_valid_uuid(current_parent_id):
+        return
+    if requested_parent_id is not None and not is_valid_uuid(requested_parent_id):
+        return
+
     if current_parent_id != requested_parent_id:
         old_parent = (
             Issue.objects.filter(pk=current_parent_id).first()
@@ -142,6 +148,7 @@ def track_parent(
             if requested_parent_id is not None
             else None
         )
+
 
         issue_activities.append(
             IssueActivity(
@@ -212,22 +219,22 @@ def track_state(
     requested_state_id = requested_data.get("state_id") or requested_data.get("state")
 
     if current_state_id != requested_state_id:
-        new_state = State.objects.get(pk=requested_state_id)
-        old_state = State.objects.get(pk=current_state_id)
+        new_state = State.objects.filter(pk=requested_state_id).first()
+        old_state = State.objects.filter(pk=current_state_id).first()
 
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_state.name,
-                new_value=new_state.name,
+                old_value=old_state.name if old_state else None,
+                new_value=new_state.name if new_state else None,
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the state to",
-                old_identifier=old_state.id,
-                new_identifier=new_state.id,
+                old_identifier=old_state.id if old_state else None,
+                new_identifier=new_state.id if new_state else None,
                 epoch=epoch,
             )
         )
