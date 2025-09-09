@@ -84,7 +84,6 @@ const LongTextContent = () => (
   </div>
 );
 
-
 // Default story
 export const Default: Story = {
   args: {

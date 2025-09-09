@@ -13,14 +13,7 @@ interface ScrollAreaProps extends React.ComponentProps<typeof BaseScrollArea.Roo
   size?: ScrollAreaSize;
 }
 
-function ScrollArea({
-  className,
-  children,
-  orientation,
-  scrollType,
-  size = "md",
-  ...props
-}: ScrollAreaProps) {
+function ScrollArea({ className, children, orientation, scrollType, size = "md", ...props }: ScrollAreaProps) {
   return (
     <BaseScrollArea.Root data-slot="scroll-area" className={cn("relative", className)} {...props}>
       <BaseScrollArea.Viewport
