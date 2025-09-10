@@ -23,6 +23,7 @@ import {
   TActivityEntityData,
   TIssueEntityData,
   TIssueSearchResponse,
+  TPartialProject,
 } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex, generateWorkItemLink } from "@plane/utils";
@@ -39,6 +40,7 @@ import {
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { CommandPaletteProjectSelector } from "@/components/command-palette";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -55,7 +57,6 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-import type { TPartialProject } from "@/plane-web/types";
 
 const workspaceService = new WorkspaceService();
 
@@ -75,6 +76,8 @@ export const CommandModal: React.FC = observer(() => {
   const [searchInIssue, setSearchInIssue] = useState(false);
   const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
   const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
+  const [projectSelectionAction, setProjectSelectionAction] = useState<"navigate" | "cycle" | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const keySequence = useRef("");
   const sequenceTimeout = useRef<NodeJS.Timeout | null>(null);
   // plane hooks
@@ -85,7 +88,7 @@ export const CommandModal: React.FC = observer(() => {
     fetchIssueWithIdentifier,
   } = useIssueDetail();
   const { workspaceProjectIds, joinedProjectIds, getPartialProjectById } = useProject();
-  const { getProjectCycleIds, getCycleById, fetchAllCycles, fetchWorkspaceCycles } = useCycle();
+  const { getProjectCycleIds, getCycleById, fetchAllCycles } = useCycle();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
   const {
@@ -120,20 +123,29 @@ export const CommandModal: React.FC = observer(() => {
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
-  const openProjectList = () => {
+  const openProjectSelection = (action: "navigate" | "cycle") => {
     if (!workspaceSlug) return;
     setPlaceholder("Search projects...");
     setSearchTerm("");
+    setProjectSelectionAction(action);
+    setSelectedProjectId(null);
     setPages((p) => [...p, "open-project"]);
   };
 
+  const openProjectList = () => openProjectSelection("navigate");
+
   const openCycleList = () => {
     if (!workspaceSlug) return;
-    setPlaceholder("Search cycles...");
-    setSearchTerm("");
-    setPages((p) => [...p, "open-cycle"]);
-    if (isWorkspaceLevel || !projectId) fetchWorkspaceCycles(workspaceSlug.toString());
-    else fetchAllCycles(workspaceSlug.toString(), projectId.toString());
+    const currentProject = projectId ? getPartialProjectById(projectId.toString()) : null;
+    if (currentProject && currentProject.cycle_view) {
+      setSelectedProjectId(projectId.toString());
+      setPlaceholder("Search cycles...");
+      setSearchTerm("");
+      setPages((p) => [...p, "open-cycle"]);
+      fetchAllCycles(workspaceSlug.toString(), projectId.toString());
+    } else {
+      openProjectSelection("cycle");
+    }
   };
 
   const openIssueList = () => {
@@ -169,23 +181,21 @@ export const CommandModal: React.FC = observer(() => {
 
   const cycleOptions = useMemo(() => {
     const cycles: ICycle[] = [];
-    const ids = isWorkspaceLevel || !projectId ? joinedProjectIds : [projectId?.toString()];
-    ids.forEach((pid) => {
-      if (!pid) return;
-      const cycleIds = getProjectCycleIds(pid) || [];
+    if (selectedProjectId) {
+      const cycleIds = getProjectCycleIds(selectedProjectId) || [];
       cycleIds.forEach((cid) => {
         const cycle = getCycleById(cid);
-        if (cycle) cycles.push(cycle);
+        const status = cycle?.status ? cycle.status.toLowerCase() : "";
+        if (cycle && ["current", "upcoming"].includes(status)) cycles.push(cycle);
       });
-    });
+    }
     return cycles.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
-  }, [isWorkspaceLevel, projectId, joinedProjectIds, getProjectCycleIds, getCycleById]);
+  }, [selectedProjectId, getProjectCycleIds, getCycleById]);
 
   useEffect(() => {
-    if (page !== "open-cycle" || !workspaceSlug) return;
-    if (isWorkspaceLevel || !projectId) fetchWorkspaceCycles(workspaceSlug.toString());
-    else fetchAllCycles(workspaceSlug.toString(), projectId.toString());
-  }, [page, isWorkspaceLevel, workspaceSlug, projectId, fetchWorkspaceCycles, fetchAllCycles]);
+    if (page !== "open-cycle" || !workspaceSlug || !selectedProjectId) return;
+    fetchAllCycles(workspaceSlug.toString(), selectedProjectId);
+  }, [page, workspaceSlug, selectedProjectId, fetchAllCycles]);
 
   useEffect(() => {
     if (issueDetails && isCommandPaletteOpen) {
@@ -205,6 +215,8 @@ export const CommandModal: React.FC = observer(() => {
     toggleCommandPaletteModal(false);
     setPages([]);
     setPlaceholder("Type a command or search...");
+    setProjectSelectionAction(null);
+    setSelectedProjectId(null);
   };
 
   const createNewWorkspace = () => {
@@ -376,8 +388,14 @@ export const CommandModal: React.FC = observer(() => {
 
                       if (e.key === "Backspace" && !searchTerm && page) {
                         e.preventDefault();
-                        setPages((pages) => pages.slice(0, -1));
-                        setPlaceholder("Type a command or search...");
+                        const newPages = pages.slice(0, -1);
+                        const newPage = newPages[newPages.length - 1];
+                        setPages(newPages);
+                        if (!newPage) setPlaceholder("Type a command or search...");
+                        else if (newPage === "open-project") setPlaceholder("Search projects...");
+                        else if (newPage === "open-cycle") setPlaceholder("Search cycles...");
+                        if (page === "open-cycle") setSelectedProjectId(null);
+                        if (page === "open-project" && !newPage) setProjectSelectionAction(null);
                       }
                     }}
                   >
@@ -595,43 +613,37 @@ export const CommandModal: React.FC = observer(() => {
                       )}
 
                       {page === "open-project" && workspaceSlug && (
-                        <Command.Group heading="Projects">
-                          {projectOptions.map((project) => (
-                            <Command.Item
-                              key={project.id}
-                              value={project.name}
-                              onSelect={() => {
-                                closePalette();
-                                router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-                              }}
-                              className="focus:outline-none"
-                            >
-                              {project.name}
-                            </Command.Item>
-                          ))}
-                        </Command.Group>
+                        <CommandPaletteProjectSelector
+                          projects={projectOptions.filter((p) =>
+                            projectSelectionAction === "cycle" ? p.cycle_view : true
+                          )}
+                          onSelect={(project) => {
+                            if (projectSelectionAction === "navigate") {
+                              closePalette();
+                              router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+                            } else if (projectSelectionAction === "cycle") {
+                              setSelectedProjectId(project.id);
+                              setPages((p) => [...p, "open-cycle"]);
+                              setPlaceholder("Search cycles...");
+                              fetchAllCycles(workspaceSlug.toString(), project.id);
+                            }
+                          }}
+                        />
                       )}
 
-                      {page === "open-cycle" && workspaceSlug && (
+                      {page === "open-cycle" && workspaceSlug && selectedProjectId && (
                         <Command.Group heading="Cycles">
                           {cycleOptions.map((cycle) => (
                             <Command.Item
                               key={cycle.id}
-                              value={`${cycle.name} ${getPartialProjectById(cycle.project_id)?.name ?? ""}`}
+                              value={cycle.name}
                               onSelect={() => {
                                 closePalette();
                                 router.push(`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`);
                               }}
                               className="focus:outline-none"
                             >
-                              <div className="flex flex-col">
-                                <span>{cycle.name}</span>
-                                {(isWorkspaceLevel || !projectId) && (
-                                  <span className="text-xs text-custom-text-400">
-                                    {getPartialProjectById(cycle.project_id)?.name}
-                                  </span>
-                                )}
-                              </div>
+                              {cycle.name}
                             </Command.Item>
                           ))}
                         </Command.Group>
