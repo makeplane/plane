@@ -47,10 +47,9 @@ class ProjectPagePermission(BasePermission):
             if page.access == Page.PRIVATE_ACCESS:
                 return self._has_private_page_action_access(request, slug, page, project_id)
 
-            # Handle public page access
-            return self._has_public_page_action_access(request, slug, project_id)
-        else:
-            return self._has_public_page_action_access(request, slug, project_id)
+        # Handle public page access
+        return self._has_public_page_action_access(request, slug, project_id)
+
 
     def _check_project_member_access(self, request, slug, project_id):
         """
@@ -80,12 +79,7 @@ class ProjectPagePermission(BasePermission):
         # Base implementation: only owner can access private pages
         return False
 
-    def _has_public_page_action_access(self, request, slug, project_id):
-        """
-        Check if the user has permission to access a public page
-        and can perform operations on the page.
-        """
-
+    def _check_project_action_access(self, request, slug, project_id):
         user_id = request.user.id
         method = request.method
 
@@ -131,3 +125,13 @@ class ProjectPagePermission(BasePermission):
 
         # Deny by default
         return False
+
+    def _has_public_page_action_access(self, request, slug, project_id):
+        """
+        Check if the user has permission to access a public page
+        and can perform operations on the page.
+        """
+        project_member_exists = self._check_project_action_access(request, slug, project_id)
+        if not project_member_exists:
+            return False
+        return True
