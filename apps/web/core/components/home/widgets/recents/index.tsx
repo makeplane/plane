@@ -6,9 +6,9 @@ import useSWR from "swr";
 import { Briefcase, FileText } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
+import { LayersIcon } from "@plane/propel/icons";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // plane ui
-import { LayersIcon } from "@plane/ui";
 // components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 // plane web services

@@ -2,7 +2,7 @@
 
 // icons
 import { FileText, Layers } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // types
 import { TTourSteps } from "./root";
 

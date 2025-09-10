@@ -1,6 +1,6 @@
 import { FC } from "react";
+import { ISvgIcons } from "@plane/propel/icons";
 import { TLogoProps } from "@plane/types";
-import { ISvgIcons } from "@plane/ui";
 import { getFileURL, truncateText } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 

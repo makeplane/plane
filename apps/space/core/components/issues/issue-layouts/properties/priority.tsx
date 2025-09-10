@@ -3,9 +3,9 @@
 import { SignalHigh } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // types
+import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon } from "@plane/ui";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 

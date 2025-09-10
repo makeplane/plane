@@ -1,5 +1,5 @@
-import type { Content, JSONContent } from "@plane/types";
 import DOMPurify from "isomorphic-dompurify";
+import type { Content, JSONContent } from "@plane/types";
 
 /**
  * @description Adds space between camelCase words
@@ -167,8 +167,11 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
  * @param {JSONContent} content
  * @returns {boolean}
  */
-const isJSONContentEmpty = (content: JSONContent): boolean => {
+export const isJSONContentEmpty = (content: JSONContent | undefined): boolean => {
   // If it has text, check if text is meaningful
+  if (!content) {
+    return true;
+  }
   if (content.text !== undefined) {
     return !content.text || content.text.trim() === "";
   }

@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { WEBSITE_URL } from "@plane/constants";
 // assets
-import { PlaneLogo } from "@plane/ui";
+import { PlaneLogo } from "@plane/propel/icons";
 
 type TPoweredBy = {
   disabled?: boolean;

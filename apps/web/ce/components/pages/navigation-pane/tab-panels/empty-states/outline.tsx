@@ -6,7 +6,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const PageNavigationPaneOutlineTabEmptyState = () => {
   // asset resolved path
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/outline" });
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/wiki/navigation-pane/outline" });
   // translation
   const { t } = useTranslation();
 

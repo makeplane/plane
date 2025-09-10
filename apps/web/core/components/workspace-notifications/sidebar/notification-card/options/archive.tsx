@@ -6,7 +6,8 @@ import { ArchiveRestore } from "lucide-react";
 // plane imports
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

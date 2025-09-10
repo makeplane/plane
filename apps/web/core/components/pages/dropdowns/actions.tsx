@@ -20,7 +20,8 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";

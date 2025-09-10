@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
@@ -22,16 +23,11 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
+// plane web imports
 import { EditorAIMenu } from "@/plane-web/components/pages";
-// plane web types
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-// plane web store
 import { EPageStoreType } from "@/plane-web/hooks/store";
-// plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -96,11 +92,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     editor: { editorRef, updateAssetsList },
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
-    fetchEmbedSuggestions: handlers.fetchEntity,
-    workspaceSlug,
-  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
@@ -243,9 +234,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             },
             renderComponent: (props) => <EditorMentionsRoot {...props} />,
             getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-          }}
-          embedHandler={{
-            issue: issueEmbedProps,
           }}
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}

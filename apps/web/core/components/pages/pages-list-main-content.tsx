@@ -34,8 +34,8 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { currentProjectDetails, loader } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
+  const { currentProjectDetails } = useProject();
+  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters, loader } =
     usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);
@@ -55,17 +55,17 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
     basePath: "/empty-state/onboarding/pages",
   });
   const publicPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/public",
+    basePath: "/empty-state/wiki/public",
   });
   const privatePageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/private",
+    basePath: "/empty-state/wiki/private",
   });
   const archivedPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/archived",
+    basePath: "/empty-state/wiki/archived",
   });
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/wiki/all-filters", extension: "svg" });
   const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
+    basePath: "/empty-state/wiki/name-filter",
     extension: "svg",
   });
 

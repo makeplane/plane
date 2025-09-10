@@ -147,7 +147,6 @@ export type IEditorProps = {
   editorClassName?: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
-  embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -178,7 +177,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -187,7 +185,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
-  embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 };
