@@ -107,7 +107,7 @@ class MagicSignInEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
             if user.is_password_autoset and profile.is_onboarded:
-                path = f"accounts/set-password?email={email}"
+                path = f"accounts/set-password?{urlencode({'email': email})}"
             else:
                 # Get the redirection path
                 path = (
