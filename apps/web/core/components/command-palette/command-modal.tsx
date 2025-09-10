@@ -17,9 +17,15 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LayersIcon } from "@plane/propel/icons";
-import { IWorkspaceSearchResults, ICycle } from "@plane/types";
+import {
+  IWorkspaceSearchResults,
+  ICycle,
+  TActivityEntityData,
+  TIssueEntityData,
+  TIssueSearchResponse,
+} from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
-import { cn, getTabIndex } from "@plane/utils";
+import { cn, getTabIndex, generateWorkItemLink } from "@plane/utils";
 // components
 import {
   ChangeIssueAssignee,
@@ -67,6 +73,8 @@ export const CommandModal: React.FC = observer(() => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
+  const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
+  const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
   const keySequence = useRef("");
   const sequenceTimeout = useRef<NodeJS.Timeout | null>(null);
   // plane hooks
@@ -128,11 +136,25 @@ export const CommandModal: React.FC = observer(() => {
     else fetchAllCycles(workspaceSlug.toString(), projectId.toString());
   };
 
+  const openIssueList = () => {
+    if (!workspaceSlug) return;
+    setPlaceholder("Search issues...");
+    setSearchTerm("");
+    setPages((p) => [...p, "open-issue"]);
+    workspaceService
+      .fetchWorkspaceRecents(workspaceSlug.toString(), "issue")
+      .then((res) =>
+        setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
+      )
+      .catch(() => setRecentIssues([]));
+  };
+
   useEffect(() => {
     if (!isCommandPaletteOpen || !activeEntity) return;
 
     if (activeEntity === "project") openProjectList();
     if (activeEntity === "cycle") openCycleList();
+    if (activeEntity === "issue") openIssueList();
     clearActiveEntity();
   }, [isCommandPaletteOpen, activeEntity, clearActiveEntity]);
 
@@ -190,14 +212,30 @@ export const CommandModal: React.FC = observer(() => {
     router.push("/create-workspace");
   };
 
-  useEffect(
-    () => {
-      if (!workspaceSlug) return;
+  useEffect(() => {
+    if (!workspaceSlug) return;
 
-      setIsLoading(true);
+    setIsLoading(true);
 
-      if (debouncedSearchTerm) {
-        setIsSearching(true);
+    if (debouncedSearchTerm) {
+      setIsSearching(true);
+      if (page === "open-issue") {
+        workspaceService
+          .searchEntity(workspaceSlug.toString(), {
+            count: 10,
+            query: debouncedSearchTerm,
+            query_type: ["issue"],
+            ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
+          })
+          .then((res) => {
+            setIssueResults(res.issue || []);
+            setResultsCount(res.issue?.length || 0);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setIsSearching(false);
+          });
+      } else {
         workspaceService
           .searchWorkspace(workspaceSlug.toString(), {
             ...(projectId ? { project_id: projectId.toString() } : {}),
@@ -216,14 +254,14 @@ export const CommandModal: React.FC = observer(() => {
             setIsLoading(false);
             setIsSearching(false);
           });
-      } else {
-        setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
-        setIsLoading(false);
-        setIsSearching(false);
       }
-    },
-    [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
-  );
+    } else {
+      setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
+      setIssueResults([]);
+      setIsLoading(false);
+      setIsSearching(false);
+    }
+  }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, page]);
 
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
@@ -286,6 +324,12 @@ export const CommandModal: React.FC = observer(() => {
                           if (keySequence.current === "oc") {
                             e.preventDefault();
                             openCycleList();
+                            keySequence.current = "";
+                            return;
+                          }
+                          if (keySequence.current === "oi") {
+                            e.preventDefault();
+                            openIssueList();
                             keySequence.current = "";
                             return;
                           }
@@ -409,7 +453,7 @@ export const CommandModal: React.FC = observer(() => {
                         </Command.Loading>
                       )}
 
-                      {debouncedSearchTerm !== "" && (
+                      {debouncedSearchTerm !== "" && page !== "open-issue" && (
                         <CommandPaletteSearchResults closePalette={closePalette} results={results} />
                       )}
 
@@ -446,6 +490,16 @@ export const CommandModal: React.FC = observer(() => {
                                 <div className="flex items-center gap-1">
                                   <kbd>O</kbd>
                                   <kbd>C</kbd>
+                                </div>
+                              </Command.Item>
+                              <Command.Item onSelect={openIssueList} className="focus:outline-none">
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <Search className="h-3.5 w-3.5" />
+                                  Open issue...
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <kbd>O</kbd>
+                                  <kbd>I</kbd>
                                 </div>
                               </Command.Item>
                             </Command.Group>
@@ -581,6 +635,93 @@ export const CommandModal: React.FC = observer(() => {
                             </Command.Item>
                           ))}
                         </Command.Group>
+                      )}
+
+                      {page === "open-issue" && workspaceSlug && (
+                        <>
+                          {searchTerm === "" ? (
+                            recentIssues.length > 0 ? (
+                              <Command.Group heading="Issues">
+                                {recentIssues.map((issue) => (
+                                  <Command.Item
+                                    key={issue.id}
+                                    value={`${issue.project_identifier}-${issue.sequence_id} ${issue.name}`}
+                                    onSelect={() => {
+                                      closePalette();
+                                      router.push(
+                                        generateWorkItemLink({
+                                          workspaceSlug: workspaceSlug.toString(),
+                                          projectId: issue.project_id,
+                                          issueId: issue.id,
+                                          projectIdentifier: issue.project_identifier,
+                                          sequenceId: issue.sequence_id,
+                                          isEpic: issue.is_epic,
+                                        })
+                                      );
+                                    }}
+                                    className="focus:outline-none"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <IssueIdentifier
+                                        projectId={issue.project_id}
+                                        projectIdentifier={issue.project_identifier}
+                                        issueSequenceId={issue.sequence_id}
+                                        textContainerClassName="text-sm text-custom-text-200"
+                                      />
+                                      <span className="truncate">{issue.name}</span>
+                                    </div>
+                                  </Command.Item>
+                                ))}
+                              </Command.Group>
+                            ) : (
+                              <div className="px-3 py-8 text-center text-sm text-custom-text-300">
+                                Search for issue id or issue title
+                              </div>
+                            )
+                          ) : issueResults.length > 0 ? (
+                            <Command.Group heading="Issues">
+                              {issueResults.map((issue) => (
+                                <Command.Item
+                                  key={issue.id}
+                                  value={`${issue.project__identifier}-${issue.sequence_id} ${issue.name}`}
+                                  onSelect={() => {
+                                    closePalette();
+                                    router.push(
+                                      generateWorkItemLink({
+                                        workspaceSlug: workspaceSlug.toString(),
+                                        projectId: issue.project_id,
+                                        issueId: issue.id,
+                                        projectIdentifier: issue.project__identifier,
+                                        sequenceId: issue.sequence_id,
+                                      })
+                                    );
+                                  }}
+                                  className="focus:outline-none"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <IssueIdentifier
+                                      projectId={issue.project_id}
+                                      projectIdentifier={issue.project__identifier}
+                                      issueSequenceId={issue.sequence_id}
+                                      textContainerClassName="text-sm text-custom-text-200"
+                                    />
+                                    <span className="truncate">{issue.name}</span>
+                                  </div>
+                                </Command.Item>
+                              ))}
+                            </Command.Group>
+                          ) : (
+                            !isLoading &&
+                            !isSearching && (
+                              <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                                <SimpleEmptyState
+                                  title={t("command_k.empty_state.search.title")}
+                                  assetPath={resolvedPath}
+                                />
+                              </div>
+                            )
+                          )}
+                        </>
                       )}
 
                       {/* workspace settings actions */}

@@ -8,7 +8,7 @@ import {
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 
-export type CommandPaletteEntity = "project" | "cycle" | "module";
+export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
 export interface ModalData {
   store: EIssuesStoreType;

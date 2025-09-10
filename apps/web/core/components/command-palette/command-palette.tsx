@@ -201,6 +201,7 @@ export const CommandPalette: FC = observer(() => {
           op: "project",
           oc: "cycle",
           om: "module",
+          oi: "issue",
         };
         const entity = entityShortcutMap[keySequence.current];
         if (entity) {
