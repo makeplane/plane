@@ -13,7 +13,7 @@ import { ENotionImporterKeyType, TNotionMigratorData } from "../../types";
 import { getEmojiPayload } from "../../utils/html-helpers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
 
 /*
  * Notion Data Migrator: Phase Two Implementation
@@ -61,7 +61,6 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
    * Creates Plane pages from HTML page nodes and caches them in the store
    * for future reference
    * @param job - Import job containing workspace and project information
-   * @param client - Authenticated Plane API client
    * @param pageNodes - Array of HTML page nodes to process
    * @param contentMap - Map of file paths to content buffers
    * @returns Map of page names to their IDs in Plane

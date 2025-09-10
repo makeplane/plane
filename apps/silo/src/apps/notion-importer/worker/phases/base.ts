@@ -15,7 +15,7 @@ import { IZipImportDriver } from "../../drivers/types";
 import { ENotionImporterKeyType, TNotionImportConfig, TNotionMigratorData } from "../../types";
 import { getKey } from "../../utils";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
 
 // Context for processing nodes (everything a phase implementation needs)
 export interface PhaseProcessingContext {

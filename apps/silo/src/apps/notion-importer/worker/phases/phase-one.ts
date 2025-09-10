@@ -1,5 +1,5 @@
 import mimetics from "mimetics";
-import { Client, ExPage } from "@plane/sdk";
+import { ExPage } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
 import {
   ENotionImporterKeyType,
@@ -7,6 +7,7 @@ import {
   TAssetInfo,
   TNotionMigratorData,
 } from "@/apps/notion-importer/types";
+import { env } from "@/env";
 import { protect } from "@/lib/errors";
 import { TZipFileNode } from "@/lib/zip-manager";
 import { logger } from "@/logger";
@@ -16,7 +17,7 @@ import { importTaskManger } from "@/worker";
 import { EZipDriverType } from "../../drivers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
 
 /**
  * Notion Data Migrator: Phase One Implementation
@@ -55,7 +56,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    */
   async processNodes(context: PhaseProcessingContext, data: TNotionMigratorData): Promise<void> {
     const { parentPageId, type } = data;
-    const { currentNode, fileId, job, client, headers, zipManager } = context;
+    const { currentNode, fileId, job, headers, zipManager } = context;
 
     // Segregate the children nodes into attachment nodes, page nodes and directory nodes
     const { pageNodes, directoryNodes, attachmentNodes } = await this.segregateChildrenNodes(currentNode);
@@ -70,8 +71,8 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     const contentMap = await zipManager.getDirectoryContent(currentNode, ["html"]);
 
     // Process all children nodes and perform desired actions
-    const pageCreationResults = await this.processPageNodes(fileId, job as TImportJob, client, parentPageId, pageNodes);
-    await this.processAttachmentNodes(fileId, currentNode, job as TImportJob, client, attachmentNodes, contentMap);
+    const pageCreationResults = await this.processPageNodes(fileId, job as TImportJob, parentPageId, pageNodes);
+    await this.processAttachmentNodes(fileId, currentNode, job as TImportJob, attachmentNodes, contentMap);
     await this.processDirectoryNodes(job as TImportJob, fileId, headers, pageCreationResults, directoryNodes, type);
   }
 
@@ -89,7 +90,6 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
   async processPageNodes(
     fileId: string,
     job: TImportJob,
-    client: Client,
     parentPageId: string | undefined,
     pageNodes: TZipFileNode[]
   ): Promise<Map<string, string>> {
@@ -151,7 +151,6 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     fileId: string,
     root: TZipFileNode,
     job: TImportJob,
-    client: Client,
     attachmentNodes: TZipFileNode[],
     contentMap: Map<string, Buffer>
   ): Promise<void> {
