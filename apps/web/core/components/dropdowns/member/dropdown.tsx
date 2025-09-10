@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LucideIcon } from "lucide-react";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { MemberDropdownBase } from "./base";
 import { MemberDropdownProps } from "./types";

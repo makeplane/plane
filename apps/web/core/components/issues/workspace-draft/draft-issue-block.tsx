@@ -3,21 +3,22 @@ import React, { FC, useRef, useState } from "react";
 import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
-// types
+// plane utils
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
-import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
-// constants
-// helper
+import { Row, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
-// plane-web components
-import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues";
-// local components
-import { WorkspaceDraftIssueQuickActions } from "../issue-layouts";
-import { CreateUpdateIssueModal } from "../issue-modal";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
+// plane-web imports
+import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// local imports
+import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 import { DraftIssueProperties } from "./draft-issue-properties";
+import { WorkspaceDraftIssueQuickActions } from "./quick-action";
 
 type Props = {
   workspaceSlug: string;
@@ -152,7 +153,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
                 <div className="size-4 grid place-items-center flex-shrink-0" />
               </div>
 
-              <Tooltip tooltipContent={issue.name} position="top-left" renderByDefault={false}>
+              <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
                 <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
               </Tooltip>
             </div>

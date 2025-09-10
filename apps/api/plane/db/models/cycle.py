@@ -71,7 +71,7 @@ class Cycle(ProjectBaseModel):
     archived_at = models.DateTimeField(null=True)
     logo_props = models.JSONField(default=dict)
     # timezone
-    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     version = models.IntegerField(default=1)
 
@@ -139,6 +139,7 @@ class CycleUserProperties(ProjectBaseModel):
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["cycle", "user", "deleted_at"]

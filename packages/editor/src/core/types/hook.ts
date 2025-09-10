@@ -1,14 +1,20 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import type { EditorProps } from "@tiptap/pm/view";
+import type { Content } from "@tiptap/core";
 // local imports
-import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorProps } from "./editor";
+import type { ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
 
 type TCoreHookProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "editorClassName" | "extensions" | "flaggedExtensions" | "handleEditorReady"
-> & {
-  editorProps?: EditorProps;
-};
+  | "disabledExtensions"
+  | "editorClassName"
+  | "editorProps"
+  | "extendedEditorProps"
+  | "extensions"
+  | "flaggedExtensions"
+  | "handleEditorReady"
+  | "isTouchDevice"
+  | "onEditorFocus"
+>;
 
 export type TEditorHookProps = TCoreHookProps &
   Pick<
@@ -27,7 +33,7 @@ export type TEditorHookProps = TCoreHookProps &
   > & {
     editable: boolean;
     enableHistory: boolean;
-    initialValue?: string;
+    initialValue?: Content;
     provider?: HocuspocusProvider;
   };
 
@@ -45,8 +51,4 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
   > &
-  Pick<ICollaborativeDocumentEditorProps, "embedHandler" | "realtimeConfig" | "serverHandler" | "user">;
-
-export type TReadOnlyEditorHookProps = TCoreHookProps &
-  Pick<TEditorHookProps, "initialValue" | "provider"> &
-  Pick<IReadOnlyEditorProps, "fileHandler" | "forwardedRef" | "mentionHandler">;
+  Pick<ICollaborativeDocumentEditorProps, "dragDropEnabled" | "realtimeConfig" | "serverHandler" | "user">;

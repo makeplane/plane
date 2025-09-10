@@ -17,7 +17,7 @@ import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -29,7 +29,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
+  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size">>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;

@@ -29,6 +29,7 @@ export enum EIssueGroupByToServerOptions {
   "target_date" = "target_date",
   "project" = "project_id",
   "created_by" = "created_by",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "team_project" = "project_id",
 }
 
@@ -100,7 +101,8 @@ export type TCreateModalStoreTypes =
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.MODULE
-  | EIssuesStoreType.EPIC;
+  | EIssuesStoreType.EPIC
+  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
 
 export const ISSUE_GROUP_BY_OPTIONS: {
   key: TIssueGroupByOptions;

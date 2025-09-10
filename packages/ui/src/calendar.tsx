@@ -4,10 +4,11 @@ import { ChevronLeft } from "lucide-react";
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
 
-import { cn } from "../helpers";
+import { cn } from "./utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Calendar = ({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) => {
   const currentYear = new Date().getFullYear();
   const thirtyYearsAgoFirstDay = new Date(currentYear - 30, 0, 1);

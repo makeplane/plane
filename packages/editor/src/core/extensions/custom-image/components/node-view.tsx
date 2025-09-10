@@ -24,7 +24,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   const { editor, extension, node } = props;
   const { src: imgNodeSrc } = node.attrs;
 
-  const [isUploaded, setIsUploaded] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(!!imgNodeSrc);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
   const [resolvedDownloadSrc, setResolvedDownloadSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
@@ -43,13 +43,13 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (resolvedSrc) {
+    if (resolvedSrc || imgNodeSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [resolvedSrc]);
+  }, [resolvedSrc, imgNodeSrc]);
 
   useEffect(() => {
     if (!imgNodeSrc) {

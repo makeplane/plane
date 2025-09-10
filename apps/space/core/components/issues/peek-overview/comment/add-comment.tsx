@@ -11,7 +11,9 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
-import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 // services
 const fileService = new SitesFileService();
 
@@ -75,6 +77,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <LiteTextEditor
+              editable
               onEnterKeyPress={(e) => {
                 if (currentUser) handleSubmit(onSubmit)(e);
               }}

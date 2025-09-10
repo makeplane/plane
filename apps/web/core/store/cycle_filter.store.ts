@@ -4,7 +4,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TCycleDisplayFilters, TCycleFilters, TCycleFiltersByState } from "@plane/types";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ICycleFilterStore {
   // observables

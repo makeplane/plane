@@ -4,13 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
-import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";
 

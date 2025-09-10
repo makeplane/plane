@@ -209,7 +209,7 @@ export class InstanceStore implements IInstanceStore {
         });
       });
       await this.instanceService.disableEmail();
-    } catch (error) {
+    } catch (_error) {
       console.error("Error disabling the email");
       this.instanceConfigurations = instanceConfigurations;
     }

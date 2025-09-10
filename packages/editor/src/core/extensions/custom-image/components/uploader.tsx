@@ -40,6 +40,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
+  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
 
   const onUpload = useCallback(
     (url: string) => {
@@ -125,12 +126,14 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         uploadFile(meta.file);
       } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
         if (meta.hasOpenedFileInputOnce) return;
-        fileInputRef.current.click();
+        if (!isTouchDevice) {
+          fileInputRef.current.click();
+        }
         hasTriggeredFilePickerRef.current = true;
         imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
-  }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId]);
+  }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId, isTouchDevice]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {

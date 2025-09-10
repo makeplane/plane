@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
 export const AppSearch = observer(() => {
   // store hooks

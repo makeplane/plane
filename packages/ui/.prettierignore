@@ -2,5 +2,5 @@
 .vercel
 .tubro
 out/
-dis/
+dist/
 build/

@@ -8,22 +8,25 @@ import { CalendarCheck } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
-import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
@@ -192,7 +195,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               projectId={projectId}
                               textContainerClassName="text-xs text-custom-text-200"
                             />
-                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>

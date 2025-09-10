@@ -5,22 +5,38 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import { IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
   isLoading?: boolean;
+  isTouchDevice: boolean;
   tabIndex?: number;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
+  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, isLoading, tabIndex } =
-    props;
+  const {
+    aiHandler,
+    bubbleMenuEnabled,
+    displayConfig,
+    documentLoaderClassName,
+    editor,
+    editorContainerClassName,
+    id,
+    isLoading,
+    isTouchDevice,
+    tabIndex,
+    flaggedExtensions,
+    disabledExtensions,
+  } = props;
 
   return (
     <div
@@ -29,19 +45,24 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <EditorContainer
           displayConfig={displayConfig}
           editor={editor}
           editorContainerClassName={editorContainerClassName}
           id={id}
+          isTouchDevice={isTouchDevice}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && (
+          {editor.isEditable && !isTouchDevice && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu editor={editor} />
+              <BlockMenu
+                editor={editor}
+                flaggedExtensions={flaggedExtensions}
+                disabledExtensions={disabledExtensions}
+              />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}

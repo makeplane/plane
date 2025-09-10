@@ -39,17 +39,9 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               {filterKey === "priority" && (
                 <AppliedPriorityFilters
                   handleRemove={(val) => handleRemoveFilter("priority", val)}
-                  values={filterValue ?? []}
+                  values={(filterValue ?? []) as TFilters["priority"]}
                 />
               )}
-
-              {/* {filterKey === "labels" && labels && (
-                <AppliedLabelsFilters
-                  handleRemove={(val) => handleRemoveFilter("labels", val)}
-                  labels={labels}
-                  values={value}
-                />
-              )} */}
 
               {filterKey === "state" && (
                 <AppliedStateFilters

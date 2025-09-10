@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react";
 import { LucideProps } from "lucide-react";
 import React, { FC } from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TabListItem = {
   key: string;

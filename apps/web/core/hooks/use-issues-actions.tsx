@@ -14,8 +14,12 @@ import {
   TLoader,
   TProfileViews,
 } from "@plane/types";
-import { useTeamIssueActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
-import { useIssues } from "./store";
+import {
+  useTeamIssueActions,
+  useTeamViewIssueActions,
+  useTeamProjectWorkItemsActions,
+} from "@/plane-web/helpers/issue-action-helper";
+import { useIssues } from "./store/use-issues";
 
 export interface IssueActions {
   fetchIssues: (
@@ -48,9 +52,9 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const projectViewIssueActions = useProjectViewIssueActions();
   const globalIssueActions = useGlobalIssueActions();
   const profileIssueActions = useProfileIssueActions();
-  const draftIssueActions = useDraftIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
+  const teamProjectWorkItemsActions = useTeamProjectWorkItemsActions();
 
   switch (storeType) {
     case EIssuesStoreType.TEAM_VIEW:
@@ -63,8 +67,6 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return teamIssueActions;
     case EIssuesStoreType.ARCHIVED:
       return archivedIssueActions;
-    case EIssuesStoreType.DRAFT:
-      return draftIssueActions;
     case EIssuesStoreType.CYCLE:
       return cycleIssueActions;
     case EIssuesStoreType.MODULE:
@@ -76,6 +78,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return workspaceDraftIssueActions;
     case EIssuesStoreType.EPIC:
       return projectEpicsActions;
+    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
+      return teamProjectWorkItemsActions;
     case EIssuesStoreType.PROJECT:
     default:
       return projectIssueActions;
@@ -634,76 +638,6 @@ const useProjectViewIssueActions = () => {
       updateFilters,
     }),
     [fetchIssues, fetchNextIssues, createIssue, quickAddIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
-  );
-};
-
-const useDraftIssueActions = () => {
-  // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const projectId = routerProjectId?.toString();
-  // store hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
-
-  const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
-      if (!workspaceSlug || !projectId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options);
-    },
-    [issues.fetchIssues, workspaceSlug, projectId]
-  );
-  const fetchNextIssues = useCallback(
-    async (groupId?: string, subGroupId?: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
-    },
-    [issues.fetchIssues, workspaceSlug, projectId]
-  );
-
-  const createIssue = useCallback(
-    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.createIssue(workspaceSlug, projectId, data);
-    },
-    [issues.createIssue, workspaceSlug]
-  );
-  const updateIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.updateIssue(workspaceSlug, projectId, issueId, data);
-    },
-    [issues.updateIssue, workspaceSlug]
-  );
-  const removeIssue = useCallback(
-    async (projectId: string | undefined | null, issueId: string) => {
-      if (!workspaceSlug || !projectId) return;
-      return await issues.removeIssue(workspaceSlug, projectId, issueId);
-    },
-    [issues.removeIssue, workspaceSlug]
-  );
-
-  const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
-      if (!workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
-    },
-    [issuesFilter.updateFilters]
-  );
-
-  return useMemo(
-    () => ({
-      fetchIssues,
-      fetchNextIssues,
-      createIssue,
-      updateIssue,
-      removeIssue,
-      updateFilters,
-    }),
-    [fetchIssues, createIssue, updateIssue, removeIssue, updateFilters]
   );
 };
 

@@ -9,18 +9,19 @@ import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TModuleFilters } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
 // components
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 // helpers
 // hooks
-import { useMember, useModuleFilter } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
 // i18n

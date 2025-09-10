@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 import {
   Control,
   Controller,
@@ -32,11 +30,7 @@ import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";
-// assets
-import InviteMembersDark from "@/public/onboarding/invite-members-dark.webp";
-import InviteMembersLight from "@/public/onboarding/invite-members-light.webp";
 // components
-import { OnboardingHeader } from "./header";
 import { SwitchAccountDropdown } from "./switch-account-dropdown";
 
 type Props = {
@@ -169,7 +163,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                 ref={ref}
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-onboarding-border-100 text-xs placeholder:text-onboarding-text-400 sm:text-sm"
+                className="w-full border-custom-border-300 text-xs placeholder:text-custom-text-400 sm:text-sm"
                 autoComplete="off"
               />
             )}
@@ -193,13 +187,11 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                 <Listbox.Button
                   type="button"
                   ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-onboarding-border-100"
+                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-custom-border-300"
                 >
                   <span
                     className={`text-sm ${
-                      !getValues(`emails.${index}.role_active`)
-                        ? "text-onboarding-text-400"
-                        : "text-onboarding-text-100"
+                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
                     } sm:text-sm`}
                   >
                     {ROLE[value]}
@@ -216,7 +208,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-onboarding-border-100 bg-onboarding-background-200 shadow-sm focus:outline-none"
+                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-sm focus:outline-none"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
@@ -229,7 +221,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ selected }) => (
@@ -273,8 +265,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const { finishOnboarding, totalSteps, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
-
-  const { resolvedTheme } = useTheme();
 
   const {
     control,
@@ -360,17 +350,10 @@ export const InviteMembers: React.FC<Props> = (props) => {
   return (
     <div className="flex w-full h-full">
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <div className="flex items-center justify-between">
-          {/* Since this will always be the last step */}
-          <OnboardingHeader currentStep={totalSteps} totalSteps={totalSteps} />
-          <div className="shrink-0 lg:hidden">
-            <SwitchAccountDropdown />
-          </div>
-        </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
-            <h3 className="text-3xl font-bold text-onboarding-text-100">Invite your teammates</h3>
-            <p className="font-medium text-onboarding-text-400">
+            <h3 className="text-3xl font-bold text-custom-text-100">Invite your teammates</h3>
+            <p className="font-medium text-custom-text-400">
               Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>
           </div>
@@ -383,8 +366,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
           >
             <div className="w-full text-sm py-4">
               <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-sm text-onboarding-text-200 font-medium">Email</div>
-                <div className="col-span-4 px-1 text-sm text-onboarding-text-200 font-medium">Role</div>
+                <div className="col-span-6 px-1 text-sm text-custom-text-200 font-medium">Email</div>
+                <div className="col-span-4 px-1 text-sm text-custom-text-200 font-medium">Role</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -431,16 +414,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           </form>
         </div>
       </div>
-      <div className="hidden lg:block relative w-2/5 h-screen overflow-hidden px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <SwitchAccountDropdown />
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={resolvedTheme === "dark" ? InviteMembersDark : InviteMembersLight}
-            className="h-screen w-auto float-end object-cover"
-            alt="Profile setup"
-          />
-        </div>
-      </div>
+      <SwitchAccountDropdown />
     </div>
   );
 };

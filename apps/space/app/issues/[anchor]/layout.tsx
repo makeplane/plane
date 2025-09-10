@@ -13,6 +13,11 @@ export async function generateMetadata({ params }: Props) {
   const { anchor } = params;
   const DEFAULT_TITLE = "Plane";
   const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
+  // Validate anchor before using in request (only allow alphanumeric, -, _)
+  const ANCHOR_REGEX = /^[a-zA-Z0-9_-]+$/;
+  if (!ANCHOR_REGEX.test(anchor)) {
+    return { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION };
+  }
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/anchor/${anchor}/meta/`);
     const data = await response.json();

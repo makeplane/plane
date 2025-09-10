@@ -9,12 +9,12 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueLabel } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 // hooks
 import { cn } from "@plane/utils";
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { LabelDropdown } from "./label-dropdown";
 

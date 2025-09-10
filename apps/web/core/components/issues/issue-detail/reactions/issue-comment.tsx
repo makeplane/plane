@@ -2,14 +2,16 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IUser } from "@plane/types";
 // components
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // helper
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 // types
 import { ReactionSelector } from "./reaction-selector";
 

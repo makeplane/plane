@@ -12,6 +12,7 @@ from plane.app.serializers import StickySerializer
 class WorkspaceStickyViewSet(BaseViewSet):
     serializer_class = StickySerializer
     model = Sticky
+    use_read_replica = True
 
     def get_queryset(self):
         return self.filter_queryset(

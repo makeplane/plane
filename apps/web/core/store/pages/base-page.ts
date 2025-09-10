@@ -7,7 +7,7 @@ import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
 import { PageEditorInstance } from "./page-editor-info";
 
@@ -78,6 +78,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   id: string | undefined;
   name: string | undefined;
   logo_props: TLogoProps | undefined;
+  description: object | undefined;
   description_html: string | undefined;
   color: string | undefined;
   label_ids: string[] | undefined;
@@ -92,6 +93,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   updated_by: string | undefined;
   created_at: Date | undefined;
   updated_at: Date | undefined;
+  deleted_at: Date | undefined;
   // helpers
   oldName: string = "";
   // services
@@ -113,6 +115,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;
+    this.description = page?.description || undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
     this.label_ids = page?.label_ids || undefined;
@@ -128,6 +131,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.created_at = page?.created_at || undefined;
     this.updated_at = page?.updated_at || undefined;
     this.oldName = page?.name || "";
+    this.deleted_at = page?.deleted_at || undefined;
 
     makeObservable(this, {
       // loaders
@@ -136,6 +140,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       id: observable.ref,
       name: observable.ref,
       logo_props: observable.ref,
+      description: observable,
       description_html: observable.ref,
       color: observable.ref,
       label_ids: observable,
@@ -150,6 +155,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       updated_by: observable.ref,
       created_at: observable.ref,
       updated_at: observable.ref,
+      deleted_at: observable.ref,
       // helpers
       oldName: observable.ref,
       setIsSubmitting: action,
@@ -208,6 +214,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     return {
       id: this.id,
       name: this.name,
+      description: this.description,
       description_html: this.description_html,
       color: this.color,
       label_ids: this.label_ids,
@@ -223,6 +230,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       updated_by: this.updated_by,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      deleted_at: this.deleted_at,
       ...this.asJSONExtended,
     };
   }

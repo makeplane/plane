@@ -4,7 +4,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { UserService } from "@plane/services";
 import { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -51,6 +51,7 @@ export class ProfileStore implements IProfileStore {
     billing_address_country: undefined,
     billing_address: undefined,
     has_billing_address: false,
+    has_marketing_email_consent: false,
     created_at: "",
     updated_at: "",
     language: "",
@@ -91,7 +92,7 @@ export class ProfileStore implements IProfileStore {
         this.data = userProfile;
       });
       return userProfile;
-    } catch (error) {
+    } catch (_error) {
       runInAction(() => {
         this.isLoading = false;
         this.error = {
@@ -118,7 +119,7 @@ export class ProfileStore implements IProfileStore {
       }
       const userProfile = await this.userService.updateProfile(data);
       return userProfile;
-    } catch (error) {
+    } catch (_error) {
       if (currentUserProfileData) {
         Object.keys(currentUserProfileData).forEach((key: string) => {
           const userKey: keyof TUserProfile = key as keyof TUserProfile;

@@ -5,7 +5,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
-import coreEn from "../locales/en/core.json";
+import { enCore, locales } from "../locales";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
 
@@ -17,7 +17,7 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
 export class TranslationStore {
   // Core translations that are always loaded
   private coreTranslations: ITranslations = {
-    en: coreEn,
+    en: enCore,
   };
   // List of translations for each language
   private translations: ITranslations = {};
@@ -136,12 +136,26 @@ export class TranslationStore {
    * @param files - Array of file names to import (without .json extension)
    * @returns Promise that resolves to merged translations
    */
-  private async importAndMergeFiles(language: TLanguage, files: string[]): Promise<any> {
+  private async importAndMergeFiles(language: TLanguage, files: string[]) {
     try {
-      const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
+      const localeData = locales[language as keyof typeof locales];
+      if (!localeData) {
+        throw new Error(`Locale data not found for language: ${language}`);
+      }
+
+      // Filter out files that don't exist for this language
+      const availableFiles = files.filter((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return fileKey in localeData;
+      });
+
+      const importPromises = availableFiles.map((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return localeData[fileKey]();
+      });
 
       const modules = await Promise.all(importPromises);
-      const merged = modules.reduce((acc, module) => merge(acc, module.default), {});
+      const merged = modules.reduce((acc: any, module: any) => merge(acc, module.default), {});
       return { default: merged };
     } catch (error) {
       throw new Error(`Failed to import and merge files for ${language}: ${error}`);
@@ -153,7 +167,7 @@ export class TranslationStore {
    * @param language - The language to import the translations for
    * @returns {Promise<any>}
    */
-  private async importLanguageFile(language: TLanguage): Promise<any> {
+  private async importLanguageFile(language: TLanguage) {
     const files = Object.values(ETranslationFiles);
     return this.importAndMergeFiles(language, files);
   }
@@ -176,7 +190,6 @@ export class TranslationStore {
   /**
    * Gets the IntlMessageFormat instance for the given key and locale
    * Returns cached instance if available
-   * Throws an error if the key is not found in the translations
    */
   private getMessageInstance(key: string, locale: TLanguage): IntlMessageFormat | null {
     const cacheKey = this.getCacheKey(key, locale);
@@ -188,10 +201,10 @@ export class TranslationStore {
 
     // Get the message from the translations
     const message = get(this.translations[locale], key);
-    if (!message) return null;
+    if (typeof message !== "string") return null;
 
     try {
-      const formatter = new IntlMessageFormat(message as any, locale);
+      const formatter = new IntlMessageFormat(message, locale);
       this.messageCache.set(cacheKey, formatter);
       return formatter;
     } catch (error) {
@@ -208,7 +221,7 @@ export class TranslationStore {
    * @param params - The params to format the translation with
    * @returns The translated string
    */
-  t(key: string, params?: Record<string, any>): string {
+  t(key: string, params?: Record<string, unknown>): string {
     try {
       // Try current locale
       let formatter = this.getMessageInstance(key, this.currentLocale);

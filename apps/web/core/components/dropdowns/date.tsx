@@ -10,7 +10,7 @@ import { ComboDropDown, Calendar } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";

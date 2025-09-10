@@ -14,6 +14,7 @@ export abstract class APIService {
     this.axiosInstance = axios.create({
       baseURL,
       withCredentials: true,
+      timeout: 20000,
     });
   }
 
@@ -36,7 +37,7 @@ export abstract class APIService {
     return this.axiosInstance.patch(url, data, config);
   }
 
-  delete(url: string, data?: any, config = {}) {
+  delete(url: string, data?: Record<string, unknown> | null | string, config = {}) {
     return this.axiosInstance.delete(url, { data, ...config });
   }
 

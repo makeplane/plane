@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
-import { Tooltip, ModuleStatusIcon } from "@plane/ui";
+import { ModuleStatusIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";
 // constants
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -45,7 +46,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
           <div>{message}</div>
         </div>
       }
-      position="top-left"
+      position="top-start"
     >
       <div
         className="relative flex h-full w-full cursor-pointer items-center rounded"

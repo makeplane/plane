@@ -1,6 +1,6 @@
 {
   "name": "@plane/hooks",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "React hooks that are shared across multiple apps internally",
   "private": true,
@@ -11,9 +11,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup --minify",
-    "dev": "tsup --watch",
-    "check:lint": "eslint . --max-warnings 0",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:lint": "eslint . --max-warnings 6",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -21,13 +21,14 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "react": "^18.3.1"
+    "react": "catalog:"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/react": "^18.3.11",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

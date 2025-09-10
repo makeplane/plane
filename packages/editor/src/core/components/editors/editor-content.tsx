@@ -1,19 +1,19 @@
-import { Editor, EditorContent } from "@tiptap/react";
+import { type Editor, EditorContent } from "@tiptap/react";
 import { FC, ReactNode } from "react";
 
-interface EditorContentProps {
+type Props = {
   children?: ReactNode;
   editor: Editor | null;
   id: string;
   tabIndex?: number;
-}
+};
 
-export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
-  const { editor, children, id, tabIndex } = props;
+export const EditorContentWrapper: FC<Props> = (props) => {
+  const { editor, children, tabIndex, id } = props;
 
   return (
     <div tabIndex={tabIndex} onFocus={() => editor?.chain().focus(undefined, { scrollIntoView: false }).run()}>
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} id={id} />
       {children}
     </div>
   );

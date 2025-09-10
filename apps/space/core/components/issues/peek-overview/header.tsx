@@ -5,11 +5,12 @@ import { observer } from "mobx-react";
 import { Link2, MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { CenterPanelIcon, FullScreenPanelIcon, setToast, SidePanelIcon, TOAST_TYPE } from "@plane/ui";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetails } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";

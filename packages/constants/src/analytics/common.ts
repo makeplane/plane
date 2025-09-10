@@ -6,7 +6,9 @@ export interface IInsightField {
   i18nProps?: {
     entity?: string;
     entityPlural?: string;
-    [key: string]: any;
+    prefix?: string;
+    suffix?: string;
+    [key: string]: unknown;
   };
 }
 
@@ -171,6 +173,10 @@ export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; label: string }
   {
     value: ChartYAxisMetric.ESTIMATE_POINT_COUNT,
     label: "Estimate",
+  },
+  {
+    value: ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,
+    label: "Epic",
   },
 ];
 

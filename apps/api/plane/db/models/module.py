@@ -51,6 +51,15 @@ def get_default_display_properties():
     }
 
 
+class ModuleStatus(models.TextChoices):
+    BACKLOG = "backlog"
+    PLANNED = "planned"
+    IN_PROGRESS = "in-progress"
+    PAUSED = "paused"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
@@ -198,6 +207,7 @@ class ModuleUserProperties(ProjectBaseModel):
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["module", "user", "deleted_at"]

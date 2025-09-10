@@ -4,11 +4,11 @@ import React from "react";
 // plane constants
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueLayoutTypes } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 // types
-import { IssueLayoutIcon } from "@/components/issues";
+import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
 

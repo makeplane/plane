@@ -3,7 +3,7 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
-export interface CodeBlockOptions {
+export type CodeBlockOptions = {
   /**
    * Adds a prefix to language classes that are applied to code tags.
    * Defaults to `'language-'`.
@@ -22,8 +22,8 @@ export interface CodeBlockOptions {
   /**
    * Custom HTML attributes that should be added to the rendered HTML tag.
    */
-  HTMLAttributes: Record<string, any>;
-}
+  HTMLAttributes: Record<string, unknown>;
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

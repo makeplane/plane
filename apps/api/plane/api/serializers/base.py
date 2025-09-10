@@ -3,6 +3,13 @@ from rest_framework import serializers
 
 
 class BaseSerializer(serializers.ModelSerializer):
+    """
+    Base serializer providing common functionality for all model serializers.
+
+    Features field filtering, dynamic expansion of related fields, and standardized
+    primary key handling for consistent API responses across the application.
+    """
+
     id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -84,6 +91,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         "project_lead": UserLiteSerializer,
                         "state": StateLiteSerializer,
                         "created_by": UserLiteSerializer,
+                        "updated_by": UserLiteSerializer,
                         "issue": IssueSerializer,
                         "actor": UserLiteSerializer,
                         "owned_by": UserLiteSerializer,

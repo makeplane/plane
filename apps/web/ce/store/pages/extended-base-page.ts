@@ -1,6 +1,6 @@
-import { TPage, TPageExtended } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TBasePageServices } from "@/store/pages/base-page";
+import type { TPage, TPageExtended } from "@plane/types";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TBasePageServices } from "@/store/pages/base-page";
 
 export type TExtendedPageInstance = TPageExtended & {
   asJSONExtended: TPageExtended;

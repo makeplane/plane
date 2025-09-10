@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 import { MoveRight } from "lucide-react";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images

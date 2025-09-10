@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 // ui
 import { UserCircle2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CreateIcon, LayerStackIcon } from "@plane/propel/icons";
 import { IUserProfileData } from "@plane/types";
-import { CreateIcon, LayerStackIcon, Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
+import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
 // types
 
 type Props = {

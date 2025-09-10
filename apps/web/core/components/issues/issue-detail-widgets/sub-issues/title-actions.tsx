@@ -9,7 +9,9 @@ import {
   IIssueFilterOptions,
   TIssueServiceType,
 } from "@plane/types";
-import { useIssueDetail, useMember, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { SubIssueDisplayFilters } from "./display-filters";
 import { SubIssueFilters } from "./filters";
 import { SubIssuesActionButton } from "./quick-action-button";

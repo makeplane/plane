@@ -5,22 +5,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-// plane constants
-import {  WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-// i18n
+// plane imports
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
-// ui
 import { setPromiseToast } from "@plane/ui";
 import { cn, createIssuePayload } from "@plane/utils";
-// components
-import { CreateIssueToastActionItems } from "@/components/issues";
-// constants
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-// plane web components
-import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
+// plane web imports
+import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
+// local imports
+import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;
@@ -42,7 +38,7 @@ type TQuickAddIssueRoot = {
   layout: EIssueLayoutTypes;
   prePopulatedData?: Partial<TIssue>;
   QuickAddButton?: FC<TQuickAddIssueButton>;
-  customQuickAddButton?: JSX.Element;
+  customQuickAddButton?: React.ReactNode;
   containerClassName?: string;
   setIsQuickAddOpen?: (isOpen: boolean) => void;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;

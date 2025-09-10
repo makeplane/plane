@@ -11,7 +11,7 @@ import { IApiToken } from "@plane/types";
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 type Props = {
   handleClose: () => void;

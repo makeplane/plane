@@ -7,11 +7,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // mobx
 import { TIssueLayout } from "@/types/issue";
 import { IssueLayoutIcon } from "./layout-icon";

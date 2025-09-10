@@ -5,7 +5,7 @@ import { SitesProjectPublishService } from "@plane/services";
 import { TProjectPublishSettings } from "@plane/types";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export interface IPublishListStore {
   // observables

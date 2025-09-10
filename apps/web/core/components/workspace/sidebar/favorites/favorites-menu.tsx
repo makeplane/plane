@@ -16,8 +16,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Tooltip } from "@plane/propel/tooltip";
 import { IFavorite } from "@plane/types";
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // constants
 
 // helpers

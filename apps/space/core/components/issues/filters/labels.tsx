@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+// plane imports
 import { Loader } from "@plane/ui";
-// components
-import { FilterHeader, FilterOption } from "@/components/issues/filters/helpers";
 // types
-import { IIssueLabel } from "@/types/issue";
+import type { IIssueLabel } from "@/types/issue";
+// local imports
+import { FilterHeader } from "./helpers/filter-header";
+import { FilterOption } from "./helpers/filter-option";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />

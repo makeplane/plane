@@ -1,14 +1,14 @@
 import { Editor } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 // types
-import { TFileHandler, TReadOnlyFileHandler } from "@/types";
+import { TFileHandler } from "@/types";
 // local imports
 import { TrackFileDeletionPlugin } from "./delete";
 import { TrackFileRestorationPlugin } from "./restore";
 
 type TArgs = {
   editor: Editor;
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
   isEditable: boolean;
 };
 

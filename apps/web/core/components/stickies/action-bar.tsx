@@ -6,11 +6,12 @@ import { Plus, StickyNote as StickyIcon, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
-import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
+import { RecentStickyIcon, StickyNoteIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useSticky } from "@/hooks/use-stickies";
 // components
 import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";

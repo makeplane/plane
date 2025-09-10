@@ -1,13 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueDisplayProperties } from "@plane/types";
 // ui
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 
 type TIssueIdentifierBaseProps = {
   projectId: string;

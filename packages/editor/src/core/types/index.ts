@@ -8,5 +8,6 @@ export * from "./extensions";
 export * from "./hook";
 export * from "./mention";
 export * from "./slash-commands-suggestion";
-export * from "@/plane-editor/types";
 export * from "./document-collaborative-events";
+
+export * from "@/plane-editor/types";

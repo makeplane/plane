@@ -18,10 +18,15 @@ import { CustomMenu } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
-// helpers
+import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
-import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const CycleIssuesMobileHeader = () => {
   // i18n

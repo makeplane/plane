@@ -8,7 +8,7 @@ import { IIssueDisplayProperties } from "@plane/types";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // hooks
-import { useIssue } from "@/hooks/store";
+import { useIssue } from "@/hooks/store/use-issue";
 
 import { KanBan } from "./default";
 
@@ -37,7 +37,7 @@ export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) =>
         fetchNextPublicIssues(anchor, groupId, subgroupId);
       }
     },
-    [fetchNextPublicIssues]
+    [anchor, getIssueLoader, fetchNextPublicIssues]
   );
 
   const debouncedFetchMoreIssues = debounce(

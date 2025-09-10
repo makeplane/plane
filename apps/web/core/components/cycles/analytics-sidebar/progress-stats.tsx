@@ -4,7 +4,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -13,13 +15,12 @@ import {
   TCyclePlotType,
   TStateGroups,
 } from "@plane/types";
-import { Avatar, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
-// helpers
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
 // public
 import emptyLabel from "@/public/empty-state/empty_label.svg";

@@ -1,5 +1,4 @@
 import { pinoHttp } from "pino-http";
-import { Logger } from "pino";
 
 const transport = {
   target: "pino-pretty",
@@ -9,6 +8,7 @@ const transport = {
 };
 
 const hooks = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logMethod(inputArgs: any, method: any): any {
     if (inputArgs.length >= 2) {
       const arg1 = inputArgs.shift();
@@ -36,4 +36,4 @@ export const logger = pinoHttp({
   },
 });
 
-export const manualLogger: Logger = logger.logger;
+export const manualLogger: typeof logger.logger = logger.logger;
