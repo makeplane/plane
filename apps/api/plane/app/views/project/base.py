@@ -208,7 +208,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=ROLE.GUEST.value,
+            role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
