@@ -15,6 +15,7 @@ import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -41,7 +42,7 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen, openProjectSwitcher } =
+  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen, activateEntity } =
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
@@ -196,9 +197,15 @@ export const CommandPalette: FC = observer(() => {
         sequenceTimeout.current = setTimeout(() => {
           keySequence.current = "";
         }, 500);
-        if (keySequence.current === "op") {
+        const entityShortcutMap: Record<string, CommandPaletteEntity> = {
+          op: "project",
+          oc: "cycle",
+          om: "module",
+        };
+        const entity = entityShortcutMap[keySequence.current];
+        if (entity) {
           e.preventDefault();
-          openProjectSwitcher();
+          activateEntity(entity);
           keySequence.current = "";
           return;
         }
@@ -258,7 +265,7 @@ export const CommandPalette: FC = observer(() => {
       projectId,
       shortcutsList,
       toggleCommandPaletteModal,
-      openProjectSwitcher,
+      activateEntity,
       toggleShortcutModal,
       toggleSidebar,
       workspaceSlug,

@@ -83,8 +83,8 @@ export const CommandModal: React.FC = observer(() => {
     toggleCommandPaletteModal,
     toggleCreateIssueModal,
     toggleCreateProjectModal,
-    isProjectSwitcherOpen,
-    closeProjectSwitcher,
+    activeEntity,
+    clearActiveEntity,
   } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const projectIdentifier = workItem?.toString().split("-")[0];
@@ -118,11 +118,13 @@ export const CommandModal: React.FC = observer(() => {
   };
 
   useEffect(() => {
-    if (isCommandPaletteOpen && isProjectSwitcherOpen) {
+    if (!isCommandPaletteOpen || !activeEntity) return;
+
+    if (activeEntity === "project") {
       openProjectList();
-      closeProjectSwitcher();
     }
-  }, [isCommandPaletteOpen, isProjectSwitcherOpen, closeProjectSwitcher]);
+    clearActiveEntity();
+  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity]);
 
   const projectOptions = useMemo(() => {
     const list: TPartialProject[] = [];

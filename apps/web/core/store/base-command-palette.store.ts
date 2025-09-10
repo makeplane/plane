@@ -8,6 +8,8 @@ import {
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 
+export type CommandPaletteEntity = "project" | "cycle" | "module";
+
 export interface ModalData {
   store: EIssuesStoreType;
   viewId: string;
@@ -30,9 +32,9 @@ export interface IBaseCommandPaletteStore {
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
-  isProjectSwitcherOpen: boolean;
-  openProjectSwitcher: () => void;
-  closeProjectSwitcher: () => void;
+  activeEntity: CommandPaletteEntity | null;
+  activateEntity: (entity: CommandPaletteEntity) => void;
+  clearActiveEntity: () => void;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -64,7 +66,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
-  isProjectSwitcherOpen = false;
+  activeEntity: CommandPaletteEntity | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -83,7 +85,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      isProjectSwitcherOpen: observable,
+      activeEntity: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -98,8 +100,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
-      openProjectSwitcher: action,
-      closeProjectSwitcher: action,
+      activateEntity: action,
+      clearActiveEntity: action,
     });
   }
 
@@ -135,18 +137,19 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   };
 
   /**
-   * Opens the project switcher inside the command palette
+   * Opens the command palette with a specific entity pre-selected
+   * @param entity
    */
-  openProjectSwitcher = () => {
+  activateEntity = (entity: CommandPaletteEntity) => {
     this.isCommandPaletteOpen = true;
-    this.isProjectSwitcherOpen = true;
+    this.activeEntity = entity;
   };
 
   /**
-   * Resets project switcher trigger
+   * Clears the active entity trigger
    */
-  closeProjectSwitcher = () => {
-    this.isProjectSwitcherOpen = false;
+  clearActiveEntity = () => {
+    this.activeEntity = null;
   };
 
   /**
