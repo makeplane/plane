@@ -1,8 +1,13 @@
 import { Extension } from "@tiptap/core";
+import { NodeType, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
-function nodeEqualsType({ types, node }) {
-  return (Array.isArray(types) && types.includes(node.type)) || node.type === types;
+function nodeEqualsType({ types, node }: { types: NodeType[]; node: ProseMirrorNode | null }) {
+  // TODO: check this logic, might be wrong
+  // @ts-expect-error - logic might be wrong
+  return (Array.isArray(types) && types.includes(node?.type)) || node?.type === types;
 }
 
 export interface TrailingNodeOptions {
@@ -15,8 +20,8 @@ export const TrailingNode = Extension.create<TrailingNodeOptions>({
 
   addOptions() {
     return {
-      node: "paragraph",
-      notAfter: ["paragraph"],
+      node: CORE_EXTENSIONS.PARAGRAPH,
+      notAfter: [CORE_EXTENSIONS.PARAGRAPH],
     };
   },
 
