@@ -1,6 +1,6 @@
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes, IProjectView } from "@plane/types";
 import { TContextMenuItem } from "@plane/ui";
 import { TWorkspaceLayoutProps } from "@/components/views/helper";
 
@@ -75,3 +75,6 @@ export const useViewMenuItems = (props: TMenuItemsFactoryProps): TContextMenuIte
 
   return [factory.editMenuItem(), factory.openInNewTabMenuItem(), factory.copyLinkMenuItem(), factory.deleteMenuItem()];
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const AdditionalHeaderItems = (view: IProjectView) => <></>;
