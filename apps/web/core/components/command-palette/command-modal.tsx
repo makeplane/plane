@@ -17,7 +17,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LayersIcon } from "@plane/propel/icons";
-import { IWorkspaceSearchResults } from "@plane/types";
+import { IWorkspaceSearchResults, ICycle } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // components
@@ -39,6 +39,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -76,6 +77,7 @@ export const CommandModal: React.FC = observer(() => {
     fetchIssueWithIdentifier,
   } = useIssueDetail();
   const { workspaceProjectIds, joinedProjectIds, getPartialProjectById } = useProject();
+  const { getProjectCycleIds, getCycleById, fetchAllCycles, fetchWorkspaceCycles } = useCycle();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
   const {
@@ -117,12 +119,20 @@ export const CommandModal: React.FC = observer(() => {
     setPages((p) => [...p, "open-project"]);
   };
 
+  const openCycleList = () => {
+    if (!workspaceSlug) return;
+    setPlaceholder("Search cycles...");
+    setSearchTerm("");
+    setPages((p) => [...p, "open-cycle"]);
+    if (isWorkspaceLevel || !projectId) fetchWorkspaceCycles(workspaceSlug.toString());
+    else fetchAllCycles(workspaceSlug.toString(), projectId.toString());
+  };
+
   useEffect(() => {
     if (!isCommandPaletteOpen || !activeEntity) return;
 
-    if (activeEntity === "project") {
-      openProjectList();
-    }
+    if (activeEntity === "project") openProjectList();
+    if (activeEntity === "cycle") openCycleList();
     clearActiveEntity();
   }, [isCommandPaletteOpen, activeEntity, clearActiveEntity]);
 
@@ -134,6 +144,26 @@ export const CommandModal: React.FC = observer(() => {
     });
     return list.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
   }, [joinedProjectIds, getPartialProjectById]);
+
+  const cycleOptions = useMemo(() => {
+    const cycles: ICycle[] = [];
+    const ids = isWorkspaceLevel || !projectId ? joinedProjectIds : [projectId?.toString()];
+    ids.forEach((pid) => {
+      if (!pid) return;
+      const cycleIds = getProjectCycleIds(pid) || [];
+      cycleIds.forEach((cid) => {
+        const cycle = getCycleById(cid);
+        if (cycle) cycles.push(cycle);
+      });
+    });
+    return cycles.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
+  }, [isWorkspaceLevel, projectId, joinedProjectIds, getProjectCycleIds, getCycleById]);
+
+  useEffect(() => {
+    if (page !== "open-cycle" || !workspaceSlug) return;
+    if (isWorkspaceLevel || !projectId) fetchWorkspaceCycles(workspaceSlug.toString());
+    else fetchAllCycles(workspaceSlug.toString(), projectId.toString());
+  }, [page, isWorkspaceLevel, workspaceSlug, projectId, fetchWorkspaceCycles, fetchAllCycles]);
 
   useEffect(() => {
     if (issueDetails && isCommandPaletteOpen) {
@@ -151,6 +181,8 @@ export const CommandModal: React.FC = observer(() => {
 
   const closePalette = () => {
     toggleCommandPaletteModal(false);
+    setPages([]);
+    setPlaceholder("Type a command or search...");
   };
 
   const createNewWorkspace = () => {
@@ -251,6 +283,12 @@ export const CommandModal: React.FC = observer(() => {
                             keySequence.current = "";
                             return;
                           }
+                          if (keySequence.current === "oc") {
+                            e.preventDefault();
+                            openCycleList();
+                            keySequence.current = "";
+                            return;
+                          }
                         }
                       }
                       if ((e.metaKey || e.ctrlKey) && key === "k") {
@@ -285,17 +323,14 @@ export const CommandModal: React.FC = observer(() => {
                         }
                       }
 
-                      if (e.key === "Escape" && searchTerm) {
+                      if (e.key === "Escape") {
                         e.preventDefault();
-                        setSearchTerm("");
+                        if (searchTerm) setSearchTerm("");
+                        else closePalette();
+                        return;
                       }
 
-                      if (e.key === "Escape" && !page && !searchTerm) {
-                        e.preventDefault();
-                        closePalette();
-                      }
-
-                      if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
+                      if (e.key === "Backspace" && !searchTerm && page) {
                         e.preventDefault();
                         setPages((pages) => pages.slice(0, -1));
                         setPlaceholder("Type a command or search...");
@@ -403,6 +438,16 @@ export const CommandModal: React.FC = observer(() => {
                                   <kbd>P</kbd>
                                 </div>
                               </Command.Item>
+                              <Command.Item onSelect={openCycleList} className="focus:outline-none">
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <Search className="h-3.5 w-3.5" />
+                                  Open cycle...
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <kbd>O</kbd>
+                                  <kbd>C</kbd>
+                                </div>
+                              </Command.Item>
                             </Command.Group>
                           )}
                           {workspaceSlug &&
@@ -508,6 +553,31 @@ export const CommandModal: React.FC = observer(() => {
                               className="focus:outline-none"
                             >
                               {project.name}
+                            </Command.Item>
+                          ))}
+                        </Command.Group>
+                      )}
+
+                      {page === "open-cycle" && workspaceSlug && (
+                        <Command.Group heading="Cycles">
+                          {cycleOptions.map((cycle) => (
+                            <Command.Item
+                              key={cycle.id}
+                              value={`${cycle.name} ${getPartialProjectById(cycle.project_id)?.name ?? ""}`}
+                              onSelect={() => {
+                                closePalette();
+                                router.push(`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`);
+                              }}
+                              className="focus:outline-none"
+                            >
+                              <div className="flex flex-col">
+                                <span>{cycle.name}</span>
+                                {(isWorkspaceLevel || !projectId) && (
+                                  <span className="text-xs text-custom-text-400">
+                                    {getPartialProjectById(cycle.project_id)?.name}
+                                  </span>
+                                )}
+                              </div>
                             </Command.Item>
                           ))}
                         </Command.Group>
