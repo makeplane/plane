@@ -28,19 +28,18 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
-import { CreateLabelModal } from "@/components/labels";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web imports
-import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
+import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
 import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
@@ -96,7 +95,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = props;
 
   // states
-  const [labelModal, setLabelModal] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [isMoving, setIsMoving] = useState<boolean>(false);
 
@@ -125,7 +123,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
-  const { createLabel } = useLabel();
 
   const {
     issue: { getIssueById },
@@ -362,17 +359,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      {projectId && (
-        <CreateLabelModal
-          createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId)}
-          isOpen={labelModal}
-          handleClose={() => setLabelModal(false)}
-          onSuccess={(response) => {
-            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
-            handleFormChange();
-          }}
-        />
-      )}
       <div className="flex gap-2 bg-transparent">
         <div className="rounded-lg w-full">
           <form
@@ -501,7 +487,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   parentId={watch("parent_id")}
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
-                  setLabelModal={setLabelModal}
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>

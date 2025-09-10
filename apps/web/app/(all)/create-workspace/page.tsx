@@ -6,8 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PlaneLogo } from "@plane/propel/icons";
 import { IWorkspace } from "@plane/types";
-import { Button, getButtonStyling, PlaneLogo } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/ui";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 // hooks

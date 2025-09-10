@@ -2,8 +2,11 @@ import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
+import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
+// plane editor imports
+import type { IEditorPropsExtended, TExtendedEditorCommands } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
@@ -48,7 +51,9 @@ export type TEditorCommands =
   | "text-align"
   | "callout"
   | "attachment"
-  | "emoji";
+  | "emoji"
+  | "external-embed"
+  | TExtendedEditorCommands;
 
 export type TCommandExtraProps = {
   image: {
@@ -154,6 +159,7 @@ export type IEditorProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  extendedEditorProps: IEditorPropsExtended;
 };
 
 export type ILiteTextEditorProps = IEditorProps;
@@ -167,7 +173,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -175,7 +180,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
-  embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 };
@@ -191,3 +195,5 @@ export type EditorEvents = {
   destroy: never;
   ready: { height: number };
 };
+
+export type NodeViewProps = TNodeViewProps;

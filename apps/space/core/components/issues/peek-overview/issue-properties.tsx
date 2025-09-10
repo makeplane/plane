@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { CalendarCheck2, Signal } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { DoubleCircleIcon, StateGroupIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // components
 import { Icon } from "@/components/ui";

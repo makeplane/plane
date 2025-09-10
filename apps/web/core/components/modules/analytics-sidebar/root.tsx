@@ -16,9 +16,10 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
+import { LayersIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
+import { Loader, CustomSelect, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";

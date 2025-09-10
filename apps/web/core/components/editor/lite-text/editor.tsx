@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-// plane imports
+// plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
+// plane imports
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { MakeOptional } from "@plane/types";
@@ -18,7 +19,7 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
@@ -67,7 +68,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // store hooks
   const { getUserDetails } = useMember();
   // use editor mention
@@ -87,7 +90,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn(
@@ -126,6 +128,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative", {
           "p-2": !editable,
         })}
+        extendedEditorProps={{}}
         {...rest}
       />
       {showToolbar && editable && (

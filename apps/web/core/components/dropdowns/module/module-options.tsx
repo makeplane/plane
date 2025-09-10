@@ -8,8 +8,8 @@ import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { DiceIcon } from "@plane/propel/icons";
 import { IModule } from "@plane/types";
-import { DiceIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

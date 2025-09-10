@@ -43,7 +43,6 @@ from plane.db.models import (
 )
 from plane.utils.content_validator import (
     validate_html_content,
-    validate_json_content,
     validate_binary_data,
 )
 
@@ -128,20 +127,24 @@ class IssueCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         # Validate description content for security
-        if "description" in attrs and attrs["description"]:
-            is_valid, error_msg = validate_json_content(attrs["description"])
-            if not is_valid:
-                raise serializers.ValidationError({"description": error_msg})
-
         if "description_html" in attrs and attrs["description_html"]:
-            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                attrs["description_html"]
+            )
             if not is_valid:
-                raise serializers.ValidationError({"description_html": error_msg})
+                raise serializers.ValidationError(
+                    {"error": "html content is not valid"}
+                )
+            # Update the attrs with sanitized HTML if available
+            if sanitized_html is not None:
+                attrs["description_html"] = sanitized_html
 
         if "description_binary" in attrs and attrs["description_binary"]:
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError({"description_binary": error_msg})
+                raise serializers.ValidationError(
+                    {"description_binary": "Invalid binary data"}
+                )
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -664,16 +667,33 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(DynamicBaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = IssueReaction
-        fields = ["id", "actor", "issue", "reaction"]
+        fields = ["id", "actor", "issue", "reaction", "display_name"]
 
 
 class CommentReactionSerializer(BaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = CommentReaction
-        fields = "__all__"
-        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at"]
+        fields = [
+            "id",
+            "actor",
+            "comment",
+            "reaction",
+            "display_name",
+            "deleted_at",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at", "created_by", "updated_by"]
 
 
 class IssueVoteSerializer(BaseSerializer):

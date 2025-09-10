@@ -45,6 +45,7 @@ type TArguments = Pick<
   | "mentionHandler"
   | "placeholder"
   | "tabIndex"
+  | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
@@ -61,6 +62,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     placeholder,
     tabIndex,
     editable,
+    extendedEditorProps,
   } = args;
 
   const extensions = [
@@ -115,6 +117,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      extendedEditorProps,
     }),
   ];
 
