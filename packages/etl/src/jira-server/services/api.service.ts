@@ -11,7 +11,6 @@ import {
   IssueTypeDetails,
   JiraStatus,
   Project,
-  User,
 } from "jira.js/out/version2/models";
 import { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
@@ -54,7 +53,7 @@ export class JiraV2Service {
   // Verified
   async getNumberOfIssues(projectKey: string) {
     const issues = await this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `project = ${projectKey}`,
+      jql: `project = "${projectKey}"`,
       maxResults: 0,
     });
     return issues.total;
@@ -125,7 +124,7 @@ export class JiraV2Service {
   // Verified
   async getProjectComponentIssues(componentId: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `component = ${componentId}`,
+      jql: `component = "${componentId}"`,
     });
   }
 
@@ -208,7 +207,7 @@ export class JiraV2Service {
   async getProjectLabels(projectId: string, startAt = 0) {
     const response = await axios.get(`${this.hostname}/rest/api/2/search`, {
       params: {
-        jql: `project = ${projectId}`,
+        jql: `project = "${projectId}"`,
         fields: ["labels"],
         startAt: startAt,
       },
@@ -351,8 +350,8 @@ export class JiraV2Service {
   async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
-        ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
-        : `project = ${projectKey}`,
+        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
+        : `project = "${projectKey}"`,
       expand: "renderedFields",
       fields: ["*all"],
       startAt,
