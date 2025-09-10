@@ -29,6 +29,9 @@ export type TApplication = {
   created_at: string;
   is_mentionable: boolean;
   website?: string;
+  is_internal?: boolean;
+  is_not_supported?: boolean;
+  is_hardcoded?: boolean;
 };
 
 export type TUserApplication = TApplication & {

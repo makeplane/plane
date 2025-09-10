@@ -1,9 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
+
+// component
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TApplication } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -22,26 +23,26 @@ const ApplicationEditPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { applicationId } = useParams();
-  const { updateApplication, getApplicationById, fetchApplication, fetchApplicationCategories } = useApplications();
+  const { appSlug } = useParams();
+  const { updateApplication, getApplicationBySlug, fetchApplication, fetchApplicationCategories } = useApplications();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Edit Application` : undefined;
-  const application = getApplicationById(applicationId?.toString() || "");
+  const application = getApplicationBySlug(appSlug?.toString() || "");
 
   // state
   const { data, isLoading } = useSWR(
-    applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null,
-    applicationId ? async () => fetchApplication(applicationId.toString()) : null
+    appSlug ? APPLICATION_DETAILS(appSlug.toString()) : null,
+    appSlug ? async () => fetchApplication(appSlug.toString()) : null
   );
 
   useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TApplication>): Promise<TApplication | undefined> => {
     try {
-      if (!data || !applicationId) return;
-      const res = await updateApplication(applicationId?.toString(), data);
+      if (!data || !application) return;
+      const res = await updateApplication(application.slug, data);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",

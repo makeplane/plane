@@ -179,6 +179,10 @@ class WorkspaceAppInstallation(BaseModel):
         FAILED = "failed"
         REAUTHORIZE = "reauthorize"
         UNINSTALLED = "uninstalled"
+    
+    class InstallationState(models.TextChoices):
+        ALLOWED = "allowed"
+        NOT_ALLOWED = "not_allowed"
 
     workspace = models.ForeignKey(
         "db.Workspace",

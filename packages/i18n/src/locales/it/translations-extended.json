@@ -585,6 +585,7 @@
         "connected": "Connesso",
         "install": "Installa",
         "installed": "Installato",
+        "configure": "Configura",
         "app_available": "Hai reso questa app disponibile per l'uso con un workspace Plane",
         "app_available_description": "Connetti un workspace Plane per iniziare a usarla",
         "client_id_and_secret": "ID e Secret Cliente",
@@ -601,7 +602,10 @@
         "app_name_error": "Il nome dell'app è obbligatorio",
         "app_short_description_title": "Dai una breve descrizione a questa app",
         "app_short_description_error": "La breve descrizione dell'app è obbligatoria",
-        "app_description_title": "Scrivi anche una descrizione più lunga per chi vuole saperne di più. Premi / per i comandi",
+        "app_description_title": {
+          "label": "Descrizione lunga",
+          "placeholder": "Scrivi una descrizione lunga per il marketplace. Premi ‘/’ per i comandi."
+        },
         "app_description_error": "La descrizione dell'app è obbligatoria",
         "app_slug_title": "Slug dell'app",
         "app_slug_error": "Lo slug dell'app è obbligatorio",
@@ -678,7 +682,47 @@
         "click_to_upload_images": "Clicca per caricare le immagini",
         "invalid_file_or_exceeds_size_limit": "File non valido o supera il limite di dimensione ({size} MB)",
         "uploading": "Caricamento...",
-        "upload_and_save": "Carica e salva"
+        "upload_and_save": "Carica e salva",
+        "app_credentials_regenrated": {
+          "title": "Le credenziali dell'app sono state rigenerate con successo",
+          "description": "Sostituisci il client secret ovunque venga utilizzato. Il secret precedente non è più valido."
+        },
+        "app_created": {
+          "title": "App creata con successo",
+          "description": "Usa le credenziali per installare l'app in uno spazio di lavoro Plane"
+        },
+        "installed_apps": "App installate",
+        "all_apps": "Tutte le app",
+        "internal_apps": "App interne",
+        "website": {
+          "title": "Sito web",
+          "description": "Link al sito web della tua app.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creatore di app",
+          "description": "La persona o l'organizzazione che crea l'app."
+        },
+        "setup_url": {
+          "label": "URL di configurazione",
+          "description": "Gli utenti verranno reindirizzati a questo URL quando installeranno l'app.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL del webhook",
+          "description": "Qui invieremo eventi e aggiornamenti webhook dagli workspace in cui la tua app è installata.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URI di reindirizzamento (separate da spazi)",
+          "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Questa app può essere installata solo dopo che un amministratore del workspace l'ha installata. Contatta l'amministratore del tuo workspace per procedere.",
+        "enable_app_mentions": "Abilita menzioni dell'app",
+        "enable_app_mentions_tooltip": "Quando è abilitato, gli utenti possono menzionare o assegnare Work Item a questa applicazione.",
+        "build_your_own_app": "Crea la tua app",
+        "edit_app_details": "Modifica i dettagli dell'app"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

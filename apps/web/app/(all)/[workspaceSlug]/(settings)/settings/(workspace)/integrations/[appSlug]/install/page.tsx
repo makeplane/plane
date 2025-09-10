@@ -21,17 +21,17 @@ const ApplicationInstallPage: React.FC = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { applicationId } = useParams();
-  const { getApplicationById, fetchApplication } = useApplications();
+  const { appSlug } = useParams();
+  const { getApplicationBySlug, fetchApplication } = useApplications();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Install Application` : undefined;
 
-  const application = getApplicationById(applicationId?.toString() || "");
+  const application = getApplicationBySlug(appSlug?.toString() || "");
   const { data, isLoading } = useSWR(
-    applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null,
-    applicationId ? async () => fetchApplication(applicationId.toString()) : null
+    appSlug ? APPLICATION_DETAILS(appSlug.toString()) : null,
+    appSlug ? async () => fetchApplication(appSlug.toString()) : null
   );
 
   if (!data || !application || isLoading) {

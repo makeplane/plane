@@ -127,7 +127,7 @@ export const ApplicationInstallationDetails: React.FC<ApplicationInstallationDet
       </div>
 
       <div className="flex items-center space-x-2">
-        <Link href={`/${currentWorkspace?.slug}/settings/applications`}>
+        <Link href={`/${currentWorkspace?.slug}/settings/integrations`}>
           <Button variant="neutral-primary" className="bg-custom-background-100">
             {t("common.cancel")}
           </Button>

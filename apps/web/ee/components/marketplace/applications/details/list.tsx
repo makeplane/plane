@@ -14,13 +14,9 @@ type AppListProps = {
 export const AppList: React.FC<AppListProps> = (props) => {
   const { apps } = props;
 
-  return (
-    <div className="pb-20">
-      {apps.map((app) => (
-        <div key={app.id}>
-          <AppTile app={app} />
-        </div>
-      ))}
+  return apps.map((app) => (
+    <div key={app.id}>
+      <AppTile app={app} />
     </div>
-  );
+  ));
 };

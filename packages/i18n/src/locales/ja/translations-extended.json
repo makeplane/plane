@@ -586,6 +586,7 @@
         "connected": "接続済み",
         "install": "インストール",
         "installed": "インストール済み",
+        "configure": "設定",
         "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
         "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
         "client_id_and_secret": "クライアントIDとシークレット",
@@ -602,7 +603,10 @@
         "app_name_error": "アプリ名は必須です",
         "app_short_description_title": "このアプリの短い説明を入力してください",
         "app_short_description_error": "アプリの短い説明は必須です",
-        "app_description_title": "より詳しく知りたい人のために、長い説明も書いてください。コマンドには / を押してください",
+        "app_description_title": {
+          "label": "詳細な説明",
+          "placeholder": "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには ‘/’ を押してください。"
+        },
         "app_description_error": "アプリの説明は必須です",
         "app_slug_title": "アプリのスラッグ",
         "app_slug_error": "アプリのスラッグは必須です",
@@ -621,6 +625,8 @@
         "authorized_javascript_origins_description": "アプリがリクエストを行うことができるオリジンをスペース区切りで入力してください（例：app.com example.com）",
         "create_app": "アプリを作成",
         "update_app": "アプリを更新",
+        "build_your_own_app": "独自のアプリを構築",
+        "edit_app_details": "アプリの詳細を編集",
         "regenerate_client_secret_description": "クライアントシークレットを再生成します。再生成後、キーをコピーするかCSVファイルとしてダウンロードできます。",
         "regenerate_client_secret": "クライアントシークレットを再生成",
         "regenerate_client_secret_confirm_title": "クライアントシークレットを再生成してもよろしいですか？",
@@ -679,7 +685,45 @@
         "click_to_upload_images": "画像をクリックしてアップロード",
         "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
         "uploading": "アップロード中...",
-        "upload_and_save": "アップロードして保存"
+        "upload_and_save": "アップロードして保存",
+        "app_credentials_regenrated": {
+          "title": "アプリの認証情報が正常に再生成されました",
+          "description": "クライアントシークレットを使用しているすべての場所で置き換えてください。以前のシークレットは無効になっています。"
+        },
+        "app_created": {
+          "title": "アプリが正常に作成されました",
+          "description": "認証情報を使用して、Plane ワークスペースにアプリをインストールしてください"
+        },
+        "installed_apps": "インストール済みアプリ",
+        "all_apps": "すべてのアプリ",
+        "internal_apps": "内部アプリ",
+        "website": {
+          "title": "ウェブサイト",
+          "description": "アプリのウェブサイトへのリンク。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "アプリ作成者",
+          "description": "アプリを作成している人物または組織。"
+        },
+        "setup_url": {
+          "label": "セットアップURL",
+          "description": "ユーザーはアプリをインストールすると、このURLにリダイレクトされます。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "これは、アプリがインストールされているワークスペースからのWebhookイベントや更新を送信する場所です。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "リダイレクトURI（スペース区切り）",
+          "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
+        "enable_app_mentions": "アプリのメンションを有効にする",
+        "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

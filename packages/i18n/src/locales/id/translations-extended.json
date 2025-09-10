@@ -587,6 +587,7 @@
         "connected": "Terhubung",
         "install": "Pasang",
         "installed": "Terpasang",
+        "configure": "Konfigurasi",
         "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
         "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
         "client_id_and_secret": "ID klien dan Rahasia",
@@ -603,7 +604,10 @@
         "app_name_error": "Nama aplikasi diperlukan",
         "app_short_description_title": "Berikan aplikasi ini deskripsi singkat",
         "app_short_description_error": "Deskripsi aplikasi singkat diperlukan",
-        "app_description_title": "Tulis deskripsi yang lebih panjang untuk orang yang ingin mengetahui lebih lanjut. Tekan / untuk perintah",
+        "app_description_title": {
+          "label": "Deskripsi panjang",
+          "placeholder": "Tulis deskripsi panjang untuk marketplace. Tekan ‘/’ untuk perintah."
+        },
         "app_description_error": "Deskripsi aplikasi diperlukan",
         "app_slug_title": "Slug aplikasi",
         "app_slug_error": "Slug aplikasi diperlukan",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "Klik untuk mengunggah gambar",
         "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
         "uploading": "Mengunggah...",
-        "upload_and_save": "Unggah dan Simpan"
+        "upload_and_save": "Unggah dan Simpan",
+        "app_credentials_regenrated": {
+          "title": "Kredensial aplikasi berhasil digenerasi ulang",
+          "description": "Ganti client secret di semua tempat yang digunakan. Secret sebelumnya sudah tidak berlaku."
+        },
+        "app_created": {
+          "title": "Aplikasi berhasil dibuat",
+          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Plane"
+        },
+        "installed_apps": "Aplikasi terpasang",
+        "all_apps": "Semua aplikasi",
+        "internal_apps": "Aplikasi internal",
+        "website": {
+          "title": "Situs web",
+          "description": "Tautan ke situs web aplikasi Anda.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Pembuat Aplikasi",
+          "description": "Orang atau organisasi yang membuat aplikasi."
+        },
+        "setup_url": {
+          "label": "URL pengaturan",
+          "description": "Pengguna akan diarahkan ke URL ini saat mereka menginstal aplikasi.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Di sinilah kami akan mengirimkan event dan pembaruan webhook dari workspace tempat aplikasi Anda terpasang.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URI pengalihan (dipisahkan spasi)",
+          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Aplikasi ini hanya dapat diinstal setelah admin workspace menginstalnya. Hubungi admin workspace Anda untuk melanjutkan.",
+        "enable_app_mentions": "Aktifkan penyebutan aplikasi",
+        "enable_app_mentions_tooltip": "Saat ini diaktifkan, pengguna dapat menyebut atau menetapkan Work Items ke aplikasi ini.",
+        "build_your_own_app": "Bangun aplikasi Anda sendiri",
+        "edit_app_details": "Edit detail aplikasi"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

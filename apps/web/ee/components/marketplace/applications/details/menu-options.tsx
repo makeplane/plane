@@ -3,15 +3,23 @@
 import React, { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { Delete, Edit, Share } from "lucide-react";
+import { Edit, Key, Share, Trash2 } from "lucide-react";
+
+// plane imports
+
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TUserApplication } from "@plane/types";
+import { EUserWorkspaceRoles, TUserApplication } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
-// components
+
+// local imports
+
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { ApplicationPublishModal, ApplicationTileMenuItem } from "@/plane-web/components/marketplace";
-// constants
-// hooks
+
+import { RegenerateClientSecretModal } from "../form/regenerate-client-secret-modal";
+import { RevokeAccessModal } from "./revoke-modal";
 
 export type TPopoverMenuOptions = {
   key: string;
@@ -21,6 +29,7 @@ export type TPopoverMenuOptions = {
   prependIcon?: ReactNode | undefined;
   appendIcon?: ReactNode | undefined;
   onClick?: (() => void) | undefined;
+  isDanger?: boolean | undefined;
 };
 
 type ApplicationTileMenuOptionsProps = {
@@ -32,16 +41,28 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
   const { app } = props;
   const { t } = useTranslation();
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
+  const [isRevokeAccessModalOpen, setIsRevokeAccessModalOpen] = React.useState(false);
+  const [isCredentialsModalOpen, setIsCredentialsModalOpen] = React.useState(false);
+
   const router = useRouter();
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
   const { slug: workspaceSlug } = currentWorkspace || {};
 
   const togglePublishModal = (flag: boolean) => {
     setIsPublishModalOpen(flag);
   };
 
+  const toggleRevokeAccessModal = (flag: boolean) => {
+    setIsRevokeAccessModalOpen(flag);
+  };
+
+  const toggleCredentialsModal = (flag: boolean) => {
+    setIsCredentialsModalOpen(flag);
+  };
+
   const handleEdit = () => {
-    router.push(`/${workspaceSlug}/settings/applications/${app.id}/edit`);
+    router.push(`/${workspaceSlug}/settings/integrations/${app.slug}/edit`);
   };
 
   const popoverMenuOptions: TPopoverMenuOptions[] = [
@@ -49,10 +70,20 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
       key: "menu-edit",
       type: "menu-item",
       label: "Edit",
-      isActive: true,
+      isActive: app.is_owned,
       prependIcon: <Edit className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         handleEdit();
+      },
+    },
+    {
+      key: "menu-credentials",
+      type: "menu-item",
+      label: "App credentials",
+      isActive: app.is_owned && Boolean(app.client_id) && Boolean(app.client_secret),
+      prependIcon: <Key className="flex-shrink-0 h-3 w-3" />,
+      onClick: () => {
+        toggleCredentialsModal(true);
       },
     },
     {
@@ -70,8 +101,19 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
       type: "menu-item",
       label: "Delete",
       isActive: false,
-      prependIcon: <Delete className="flex-shrink-0 h-3 w-3" />,
+      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {},
+    },
+    {
+      key: "uninstall",
+      type: "menu-item",
+      label: "Uninstall",
+      isActive: app.is_installed && allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE),
+      prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
+      onClick: () => {
+        toggleRevokeAccessModal(true);
+      },
+      isDanger: true,
     },
   ];
 
@@ -85,6 +127,17 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
         render={(item: TPopoverMenuOptions) => <ApplicationTileMenuItem {...item} />}
       />
       <ApplicationPublishModal isOpen={isPublishModalOpen} handleClose={() => togglePublishModal(false)} app={app} />
+      <RevokeAccessModal
+        app={app}
+        isOpen={isRevokeAccessModalOpen}
+        handleClose={() => toggleRevokeAccessModal(false)}
+      />
+
+      <RegenerateClientSecretModal
+        application={app}
+        isOpen={isCredentialsModalOpen}
+        handleClose={() => setIsCredentialsModalOpen(false)}
+      />
     </>
   );
 });

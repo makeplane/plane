@@ -587,6 +587,7 @@
         "connected": "已連接",
         "install": "安裝",
         "installed": "已安裝",
+        "configure": "配置",
         "app_available": "您已使此應用可用於Plane工作空間",
         "app_available_description": "連接Plane工作空間以開始使用",
         "client_id_and_secret": "客戶端ID和密鑰",
@@ -603,7 +604,10 @@
         "app_name_error": "應用名稱為必填項",
         "app_short_description_title": "為此應用提供簡短描述",
         "app_short_description_error": "應用簡短描述為必填項",
-        "app_description_title": "同時為想了解更多的人寫一個更長的描述。按 / 獲取命令",
+        "app_description_title": {
+          "label": "詳細描述",
+          "placeholder": "為市集撰寫詳細描述。按 ‘/’ 查看指令。"
+        },
         "app_description_error": "應用描述為必填項",
         "app_slug_title": "應用別名",
         "app_slug_error": "應用別名為必填項",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "點擊上傳圖片",
         "invalid_file_or_exceeds_size_limit": "無效的文件或超過大小限制 ({size} MB)",
         "uploading": "上傳中...",
-        "upload_and_save": "上傳並保存"
+        "upload_and_save": "上傳並保存",
+        "app_credentials_regenrated": {
+          "title": "應用程式憑證已成功重新生成",
+          "description": "請在所有使用的地方替換客戶端密鑰。之前的密鑰已不再有效。"
+        },
+        "app_created": {
+          "title": "應用程式已成功建立",
+          "description": "使用憑證將應用程式安裝到 Plane 工作區中"
+        },
+        "installed_apps": "已安裝的應用程式",
+        "all_apps": "所有應用程式",
+        "internal_apps": "內部應用程式",
+        "website": {
+          "title": "網站",
+          "description": "連結到您的應用程式網站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "應用程式建立者",
+          "description": "建立該應用程式的個人或組織。"
+        },
+        "setup_url": {
+          "label": "設定 URL",
+          "description": "使用者在安裝應用程式時將被重新導向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我們將在此接收來自已安裝您應用的工作區的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "使用者在透過 Plane 認證後將被重新導向到此路徑。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "此應用程式只能在工作區管理員安裝後才能安裝。請聯絡您的工作區管理員以繼續。",
+        "enable_app_mentions": "啟用應用程式提及",
+        "enable_app_mentions_tooltip": "啟用此功能後，使用者可以提及或指派工作項目給此應用程式。",
+        "build_your_own_app": "建立您自己的應用程式",
+        "edit_app_details": "編輯應用程式詳情"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

@@ -17,8 +17,8 @@ export class ApplicationService extends APIService {
       });
   }
 
-  async getApplication(workspaceSlug: string, applicationId: string): Promise<TUserApplication | undefined> {
-    return this.get(`/api/workspaces/${workspaceSlug}/applications/${applicationId}/`)
+  async getApplication(workspaceSlug: string, appSlug: string): Promise<TUserApplication | undefined> {
+    return this.get(`/api/workspaces/${workspaceSlug}/applications/${appSlug}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -35,10 +35,10 @@ export class ApplicationService extends APIService {
 
   async updateApplication(
     workspaceSlug: string,
-    applicationId: string,
+    appSlug: string,
     data: Partial<TUserApplication>
   ): Promise<TUserApplication> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/applications/${applicationId}/`, data)
+    return this.patch(`/api/workspaces/${workspaceSlug}/applications/${appSlug}/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -47,6 +47,14 @@ export class ApplicationService extends APIService {
 
   async deleteApplication(workspaceSlug: string, applicationId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/applications/${applicationId}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async revokeApplicationAccess(workspaceSlug: string, applicationId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/app-installations/${applicationId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -96,6 +104,16 @@ export class ApplicationService extends APIService {
 
   async getPublishedApplicationBySlug(workspaceSlug: string, appSlug: string): Promise<TUserApplication | undefined> {
     return this.get(`/api/workspaces/${workspaceSlug}/published-applications/${appSlug}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getApplicationPermissions(
+    applicationId: string
+  ): Promise<{ workspace_id: string; state: boolean }[] | undefined> {
+    return this.get(`/api/workspaces-check-app-installation-allowed/${applicationId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

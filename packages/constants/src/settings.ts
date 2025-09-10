@@ -41,7 +41,6 @@ export const GROUPED_WORKSPACE_SETTINGS = {
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
     WORKSPACE_SETTINGS["project_states"],
     WORKSPACE_SETTINGS["integrations"],
-    WORKSPACE_SETTINGS["applications"],
     WORKSPACE_SETTINGS["teamspaces"],
     WORKSPACE_SETTINGS["initiatives"],
     WORKSPACE_SETTINGS["customers"],

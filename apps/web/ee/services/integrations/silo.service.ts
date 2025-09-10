@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 
 export class SiloAppService {
   protected baseURL: string;

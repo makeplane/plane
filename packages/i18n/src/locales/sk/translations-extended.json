@@ -595,6 +595,7 @@
         "connected": "Pripojené",
         "install": "Nainštalovať",
         "installed": "Nainštalované",
+        "configure": "Konfigurovať",
         "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Plane",
         "app_available_description": "Pripojte pracovný priestor Plane pre začatie používania",
         "client_id_and_secret": "ID a Tajomstvo Klienta",
@@ -611,7 +612,10 @@
         "app_name_error": "Názov aplikácie je povinný",
         "app_short_description_title": "Dajte tejto aplikácii krátky popis",
         "app_short_description_error": "Krátky popis aplikácie je povinný",
-        "app_description_title": "Napíšte aj dlhší popis pre tých, ktorí chcú vedieť viac. Stlačte / pre príkazy",
+        "app_description_title": {
+          "label": "Dlhý popis",
+          "placeholder": "Napíšte dlhý popis pre trhovisko. Stlačte ‘/’ pre príkazy."
+        },
         "app_description_error": "Popis aplikácie je povinný",
         "app_slug_title": "Slug aplikácie",
         "app_slug_error": "Slug aplikácie je povinný",
@@ -688,7 +692,47 @@
         "click_to_upload_images": "Kliknite, aby ste nahrávali obrázky",
         "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo presahuje limit veľkosti ({size} MB)",
         "uploading": "Nahrávanie...",
-        "upload_and_save": "Nahrať a uložiť"
+        "upload_and_save": "Nahrať a uložiť",
+        "app_credentials_regenrated": {
+          "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
+          "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
+        },
+        "app_created": {
+          "title": "Aplikácia bola úspešne vytvorená",
+          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
+        },
+        "installed_apps": "Nainštalované aplikácie",
+        "all_apps": "Všetky aplikácie",
+        "internal_apps": "Interné aplikácie",
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webovú stránku vašej aplikácie.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvorca aplikácií",
+          "description": "Osoba alebo organizácia, ktorá vytvára aplikáciu."
+        },
+        "setup_url": {
+          "label": "URL nastavenia",
+          "description": "Používatelia budú po nainštalovaní aplikácie presmerovaní na túto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Presmerovacie URI (oddelené medzerou)",
+          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Táto aplikácia môže byť nainštalovaná až po jej inštalácii administrátorom pracovného priestoru. Kontaktujte svojho administrátora pracovného priestoru, aby ste mohli pokračovať.",
+        "enable_app_mentions": "Povoliť zmienky o aplikácii",
+        "enable_app_mentions_tooltip": "Keď je toto povolené, používatelia môžu spomenúť alebo priradiť pracovné položky tejto aplikácii.",
+        "build_your_own_app": "Vytvorte si vlastnú aplikáciu",
+        "edit_app_details": "Upraviť detaily aplikácie"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

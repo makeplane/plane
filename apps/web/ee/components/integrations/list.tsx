@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { StaticImageData } from "next/image";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web components
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { IntegrationListItem } from "@/plane-web/components/integrations";
 // plane web types
 import { TFeatureFlags } from "@/plane-web/types/feature-flag";

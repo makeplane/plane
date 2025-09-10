@@ -587,6 +587,7 @@
         "connected": "Verbunden",
         "install": "Installieren",
         "installed": "Installiert",
+        "configure": "Konfigurieren",
         "app_available": "Sie haben diese App für die Verwendung mit einem Plane-Workspace verfügbar gemacht",
         "app_available_description": "Verbinden Sie einen Plane-Workspace, um die Nutzung zu beginnen",
         "client_id_and_secret": "Client-ID und Secret",
@@ -603,7 +604,10 @@
         "app_name_error": "App-Name ist erforderlich",
         "app_short_description_title": "Geben Sie dieser App eine kurze Beschreibung",
         "app_short_description_error": "Kurze App-Beschreibung ist erforderlich",
-        "app_description_title": "Schreiben Sie auch eine längere Beschreibung für diejenigen, die mehr wissen möchten. Drücken Sie / für Befehle",
+        "app_description_title": {
+          "label": "Lange Beschreibung",
+          "placeholder": "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie ‘/’ für Befehle."
+        },
         "app_description_error": "App-Beschreibung ist erforderlich",
         "app_slug_title": "App-Slug",
         "app_slug_error": "App-Slug ist erforderlich",
@@ -622,6 +626,8 @@
         "authorized_javascript_origins_description": "Geben Sie durch Leerzeichen getrennte Ursprünge ein, von denen aus die App Anfragen stellen darf, z.B. app.com example.com",
         "create_app": "App erstellen",
         "update_app": "App aktualisieren",
+        "build_your_own_app": "Erstelle deine eigene App",
+        "edit_app_details": "App-Details bearbeiten",
         "regenerate_client_secret_description": "Client-Secret neu generieren. Wenn Sie das Secret neu generieren, können Sie den Schlüssel kopieren oder direkt danach als CSV-Datei herunterladen.",
         "regenerate_client_secret": "Client-Secret neu generieren",
         "regenerate_client_secret_confirm_title": "Sind Sie sicher, dass Sie das Client-Secret neu generieren möchten?",
@@ -680,7 +686,45 @@
         "click_to_upload_images": "Dateien hochladen",
         "invalid_file_or_exceeds_size_limit": "Ungültige Datei oder überschreitet die Größe ({size} MB)",
         "uploading": "Hochladen...",
-        "upload_and_save": "Hochladen und speichern"
+        "upload_and_save": "Hochladen und speichern",
+        "app_credentials_regenrated": {
+          "title": "App-Anmeldedaten wurden erfolgreich neu generiert",
+          "description": "Ersetzen Sie das Client-Secret überall, wo es verwendet wird. Das vorherige Secret ist nicht mehr gültig."
+        },
+        "app_created": {
+          "title": "App wurde erfolgreich erstellt",
+          "description": "Verwenden Sie die Anmeldedaten, um die App in einem Plane-Arbeitsbereich zu installieren"
+        },
+        "installed_apps": "Installierte Apps",
+        "all_apps": "Alle Apps",
+        "internal_apps": "Interne Apps",
+        "website": {
+          "title": "Webseite",
+          "description": "Link zur Website Ihrer App.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "App-Entwickler",
+          "description": "Die Person oder Organisation, die die App erstellt."
+        },
+        "setup_url": {
+          "label": "Setup-URL",
+          "description": "Benutzer werden zu dieser URL weitergeleitet, wenn sie die App installieren.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook-URL",
+          "description": "Hier werden wir Webhook-Ereignisse und Updates von den Arbeitsbereichen senden, in denen Ihre App installiert ist.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Redirect-URIs (durch Leerzeichen getrennt)",
+          "description": "Benutzer werden nach der Authentifizierung mit Plane auf diesen Pfad weitergeleitet.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Diese App kann nur installiert werden, nachdem ein Workspace-Administrator sie installiert hat. Wenden Sie sich an Ihren Workspace-Administrator, um fortzufahren.",
+        "enable_app_mentions": "App-Erwähnungen aktivieren",
+        "enable_app_mentions_tooltip": "Wenn dies aktiviert ist, können Benutzer Arbeitsaufgaben an diese Anwendung erwähnen oder zuweisen."
       }
     }
   },

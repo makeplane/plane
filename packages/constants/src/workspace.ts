@@ -132,7 +132,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
   WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["integrations"],
-  WORKSPACE_SETTINGS["applications"],
   WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],

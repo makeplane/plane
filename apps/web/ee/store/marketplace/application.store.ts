@@ -1,5 +1,5 @@
 // helpers
-import { action, computed, makeObservable, observable, runInAction, set } from "mobx";
+import { action, makeObservable, observable, runInAction, set } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TLoader, TUserApplication, TApplicationCategory } from "@plane/types";
@@ -8,26 +8,28 @@ import { ApplicationService } from "@/plane-web/services/marketplace/application
 import { CategoryService } from "@/plane-web/services/marketplace/category.service";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
+import update from "lodash/update";
 
 export interface IApplicationStore {
   // observables
   applicationsLoader: TLoader;
-  applicationsMap: Record<string, Record<string, TUserApplication>>; // key: workspaceId | value: <applicationId, application>
+  applicationsMap: Record<string, Record<string, TUserApplication>>; // key: workspaceId | value: <appSlug, application>
   categoriesLoader: TLoader;
   allApplicationCategories: TApplicationCategory[];
   // computed functions
-  getApplicationsLoader: (applicationId: string) => TLoader | undefined;
+  getApplicationsLoader: (appSlug: string) => TLoader | undefined;
   getApplicationsForWorkspace: (workspaceSlug: string) => TUserApplication[] | undefined;
-  getApplicationById: (applicationId: string) => TUserApplication | undefined;
+  getApplicationBySlug: (appSlug: string) => TUserApplication | undefined;
   // actions
   fetchApplications: () => Promise<TUserApplication[] | undefined>;
-  fetchApplication: (applicationId: string) => Promise<TUserApplication | undefined>;
+  fetchApplication: (appSlug: string) => Promise<TUserApplication | undefined>;
   createApplication: (data: Partial<TUserApplication>) => Promise<TUserApplication | undefined>;
-  updateApplication: (applicationId: string, data: Partial<TUserApplication>) => Promise<TUserApplication | undefined>;
-  deleteApplication: (applicationId: string) => Promise<TUserApplication | undefined>;
+  updateApplication: (appSlug: string, data: Partial<TUserApplication>) => Promise<TUserApplication | undefined>;
+  deleteApplication: (applicationId: string, appSlug: string) => Promise<TUserApplication | undefined>;
   regenerateApplicationSecret: (applicationId: string) => Promise<TUserApplication | undefined>;
   checkApplicationSlug: (slug: string) => Promise<any>;
   fetchApplicationCategories: () => Promise<TApplicationCategory[] | undefined>;
+  revokeApplicationAccess: (installationId: string, appSlug: string) => Promise<void>;
 }
 
 export class ApplicationStore implements IApplicationStore {
@@ -58,6 +60,7 @@ export class ApplicationStore implements IApplicationStore {
       regenerateApplicationSecret: action,
       checkApplicationSlug: action,
       fetchApplicationCategories: action,
+      revokeApplicationAccess: action,
     });
     // service
     this.applicationService = new ApplicationService();
@@ -80,17 +83,17 @@ export class ApplicationStore implements IApplicationStore {
   });
 
   /**
-   * Get an application by its ID
-   * @param applicationId - The application ID
-   * @returns The application with the given ID
+   * Get an application by its slug
+   * @param appSlug - The application slug
+   * @returns The application with the given slug
    */
-  getApplicationById = computedFn((applicationId: string): TUserApplication | undefined => {
+  getApplicationBySlug = computedFn((appSlug: string): TUserApplication | undefined => {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug) {
       return undefined;
     }
     if (this.applicationsMap[workspaceSlug]) {
-      return this.applicationsMap[workspaceSlug][applicationId];
+      return this.applicationsMap[workspaceSlug][appSlug];
     }
     return undefined;
   });
@@ -110,7 +113,7 @@ export class ApplicationStore implements IApplicationStore {
       }
       const response = await this.applicationService.createApplication(workspaceSlug, data);
       if (response) {
-        set(this.applicationsMap, workspaceSlug, { [response.id]: response });
+        set(this.applicationsMap, workspaceSlug, { [response.slug]: { ...response, is_owned: true } });
         return response;
       }
       return response;
@@ -129,7 +132,7 @@ export class ApplicationStore implements IApplicationStore {
    * @returns The updated application
    */
   updateApplication = async (
-    applicationId: string,
+    appSlug: string,
     data: Partial<TUserApplication>
   ): Promise<TUserApplication | undefined> => {
     this.applicationsLoader = "init-loader";
@@ -138,11 +141,11 @@ export class ApplicationStore implements IApplicationStore {
       if (!workspaceSlug) {
         throw new Error("Workspace not found");
       }
-      const response = await this.applicationService.updateApplication(workspaceSlug, applicationId, data);
+      const response = await this.applicationService.updateApplication(workspaceSlug, appSlug, data);
       if (response) {
         runInAction(() => {
           this.applicationsLoader = "loaded";
-          set(this.applicationsMap, workspaceSlug, { [response.id]: response });
+          set(this.applicationsMap, workspaceSlug, { [response.slug]: response });
         });
       }
       return response;
@@ -159,7 +162,7 @@ export class ApplicationStore implements IApplicationStore {
    * @param applicationId - The application ID
    * @returns The deleted application
    */
-  deleteApplication = async (applicationId: string): Promise<TUserApplication | undefined> => {
+  deleteApplication = async (applicationId: string, appSlug: string): Promise<TUserApplication | undefined> => {
     this.applicationsLoader = "init-loader";
     try {
       const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
@@ -170,10 +173,41 @@ export class ApplicationStore implements IApplicationStore {
       if (response) {
         runInAction(() => {
           this.applicationsLoader = "loaded";
-          delete this.applicationsMap[workspaceSlug][applicationId];
+          delete this.applicationsMap[workspaceSlug][appSlug];
         });
       }
       return response;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    } finally {
+      this.applicationsLoader = "loaded";
+    }
+  };
+
+  /**
+   * Revoke access for an application
+   * @param installationId - The installationId ID
+   * @returns void
+   */
+  revokeApplicationAccess = async (installationId: string, appSlug: string): Promise<void> => {
+    this.applicationsLoader = "mutation";
+    try {
+      const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
+      if (!workspaceSlug) {
+        throw new Error("Workspace not found");
+      }
+      await this.applicationService.revokeApplicationAccess(workspaceSlug, installationId);
+      runInAction(() => {
+        this.applicationsLoader = "loaded";
+        update(this.applicationsMap, workspaceSlug, (prev) => ({
+          ...prev,
+          [appSlug]: {
+            ...prev[appSlug],
+            is_installed: false,
+          },
+        }));
+      });
     } catch (error) {
       console.log(error);
       throw error;
@@ -199,7 +233,7 @@ export class ApplicationStore implements IApplicationStore {
         runInAction(() => {
           this.applicationsLoader = "loaded";
           response.map((app: TUserApplication) => {
-            set(this.applicationsMap, workspaceSlug, { ...this.applicationsMap[workspaceSlug], [app.id]: app });
+            set(this.applicationsMap, workspaceSlug, { ...this.applicationsMap[workspaceSlug], [app.slug]: app });
           });
         });
       }
@@ -214,21 +248,21 @@ export class ApplicationStore implements IApplicationStore {
 
   /**
    * Fetch a specific application by ID
-   * @param applicationId - The application ID
+   * @param appSlug - The application slug
    * @returns The application with the given ID
    */
-  fetchApplication = async (applicationId: string): Promise<TUserApplication | undefined> => {
+  fetchApplication = async (appSlug: string): Promise<TUserApplication | undefined> => {
     this.applicationsLoader = "init-loader";
     try {
       const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
       if (!workspaceSlug) {
         throw new Error("Workspace not found");
       }
-      const response = await this.applicationService.getApplication(workspaceSlug, applicationId);
+      const response = await this.applicationService.getApplication(workspaceSlug, appSlug);
       if (response) {
         runInAction(() => {
           this.applicationsLoader = "loaded";
-          set(this.applicationsMap, workspaceSlug, { [response.id]: response });
+          set(this.applicationsMap, workspaceSlug, { [response.slug]: response });
         });
       }
       return response;
@@ -259,8 +293,8 @@ export class ApplicationStore implements IApplicationStore {
           this.applicationsLoader = "loaded";
           // just update the secret
           set(this.applicationsMap, workspaceSlug, {
-            [response.id]: {
-              ...this.applicationsMap[workspaceSlug][response.id],
+            [response.slug]: {
+              ...this.applicationsMap[workspaceSlug][response.slug],
               client_secret: response.client_secret,
             },
           });

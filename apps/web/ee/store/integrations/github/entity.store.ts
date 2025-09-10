@@ -6,7 +6,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { GithubEntityService } from "@/plane-web/services/integrations/github";
 // plane web store
 import { IGithubStore } from "@/plane-web/store/integrations";

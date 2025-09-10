@@ -10,19 +10,27 @@ from django.db.models import (
     Subquery,
 )
 from django.utils import timezone
+from django.db import transaction
 
 # third-party imports
 from oauth2_provider.generators import generate_client_secret
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 
 # local imports
-from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceOwnerPermission
+from plane.app.permissions import (
+    WorkSpaceAdminPermission,
+    WorkspaceOwnerPermission,
+    ROLE,
+)
 from plane.authentication.models import (
     Application,
     ApplicationOwner,
     WorkspaceAppInstallation,
     ApplicationCategory,
+    AccessToken,
+    RefreshToken,
 )
 from plane.authentication.serializers import (
     ApplicationOwnerSerializer,
@@ -30,9 +38,11 @@ from plane.authentication.serializers import (
     WorkspaceAppInstallationSerializer,
     ApplicationCategorySerializer,
 )
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember
 from plane.ee.views.base import BaseAPIView
-from plane.authentication.bgtasks.send_app_uninstall_webhook import send_app_uninstall_webhook
+from plane.authentication.bgtasks.send_app_uninstall_webhook import (
+    send_app_uninstall_webhook,
+)
 
 
 class OAuthApplicationEndpoint(BaseAPIView):
@@ -79,7 +89,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             serialised_application.errors, status=status.HTTP_400_BAD_REQUEST
         )
 
-    def patch(self, request, slug, pk):
+    def patch(self, request, slug, app_slug):
         # Define allowed fields for update
         ALLOWED_FIELDS = {
             "name",
@@ -109,7 +119,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
         }
 
         application = Application.objects.filter(
-            id=pk, application_owners__workspace__slug=slug
+            slug=app_slug, application_owners__workspace__slug=slug
         ).first()
 
         if not application:
@@ -128,9 +138,9 @@ class OAuthApplicationEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, slug, pk=None):
+    def get(self, request, slug, app_slug=None):
         try:
-            if not pk:
+            if not app_slug:
                 # Get all applications that is either owned by workspace
                 # OR published
                 applications = (
@@ -176,8 +186,8 @@ class OAuthApplicationEndpoint(BaseAPIView):
             # Single application case
             application = (
                 Application.objects.filter(
-                    Q(id=pk, application_owners__workspace__slug=slug)
-                    | Q(published_at__isnull=False, id=pk)
+                    Q(slug=app_slug, application_owners__workspace__slug=slug)
+                    | Q(published_at__isnull=False, slug=app_slug)
                 )
                 .select_related(
                     "logo_asset",
@@ -271,7 +281,7 @@ class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
 
 
 class OAuthApplicationInstallEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
+    permission_classes = [WorkSpaceAdminPermission]
 
     def post(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
@@ -280,7 +290,7 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
             return Response(
                 {"error": "App ID is required"}, status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         application = Application.objects.filter(id=pk).first()
         if not application:
             return Response(
@@ -291,6 +301,17 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
         workspace_application = WorkspaceAppInstallation.objects.filter(
             workspace=workspace, application=pk
         ).first()
+
+        # check if the application is already installed and if the user is an admin
+        is_user_admin = WorkspaceMember.objects.filter(
+            workspace=workspace, member=request.user, role=ROLE.ADMIN.value
+        ).exists()
+        if not workspace_application and not is_user_admin:
+            return Response(
+                {"error": "Admin must install the application first"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if not workspace_application:
             workspace_application_serialiser = WorkspaceAppInstallationSerializer(
                 data={
@@ -304,7 +325,6 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
             workspace_application_serialiser = WorkspaceAppInstallationSerializer(
                 workspace_application,
                 data={
-                    "installed_by": request.user.id,
                     "status": WorkspaceAppInstallation.Status.INSTALLED,
                 },
                 partial=True,
@@ -377,7 +397,8 @@ class OAuthApplicationCategoryEndpoint(BaseAPIView):
         serializer = ApplicationCategorySerializer(application_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class OAuthApplicationDetailEndpoint(BaseAPIView):
+
+class OAuthAppInstallationDetailEndpoint(BaseAPIView):
     permission_classes = [WorkspaceOwnerPermission]
 
     def delete(self, request, slug, pk):
@@ -390,7 +411,11 @@ class OAuthApplicationDetailEndpoint(BaseAPIView):
                 {"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND
             )
         # get the webhook url and application id
-        webhook_url = workspace_app_installation.webhook.url if workspace_app_installation.webhook else None
+        webhook_url = (
+            workspace_app_installation.webhook.url
+            if workspace_app_installation.webhook
+            else None
+        )
         application_id = workspace_app_installation.application.id
 
         # Delete the workspace app installation (cleanup is handled in the model's delete method)
@@ -402,6 +427,7 @@ class OAuthApplicationDetailEndpoint(BaseAPIView):
                 webhook_url, workspace.id, application_id, workspace_app_installation.id
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
@@ -438,3 +464,89 @@ class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
 
         serialised_application = ApplicationSerializer(application)
         return Response(serialised_application.data, status=status.HTTP_200_OK)
+
+
+class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def delete(self, request, slug, pk):
+        workspace_app_installation = WorkspaceAppInstallation.objects.filter(
+            id=pk, workspace__slug=slug
+        ).first()
+        if not workspace_app_installation:
+            return Response(
+                {"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        application = workspace_app_installation.application
+
+        with transaction.atomic():
+            # revoke all oauth tokens for the application and the user
+            AccessToken.objects.filter(
+                application=application,
+                user=request.user,
+            ).update(expires=timezone.now())
+            # delete the refresh token
+            RefreshToken.objects.filter(
+                application=application,
+                user=request.user,
+            ).update(revoked=timezone.now())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, application_id):
+        application = Application.objects.filter(id=application_id).first()
+        if not application:
+            return Response(
+                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        # get all workspaces where user is a member
+        workspace_members = WorkspaceMember.objects.filter(member=request.user)
+        # create a map of workspace id and member role
+        workspace_members_map = {
+            workspace_member.workspace_id: {
+                "role": workspace_member.role,
+            }
+            for workspace_member in workspace_members
+        }
+        workspace_ids = workspace_members.values_list("workspace_id", flat=True)
+        workspace_app_installations = WorkspaceAppInstallation.objects.filter(
+            workspace__in=workspace_ids,
+            application_id=application_id,
+            status=WorkspaceAppInstallation.Status.INSTALLED,
+        )
+        # create a map of workspace id and installation
+        workspace_app_installations_map = {
+            workspace_app_installation.workspace_id: True
+            for workspace_app_installation in workspace_app_installations
+        }
+
+        # check the role of the user in the workspace
+        # if the user is an admin, then they can install the application in the workspace
+        # if the user is a member, then they can install the application in the workspace only if installation is present
+        # if the user is a guest, then they cannot install the application in the workspace
+
+        workspace_app_installations_data = []
+
+        for workspace_id in workspace_ids:
+            user_workspace_member = workspace_members_map.get(workspace_id)
+            is_installed = workspace_app_installations_map.get(workspace_id)
+            installation_state = WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
+            if user_workspace_member["role"] == ROLE.ADMIN.value:
+                installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
+            elif user_workspace_member["role"] == ROLE.MEMBER.value and is_installed:
+                installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
+            else:
+                installation_state = (
+                    WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
+                )
+
+            workspace_app_installations_data.append(
+                {
+                    "workspace_id": workspace_id,
+                    "state": installation_state,
+                }
+            )
+
+        return Response(workspace_app_installations_data, status=status.HTTP_200_OK)

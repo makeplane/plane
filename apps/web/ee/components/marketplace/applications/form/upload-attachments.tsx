@@ -143,15 +143,15 @@ export const UploadAppAttachments: React.FC<Props> = observer((props) => {
       ) : (
         <div
           className={cn(
-            "group border border-dashed border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80/70 rounded-md flex items-center justify-center gap-1.5 p-4 cursor-pointer",
+            "group border border-dashed border-custom-primary-80  h-24 bg-custom-background-100 rounded-md flex items-center justify-center gap-1.5 p-4 cursor-pointer",
             {
               "border-red-500": hasError,
             }
           )}
           {...getRootProps()}
         >
-          <ImageUp className="size-5 text-custom-text-400" />
-          <div className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
+          <ImageUp className="size-5 text-custom-primary-80" />
+          <div className="text-sm font-medium group-hover:text-custom-text-200 text-custom-primary-80">
             Drag and drop to upload external files
           </div>
           <input {...getInputProps()} />

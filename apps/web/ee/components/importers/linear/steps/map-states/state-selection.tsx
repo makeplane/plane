@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { LinearState } from "@plane/etl/linear";
-import { StateGroupIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
 // silo ui components
 import { Dropdown } from "@/plane-web/components/importers/ui";

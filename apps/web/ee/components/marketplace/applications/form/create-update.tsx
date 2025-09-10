@@ -3,26 +3,27 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Camera } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TUserApplication } from "@plane/types";
-import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button, Loader, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor/rich-text";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { AppImageUploadModal } from "@/plane-web/components/common/modal/upload-app-image";
-import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";
+import { GeneratedCredentialsModal } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // local imports
-import { CustomCheckbox } from "../ui/checkbox";
+import { InputField } from "./fields/input-field";
+import { RichTextField } from "./fields/rich-text-field";
+import { FormSection } from "./form-section";
 import { SelectCategories } from "./select-categories";
 import { UploadAppAttachments } from "./upload-attachments";
 
@@ -158,7 +159,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
 
   const handleCredentialsModalClose = () => {
     setIsCredentialsModalOpen(false);
-    router.push(`/${workspaceSlug}/settings/applications`);
+    router.push(`/${workspaceSlug}/settings/integrations`);
     setClientId(undefined);
     setClientSecret(undefined);
   };
@@ -169,155 +170,203 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleAppFormSubmit}>
-      <div className="space-y-4">
-        <SettingsHeading title={!watch("id") ? "Let's get all the necessary info" : "Edit your app's details"} />
-        <AppImageUploadModal
-          isOpen={isImageModalOpen}
-          onClose={() => setIsImageModalOpen(false)}
-          onSuccess={(url) => setValue("logo_url", getFileURL(url) ?? "")}
-          initialValue={formData?.logo_url ? (getFileURL(formData?.logo_url) ?? null) : null}
-          handleRemove={async () => setValue("logo_url", undefined)}
-          entityType={EFileAssetType.OAUTH_APP_LOGO}
-        />
-        <div className="space-y-5 flew-grow w-full">
-          <div className="space-y-2">
-            {watch("logo_url") ? (
-              <img
-                loading="lazy"
-                src={getFileURL(watch("logo_url") ?? "")}
-                alt="Logo"
-                className="w-20 h-20 object-cover"
-              />
-            ) : (
-              <div
-                className={`flex items-center justify-center w-20 gap-2 p-5 bg-custom-background-100 rounded border border-custom-border-200`}
-              >
-                <Camera className="w-5 h-5 text-custom-text-400" />
-              </div>
-            )}
+      <SettingsHeading
+        title={
+          !watch("id")
+            ? t("workspace_settings.settings.applications.build_your_own_app")
+            : t("workspace_settings.settings.applications.edit_app_details")
+        }
+      />
+      <div className="space-y-5 flew-grow w-full">
+        <FormSection title={"Basic information"}>
+          <AppImageUploadModal
+            isOpen={isImageModalOpen}
+            onClose={() => setIsImageModalOpen(false)}
+            onSuccess={(url) => setValue("logo_url", getFileURL(url) ?? "")}
+            initialValue={formData?.logo_url ? (getFileURL(formData?.logo_url) ?? null) : null}
+            handleRemove={async () => setValue("logo_url", undefined)}
+            entityType={EFileAssetType.OAUTH_APP_LOGO}
+          />
+
+          <div className="flex  gap-4">
+            <div className="space-y-2 size-14">
+              {watch("logo_url") ? (
+                <img
+                  loading="lazy"
+                  src={getFileURL(watch("logo_url") ?? "")}
+                  alt="Logo"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className={`flex items-center justify-center w-full h-full gap-2 p-5 bg-custom-background-100 rounded border border-custom-border-200`}
+                >
+                  <Camera className="w-5 h-5 text-custom-text-400" />
+                </div>
+              )}
+            </div>
             <button onClick={() => setIsImageModalOpen(true)} className="text-sm text-custom-primary-100 font-medium">
               {t("workspace_settings.settings.applications.upload_logo")}
             </button>
           </div>
-          <div className="flex flex-col gap-1">
-            <Input
-              id="name"
-              type="text"
-              placeholder={t("workspace_settings.settings.applications.app_name_title")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.name)}
-              tabIndex={1}
-              {...register("name", { required: t("workspace_settings.settings.applications.app_name_error") })}
-              onChange={(e) => handleTextChange("name", e.target.value)}
-            />
-            {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <Input
-              id="short_description"
-              type="text"
-              placeholder={t("workspace_settings.settings.applications.app_short_description_title")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.short_description)}
-              tabIndex={2}
-              {...register("short_description", {
-                required: t("workspace_settings.settings.applications.app_short_description_error"),
-              })}
-              onChange={(e) => handleTextChange("short_description", e.target.value)}
-            />
-            {errors.short_description && <p className="text-red-500 text-xs">{errors.short_description.message}</p>}
-          </div>
 
-          <div className="flex flex-col gap-1">
-            <Controller
-              name="description_html"
-              control={control}
-              rules={{ required: t("workspace_settings.settings.applications.app_description_error") }}
-              render={({ field: { onChange } }) => (
-                <RichTextEditor
-                  editable
-                  id={workspaceSlug.toString()}
-                  tabIndex={3}
-                  initialValue={!watch("description_html") ? "<p></p>" : watch("description_html") || "<p></p>"}
-                  workspaceSlug={workspaceSlug}
-                  workspaceId={workspaceId}
-                  searchMentionCallback={async (payload) =>
-                    await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                      ...payload,
-                    })
-                  }
-                  dragDropEnabled={false}
-                  onChange={(_description: object, description_html: string) => {
-                    onChange(description_html);
-                  }}
-                  placeholder={t("workspace_settings.settings.applications.app_description_title")}
-                  editorClassName="text-xs"
-                  containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
-                  displayConfig={{ fontSize: "small-font" }}
-                  uploadFile={async (blockId, file) => {
-                    try {
-                      const { asset_id } = await uploadEditorAsset({
-                        blockId,
-                        data: {
-                          entity_identifier: workspaceId,
-                          entity_type: EFileAssetType.OAUTH_APP_DESCRIPTION,
-                        },
-                        file,
-                        workspaceSlug,
-                      });
-                      return asset_id;
-                    } catch (error) {
-                      console.log("Error in uploading application asset:", error);
-                      throw new Error("Asset upload failed. Please try again later.");
-                    }
-                  }}
-                  disabledExtensions={["attachments"]}
-                />
-              )}
-            />
-            {errors.description_html && <p className="text-red-500 text-xs">{errors.description_html.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.app_slug_title")}
-            </div>
-            <Input
-              id="slug"
-              type="text"
-              disabled={!!watch("id")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.slug)}
-              tabIndex={4}
-              {...register("slug", { required: t("workspace_settings.settings.applications.app_slug_error") })}
-              onChange={(e) => handleTextChange("slug", e.target.value)}
-            />
-            {errors.slug && <p className="text-red-500 text-xs">{errors.slug.message}</p>}
-          </div>
-          <CustomCheckbox
-            label="Is mentionable"
-            checked={watch("is_mentionable") ?? false}
-            onChange={(value) => setValue("is_mentionable", value)}
+          <InputField
+            id="name"
+            type="text"
+            label={t("workspace_settings.settings.applications.app_name_title")}
+            register={register}
+            validation={{ required: t("workspace_settings.settings.applications.app_name_error") }}
+            placeholder={t("workspace_settings.settings.applications.app_name_title")}
+            onChange={(value) => handleTextChange("name", value)}
+            error={errors.name}
           />
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.website_title")}
-            </div>
-            <Input
-              id="website"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.website)}
-              tabIndex={4}
-              {...register("website", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_website_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("website", e.target.value)}
+          <InputField
+            id="slug"
+            type="text"
+            label={t("workspace_settings.settings.applications.app_slug_title")}
+            register={register}
+            validation={{ required: t("workspace_settings.settings.applications.app_slug_error") }}
+            placeholder={t("workspace_settings.settings.applications.app_slug_title")}
+            onChange={(value) => handleTextChange("slug", value)}
+            error={errors.slug}
+          />
+          <InputField
+            id="company_name"
+            type="text"
+            label={t("workspace_settings.settings.applications.app_maker.title")}
+            description={t("workspace_settings.settings.applications.app_maker.description")}
+            placeholder={t("workspace_settings.settings.applications.app_maker.title")}
+            register={register}
+            validation={{ required: t("workspace_settings.settings.applications.app_maker_error") }}
+            onChange={(value) => handleTextChange("company_name", value)}
+            error={errors.company_name}
+          />
+          <InputField
+            id="short_description"
+            type="text"
+            label={t("workspace_settings.settings.applications.app_short_description_title")}
+            register={register}
+            validation={{
+              required: t("workspace_settings.settings.applications.app_short_description_error"),
+            }}
+            placeholder={t("workspace_settings.settings.applications.app_short_description_title")}
+            onChange={(value) => handleTextChange("short_description", value)}
+            error={errors.short_description}
+          />
+          <RichTextField
+            id="description_html"
+            label={t("workspace_settings.settings.applications.app_description_title.label")}
+            control={control}
+            workspaceSlug={workspaceSlug}
+            workspaceId={workspaceId}
+            searchEntityCallback={async (payload) =>
+              await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                ...payload,
+              })
+            }
+            validation={{ required: t("workspace_settings.settings.applications.app_description_error") }}
+            placeholder={t("workspace_settings.settings.applications.app_description_title.placeholder")}
+            error={errors.description_html}
+            uploadFile={async (blockId, file) => {
+              try {
+                const { asset_id } = await uploadEditorAsset({
+                  blockId,
+                  data: {
+                    entity_identifier: workspaceId,
+                    entity_type: EFileAssetType.OAUTH_APP_DESCRIPTION,
+                  },
+                  file,
+                  workspaceSlug,
+                });
+                return asset_id;
+              } catch (error) {
+                console.log("Error in uploading application asset:", error);
+                throw new Error("Asset upload failed. Please try again later.");
+              }
+            }}
+          />
+
+          <InputField
+            id="website"
+            type="url"
+            label={t("workspace_settings.settings.applications.website.title")}
+            placeholder={t("workspace_settings.settings.applications.website.placeholder")}
+            register={register}
+            validation={{
+              required: t("workspace_settings.settings.applications.website_error"),
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_website_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("website", value)}
+            error={errors.website}
+          />
+          <div className="text-xs text-custom-text-300 flex items-center gap-2">
+            <ToggleSwitch
+              value={watch("is_mentionable") ?? false}
+              onChange={(value) => setValue("is_mentionable", value)}
+              size="sm"
             />
-            {errors.website && <p className="text-red-500 text-xs">{errors.website.message}</p>}
+            <span>{t("workspace_settings.settings.applications.enable_app_mentions")}</span>
+            <Tooltip
+              tooltipContent={t("workspace_settings.settings.applications.enable_app_mentions_tooltip")}
+              position="top"
+            >
+              <span className="border border-custom-border-200 rounded-full h-4 w-4 flex items-center justify-center text-custom-text-400 cursor-help">
+                ?
+              </span>
+            </Tooltip>
           </div>
+        </FormSection>
+        <FormSection title={"Connections"}>
+          <InputField
+            id="setup_url"
+            type="text"
+            label={t("workspace_settings.settings.applications.setup_url.label")}
+            description={t("workspace_settings.settings.applications.setup_url.description")}
+            placeholder={t("workspace_settings.settings.applications.setup_url.placeholder")}
+            register={register}
+            validation={{ required: t("workspace_settings.settings.applications.setup_url_error") }}
+            onChange={(value) => handleTextChange("setup_url", value)}
+            error={errors.setup_url}
+          />
+          <InputField
+            id="webhook_url"
+            type="url"
+            label={t("workspace_settings.settings.applications.webhook_url.label")}
+            description={t("workspace_settings.settings.applications.webhook_url.description")}
+            placeholder={t("workspace_settings.settings.applications.webhook_url.placeholder")}
+            register={register}
+            validation={{
+              required: t("workspace_settings.settings.applications.webhook_url_error"),
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_webhook_url_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("webhook_url", value)}
+            error={errors.webhook_url}
+          />
+          <InputField
+            id="redirect_uris"
+            type="text"
+            label={t("workspace_settings.settings.applications.redirect_uris.label")}
+            description={t("workspace_settings.settings.applications.redirect_uris.description")}
+            placeholder={t("workspace_settings.settings.applications.redirect_uris.placeholder")}
+            register={register}
+            validation={{
+              required: t("workspace_settings.settings.applications.redirect_uris_error"),
+              pattern: {
+                value: redirectURIsRegex,
+                message: t("workspace_settings.settings.applications.invalid_redirect_uris_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("redirect_uris", value)}
+            error={errors.redirect_uris}
+          />
+        </FormSection>
+        <FormSection title={"Categorisation"} collapsible>
           <div tabIndex={5} className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.categories_description")}
@@ -331,253 +380,107 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
               />
             )}
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.app_maker_title")}
-            </div>
-            <Input
-              id="company_name"
-              type="text"
-              placeholder={t("workspace_settings.settings.applications.app_maker_title")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.company_name)}
-              tabIndex={6}
-              {...register("company_name", { required: t("workspace_settings.settings.applications.app_maker_error") })}
-              onChange={(e) => handleTextChange("company_name", e.target.value)}
-            />
-            {errors.company_name && <p className="text-red-500 text-xs">{errors.company_name.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.webhook_url_title")}
-            </div>
-            <Input
-              id="webhook_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.webhook_url)}
-              tabIndex={7}
-              {...register("webhook_url", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_webhook_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("webhook_url", e.target.value)}
-            />
-            {errors.webhook_url && <p className="text-red-500 text-xs">{errors.webhook_url.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.redirect_uris_title")}
-            </div>
-            <Input
-              id="redirect_uris"
-              type="text"
-              placeholder={t("workspace_settings.settings.applications.redirect_uris_description")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.redirect_uris)}
-              tabIndex={8}
-              {...register("redirect_uris", {
-                required: t("workspace_settings.settings.applications.redirect_uris_error"),
-                pattern: {
-                  value: redirectURIsRegex,
-                  message: t("workspace_settings.settings.applications.invalid_redirect_uris_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("redirect_uris", e.target.value)}
-            />
-            {errors.redirect_uris && <p className="text-red-500 text-xs">{errors.redirect_uris.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.authorized_javascript_origins_title")}
-            </div>
-            <Input
-              id="allowed_origins"
-              type="text"
-              placeholder={t("workspace_settings.settings.applications.authorized_javascript_origins_description")}
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.allowed_origins)}
-              tabIndex={9}
-              {...register("allowed_origins", {
-                pattern: {
-                  value: allowedOriginsRegex,
-                  message: t("workspace_settings.settings.applications.invalid_authorized_javascript_origins_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("allowed_origins", e.target.value)}
-            />
-            {errors.allowed_origins && <p className="text-red-500 text-xs">{errors.allowed_origins.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.contact_email_title")}
-            </div>
-            <Input
-              id="contact_email"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.contact_email)}
-              tabIndex={10}
-              {...register("contact_email", {
-                pattern: {
-                  value: emailRegex,
-                  message: t("workspace_settings.settings.applications.invalid_contact_email_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("contact_email", e.target.value)}
-            />
-            {errors.contact_email && <p className="text-red-500 text-xs">{errors.contact_email.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.privacy_policy_url_title")}
-            </div>
-            <Input
-              id="privacy_policy_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.privacy_policy_url)}
-              tabIndex={11}
-              {...register("privacy_policy_url", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_privacy_policy_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("privacy_policy_url", e.target.value)}
-            />
-            {errors.privacy_policy_url && <p className="text-red-500 text-xs">{errors.privacy_policy_url.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.terms_of_service_url_title")}
-            </div>
-            <Input
-              id="terms_of_service_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.terms_of_service_url)}
-              tabIndex={12}
-              {...register("terms_of_service_url", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_terms_of_service_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("terms_of_service_url", e.target.value)}
-            />
-            {errors.terms_of_service_url && (
-              <p className="text-red-500 text-xs">{errors.terms_of_service_url.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.support_url_title")}
-            </div>
-            <Input
-              id="support_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.support_url)}
-              tabIndex={13}
-              {...register("support_url", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_support_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("support_url", e.target.value)}
-            />
-            {errors.support_url && <p className="text-red-500 text-xs">{errors.support_url.message}</p>}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.video_url_title")}
-            </div>
-            <Input
-              id="video_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.video_url)}
-              tabIndex={14}
-              {...register("video_url", {
-                pattern: {
-                  value: singleUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_video_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("video_url", e.target.value)}
-            />
-            {errors.video_url && <p className="text-red-500 text-xs">{errors.video_url.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.setup_url_title")}
-            </div>
-            <Input
-              id="setup_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.setup_url)}
-              tabIndex={15}
-              {...register("setup_url", {
-                pattern: {
-                  value: relativeUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_setup_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("setup_url", e.target.value)}
-            />
-            {errors.setup_url && <p className="text-red-500 text-xs">{errors.setup_url.message}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm text-custom-text-300">
-              {t("workspace_settings.settings.applications.configuration_url_title")}
-            </div>
-            <Input
-              id="configuration_url"
-              type="text"
-              className="w-full resize-none text-sm"
-              hasError={Boolean(errors.configuration_url)}
-              tabIndex={16}
-              {...register("configuration_url", {
-                pattern: {
-                  value: relativeUrlRegex,
-                  message: t("workspace_settings.settings.applications.invalid_configuration_url_error"),
-                },
-              })}
-              onChange={(e) => handleTextChange("configuration_url", e.target.value)}
-            />
-            {errors.configuration_url && <p className="text-red-500 text-xs">{errors.configuration_url.message}</p>}
-          </div>
+        </FormSection>
+        <FormSection title={"Compliance & Support"} collapsible>
+          <InputField
+            id="contact_email"
+            type="email"
+            label={t("workspace_settings.settings.applications.contact_email_title")}
+            placeholder={t("workspace_settings.settings.applications.contact_email_title")}
+            register={register}
+            validation={{
+              pattern: {
+                value: emailRegex,
+                message: t("workspace_settings.settings.applications.invalid_contact_email_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("contact_email", value)}
+            error={errors.contact_email}
+          />
+          <InputField
+            id="privacy_policy_url"
+            type="url"
+            label={t("workspace_settings.settings.applications.privacy_policy_url_title")}
+            placeholder={t("workspace_settings.settings.applications.privacy_policy_url_title")}
+            register={register}
+            validation={{
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_privacy_policy_url_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("privacy_policy_url", value)}
+            error={errors.privacy_policy_url}
+          />
+          <InputField
+            id="terms_of_service_url"
+            type="url"
+            label={t("workspace_settings.settings.applications.terms_of_service_url_title")}
+            placeholder={t("workspace_settings.settings.applications.terms_of_service_url_title")}
+            register={register}
+            validation={{
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_terms_of_service_url_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("terms_of_service_url", value)}
+            error={errors.terms_of_service_url}
+          />
+          <InputField
+            id="support_url"
+            type="url"
+            label={t("workspace_settings.settings.applications.support_url_title")}
+            placeholder={t("workspace_settings.settings.applications.support_url_title")}
+            register={register}
+            validation={{
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_support_url_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("support_url", value)}
+            error={errors.support_url}
+          />
+        </FormSection>
+        <FormSection title={"Additional resources"} collapsible>
+          <InputField
+            id="video_url"
+            type="url"
+            label={t("workspace_settings.settings.applications.video_url_title")}
+            placeholder={t("workspace_settings.settings.applications.video_url_title")}
+            register={register}
+            validation={{
+              pattern: {
+                value: singleUrlRegex,
+                message: t("workspace_settings.settings.applications.invalid_video_url_error"),
+              },
+            }}
+            onChange={(value) => handleTextChange("video_url", value)}
+            error={errors.video_url}
+          />
           <UploadAppAttachments
             initialValue={formData?.attachments_urls ?? []}
             entityType={EFileAssetType.OAUTH_APP_ATTACHMENT}
             onFilesFinalise={(urls) => setValue("attachments_urls", urls)}
           />
-          {watch("id") && formData && (
-            <RegenerateClientSecret application={formData} handleRegenerateSuccess={handleRegenerateSuccess} />
-          )}
-        </div>
-        <div className="flex justify-start gap-2 mt-10">
-          <Button
-            type="button"
-            variant="outline-primary"
-            onClick={() => router.push(`/${workspaceSlug}/settings/applications`)}
-          >
-            {t("common.cancel")}
-          </Button>
-          <Button type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary">
-            {!watch("id")
-              ? t("workspace_settings.settings.applications.create_app")
-              : t("workspace_settings.settings.applications.update_app")}
-          </Button>
-        </div>
+        </FormSection>
       </div>
+      <div className="flex justify-end gap-2 mt-4">
+        <Button type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary">
+          {!watch("id")
+            ? t("workspace_settings.settings.applications.create_app")
+            : t("workspace_settings.settings.applications.update_app")}
+        </Button>
+        <Button
+          type="button"
+          variant="neutral-primary"
+          onClick={() => router.push(`/${workspaceSlug}/settings/integrations`)}
+        >
+          {t("common.cancel")}
+        </Button>
+      </div>
+
       <GeneratedCredentialsModal
         handleClose={handleCredentialsModalClose}
         isOpen={isCredentialsModalOpen}

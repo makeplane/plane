@@ -587,6 +587,7 @@
         "connected": "Připojeno",
         "install": "Instalovat",
         "installed": "Instalováno",
+        "configure": "Konfigurovat",
         "app_available": "Tuto aplikaci jste zpřístupnili pro použití s pracovním prostorem Plane",
         "app_available_description": "Připojte pracovní prostor Plane pro začátek používání",
         "client_id_and_secret": "ID a Tajemství Klienta",
@@ -603,7 +604,10 @@
         "app_name_error": "Název aplikace je povinný",
         "app_short_description_title": "Dejte této aplikaci krátký popis",
         "app_short_description_error": "Krátký popis aplikace je povinný",
-        "app_description_title": "Napište také delší popis pro ty, kteří chtějí vědět více. Stiskněte / pro příkazy",
+        "app_description_title": {
+          "label": "Dlouhý popis",
+          "placeholder": "Napište dlouhý popis pro tržiště. Stiskněte ‘/’ pro příkazy."
+        },
         "app_description_error": "Popis aplikace je povinný",
         "app_slug_title": "Slug aplikace",
         "app_slug_error": "Slug aplikace je povinný",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "Klikněte pro nahrávání obrázků",
         "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překračuje limit velikosti ({size} MB)",
         "uploading": "Nahrávání...",
-        "upload_and_save": "Nahrát a uložit"
+        "upload_and_save": "Nahrát a uložit",
+        "app_credentials_regenrated": {
+          "title": "Přihlašovací údaje aplikace byly úspěšně znovu vygenerovány",
+          "description": "Nahraďte klientský klíč všude, kde je používán. Předchozí klíč již není platný."
+        },
+        "app_created": {
+          "title": "Aplikace byla úspěšně vytvořena",
+          "description": "Použijte přihlašovací údaje k instalaci aplikace do pracovního prostoru Plane"
+        },
+        "installed_apps": "Nainstalované aplikace",
+        "all_apps": "Všechny aplikace",
+        "internal_apps": "Interní aplikace",
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webové stránky vaší aplikace.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvůrce aplikací",
+          "description": "Osoba nebo organizace, která vytváří aplikaci."
+        },
+        "setup_url": {
+          "label": "URL nastavení",
+          "description": "Uživatelé budou po instalaci aplikace přesměrováni na tuto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Sem budeme odesílat události webhook a aktualizace z pracovních prostorů, kde je vaše aplikace nainstalována.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Přesměrovací URI (oddělené mezerou)",
+          "description": "Uživatelé budou po ověření pomocí Plane přesměrováni na tuto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Tato aplikace může být nainstalována pouze po jejím nainstalování správcem pracovního prostoru. Kontaktujte svého správce pracovního prostoru, abyste mohli pokračovat.",
+        "enable_app_mentions": "Povolit zmínky o aplikaci",
+        "enable_app_mentions_tooltip": "Když je tato možnost povolena, uživatelé mohou zmínit nebo přiřadit pracovní položky této aplikaci.",
+        "build_your_own_app": "Vytvořte si vlastní aplikaci",
+        "edit_app_details": "Upravit detaily aplikace"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

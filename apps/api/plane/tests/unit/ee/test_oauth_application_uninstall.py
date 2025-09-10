@@ -19,7 +19,7 @@ class TestOAuthApplicationUninstallEndpoint:
     ):
         """Test successful uninstallation of an application"""
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -60,7 +60,7 @@ class TestOAuthApplicationUninstallEndpoint:
         ).exists()
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -130,7 +130,7 @@ class TestOAuthApplicationUninstallEndpoint:
         ).exists()
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -193,7 +193,7 @@ class TestOAuthApplicationUninstallEndpoint:
         )
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -222,7 +222,7 @@ class TestOAuthApplicationUninstallEndpoint:
 
         non_existent_id = uuid.uuid4()
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": non_existent_id,
@@ -250,7 +250,7 @@ class TestOAuthApplicationUninstallEndpoint:
         )
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,  # Current workspace
                 "pk": other_installation.id,  # Installation from other workspace
@@ -274,7 +274,7 @@ class TestOAuthApplicationUninstallEndpoint:
     ):
         """Test uninstallation when workspace doesn't exist"""
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": "non-existent-workspace",
                 "pk": workspace_app_installation.id,
@@ -290,7 +290,7 @@ class TestOAuthApplicationUninstallEndpoint:
     ):
         """Test uninstallation without authentication"""
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -312,7 +312,7 @@ class TestOAuthApplicationUninstallEndpoint:
         ).update(role=15)
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -359,7 +359,7 @@ class TestOAuthApplicationUninstallEndpoint:
         )
 
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -396,7 +396,7 @@ class TestOAuthApplicationUninstallEndpoint:
     ):
         """Test that only POST method is allowed"""
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": workspace_app_installation.id,
@@ -442,7 +442,7 @@ class TestOAuthApplicationUninstallEndpoint:
 
         # Uninstall the application
         url = reverse(
-            "application-detail",
+            "app-installation-detail",
             kwargs={
                 "slug": workspace.slug,
                 "pk": installation1.id,

@@ -1,13 +1,25 @@
 "use client";
-import { observer } from "mobx-react";
+
 import { useParams } from "next/navigation";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+// components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useFlag } from "@/plane-web/hooks/store";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { ApplicationsUpgrade } from "@/plane-web/components/marketplace";
 
-const WorkspaceIntegrationsLayout = observer(({ children }: { children: React.ReactNode }) => {
+const IntegrationsLayout = ({ children }: { children: React.ReactNode }) => {
   const { workspaceSlug } = useParams();
-  const integrationsEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATIONS");
-  return <SettingsContentWrapper size={integrationsEnabled ? "lg" : "md"}>{children}</SettingsContentWrapper>;
-});
+  return (
+    <SettingsContentWrapper size="md">
+      <WithFeatureFlagHOC
+        workspaceSlug={workspaceSlug?.toString()}
+        flag={E_FEATURE_FLAGS.SILO_INTEGRATIONS}
+        fallback={<ApplicationsUpgrade />}
+      >
+        {children}
+      </WithFeatureFlagHOC>
+    </SettingsContentWrapper>
+  );
+};
 
-export default WorkspaceIntegrationsLayout;
+export default IntegrationsLayout;

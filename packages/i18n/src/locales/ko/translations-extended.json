@@ -587,6 +587,7 @@
         "connected": "연결됨",
         "install": "설치",
         "installed": "설치됨",
+        "configure": "설정",
         "app_available": "이 앱을 Plane 워크스페이스에서 사용할 수 있게 되었습니다",
         "app_available_description": "사용을 시작하려면 Plane 워크스페이스에 연결하세요",
         "client_id_and_secret": "클라이언트 ID와 시크릿",
@@ -603,7 +604,10 @@
         "app_name_error": "앱 이름은 필수입니다",
         "app_short_description_title": "이 앱에 대한 간단한 설명을 작성하세요",
         "app_short_description_error": "앱 간단 설명은 필수입니다",
-        "app_description_title": "더 자세히 알고 싶어하는 사람들을 위해 긴 설명도 작성하세요. 명령어는 /를 누르세요",
+        "app_description_title": {
+          "label": "긴 설명",
+          "placeholder": "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 ‘/’ 키를 누르세요."
+        },
         "app_description_error": "앱 설명은 필수입니다",
         "app_slug_title": "앱 슬러그",
         "app_slug_error": "앱 슬러그는 필수입니다",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "이미지를 클릭하여 업로드",
         "invalid_file_or_exceeds_size_limit": "유효하지 않은 파일 또는 크기 제한 초과 ({size} MB)",
         "uploading": "업로드 중...",
-        "upload_and_save": "업로드 및 저장"
+        "upload_and_save": "업로드 및 저장",
+        "app_credentials_regenrated": {
+          "title": "앱 자격 증명이 성공적으로 재생성되었습니다",
+          "description": "클라이언트 시크릿이 사용되는 모든 곳에서 교체하세요. 이전 시크릿은 더 이상 유효하지 않습니다."
+        },
+        "app_created": {
+          "title": "앱이 성공적으로 생성되었습니다",
+          "description": "자격 증명을 사용하여 Plane 작업 공간에 앱을 설치하세요"
+        },
+        "installed_apps": "설치된 앱",
+        "all_apps": "모든 앱",
+        "internal_apps": "내부 앱",
+        "website": {
+          "title": "웹사이트",
+          "description": "앱 웹사이트로 연결되는 링크입니다.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "앱 메이커",
+          "description": "앱을 만드는 개인 또는 조직입니다."
+        },
+        "setup_url": {
+          "label": "설정 URL",
+          "description": "사용자가 앱을 설치하면 이 URL로 리디렉션됩니다.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "웹훅 URL",
+          "description": "앱이 설치된 작업 공간에서 발생하는 웹훅 이벤트와 업데이트를 여기에 전송합니다.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "리디렉션 URI(공백으로 구분)",
+          "description": "사용자가 Plane에서 인증을 완료하면 이 경로로 리디렉션됩니다.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "이 앱은 워크스페이스 관리자가 설치한 후에만 설치할 수 있습니다. 계속 진행하려면 워크스페이스 관리자에게 문의하세요.",
+        "enable_app_mentions": "앱 멘션 활성화",
+        "enable_app_mentions_tooltip": "이 기능을 활성화하면 사용자가 워크 아이템을 이 애플리케이션에 언급하거나 할당할 수 있습니다.",
+        "build_your_own_app": "나만의 앱 만들기",
+        "edit_app_details": "앱 세부정보 편집"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

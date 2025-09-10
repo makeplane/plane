@@ -8,8 +8,10 @@ from plane.ee.views.app.oauth import (
     OAuthApplicationPublishEndpoint,
     OAuthApplicationClientIdEndpoint,
     OAuthApplicationCategoryEndpoint,
-    OAuthApplicationDetailEndpoint,
+    OAuthAppInstallationDetailEndpoint,
     OAuthPublishedApplicationBySlugEndpoint,
+    OAuthUserAppInstallationDetailEndpoint,
+    OAuthWorkspacesCheckAppInstallationAllowedEndpoint,
 )
 
 urlpatterns = [
@@ -19,9 +21,9 @@ urlpatterns = [
         name="application",
     ),
     path(
-        "workspaces/<str:slug>/applications/<uuid:pk>/",
+        "workspaces/<str:slug>/applications/<str:app_slug>/",
         OAuthApplicationEndpoint.as_view(),
-        name="application-detail",
+        name="app-installation-detail",
     ),
     path(
         "workspaces/<str:slug>/applications/<uuid:pk>/regenerate-secret/",
@@ -40,8 +42,13 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/app-installations/<uuid:pk>/",
-        OAuthApplicationDetailEndpoint.as_view(),
-        name="application-detail",
+        OAuthAppInstallationDetailEndpoint.as_view(),
+        name="app-installation-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/my-app-installations/<uuid:pk>/",
+        OAuthUserAppInstallationDetailEndpoint.as_view(),
+        name="my-app-installation-detail",
     ),
     path(
         "workspaces/<str:slug>/applications/<uuid:pk>/publish/",
@@ -58,9 +65,14 @@ urlpatterns = [
         OAuthApplicationCategoryEndpoint.as_view(),
         name="application-categories",
     ),
-        path(
+    path(
         "workspaces/<str:slug>/published-applications/<str:app_slug>/",
         OAuthPublishedApplicationBySlugEndpoint.as_view(),
         name="published-application-by-slug",
+    ),
+    path(
+        "workspaces-check-app-installation-allowed/<uuid:application_id>/",
+        OAuthWorkspacesCheckAppInstallationAllowedEndpoint.as_view(),
+        name="workspaces-check-app-installation-allowed",
     ),
 ]

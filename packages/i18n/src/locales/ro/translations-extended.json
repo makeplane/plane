@@ -587,6 +587,7 @@
         "connected": "Conectat",
         "install": "Instalează",
         "installed": "Instalat",
+        "configure": "Configurează",
         "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Plane",
         "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
         "client_id_and_secret": "ID-ul clientului și Secretul",
@@ -603,7 +604,10 @@
         "app_name_error": "Numele aplicației este obligatoriu",
         "app_short_description_title": "Dați această aplicație o descriere scurtă",
         "app_short_description_error": "Descrierea scurtă a aplicației este obligatorie",
-        "app_description_title": "Scrie și o descriere mai lungă pentru cei care doresc să știe mai multe. Apăsați / pentru comenzi",
+        "app_description_title": {
+          "label": "Descriere lungă",
+          "placeholder": "Scrieți o descriere lungă pentru piață. Apăsați ‘/’ pentru comenzi."
+        },
         "app_description_error": "Descrierea aplicației este obligatorie",
         "app_slug_title": "Slug-ul aplicației",
         "app_slug_error": "Slug-ul aplicației este obligatoriu",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "Click pentru a încărca imagini",
         "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune ({size} MB)",
         "uploading": "Încarcă...",
-        "upload_and_save": "Încarcă și salvează"
+        "upload_and_save": "Încarcă și salvează",
+        "app_credentials_regenrated": {
+          "title": "Acreditările aplicației au fost regenerate cu succes",
+          "description": "Înlocuiți secretul clientului peste tot unde este folosit. Secretul anterior nu mai este valid."
+        },
+        "app_created": {
+          "title": "Aplicația a fost creată cu succes",
+          "description": "Folosiți acreditările pentru a instala aplicația într-un spațiu de lucru Plane"
+        },
+        "installed_apps": "Aplicații instalate",
+        "all_apps": "Toate aplicațiile",
+        "internal_apps": "Aplicații interne",
+        "website": {
+          "title": "Site web",
+          "description": "Link către site-ul web al aplicației dvs.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creator de aplicații",
+          "description": "Persoana sau organizația care creează aplicația."
+        },
+        "setup_url": {
+          "label": "URL de configurare",
+          "description": "Utilizatorii vor fi redirecționați către acest URL atunci când instalează aplicația.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Aici vom trimite evenimente și actualizări webhook din spațiile de lucru unde aplicația dvs. este instalată.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URI de redirecționare (separate prin spațiu)",
+          "description": "Utilizatorii vor fi redirecționați către acest traseu după ce s-au autentificat cu Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Această aplicație poate fi instalată doar după ce un administrator al workspace-ului o instalează. Contactați administratorul workspace-ului pentru a continua.",
+        "enable_app_mentions": "Activează mențiunile aplicației",
+        "enable_app_mentions_tooltip": "Când aceasta este activată, utilizatorii pot menționa sau atribui Work Items acestei aplicații.",
+        "build_your_own_app": "Construiți propria aplicație",
+        "edit_app_details": "Editează detaliile aplicației"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

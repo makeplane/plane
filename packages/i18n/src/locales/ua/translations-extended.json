@@ -587,6 +587,7 @@
         "connected": "Підключено",
         "install": "Встановити",
         "installed": "Встановлено",
+        "configure": "Налаштувати",
         "app_available": "Ви зробили цей додаток доступним для використання з робочим простором Plane",
         "app_available_description": "Підключіть робочий простір Plane, щоб почати використання",
         "client_id_and_secret": "ID та Секрет Клієнта",
@@ -603,7 +604,10 @@
         "app_name_error": "Назва додатку обов'язкова",
         "app_short_description_title": "Дайте короткий опис цьому додатку",
         "app_short_description_error": "Короткий опис додатку обов'язковий",
-        "app_description_title": "Також напишіть довший опис для тих, хто хоче дізнатися більше. Натисніть / для команд",
+        "app_description_title": {
+          "label": "Довгий опис",
+          "placeholder": "Напишіть довгий опис для маркетплейсу. Натисніть ‘/’ для команд."
+        },
         "app_description_error": "Опис додатку обов'язковий",
         "app_slug_title": "Слаг додатку",
         "app_slug_error": "Слаг додатку обов'язковий",
@@ -680,7 +684,47 @@
         "click_to_upload_images": "Натисніть, щоб завантажити зображення",
         "invalid_file_or_exceeds_size_limit": "Недійсний файл або перевищує ліміт розміру ({size} MB)",
         "uploading": "Завантаження...",
-        "upload_and_save": "Завантажити та зберегти"
+        "upload_and_save": "Завантажити та зберегти",
+        "app_credentials_regenrated": {
+          "title": "Облікові дані додатка були успішно згенеровані повторно",
+          "description": "Замініть клієнтський секрет усюди, де він використовується. Попередній секрет більше не дійсний."
+        },
+        "app_created": {
+          "title": "Додаток успішно створено",
+          "description": "Використайте облікові дані, щоб встановити додаток у робочому просторі Plane"
+        },
+        "installed_apps": "Встановлені додатки",
+        "all_apps": "Усі додатки",
+        "internal_apps": "Внутрішні додатки",
+        "website": {
+          "title": "Вебсайт",
+          "description": "Посилання на вебсайт вашого додатка.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Створювач додатків",
+          "description": "Особа чи організація, яка створює додаток."
+        },
+        "setup_url": {
+          "label": "URL налаштування",
+          "description": "Користувачі будуть перенаправлені на цю URL після встановлення додатка.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL вебхука",
+          "description": "Тут ми будемо надсилати події вебхука та оновлення з робочих просторів, де встановлено ваш додаток.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URI перенаправлення (через пробіл)",
+          "description": "Користувачі будуть перенаправлені на цей шлях після автентифікації через Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Цей додаток можна встановити лише після того, як адміністратор робочого простору його встановить. Зверніться до адміністратора робочого простору, щоб продовжити.",
+        "enable_app_mentions": "Увімкнути згадки додатка",
+        "enable_app_mentions_tooltip": "Коли це увімкнено, користувачі можуть згадувати або призначати робочі елементи цьому додатку.",
+        "build_your_own_app": "Створіть власний додаток",
+        "edit_app_details": "Редагувати деталі додатку"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

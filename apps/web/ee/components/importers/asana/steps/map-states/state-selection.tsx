@@ -3,8 +3,8 @@
 import { FC } from "react";
 // types
 import { AsanaSection } from "@plane/etl/asana";
-import { StateGroupIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
 // ui
 // silo types

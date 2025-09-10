@@ -577,6 +577,7 @@
         "connected": "Đã kết nối",
         "install": "Cài đặt",
         "installed": "Đã cài đặt",
+        "configure": "Cấu hình",
         "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
         "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",
@@ -593,7 +594,10 @@
         "app_name_error": "Tên ứng dụng là bắt buộc",
         "app_short_description_title": "Đưa ra một mô tả ngắn cho ứng dụng này",
         "app_short_description_error": "Mô tả ngắn ứng dụng là bắt buộc",
-        "app_description_title": "Viết thêm một mô tả dài hơn cho những người muốn biết thêm. Nhấn / để thực hiện lệnh",
+        "app_description_title": {
+          "label": "Mô tả dài",
+          "placeholder": "Viết mô tả dài cho marketplace. Nhấn ‘/’ để xem lệnh."
+        },
         "app_description_error": "Mô tả ứng dụng là bắt buộc",
         "app_slug_title": "Slug ứng dụng",
         "app_slug_error": "Slug ứng dụng là bắt buộc",
@@ -670,7 +674,47 @@
         "click_to_upload_images": "Nhấp để tải lên hình ảnh",
         "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
         "uploading": "Đang tải lên...",
-        "upload_and_save": "Tải lên và lưu"
+        "upload_and_save": "Tải lên và lưu",
+        "app_credentials_regenrated": {
+          "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
+          "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
+        },
+        "app_created": {
+          "title": "Ứng dụng đã được tạo thành công",
+          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
+        },
+        "installed_apps": "Ứng dụng đã cài đặt",
+        "all_apps": "Tất cả ứng dụng",
+        "internal_apps": "Ứng dụng nội bộ",
+        "website": {
+          "title": "Trang web",
+          "description": "Liên kết đến trang web của ứng dụng của bạn.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Trình tạo ứng dụng",
+          "description": "Người hoặc tổ chức tạo ra ứng dụng."
+        },
+        "setup_url": {
+          "label": "URL thiết lập",
+          "description": "Người dùng sẽ được chuyển hướng đến URL này khi họ cài đặt ứng dụng.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các workspace nơi ứng dụng của bạn được cài đặt.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URI chuyển hướng (cách nhau bằng dấu cách)",
+          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên workspace cài đặt nó. Liên hệ với quản trị viên workspace của bạn để tiếp tục.",
+        "enable_app_mentions": "Bật đề cập ứng dụng",
+        "enable_app_mentions_tooltip": "Khi bật tính năng này, người dùng có thể đề cập hoặc gán Work Items cho ứng dụng này.",
+        "build_your_own_app": "Tạo ứng dụng của riêng bạn",
+        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

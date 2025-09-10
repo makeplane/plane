@@ -35,10 +35,19 @@ const OAuthPage = observer(() => {
     claims,
   } = Object.fromEntries(searchParams.entries());
 
-  const { data: application, isLoading } = useSWR(
-    client_id ? APPLICATION_BY_CLIENT_ID(client_id?.toString() ?? "") : null,
-    client_id ? async () => await applicationService.getApplicationByClientId(client_id?.toString() ?? "") : null
-  );
+  const { data, isLoading } = useSWR(client_id ? APPLICATION_BY_CLIENT_ID(client_id) : null, async () => {
+    const application = await applicationService.getApplicationByClientId(client_id);
+    if (!application?.id) return { application, applicationPermissions: null };
+
+    const applicationPermissions = await applicationService.getApplicationPermissions(application.id.toString());
+    return { application, applicationPermissions };
+  });
+
+  const application = data?.application;
+  const applicationPermissions = data?.applicationPermissions?.reduce((acc: any, curr: any) => {
+    acc[curr.workspace_id] = curr.state;
+    return acc;
+  }, {} as any);
 
   if (isLoading) {
     return <EmailSettingsLoader />;
@@ -83,6 +92,7 @@ const OAuthPage = observer(() => {
                     state,
                     claims,
                   }}
+                  worskapcePermissions={applicationPermissions}
                 />
               </div>
             </div>

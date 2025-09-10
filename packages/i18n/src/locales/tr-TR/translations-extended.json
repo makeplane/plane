@@ -603,6 +603,7 @@
         "connected": "Bağlandı",
         "install": "Yükle",
         "installed": "Yüklendi",
+        "configure": "Yapılandır",
         "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
         "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
         "client_id_and_secret": "Klayınt ID ve Sikrıt",
@@ -619,7 +620,10 @@
         "app_name_error": "Aplikasyon adı gerekli",
         "app_short_description_title": "Bu aplikasyona kısa bir açıklama verin",
         "app_short_description_error": "Aplikasyon kısa açıklaması gerekli",
-        "app_description_title": "Ayrıca daha fazla bilgi isteyenler için uzun bir açıklama yazın. Komutlar için / tuşuna basın",
+        "app_description_title": {
+          "label": "Uzun açıklama",
+          "placeholder": "Pazar yeri için uzun bir açıklama yazın. Komutlar için ‘/’ tuşuna basın."
+        },
         "app_description_error": "Aplikasyon açıklaması gerekli",
         "app_slug_title": "Aplikasyon slag",
         "app_slug_error": "Aplikasyon slag gerekli",
@@ -696,7 +700,47 @@
         "click_to_upload_images": "Görselleri yüklemek için tıklayın",
         "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
         "uploading": "Yükleniyor...",
-        "upload_and_save": "Yükle ve kaydet"
+        "upload_and_save": "Yükle ve kaydet",
+        "app_credentials_regenrated": {
+          "title": "Uygulama kimlik bilgileri başarıyla yeniden oluşturuldu",
+          "description": "İstemci sırrını kullanıldığı her yerde değiştirin. Önceki sır artık geçerli değil."
+        },
+        "app_created": {
+          "title": "Uygulama başarıyla oluşturuldu",
+          "description": "Uygulamayı bir Plane çalışma alanına yüklemek için kimlik bilgilerini kullanın"
+        },
+        "installed_apps": "Yüklü uygulamalar",
+        "all_apps": "Tüm uygulamalar",
+        "internal_apps": "Dahili uygulamalar",
+        "website": {
+          "title": "Web sitesi",
+          "description": "Uygulamanızın web sitesine bağlantı.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Uygulama Yapıcı",
+          "description": "Uygulamayı oluşturan kişi veya kuruluş."
+        },
+        "setup_url": {
+          "label": "Kurulum URL'si",
+          "description": "Kullanıcılar uygulamayı yüklediklerinde bu URL'ye yönlendirilecektir.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL'si",
+          "description": "Uygulamanızın yüklü olduğu çalışma alanlarından webhook olaylarını ve güncellemelerini buraya göndereceğiz.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Yönlendirme URI'leri (boşluk ile ayrılmış)",
+          "description": "Kullanıcılar Plane ile kimlik doğrulaması yaptıktan sonra bu yola yönlendirilecektir.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Bu uygulama yalnızca bir workspace yöneticisi tarafından kurulduktan sonra yüklenebilir. Devam etmek için workspace yöneticinizle iletişime geçin.",
+        "enable_app_mentions": "Uygulama bahsini etkinleştir",
+        "enable_app_mentions_tooltip": "Bu etkinleştirildiğinde, kullanıcılar Çalışma Öğelerini bu uygulamaya atayabilir veya bahsedebilir.",
+        "build_your_own_app": "Kendi uygulamanızı oluşturun",
+        "edit_app_details": "Uygulama ayrıntılarını düzenle"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

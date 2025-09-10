@@ -6,8 +6,9 @@ import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
 import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
+import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks

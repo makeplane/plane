@@ -55,3 +55,10 @@ export const getFormattedDateFromTimestamp = (timestamp: number | undefined): st
     return formattedDate;
   }
 };
+
+export const convertAppSlugToIntegrationKey = (slug: string): string => {
+  // Convert "github" to "GITHUB"
+  // Convert "prd-agent" to "PRD_AGENT"
+  const normalizedSlug = slug.toUpperCase().replace(/-/g, "_");
+  return normalizedSlug;
+};

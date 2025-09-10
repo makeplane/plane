@@ -586,6 +586,7 @@
         "connected": "已连接",
         "install": "安装",
         "installed": "已安装",
+        "configure": "配置",
         "app_available": "您已使此应用可用于Plane工作空间",
         "app_available_description": "连接Plane工作空间以开始使用",
         "client_id_and_secret": "客户端ID和密钥",
@@ -602,7 +603,10 @@
         "app_name_error": "应用名称为必填项",
         "app_short_description_title": "为此应用提供简短描述",
         "app_short_description_error": "应用简短描述为必填项",
-        "app_description_title": "同时为想了解更多的人写一个更长的描述。按 / 获取命令",
+        "app_description_title": {
+          "label": "详细描述",
+          "placeholder": "为市场编写详细描述。按 ‘/’ 查看命令。"
+        },
         "app_description_error": "应用描述为必填项",
         "app_slug_title": "应用别名",
         "app_slug_error": "应用别名为必填项",
@@ -621,6 +625,8 @@
         "authorized_javascript_origins_description": "输入应用将被允许发出请求的来源，用空格分隔，例如 app.com example.com",
         "create_app": "创建应用",
         "update_app": "更新应用",
+        "build_your_own_app": "构建您自己的应用",
+        "edit_app_details": "编辑应用详情",
         "regenerate_client_secret_description": "重新生成客户端密钥。重新生成后，您可以复制密钥或将其下载到CSV文件中。",
         "regenerate_client_secret": "重新生成客户端密钥",
         "regenerate_client_secret_confirm_title": "确定要重新生成客户端密钥吗？",
@@ -679,7 +685,45 @@
         "click_to_upload_images": "点击上传图片",
         "invalid_file_or_exceeds_size_limit": "无效的文件或超过大小限制 ({size} MB)",
         "uploading": "上传中...",
-        "upload_and_save": "上传并保存"
+        "upload_and_save": "上传并保存",
+        "app_credentials_regenrated": {
+          "title": "应用凭证已成功重新生成",
+          "description": "请在所有使用的地方替换客户端密钥。之前的密钥已不再有效。"
+        },
+        "app_created": {
+          "title": "应用已成功创建",
+          "description": "使用凭证将应用安装到 Plane 工作区中"
+        },
+        "installed_apps": "已安装的应用",
+        "all_apps": "所有应用",
+        "internal_apps": "内部应用",
+        "website": {
+          "title": "网站",
+          "description": "链接到您的应用程序网站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "应用创建者",
+          "description": "创建该应用的个人或组织。"
+        },
+        "setup_url": {
+          "label": "设置 URL",
+          "description": "用户在安装应用时将被重定向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "用户在通过 Plane 认证后将被重定向到此路径。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "此应用只能在工作区管理员安装后才能安装。请联系您的工作区管理员以继续。",
+        "enable_app_mentions": "启用应用提及",
+        "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

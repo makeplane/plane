@@ -7,8 +7,9 @@ import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
+import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { SentryIntegrationRoot } from "@/plane-web/components/integrations/sentry";
 //  plane web hooks

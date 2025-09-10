@@ -688,7 +688,49 @@
         "connected": "Connected",
         "install": "Install",
         "installed": "Installed",
+        "configure": "Configure",
         "app_available": "You have made this app available to use with a Plane workspace",
+        "app_credentials_regenrated": {
+          "title": "App credentials successfully re-generated",
+          "description": "Replace the client secret everywhere it's used. The previous secret is no longer valid."
+        },
+        "app_created": {
+          "title": "App created successfully",
+          "description": "Use the credentials to install the app in a Plane workspace"
+        },
+        "installed_apps": "Installed apps",
+        "all_apps": "All apps",
+        "internal_apps": "Internal apps",
+        "app_name_title": "App Name",
+        "app_description_title": {
+          "label": "Long Description",
+          "placeholder": "Write a long description for marketplace. Press ‘/’ for commands."
+        },
+        "website": {
+          "title": "Website",
+          "description": "Link to your app's website.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "App Maker",
+          "description": "The person or organization creating the app."
+        },
+        "app_maker_error": "Maker name is required",
+        "setup_url": {
+          "label": "Setup URL",
+          "description": "Users will be redirected to this URL when they install the app.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "This is where we will send webhook events and updates from the workspaces where your app is installed.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Redirect URIs (space separated)",
+          "description": "Users will be redirected to this path after they have authenticated with Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Connect a Plane workspace to start using it",
         "client_id_and_secret": "Client ID and Secret",
         "client_id_and_secret_description": "Copy and save this secret key in Pages. You can't see this key again after you hit Close.",
@@ -700,18 +742,13 @@
         "slug_already_exists": "Slug already exists",
         "failed_to_create_application": "Failed to create application",
         "upload_logo": "Upload Logo",
-        "app_name_title": "What will you call this app",
         "app_name_error": "App name is required",
-        "app_short_description_title": "Give this app a short description",
+        "app_short_description_title": "Short Description",
         "app_short_description_error": "App short description is required",
-        "app_description_title": "Also write a longer description for folks who want to know more. Press / for commands",
         "app_description_error": "App description is required",
         "app_slug_title": "App slug",
         "app_slug_error": "App slug is required",
-        "website_title": "Website",
         "invalid_website_error": "Invalid website",
-        "app_maker_title": "App Maker",
-        "app_maker_error": "App maker is required",
         "webhook_url_title": "Webhook URL",
         "webhook_url_error": "Webhook URL is required",
         "invalid_webhook_url_error": "Invalid webhook URL",
@@ -725,6 +762,8 @@
         "authorized_javascript_origins_description": "Enter space seperated origins where the app will be allowed to make requests e.g app.com example.com",
         "create_app": "Create app",
         "update_app": "Update app",
+        "build_your_own_app": "Build your own app",
+        "edit_app_details": "Edit app details",
         "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
         "regenerate_client_secret": "Regenerate client secret",
         "regenerate_client_secret_confirm_title": "Sure you want to regenerate the client secret?",
@@ -768,7 +807,6 @@
         "video_url_title": "Video URL",
         "video_url_error": "Video URL is required",
         "invalid_video_url_error": "Invalid video URL",
-        "setup_url_title": "Setup URL",
         "setup_url_error": "Setup URL is required",
         "invalid_setup_url_error": "Invalid setup URL",
         "configuration_url_title": "Configuration URL",
@@ -783,7 +821,14 @@
         "click_to_upload_images": "Click to upload images",
         "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit ({size} MB)",
         "uploading": "Uploading...",
-        "upload_and_save": "Upload & Save"
+        "upload_and_save": "Upload & Save",
+        "app_consent_no_access_title": "Request to install",
+        "app_consent_no_access_description": "This app can only be installed after a workspace admin installs it. Contact your workspace admin to proceed.",
+        "app_consent_unapproved_title": "This app hasn't been reviewed or approved by Plane yet.",
+        "app_consent_unapproved_description": "Make sure you trust this app before connecting it to your workspace.",
+        "go_to_app": "Go to app",
+        "enable_app_mentions": "Enable App Mentions",
+        "enable_app_mentions_tooltip": "When this is enabled, Users can mention or assign Work Items to this application."
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

@@ -3,8 +3,8 @@ import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web root store
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { ConnectionService, E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { TWorkspaceUserConnection } from "@plane/types";
+import { ConnectionService } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS, TWorkspaceUserConnection } from "@plane/types";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IIntegrationBaseStore, IntegrationBaseStore } from ".";
 

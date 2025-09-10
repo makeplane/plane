@@ -586,6 +586,7 @@
         "connected": "Conectado",
         "install": "Instalar",
         "installed": "Instalado",
+        "configure": "Configurar",
         "app_available": "Has hecho que esta aplicación esté disponible para usar con un espacio de trabajo de Plane",
         "app_available_description": "Conecta un espacio de trabajo de Plane para comenzar a usarla",
         "client_id_and_secret": "ID y Secreto de Cliente",
@@ -602,7 +603,10 @@
         "app_name_error": "El nombre de la aplicación es obligatorio",
         "app_short_description_title": "Dale una breve descripción a esta aplicación",
         "app_short_description_error": "La descripción corta de la aplicación es obligatoria",
-        "app_description_title": "También escribe una descripción más larga para quienes quieran saber más. Presiona / para comandos",
+        "app_description_title": {
+          "label": "Descripción larga",
+          "placeholder": "Escriba una descripción larga para el mercado. Presione ‘/’ para ver los comandos."
+        },
         "app_description_error": "La descripción de la aplicación es obligatoria",
         "app_slug_title": "Slug de la aplicación",
         "app_slug_error": "El slug de la aplicación es obligatorio",
@@ -621,6 +625,8 @@
         "authorized_javascript_origins_description": "Ingresa los orígenes separados por espacios donde la aplicación podrá hacer solicitudes, por ejemplo app.com example.com",
         "create_app": "Crear aplicación",
         "update_app": "Actualizar aplicación",
+        "build_your_own_app": "Construye tu propia aplicación",
+        "edit_app_details": "Editar detalles de la aplicación",
         "regenerate_client_secret_description": "Regenerar el secreto de cliente. Si regeneras el secreto, podrás copiar la clave o descargarla en un archivo CSV justo después.",
         "regenerate_client_secret": "Regenerar secreto de cliente",
         "regenerate_client_secret_confirm_title": "¿Seguro que quieres regenerar el secreto de cliente?",
@@ -679,7 +685,45 @@
         "click_to_upload_images": "Haz clic para subir imágenes",
         "invalid_file_or_exceeds_size_limit": "Archivo inválido o excede el límite de tamaño ({size} MB)",
         "uploading": "Subiendo...",
-        "upload_and_save": "Subir y guardar"
+        "upload_and_save": "Subir y guardar",
+        "app_credentials_regenrated": {
+          "title": "Las credenciales de la aplicación se han regenerado correctamente",
+          "description": "Reemplace el secreto del cliente en todos los lugares donde se utilice. El secreto anterior ya no es válido."
+        },
+        "app_created": {
+          "title": "La aplicación se creó correctamente",
+          "description": "Utilice las credenciales para instalar la aplicación en un espacio de trabajo de Plane"
+        },
+        "installed_apps": "Aplicaciones instaladas",
+        "all_apps": "Todas las aplicaciones",
+        "internal_apps": "Aplicaciones internas",
+        "website": {
+          "title": "Sitio web",
+          "description": "Enlace al sitio web de su aplicación.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creador de aplicaciones",
+          "description": "La persona u organización que crea la aplicación."
+        },
+        "setup_url": {
+          "label": "URL de configuración",
+          "description": "Los usuarios serán redirigidos a esta URL cuando instalen la aplicación.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL del webhook",
+          "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada su aplicación.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "URIs de redirección (separadas por espacios)",
+          "description": "Los usuarios serán redirigidos a esta ruta después de haberse autenticado con Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Esta aplicación solo se puede instalar después de que un administrador del espacio de trabajo la instale. Contacta con el administrador de tu espacio de trabajo para continuar.",
+        "enable_app_mentions": "Habilitar menciones de la aplicación",
+        "enable_app_mentions_tooltip": "Cuando esto está habilitado, los usuarios pueden mencionar o asignar elementos de trabajo a esta aplicación."
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",
