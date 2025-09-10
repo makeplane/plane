@@ -218,9 +218,14 @@ def track_state(
     current_state_id = current_instance.get("state_id") or current_instance.get("state")
     requested_state_id = requested_data.get("state_id") or requested_data.get("state")
 
+    if current_state_id is not None and not is_valid_uuid(current_state_id):
+        current_state_id = None
+    if requested_state_id is not None and not is_valid_uuid(requested_state_id):
+        requested_state_id = None
+
     if current_state_id != requested_state_id:
-        new_state = State.objects.filter(pk=requested_state_id).first()
-        old_state = State.objects.filter(pk=current_state_id).first()
+        new_state = State.objects.filter(pk=requested_state_id, project_id=project_id).first()
+        old_state = State.objects.filter(pk=current_state_id, project_id=project_id).first()
 
         issue_activities.append(
             IssueActivity(
