@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import React, { useCallback, useEffect, FC, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -41,7 +41,8 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
+  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen, openProjectSwitcher } =
+    useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
@@ -158,6 +159,9 @@ export const CommandPalette: FC = observer(() => {
     []
   );
 
+  const keySequence = useRef("");
+  const sequenceTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
@@ -184,6 +188,20 @@ export const CommandPalette: FC = observer(() => {
       if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
         e.preventDefault();
         toggleShortcutModal(true);
+      }
+
+      if (!cmdClicked && !altKey && !shiftKey && !isAnyModalOpen) {
+        keySequence.current = (keySequence.current + keyPressed).slice(-2);
+        if (sequenceTimeout.current) clearTimeout(sequenceTimeout.current);
+        sequenceTimeout.current = setTimeout(() => {
+          keySequence.current = "";
+        }, 500);
+        if (keySequence.current === "op") {
+          e.preventDefault();
+          openProjectSwitcher();
+          keySequence.current = "";
+          return;
+        }
       }
 
       if (deleteKey) {
@@ -240,6 +258,7 @@ export const CommandPalette: FC = observer(() => {
       projectId,
       shortcutsList,
       toggleCommandPaletteModal,
+      openProjectSwitcher,
       toggleShortcutModal,
       toggleSidebar,
       workspaceSlug,

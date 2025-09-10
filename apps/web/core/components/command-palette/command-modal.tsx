@@ -75,11 +75,17 @@ export const CommandModal: React.FC = observer(() => {
     issue: { getIssueById },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
-  const { workspaceProjectIds, joinedProjectIds, fetchPartialProjects, getPartialProjectById } = useProject();
+  const { workspaceProjectIds, joinedProjectIds, getPartialProjectById } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
-  const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
-    useCommandPalette();
+  const {
+    isCommandPaletteOpen,
+    toggleCommandPaletteModal,
+    toggleCreateIssueModal,
+    toggleCreateProjectModal,
+    isProjectSwitcherOpen,
+    closeProjectSwitcher,
+  } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
@@ -109,8 +115,14 @@ export const CommandModal: React.FC = observer(() => {
     setPlaceholder("Search projects...");
     setSearchTerm("");
     setPages((p) => [...p, "open-project"]);
-    fetchPartialProjects(workspaceSlug.toString());
   };
+
+  useEffect(() => {
+    if (isCommandPaletteOpen && isProjectSwitcherOpen) {
+      openProjectList();
+      closeProjectSwitcher();
+    }
+  }, [isCommandPaletteOpen, isProjectSwitcherOpen, closeProjectSwitcher]);
 
   const projectOptions = useMemo(() => {
     const list: TPartialProject[] = [];

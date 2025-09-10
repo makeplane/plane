@@ -30,6 +30,9 @@ export interface IBaseCommandPaletteStore {
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
+  isProjectSwitcherOpen: boolean;
+  openProjectSwitcher: () => void;
+  closeProjectSwitcher: () => void;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -61,6 +64,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
+  isProjectSwitcherOpen = false;
 
   constructor() {
     makeObservable(this, {
@@ -79,6 +83,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
+      isProjectSwitcherOpen: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -93,6 +98,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      openProjectSwitcher: action,
+      closeProjectSwitcher: action,
     });
   }
 
@@ -125,6 +132,21 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
+  };
+
+  /**
+   * Opens the project switcher inside the command palette
+   */
+  openProjectSwitcher = () => {
+    this.isCommandPaletteOpen = true;
+    this.isProjectSwitcherOpen = true;
+  };
+
+  /**
+   * Resets project switcher trigger
+   */
+  closeProjectSwitcher = () => {
+    this.isProjectSwitcherOpen = false;
   };
 
   /**
