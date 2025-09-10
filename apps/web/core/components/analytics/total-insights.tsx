@@ -20,7 +20,7 @@ const getInsightLabel = (
   analyticsType: TAnalyticsTabsBase,
   item: IInsightField,
   isEpic: boolean | undefined,
-  t: (key: string, options?: unknown) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ) => {
   if (analyticsType === "work-items") {
     return isEpic
