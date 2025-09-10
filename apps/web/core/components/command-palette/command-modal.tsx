@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -48,6 +48,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import type { TPartialProject } from "@/plane-web/types";
 
 const workspaceService = new WorkspaceService();
 
@@ -65,6 +66,8 @@ export const CommandModal: React.FC = observer(() => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
+  const keySequence = useRef("");
+  const sequenceTimeout = useRef<NodeJS.Timeout | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -72,7 +75,7 @@ export const CommandModal: React.FC = observer(() => {
     issue: { getIssueById },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
-  const { workspaceProjectIds } = useProject();
+  const { workspaceProjectIds, joinedProjectIds, fetchPartialProjects, getPartialProjectById } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
@@ -100,6 +103,23 @@ export const CommandModal: React.FC = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+
+  const openProjectList = () => {
+    if (!workspaceSlug) return;
+    setPlaceholder("Search projects...");
+    setSearchTerm("");
+    setPages((p) => [...p, "open-project"]);
+    fetchPartialProjects(workspaceSlug.toString());
+  };
+
+  const projectOptions = useMemo(() => {
+    const list: TPartialProject[] = [];
+    joinedProjectIds.forEach((id) => {
+      const project = getPartialProjectById(id);
+      if (project) list.push(project);
+    });
+    return list.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
+  }, [joinedProjectIds, getPartialProjectById]);
 
   useEffect(() => {
     if (issueDetails && isCommandPaletteOpen) {
@@ -203,7 +223,23 @@ export const CommandModal: React.FC = observer(() => {
                     }}
                     shouldFilter={searchTerm.length > 0}
                     onKeyDown={(e: any) => {
-                      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                      const key = e.key.toLowerCase();
+                      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+                        if (!page && searchTerm === "") {
+                          keySequence.current = (keySequence.current + key).slice(-2);
+                          if (sequenceTimeout.current) clearTimeout(sequenceTimeout.current);
+                          sequenceTimeout.current = setTimeout(() => {
+                            keySequence.current = "";
+                          }, 500);
+                          if (keySequence.current === "op") {
+                            e.preventDefault();
+                            openProjectList();
+                            keySequence.current = "";
+                            return;
+                          }
+                        }
+                      }
+                      if ((e.metaKey || e.ctrlKey) && key === "k") {
                         e.preventDefault();
                         e.stopPropagation();
                         closePalette();
@@ -341,6 +377,20 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
+                          {workspaceSlug && joinedProjectIds.length > 0 && (
+                            <Command.Group heading="Navigate">
+                              <Command.Item onSelect={openProjectList} className="focus:outline-none">
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <Search className="h-3.5 w-3.5" />
+                                  Open project...
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <kbd>O</kbd>
+                                  <kbd>P</kbd>
+                                </div>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
                           {workspaceSlug &&
                             workspaceProjectIds &&
                             workspaceProjectIds.length > 0 &&
@@ -429,6 +479,24 @@ export const CommandModal: React.FC = observer(() => {
                           {/* help options */}
                           <CommandPaletteHelpActions closePalette={closePalette} />
                         </>
+                      )}
+
+                      {page === "open-project" && workspaceSlug && (
+                        <Command.Group heading="Projects">
+                          {projectOptions.map((project) => (
+                            <Command.Item
+                              key={project.id}
+                              value={project.name}
+                              onSelect={() => {
+                                closePalette();
+                                router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+                              }}
+                              className="focus:outline-none"
+                            >
+                              {project.name}
+                            </Command.Item>
+                          ))}
+                        </Command.Group>
                       )}
 
                       {/* workspace settings actions */}
