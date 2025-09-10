@@ -104,7 +104,6 @@
       "finish_after": "終了後"
     }
   },
-
   "pages": {
     "link_pages": "ページを接続",
     "show_wiki_pages": "Wikiページを表示",
@@ -134,7 +133,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "接続"
@@ -1322,7 +1320,6 @@
       "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1351,7 +1348,6 @@
       "upload_progress_message": "このウィンドウを閉じないでください。"
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
     "steps": {
@@ -1380,7 +1376,6 @@
       "upload_progress_message": "このウィンドウを閉じないでください。"
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1390,7 +1385,6 @@
       "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "ClickUpのデータをPlaneプロジェクトにインポートします。",
     "select_service_space": "{serviceName}スペースを選択",
@@ -1411,7 +1405,6 @@
       "pull_additional_data_title": "コメントと添付ファイルをインポート"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2494,6 +2487,7 @@
     "projects_by_status": "ステータス別のプロジェクト",
     "active_users": "アクティブユーザー",
     "intake_trends": "受け入れの傾向",
+    "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
     "empty_state": {
       "cycle_progress": {
         "title": "データがまだありません",

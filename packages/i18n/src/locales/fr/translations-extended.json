@@ -104,7 +104,6 @@
       "finish_after": "Se termine après"
     }
   },
-
   "pages": {
     "link_pages": "Lier les pages",
     "show_wiki_pages": "Afficher les pages de wiki",
@@ -134,7 +133,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Connexions"
@@ -1322,7 +1320,6 @@
       "description_summary": "Voici un résumé des données qui seront migrées de Jira vers Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Importez vos données Notion dans les projets Plane.",
     "steps": {
@@ -1351,7 +1348,6 @@
       "upload_progress_message": "Veuillez ne pas fermer cette fenêtre."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Importez vos données Confluence dans le wiki Plane.",
     "steps": {
@@ -1380,7 +1376,6 @@
       "upload_progress_message": "Veuillez ne pas fermer cette fenêtre."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importez vos données CSV dans les projets Plane.",
     "steps": {
@@ -1390,7 +1385,6 @@
       "description_configure_csv": "Veuillez télécharger votre fichier CSV et configurer les champs à mapper aux champs Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Importez vos données ClickUp dans les projets Plane.",
     "select_service_space": "Sélectionner l'espace {serviceName}",
@@ -1411,7 +1405,6 @@
       "pull_additional_data_title": "Importer les commentaires et les pièces jointes"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2494,6 +2487,7 @@
     "projects_by_status": "Projets par statut",
     "active_users": "Utilisateurs actifs",
     "intake_trends": "Tendances des admissions",
+    "workitem_resolved_vs_pending": "Éléments de travail résolus vs en attente",
     "empty_state": {
       "cycle_progress": {
         "title": "Pas encore de données",

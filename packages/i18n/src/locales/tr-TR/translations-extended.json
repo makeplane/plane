@@ -140,7 +140,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Bağlantılar"
@@ -1338,7 +1337,6 @@
       "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Notion verilerinizi Plane projelerine aktarın.",
     "steps": {
@@ -1367,7 +1365,6 @@
       "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Confluence verilerinizi Plane wiki'sine aktarın.",
     "steps": {
@@ -1396,7 +1393,6 @@
       "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
     "steps": {
@@ -1406,7 +1402,6 @@
       "description_configure_csv": "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "ClickUp verilerinizi Plane projelerine import edin.",
     "select_service_space": "{serviceName} Space Seçin",
@@ -1427,7 +1422,6 @@
       "pull_additional_data_title": "Yorumları ve Ekleri İmport Et"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2553,6 +2547,7 @@
     "projects_by_status": "Durumuna göre projeler",
     "active_users": "Aktif kullanıcılar",
     "intake_trends": "Alım Eğilimleri",
+    "workitem_resolved_vs_pending": "Çözülen vs bekleyen iş öğeleri",
     "empty_state": {
       "cycle_progress": {
         "title": "Henüz veri yok",

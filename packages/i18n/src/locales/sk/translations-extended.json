@@ -105,7 +105,6 @@
       "finish_after": "Končí po"
     }
   },
-
   "pages": {
     "link_pages": "Pripojenie stránok",
     "show_wiki_pages": "Zobraziť Wiki stránky",
@@ -1338,7 +1337,6 @@
       "description_configure_csv": "Nahrajte váš CSV súbor a nakonfigurujte polia, ktoré majú byť mapované na polia Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Importujte vaše ClickUp dáta do projektov Plane.",
     "select_service_space": "Vyberte {serviceName} priestor",
@@ -1359,7 +1357,6 @@
       "pull_additional_data_title": "Importovať komentáre a prílohy"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2443,6 +2440,7 @@
     "projects_by_status": "Projekty podľa stavu",
     "active_users": "Aktívni používatelia",
     "intake_trends": "Trendy prijímania",
+    "workitem_resolved_vs_pending": "Vyriešené vs. čakajúce pracovné položky",
     "empty_state": {
       "cycle_progress": {
         "title": "Zatiaľ žiadne údaje",
@@ -2459,7 +2457,6 @@
     },
     "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}"
   },
-
   "notion_importer": {
     "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",
     "steps": {
@@ -2488,7 +2485,6 @@
       "upload_progress_message": "Prosím nezatvárajte toto okno."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Importujte vaše Confluence dáta do wiki Plane.",
     "steps": {

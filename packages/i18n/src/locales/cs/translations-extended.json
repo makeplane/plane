@@ -105,7 +105,6 @@
       "finish_after": "Končí po"
     }
   },
-
   "pages": {
     "link_pages": "Propojit stránky",
     "show_wiki_pages": "Zobrazit wikipedií",
@@ -135,7 +134,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Spojení"
@@ -1323,7 +1321,6 @@
       "description_summary": "Zde je shrnutí dat, která budou migrována z Jira do Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Importujte svá data z Notion do projektů Plane.",
     "steps": {
@@ -1352,7 +1349,6 @@
       "upload_progress_message": "Prosím nezavírejte toto okno."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Importujte svá data z Confluence do wiki Plane.",
     "steps": {
@@ -1381,7 +1377,6 @@
       "upload_progress_message": "Prosím nezavírejte toto okno."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importujte svá CSV data do projektů Plane.",
     "steps": {
@@ -1391,7 +1386,6 @@
       "description_configure_csv": "Nahrajte svůj CSV soubor a nakonfigurujte pole, která mají být mapována na pole Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Importujte svá ClickUp data do projektů Plane.",
     "select_service_space": "Vyberte {serviceName} Space",
@@ -1412,7 +1406,6 @@
       "pull_additional_data_title": "Importovat komentáře a přílohy"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2495,6 +2488,7 @@
     "projects_by_status": "Projekty podle stavu",
     "active_users": "Aktivní uživatelé",
     "intake_trends": "Trendy příjmů",
+    "workitem_resolved_vs_pending": "Vyřešené vs. čekající pracovní položky",
     "empty_state": {
       "cycle_progress": {
         "title": "Zatím žádná data",

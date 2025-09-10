@@ -134,7 +134,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Conexiuni"
@@ -1321,7 +1320,6 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Importați datele dvs. Notion în proiectele Plane.",
     "steps": {
@@ -1350,7 +1348,6 @@
       "upload_progress_message": "Vă rugăm să nu închideți această fereastră."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Importați datele dvs. Confluence în wiki-ul Plane.",
     "steps": {
@@ -1379,7 +1376,6 @@
       "upload_progress_message": "Vă rugăm să nu închideți această fereastră."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importă datele tale CSV în proiectele Plane.",
     "steps": {
@@ -1389,7 +1385,6 @@
       "description_configure_csv": "Te rugăm să încarci fișierul tău CSV și să configurezi câmpurile care vor fi mapate la câmpurile Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Importă datele tale ClickUp în proiectele Plane.",
     "select_service_space": "Selectează {serviceName} Spațiu",
@@ -1410,7 +1405,6 @@
       "pull_additional_data_title": "Importă comentarii și atașamente"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2491,6 +2485,7 @@
     "projects_by_status": "Proiecte după statut",
     "active_users": "Utilizatori activi",
     "intake_trends": "Tendințe de admitere",
+    "workitem_resolved_vs_pending": "Elemente de lucru rezolvate vs în așteptare",
     "empty_state": {
       "cycle_progress": {
         "title": "Nu există date încă",

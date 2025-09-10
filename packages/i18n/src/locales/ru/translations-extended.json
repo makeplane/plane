@@ -98,7 +98,6 @@
       "finish_after": "Заканчивается после"
     }
   },
-
   "pages": {
     "link_pages": "Связать страницы",
     "show_wiki_pages": "Показать страницы Wiki",
@@ -128,7 +127,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Соединения"
@@ -1313,7 +1311,6 @@
       "description_summary": "Вот резюме данных, которые будут мигрированы из Jira Server в Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Импортируйте ваши данные Notion в проекты Plane.",
     "steps": {
@@ -1342,7 +1339,6 @@
       "upload_progress_message": "Пожалуйста, не закрывайте это окно."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Импортируйте ваши данные Confluence в вики Plane.",
     "steps": {
@@ -1371,7 +1367,6 @@
       "upload_progress_message": "Пожалуйста, не закрывайте это окно."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Импортируйте ваши данные CSV в проекты Plane.",
     "steps": {
@@ -1381,7 +1376,6 @@
       "description_configure_csv": "Пожалуйста, загрузите ваш файл CSV и настройте поля для сопоставления с полями Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Импортируйте ваши данные ClickUp в проекты Plane.",
     "select_service_space": "Выберите {serviceName} Пространство",
@@ -1402,7 +1396,6 @@
       "pull_additional_data_title": "Получить комментарии и вложения"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2485,6 +2478,7 @@
     "projects_by_status": "Проекты по статусу",
     "active_users": "Активные пользователи",
     "intake_trends": "Тенденции приёма",
+    "workitem_resolved_vs_pending": "Решенные vs ожидающие рабочие элементы",
     "empty_state": {
       "cycle_progress": {
         "title": "Данных пока нет",

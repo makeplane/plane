@@ -105,7 +105,6 @@
       "finish_after": "Selesai Setelah"
     }
   },
-
   "pages": {
     "link_pages": "Menghubungkan halaman",
     "show_wiki_pages": "Tampilkan halaman wiki",
@@ -135,7 +134,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Koneksi"
@@ -1322,7 +1320,6 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Impor data Notion Anda ke proyek Plane.",
     "steps": {
@@ -1351,7 +1348,6 @@
       "upload_progress_message": "Harap jangan tutup jendela ini."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Impor data Confluence Anda ke wiki Plane.",
     "steps": {
@@ -1380,7 +1376,6 @@
       "upload_progress_message": "Harap jangan tutup jendela ini."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Impor data CSV Anda ke dalam projek Plane.",
     "steps": {
@@ -1390,7 +1385,6 @@
       "description_configure_csv": "Silakan unggah file CSV Anda dan konfigurasikan bidang yang akan dipetakan ke bidang Plane."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Impor data ClickUp Anda ke dalam projek Plane.",
     "select_service_space": "Pilih {serviceName} Space",
@@ -1411,7 +1405,6 @@
       "pull_additional_data_title": "Impor komentar dan lampiran"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2492,6 +2485,7 @@
     "projects_by_status": "Proyek berdasarkan status",
     "active_users": "Pengguna aktif",
     "intake_trends": "Tren Penerimaan",
+    "workitem_resolved_vs_pending": "Item kerja yang diselesaikan vs tertunda",
     "empty_state": {
       "cycle_progress": {
         "title": "Belum ada data",

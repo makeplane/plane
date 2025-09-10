@@ -1,43 +1,20 @@
 import { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { UserInsightColumns } from "@plane/types";
 // components
 import { InsightTable } from "@/components/analytics/insight-table";
-// hooks
-import { useAnalytics } from "@/hooks/store/use-analytics";
-// services
-import { AnalyticsService } from "@/services/analytics.service";
 import { UserAvatarName } from "../user-avatar-name";
 
-const analyticsService = new AnalyticsService();
+interface UsersInsightTableProps {
+  data?: UserInsightColumns[];
+  isLoading: boolean;
+}
 
-const UsersInsightTable = observer(() => {
-  // router
-  const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+const UsersInsightTable = observer(({ data: usersData, isLoading }: UsersInsightTableProps) => {
   const { t } = useTranslation();
-  // store hooks
-  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalytics();
-  const { data: usersData, isLoading } = useSWR(
-    `insights-table-users-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
-    () =>
-      analyticsService.getAdvanceAnalyticsStats<UserInsightColumns[]>(
-        workspaceSlug,
-        "users",
-        {
-          // date_filter: selectedDuration,
-          ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
-          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
-          ...(selectedModule ? { module_id: selectedModule } : {}),
-        },
-        isPeekView
-      )
-  );
 
   // derived values
   const columnsLabels: Record<string, string> = useMemo(
@@ -57,21 +34,45 @@ const UsersInsightTable = observer(() => {
           accessorKey: "display_name",
           header: () => <div className="text-left">{columnsLabels["display_name"]}</div>,
           cell: ({ row }) => <UserAvatarName userId={row.original.user_id} />,
+          meta: {
+            export: {
+              key: columnsLabels["display_name"],
+              value: (row) => row.original.display_name,
+            },
+          },
         },
         {
           accessorKey: "started_work_items",
           header: () => <div className="text-right">{columnsLabels["started_work_items"]}</div>,
           cell: ({ row }) => <div className="text-right">{row.original.started_work_items}</div>,
+          meta: {
+            export: {
+              key: columnsLabels["started_work_items"],
+              value: (row) => row.original.started_work_items,
+            },
+          },
         },
         {
           accessorKey: "un_started_work_items",
           header: () => <div className="text-right">{columnsLabels["un_started_work_items"]}</div>,
           cell: ({ row }) => <div className="text-right">{row.original.un_started_work_items}</div>,
+          meta: {
+            export: {
+              key: columnsLabels["un_started_work_items"],
+              value: (row) => row.original.un_started_work_items,
+            },
+          },
         },
         {
           accessorKey: "completed_work_items",
           header: () => <div className="text-right">{columnsLabels["completed_work_items"]}</div>,
           cell: ({ row }) => <div className="text-right">{row.original.completed_work_items}</div>,
+          meta: {
+            export: {
+              key: columnsLabels["completed_work_items"],
+              value: (row) => row.original.completed_work_items,
+            },
+          },
         },
       ] as ColumnDef<UserInsightColumns>[],
     [columnsLabels, t]

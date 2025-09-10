@@ -532,6 +532,7 @@
   },
   "workspace_analytics": {
     "upgrade_to_plan": "Upgrade to {plan} to unlock {tab}",
+    "workitem_resolved_vs_pending": "Work items resolved vs pending",
     "projects_by_status": "Projects by status",
     "active_users": "Active users",
     "intake_trends": "Intake Trends",
@@ -1403,7 +1404,6 @@
       "description_summary": "Here is a summary of the data that will be migrated from Asana to Plane."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Import your Notion data into Plane wiki.",
     "steps": {
@@ -1432,7 +1432,6 @@
       "upload_progress_message": "Please don't close this window."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Import your Confluence data into Plane wiki.",
     "steps": {
@@ -1461,7 +1460,6 @@
       "upload_progress_message": "Please don't close this window."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Import your Linear data into Plane projects.",
     "steps": {
@@ -1501,7 +1499,6 @@
       "description_configure_csv": "Please upload your CSV file and configure the fields to be mapped to Plane fields."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Import your ClickUp data into Plane projects.",
     "select_service_space": "Select {serviceName} Space",
@@ -1522,7 +1519,6 @@
       "pull_additional_data_title": "Import comments and attachments"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2657,7 +2653,6 @@
       }
     }
   },
-
   "intake_forms": {
     "create": {
       "title": "Create a work item",
@@ -2701,7 +2696,6 @@
       }
     }
   },
-
   "recurring_work_items": {
     "settings": {
       "heading": "Recurring work items",
@@ -2781,7 +2775,6 @@
       }
     }
   },
-
   "automations": {
     "settings": {
       "title": "Custom automations",

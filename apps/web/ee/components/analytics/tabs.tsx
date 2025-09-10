@@ -4,6 +4,7 @@ import { Intake } from "./intake";
 import LockedTabLabel from "./locked-tab-label";
 import { Modules } from "./modules";
 import { Projects } from "./projects";
+import { Users } from "./users";
 
 export const getAnalyticsTabs = (
   t: (key: string, params?: Record<string, any>) => string,
@@ -16,6 +17,12 @@ export const getAnalyticsTabs = (
       key: "projects",
       label: isAnalyticsTabsEnabled ? t("common.projects") : <LockedTabLabel label={t("common.projects")} t={t} />,
       content: Projects,
+      isDisabled: !isAnalyticsTabsEnabled,
+    },
+    {
+      key: "users",
+      label: isAnalyticsTabsEnabled ? t("common.users") : <LockedTabLabel label={t("common.users")} t={t} />,
+      content: Users,
       isDisabled: !isAnalyticsTabsEnabled,
     },
     baseAnalyticsTabs[1],

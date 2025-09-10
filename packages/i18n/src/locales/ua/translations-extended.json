@@ -105,7 +105,6 @@
       "finish_after": "Фінішує Після"
     }
   },
-
   "pages": {
     "link_pages": "Сторінки з'єднати",
     "show_wiki_pages": "Показати сторінки Wiki",
@@ -135,7 +134,6 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Коннекшнс"
@@ -1322,7 +1320,6 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн."
     }
   },
-
   "notion_importer": {
     "notion_importer_description": "Імпортуйте ваші дані Notion у проекти Plane.",
     "steps": {
@@ -1351,7 +1348,6 @@
       "upload_progress_message": "Будь ласка, не закривайте це вікно."
     }
   },
-
   "confluence_importer": {
     "confluence_importer_description": "Імпортуйте ваші дані Confluence у вікі Plane.",
     "steps": {
@@ -1380,7 +1376,6 @@
       "upload_progress_message": "Будь ласка, не закривайте це вікно."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Імпортуйте ваші дані CSV у проджекти Плейн.",
     "steps": {
@@ -1390,7 +1385,6 @@
       "description_configure_csv": "Будь ласка, завантажте ваш CSV файл і налаштуйте поля, які будуть мапитися до полів Плейн."
     }
   },
-
   "clickup_importer": {
     "clickup_importer_description": "Імпортуйте ваші дані ClickUp у проджекти Плейн.",
     "select_service_space": "Виберіть {serviceName} Простір",
@@ -1411,7 +1405,6 @@
       "pull_additional_data_title": "Імпортувати коментарі та прикріплення"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -2495,6 +2488,7 @@
     "projects_by_status": "Проєкти за статусом",
     "active_users": "Активні користувачі",
     "intake_trends": "Тенденції прийому",
+    "workitem_resolved_vs_pending": "Вирішені vs очікуючі робочі елементи",
     "empty_state": {
       "cycle_progress": {
         "title": "Ще немає даних",
