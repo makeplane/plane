@@ -37,12 +37,14 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
+
+# Local imports
 from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
-
+from plane.app.permissions import ProjectPagePermission
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
@@ -63,6 +65,7 @@ def unarchive_archive_page_and_descendants(page_id, archived_at):
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
+    permission_classes = [ProjectPagePermission]
     search_fields = ["name"]
 
     def get_queryset(self):
@@ -117,7 +120,6 @@ class PageViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
@@ -139,7 +141,6 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
         try:
             page = Page.objects.get(
@@ -188,13 +189,10 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
         project = Project.objects.get(pk=project_id)
@@ -241,7 +239,7 @@ class PageViewSet(BaseViewSet):
                 )
             return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -251,7 +249,6 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -262,7 +259,6 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -275,9 +271,7 @@ class PageViewSet(BaseViewSet):
             and page.owned_by_id != request.user.id
         ):
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -285,7 +279,6 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         project = Project.objects.get(pk=project_id)
@@ -303,7 +296,6 @@ class PageViewSet(BaseViewSet):
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
 
@@ -330,7 +322,6 @@ class PageViewSet(BaseViewSet):
 
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
 
@@ -346,7 +337,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # if parent page is archived then the page will be un archived breaking the hierarchy
+        # if parent archived then page will be un archived breaking hierarchy
         if page.parent_id and page.parent.archived_at:
             page.parent = None
             page.save(update_fields=["parent"])
@@ -355,7 +346,6 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
 
@@ -484,7 +474,8 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    permission_classes = [ProjectPagePermission]
+
     def retrieve(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(pk=pk, workspace__slug=slug, projects__id=project_id)
@@ -507,7 +498,6 @@ class PagesDescriptionViewSet(BaseViewSet):
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(pk=pk, workspace__slug=slug, projects__id=project_id)
@@ -565,7 +555,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 
 class PageDuplicateEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    permission_classes = [ProjectPagePermission]
     def post(self, request, slug, project_id, page_id):
         page = Page.objects.filter(
             pk=page_id, workspace__slug=slug, projects__id=project_id
