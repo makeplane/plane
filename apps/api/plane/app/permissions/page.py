@@ -48,10 +48,9 @@ class ProjectPagePermission(BasePermission):
                 return self._has_private_page_action_access(request, slug, page, project_id)
 
             # Handle public page access
-            if self._has_public_page_action_access(request, slug, project_id):
-                return True
+            return self._has_public_page_action_access(request, slug, project_id)
         else:
-            return True
+            return self._has_public_page_action_access(request, slug, project_id)
 
     def _check_project_member_access(self, request, slug, project_id):
         """
