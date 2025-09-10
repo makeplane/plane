@@ -40,6 +40,7 @@
       "@types/express": "4.17.23",
       "typescript": "catalog:",
       "sharp": "catalog:",
+      "vite": "7.0.7",
       "@octokit/types": "13.8.0",
       "pbkdf2": "3.1.3"
     }

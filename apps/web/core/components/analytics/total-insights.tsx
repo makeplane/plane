@@ -47,14 +47,7 @@ const TotalInsights: React.FC<{
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();
-  /**
-   * Store hooks
-   */
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
-
-  /**
-   * API calls
-   */
   const { data: totalInsightsData, isLoading } = useSWR(
     `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isEpic}`,
     () =>
