@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-require("dotenv").config({ path: ".env" });
+// require("@dotenvx/dotenvx").config({ path: ".env" });
 
 const nextConfig = {
   trailingSlash: true,
@@ -91,6 +91,21 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/:workspaceSlug/projects/:projectId/settings/:path*",
+        destination: "/:workspaceSlug/settings/projects/:projectId/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/settings/api-tokens",
+        destination: "/:workspaceSlug/settings/account/api-tokens",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/pages/:path*",
+        destination: "/:workspaceSlug/wiki/:path*",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
@@ -105,6 +120,7 @@ const nextConfig = {
         destination: `${posthogHost}/:path*`,
       },
     ];
+
     if (process.env.NEXT_PUBLIC_ADMIN_BASE_URL || process.env.NEXT_PUBLIC_ADMIN_BASE_PATH) {
       const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || "";
       const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || "";

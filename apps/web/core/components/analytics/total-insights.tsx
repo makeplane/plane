@@ -2,19 +2,20 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+
 import { IInsightField, ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
-// hooks
+
+/**
+ * Local imports
+ */
 import { useAnalytics } from "@/hooks/store/use-analytics";
-// services
 import { AnalyticsService } from "@/services/analytics.service";
-// local imports
 import InsightCard from "./insight-card";
 
 const analyticsService = new AnalyticsService();
-
 const getInsightLabel = (
   analyticsType: TAnalyticsTabsBase,
   item: IInsightField,
@@ -27,19 +28,15 @@ const getInsightLabel = (
       : t(item.i18nKey, { entity: t("common.work_items") });
   }
 
-  // Get the base translation with entity
   const baseTranslation = t(item.i18nKey, {
     ...item.i18nProps,
     entity: item.i18nProps?.entity && t(item.i18nProps?.entity),
   });
 
-  // Add prefix if available
   const prefix = item.i18nProps?.prefix ? `${t(item.i18nProps.prefix)} ` : "";
 
-  // Add suffix if available
   const suffix = item.i18nProps?.suffix ? ` ${t(item.i18nProps.suffix)}` : "";
 
-  // Combine prefix, base translation, and suffix
   return `${prefix}${baseTranslation}${suffix}`;
 };
 
@@ -58,7 +55,6 @@ const TotalInsights: React.FC<{
         workspaceSlug,
         analyticsType,
         {
-          // date_filter: selectedDuration,
           ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
@@ -67,6 +63,7 @@ const TotalInsights: React.FC<{
         isPeekView
       )
   );
+
   return (
     <div
       className={cn(

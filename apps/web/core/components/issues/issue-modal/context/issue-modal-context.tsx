@@ -3,9 +3,8 @@ import { createContext } from "react";
 import { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
 // plane web imports
-import { TIssuePropertyValues, TIssuePropertyValueErrors } from "@/plane-web/types/issue-types";
 import { TIssueFields } from "ce/components/issues/issue-modal";
 
 export type TPropertyValuesValidationProps = {

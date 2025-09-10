@@ -8,10 +8,12 @@ import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,
 } from "@/extensions/core-without-props";
+import { TitleExtensions } from "@/extensions/title-extension";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
+export const TITLE_EDITOR_EXTENSIONS = TitleExtensions;
 // editor schemas
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
@@ -113,11 +115,13 @@ export const getAllDocumentFormatsFromRichTextEditorBinaryData = (
  * @returns
  */
 export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
-  description: Uint8Array
+  description: Uint8Array,
+  updateTitle: boolean
 ): {
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
+  titleHTML?: string;
 } => {
   // encode binary description data
   const base64Data = convertBinaryDataToBase64String(description);
@@ -129,11 +133,24 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   // convert to HTML
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
-  return {
-    contentBinaryEncoded: base64Data,
-    contentJSON,
-    contentHTML,
-  };
+  if (updateTitle) {
+    const title = yDoc.getXmlFragment("title");
+    const titleJSON = yXmlFragmentToProseMirrorRootNode(title, documentEditorSchema).toJSON();
+    const titleHTML = extractTextFromHTML(generateHTML(titleJSON, DOCUMENT_EDITOR_EXTENSIONS));
+
+    return {
+      contentBinaryEncoded: base64Data,
+      contentJSON,
+      contentHTML,
+      titleHTML,
+    };
+  } else {
+    return {
+      contentBinaryEncoded: base64Data,
+      contentJSON,
+      contentHTML,
+    };
+  }
 };
 
 type TConvertHTMLDocumentToAllFormatsArgs = {
@@ -169,8 +186,10 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
     // Convert HTML to binary format for document editor
     const contentBinary = getBinaryDataFromDocumentEditorHTMLString(document_html);
     // Generate all document formats from the binary data
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromDocumentEditorBinaryData(contentBinary);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      contentBinary,
+      false
+    );
     allFormats = {
       description: contentJSON,
       description_html: contentHTML,
@@ -181,4 +200,10 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
   }
 
   return allFormats;
+};
+
+export const extractTextFromHTML = (html: string): string => {
+  // Use a regex to extract text between tags
+  const textMatch = html.replace(/<[^>]*>/g, "");
+  return textMatch || "";
 };

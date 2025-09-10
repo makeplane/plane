@@ -3,12 +3,12 @@
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-import { ProjectIssueDetailsHeader } from "./header";
+import { ProjectWorkItemDetailsHeader } from "./header";
 
 export default function ProjectIssueDetailsLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <AppHeader header={<ProjectIssueDetailsHeader />} />
+      <AppHeader header={<ProjectWorkItemDetailsHeader />} />
       <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
     </>
   );

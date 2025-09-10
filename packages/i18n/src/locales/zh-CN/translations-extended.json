@@ -1,0 +1,2630 @@
+{
+  "sidebar": {
+    "pi_chat": "PI 聊天",
+    "initiatives": "计划",
+    "teamspaces": "团队空间",
+    "epics": "史诗",
+    "upgrade_plan": "升级计划",
+    "plane_pro": "Plane Pro",
+    "business": "商业版",
+    "customers": "客户",
+    "recurring_work_items": "重复工作项"
+  },
+  "workspace_dashboards": "仪表板",
+  "pi_chat": "PI 聊天",
+  "in_app": "应用内",
+  "forms": "表单",
+  "choose_workspace_for_integration": "选择工作区以连接此应用程序",
+  "integrations_description": "与 Plane 一起工作的应用程序必须连接到您是管理员的工作区",
+  "create_a_new_workspace": "创建新的工作区",
+  "learn_more_about_workspaces": "了解更多关于工作区的信息",
+  "no_workspaces_to_connect": "没有工作区可连接",
+  "no_workspaces_to_connect_description": "您需要创建工作区才能连接此应用程序",
+  "common": {
+    "worklogs": "工作日志",
+    "live": "实时",
+    "epics": "史诗",
+    "project_updates": "项目更新",
+    "overview": "概览",
+    "workflows": "工作流",
+    "members_and_teamspaces": "成员和团队空间"
+  },
+  "updates": {
+    "add_update": "添加更新",
+    "add_update_placeholder": "在这里输入您的更新",
+    "empty": {
+      "title": "还没有更新",
+      "description": "您可以在这里查看更新。"
+    },
+    "delete": {
+      "title": "删除更新",
+      "confirmation": "您确定要删除此更新吗？此操作是不可逆的。",
+      "success": {
+        "title": "更新已删除",
+        "message": "更新已成功删除。"
+      },
+      "error": {
+        "title": "更新未删除",
+        "message": "更新未删除。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新已更新",
+        "message": "更新已成功更新。"
+      },
+      "error": {
+        "title": "更新未更新",
+        "message": "更新未更新。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反应已创建",
+          "message": "反应已成功创建。"
+        },
+        "error": {
+          "title": "反应未创建",
+          "message": "反应未创建。"
+        }
+      }
+    },
+    "remove": {
+      "success": {
+        "title": "反应已移除",
+        "message": "反应已成功移除。"
+      },
+      "error": {
+        "title": "反应未移除",
+        "message": "反应未移除。"
+      }
+    },
+    "progress": {
+      "title": "进度",
+      "since_last_update": "自上次更新以来",
+      "comments": "{count, plural, other{# 评论}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新已创建",
+        "message": "更新已成功创建。"
+      },
+      "error": {
+        "title": "更新未创建",
+        "message": "更新未创建。"
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "开始于之前",
+      "start_after": "开始于之后",
+      "finish_before": "结束于之前",
+      "finish_after": "结束于之后"
+    }
+  },
+  "pages": {
+    "link_pages": "连接页面",
+    "show_wiki_pages": "显示 Wiki 页面",
+    "link_pages_to": "连接页面到",
+    "linked_pages": "连接的页面",
+    "no_description": "此页面为空。在此输入一些内容，并在此处查看此占位符",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "页面已更新",
+          "message": "页面已成功更新"
+        },
+        "error": {
+          "title": "页面未更新",
+          "message": "页面无法更新"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "页面已删除",
+          "message": "页面已成功删除"
+        },
+        "error": {
+          "title": "页面未删除",
+          "message": "页面无法删除"
+        }
+      }
+    }
+  },
+  "profile": {
+    "actions": {
+      "connections": "连接"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "计划",
+      "sub_heading": "在 Plane 中为所有工作解锁最高级别的组织。",
+      "title": "启用计划",
+      "description": "设置更大的目标以监控进度",
+      "toast": {
+        "updating": "正在更新计划功能",
+        "enable_success": "计划功能已成功启用。",
+        "disable_success": "计划功能已成功禁用。",
+        "error": "更新计划功能失败！"
+      }
+    },
+    "customers": {
+      "heading": "客户",
+      "settings_heading": "根据客户的重要需求管理工作。",
+      "settings_sub_heading": "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。"
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "未配置集成",
+        "description": "配置 GitHub 和其他集成以同步您的项目工作项。"
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "编辑估算系统",
+        "add_or_update": {
+          "title": "添加、更新或删除估算",
+          "description": "通过添加、更新或删除点数或类别来管理当前系统。"
+        },
+        "switch": {
+          "title": "更改估算类型",
+          "description": "将点数系统转换为类别系统，反之亦然。"
+        }
+      },
+      "switch": "切换估算系统",
+      "current": "当前估算系统",
+      "select": "选择估算系统",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "估算已重新排序",
+            "message": "估算已在您的项目中重新排序。"
+          },
+          "error": {
+            "title": "估算重新排序失败",
+            "message": "我们无法重新排序估算，请重试"
+          }
+        }
+      },
+      "validation": {
+        "fill": "请填写此估算字段",
+        "repeat": "估算值不能重复"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "属性",
+        "description": "为您的史诗添加自定义属性。"
+      },
+      "disabled": "已禁用"
+    }
+  },
+  "teamspaces": {
+    "label": "团队空间",
+    "empty_state": {
+      "general": {
+        "title": "团队空间可在 Plane 中实现更好的组织和跟踪。",
+        "description": "为每个现实世界的团队创建专用空间，与 Plane 中的其他工作空间分开，并根据团队的工作方式进行自定义。",
+        "primary_button": {
+          "text": "创建新的团队空间"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "您还没有链接任何团队空间。",
+          "description": "团队空间和项目所有者可以管理项目访问权限。"
+        }
+      },
+      "primary_button": {
+        "text": "链接团队空间"
+      },
+      "secondary_button": {
+        "text": "了解更多"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "团队空间名称",
+          "members": "成员",
+          "accountType": "账户类型"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "移除团队空间"
+            },
+            "confirm": {
+              "title": "从{projectName}中移除{teamspaceName}",
+              "description": "当您从链接项目中移除此团队空间时，此处的成员将失去对链接项目的访问权限。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "未找到匹配的团队空间"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {您已将团队空间链接到此项目。} other {您已将#个团队空间链接到此项目。}}",
+            "description": "{additionalCount, plural, =0 {团队空间{firstTeamspaceName}现已链接到此项目。} other {团队空间{firstTeamspaceName}和其他{additionalCount}个团队空间现已链接到此项目。}}"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "请重试或刷新页面后重试。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "您已从该项目中移除该团队空间。",
+            "description": "团队空间{teamspaceName}已从{projectName}中移除。"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "请重试或刷新页面后重试。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "搜索团队空间",
+        "info": {
+          "title": "添加团队空间将授予所有团队成员对此项目的访问权限。",
+          "link": "了解更多"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "您没有可链接的团队空间。",
+            "description": "要么您不在可以链接的团队空间中，要么您已经链接了所有可用的团队空间。"
+          },
+          "no_results": {
+            "title": "未找到匹配的团队空间。",
+            "description": "尝试其他搜索词或确保您有可链接的团队空间。"
+          }
+        },
+        "primary_button": {
+          "text": "链接选中的团队空间"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "创建团队特定的工作项。",
+        "description": "在任何链接项目中分配给该团队成员的工作项将自动显示在此处。如果您期望在此处看到一些工作项，请确保您的链接项目有分配给该团队成员的工作项或创建工作项。",
+        "primary_button": {
+          "text": "向链接项目添加工作项"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "应用的筛选器没有团队特定的工作项",
+        "description": "更改一些筛选器或清除所有筛选器以查看与此空间相关的工作项。",
+        "secondary_button": {
+          "text": "清除所有筛选器"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "您的链接项目中没有活动周期。",
+        "description": "链接项目中的活动周期将自动显示在此处。如果您期望看到活动周期，请确保它现在正在链接项目中运行。"
+      },
+      "completed": {
+        "title": "您的链接项目中没有已完成的周期。",
+        "description": "链接项目中的已完成周期将自动显示在此处。如果您期望看到已完成的周期，请确保它在链接项目中也已完成。"
+      },
+      "upcoming": {
+        "title": "您的链接项目中没有即将到来的周期。",
+        "description": "链接项目中的即将到来的周期将自动显示在此处。如果您期望看到即将到来的周期，请确保它也在链接项目中。"
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "您团队的工作视图，不会干扰工作空间中的其他视图",
+        "description": "在仅为您的团队保存的视图中查看您团队的工作，与项目的视图分开。",
+        "primary_button": {
+          "text": "创建视图"
+        }
+      },
+      "filter": {
+        "title": "没有匹配的视图",
+        "description": "没有符合搜索条件的视图。\n 创建一个新视图。"
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "在团队页面中存储您团队的知识。",
+        "description": "与项目中的页面不同，您可以在此处的一组单独页面中保存特定于团队的知识。获取页面的所有功能，轻松创建最佳实践文档和团队维基。",
+        "primary_button": {
+          "text": "创建您的第一个团队页面"
+        }
+      },
+      "filter": {
+        "title": "没有匹配的页面",
+        "description": "移除筛选器以查看所有页面"
+      },
+      "search": {
+        "title": "没有匹配的页面",
+        "description": "移除搜索条件以查看所有页面"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "您的链接项目中没有已发布的工作项。",
+        "description": "在一个或多个项目中创建一些工作项，以按日期、状态和优先级查看进度。"
+      },
+      "relation": {
+        "blocking": {
+          "title": "您没有任何阻碍团队成员的工作项。",
+          "description": "干得好！您已为团队清除了道路。您是一个好的团队成员。"
+        },
+        "blocked": {
+          "title": "没有任何团队成员的工作项阻碍您。",
+          "description": "好消息！您可以推进所有分配给您的工作项。"
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "您的链接项目中没有已发布的工作项。",
+          "description": "在一个或多个项目中创建一些工作项，以查看按项目和团队成员分配的工作分布。"
+        },
+        "filter": {
+          "title": "应用的筛选器没有团队统计数据。",
+          "description": "在一个或多个项目中创建一些工作项，以查看按项目和团队成员分配的工作分布。"
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "overview": "概览",
+    "label": "计划",
+    "placeholder": "{count, plural, one{# 计划} other{# 计划}}",
+    "add_initiative": "添加计划",
+    "create_initiative": "创建计划",
+    "update_initiative": "更新计划",
+    "initiative_name": "计划名称",
+    "all_initiatives": "所有计划",
+    "delete_initiative": "删除计划",
+    "fill_all_required_fields": "请填写所有必填字段。",
+    "toast": {
+      "create_success": "计划 {name} 创建成功。",
+      "create_error": "创建计划失败。请重试！",
+      "update_success": "计划 {name} 更新成功。",
+      "update_error": "更新计划失败。请重试！",
+      "delete": {
+        "success": "计划删除成功。",
+        "error": "删除计划失败"
+      },
+      "link_copied": "计划链接已复制到剪贴板。",
+      "project_update_success": "计划项目更新成功。",
+      "project_update_error": "更新计划项目失败。请重试！",
+      "epic_update_success": "史诗{count, plural, one {已成功添加到计划。} other {已成功添加到计划。}}",
+      "epic_update_error": "将史诗添加到计划失败。请稍后重试。"
+    },
+    "empty_state": {
+      "general": {
+        "title": "使用计划在最高层级组织工作",
+        "description": "当您需要组织跨越多个项目和团队的工作时，计划就派上用场了。将项目和史诗连接到计划，查看自动汇总的更新，在深入细节之前先看全局。",
+        "primary_button": {
+          "text": "创建计划"
+        }
+      },
+      "search": {
+        "title": "没有匹配的计划",
+        "description": "未检测到符合匹配条件的计划。\n 创建一个新计划。"
+      },
+      "not_found": {
+        "title": "计划不存在",
+        "description": "您要查找的计划不存在或已被删除。",
+        "primary_button": {
+          "text": "查看其他计划"
+        }
+      },
+      "epics": {
+        "title": "没有匹配的史诗",
+        "subHeading": "要查看所有史诗，请清除所有应用的筛选器。",
+        "action": "清除筛选器"
+      }
+    },
+    "scope": {
+      "view_scope": "查看范围",
+      "breakdown": "范围分解",
+      "add_scope": "添加范围",
+      "label": "范围",
+      "empty_state": {
+        "title": "尚未添加范围",
+        "description": "将项目或史诗添加到此计划以开始。",
+        "primary_button": {
+          "text": "添加范围"
+        }
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "写笔记、文档或完整的知识库。让 Galileo，Plane 的 AI 助手，帮助您开始",
+        "description": "页面是 Plane 中的思考空间。记录会议笔记，轻松格式化，嵌入工作项，使用组件库布局，并将它们全部保存在项目的上下文中。要快速完成任何文档，使用快捷键或点击按钮调用 Plane 的 AI Galileo。",
+        "primary_button": {
+          "text": "创建您的第一个页面"
+        }
+      },
+      "private": {
+        "title": "还没有私人页面",
+        "description": "在这里保存您的私人想法。当您准备好分享时，团队就在一键之遥。",
+        "primary_button": {
+          "text": "创建您的第一个页面"
+        }
+      },
+      "public": {
+        "title": "还没有工作空间页面",
+        "description": "在这里查看与工作空间中所有人共享的页面。",
+        "primary_button": {
+          "text": "创建您的第一个页面"
+        }
+      },
+      "archived": {
+        "title": "还没有已归档的页面",
+        "description": "归档不在您关注范围内的页面。需要时可以在这里访问它们。"
+      }
+    }
+  },
+  "epics": {
+    "label": "史诗",
+    "no_epics_selected": "未选择史诗",
+    "add_selected_epics": "添加选定的史诗",
+    "epic_link_copied_to_clipboard": "史诗链接已复制到剪贴板。",
+    "project_link_copied_to_clipboard": "项目链接已复制到剪贴板",
+    "empty_state": {
+      "general": {
+        "title": "创建史诗并将其分配给某人，甚至是您自己",
+        "description": "对于跨越多个周期并可以跨模块的较大工作体量，创建一个史诗。将项目中的工作项和子工作项链接到史诗，并从概览中跳转到工作项。",
+        "primary_button": {
+          "text": "创建史诗"
+        }
+      },
+      "section": {
+        "title": "还没有史诗",
+        "description": "开始添加史诗以管理和跟踪进度。",
+        "primary_button": {
+          "text": "添加史诗"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "未找到匹配的史诗"
+      },
+      "no_epics": {
+        "title": "未找到史诗"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "没有活动的周期",
+        "description": "您的项目中包含当前日期在其范围内的任何时期的周期。在这里查看所有活动周期的进度和详细信息。"
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "向周期添加工作项以查看其进度"
+      },
+      "priority": {
+        "title": "一目了然地观察周期中处理的高优先级工作项"
+      },
+      "assignee": {
+        "title": "为工作项添加负责人以查看按负责人\n划分的工作明细"
+      },
+      "label": {
+        "title": "为工作项添加标签以查看按标签\n划分的工作明细"
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "集成"
+      },
+      "imports": {
+        "title": "导入"
+      },
+      "worklogs": {
+        "title": "工作日志"
+      },
+      "project_states": {
+        "title": "项目状态"
+      },
+      "teamspaces": {
+        "title": "团队空间"
+      },
+      "initiatives": {
+        "title": "计划"
+      },
+      "customers": {
+        "title": "客户"
+      },
+      "cancel_trial": {
+        "title": "请先取消试用期。",
+        "description": "您目前正在试用我们的付费计划。请先取消试用后再继续。",
+        "dismiss": "关闭",
+        "cancel": "取消试用",
+        "cancel_success_title": "试用已取消。",
+        "cancel_success_message": "现在您可以删除工作空间了。",
+        "cancel_error_title": "操作失败。",
+        "cancel_error_message": "请重试。"
+      },
+      "applications": {
+        "title": "应用程序",
+        "applicationId_copied": "应用ID已复制到剪贴板",
+        "clientId_copied": "客户端ID已复制到剪贴板",
+        "clientSecret_copied": "客户端密钥已复制到剪贴板",
+        "third_party_apps": "第三方应用",
+        "your_apps": "您的应用",
+        "connect": "连接",
+        "connected": "已连接",
+        "install": "安装",
+        "installed": "已安装",
+        "configure": "配置",
+        "app_available": "您已使此应用可用于Plane工作空间",
+        "app_available_description": "连接Plane工作空间以开始使用",
+        "client_id_and_secret": "客户端ID和密钥",
+        "client_id_and_secret_description": "复制并保存此密钥。关闭后您将无法再次查看此密钥。",
+        "client_id_and_secret_download": "您可以从这里下载包含密钥的CSV文件。",
+        "application_id": "应用ID",
+        "client_id": "客户端ID",
+        "client_secret": "客户端密钥",
+        "export_as_csv": "导出为CSV",
+        "slug_already_exists": "别名已存在",
+        "failed_to_create_application": "创建应用程序失败",
+        "upload_logo": "上传标志",
+        "app_name_title": "您将如何命名此应用",
+        "app_name_error": "应用名称为必填项",
+        "app_short_description_title": "为此应用提供简短描述",
+        "app_short_description_error": "应用简短描述为必填项",
+        "app_description_title": {
+          "label": "详细描述",
+          "placeholder": "为市场编写详细描述。按 ‘/’ 查看命令。"
+        },
+        "app_description_error": "应用描述为必填项",
+        "app_slug_title": "应用别名",
+        "app_slug_error": "应用别名为必填项",
+        "app_maker_title": "应用制作者",
+        "app_maker_error": "应用制作者为必填项",
+        "webhook_url_title": "Webhook URL",
+        "webhook_url_error": "Webhook URL为必填项",
+        "invalid_webhook_url_error": "无效的Webhook URL",
+        "redirect_uris_title": "重定向URI",
+        "redirect_uris_error": "重定向URI为必填项",
+        "invalid_redirect_uris_error": "无效的重定向URI",
+        "redirect_uris_description": "输入应用将在用户后重定向到的URI，用空格分隔，例如 https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "授权的JavaScript来源",
+        "authorized_javascript_origins_error": "授权的JavaScript来源为必填项",
+        "invalid_authorized_javascript_origins_error": "无效的授权JavaScript来源",
+        "authorized_javascript_origins_description": "输入应用将被允许发出请求的来源，用空格分隔，例如 app.com example.com",
+        "create_app": "创建应用",
+        "update_app": "更新应用",
+        "build_your_own_app": "构建您自己的应用",
+        "edit_app_details": "编辑应用详情",
+        "regenerate_client_secret_description": "重新生成客户端密钥。重新生成后，您可以复制密钥或将其下载到CSV文件中。",
+        "regenerate_client_secret": "重新生成客户端密钥",
+        "regenerate_client_secret_confirm_title": "确定要重新生成客户端密钥吗？",
+        "regenerate_client_secret_confirm_description": "使用此密钥的应用将停止工作。您需要在应用中更新密钥。",
+        "regenerate_client_secret_confirm_cancel": "取消",
+        "regenerate_client_secret_confirm_regenerate": "重新生成",
+        "read_only_access_to_workspace": "对您的工作空间的只读访问",
+        "write_access_to_workspace": "对您的工作空间的写入访问",
+        "read_only_access_to_user_profile": "对您的用户配置文件的只读访问",
+        "write_access_to_user_profile": "对您的用户配置文件的写入访问",
+        "connect_app_to_workspace": "将{app}连接到您的工作空间{workspace}",
+        "user_permissions": "用户权限",
+        "user_permissions_description": "用户权限用于授予对用户配置文件的访问权限。",
+        "workspace_permissions": "工作空间权限",
+        "workspace_permissions_description": "工作空间权限用于授予对工作空间的访问权限。",
+        "with_the_permissions": "具有权限",
+        "app_consent_title": "{app}正在请求访问您的Plane工作空间和配置文件。",
+        "choose_workspace_to_connect_app_with": "选择要连接应用的工作空间",
+        "app_consent_workspace_permissions_title": "{app}想要",
+        "app_consent_user_permissions_title": "{app}还可以请求用户对以下资源的权限。这些权限将仅由用户请求和授权。",
+        "app_consent_accept_title": "通过接受",
+        "app_consent_accept_1": "您授予应用在Plane内部或外部可以使用应用的任何地方访问您的Plane数据的权限",
+        "app_consent_accept_2": "您同意{app}的隐私政策和使用条款",
+        "accepting": "接受中...",
+        "accept": "接受",
+        "categories": "类别",
+        "select_app_categories": "选择应用类别",
+        "categories_title": "类别",
+        "categories_error": "类别是必填项",
+        "invalid_categories_error": "无效的类别",
+        "categories_description": "选择最能描述应用的类别",
+        "privacy_policy_url_title": "隐私政策URL",
+        "privacy_policy_url_error": "隐私政策URL是必填项",
+        "invalid_privacy_policy_url_error": "无效的隐私政策URL",
+        "terms_of_service_url_title": "使用条款URL",
+        "terms_of_service_url_error": "使用条款URL是必填项",
+        "invalid_terms_of_service_url_error": "无效的使用条款URL",
+        "support_url_title": "支持URL",
+        "support_url_error": "支持URL是必填项",
+        "invalid_support_url_error": "无效的支持URL",
+        "video_url_title": "视频URL",
+        "video_url_error": "视频URL是必填项",
+        "invalid_video_url_error": "无效的视频URL",
+        "setup_url_title": "设置URL",
+        "setup_url_error": "设置URL是必填项",
+        "invalid_setup_url_error": "无效的设置URL",
+        "configuration_url_title": "配置URL",
+        "configuration_url_error": "配置URL是必填项",
+        "invalid_configuration_url_error": "无效的配置URL",
+        "contact_email_title": "联系邮箱",
+        "contact_email_error": "联系邮箱是必填项",
+        "invalid_contact_email_error": "无效的联系邮箱",
+        "upload_attachments": "上传附件",
+        "uploading_images": "上传 {count, plural, one {张图片} other {张图片}}",
+        "drop_images_here": "将图片拖到这里",
+        "click_to_upload_images": "点击上传图片",
+        "invalid_file_or_exceeds_size_limit": "无效的文件或超过大小限制 ({size} MB)",
+        "uploading": "上传中...",
+        "upload_and_save": "上传并保存",
+        "app_credentials_regenrated": {
+          "title": "应用凭证已成功重新生成",
+          "description": "请在所有使用的地方替换客户端密钥。之前的密钥已不再有效。"
+        },
+        "app_created": {
+          "title": "应用已成功创建",
+          "description": "使用凭证将应用安装到 Plane 工作区中"
+        },
+        "installed_apps": "已安装的应用",
+        "all_apps": "所有应用",
+        "internal_apps": "内部应用",
+        "website": {
+          "title": "网站",
+          "description": "链接到您的应用程序网站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "应用创建者",
+          "description": "创建该应用的个人或组织。"
+        },
+        "setup_url": {
+          "label": "设置 URL",
+          "description": "用户在安装应用时将被重定向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "用户在通过 Plane 认证后将被重定向到此路径。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "此应用只能在工作区管理员安装后才能安装。请联系您的工作区管理员以继续。",
+        "enable_app_mentions": "启用应用提及",
+        "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "无法归档工作项",
+        "message": "只有属于已完成或已取消状态组的工作项才能被归档。"
+      },
+      "invalid_issue_start_date": {
+        "title": "无法更新工作项",
+        "message": "所选开始日期晚于某些工作项的截止日期。请确保开始日期在截止日期之前。"
+      },
+      "invalid_issue_target_date": {
+        "title": "无法更新工作项",
+        "message": "所选截止日期早于某些工作项的开始日期。请确保截止日期在开始日期之后。"
+      },
+      "invalid_state_transition": {
+        "title": "无法更新工作项",
+        "message": "某些工作项的状态更改不被允许。请确保状态更改是被允许的。"
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "工作项类型",
+    "label_lowercase": "工作项类型",
+    "settings": {
+      "title": "工作项类型",
+      "properties": {
+        "title": "自定义工作项属性",
+        "tooltip": "每种工作项类型都带有一组默认属性，如标题、描述、负责人、状态、优先级、开始日期、截止日期、模块、周期等。您还可以自定义并添加自己的属性以满足团队需求。",
+        "add_button": "添加新属性",
+        "dropdown": {
+          "label": "属性类型",
+          "placeholder": "选择类型"
+        },
+        "property_type": {
+          "text": {
+            "label": "文本"
+          },
+          "number": {
+            "label": "数字"
+          },
+          "dropdown": {
+            "label": "下拉菜单"
+          },
+          "boolean": {
+            "label": "布尔值"
+          },
+          "date": {
+            "label": "日期"
+          },
+          "member_picker": {
+            "label": "成员选择器"
+          }
+        },
+        "attributes": {
+          "label": "属性",
+          "text": {
+            "single_line": {
+              "label": "单行"
+            },
+            "multi_line": {
+              "label": "段落"
+            },
+            "readonly": {
+              "label": "只读",
+              "header": "只读数据"
+            },
+            "invalid_text_format": {
+              "label": "无效的文本格式"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "添加数字"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "单选"
+            },
+            "multi_select": {
+              "label": "多选"
+            },
+            "no_default_value": {
+              "label": "无默认值"
+            }
+          },
+          "boolean": {
+            "label": "真 | 假",
+            "no_default": "无默认值"
+          },
+          "option": {
+            "create_update": {
+              "label": "选项",
+              "form": {
+                "placeholder": "添加选项",
+                "errors": {
+                  "name": {
+                    "required": "选项名称是必需的。",
+                    "integrity": "已存在同名选项。"
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "选择选项",
+                "multi": {
+                  "default": "选择选项",
+                  "variable": "已选择 {count} 个选项"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 创建成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "创建属性失败。请重试！"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 更新成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "更新属性失败。请重试！"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} 删除成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "删除属性失败。请重试！"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} {name} 属性",
+            "success": {
+              "title": "成功！",
+              "message": "属性 {name} {action} 成功。"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "{action} 属性失败。请重试！"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "标题"
+            },
+            "description": {
+              "placeholder": "描述"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "您必须为属性命名。",
+              "max_length": "属性名称不应超过255个字符。"
+            },
+            "property_type": {
+              "required": "您必须选择一个属性类型。"
+            },
+            "options": {
+              "required": "您必须添加至少一个选项。"
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "活动",
+          "tooltip": {
+            "disabled": "点击禁用",
+            "enabled": "点击启用"
+          }
+        },
+        "delete_confirmation": {
+          "title": "删除此属性",
+          "description": "删除属性可能导致现有数据丢失。",
+          "secondary_description": "您是否想要禁用该属性？",
+          "primary_button": "{action}，删除它",
+          "secondary_button": "是的，禁用它"
+        },
+        "mandate_confirmation": {
+          "label": "必填属性",
+          "content": "此属性似乎有默认选项。将属性设为必填将删除默认值，用户必须添加他们选择的值。",
+          "tooltip": {
+            "disabled": "此属性类型无法设为必填",
+            "enabled": "取消选中以将字段标记为可选",
+            "checked": "选中以将字段标记为必填"
+          }
+        },
+        "empty_state": {
+          "title": "添加自定义属性",
+          "description": "您为此工作项类型添加的新属性将显示在此处。"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "删除此类型",
+        "description": "删除类型可能会导致现有数据丢失。",
+        "primary_button": "是的，删除它",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "工作项类型已成功删除。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "删除工作项类型失败。请再试一次！"
+          }
+        },
+        "can_disable_warning": "您想改为禁用该类型吗？"
+      },
+      "cant_delete_default_message": "无法删除此工作项类型，因为它已设置为该项目的默认类型。"
+    },
+    "create": {
+      "title": "创建工作项类型",
+      "button": "添加工作项类型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型创建成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": {
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "更新工作项类型",
+      "button": "更新工作项类型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型 {name} 更新成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": {
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "为此工作项类型取一个独特的名称"
+        },
+        "description": {
+          "placeholder": "描述此工作项类型的用途和使用时机。"
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} {name} 工作项类型",
+        "success": {
+          "title": "成功！",
+          "message": "工作项类型 {name} {action} 成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "{action} 工作项类型失败。请重试！"
+        }
+      },
+      "tooltip": "点击 {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "启用工作项类型",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "启用"
+        },
+        "confirmation": {
+          "title": "一旦启用，工作项类型将无法禁用。",
+          "description": "Plane的工作项将成为此项目的默认工作项类型，并将在此项目中显示其图标和背景。",
+          "button": {
+            "default": "启用",
+            "loading": "正在设置"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "获取 Pro 版以启用工作项类型。",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "获取 Pro 版"
+        }
+      },
+      "upgrade": {
+        "title": "升级以启用工作项类型。",
+        "description": "使用工作项类型塑造您的工作项。使用图标、背景和属性进行自定义，并为此项目配置它们。",
+        "primary_button": {
+          "text": "升级"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "导入",
+    "logo": "标志",
+    "import_message": "将您的 {serviceName} 数据导入到 Plane 项目中。",
+    "deactivate": "停用",
+    "deactivating": "正在停用",
+    "migrating": "正在迁移",
+    "migrations": "迁移",
+    "refreshing": "正在刷新",
+    "import": "导入",
+    "serial_number": "序号",
+    "project": "项目",
+    "workspace": "工作区",
+    "status": "状态",
+    "total_batches": "总批次",
+    "imported_batches": "已导入批次",
+    "re_run": "重新运行",
+    "cancel": "取消",
+    "start_time": "开始时间",
+    "no_jobs_found": "未找到任务",
+    "no_project_imports": "您尚未导入任何 {serviceName} 项目。",
+    "cancel_import_job": "取消导入任务",
+    "cancel_import_job_confirmation": "您确定要取消此导入任务吗？这将停止此项目的导入过程。",
+    "re_run_import_job": "重新运行导入任务",
+    "re_run_import_job_confirmation": "您确定要重新运行此导入任务吗？这将重新启动此项目的导入过程。",
+    "upload_csv_file": "上传 CSV 文件以导入用户数据。",
+    "connect_importer": "连接 {serviceName}",
+    "migration_assistant": "迁移助手",
+    "migration_assistant_description": "使用我们强大的助手将您的 {serviceName} 项目无缝迁移到 Plane。",
+    "token_helper": "您可以从以下位置获取",
+    "personal_access_token": "个人访问令牌",
+    "source_token_expired": "令牌已过期",
+    "source_token_expired_description": "提供的令牌已过期。请停用并使用新的凭据重新连接。",
+    "user_email": "用户邮箱",
+    "select_state": "选择状态",
+    "select_service_project": "选择 {serviceName} 项目",
+    "loading_service_projects": "正在加载 {serviceName} 项目",
+    "select_service_workspace": "选择 {serviceName} 工作区",
+    "loading_service_workspaces": "正在加载 {serviceName} 工作区",
+    "select_priority": "选择优先级",
+    "select_service_team": "选择 {serviceName} 团队",
+    "add_seat_msg_free_trial": "您正在尝试导入 {additionalUserCount} 个未注册用户，但当前计划中只有 {currentWorkspaceSubscriptionAvailableSeats} 个席位可用。要继续导入，请立即升级。",
+    "add_seat_msg_paid": "您正在尝试导入 {additionalUserCount} 个未注册用户，但当前计划中只有 {currentWorkspaceSubscriptionAvailableSeats} 个席位可用。要继续导入，请至少购买 {extraSeatRequired} 个额外席位。",
+    "skip_user_import_title": "跳过导入用户数据",
+    "skip_user_import_description": "跳过用户导入将导致工作项、评论和来自 {serviceName} 的其他数据由在 Plane 中执行迁移的用户创建。您以后仍可以手动添加用户。",
+    "invalid_pat": "无效的个人访问令牌"
+  },
+  "integrations": {
+    "integrations": "集成",
+    "loading": "正在加载",
+    "unauthorized": "您无权查看此页面。",
+    "configure": "配置",
+    "not_enabled": "此工作区未启用 {name}。",
+    "not_configured": "未配置",
+    "disconnect_personal_account": "断开个人 {providerName} 账户连接",
+    "not_configured_message_admin": "{name} 集成未配置。请联系您的实例管理员进行配置。",
+    "not_configured_message_support": "{name} 集成未配置。请联系支持进行配置。",
+    "external_api_unreachable": "无法访问外部 API。请稍后重试。",
+    "error_fetching_supported_integrations": "无法获取支持的集成。请稍后重试。",
+    "back_to_integrations": "返回集成",
+    "select_state": "选择状态"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "连接并同步您的 GitHub 工作项与 Plane。",
+    "connect_org": "连接组织",
+    "connect_org_description": "将您的 GitHub 组织与 Plane 连接。",
+    "processing": "处理中",
+    "org_added_desc": "GitHub 组织添加者和时间",
+    "connection_fetch_error": "从服务器获取连接详情时出错",
+    "personal_account_connected": "个人账户已连接",
+    "personal_account_connected_description": "您的个人 GitHub 账户已连接到 Plane。",
+    "connect_personal_account": "连接个人账户",
+    "connect_personal_account_description": "将您的个人 GitHub 账户与 Plane 连接。",
+    "repo_mapping": "仓库映射",
+    "repo_mapping_description": "将您的 GitHub 仓库与 Plane 项目映射。",
+    "remove_entity": "移除实体",
+    "remove_entity_confirmation": "您确定要移除此实体吗？",
+    "issue_sync_message": "工作项已同步到 {project}",
+    "link": "将 GitHub 仓库链接到 Plane 项目",
+    "pull_request_automation": "拉取请求自动化",
+    "pull_request_automation_description": "配置从 GitHub 到 Plane 的拉取请求状态映射",
+    "DRAFT_MR_OPENED": "当草稿 PR 打开时，将状态设置为",
+    "MR_OPENED": "当 PR 打开时，将状态设置为",
+    "MR_READY_FOR_MERGE": "当 PR 准备合并时，将状态设置为",
+    "MR_REVIEW_REQUESTED": "当请求 PR 审查时，将状态设置为",
+    "MR_MERGED": "当 PR 合并时，将状态设置为",
+    "MR_CLOSED": "当 PR 关闭时，将状态设置为"
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "连接并同步您的 Gitlab 合并请求与 Plane。",
+    "connection_fetch_error": "从服务器获取连接详情时出错",
+    "connect_org": "连接组织",
+    "connect_org_description": "将您的 Gitlab 组织与 Plane 连接。",
+    "project_connections": "Gitlab 项目连接",
+    "project_connections_description": "从 Gitlab 同步合并请求到 Plane 项目。",
+    "plane_project_connection": "Plane 项目连接",
+    "plane_project_connection_description": "配置从 Gitlab 到 Plane 项目的拉取请求状态映射",
+    "remove_connection": "移除连接",
+    "remove_connection_confirmation": "您确定要移除此连接吗？",
+    "link": "将 Gitlab 仓库链接到 Plane 项目",
+    "pull_request_automation": "拉取请求自动化",
+    "pull_request_automation_description": "配置从 Gitlab 到 Plane 的拉取请求状态映射",
+    "DRAFT_MR_OPENED": "当草稿 MR 打开时，将状态设置为",
+    "MR_OPENED": "当 MR 打开时，将状态设置为",
+    "MR_REVIEW_REQUESTED": "当请求 MR 审查时，将状态设置为",
+    "MR_READY_FOR_MERGE": "当 MR 准备合并时，将状态设置为",
+    "MR_MERGED": "当 MR 合并时，将状态设置为",
+    "MR_CLOSED": "当 MR 关闭时，将状态设置为",
+    "integration_enabled_text": "启用 Gitlab 集成后，您可以自动化工作项工作流",
+    "choose_entity": "选择实体",
+    "choose_project": "选择项目",
+    "link_plane_project": "链接 Plane 项目"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "将您的 Slack 工作区与 Plane 连接。",
+    "connect_personal_account": "将您的个人 Slack 账户与 Plane 连接。",
+    "personal_account_connected": "您的个人 {providerName} 账户现已连接到 Plane。",
+    "link_personal_account": "将您的个人 {providerName} 账户链接到 Plane。",
+    "connected_slack_workspaces": "已连接的 Slack 工作区",
+    "connected_on": "连接于 {date}",
+    "disconnect_workspace": "断开 {name} 工作区连接",
+    "alerts": {
+      "dm_alerts": {
+        "title": "在 Slack 私信中接收重要更新、提醒和专属警报的通知。"
+      }
+    },
+    "project_updates": {
+      "title": "项目更新",
+      "description": "配置项目的更新通知",
+      "add_new_project_update": "添加新的项目更新通知",
+      "project_updates_empty_state": "与 Slack 频道连接的项目将在此处显示。",
+      "project_updates_form": {
+        "title": "配置项目更新",
+        "description": "在创建工作项时在 Slack 中接收项目更新通知",
+        "failed_to_load_channels": "无法从 Slack 加载频道",
+        "project_dropdown": {
+          "placeholder": "选择项目",
+          "label": "Plane 项目",
+          "no_projects": "没有可用项目"
+        },
+        "channel_dropdown": {
+          "label": "Slack 频道",
+          "placeholder": "选择频道",
+          "no_channels": "没有可用频道"
+        },
+        "all_projects_connected": "所有项目已连接到 Slack 频道。",
+        "all_channels_connected": "所有 Slack 频道已连接到项目。",
+        "project_connection_success": "项目连接创建成功",
+        "project_connection_updated": "项目连接更新成功",
+        "project_connection_deleted": "项目连接删除成功",
+        "failed_delete_project_connection": "删除项目连接失败",
+        "failed_create_project_connection": "创建项目连接失败",
+        "failed_upserting_project_connection": "更新项目连接失败",
+        "failed_loading_project_connections": "无法加载您的项目连接。这可能是由于网络问题或集成问题。"
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "将您的Sentry工作空间连接到Plane。",
+    "connected_sentry_workspaces": "已连接的Sentry工作空间",
+    "connected_on": "连接于{date}",
+    "disconnect_workspace": "断开{name}工作空间",
+    "state_mapping": {
+      "title": "状态映射",
+      "description": "将Sentry事件状态映射到您的项目状态。配置当Sentry事件已解决或未解决时使用哪些状态。",
+      "add_new_state_mapping": "添加新状态映射",
+      "empty_state": "未配置状态映射。创建您的第一个映射以同步Sentry事件状态与您的项目状态。",
+      "failed_loading_state_mappings": "我们无法加载您的状态映射。这可能是由于网络问题或集成问题。",
+      "loading_project_states": "正在加载项目状态...",
+      "error_loading_states": "加载状态时出错",
+      "no_states_available": "没有可用状态",
+      "no_permission_states": "您没有权限访问此项目的状态",
+      "states_not_found": "未找到项目状态",
+      "server_error_states": "加载状态时服务器错误"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "连接并同步您的 GitHub Enterprise 组织与 Plane。",
+    "app_form_title": "GitHub Enterprise 配置",
+    "app_form_description": "配置 GitHub Enterprise 以连接到 Plane。",
+    "app_id_title": "App ID",
+    "app_id_description": "您在 GitHub Enterprise 组织中创建的应用程序的 ID。",
+    "app_id_placeholder": "例如，\"1234567890\"",
+    "app_id_error": "App ID 是必需的",
+    "app_name_title": "App Slug",
+    "app_name_description": "您在 GitHub Enterprise 组织中创建的应用程序的 slug。",
+    "app_name_error": "App slug 是必需的",
+    "app_name_placeholder": "例如，\"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "您的 GitHub Enterprise 组织的基 URL。",
+    "base_url_placeholder": "例如，\"https://gh.plane.town\"",
+    "base_url_error": "Base URL 是必需的",
+    "invalid_base_url_error": "无效的基 URL",
+    "client_id_title": "Client ID",
+    "client_id_description": "您在 GitHub Enterprise 组织中创建的应用程序的客户端 ID。",
+    "client_id_placeholder": "例如，\"1234567890\"",
+    "client_id_error": "Client ID 是必需的",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "您在 GitHub Enterprise 组织中创建的应用程序的客户端密钥。",
+    "client_secret_placeholder": "例如，\"1234567890\"",
+    "client_secret_error": "Client secret 是必需的",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "您在 GitHub Enterprise 组织中创建的应用程序的 webhook 密钥。",
+    "webhook_secret_placeholder": "例如，\"1234567890\"",
+    "webhook_secret_error": "Webhook secret 是必需的",
+    "private_key_title": "私钥 (Base64 编码)",
+    "private_key_description": "您在 GitHub Enterprise 组织中创建的应用程序的 Base64 编码的私钥。",
+    "private_key_placeholder": "例如，\"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key 是必需的",
+    "connect_app": "连接应用"
+  },
+  "file_upload": {
+    "upload_text": "点击此处上传文件",
+    "drag_drop_text": "拖放",
+    "processing": "处理中",
+    "invalid": "无效的文件类型",
+    "missing_fields": "缺少字段",
+    "success": "{fileName} 已上传！"
+  },
+  "silo_errors": {
+    "invalid_query_params": "提供的查询参数无效或缺少必需字段",
+    "invalid_installation_account": "提供的安装账户无效",
+    "generic_error": "处理您的请求时发生意外错误",
+    "connection_not_found": "找不到请求的连接",
+    "multiple_connections_found": "找到多个连接，但只期望一个",
+    "installation_not_found": "找不到请求的安装",
+    "user_not_found": "找不到请求的用户",
+    "error_fetching_token": "获取身份验证令牌失败",
+    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。",
+    "invalid_app_credentials": "提供的应用凭证无效",
+    "invalid_app_installation_id": "安装应用失败"
+  },
+  "import_status": {
+    "queued": "排队中",
+    "created": "已创建",
+    "initiated": "已启动",
+    "pulling": "拉取中",
+    "pulled": "已拉取",
+    "transforming": "转换中",
+    "transformed": "已转换",
+    "pushing": "推送中",
+    "finished": "已完成",
+    "error": "错误",
+    "cancelled": "已取消"
+  },
+  "jira_importer": {
+    "jira_importer_description": "将您的 Jira 数据导入到 Plane 项目中。",
+    "personal_access_token": "个人访问令牌",
+    "user_email": "用户邮箱",
+    "atlassian_security_settings": "Atlassian 安全设置",
+    "email_description": "这是与您的个人访问令牌关联的邮箱",
+    "jira_domain": "Jira 域名",
+    "jira_domain_description": "这是您的 Jira 实例的域名",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 Jira 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "请选择您要从中迁移数据的 Jira 工作区。",
+      "title_import_users": "导入用户",
+      "description_import_users": "请添加您希望从 Jira 迁移到 Plane 的用户。或者，您可以跳过此步骤，稍后手动添加用户。",
+      "title_map_states": "映射状态",
+      "description_map_states": "我们已尽可能自动将 Jira 状态匹配到 Plane 状态。在继续之前，请映射任何剩余的状态，您也可以创建状态并手动映射它们。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "我们已尽可能自动匹配优先级。在继续之前，请映射任何剩余的优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 Jira 迁移到 Plane 的数据摘要。"
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "将您的 Asana 数据导入到 Plane 项目中。",
+    "select_asana_priority_field": "选择 Asana 优先级字段",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 Asana 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_asana": "配置 Asana",
+      "description_configure_asana": "请选择您要从中迁移数据的 Asana 工作区和项目。",
+      "title_map_states": "映射状态",
+      "description_map_states": "请选择您要映射到 Plane 项目状态的 Asana 状态。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 Asana 优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 Asana 迁移到 Plane 的数据摘要。"
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "将您的 Linear 数据导入到 Plane 项目中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 Linear 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_linear": "配置 Linear",
+      "description_configure_linear": "请选择您要从中迁移数据的 Linear 团队。",
+      "title_map_states": "映射状态",
+      "description_map_states": "我们已尽可能自动将 Linear 状态匹配到 Plane 状态。在继续之前，请映射任何剩余的状态，您也可以创建状态并手动映射它们。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 Linear 优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 Linear 迁移到 Plane 的数据摘要。"
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "将您的 Jira Server 数据导入到 Plane 项目中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 Jira 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "请选择您要从中迁移数据的 Jira 工作区。",
+      "title_map_states": "映射状态",
+      "description_map_states": "请选择您要映射到 Plane 项目状态的 Jira 状态。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 Jira 优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 Jira 迁移到 Plane 的数据摘要。"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "将您的 Notion 数据导入到 Plane 项目中。",
+    "steps": {
+      "title_upload_zip": "上传 Notion 导出的 ZIP 文件",
+      "description_upload_zip": "请上传包含您的 Notion 数据的 ZIP 文件。"
+    },
+    "upload": {
+      "drop_file_here": "将您的 Notion zip 文件拖放到这里",
+      "upload_title": "上传 Notion 导出文件",
+      "drag_drop_description": "拖放您的 Notion 导出 zip 文件，或点击浏览",
+      "file_type_restriction": "仅支持从 Notion 导出的 .zip 文件",
+      "select_file": "选择文件",
+      "uploading": "正在上传...",
+      "preparing_upload": "正在准备上传...",
+      "confirming_upload": "正在确认上传...",
+      "confirming": "正在确认...",
+      "upload_complete": "上传完成",
+      "upload_failed": "上传失败",
+      "start_import": "开始导入",
+      "retry_upload": "重试上传",
+      "upload": "上传",
+      "ready": "就绪",
+      "error": "错误",
+      "upload_complete_message": "上传完成！",
+      "upload_complete_description": "点击\"开始导入\"开始处理您的 Notion 数据。",
+      "upload_progress_message": "请不要关闭此窗口。"
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "将您的 Confluence 数据导入到 Plane 维基中。",
+    "steps": {
+      "title_upload_zip": "上传 Confluence 导出的 ZIP 文件",
+      "description_upload_zip": "请上传包含您的 Confluence 数据的 ZIP 文件。"
+    },
+    "upload": {
+      "drop_file_here": "将您的 Confluence zip 文件拖放到这里",
+      "upload_title": "上传 Confluence 导出文件",
+      "drag_drop_description": "拖放您的 Confluence 导出 zip 文件，或点击浏览",
+      "file_type_restriction": "仅支持从 Confluence 导出的 .zip 文件",
+      "select_file": "选择文件",
+      "uploading": "正在上传...",
+      "preparing_upload": "正在准备上传...",
+      "confirming_upload": "正在确认上传...",
+      "confirming": "正在确认...",
+      "upload_complete": "上传完成",
+      "upload_failed": "上传失败",
+      "start_import": "开始导入",
+      "retry_upload": "重试上传",
+      "upload": "上传",
+      "ready": "就绪",
+      "error": "错误",
+      "upload_complete_message": "上传完成！",
+      "upload_complete_description": "点击\"开始导入\"开始处理您的 Confluence 数据。",
+      "upload_progress_message": "请不要关闭此窗口。"
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "将您的 CSV 数据导入到 Plane 项目中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 CSV 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_csv": "配置 CSV",
+      "description_configure_csv": "请上传您的 CSV 文件并配置要映射到 Plane 字段的字段。"
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "将您的 ClickUp 数据导入到 Plane 项目中。",
+    "select_service_space": "选择 {serviceName} 空间",
+    "select_service_folder": "选择 {serviceName} 文件夹",
+    "selected": "已选择",
+    "users": "用户",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 ClickUp 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_clickup": "配置 ClickUp",
+      "description_configure_clickup": "请选择您要从中迁移数据的 ClickUp 团队、空间和文件夹。",
+      "title_map_states": "映射状态",
+      "description_map_states": "我们已尽可能自动将 ClickUp 状态匹配到 Plane 状态。在继续之前，请映射任何剩余的状态，您也可以创建状态并手动映射它们。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 ClickUp 优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 ClickUp 迁移到 Plane 的数据摘要。",
+      "pull_additional_data_title": "导入评论和附件"
+    }
+  },
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "柱状",
+          "long_label": "柱状图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "grouped": "分组"
+          },
+          "orientation": {
+            "label": "方向",
+            "horizontal": "水平",
+            "vertical": "垂直",
+            "placeholder": "添加方向"
+          },
+          "bar_color": "柱状颜色"
+        },
+        "line_chart": {
+          "short_label": "线形",
+          "long_label": "线形图",
+          "chart_models": {
+            "basic": "基础",
+            "multi_line": "多线"
+          },
+          "line_color": "线条颜色",
+          "line_type": {
+            "label": "线型",
+            "solid": "实线",
+            "dashed": "虚线",
+            "placeholder": "添加线型"
+          }
+        },
+        "area_chart": {
+          "short_label": "区域",
+          "long_label": "区域图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "comparison": "对比"
+          },
+          "fill_color": "填充颜色"
+        },
+        "donut_chart": {
+          "short_label": "环形",
+          "long_label": "环形图",
+          "chart_models": {
+            "basic": "基础",
+            "progress": "进度"
+          },
+          "center_value": "中心值",
+          "completed_color": "完成颜色"
+        },
+        "pie_chart": {
+          "short_label": "饼形",
+          "long_label": "饼形图",
+          "chart_models": {
+            "basic": "基础"
+          },
+          "group": {
+            "label": "分组切片",
+            "group_thin_pieces": "分组细小切片",
+            "minimum_threshold": {
+              "label": "最小阈值",
+              "placeholder": "添加阈值"
+            },
+            "name_group": {
+              "label": "组名",
+              "placeholder": "\"小于5%\""
+            }
+          },
+          "show_values": "显示值",
+          "value_type": {
+            "percentage": "百分比",
+            "count": "计数"
+          }
+        },
+        "text": {
+          "short_label": "文本",
+          "long_label": "文本",
+          "alignment": {
+            "label": "文本对齐",
+            "left": "左对齐",
+            "center": "居中",
+            "right": "右对齐",
+            "placeholder": "添加文本对齐"
+          },
+          "text_color": "文本颜色"
+        }
+      },
+      "color_palettes": {
+        "modern": "现代",
+        "horizon": "地平线",
+        "earthen": "土色"
+      },
+      "common": {
+        "add_widget": "添加组件",
+        "widget_title": {
+          "label": "命名此组件",
+          "placeholder": "例如，\"昨日待办\", \"全部完成\""
+        },
+        "chart_type": "图表类型",
+        "visualization_type": {
+          "label": "可视化类型",
+          "placeholder": "添加可视化类型"
+        },
+        "date_group": {
+          "label": "日期分组",
+          "placeholder": "添加日期分组"
+        },
+        "group_by": "分组依据",
+        "stack_by": "堆叠依据",
+        "daily": "每日",
+        "weekly": "每周",
+        "monthly": "每月",
+        "yearly": "每年",
+        "work_item_count": "工作项计数",
+        "estimate_point": "估算点数",
+        "pending_work_item": "待处理工作项",
+        "completed_work_item": "已完成工作项",
+        "in_progress_work_item": "进行中工作项",
+        "blocked_work_item": "已阻塞工作项",
+        "work_item_due_this_week": "本周到期工作项",
+        "work_item_due_today": "今日到期工作项",
+        "color_scheme": {
+          "label": "配色方案",
+          "placeholder": "添加配色方案"
+        },
+        "smoothing": "平滑",
+        "markers": "标记",
+        "legends": "图例",
+        "tooltips": "提示框",
+        "opacity": {
+          "label": "不透明度",
+          "placeholder": "添加不透明度"
+        },
+        "border": "边框",
+        "widget_configuration": "组件配置",
+        "configure_widget": "配置组件",
+        "guides": "指南",
+        "style": "样式",
+        "area_appearance": "区域外观",
+        "comparison_line_appearance": "比较线外观",
+        "add_property": "添加属性",
+        "add_metric": "添加指标"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "grouped": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "multi_line": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "comparison": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "progress": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "ask_admin": "请联系管理员配置此组件。"
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "创建新仪表板",
+        "update": "更新仪表板"
+      },
+      "title": {
+        "label": "命名您的仪表板。",
+        "placeholder": "\"跨项目容量\", \"按团队工作量\", \"跨所有项目状态\"",
+        "required_error": "标题为必填项"
+      },
+      "project": {
+        "label": "选择项目",
+        "placeholder": "这些项目的数据将为此仪表板提供支持。",
+        "required_error": "项目为必填项"
+      },
+      "create_dashboard": "创建仪表板",
+      "update_dashboard": "更新仪表板"
+    },
+    "delete_modal": {
+      "heading": "删除仪表板"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "在按需永久仪表板中展示您的进度。",
+        "description": "构建您需要的任何仪表板，并定制数据的显示方式，以完美呈现您的进度。",
+        "coming_soon_to_mobile": "即将登陆移动应用",
+        "card_1": {
+          "title": "适用于您的所有项目",
+          "description": "通过所有项目获得工作空间的全局视图，或者为完美查看您的进度而筛选工作数据。"
+        },
+        "card_2": {
+          "title": "适用于Plane中的任何数据",
+          "description": "超越内置分析和预制周期图表，以前所未有的方式查看团队、计划或任何其他内容。"
+        },
+        "card_3": {
+          "title": "满足您所有的数据可视化需求",
+          "description": "从多种可定制的图表中选择，具有精细控制，以您想要的方式准确查看和展示您的工作数据。"
+        },
+        "card_4": {
+          "title": "按需且永久",
+          "description": "构建一次，永久保存，数据自动刷新，范围变更的上下文标志，以及可共享的永久链接。"
+        },
+        "card_5": {
+          "title": "导出和定时通信",
+          "description": "当链接不起作用时，将您的仪表板导出为一次性PDF，或计划自动发送给利益相关者。"
+        },
+        "card_6": {
+          "title": "自动适应所有设备的布局",
+          "description": "调整组件大小以获得您想要的布局，并在移动设备、平板电脑和其他浏览器上看到完全相同的效果。"
+        }
+      },
+      "dashboards_list": {
+        "title": "在组件中可视化数据，用组件构建仪表板，并按需查看最新信息。",
+        "description": "使用自定义组件构建您的仪表板，在您指定的范围内显示数据。获取跨项目和团队的所有工作的仪表板，并与利益相关者共享永久链接以进行按需跟踪。"
+      },
+      "dashboards_search": {
+        "title": "这与仪表板名称不匹配。",
+        "description": "确保您的查询正确或尝试其他查询。"
+      },
+      "widgets_list": {
+        "title": "按照您想要的方式可视化数据。",
+        "description": "使用折线、柱状、饼图和其他格式，从您指定的数据源以您想要的方式查看数据。"
+      },
+      "widget_data": {
+        "title": "这里没有内容",
+        "description": "刷新或添加数据以在此处查看。"
+      }
+    },
+    "common": {
+      "editing": "编辑中"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "允许新工作项",
+      "work_item_creation_disable_tooltip": "工作项创建在此状态中被禁用",
+      "default_state": "默认状态允许所有成员创建新工作项。不能更改",
+      "state_change_count": "{count, plural, one {1 个允许的状态更改} other {{count} 个允许的状态更改}}",
+      "movers_count": "{count, plural, one {1 个列出的评审人} other {{count} 个列出的评审人}}",
+      "state_changes": {
+        "label": {
+          "default": "添加允许的状态更改",
+          "loading": "正在添加允许的状态更改"
+        },
+        "move_to": "移动到",
+        "movers": {
+          "label": "当被",
+          "tooltip": "评审人是允许从一个状态移动到另一个状态的工作项的人。",
+          "add": "添加评审人"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "您不能在这里移动这个工作项。"
+    },
+    "workflow_enabled": {
+      "label": "状态更改"
+    },
+    "workflow_tree": {
+      "label": "对于在",
+      "state_change_label": "可以移动到"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "使用工作流控制更改和审查的混乱。",
+        "description": "使用 Plane 中的工作流定义您工作的移动规则，包括谁、何时。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "查看更改历史",
+      "reset_workflow": "重置工作流"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "您确定要重置这个工作流吗？",
+        "description": "如果您重置这个工作流，您所有的状态更改规则将被删除，您将需要为这个项目重新创建它们。"
+      },
+      "delete_state_change": {
+        "title": "您确定要删除这个状态更改规则吗？",
+        "description": "一旦删除，您不能撤销这个更改，您将需要为这个项目重新设置规则。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} 工作流",
+        "success": {
+          "title": "成功",
+          "message": "工作流 {action} 成功"
+        },
+        "error": {
+          "title": "错误",
+          "message": "工作流不能被 {action}。请重试。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "成功",
+          "message": "工作流重置成功"
+        },
+        "error": {
+          "title": "重置工作流错误",
+          "message": "工作流不能被重置。请重试。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "添加状态更改规则错误",
+          "message": "状态更改规则不能被添加。请重试。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "修改状态更改规则错误",
+          "message": "状态更改规则不能被修改。请重试。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "删除状态更改规则错误",
+          "message": "状态更改规则不能被删除。请重试。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "修改状态更改规则移交人错误",
+          "message": "状态更改规则移交人不能被修改。请重试。"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {客户} other {客户}}",
+    "dropdown": {
+      "placeholder": "选择客户",
+      "required": "请选择客户",
+      "no_selection": "没有客户"
+    },
+    "upgrade": {
+      "title": "与客户一起优先排序并管理工作。",
+      "description": "将您的工作与客户关联，并根据客户属性确定优先级。"
+    },
+    "properties": {
+      "default": {
+        "title": "默认",
+        "customer_name": {
+          "name": "客户名称",
+          "placeholder": "可以是个人或公司名称",
+          "validation": {
+            "required": "客户名称是必填项。",
+            "max_length": "客户名称不能超过255个字符。"
+          }
+        },
+        "description": {
+          "name": "描述",
+          "validation": {}
+        },
+        "email": {
+          "name": "电子邮件",
+          "placeholder": "请输入电子邮件",
+          "validation": {
+            "required": "电子邮件是必填项。",
+            "pattern": "电子邮件格式不正确。"
+          }
+        },
+        "website_url": {
+          "name": "网站",
+          "placeholder": "任何以https://开头的URL都有效。",
+          "placeholder_short": "添加网站",
+          "validation": {
+            "pattern": "无效的网站URL"
+          }
+        },
+        "employees": {
+          "name": "员工",
+          "placeholder": "如果客户是公司，请填写员工数量。",
+          "validation": {
+            "min_length": "员工数量不能小于0。",
+            "max_length": "员工数量不能大于2147483647。"
+          }
+        },
+        "size": {
+          "name": "规模",
+          "placeholder": "添加公司规模",
+          "validation": {
+            "min_length": "无效的规模"
+          }
+        },
+        "domain": {
+          "domain": "行业",
+          "placeholder": "零售、电商、金融科技、银行",
+          "placeholder_short": "添加行业",
+          "validation": {}
+        },
+        "stage": {
+          "name": "阶段",
+          "placeholder": "选择阶段",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "合同状态",
+          "placeholder": "选择合同状态",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "收入",
+          "placeholder": "这是客户的年收入。",
+          "placeholder_short": "添加收入",
+          "validation": {
+            "min_length": "收入不能小于0。",
+            "max_length": "收入不能大于2147483647。"
+          }
+        },
+        "invalid_value": "无效的收入值。"
+      },
+      "custom": {
+        "title": "自定义属性",
+        "info": "将客户的独特属性添加到Plane，以更好地管理工作项或客户记录。"
+      },
+      "empty_state": {
+        "title": "添加自定义属性",
+        "description": "您希望手动或自动与CRM匹配的自定义属性将显示在此处。"
+      },
+      "add": {
+        "primary_button": "添加新属性"
+      }
+    },
+    "stage": {
+      "lead": "潜在客户",
+      "sales_qualified_lead": "销售合格潜在客户",
+      "contract_negotiation": "合同谈判",
+      "closed_won": "已关闭，已赢得",
+      "closed_lost": "已关闭，已失去"
+    },
+    "contract_status": {
+      "active": "激活",
+      "pre_contract": "预合同",
+      "signed": "已签署",
+      "inactive": "未激活"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "未找到此客户记录。",
+        "description": "此记录的链接可能无效，或已被删除。",
+        "primary_button": "转到客户",
+        "secondary_button": "添加客户"
+      },
+      "search": {
+        "title": "似乎没有与该术语匹配的客户记录。",
+        "description": "请尝试使用其他搜索词，或者如果您确定应该看到该术语的结果，请联系我们。"
+      },
+      "list": {
+        "title": "管理客户的体量、速度和流量，基于客户对你工作的重要性。",
+        "description": "在Plane中使用客户功能，您可以从头开始创建新客户，并将其与您的工作相关联。稍后您将能够将它们与其他工具一起导入，包括它们的自定义属性。",
+        "primary_button": "添加第一个客户"
+      }
+    },
+    "settings": {
+      "unauthorized": "您没有权限访问此页面。",
+      "description": "在您的工作流程中跟踪和管理与客户的关系。",
+      "enable": "启用客户",
+      "toasts": {
+        "enable": {
+          "loading": "正在启用客户功能...",
+          "success": {
+            "title": "您已启用此工作区的客户功能。",
+            "message": "成员现在可以添加客户记录、将其链接到工作项等。"
+          },
+          "error": {
+            "title": "无法启用客户功能。",
+            "message": "请稍后重试或返回此页面。如果问题仍然存在，请联系支持。"
+          }
+        },
+        "disable": {
+          "loading": "正在禁用客户功能...",
+          "success": {
+            "title": "客户已禁用",
+            "message": "客户功能已成功禁用！"
+          },
+          "error": {
+            "title": "错误",
+            "message": "无法禁用客户功能！"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "无法获取客户列表。",
+          "message": "请稍后重试或刷新此页面。"
+        }
+      },
+      "copy_link": {
+        "title": "您已复制客户的直接链接。",
+        "message": "将其粘贴到任何位置，它将直接将您带到此页面。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} 现在可用",
+          "message": "您可以在工作项中引用此客户并跟踪来自他们的请求。",
+          "actions": {
+            "view": "查看",
+            "copy_link": "复制链接",
+            "copied": "已复制！"
+          }
+        },
+        "error": {
+          "title": "无法创建此记录。",
+          "message": "请重新保存，或将未保存的文本复制到新记录中，最好是在其他标签页中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "客户已成功更新！"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "无法更新客户。请重试！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "无法加载客户的logo。",
+          "message": "请再次保存logo，或者从头开始。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "您已从该客户记录中移除工作项。",
+            "message": "我们还自动将此客户从工作项中移除。"
+          },
+          "error": {
+            "title": "此次无法从该客户记录中删除工作项。",
+            "message": "请重试删除此工作项，如果问题仍然存在，请联系我们。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "无法将此工作项添加到该客户记录。",
+            "message": "请重试，或者稍后再试。如果错误仍然存在，请联系支持。"
+          },
+          "success": {
+            "title": "您已将工作项添加到该客户记录。",
+            "message": "我们还自动将此客户添加到工作项中。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "编辑",
+      "copy_link": "复制客户链接",
+      "delete": "删除"
+    },
+    "create": {
+      "label": "创建客户记录",
+      "loading": "创建中",
+      "cancel": "取消"
+    },
+    "update": {
+      "label": "更新客户",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "您确定要删除客户记录 {customer_name} 吗？",
+      "description": "与此记录相关的所有数据将被永久删除。您以后无法恢复此记录。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "目前没有要显示的请求。",
+          "description": "从您的客户创建请求，将它们与工作项关联。",
+          "button": "添加新请求"
+        },
+        "search": {
+          "title": "似乎没有与该术语匹配的请求。",
+          "description": "请尝试使用其他搜索词，或者如果您确定应该看到该术语的结果，请联系我们。"
+        }
+      },
+      "label": "{count, plural, one {请求} other {请求}}",
+      "add": "添加请求",
+      "create": "创建请求",
+      "update": "更新请求",
+      "form": {
+        "name": {
+          "placeholder": "为此请求命名",
+          "validation": {
+            "required": "名称是必填项。",
+            "max_length": "请求名称不能超过255个字符。"
+          }
+        },
+        "description": {
+          "placeholder": "描述请求或粘贴客户从其他工具中的评论。"
+        },
+        "source": {
+          "add": "添加来源",
+          "update": "更新来源",
+          "url": {
+            "label": "URL",
+            "required": "URL是必填项",
+            "invalid": "无效的URL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "链接已复制",
+          "message": "客户请求的链接已复制到剪贴板。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "上传附件...",
+            "success": {
+              "title": "附件上传成功",
+              "message": "附件已成功上传。"
+            },
+            "error": {
+              "title": "上传附件失败",
+              "message": "无法上传附件。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "错误！",
+              "message": "一次只能上传一个文件。"
+            }
+          },
+          "length": {
+            "message": "文件大小必须小于 {size} MB"
+          },
+          "remove": {
+            "success": {
+              "title": "附件已删除",
+              "message": "附件已成功删除"
+            },
+            "error": {
+              "title": "无法删除附件",
+              "message": "无法删除附件"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "来源已成功更新！"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "无法更新来源。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "错误！",
+              "message": "无法将工作项添加到请求中。请重试。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "工作项已添加到请求中。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "请求已成功更新！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法更新请求。请重试！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "请求已成功创建！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法创建请求。请重试！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "关联工作项",
+      "link": "关联工作项",
+      "empty_state": {
+        "list": {
+          "title": "看起来您还没有将任何工作项关联到此客户。",
+          "description": "将现有工作项从任何项目中关联到此处，以便跟踪该客户。",
+          "button": "关联工作项"
+        }
+      },
+      "action": {
+        "remove_epic": "移除史诗",
+        "remove": "移除工作项"
+      }
+    },
+    "sidebar": {
+      "properties": "属性"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "模板",
+      "description": "使用模板可以节省80%创建项目、工作项和页面的时间。",
+      "options": {
+        "project": {
+          "label": "项目模板"
+        },
+        "work_item": {
+          "label": "工作项模板"
+        },
+        "page": {
+          "label": "页面模板"
+        }
+      },
+      "create_template": {
+        "label": "创建模板",
+        "no_permission": {
+          "project": "联系您的项目管理员创建模板",
+          "workspace": "联系您的工作区管理员创建模板"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "使用模板",
+          "loading": "使用中"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "源自工作区"
+        },
+        "project": {
+          "info": "源自项目"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "为您的项目模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为您的项目命名。",
+            "validation": {
+              "required": "项目标题是必填项",
+              "maxLength": "项目标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此项目的目的和目标。"
+          },
+          "button": {
+            "create": "创建项目模板",
+            "update": "更新项目模板"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "为您的工作项模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为此工作项提供标题。",
+            "validation": {
+              "required": "工作项标题是必填项",
+              "maxLength": "工作项标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此工作项，以便清楚地了解完成后您将实现什么。"
+          },
+          "button": {
+            "create": "创建工作项模板",
+            "update": "更新工作项模板"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "为您的页面模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名页面",
+            "validation": {
+              "maxLength": "页面名称应少于255个字符"
+            }
+          },
+          "button": {
+            "create": "创建页面模板",
+            "update": "更新页面模板"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {发布设置} other {发布到市场}}",
+          "unpublish_action": "从市场移除",
+          "title": "让您的模板可被发现和识别。",
+          "name": {
+            "label": "模板名称",
+            "placeholder": "为您的模板命名",
+            "validation": {
+              "required": "模板名称是必填项",
+              "maxLength": "模板名称应少于255个字符"
+            }
+          },
+          "short_description": {
+            "label": "简短描述",
+            "placeholder": "此模板非常适合同时管理多个项目的项目经理。",
+            "validation": {
+              "required": "简短描述是必填项"
+            }
+          },
+          "description": {
+            "label": "描述",
+            "placeholder": "通过我们的语音转文字集成提高生产力并简化沟通。\n• 实时转录：立即将语音转换为准确的文本。\n• 任务和评论创建：通过语音命令添加任务、描述和评论。",
+            "validation": {
+              "required": "描述是必填项"
+            }
+          },
+          "category": {
+            "label": "类别",
+            "placeholder": "选择您认为最合适的位置。您可以选择多个。",
+            "validation": {
+              "required": "至少需要一个类别"
+            }
+          },
+          "keywords": {
+            "label": "关键词",
+            "placeholder": "使用您认为用户在查找此模板时会搜索的术语。",
+            "helperText": "输入逗号分隔的关键词，这些关键词可能有助于人们从搜索中找到此模板。",
+            "validation": {
+              "required": "至少需要一个关键词"
+            }
+          },
+          "company_name": {
+            "label": "公司名称",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "公司名称是必填项",
+              "maxLength": "公司名称应少于255个字符"
+            }
+          },
+          "contact_email": {
+            "label": "支持邮箱",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "无效的邮箱地址",
+              "required": "支持邮箱是必填项",
+              "maxLength": "支持邮箱应少于255个字符"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "隐私政策链接",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "无效的URL",
+              "maxLength": "URL应少于800个字符"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "使用条款链接",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "无效的URL",
+              "maxLength": "URL应少于800个字符"
+            }
+          },
+          "cover_image": {
+            "label": "添加将在市场中显示的封面图片",
+            "upload_title": "上传封面图片",
+            "upload_placeholder": "点击上传或拖放上传封面图片",
+            "drop_here": "拖放到这里",
+            "click_to_upload": "点击上传",
+            "invalid_file_or_exceeds_size_limit": "无效的文件或超出大小限制。请重试。",
+            "upload_and_save": "上传并保存",
+            "uploading": "上传中",
+            "remove": "删除",
+            "removing": "删除中",
+            "validation": {
+              "required": "封面图片是必填项"
+            }
+          },
+          "attach_screenshots": {
+            "label": "包含您认为对查看此模板的用户有帮助的文档和图片。",
+            "validation": {
+              "required": "至少需要一张截图"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "模板",
+        "description": "使用Plane中的项目、工作项和页面模板，您无需从头开始创建项目或手动设置工作项属性。",
+        "sub_description": "使用模板可以收回80%的管理时间。"
+      },
+      "no_templates": {
+        "button": "创建您的第一个模板"
+      },
+      "no_labels": {
+        "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      },
+      "no_work_items": {
+        "description": "还没有工作项。添加一个以更好地组织您的工作。"
+      },
+      "no_sub_work_items": {
+        "description": "还没有子工作项。添加一个以更好地组织您的工作。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "您没有访问任何模板。",
+          "description": "请创建一个模板"
+        },
+        "no_results": {
+          "title": "没有找到模板。",
+          "description": "尝试使用其他术语搜索。"
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "模板已创建",
+          "message": "{templateName}，{templateType}模板，现已可用于您的工作区。"
+        },
+        "error": {
+          "title": "这次我们无法创建该模板。",
+          "message": "尝试再次保存您的详细信息或将它们复制到新模板中，最好在另一个标签页中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "模板已更改",
+          "message": "{templateName}，{templateType}模板，已被更改。"
+        },
+        "error": {
+          "title": "我们无法保存对此模板的更改。",
+          "message": "尝试再次保存您的详细信息或稍后回到此模板。如果仍有问题，请联系我们。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "模板已删除",
+          "message": "{templateName}，{templateType}模板，已从您的工作区中删除。"
+        },
+        "error": {
+          "title": "这次我们无法删除该模板。",
+          "message": "尝试再次删除它或稍后再回来。如果那时您仍无法删除它，请联系我们。"
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "模板已移除",
+          "message": "{templateName}，{templateType}模板，已被移除。"
+        },
+        "error": {
+          "title": "这次我们无法移除该模板。",
+          "message": "尝试再次移除它或稍后再回来。如果那时您仍无法移除它，请联系我们。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "删除模板",
+      "description": {
+        "prefix": "您确定要删除模板-",
+        "suffix": "吗？与该模板相关的所有数据将被永久删除。此操作无法撤消。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "移除模板",
+      "description": {
+        "prefix": "您确定要移除模板-",
+        "suffix": "吗？此模板将不再在市场上供用户使用。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "添加新模板",
+        "project": "添加新模板"
+      },
+      "label": {
+        "project": "选择项目模板",
+        "page": "从模板中选择"
+      },
+      "tooltip": {
+        "work_item": "选择工作项模板"
+      },
+      "no_results": {
+        "work_item": "未找到模板。",
+        "project": "未找到模板。"
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "按状态分类的项目",
+    "active_users": "活跃用户",
+    "intake_trends": "入学趋势",
+    "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "尚无数据",
+        "description": "周期进度分析将显示在此处。将工作项添加到周期中以开始跟踪进度。"
+      },
+      "module_progress": {
+        "title": "尚无数据",
+        "description": "模块进度分析将显示在此处。将工作项添加到模块中以开始跟踪进度。"
+      },
+      "intake_trends": {
+        "title": "尚无数据",
+        "description": "引入趋势分析将显示在此处。将工作项添加到引入中以开始跟踪趋势。"
+      }
+    },
+    "upgrade_to_plan": "升级到 {plan} 以解锁 {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "重复工作项",
+      "description": "设置一次重复工作，我们将处理重复。当需要时，您将在这里看到所有内容。",
+      "new_recurring_work_item": "创建新的重复工作项",
+      "update_recurring_work_item": "更新重复工作项",
+      "form": {
+        "interval": {
+          "title": "计划",
+          "start_date": {
+            "validation": {
+              "required": "开始日期为必填项"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "间隔类型为必填项"
+            }
+          }
+        },
+        "button": {
+          "create": "创建重复工作项",
+          "update": "更新重复工作项"
+        }
+      },
+      "create_button": {
+        "label": "创建重复工作项",
+        "no_permission": "请联系您的项目管理员以创建重复工作项"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "让您的工作自动化",
+        "description": "只需设置一次，到期时我们会自动为您生成。升级到商业版，让重复工作变得轻松无忧。"
+      },
+      "no_templates": {
+        "button": "创建您的第一个重复工作项"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "重复工作项已创建",
+          "message": "{name}，该重复工作项，现已在您的工作区中可用。"
+        },
+        "error": {
+          "title": "本次无法创建该重复工作项。",
+          "message": "请重试保存您的信息，或将其复制到新的重复工作项中，建议在其他标签页操作。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "重复工作项已更改",
+          "message": "{name}，该重复工作项，已被更改。"
+        },
+        "error": {
+          "title": "无法保存该重复工作项的更改。",
+          "message": "请重试保存您的信息，或稍后再回来更改该重复工作项。如果仍有问题，请联系我们。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "重复工作项已删除",
+          "message": "{name}，该重复工作项，已从您的工作区中删除。"
+        },
+        "error": {
+          "title": "无法删除该重复工作项。",
+          "message": "请重试删除，或稍后再试。如果仍无法删除，请联系我们。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "删除重复工作项",
+      "description": {
+        "prefix": "您确定要删除重复工作项-",
+        "suffix": "吗？与该重复工作项相关的所有数据将被永久删除。此操作无法撤销。"
+      }
+    }
+  }
+}
