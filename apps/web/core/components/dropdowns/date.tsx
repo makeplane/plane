@@ -178,11 +178,11 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
               {...attributes.popper}
             >
               <Calendar
+                className="rounded-md border border-custom-border-200 p-3"
                 captionLayout="dropdown"
-                classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
-                onSelect={(date) => {
+                onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays

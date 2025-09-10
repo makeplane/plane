@@ -271,10 +271,10 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
             {...attributes.popper}
           >
             <Calendar
+              className="rounded-md border border-custom-border-200 p-3"
               captionLayout="dropdown"
-              classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
-              onSelect={(val) => {
+              onSelect={(val: DateRange | undefined) => {
                 onSelect?.(val);
               }}
               mode="range"
