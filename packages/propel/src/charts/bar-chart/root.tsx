@@ -60,7 +60,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
 
   // get bar color dynamically based on payload
   const getBarColor = useCallback(
-    (payload: any[], barKey: string) => {
+    (payload: Record<string, string>[], barKey: string) => {
       const bar = bars.find((b) => b.key === barKey);
       if (!bar) return DEFAULT_BAR_FILL_COLOR;
 
