@@ -10,10 +10,11 @@ type TIssueLabelSelectRoot = {
   issueId: string;
   values: string[];
   labelOperations: TLabelOperations;
+  triggerClassName?: string;
 };
 
 export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
-  const { workspaceSlug, projectId, issueId, values, labelOperations } = props;
+  const { workspaceSlug, projectId, issueId, values, labelOperations, triggerClassName } = props;
 
   const handleLabel = async (_labelIds: string[]) => {
     await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: _labelIds });
@@ -27,6 +28,7 @@ export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
       values={values}
       onSelect={handleLabel}
       onAddLabel={labelOperations.createLabel}
+      triggerClassName={triggerClassName}
     />
   );
 };

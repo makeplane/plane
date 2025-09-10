@@ -16,6 +16,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssueDetailShortcuts } from "@/hooks/use-issue-detail-shortcuts";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
@@ -278,14 +279,16 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   );
 
   // issue details
-  const issue = getIssueById(issueId);
-  // checking if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
+    const issue = getIssueById(issueId);
+    // checking if issue is editable, based on user role
+    const isEditable = allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug,
+      projectId
+    );
+
+    useIssueDetailShortcuts({ workspaceSlug, projectId, issueId, issueOperations });
 
   return (
     <>

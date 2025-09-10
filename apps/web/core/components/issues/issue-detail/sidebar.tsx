@@ -77,18 +77,18 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.state")}</span>
               </div>
-              <StateDropdown
-                value={issue?.state_id}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                projectId={projectId?.toString() ?? ""}
-                disabled={!isEditable}
-                buttonVariant="transparent-with-text"
-                className="group w-3/5 flex-grow"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName="text-sm"
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-              />
+                <StateDropdown
+                  value={issue?.state_id}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                  projectId={projectId?.toString() ?? ""}
+                  disabled={!isEditable}
+                  buttonVariant="transparent-with-text"
+                  className="group w-3/5 flex-grow"
+                  buttonContainerClassName="w-full text-left js-issue-state"
+                  buttonClassName="text-sm"
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                />
             </div>
 
             <div className="flex h-8 items-center gap-2">
@@ -96,23 +96,23 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <Users className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.assignees")}</span>
               </div>
-              <MemberDropdown
-                value={issue?.assignee_ids ?? undefined}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-                disabled={!isEditable}
-                projectId={projectId?.toString() ?? ""}
-                placeholder={t("issue.add.assignee")}
-                multiple
-                buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-                className="group w-3/5 flex-grow"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
-                }`}
-                hideIcon={issue.assignee_ids?.length === 0}
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-              />
+                <MemberDropdown
+                  value={issue?.assignee_ids ?? undefined}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
+                  disabled={!isEditable}
+                  projectId={projectId?.toString() ?? ""}
+                  placeholder={t("issue.add.assignee")}
+                  multiple
+                  buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
+                  className="group w-3/5 flex-grow"
+                  buttonContainerClassName="w-full text-left js-issue-assignee"
+                  buttonClassName={`text-sm justify-between ${
+                    issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
+                  }`}
+                  hideIcon={issue.assignee_ids?.length === 0}
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                />
             </div>
 
             <div className="flex h-8 items-center gap-2">
@@ -120,15 +120,15 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <Signal className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.priority")}</span>
               </div>
-              <PriorityDropdown
-                value={issue?.priority}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-                disabled={!isEditable}
-                buttonVariant="border-with-text"
-                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName="w-min h-auto whitespace-nowrap"
-              />
+                <PriorityDropdown
+                  value={issue?.priority}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
+                  disabled={!isEditable}
+                  buttonVariant="border-with-text"
+                  className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                  buttonContainerClassName="w-full text-left js-issue-priority"
+                  buttonClassName="w-min h-auto whitespace-nowrap"
+                />
             </div>
 
             {createdByDetails && (
@@ -175,28 +175,28 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.order_by.due_date")}</span>
               </div>
-              <DateDropdown
-                placeholder={t("issue.add.due_date")}
-                value={issue.target_date}
-                onChange={(val) =>
-                  issueOperations.update(workspaceSlug, projectId, issueId, {
-                    target_date: val ? renderFormattedPayloadDate(val) : null,
-                  })
-                }
-                minDate={minDate ?? undefined}
-                disabled={!isEditable}
-                buttonVariant="transparent-with-text"
-                className="group w-3/5 flex-grow"
-                buttonContainerClassName="w-full text-left"
-                buttonClassName={cn("text-sm", {
-                  "text-custom-text-400": !issue.target_date,
-                  "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-                })}
-                hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
-                // TODO: add this logic
-                // showPlaceholderIcon
-              />
+                <DateDropdown
+                  placeholder={t("issue.add.due_date")}
+                  value={issue.target_date}
+                  onChange={(val) =>
+                    issueOperations.update(workspaceSlug, projectId, issueId, {
+                      target_date: val ? renderFormattedPayloadDate(val) : null,
+                    })
+                  }
+                  minDate={minDate ?? undefined}
+                  disabled={!isEditable}
+                  buttonVariant="transparent-with-text"
+                  className="group w-3/5 flex-grow"
+                  buttonContainerClassName="w-full text-left js-issue-due-date"
+                  buttonClassName={cn("text-sm", {
+                    "text-custom-text-400": !issue.target_date,
+                    "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+                  })}
+                  hideIcon
+                  clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+                  // TODO: add this logic
+                  // showPlaceholderIcon
+                />
             </div>
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (
@@ -205,22 +205,22 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Triangle className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.estimate")}</span>
                 </div>
-                <EstimateDropdown
-                  value={issue?.estimate_point ?? undefined}
-                  onChange={(val: string | undefined) =>
-                    issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
-                  }
-                  projectId={projectId}
-                  disabled={!isEditable}
-                  buttonVariant="transparent-with-text"
-                  className="group w-3/5 flex-grow"
-                  buttonContainerClassName="w-full text-left"
-                  buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
-                  placeholder={t("common.none")}
-                  hideIcon
-                  dropdownArrow
-                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-                />
+                  <EstimateDropdown
+                    value={issue?.estimate_point ?? undefined}
+                    onChange={(val: string | undefined) =>
+                      issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
+                    }
+                    projectId={projectId}
+                    disabled={!isEditable}
+                    buttonVariant="transparent-with-text"
+                    className="group w-3/5 flex-grow"
+                    buttonContainerClassName="w-full text-left js-issue-estimate"
+                    buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+                    placeholder={t("common.none")}
+                    hideIcon
+                    dropdownArrow
+                    dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                  />
               </div>
             )}
 
@@ -284,6 +284,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   projectId={projectId}
                   issueId={issueId}
                   disabled={!isEditable}
+                  triggerClassName="js-issue-label"
                 />
               </div>
             </div>

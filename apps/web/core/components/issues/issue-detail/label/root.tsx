@@ -24,6 +24,7 @@ export type TIssueLabel = {
   isInboxIssue?: boolean;
   onLabelUpdate?: (labelIds: string[]) => void;
   issueServiceType?: TIssueServiceType;
+  triggerClassName?: string;
 };
 
 export type TLabelOperations = {
@@ -40,6 +41,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     isInboxIssue = false,
     onLabelUpdate,
     issueServiceType = EIssueServiceType.ISSUES,
+    triggerClassName,
   } = props;
   const { t } = useTranslation();
   // hooks
@@ -111,6 +113,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           issueId={issueId}
           values={issue?.label_ids || []}
           labelOperations={labelOperations}
+          triggerClassName={triggerClassName}
         />
       )}
     </div>

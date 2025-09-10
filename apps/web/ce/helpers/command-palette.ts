@@ -119,4 +119,23 @@ export const getCommonShortcutsList = (platform: string): TCommandPaletteShortcu
   },
 ];
 
-export const getAdditionalShortcutsList = (): TCommandPaletteShortcutList[] => [];
+export const getAdditionalShortcutsList = (): TCommandPaletteShortcutList[] => [
+  {
+    key: "issue",
+    title: "Issue detail",
+    shortcuts: [
+      { keys: "A", description: "Assign issue" },
+      { keys: "I", description: "Assign to me" },
+      { keys: "S", description: "Change state/status" },
+      { keys: "P", description: "Set priority" },
+      { keys: "L", description: "Manage labels" },
+      { keys: "Shift,E", description: "Set estimate" },
+      { keys: "Shift,D", description: "Set due date" },
+      { keys: "Ctrl,Shift,D", description: "Clear due date" },
+      { keys: "Shift,C", description: "Add to cycle" },
+      { keys: "Shift,M", description: "Add to module" },
+      { keys: "Ctrl,M", description: "Add a comment on the issue" },
+      { keys: "Ctrl,Delete", description: "Delete issue" },
+    ],
+  },
+];

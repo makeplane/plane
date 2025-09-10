@@ -8,7 +8,7 @@ import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles, IIssueLabel } from "@plane/types";
 // helpers
-import { getTabIndex } from "@plane/utils";
+import { cn, getTabIndex } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -21,10 +21,11 @@ export interface IIssueLabelSelect {
   values: string[];
   onSelect: (_labelIds: string[]) => void;
   onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
+  triggerClassName?: string;
 }
 
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
+  const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel, triggerClassName } = props;
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
@@ -130,7 +131,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
           <button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer rounded"
+            className={cn("cursor-pointer rounded", triggerClassName)}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
