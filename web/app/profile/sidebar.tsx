@@ -22,12 +22,12 @@ import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/sto
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
-  {
-    key: "create_workspace",
-    Icon: Plus,
-    label: "Create workspace",
-    href: "/create-workspace",
-  },
+  // {
+  //   key: "create_workspace",
+  //   Icon: Plus,
+  //   label: "Create workspace",
+  //   href: "/create-workspace",
+  // },
   {
     key: "invitations",
     Icon: UserPlus,
