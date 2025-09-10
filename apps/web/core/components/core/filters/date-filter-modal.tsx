@@ -101,7 +101,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                             captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
-                            onSelect={(date) => {
+                            onSelect={(date: Date | undefined) => {
                               if (!date) return;
                               onChange(date);
                             }}
@@ -126,7 +126,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                               captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}
-                              onSelect={(date) => {
+                              onSelect={(date: Date | undefined) => {
                                 if (!date) return;
                                 onChange(date);
                               }}

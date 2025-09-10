@@ -182,7 +182,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
                 classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
-                onSelect={(date) => {
+                onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays

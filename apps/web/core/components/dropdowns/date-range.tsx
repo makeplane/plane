@@ -274,7 +274,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
               captionLayout="dropdown"
               classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
-              onSelect={(val) => {
+              onSelect={(val: DateRange | undefined) => {
                 onSelect?.(val);
               }}
               mode="range"

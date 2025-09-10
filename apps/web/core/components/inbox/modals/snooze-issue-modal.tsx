@@ -53,7 +53,7 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
                     classNames={{ root: `rounded-md border border-custom-border-200 p-3` }}
                     selected={date ? new Date(date) : undefined}
                     defaultMonth={date ? new Date(date) : undefined}
-                    onSelect={(date) => {
+                    onSelect={(date: Date | undefined) => {
                       if (!date) return;
                       setDate(date);
                     }}
