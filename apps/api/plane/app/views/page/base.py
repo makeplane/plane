@@ -487,7 +487,7 @@ class PagesDescriptionViewSet(BaseViewSet):
             # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data, old_value=existing_instance, page_id=pk
+                    new_value=request.data, old_value=existing_instance, page_id=page_id
                 )
 
             # Update the page using serializer
