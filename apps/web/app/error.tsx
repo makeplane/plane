@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // layouts
+import { Button } from "@plane/ui";
+import { useAppRouter } from "@/hooks/use-app-router";
 import DefaultLayout from "@/layouts/default-layout";
 // images
 import maintenanceModeDarkModeImage from "@/public/instance/maintenance-mode-dark.svg";
 import maintenanceModeLightModeImage from "@/public/instance/maintenance-mode-light.svg";
-import { Button } from "@plane/ui";
 
 const linkMap = [
   {
@@ -30,6 +31,7 @@ const linkMap = [
 export default function CustomErrorComponent() {
   // hooks
   const { resolvedTheme } = useTheme();
+  const router = useAppRouter();
 
   // derived values
   const maintenanceModeImage = resolvedTheme === "dark" ? maintenanceModeDarkModeImage : maintenanceModeLightModeImage;
@@ -73,7 +75,7 @@ export default function CustomErrorComponent() {
           </div>
 
           <div className="flex items-center justify-start gap-6">
-            <Button variant="primary" size="md" onClick={() => window.location.reload()}>
+            <Button variant="primary" size="md" onClick={() => router.push("/")}>
               Go to home
             </Button>
           </div>
