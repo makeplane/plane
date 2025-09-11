@@ -3,13 +3,14 @@
 import { ReactNode } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { useTeamspaces } from "@/plane-web/hooks/store";
+import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
 
 export default function TeamspaceDetailLayout({ children }: { children: ReactNode }) {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
   // store hooks
   const { isCurrentUserMemberOfTeamspace, fetchTeamspaceDetails } = useTeamspaces();
+  const { fetchTeamspaceViews } = useTeamspaceViews();
   // derived values
   const workspaceSlug = routerWorkspaceSlug!.toString();
   const teamspaceId = routerTeamSpaceId!.toString();
@@ -22,6 +23,16 @@ export default function TeamspaceDetailLayout({ children }: { children: ReactNod
       : null,
     workspaceSlug && teamspaceId && isTeamspaceMember ? () => fetchTeamspaceDetails(workspaceSlug, teamspaceId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetch teamspace views
+  useSWR(
+    workspaceSlug && teamspaceId ? ["teamspaceViews", workspaceSlug, teamspaceId] : null,
+    () => (workspaceSlug && teamspaceId ? fetchTeamspaceViews(workspaceSlug, teamspaceId) : null),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   return <>{children}</>;

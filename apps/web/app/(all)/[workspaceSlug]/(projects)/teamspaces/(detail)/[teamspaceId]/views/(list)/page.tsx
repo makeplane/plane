@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // plane imports
 import { EViewAccess, TViewFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
@@ -18,19 +17,10 @@ const TeamspaceViewsPage = observer(() => {
   const workspaceSlug = routerWorkspaceSlug!.toString();
   const teamspaceId = routerTeamSpaceId!.toString();
   // store hooks
-  const { getTeamspaceViewsFilters, fetchTeamspaceViews, updateFilters, clearAllFilters } = useTeamspaceViews();
+  const { getTeamspaceViewsFilters, updateFilters, clearAllFilters } = useTeamspaceViews();
   // derived values
   const teamspaceViewsFilters = getTeamspaceViewsFilters(teamspaceId);
   const isFiltersApplied = calculateTotalFilters(teamspaceViewsFilters?.filters ?? {}) !== 0;
-  // fetch teamspace views
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspaceViews", workspaceSlug, teamspaceId] : null,
-    () => (workspaceSlug && teamspaceId ? fetchTeamspaceViews(workspaceSlug, teamspaceId) : null),
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
 
   // handlers
   const handleRemoveFilter = useCallback(

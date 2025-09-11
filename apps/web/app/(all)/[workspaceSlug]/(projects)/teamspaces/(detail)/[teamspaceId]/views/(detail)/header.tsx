@@ -19,13 +19,15 @@ import {
   IIssueDisplayProperties,
   EIssueLayoutTypes,
   IIssueFilterOptions,
+  ICustomSearchSelectOption,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, Loader } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
+import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -39,6 +41,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
@@ -48,6 +51,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
   const viewId = routerViewId ? routerViewId.toString() : undefined;
+  const router = useAppRouter();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -61,14 +65,27 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
-  const { getTeamspaceViewsLoader, getViewById } = useTeamspaceViews();
+  const { getViewById, getTeamspaceViewIds } = useTeamspaceViews();
   // derived values
-  const teamspaceViewLoader = teamspaceId ? getTeamspaceViewsLoader(teamspaceId) : undefined;
   const teamspace = teamspaceId ? getTeamspaceById(teamspaceId) : undefined;
   const view = teamspace && viewId ? getViewById(teamspace.id, viewId.toString()) : null;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const publishLink = getPublishViewLink(view?.anchor);
   const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
+  const teamspaceViewIds = teamspaceId ? getTeamspaceViewIds(teamspaceId) : [];
+
+  const switcherOptions = teamspaceViewIds
+    ?.map((id) => {
+      if (!teamspaceId) return;
+      const _view = id === viewId ? view : getViewById(teamspaceId, id);
+      if (!_view) return;
+      return {
+        value: _view.id,
+        query: _view.name,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
   // permissions
   const canUserCreateIssue = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -186,22 +203,20 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
             />
             <Breadcrumbs.Item
               component={
-                <>
-                  {teamspaceViewLoader === "init-loader" && !view ? (
-                    <Loader.Item height="20px" width="140px" />
-                  ) : view ? (
-                    <BreadcrumbLink
-                      label={view.name}
-                      icon={
-                        view?.logo_props?.in_use ? (
-                          <Logo logo={view?.logo_props} size={16} type="lucide" />
-                        ) : (
-                          <Layers className="size-4 text-custom-text-300" />
-                        )
-                      }
-                    />
-                  ) : null}
-                </>
+                <BreadcrumbNavigationSearchDropdown
+                  selectedItem={viewId?.toString() ?? ""}
+                  navigationItems={switcherOptions}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/views/${value}`);
+                  }}
+                  title={view?.name}
+                  icon={
+                    <Breadcrumbs.Icon>
+                      <SwitcherIcon logo_props={view?.logo_props} LabelIcon={Layers} size={16} />
+                    </Breadcrumbs.Icon>
+                  }
+                  isLast
+                />
               }
             />
           </Breadcrumbs>
