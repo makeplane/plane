@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { ICollaborativeDocumentEditorPropsExtended, IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
+import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
