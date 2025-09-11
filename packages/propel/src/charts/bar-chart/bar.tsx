@@ -23,7 +23,7 @@ interface TShapeProps {
 }
 
 interface TBarProps extends TShapeProps {
-  fill: string | ((payload: any) => string);
+  fill: string;
   stackKeys: string[];
   textClassName?: string;
   showPercentage?: boolean;
@@ -108,7 +108,7 @@ const CustomBar = React.memo((props: TBarProps) => {
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
         className="transition-opacity duration-200"
-        fill={typeof fill === "function" ? fill(payload) : fill}
+        fill={fill}
         opacity={opacity}
       />
       {showText && (
@@ -130,7 +130,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         y1={y + height}
         x2={x + width / 2}
         y2={y}
-        stroke={typeof fill === "function" ? fill(payload) : fill}
+        stroke={fill}
         strokeWidth={DEFAULT_LOLLIPOP_LINE_WIDTH}
         strokeLinecap="round"
         strokeDasharray={dotted ? "4 4" : "0"}
