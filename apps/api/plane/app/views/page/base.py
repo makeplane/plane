@@ -7,8 +7,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Django imports
 from django.db import connection
 from django.db.models import Exists, OuterRef, Q, Value, UUIDField
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -21,9 +19,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
-    PageLogSerializer,
     PageSerializer,
-    SubPageSerializer,
     PageDetailSerializer,
     PageBinaryUpdateSerializer,
 )
