@@ -45,3 +45,10 @@ export const getAPIClient = (baseUrl?: string): APIClient => {
   }
   return apiClient;
 };
+
+export const getAPIClientInternal = (): APIClient =>
+  new APIClient({
+    baseURL: env.API_INTERNAL_BASE_URL || env.API_BASE_URL,
+    hmacPrivateKey: env.SILO_HMAC_SECRET_KEY,
+    serviceName: "SILO",
+  });

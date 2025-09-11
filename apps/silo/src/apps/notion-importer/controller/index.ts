@@ -3,11 +3,11 @@ import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Post } from "@/lib";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { importTaskManger } from "@/worker";
 import { EZipDriverType } from "../drivers";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClientInternal();
 
 @Controller("/api/zip-importer")
 export class NotionController {

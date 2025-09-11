@@ -7,17 +7,16 @@ import {
   TAssetInfo,
   TNotionMigratorData,
 } from "@/apps/notion-importer/types";
-import { env } from "@/env";
 import { protect } from "@/lib/errors";
 import { TZipFileNode } from "@/lib/zip-manager";
 import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
 import { EZipDriverType } from "../../drivers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
-const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
+const apiClient = getAPIClientInternal();
 
 /**
  * Notion Data Migrator: Phase One Implementation

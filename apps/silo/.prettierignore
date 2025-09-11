@@ -5,3 +5,4 @@ build/
 src/public
 yarn.lock
 package-lock.json
+*.html

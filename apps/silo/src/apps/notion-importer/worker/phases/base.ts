@@ -7,7 +7,7 @@ import { env } from "@/env";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { createZipManager, EZipNodeType, TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { EZipDriverType, ZipDriverFactory } from "../../drivers";
@@ -15,7 +15,7 @@ import { IZipImportDriver } from "../../drivers/types";
 import { ENotionImporterKeyType, TNotionImportConfig, TNotionMigratorData } from "../../types";
 import { getKey } from "../../utils";
 
-const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
+const apiClient = getAPIClientInternal();
 
 // Context for processing nodes (everything a phase implementation needs)
 export interface PhaseProcessingContext {

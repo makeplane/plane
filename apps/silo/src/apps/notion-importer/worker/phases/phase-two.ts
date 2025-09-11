@@ -4,7 +4,7 @@ import { TImportJob, TPage } from "@plane/types";
 import { env } from "@/env";
 import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
 import { EZipDriverType } from "../../drivers";
@@ -13,7 +13,7 @@ import { ENotionImporterKeyType, TNotionMigratorData } from "../../types";
 import { getEmojiPayload } from "../../utils/html-helpers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
-const apiClient = getAPIClient(env.API_INTERNAL_BASE_URL);
+const apiClient = getAPIClientInternal();
 
 /*
  * Notion Data Migrator: Phase Two Implementation
