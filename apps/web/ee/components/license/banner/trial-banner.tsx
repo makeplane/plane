@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, SUBSCRIPTION_WEBPAGE_URLS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { getButtonStyling, getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
@@ -56,12 +56,13 @@ export const TrialBanner: FC = observer(() => {
             >
               Upgrade to {subscriptionName}
             </button>
+
             <a
-              href="https://cal.com/plane/"
+              href={SUBSCRIPTION_WEBPAGE_URLS[currentPlan]}
               target="_blank"
               className={cn(getButtonStyling("neutral-primary", "sm"), COMMON_BUTTON_STYLE, "border-custom-border-400")}
             >
-              Get 1:1 help
+              Learn more
             </a>
           </div>
         </div>
