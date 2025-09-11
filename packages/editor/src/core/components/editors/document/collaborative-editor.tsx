@@ -44,6 +44,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    extendedDocumentEditorProps,
   } = props;
 
   // use document editor
@@ -71,6 +72,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    extendedDocumentEditorProps,
   });
 
   const editorContainerClassNames = getEditorClassNames({
