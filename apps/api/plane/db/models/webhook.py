@@ -23,7 +23,24 @@ def validate_schema(value):
 def validate_domain(value):
     parsed_url = urlparse(value)
     domain = parsed_url.netloc
-    if domain in ["localhost", "127.0.0.1"]:
+    hostname = parsed_url.hostname
+    
+    # More comprehensive localhost validation
+    localhost_variants = [
+        "localhost", 
+        "127.0.0.1", 
+        "0.0.0.0",
+        "::1",  # IPv6 localhost
+        "0:0:0:0:0:0:0:1"  # IPv6 localhost expanded
+    ]
+    
+    # Only block explicit localhost variants, allow Docker service names
+    if hostname and hostname.lower() in localhost_variants:
+        raise ValidationError("Local URLs are not allowed.")
+    
+    # Also check the full netloc for cases like localhost:8080
+    domain_host = domain.split(':')[0] if ':' in domain else domain
+    if domain_host.lower() in localhost_variants:
         raise ValidationError("Local URLs are not allowed.")
 
 
