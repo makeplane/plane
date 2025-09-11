@@ -70,6 +70,11 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
+  const {
+    embedHandler,
+    isSmoothCursorEnabled: _isSmoothCursorEnabled,
+    ...restExtendedEditorProps
+  } = extendedEditorProps ?? {};
 
   return (
     <DocumentEditorWithRef
@@ -99,9 +104,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
           externalEmbedComponent: {
             widgetCallback: EmbedHandler,
           },
-          ...extendedEditorProps?.embedHandler,
+          ...embedHandler,
         },
-        ...extendedEditorProps,
+        ...restExtendedEditorProps,
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
