@@ -1,0 +1,41 @@
+(plane_proxy) {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT}
+	}
+
+	reverse_proxy /spaces/* systemd-space:3000
+	reverse_proxy /god-mode/* systemd-admin:3000
+	reverse_proxy /api/* systemd-api:8000
+	reverse_proxy /graphql/* systemd-api:8000
+	reverse_proxy /auth/* systemd-api:8000
+	reverse_proxy /live/* systemd-live:3000
+	reverse_proxy /silo/* systemd-silo:3000
+	reverse_proxy /{$BUCKET_NAME} systemd-plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME}/* systemd-plane-minio:9000
+	reverse_proxy /* systemd-web:3000
+}
+
+{
+	email {$CERT_EMAIL:admin@example.com}
+	acme_ca {$CERT_ACME_CA} 
+	{$CERT_ACME_DNS}
+	servers {
+		timeouts {
+			read_body 600s
+			read_header 30s
+			write 600s
+			idle 600s
+		}
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
+	}
+	log {
+		output {$LOG_OUTPUT:stdout}
+		level {$LOG_LEVEL:INFO}
+	}
+}
+
+{$SITE_ADDRESS} {
+	import plane_proxy
+}
