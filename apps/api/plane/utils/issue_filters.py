@@ -476,6 +476,8 @@ def filter_subscribed_issues(params, issue_filter, method, prefix=""):
             issue_filter[f"{prefix}issue_subscribers__subscriber_id__in"] = params.get(
                 "subscriber"
             )
+    issue_filter[f"{prefix}issue_subscribers__deleted_at__isnull"] = True
+
     return issue_filter
 
 
