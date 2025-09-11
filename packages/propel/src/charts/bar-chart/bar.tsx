@@ -135,13 +135,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         strokeLinecap="round"
         strokeDasharray={dotted ? "4 4" : "0"}
       />
-      <circle
-        cx={x + width / 2}
-        cy={y}
-        r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
-        fill={typeof fill === "function" ? fill(payload) : fill}
-        stroke="none"
-      />
+      <circle cx={x + width / 2} cy={y} r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS} fill={fill} stroke="none" />
       {showPercentage && (
         <PercentageText x={x + width / 2} y={y} percentage={currentBarPercentage} className={textClassName} />
       )}
