@@ -232,9 +232,6 @@ class ModuleViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .annotate(is_favorite=Exists(favorite_subquery))
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("lead")
             .prefetch_related("members")
             .prefetch_related(
                 Prefetch(
@@ -315,7 +312,10 @@ class ModuleViewSet(BaseViewSet):
                     ArrayAgg(
                         "members__id",
                         distinct=True,
-                        filter=~Q(members__id__isnull=True),
+                        filter=Q(
+                            members__id__isnull=False,
+                            modulemember__deleted_at__isnull=True,
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
