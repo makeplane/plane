@@ -7,7 +7,7 @@ import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
 import { refreshLinkback } from "../../helpers/linkback";
-import { createIntakeModal, createWorkItemModal } from "../../helpers/modal";
+import { createIntakeModal, createWorkItemModal, patchSlackView } from "../../helpers/modal";
 import {
   E_MESSAGE_ACTION_TYPES,
   SlackPrivateMetadata,
@@ -486,13 +486,19 @@ async function handleWorkItemOrIntakeSelectionAction(data: TBlockActionModalPayl
     details,
     showThreadSync,
   };
+  const { slackService } = details;
+
+  let modal: any;
 
   // Delegate to appropriate modal creation
   if (isWorkItem) {
-    await createWorkItemModal(modalParams);
+    modal = await createWorkItemModal(modalParams, false);
   } else {
-    await createIntakeModal(modalParams);
+    modal = await createIntakeModal(modalParams, false);
   }
+
+  const patchedModalWithExistingValues = patchSlackView(modal, data.view.state.values);
+  await slackService.updateModal(data.view.id, patchedModalWithExistingValues);
 }
 
 async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
@@ -512,6 +518,7 @@ async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, detai
   >;
   const showThreadSync =
     metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload;
+  const { slackService } = details;
 
   const modalParams: TSlackWorkItemOrIntakeModalParams = {
     viewId: data.view.id,
@@ -522,7 +529,9 @@ async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, detai
     details,
   };
 
-  await createWorkItemModal(modalParams);
+  const modal = await createWorkItemModal(modalParams, false);
+  const patchedModalWithExistingValues = patchSlackView(modal, data.view.state.values);
+  await slackService.updateModal(data.view.id, patchedModalWithExistingValues);
 }
 
 /**

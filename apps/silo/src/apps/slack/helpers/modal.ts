@@ -11,6 +11,57 @@ import { ENTITIES } from "./constants";
 import { extractFieldValue, getSlackBlock } from "./fields";
 import { convertToSlackOption, convertToSlackOptions, PlainTextOption } from "./slack-options";
 
+export function patchSlackView(newModal: any, existingValues: any) {
+  // If no existing values, return the modal as-is
+  if (!existingValues || !newModal.blocks) {
+    return newModal;
+  }
+
+  // Create a flat map of action_id -> value object
+  const actionValueMap = new Map();
+  Object.values(existingValues).forEach((blockData: any) => {
+    Object.entries(blockData).forEach(([actionId, valueObject]) => {
+      actionValueMap.set(actionId, valueObject);
+    });
+  });
+
+  // Process each block and merge existing values if available
+  const patchedBlocks = newModal.blocks.map((block: any) => {
+    if (block.type !== "input" || !block.element?.action_id) {
+      logger.info("No input block or action_id", { block });
+      return block;
+    }
+
+    const existingValue = actionValueMap.get(block.element.action_id);
+    if (!existingValue) {
+      logger.info("No existing value for this action_id", { actionId: block.element.action_id });
+      return block; // No existing value for this action_id
+    }
+
+    // Clone the block and convert state values to initial values
+    const patchedBlock = {
+      ...block,
+      element: {
+        ...block.element,
+        // Convert state properties to initial properties
+        ...(existingValue.selected_option && { initial_option: existingValue.selected_option }),
+        ...(existingValue.selected_options &&
+          existingValue.selected_options.length > 0 && { initial_options: existingValue.selected_options }),
+        ...(existingValue.value && { initial_value: existingValue.value }),
+        ...(existingValue.rich_text_value && { initial_value: existingValue.rich_text_value }),
+        ...(existingValue.selected_date && { initial_date: existingValue.selected_date }),
+      },
+    };
+
+    return patchedBlock;
+  });
+
+  return {
+    ...newModal,
+    blocks: patchedBlocks,
+  };
+}
+
 // ================================ API ================================
 
 /**
@@ -18,7 +69,7 @@ import { convertToSlackOption, convertToSlackOptions, PlainTextOption } from "./
  * @param params - Parameters for creating the work item modal
  * @returns Promise<void>
  */
-export async function createWorkItemModal(params: TSlackWorkItemOrIntakeModalParams) {
+export async function createWorkItemModal(params: TSlackWorkItemOrIntakeModalParams, shouldDispatch: boolean = true) {
   const { viewId, triggerId, details, workItem, issueTypeId, metadata, showThreadSync } = params;
   const { slackService, planeClient, workspaceConnection, credentials } = details;
 
@@ -102,16 +153,20 @@ export async function createWorkItemModal(params: TSlackWorkItemOrIntakeModalPar
     isUpdate: !!workItem,
   });
 
-  if (viewId) {
-    const res = await slackService.updateModal(viewId, modal);
-    logger.info("Modal updated", { res });
-  } else {
-    if (!triggerId) {
-      throw new Error("Trigger id is required");
+  if (shouldDispatch) {
+    if (viewId) {
+      const res = await slackService.updateModal(viewId, modal);
+      logger.info("Modal updated", { res });
+    } else {
+      if (!triggerId) {
+        throw new Error("Trigger id is required");
+      }
+      const res = await slackService.openModal(triggerId, modal);
+      logger.info("Modal opened", { res });
     }
-    const res = await slackService.openModal(triggerId, modal);
-    logger.info("Modal opened", { res });
   }
+
+  return modal;
 }
 
 /**
@@ -119,7 +174,7 @@ export async function createWorkItemModal(params: TSlackWorkItemOrIntakeModalPar
  * @param params - Parameters for creating the intake modal
  * @returns Promise<void>
  */
-export async function createIntakeModal(params: TSlackWorkItemOrIntakeModalParams) {
+export async function createIntakeModal(params: TSlackWorkItemOrIntakeModalParams, shouldDispatch: boolean = true) {
   const { viewId, details, metadata, triggerId, showThreadSync } = params;
   const { slackService } = details;
   const { workspaceConnection, credentials } = details;
@@ -161,16 +216,20 @@ export async function createIntakeModal(params: TSlackWorkItemOrIntakeModalParam
     slackBlocks,
   });
 
-  if (viewId) {
-    const res = await slackService.updateModal(viewId, modal);
-    logger.info("Modal updated", { res });
-  } else {
-    if (!triggerId) {
-      throw new Error("Trigger id is required");
+  if (shouldDispatch) {
+    if (viewId) {
+      const res = await slackService.updateModal(viewId, modal);
+      logger.info("Modal updated", { res });
+    } else {
+      if (!triggerId) {
+        throw new Error("Trigger id is required");
+      }
+      const res = await slackService.openModal(triggerId, modal);
+      logger.info("Modal opened", { res });
     }
-    const res = await slackService.openModal(triggerId, modal);
-    logger.info("Modal opened", { res });
   }
+
+  return modal;
 }
 
 // ================================ HELPERS ================================
