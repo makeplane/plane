@@ -133,13 +133,18 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param workspaceSlug
    * @param data
    */
-  async createGlobalView(workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
-    const response = await this.workspaceService.createView(workspaceSlug, data);
-    runInAction(() => {
-      set(this.globalViewMap, response.id, response);
-    });
+  async createGlobalView(workspaceSlug: string, data: Partial<IWorkspaceView>) {
+    try {
+      const response = await this.workspaceService.createView(workspaceSlug, data);
+      runInAction(() => {
+        set(this.globalViewMap, response.id, response);
+      });
 
-    return response;
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   /**

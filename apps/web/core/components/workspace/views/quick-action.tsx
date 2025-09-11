@@ -13,6 +13,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useViewMenuItems } from "@/plane-web/components/views/helper";
 // local imports
+import { useViewMenuItems } from "@/plane-web/components/views/helper";
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 
