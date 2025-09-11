@@ -228,6 +228,7 @@ export const PROJECT_PAGE_TRACKER_ELEMENTS = {
   LOCK_BUTTON: "page_lock_button",
   ACCESS_TOGGLE: "page_access_toggle",
   DUPLICATE_BUTTON: "page_duplicate_button",
+  SIDEBAR: "page_sidebar",
 } as const;
 
 /**
