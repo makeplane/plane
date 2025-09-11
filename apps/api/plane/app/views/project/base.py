@@ -5,14 +5,14 @@ from typing import Dict, Any, List
 import uuid
 
 # Django imports
-from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
 
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 # Module imports
@@ -229,7 +229,6 @@ class ProjectViewSet(BaseViewSet):
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
             )
-
             teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
             teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
 
@@ -306,7 +305,10 @@ class ProjectViewSet(BaseViewSet):
         )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             # For role 5 (MEMBER): direct memberships + teamspace memberships
             direct_projects = base_queryset.filter(
@@ -320,7 +322,10 @@ class ProjectViewSet(BaseViewSet):
             projects = direct_projects.union(teamspace_projects)
 
         elif WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
             # For role 15 (GUEST): direct memberships + public projects + teamspace memberships
             direct_projects = base_queryset.filter(
@@ -412,28 +417,30 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
 
-                # Add the user as Administrator to the project
-                _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+            # Add the user as Administrator to the project
+            _ = ProjectMember.objects.create(
+                project_id=serializer.data["id"],
+                member=request.user,
+                role=ROLE.ADMIN.value,
+            )
+            # Also create the issue property for the user
+            _ = IssueUserProperty.objects.create(
+                project_id=serializer.data["id"], user=request.user
+            )
+
+            if serializer.data["project_lead"] is not None and str(
+                serializer.data["project_lead"]
+            ) != str(request.user.id):
+                ProjectMember.objects.create(
+                    project_id=serializer.data["id"],
+                    member_id=serializer.data["project_lead"],
+                    role=ROLE.ADMIN.value,
                 )
                 # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"], user=request.user
+                IssueUserProperty.objects.create(
+                    project_id=serializer.data["id"],
+                    user_id=serializer.data["project_lead"],
                 )
-
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
-                ) != str(request.user.id):
-                    ProjectMember.objects.create(
-                        project_id=serializer.data["id"],
-                        member_id=serializer.data["project_lead"],
-                        role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
-                    )
 
                 # Default states
                 states = [
@@ -572,14 +579,23 @@ class ProjectViewSet(BaseViewSet):
             )
 
     def partial_update(self, request, slug, pk=None):
+        is_workspace_admin = WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.ADMIN.value,
+        ).exists()
+
+        is_project_admin = ProjectMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            project_id=pk,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists()
         try:
-            if not ProjectMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                project_id=pk,
-                role=20,
-                is_active=True,
-            ).exists():
+            # Return error for if the user is neither workspace admin nor project admin
+            if not is_project_admin and not is_workspace_admin:
                 return Response(
                     {"error": "You don't have the required permissions."},
                     status=status.HTTP_403_FORBIDDEN,
@@ -633,7 +649,7 @@ class ProjectViewSet(BaseViewSet):
                             project_id=pk,
                             workspace_id=workspace.id,
                             member_id=api_token.user_id,
-                            role=20,
+                            role=ROLE.ADMIN.value,
                         )
 
                 # EE: project_grouping starts
@@ -750,13 +766,16 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         if (
             WorkspaceMember.objects.filter(
-                member=request.user, workspace__slug=slug, is_active=True, role=20
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.ADMIN.value,
             ).exists()
             or ProjectMember.objects.filter(
                 member=request.user,
                 workspace__slug=slug,
                 project_id=pk,
-                role=20,
+                role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
         ):

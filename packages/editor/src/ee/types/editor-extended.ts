@@ -17,6 +17,8 @@ export type IEditorPropsExtended = {
   isSmoothCursorEnabled: boolean;
 };
 
+export type ICollaborativeDocumentEditorPropsExtended = unknown;
+
 export type TExtendedEditorCommands = "comment" | "block-equation" | "inline-equation";
 
 export type TExtendedCommandExtraProps = {

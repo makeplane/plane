@@ -7,13 +7,7 @@ from plane.db.models import ProjectMember, WorkspaceMember
 from plane.ee.models import TeamspaceProject, TeamspaceMember
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-
-
-# Permission Role Levels
-# These constants define the permission levels in the system
-Admin: int = 20  # Administrator level access
-Member: int = 15  # Regular member level access
-Guest: int = 5  # Guest/restricted level access
+from plane.db.models.project import ROLE
 
 
 def check_teamspace_membership(view, request: Request) -> bool:
@@ -75,18 +69,31 @@ class ProjectBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[Admin, Member],
+                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
                 is_active=True,
             ).exists()
 
-        ## Only Project Admins can update project attributes
-        return ProjectMember.objects.filter(
+        project_member_qs = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role=Admin,
             project_id=view.project_id,
             is_active=True,
-        ).exists()
+        )
+
+        ## Only project admins or workspace admin who is part of the project can access
+
+        if project_member_qs.filter(role=ROLE.ADMIN.value).exists():
+            return True
+        else:
+            return (
+                project_member_qs.exists()
+                and WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=view.workspace_slug,
+                    role=ROLE.ADMIN.value,
+                    is_active=True,
+                ).exists()
+            )
 
 
 class ProjectMemberPermission(BasePermission):
@@ -112,7 +119,7 @@ class ProjectMemberPermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[Admin, Member],
+                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
                 is_active=True,
             ).exists()
 
@@ -120,7 +127,7 @@ class ProjectMemberPermission(BasePermission):
         is_project_member = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[Admin, Member],
+            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
             project_id=view.project_id,
             is_active=True,
         ).exists()
@@ -180,7 +187,7 @@ class ProjectEntityPermission(BasePermission):
         is_project_member = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[Admin, Member],
+            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
             project_id=view.project_id,
             is_active=True,
         ).exists()

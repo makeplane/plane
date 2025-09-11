@@ -52,14 +52,41 @@ def allow_permission(
                 ).exists():
                     return view_func(instance, request, *args, **kwargs)
             else:
-                if ProjectMember.objects.filter(
+                is_user_has_allowed_role = ProjectMember.objects.filter(
                     member=request.user,
                     workspace__slug=kwargs["slug"],
                     project_id=kwargs["project_id"],
                     role__in=allowed_role_values,
                     is_active=True,
-                ).exists():
+                ).exists()
+
+                #  Return if the user has allowed roles
+                if is_user_has_allowed_role:
                     return view_func(instance, request, *args, **kwargs)
+
+                #  Return if the user is workspace admin and is also part of the project or a teamspace member
+                if WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=kwargs["slug"],
+                    role=ROLE.ADMIN.value,
+                    is_active=True,
+                ).exists():
+                    teamspace_ids = TeamspaceProject.objects.filter(
+                        workspace__slug=kwargs["slug"], project_id=kwargs["project_id"]
+                    ).values_list("team_space_id", flat=True)
+                    if (
+                        ProjectMember.objects.filter(
+                            member=request.user,
+                            workspace__slug=kwargs["slug"],
+                            project_id=kwargs["project_id"],
+                            is_active=True,
+                        ).exists()
+                        or TeamspaceMember.objects.filter(
+                            member=request.user, team_space_id__in=teamspace_ids
+                        ).exists()
+                    ):
+                        return view_func(instance, request, *args, **kwargs)
+
                 #
                 # Check if the user is member of the team space
                 # if scope is project further check if user is member of the team space
