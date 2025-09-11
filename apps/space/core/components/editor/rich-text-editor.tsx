@@ -7,12 +7,13 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps">,
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps" | "embedHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -56,11 +57,18 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
       })}
       flaggedExtensions={richTextEditorExtensions.flagged}
-      extendedEditorProps={{}}
-      {...rest}
+      extendedEditorProps={{
+        embedHandler: {
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
+        },
+        isSmoothCursorEnabled: false,
+      }}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
+      {...rest}
     />
   );
 });

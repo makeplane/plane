@@ -10,3 +10,4 @@ freezegun==1.2.2
 coverage==7.2.7
 httpx==0.24.1
 requests==2.32.4
+pytest-asyncio==1.0.0

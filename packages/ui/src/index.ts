@@ -1,5 +1,6 @@
 export * from "./avatar";
 export * from "./badge";
+export * from "./beta";
 export * from "./breadcrumbs";
 export * from "./button";
 export * from "./card";

@@ -40,8 +40,8 @@ SPECTACULAR_SETTINGS = {
     # Server Configuration
     # ========================================================================
     "SERVERS": [
-        {"url": "http://localhost:8000", "description": "Local"},
         {"url": "https://api.plane.so", "description": "Production"},
+        {"url": "http://localhost:8000", "description": "Local"},
     ],
     # ========================================================================
     # API Tag Definitions
@@ -62,21 +62,6 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* User profile images, project file uploads, secure direct-to-cloud uploads."
             ),
         },
-        # Project Organization
-        {
-            "name": "Cycles",
-            "description": (
-                "**Sprint & Development Cycles**\n\n"
-                "Create and manage development cycles (sprints) to organize work into time-boxed iterations. "
-                "Track progress, assign work items, and monitor team velocity.\n\n"
-                "*Key Features:*\n"
-                "- Create and configure development cycles\n"
-                "- Assign work items to cycles\n"
-                "- Track cycle progress and completion\n"
-                "- Generate cycle analytics and reports\n\n"
-                "*Use Cases:* Sprint planning, iterative development, progress tracking, team velocity."
-            ),
-        },
         # System Features
         {
             "name": "Intake",
@@ -94,6 +79,20 @@ SPECTACULAR_SETTINGS = {
         },
         # Project Organization
         {
+            "name": "Cycles",
+            "description": (
+                "**Sprint & Development Cycles**\n\n"
+                "Create and manage development cycles (sprints) to organize work into time-boxed iterations. "
+                "Track progress, assign work items, and monitor team velocity.\n\n"
+                "*Key Features:*\n"
+                "- Create and configure development cycles\n"
+                "- Assign work items to cycles\n"
+                "- Track cycle progress and completion\n"
+                "- Generate cycle analytics and reports\n\n"
+                "*Use Cases:* Sprint planning, iterative development, progress tracking, team velocity."
+            ),
+        },
+        {
             "name": "Labels",
             "description": (
                 "**Labels & Tags**\n\n"
@@ -105,6 +104,34 @@ SPECTACULAR_SETTINGS = {
                 "- Filter and search by labels\n"
                 "- Organize labels across projects\n\n"
                 "*Use Cases:* Priority marking, feature categorization, bug classification, team organization."
+            ),
+        },
+        {
+            "name": "Modules",
+            "description": (
+                "**Feature Modules**\n\n"
+                "Group related work items into modules for better organization and tracking. "
+                "Plan features, track progress, and manage deliverables at a higher level.\n\n"
+                "*Key Features:*\n"
+                "- Create and organize feature modules\n"
+                "- Group work items by module\n"
+                "- Track module progress and completion\n"
+                "- Manage module leads and assignments\n\n"
+                "*Use Cases:* Feature planning, release organization, progress tracking, team coordination."
+            ),
+        },
+        {
+            "name": "States",
+            "description": (
+                "**Workflow States**\n\n"
+                "Define custom workflow states for work items to match your team's process. "
+                "Configure state transitions and track work item progress through different stages.\n\n"
+                "*Key Features:*\n"
+                "- Create custom workflow states\n"
+                "- Configure state transitions and rules\n"
+                "- Track work item progress through states\n"
+                "- Set state-based permissions and automation\n\n"
+                "*Use Cases:* Custom workflows, status tracking, process automation, progress monitoring."
             ),
         },
         # Team & User Management
@@ -122,19 +149,18 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* Team setup, access control, role management, collaboration."
             ),
         },
-        # Project Organization
         {
-            "name": "Modules",
+            "name": "Users",
             "description": (
-                "**Feature Modules**\n\n"
-                "Group related work items into modules for better organization and tracking. "
-                "Plan features, track progress, and manage deliverables at a higher level.\n\n"
+                "**Current User Information**\n\n"
+                "Get information about the currently authenticated user including profile details "
+                "and account settings.\n\n"
                 "*Key Features:*\n"
-                "- Create and organize feature modules\n"
-                "- Group work items by module\n"
-                "- Track module progress and completion\n"
-                "- Manage module leads and assignments\n\n"
-                "*Use Cases:* Feature planning, release organization, progress tracking, team coordination."
+                "- Retrieve current user profile\n"
+                "- Access user account information\n"
+                "- View user preferences and settings\n"
+                "- Get authentication context\n\n"
+                "*Use Cases:* Profile display, user context, account information, authentication status."
             ),
         },
         # Core Project Management
@@ -152,37 +178,21 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* Project setup, team collaboration, access control, project configuration."
             ),
         },
-        # Project Organization
-        {
-            "name": "States",
-            "description": (
-                "**Workflow States**\n\n"
-                "Define custom workflow states for work items to match your team's process. "
-                "Configure state transitions and track work item progress through different stages.\n\n"
-                "*Key Features:*\n"
-                "- Create custom workflow states\n"
-                "- Configure state transitions and rules\n"
-                "- Track work item progress through states\n"
-                "- Set state-based permissions and automation\n\n"
-                "*Use Cases:* Custom workflows, status tracking, process automation, progress monitoring."
-            ),
-        },
-        # Team & User Management
-        {
-            "name": "Users",
-            "description": (
-                "**Current User Information**\n\n"
-                "Get information about the currently authenticated user including profile details "
-                "and account settings.\n\n"
-                "*Key Features:*\n"
-                "- Retrieve current user profile\n"
-                "- Access user account information\n"
-                "- View user preferences and settings\n"
-                "- Get authentication context\n\n"
-                "*Use Cases:* Profile display, user context, account information, authentication status."
-            ),
-        },
         # Work Item Management
+        {
+            "name": "Work Items",
+            "description": (
+                "**Work Items & Tasks**\n\n"
+                "Create and manage work items like tasks, bugs, features, and user stories. "
+                "The core entities for tracking work in your projects.\n\n"
+                "*Key Features:*\n"
+                "- Create, update, and manage work items\n"
+                "- Assign to team members and set priorities\n"
+                "- Track progress through workflow states\n"
+                "- Set due dates, estimates, and relationships\n\n"
+                "*Use Cases:* Bug tracking, task management, feature development, sprint planning."
+            ),
+        },
         {
             "name": "Work Item Activity",
             "description": (
@@ -240,17 +250,45 @@ SPECTACULAR_SETTINGS = {
             ),
         },
         {
-            "name": "Work Items",
+            "name": "Work Item Properties",
             "description": (
-                "**Work Items & Tasks**\n\n"
-                "Create and manage work items like tasks, bugs, features, and user stories. "
-                "The core entities for tracking work in your projects.\n\n"
+                "**Work Item Property Management**\n\n"
+                "Define and manage custom properties for work items with flexible attributes and validation. "
+                "Create custom fields to capture project-specific information and requirements.\n\n"
                 "*Key Features:*\n"
-                "- Create, update, and manage work items\n"
-                "- Assign to team members and set priorities\n"
-                "- Track progress through workflow states\n"
-                "- Set due dates, estimates, and relationships\n\n"
-                "*Use Cases:* Bug tracking, task management, feature development, sprint planning."
+                "- Create and configure custom properties\n"
+                "- Define property validation rules\n"
+                "- Set property-specific permissions\n"
+                "- Generate property-based reports\n\n"
+                "*Use Cases:* Custom fields, data validation, project-specific attributes, reporting."
+            ),
+        },
+        {
+            "name": "Work Item Types",
+            "description": (
+                "**Work Item Type Management**\n\n"
+                "Define and manage different types of work items with customizable attributes and workflows. "
+                "Create standardized work item categories for consistent project management.\n\n"
+                "*Key Features:*\n"
+                "- Create and configure work item types\n"
+                "- Define type-specific attributes and fields\n"
+                "- Set up type-based workflow templates\n"
+                "- Configure type-specific permissions\n\n"
+                "*Use Cases:* Task categorization, workflow standardization, custom attributes, access control."
+            ),
+        },
+        {
+            "name": "Work Item Worklogs",
+            "description": (
+                "**Time Tracking & Worklog Management**\n\n"
+                "Track and manage time spent on work items with detailed worklog entries. "
+                "Record work sessions, track time allocation, and generate time-based reports.\n\n"
+                "*Key Features:*\n"
+                "- Track time spent on work items\n"
+                "- Create and edit worklog entries\n"
+                "- Generate time tracking reports\n"
+                "- Validate time entries and constraints\n\n"
+                "*Use Cases:* Time tracking, resource allocation, project reporting, billing."
             ),
         },
     ],
@@ -259,6 +297,7 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "AUTHENTICATION_WHITELIST": [
         "plane.api.middleware.api_authentication.APIKeyAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
     # ========================================================================
     # Schema Generation Options

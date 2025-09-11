@@ -83,6 +83,7 @@ export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
 
       if (event.key === "Enter") {
         event.preventDefault();
+        event.stopPropagation();
         selectItem(selectedIndex);
         return true;
       }
