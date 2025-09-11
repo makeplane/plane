@@ -1,0 +1,46 @@
+{
+  "name": "godmode",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@plane/constants": "workspace:*",
+    "@plane/hooks": "workspace:*",
+    "@plane/i18n": "workspace:*",
+    "@plane/propel": "workspace:*",
+    "@plane/services": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/ui": "workspace:*",
+    "@react-router/node": "^7.7.1",
+    "@react-router/serve": "^7.7.1",
+    "isbot": "^5.1.27",
+    "lucide-react": "catalog:",
+    "mobx": "catalog:",
+    "mobx-react": "catalog:",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "7.51.5",
+    "react-router": "^7.7.1",
+    "swr": "^2.3.1"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "workspace:*",
+    "@plane/tailwind-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@react-router/dev": "^7.7.1",
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/node": "^20",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3",
+    "vite-plugin-commonjs": "^0.10.4",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

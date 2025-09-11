@@ -1,0 +1,21 @@
+{
+  "extends": "@plane/typescript-config/vite-react.json",
+  "compilerOptions": {
+    "rootDirs": [".", "./.react-router/types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/app/*": ["app/*"],
+      "@/*": ["core/*"],
+      "@/public/*": ["public/*"],
+      "@/plane-admin/*": ["ce/*"],
+      "@/styles/*": ["styles/*"]
+    },
+    "strictNullChecks": true
+  },
+  "include": [
+    "**/*",
+    "**/.server/**/*",
+    "**/.client/**/*",
+    ".react-router/types/**/*"
+  ]
+}

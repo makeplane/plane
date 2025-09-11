@@ -1,0 +1,16 @@
+import { useTheme } from "next-themes";
+// assets
+import LogoSpinnerDark from "@/public/images/logo-spinner-dark.gif";
+import LogoSpinnerLight from "@/public/images/logo-spinner-light.gif";
+
+export const InstanceLoading = () => {
+  const { resolvedTheme } = useTheme();
+
+  const logoSrc = resolvedTheme === "dark" ? LogoSpinnerLight : LogoSpinnerDark;
+
+  return (
+    <div className="flex items-center justify-center">
+      <img src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" />
+    </div>
+  );
+};
