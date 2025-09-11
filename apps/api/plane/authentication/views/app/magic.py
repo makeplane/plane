@@ -108,7 +108,7 @@ class MagicSignInEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             if user.is_password_autoset and profile.is_onboarded:
                 # Redirect to the home page
-                path = ""
+                path = "/"
             else:
                 # Get the redirection path
                 path = (
