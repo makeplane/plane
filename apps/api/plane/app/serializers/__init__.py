@@ -92,7 +92,6 @@ from .importer import ImporterSerializer
 
 from .page import (
     PageSerializer,
-    PageLogSerializer,
     PageDetailSerializer,
     PageVersionSerializer,
     PageBinaryUpdateSerializer,
