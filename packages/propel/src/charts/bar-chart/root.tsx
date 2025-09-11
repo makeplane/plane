@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
   Bar,
@@ -21,6 +21,8 @@ import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 import { barShapeVariants } from "./bar";
 
+const DEFAULT_BAR_FILL_COLOR = "#000000";
+
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
     data,
@@ -35,6 +37,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       x: undefined,
       y: 10,
     },
+    customTicks,
     showTooltip = true,
     customTooltipContent,
   } = props;
@@ -43,20 +46,54 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   // derived values
-  const { stackKeys, stackLabels, stackDotColors } = useMemo(() => {
+  const { stackKeys, stackLabels } = useMemo(() => {
     const keys: string[] = [];
     const labels: Record<string, string> = {};
-    const colors: Record<string, string> = {};
 
     for (const bar of bars) {
       keys.push(bar.key);
       labels[bar.key] = bar.label;
-      // For tooltip, we need a string color. If fill is a function, use a default color
-      colors[bar.key] = typeof bar.fill === "function" ? "#000000" : bar.fill;
     }
 
-    return { stackKeys: keys, stackLabels: labels, stackDotColors: colors };
+    return { stackKeys: keys, stackLabels: labels };
   }, [bars]);
+
+  // get bar color dynamically based on payload
+  const getBarColor = useCallback(
+    (payload: Record<string, string>[], barKey: string) => {
+      const bar = bars.find((b) => b.key === barKey);
+      if (!bar) return DEFAULT_BAR_FILL_COLOR;
+
+      if (typeof bar.fill === "function") {
+        const payloadItem = payload?.find((item) => item.dataKey === barKey);
+        if (payloadItem?.payload) {
+          try {
+            return bar.fill(payloadItem.payload);
+          } catch (error) {
+            console.error(error);
+            return DEFAULT_BAR_FILL_COLOR;
+          }
+        } else {
+          return DEFAULT_BAR_FILL_COLOR; // fallback color when no payload data
+        }
+      } else {
+        return bar.fill;
+      }
+    },
+    [bars]
+  );
+
+  // get all bar colors
+  const getAllBarColors = useCallback(
+    (payload: any[]) => {
+      const colors: Record<string, string> = {};
+      for (const bar of bars) {
+        colors[bar.key] = getBarColor(payload, bar.key);
+      }
+      return colors;
+    },
+    [bars, getBarColor]
+  );
 
   const renderBars = useMemo(
     () =>
@@ -74,9 +111,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}
           onMouseLeave={() => setActiveBar(null)}
+          fill={getBarColor(data, bar.key)}
         />
       )),
-    [activeLegend, stackKeys, bars]
+    [activeLegend, stackKeys, bars, getBarColor, data]
   );
 
   return (
@@ -96,7 +134,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.x || CustomXAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickLine={false}
             axisLine={false}
             label={{
@@ -118,7 +159,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               dx: yAxis.dx ?? -16,
               className: AXIS_LABEL_CLASSNAME,
             }}
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.y || CustomYAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />
@@ -150,7 +194,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
                     activeKey={activeBar}
                     itemKeys={stackKeys}
                     itemLabels={stackLabels}
-                    itemDotColors={stackDotColors}
+                    itemDotColors={getAllBarColors(payload || [])}
                   />
                 );
               }}

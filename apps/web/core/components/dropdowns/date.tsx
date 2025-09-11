@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Matcher } from "react-day-picker";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { ComboDropDown, Calendar } from "@plane/ui";
+import { Calendar, Matcher } from "@plane/propel/calendar";
+import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
@@ -178,11 +178,11 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
               {...attributes.popper}
             >
               <Calendar
+                className="rounded-md border border-custom-border-200 p-3"
                 captionLayout="dropdown"
-                classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
-                onSelect={(date) => {
+                onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays

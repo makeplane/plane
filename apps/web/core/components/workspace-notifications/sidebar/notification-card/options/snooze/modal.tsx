@@ -195,7 +195,6 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
                                 )}
                               </div>
                             }
-                            optionsClassName="w-full"
                             input
                           >
                             <div className="mb-2 flex h-9 w-full overflow-hidden rounded">

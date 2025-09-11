@@ -191,7 +191,7 @@ export const GlobalIssuesHeader = observer(() => {
           </Breadcrumbs>
         </Header.LeftItem>
 
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           {!isLocked ? (
             <>
               <GlobalViewLayoutSelection

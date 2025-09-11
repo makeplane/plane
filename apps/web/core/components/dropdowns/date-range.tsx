@@ -3,14 +3,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ComboDropDown, Calendar } from "@plane/ui";
+import { Calendar, DateRange, Matcher } from "@plane/propel/calendar";
+import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
@@ -271,10 +271,10 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
             {...attributes.popper}
           >
             <Calendar
+              className="rounded-md border border-custom-border-200 p-3"
               captionLayout="dropdown"
-              classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
-              onSelect={(val) => {
+              onSelect={(val: DateRange | undefined) => {
                 onSelect?.(val);
               }}
               mode="range"
