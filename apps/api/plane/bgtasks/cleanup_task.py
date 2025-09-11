@@ -410,9 +410,11 @@ def get_webhook_logs_queryset():
             "workspace_id",
             "webhook",
             "event_type",
+            # Request
             "request_method",
-            "response_headers",
+            "request_headers",
             "request_body",
+            # Response
             "response_status",
             "response_body",
             "response_headers",
