@@ -417,32 +417,32 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
 
-            # Add the user as Administrator to the project
-            _ = ProjectMember.objects.create(
-                project_id=serializer.data["id"],
-                member=request.user,
-                role=ROLE.ADMIN.value,
-            )
-            # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(
-                project_id=serializer.data["id"], user=request.user
-            )
-
-            if serializer.data["project_lead"] is not None and str(
-                serializer.data["project_lead"]
-            ) != str(request.user.id):
-                ProjectMember.objects.create(
+                # Add the user as Administrator to the project
+                _ = ProjectMember.objects.create(
                     project_id=serializer.data["id"],
-                    member_id=serializer.data["project_lead"],
+                    member=request.user,
                     role=ROLE.ADMIN.value,
                 )
                 # Also create the issue property for the user
-                IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user_id=serializer.data["project_lead"],
+                _ = IssueUserProperty.objects.create(
+                    project_id=serializer.data["id"], user=request.user
                 )
 
-                # Default states
+                if serializer.data["project_lead"] is not None and str(
+                    serializer.data["project_lead"]
+                ) != str(request.user.id):
+                    ProjectMember.objects.create(
+                        project_id=serializer.data["id"],
+                        member_id=serializer.data["project_lead"],
+                        role=ROLE.ADMIN.value,
+                    )
+                    # Also create the issue property for the user
+                    IssueUserProperty.objects.create(
+                        project_id=serializer.data["id"],
+                        user_id=serializer.data["project_lead"],
+                    )
+
+                    # Default states
                 states = [
                     {
                         "name": "Backlog",
@@ -563,7 +563,6 @@ class ProjectViewSet(BaseViewSet):
                 payload = self.update_project_member_role(serializer.data)
                 return Response(payload, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
