@@ -46,6 +46,7 @@ import { AutomationsRootStore, IAutomationsRootStore } from "./automations/root.
 // dashboards
 import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
+import { IGlobalViewStore, GlobalViewStore } from "./global-view.store";
 import {
   IJiraStore,
   JiraStore,
@@ -88,6 +89,8 @@ import { IApplicationStore, ApplicationStore } from "./marketplace/application.s
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
+// project view
+import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { IProjectStore, ProjectStore } from "./projects/projects";
 // templates
 import { IRecurringWorkItemsRootStore, RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
@@ -117,6 +120,8 @@ export class RootStore extends CoreRootStore {
   projectInbox: IProjectInboxStore;
   customersStore: ICustomersStore;
   customerPropertiesStore: ICustomerPropertiesStore;
+  projectView: IProjectViewStore;
+  globalView: IGlobalViewStore;
   // importers
   jiraImporter: IJiraStore;
   jiraServerImporter: IJiraServerStore;
@@ -172,6 +177,9 @@ export class RootStore extends CoreRootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.customersStore = new CustomerStore(this);
     this.customerPropertiesStore = new CustomerProperties(this);
+    // project view
+    this.projectView = new ProjectViewStore(this);
+    this.globalView = new GlobalViewStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
@@ -226,6 +234,8 @@ export class RootStore extends CoreRootStore {
     this.teamspaceRoot = new TeamspaceRootStore(this);
     this.customersStore = new CustomerStore(this);
     this.customerPropertiesStore = new CustomerProperties(this);
+    this.projectView = new ProjectViewStore(this);
+    this.globalView = new GlobalViewStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);

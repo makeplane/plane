@@ -35,7 +35,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
+import { AdditionalHeaderItems, GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
@@ -191,7 +191,7 @@ export const GlobalIssuesHeader = observer(() => {
           </Breadcrumbs>
         </Header.LeftItem>
 
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           {!isLocked ? (
             <>
               <GlobalViewLayoutSelection
@@ -227,6 +227,8 @@ export const GlobalIssuesHeader = observer(() => {
           ) : (
             <></>
           )}
+
+          <AdditionalHeaderItems isLocked={!!isLocked} />
 
           <Button
             variant="primary"
