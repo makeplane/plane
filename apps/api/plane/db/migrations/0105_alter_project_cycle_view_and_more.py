@@ -25,4 +25,9 @@ class Migration(migrations.Migration):
             name="module_view",
             field=models.BooleanField(default=False),
         ),
+        migrations.AlterField(
+            model_name="session",
+            name="user_id",
+            field=models.CharField(db_index=True, max_length=50, null=True),
+        ),
     ]
