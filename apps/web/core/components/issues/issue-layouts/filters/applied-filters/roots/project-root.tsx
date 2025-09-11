@@ -90,7 +90,7 @@ export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps
         />
       </Header.LeftItem>
       <Header.RightItem>
-        {isEditingAllowed && (
+        {isEditingAllowed && storeType === EIssuesStoreType.PROJECT && (
           <SaveFilterView
             workspaceSlug={workspaceSlug?.toString()}
             projectId={projectId?.toString()}
