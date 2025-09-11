@@ -1,18 +1,21 @@
-// types
 import { TPage } from "@plane/types";
 // services
-import { APIService } from "@/services/api.service";
+import { APIService } from "../api.service";
 
-export class PageService extends APIService {
+export type TPageDescriptionPayload = {
+  description_binary: string;
+  description_html: string;
+  description: object;
+};
+
+export class ProjectPageCoreService extends APIService {
   constructor() {
     super();
   }
 
-  async fetchDetails(workspaceSlug: string, projectId: string, pageId: string, cookie: string): Promise<TPage> {
+  protected async fetchDetails(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, {
-      headers: {
-        Cookie: cookie,
-      },
+      headers: this.getHeader(),
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -20,11 +23,11 @@ export class PageService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string, cookie: string): Promise<any> {
+  protected async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
+        ...this.getHeader(),
         "Content-Type": "application/octet-stream",
-        Cookie: cookie,
       },
       responseType: "arraybuffer",
     })
@@ -34,21 +37,14 @@ export class PageService extends APIService {
       });
   }
 
-  async updateDescription(
+  protected async updateDescriptionBinary(
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-      description: object;
-    },
-    cookie: string
+    data: TPageDescriptionPayload
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data, {
-      headers: {
-        Cookie: cookie,
-      },
+      headers: this.getHeader(),
     })
       .then((response) => response?.data)
       .catch((error) => {

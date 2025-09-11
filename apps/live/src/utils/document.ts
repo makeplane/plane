@@ -73,19 +73,11 @@ export const getAllDocumentFormatsFromBinaryData = (
   };
 };
 
-export const getBinaryDataFromHTMLString = (
-  descriptionHTML: string
-): {
-  contentBinary: Uint8Array;
-} => {
+export const getBinaryDataFromHTMLString = (descriptionHTML: string): Uint8Array => {
   // convert HTML to JSON
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", DOCUMENT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(documentEditorSchema, contentJSON, "default");
   // convert Y.Doc to Uint8Array format
-  const encodedData = Y.encodeStateAsUpdate(transformedData);
-
-  return {
-    contentBinary: encodedData,
-  };
+  return Y.encodeStateAsUpdate(transformedData);
 };

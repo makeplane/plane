@@ -1,19 +1,23 @@
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
 import { logger } from "@plane/logger";
 // lib
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/lib/page";
+import { ProjectPageService } from "@/services/project-page";
 // types
-import { HocusPocusServerContext, TDocumentTypes } from "@/types";
+import { TDocumentTypes } from "@/types";
 
-const onFetch = async ({ context, documentName: pageId, requestParameters }: any) => {
+const projectPageService = new ProjectPageService();
+
+const onFetch = async ({ context, documentName, requestParameters }: any) => {
   try {
-    const cookie = (context as HocusPocusServerContext).cookie;
-    // query params
-    const params = requestParameters;
-    const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
+    const documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes | undefined;
+    const params = {
+      ...context,
+      ...requestParameters,
+      pageId: documentName,
+    };
     // fetch document
     if (documentType === "project_page") {
-      const data = await fetchPageDescriptionBinary(params, pageId, cookie);
+      const data = await projectPageService.fetchDocument(params);
       return data;
     }
     throw new Error(`Invalid document type ${documentType} provided.`);
@@ -22,16 +26,21 @@ const onFetch = async ({ context, documentName: pageId, requestParameters }: any
     return null;
   }
 };
-const onStore = async ({ context, state, documentName: pageId, requestParameters }: any) => {
-  const cookie = (context as HocusPocusServerContext).cookie;
-  try {
-    // query params
-    const params = requestParameters;
-    const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
 
+const onStore = async ({ context, state, documentName, requestParameters }: any) => {
+  try {
+    const documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes | undefined;
+    const params = {
+      ...context,
+      ...requestParameters,
+      pageId: documentName,
+    };
+    // store document
     if (documentType === "project_page") {
-      await updatePageDescription(params, pageId, state, cookie);
+      await projectPageService.storeDocument(params, state);
+      return;
     }
+    throw new Error(`Invalid document type ${documentType} provided.`);
   } catch (error) {
     logger.error("Error in updating document:", error);
   }

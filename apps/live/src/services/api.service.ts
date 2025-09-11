@@ -3,6 +3,7 @@ import { env } from "@/env";
 export abstract class APIService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
+  private header: Record<string, string> = {};
 
   constructor() {
     this.baseURL = env.API_BASE_URL ?? "";
@@ -11,6 +12,14 @@ export abstract class APIService {
       withCredentials: true,
       timeout: 20000,
     });
+  }
+
+  setHeader(key: string, value: string) {
+    this.header[key] = value;
+  }
+
+  getHeader() {
+    return this.header;
   }
 
   get(url: string, params = {}, config = {}) {
