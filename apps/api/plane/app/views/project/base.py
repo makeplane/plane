@@ -5,13 +5,12 @@ from django.utils import timezone
 import json
 
 # Django imports
-from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 # Module imports
@@ -106,7 +105,10 @@ class ProjectViewSet(BaseViewSet):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -114,7 +116,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -189,7 +194,10 @@ class ProjectViewSet(BaseViewSet):
         )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -197,7 +205,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -250,7 +261,9 @@ class ProjectViewSet(BaseViewSet):
 
             # Add the user as Administrator to the project
             _ = ProjectMember.objects.create(
-                project_id=serializer.data["id"], member=request.user, role=20
+                project_id=serializer.data["id"],
+                member=request.user,
+                role=ROLE.ADMIN.value,
             )
             # Also create the issue property for the user
             _ = IssueUserProperty.objects.create(
@@ -263,7 +276,7 @@ class ProjectViewSet(BaseViewSet):
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member_id=serializer.data["project_lead"],
-                    role=20,
+                    role=ROLE.ADMIN.value,
                 )
                 # Also create the issue property for the user
                 IssueUserProperty.objects.create(
@@ -341,13 +354,23 @@ class ProjectViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, pk=None):
         # try:
-        if not ProjectMember.objects.filter(
+        is_workspace_admin = WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.ADMIN.value,
+        ).exists()
+
+        is_project_admin = ProjectMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             project_id=pk,
-            role=20,
+            role=ROLE.ADMIN.value,
             is_active=True,
-        ).exists():
+        ).exists()
+
+        # Return error for if the user is neither workspace admin nor project admin
+        if not is_project_admin and not is_workspace_admin:
             return Response(
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -402,13 +425,16 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         if (
             WorkspaceMember.objects.filter(
-                member=request.user, workspace__slug=slug, is_active=True, role=20
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.ADMIN.value,
             ).exists()
             or ProjectMember.objects.filter(
                 member=request.user,
                 workspace__slug=slug,
                 project_id=pk,
-                role=20,
+                role=ROLE.ADMIN.value,
                 is_active=True,
             ).exists()
         ):
