@@ -284,6 +284,7 @@ class IssueRelationChoices(models.TextChoices):
     BLOCKED_BY = "blocked_by", "Blocked By"
     START_BEFORE = "start_before", "Start Before"
     FINISH_BEFORE = "finish_before", "Finish Before"
+    IMPLEMENTED_BY = "implemented_by", "Implemented By"
 
 
 class IssueRelation(ProjectBaseModel):
@@ -295,7 +296,6 @@ class IssueRelation(ProjectBaseModel):
     )
     relation_type = models.CharField(
         max_length=20,
-        choices=IssueRelationChoices.choices,
         verbose_name="Issue Relation Type",
         default=IssueRelationChoices.BLOCKED_BY,
     )
