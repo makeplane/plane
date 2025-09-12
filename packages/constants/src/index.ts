@@ -7,6 +7,7 @@ export * from "./filter";
 export * from "./graph";
 export * from "./instance";
 export * from "./issue";
+export * from "./members";
 export * from "./metadata";
 export * from "./notification";
 export * from "./state";

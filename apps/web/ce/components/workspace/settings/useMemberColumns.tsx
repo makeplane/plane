@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { IMemberFilters } from "@/store/member/utils";
 
 export const useMemberColumns = () => {
   // states
@@ -13,6 +16,11 @@ export const useMemberColumns = () => {
 
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const {
+    workspace: {
+      filtersStore: { filters, updateFilters },
+    },
+  } = useMember();
   const { t } = useTranslation();
 
   const getFormattedDate = (dateStr: string) => {
@@ -25,11 +33,23 @@ export const useMemberColumns = () => {
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
+  // handlers
+  const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
+    updateFilters(filterUpdates);
+  };
+
   const columns = [
     {
       key: "Full name",
       content: t("workspace_settings.settings.members.details.full_name"),
       thClassName: "text-left",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="full_name"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
@@ -44,18 +64,39 @@ export const useMemberColumns = () => {
     {
       key: "Display name",
       content: t("workspace_settings.settings.members.details.display_name"),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="display_name"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
 
     {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="email"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <div className="w-48 truncate">{rowData.member.email}</div>,
     },
 
     {
       key: "Account type",
       content: t("workspace_settings.settings.members.details.account_type"),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="role"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
     },
 
@@ -70,6 +111,13 @@ export const useMemberColumns = () => {
     {
       key: "Joining date",
       content: t("workspace_settings.settings.members.details.joining_date"),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="joining_date"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];
