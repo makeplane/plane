@@ -8,13 +8,15 @@ export type TPageDescriptionPayload = {
   description: object;
 };
 
-export class ProjectPageCoreService extends APIService {
+export abstract class PageCoreService extends APIService {
+  protected abstract basePath: string;
+
   constructor() {
     super();
   }
 
-  protected async fetchDetails(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, {
+  async fetchDetails(pageId: string): Promise<TPage> {
+    return this.get(`${this.basePath}/pages/${pageId}/`, {
       headers: this.getHeader(),
     })
       .then((response) => response?.data)
@@ -23,8 +25,8 @@ export class ProjectPageCoreService extends APIService {
       });
   }
 
-  protected async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
+  async fetchDescriptionBinary(pageId: string): Promise<any> {
+    return this.get(`${this.basePath}/pages/${pageId}/description/`, {
       headers: {
         ...this.getHeader(),
         "Content-Type": "application/octet-stream",
@@ -37,13 +39,8 @@ export class ProjectPageCoreService extends APIService {
       });
   }
 
-  protected async updateDescriptionBinary(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    data: TPageDescriptionPayload
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data, {
+  async updateDescriptionBinary(pageId: string, data: TPageDescriptionPayload): Promise<any> {
+    return this.patch(`${this.basePath}/pages/${pageId}/description/`, data, {
       headers: this.getHeader(),
     })
       .then((response) => response?.data)

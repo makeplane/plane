@@ -1,26 +1,35 @@
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
 import { logger } from "@plane/logger";
 // lib
-import { ProjectPageService } from "@/services/project-page";
+import { getPageService } from "@/services/page/handler";
 // types
 import { TDocumentTypes } from "@/types";
-
-const projectPageService = new ProjectPageService();
+// utils
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/utils";
 
 const onFetch = async ({ context, documentName, requestParameters }: any) => {
   try {
-    const documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes | undefined;
     const params = {
       ...context,
       ...requestParameters,
       pageId: documentName,
     };
-    // fetch document
-    if (documentType === "project_page") {
-      const data = await projectPageService.fetchDocument(params);
-      return data;
+
+    const service = getPageService(params);
+
+    // fetch details
+    const response = await service.fetchDescriptionBinary(params.pageId);
+    const binaryData = new Uint8Array(response);
+    // if binary data is empty, convert HTML to binary data
+    if (binaryData.byteLength === 0) {
+      const pageDetails = await service.fetchDetails(params.pageId);
+      const convertedBinaryData = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
+      if (convertedBinaryData) {
+        return convertedBinaryData;
+      }
     }
-    throw new Error(`Invalid document type ${documentType} provided.`);
+    // return binary data
+    return binaryData;
   } catch (error) {
     logger.error("Error in fetching document", error);
     return null;
@@ -29,18 +38,22 @@ const onFetch = async ({ context, documentName, requestParameters }: any) => {
 
 const onStore = async ({ context, state, documentName, requestParameters }: any) => {
   try {
-    const documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes | undefined;
     const params = {
       ...context,
       ...requestParameters,
       pageId: documentName,
+      data: state,
     };
-    // store document
-    if (documentType === "project_page") {
-      await projectPageService.storeDocument(params, state);
-      return;
-    }
-    throw new Error(`Invalid document type ${documentType} provided.`);
+    const service = getPageService(params);
+    // convert binary data to all formats
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(params.data);
+    // create payload
+    const payload = {
+      description_binary: contentBinaryEncoded,
+      description_html: contentHTML,
+      description: contentJSON,
+    };
+    return service.updateDescriptionBinary(params.pageId, payload);
   } catch (error) {
     logger.error("Error in updating document:", error);
   }
