@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -32,27 +32,25 @@ import {
   ChangeIssueAssignee,
   ChangeIssuePriority,
   ChangeIssueState,
+  CommandPaletteCycleSelector,
+  CommandPaletteEntityList,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
   CommandPaletteProjectActions,
+  CommandPaletteProjectSelector,
   CommandPaletteSearchResults,
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
-} from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import {
-  CommandPaletteProjectSelector,
-  CommandPaletteCycleSelector,
-  CommandPaletteEntityList,
   useKeySequence,
 } from "@/components/command-palette";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useCycle } from "@/hooks/store/use-cycle";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -329,14 +327,7 @@ export const CommandModal: React.FC = observer(() => {
                     shouldFilter={searchTerm.length > 0}
                     onKeyDown={(e: any) => {
                       const key = e.key.toLowerCase();
-                      if (
-                        !e.metaKey &&
-                        !e.ctrlKey &&
-                        !e.altKey &&
-                        !e.shiftKey &&
-                        !page &&
-                        searchTerm === ""
-                      ) {
+                      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !page && searchTerm === "") {
                         handleKeySequence(e);
                       }
                       if ((e.metaKey || e.ctrlKey) && key === "k") {
@@ -628,9 +619,7 @@ export const CommandModal: React.FC = observer(() => {
                           cycles={cycleOptions}
                           onSelect={(cycle) => {
                             closePalette();
-                            router.push(
-                              `/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`
-                            );
+                            router.push(`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`);
                           }}
                         />
                       )}
@@ -643,9 +632,7 @@ export const CommandModal: React.FC = observer(() => {
                                 heading="Issues"
                                 items={recentIssues}
                                 getKey={(issue) => issue.id}
-                                getLabel={(issue) =>
-                                  `${issue.project_identifier}-${issue.sequence_id} ${issue.name}`
-                                }
+                                getLabel={(issue) => `${issue.project_identifier}-${issue.sequence_id} ${issue.name}`}
                                 renderItem={(issue) => (
                                   <div className="flex items-center gap-2">
                                     <IssueIdentifier
@@ -682,17 +669,17 @@ export const CommandModal: React.FC = observer(() => {
                               heading="Issues"
                               items={issueResults}
                               getKey={(issue) => issue.id}
-                              getLabel={(issue) =>
-                                `${issue.project__identifier}-${issue.sequence_id} ${issue.name}`
-                              }
+                              getLabel={(issue) => `${issue.project__identifier}-${issue.sequence_id} ${issue.name}`}
                               renderItem={(issue) => (
                                 <div className="flex items-center gap-2">
-                                  <IssueIdentifier
-                                    projectId={issue.project_id}
-                                    projectIdentifier={issue.project__identifier}
-                                    issueSequenceId={issue.sequence_id}
-                                    textContainerClassName="text-sm text-custom-text-200"
-                                  />
+                                  {issue.project_id && issue.project__identifier && issue.sequence_id && (
+                                    <IssueIdentifier
+                                      projectId={issue.project_id}
+                                      projectIdentifier={issue.project__identifier}
+                                      issueSequenceId={issue.sequence_id}
+                                      textContainerClassName="text-sm text-custom-text-200"
+                                    />
+                                  )}
                                   <span className="truncate">{issue.name}</span>
                                 </div>
                               )}
