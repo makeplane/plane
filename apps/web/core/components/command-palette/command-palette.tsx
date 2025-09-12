@@ -15,7 +15,6 @@ import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -33,6 +32,7 @@ import {
   getWorkspaceShortcutsList,
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
+import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 
 export const CommandPalette: FC = observer(() => {
   // router params
@@ -161,7 +161,7 @@ export const CommandPalette: FC = observer(() => {
   );
 
   const keySequence = useRef("");
-  const sequenceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const sequenceTimeout = useRef<number | null>(null);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -193,8 +193,8 @@ export const CommandPalette: FC = observer(() => {
 
       if (!cmdClicked && !altKey && !shiftKey && !isAnyModalOpen) {
         keySequence.current = (keySequence.current + keyPressed).slice(-2);
-        if (sequenceTimeout.current) clearTimeout(sequenceTimeout.current);
-        sequenceTimeout.current = setTimeout(() => {
+        if (sequenceTimeout.current) window.clearTimeout(sequenceTimeout.current);
+        sequenceTimeout.current = window.setTimeout(() => {
           keySequence.current = "";
         }, 500);
         const entityShortcutMap: Record<string, CommandPaletteEntity> = {
