@@ -8,7 +8,6 @@ import { Controller, useForm } from "react-hook-form";
 import type { EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, type TNameDescriptionLoader } from "@plane/types";
-import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -17,6 +16,9 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+// local imports
+import { DescriptionInputLoader } from "./loader";
+// services init
 const workspaceService = new WorkspaceService();
 
 type TFormData = {
@@ -25,18 +27,57 @@ type TFormData = {
 };
 
 type Props = {
+  /**
+   * @description Container class name, this will be used to add custom styles to the editor container
+   */
   containerClassName?: string;
+  /**
+   * @description Disabled, this will be used to disable the editor
+   */
   disabled?: boolean;
+  /**
+   * @description Disabled extensions, this will be used to disable the extensions in the editor
+   */
   disabledExtensions?: TExtensions[];
+  /**
+   * @description Editor ref, this will be used to imperatively attach editor related helper functions
+   */
   editorRef?: React.RefObject<EditorRefApi>;
+  /**
+   * @description Entity ID, this will be used for file uploads and as the unique identifier for the entity
+   */
   entityId: string;
+  /**
+   * @description File asset type, this will be used to upload the file to the editor
+   */
   fileAssetType: EFileAssetType;
+  /**
+   * @description Initial value, pass the actual description to initialize the editor
+   */
   initialValue: string | undefined;
+  /**
+   * @description Submit handler, the actual function which will be called when the form is submitted
+   */
   onSubmit: (value: string) => Promise<void>;
+  /**
+   * @description Placeholder, if not provided, the placeholder will be the default placeholder
+   */
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  /**
+   * @description projectId, if not provided, the entity will be considered as a workspace entity
+   */
   projectId?: string;
+  /**
+   * @description Set is submitting, use it to set the loading state of the form
+   */
   setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
+  /**
+   * @description SWR description, use it only if you want to sync changes in realtime(pseudo realtime)
+   */
   swrDescription?: string | null | undefined;
+  /**
+   * @description Workspace slug, this will be used to get the workspace details
+   */
   workspaceSlug: string;
 };
 
@@ -193,9 +234,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
           )}
         />
       ) : (
-        <Loader>
-          <Loader.Item height="150px" />
-        </Loader>
+        <DescriptionInputLoader />
       )}
     </>
   );
