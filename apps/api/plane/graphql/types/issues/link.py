@@ -1,23 +1,25 @@
 # python imports
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 # Strawberry imports
 import strawberry
 import strawberry_django
+from strawberry.scalars import JSON
 
 # Module Imports
-from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import IssueLink
+from plane.graphql.utils.timezone import user_timezone_converter
 
 
 @strawberry_django.type(IssueLink)
 class IssueLinkType:
     id: strawberry.ID
-    title: str
+    title: Optional[str]
     url: str
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+    metadata: Optional[JSON]
 
     @strawberry.field
     def workspace(self) -> strawberry.ID:

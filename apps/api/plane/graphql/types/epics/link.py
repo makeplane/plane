@@ -6,6 +6,7 @@ from typing import Optional
 # Strawberry imports
 import strawberry
 import strawberry_django
+from strawberry.scalars import JSON
 
 # Module Imports
 from plane.db.models import IssueLink
@@ -31,6 +32,7 @@ class EpicLinkType:
     id: strawberry.ID
     title: Optional[str]
     url: str
+    metadata: Optional[JSON]
 
     @strawberry.field
     def workspace(self) -> strawberry.ID:
