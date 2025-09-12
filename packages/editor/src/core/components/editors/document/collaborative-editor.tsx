@@ -99,6 +99,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         tabIndex={tabIndex}
         flaggedExtensions={flaggedExtensions}
         disabledExtensions={disabledExtensions}
+        extendedDocumentEditorProps={extendedDocumentEditorProps}
       />
     </>
   );
