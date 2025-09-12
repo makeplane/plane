@@ -20,7 +20,7 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import FileAsset, Workspace
 from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission

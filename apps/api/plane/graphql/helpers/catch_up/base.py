@@ -109,7 +109,7 @@ def get_catch_ups(
         Notification.objects.filter(project_teamspace_filter.query)
         .filter(workspace__slug=workspace_slug)
         .filter(receiver_id=user_id)
-        .filter(entity_name__in=["issue"])
+        .filter(entity_name__in=["issue", "epic"])
         .filter(read_at__isnull=True)
         .values("entity_identifier", "entity_name", "project_id")
         .annotate(count=Count("id"))

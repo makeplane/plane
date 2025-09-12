@@ -801,10 +801,6 @@ def notifications(
                 bulk_email_logs, batch_size=100, ignore_conflicts=True
             )
 
-            # currently disabled the push notifications for epics in mobile.
-            if issue.type and issue.type.is_epic:
-                return
-
             """
             # Send Mobile Push Notifications for state, assignee, priority,
             # start_date, target_date, and parent issue changes

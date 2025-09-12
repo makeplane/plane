@@ -5,7 +5,7 @@ from enum import Enum
 from celery import shared_task
 
 # Module imports
-from plane.db.models import User, Workspace
+from plane.db.models import IssueType, User, Workspace
 from plane.graphql.helpers.catch_up import push_notification_catch_up
 
 # Local module imports
@@ -111,6 +111,7 @@ def construct_issue_notification_details(notification: dict) -> dict:
                 "id": notification_issue.get("id", ""),
                 "sequence_id": notification_issue.get("sequence_id", ""),
                 "name": notification_issue.get("name", ""),
+                "type_id": notification_issue.get("type_id", ""),
             },
             "activity": {
                 "id": notification_issue_activity.get("id", ""),
@@ -197,6 +198,11 @@ def issue_push_notifications(notification):
             else ""
         )
 
+        is_epic = False
+        issue_type_id = notification_issue.get("type_id", "")
+        if issue_type_id not in ["", "None", None]:
+            is_epic = IssueType.objects.filter(id=issue_type_id, is_epic=True).exists()
+
         # unread notification count
         unread_notification_count = notification_count(
             user_id=receiver_id, workspace_slug=None, mentioned=False, combined=True
@@ -212,6 +218,11 @@ def issue_push_notifications(notification):
             entity_identifier=issue_id,
         )
 
+        notification_type = (
+            IssuePushNotificationTypes.EPIC_UPDATED.value
+            if is_epic
+            else IssuePushNotificationTypes.ISSUE_UPDATED.value
+        )
         title = f"{project_identifier}-{issue_sequence_id} - {issue_name}"
         data = {
             # deprecated fields
@@ -221,12 +232,12 @@ def issue_push_notifications(notification):
             "userId": receiver_id,
             "notificationId": notification_id,
             # new fields
-            "type": IssuePushNotificationTypes.ISSUE_UPDATED.value,
+            "type": notification_type,
             "user_id": receiver_id,
             "workspace_slug": workspace_slug,
             "project_id": project_id,
             "issue_id": issue_id,
-            "epic_id": "",
+            "epic_id": issue_type_id if is_epic else "",
             "intake_id": "",
             "notification_id": notification_id,
             "issue_activity_id": issue_activity_id,

@@ -411,9 +411,10 @@ class EpicMutation:
         # Track the issue
         issue_activity.delay(
             type="issue.activity.deleted",
-            requested_data=json.dumps({"epic_id": str(epic)}),
+            requested_data=json.dumps({"issue_id": str(epic)}),
             actor_id=user_id,
             issue_id=epic_id,
+            notification=True,
             project_id=str(project),
             current_instance=current_epic_activity,
             epoch=int(timezone.now().timestamp()),
