@@ -1,4 +1,5 @@
 // helpers
+import update from "lodash/update";
 import { action, makeObservable, observable, runInAction, set } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -8,7 +9,6 @@ import { ApplicationService } from "@/plane-web/services/marketplace/application
 import { CategoryService } from "@/plane-web/services/marketplace/category.service";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
-import update from "lodash/update";
 
 export interface IApplicationStore {
   // observables

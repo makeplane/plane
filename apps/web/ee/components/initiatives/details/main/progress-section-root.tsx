@@ -3,8 +3,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
 import { InfoIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TStateAnalytics } from "@plane/types";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";

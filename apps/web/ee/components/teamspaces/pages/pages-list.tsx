@@ -44,18 +44,13 @@ export const TeamspacePagesList = observer((props: Props) => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // plane web hooks
-  const {
-    getTeamspacePagesLoader,
-    getTeamspacePageIds,
-    getFilteredTeamspacePageIds,
-    getTeamspacePagesFilters,
-    createPage,
-  } = usePageStore(EPageStoreType.TEAMSPACE);
+  const { loader, getCurrentTeamspacePageIds, getCurrentTeamspaceFilteredPageIdsByTab, filters, createPage } =
+    usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
-  const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
-  const teamspacePageIds = getTeamspacePageIds(teamspaceId);
-  const filteredTeamspacePageIds = getFilteredTeamspacePageIds(teamspaceId);
-  const teamspacePagesFilters = getTeamspacePagesFilters(teamspaceId);
+  const teamspacePagesLoader = loader;
+  const teamspacePageIds = getCurrentTeamspacePageIds(teamspaceId);
+  const filteredTeamspacePageIds = getCurrentTeamspaceFilteredPageIdsByTab("public"); // Default to public
+  const teamspacePagesFilters = filters;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE

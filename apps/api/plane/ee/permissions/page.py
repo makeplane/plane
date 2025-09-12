@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.db.models import WorkspaceMember, ProjectMember, Page
 from plane.app.permissions import ROLE
-from plane.ee.models import PageUser
+from plane.ee.models import PageUser, TeamspaceMember
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
@@ -18,6 +18,47 @@ GUEST = ROLE.GUEST.value
 VIEW = PageUser.AccessLevel.VIEW
 COMMENT = PageUser.AccessLevel.COMMENT
 EDIT = PageUser.AccessLevel.EDIT
+
+
+def has_shared_page_access(request, slug, page_id, project_id=None):
+    """
+    Check if the user has permission to access a shared (private) page.
+    Requires the SHARED_PAGES feature to be enabled.
+    """
+    user_id = request.user.id
+    method = request.method
+
+    if method in SAFE_METHODS:
+        return PageUser.objects.filter(
+            page_id=page_id,
+            user_id=user_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            access__in=[VIEW, COMMENT, EDIT],
+        ).exists()
+
+    # Only users with explicit create access can POST
+    if method == "POST":
+        return PageUser.objects.filter(
+            page_id=page_id,
+            user_id=user_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            access=EDIT,
+        ).exists()
+
+    # View, comment, or edit access is allowed for safe methods and updates
+    if method in ["PUT", "PATCH", "DELETE"]:
+        return PageUser.objects.filter(
+            page_id=page_id,
+            user_id=user_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            access=EDIT,
+        ).exists()
+
+    # Deny for any other unsupported method
+    return False
 
 
 class WorkspacePagePermission(BasePermission):
@@ -53,7 +94,7 @@ class WorkspacePagePermission(BasePermission):
                     slug=slug,
                     user_id=user_id,
                 ):
-                    return self._has_shared_page_access(request, slug, page.id)
+                    return has_shared_page_access(request, slug, page.id)
                 # If shared pages feature is not enabled, only the owner can access
                 return False
 
@@ -62,42 +103,6 @@ class WorkspacePagePermission(BasePermission):
 
         return True
 
-    def _has_shared_page_access(self, request, slug, page_id):
-        """
-        Check if the user has permission to access a shared (private) page.
-        Requires the SHARED_PAGES feature to be enabled.
-        """
-        user_id = request.user.id
-        method = request.method
-
-        if method in SAFE_METHODS:
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                access__in=[VIEW, COMMENT, EDIT],
-            ).exists()
-
-        # Only users with explicit create access can POST
-        if method == "POST":
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                access=EDIT,
-            ).exists()
-
-        # View, comment, or edit access is allowed for safe methods and updates
-        if method in ["PUT", "PATCH", "DELETE"]:
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                access=EDIT,
-            ).exists()
-
-        # Deny for any other unsupported method
-        return False
 
     def _has_public_page_access(self, request, slug):
         """
@@ -195,7 +200,7 @@ class ProjectPagePermission(BasePermission):
                     slug=slug,
                     user_id=user_id,
                 ):
-                    return self._has_shared_page_access(
+                    return has_shared_page_access(
                         request, slug, page.id, project_id
                     )
                 # If shared pages feature is not enabled, only the owner can access
@@ -212,45 +217,6 @@ class ProjectPagePermission(BasePermission):
         else:
             return True
 
-    def _has_shared_page_access(self, request, slug, page_id, project_id):
-        """
-        Check if the user has permission to access a shared (private) page.
-        Requires the SHARED_PAGES feature to be enabled.
-        """
-        user_id = request.user.id
-        method = request.method
-
-        if method in SAFE_METHODS:
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                project_id=project_id,
-                access__in=[VIEW, COMMENT, EDIT],
-            ).exists()
-
-        # Only users with explicit create access can POST
-        if method == "POST":
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                project_id=project_id,
-                access=EDIT,
-            ).exists()
-
-        # View, comment, or edit access is allowed for safe methods and updates
-        if method in ["PUT", "PATCH", "DELETE"]:
-            return PageUser.objects.filter(
-                page_id=page_id,
-                user_id=user_id,
-                workspace__slug=slug,
-                project_id=project_id,
-                access=EDIT,
-            ).exists()
-
-        # Deny for any other unsupported method
-        return False
 
     def _has_public_page_access(self, request, slug, project_id):
         """
@@ -317,3 +283,51 @@ class ProjectPagePermission(BasePermission):
 
         # Deny by default
         return False
+
+
+class TeamspacePagePermission(BasePermission):
+    """
+    Custom permission to control access to pages within a teamspace
+    """
+
+    def has_permission(self, request, view):
+        """
+        Check basic teamspace-level permissions before checking object-level permissions.
+        """
+        if request.user.is_anonymous:
+            return False
+
+        user_id = request.user.id
+        slug = view.kwargs.get("slug")
+        team_space_id = view.kwargs.get("team_space_id")
+        page_id = view.kwargs.get("page_id")
+
+        if not TeamspaceMember.objects.filter(
+            member_id=user_id,
+            workspace__slug=slug,
+            team_space_id=team_space_id,
+        ).exists():
+            return False
+
+        if page_id:
+            page = Page.objects.get(id=page_id, workspace__slug=slug)
+
+            # Allow access if the user is the owner of the page
+            if page.owned_by_id == user_id:
+                return True
+
+            # If the page is private, check access based on shared page feature flag
+            if page.access == Page.PRIVATE_ACCESS:
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.SHARED_PAGES,
+                    slug=slug,
+                    user_id=user_id,
+                ):
+                    return has_shared_page_access(request, slug, page.id)
+                # If shared pages feature is not enabled, only the owner can access
+                return False
+
+            # If the page is public
+            return True
+
+        return True

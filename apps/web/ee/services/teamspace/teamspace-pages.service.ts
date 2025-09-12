@@ -271,4 +271,60 @@ export class TeamspacePageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Fetch parent pages for a teamspace page
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @returns
+   */
+  async fetchParentPages(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/parent-pages`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Move a page between teamspaces
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @param newTeamspaceId
+   * @returns
+   */
+  async move(workspaceSlug: string, teamspaceId: string, pageId: string, newTeamspaceId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/move`, {
+      teamspace_id: newTeamspaceId,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Fetch pages by type for a teamspace
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param type
+   * @param searchQuery
+   * @returns
+   */
+  async fetchPagesByType(
+    workspaceSlug: string,
+    teamspaceId: string,
+    type: string,
+    searchQuery?: string
+  ): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/`, {
+      params: { search: searchQuery, type },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

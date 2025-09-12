@@ -88,7 +88,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   }
 
   get subPageIds() {
-    const pages = Object.values(this.rootStore.projectPages.data);
+    const pages = Object.values(this.rootStore.teamspaceRoot.teamspacePage.data);
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
@@ -187,9 +187,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    return false;
-    // const userRole = this.getUserWorkspaceRole();
-    // return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    const userRole = this.getUserWorkspaceRole();
+    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -210,9 +209,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    return false;
-    // const userRole = this.getUserWorkspaceRole();
-    // return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    const userRole = this.getUserWorkspaceRole();
+    return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
@@ -268,7 +266,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
 
       runInAction(() => {
         for (const page of subPages) {
-          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new TeamspacePage(this.rootStore, page));
+          if (page?.id)
+            set(this.rootStore.teamspaceRoot.teamspacePage.data, [page.id], new TeamspacePage(this.rootStore, page));
         }
       });
     } catch (error) {

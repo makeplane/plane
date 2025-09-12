@@ -2,17 +2,19 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
+import useSWR from "swr";
+import { FileText, ChevronRight } from "lucide-react";
 // plane imports
 import { TeamsIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader } from "@plane/ui";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, CustomMenu } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherLabel } from "@/components/common/switcher-label";
+import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
@@ -31,14 +33,35 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { loader, getTeamspaceById } = useTeamspaces();
-  const { getTeamspacePageIds, getPageById } = usePageStore(storeType);
+  const { getCurrentTeamspacePageIds, getPageById, fetchParentPages, getOrderedParentPages, isNestedPagesEnabled } =
+    usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
   });
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const teamspacePageIds = getTeamspacePageIds(teamspaceId?.toString());
+  const teamspacePageIds = getCurrentTeamspacePageIds(teamspaceId?.toString());
+
+  // Always fetch parent pages to keep the cache up-to-date
+  const { isLoading: isParentPagesLoading } = useSWR(
+    workspaceSlug && teamspaceId && pageId ? `TEAMSPACE_PARENT_PAGES_LIST_${pageId.toString()}` : null,
+    workspaceSlug && teamspaceId && pageId ? () => fetchParentPages(pageId.toString()) : null
+  );
+
+  // Get ordered parent pages from store
+  const orderedParentPages = pageId ? getOrderedParentPages(pageId.toString()) : undefined;
+
+  // Now use orderedParentPages from store for UI logic
+  const isRootPage = orderedParentPages?.length === 1;
+  const rootParentDetails = orderedParentPages?.[0]; // First item is the root
+  const middleParents = orderedParentPages?.slice(1, -1) ?? []; // Middle items (excluding root and current)
+
+  const BreadcrumbSeparator = () => (
+    <div className="flex items-center px-2 text-custom-text-300">
+      <ChevronRight className="size-3" />
+    </div>
+  );
 
   const switcherOptions = teamspacePageIds
     ?.map((id) => {
@@ -62,9 +85,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div className="flex items-center gap-4">
-          {/* bread crumps */}
-          <Breadcrumbs>
+        <div className="w-full overflow-hidden">
+          <Breadcrumbs isLoading={loader === "init-loader"}>
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -98,10 +120,62 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                 />
               }
             />
+            {isNestedPagesEnabled(workspaceSlug?.toString()) && (
+              <>
+                {isParentPagesLoading ? (
+                  <div className="flex items-center">
+                    <div className="flex items-center animate-pulse">
+                      <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {!isRootPage && rootParentDetails?.id && (
+                      <div className="flex items-center">
+                        <PageBreadcrumbItem
+                          pageId={rootParentDetails.id}
+                          storeType={storeType}
+                          href={`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${rootParentDetails.id}`}
+                        />
+                      </div>
+                    )}
+
+                    {middleParents.length > 0 && (
+                      <div className="flex items-center">
+                        <BreadcrumbSeparator />
+                        <CustomMenu placement="bottom-start" ellipsis>
+                          {middleParents.map(
+                            (parent, index) =>
+                              parent.id && (
+                                <div
+                                  key={parent.id}
+                                  style={{
+                                    paddingLeft: `${index * 16}px`,
+                                  }}
+                                >
+                                  <CustomMenu.MenuItem
+                                    className="flex items-center gap-1 transition-colors duration-200 ease-in-out"
+                                    onClick={() =>
+                                      router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${parent.id}`)
+                                    }
+                                  >
+                                    <PageBreadcrumbItem pageId={parent.id} storeType={storeType} showLogo />
+                                  </CustomMenu.MenuItem>
+                                </div>
+                              )
+                          )}
+                        </CustomMenu>
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+            {orderedParentPages && orderedParentPages.length > 1 && <BreadcrumbSeparator />}
             <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationSearchDropdown
-                  selectedItem={pageId?.toString()}
+                  selectedItem={pageId?.toString() ?? ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${value}`);

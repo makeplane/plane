@@ -1,9 +1,8 @@
 import { observer } from "mobx-react";
-import useSWR from "swr";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // components
-import { ProjectPagesListHeaderRoot } from "@/components/pages/header";
+import { PagesListHeaderRoot } from "@/components/pages/header";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { ProjectPagesListRoot } from "./list";
@@ -26,7 +25,7 @@ export const ProjectPagesListView: React.FC<TPageView> = observer((props) => {
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       {/* tab header */}
       {isAnyPageAvailable && (
-        <ProjectPagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
+        <PagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
       )}
       <ProjectPagesListRoot pageType={pageType} workspaceSlug={workspaceSlug} projectId={projectId} />
     </div>

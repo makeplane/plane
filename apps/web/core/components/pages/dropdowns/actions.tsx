@@ -7,7 +7,6 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { ArchiveIcon } from "@plane/propel/icons";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
@@ -130,6 +129,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
       access,
       archived_at,
       canCurrentUserChangeAccess,
+      isProjectPage,
       canCurrentUserDeletePage,
       canCurrentUserDuplicatePage,
       pageOperations,

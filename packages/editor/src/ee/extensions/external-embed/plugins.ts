@@ -4,9 +4,9 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import { find } from "linkifyjs";
 // plane editor imports
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 
 export const EXTERNAL_EMBED_PASTE_PLUGIN_KEY = new PluginKey("externalEmbedPastePlugin");
 

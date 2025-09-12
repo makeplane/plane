@@ -5,7 +5,7 @@ import base64
 from datetime import datetime
 
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField
+from django.db.models import Exists, OuterRef, Q, Value, UUIDField, Subquery, Func, F, Count
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -18,7 +18,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import TeamspaceBaseEndpoint
+from plane.ee.views.app.teamspace.base import TeamspaceBaseEndpoint
 from plane.ee.permissions import TeamspacePermission
 from plane.db.models import (
     Workspace,
@@ -28,12 +28,14 @@ from plane.db.models import (
     PageVersion,
     ProjectMember,
 )
-from plane.ee.models import TeamspacePage
+
+from plane.ee.models import TeamspacePage, TeamspaceMember, PageUser
 from plane.ee.serializers import (
     TeamspacePageDetailSerializer,
     TeamspacePageSerializer,
     TeamspacePageVersionSerializer,
     TeamspacePageVersionDetailSerializer,
+    TeamspacePageLiteSerializer,
 )
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag import FeatureFlag
@@ -43,6 +45,7 @@ from plane.bgtasks.page_version_task import page_version
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
+from plane.ee.utils.page_descendants import get_all_parent_ids
 
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
@@ -55,15 +58,23 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             entity_identifier=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        user_pages = PageUser.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            user_id=self.request.user.id,
+        ).values_list("page_id", flat=True)
+
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter()
-            .filter(parent__isnull=True)
+            .filter(
+                projects__archived_at__isnull=True,
+            )
+            .filter(moved_to_page__isnull=True)
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .select_related("workspace")
+            .select_related("parent")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
-            .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
             .annotate(
                 label_ids=Coalesce(
@@ -77,7 +88,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
             .annotate(
                 anchor=DeployBoard.objects.filter(
-                    entity_name="page",
+                    entity_name="teamspace_page",
                     entity_identifier=OuterRef("pk"),
                     workspace__slug=self.kwargs.get("slug"),
                 ).values("anchor")
@@ -87,6 +98,23 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                     page_id=OuterRef("pk"),
                     team_space_id=self.kwargs.get("team_space_id"),
                 ).values("team_space_id")
+            )
+            .annotate(
+                shared_access=Subquery(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                        user_id=self.request.user.id,
+                    ).values("access")[:1]
+                )
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
             )
             .distinct()
         )
@@ -98,13 +126,39 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             serializer = TeamspacePageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        search = request.query_params.get("search")
+        page_type = request.query_params.get("type", "public")
+
+        filters = Q()
+        if search:
+            filters &= Q(name__icontains=search)
+        elif page_type == "archived":
+            filters &= Q(archived_at__isnull=False)
+        elif page_type == "public":
+            if search:
+                filters &= Q(access=0, archived_at__isnull=True)
+            else:
+                filters &= Q(parent__isnull=True, access=0, archived_at__isnull=True)
+
         # Get all the pages that are part of the team space
         team_space_pages = TeamspacePage.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("page_id", flat=True)
 
-        pages = self.get_queryset().filter(
-            pk__in=team_space_pages, workspace__slug=slug
+        sub_pages_count = (
+            Page.objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .values("parent")
+            .annotate(count=Count("id"))
+            .values("count")[:1]
+        )
+
+        pages = (
+            self.get_queryset()
+            .filter(moved_to_page__isnull=True)
+            .annotate(sub_pages_count=Subquery(sub_pages_count))
+            .filter(filters)
+            .filter(pk__in=team_space_pages, workspace__slug=slug)
         )
         serializer = TeamspacePageSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -147,7 +201,18 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
+            if serializer.data.get("parent_id"):
+                nested_page_update.delay(
+                    page_id=serializer.data["id"],
+                    action=PageAction.SUB_PAGE,
+                    project_id=None,
+                    slug=slug,
+                    user_id=request.user.id,
+                )
             page = self.get_queryset().filter(pk=serializer.data["id"]).first()
+            if page.parent_id and page.parent.access == Page.PRIVATE_ACCESS:
+                page.owned_by_id = page.parent.owned_by_id
+                page.save()
             serializer = TeamspacePageSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -183,12 +248,41 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        current_instance = TeamspacePageDetailSerializer(page).data
         serializer = TeamspacePageDetailSerializer(
             page, data=request.data, partial=True
         )
         page_description = page.description_html
         if serializer.is_valid():
             serializer.save()
+            if (
+                request.data.get("access")
+                and request.data.get("access") == Page.PUBLIC_ACCESS
+                and current_instance.get("access") == Page.PRIVATE_ACCESS
+            ):
+                nested_page_update.delay(
+                    page_id=page.id,
+                    action=PageAction.UNSHARED,
+                    slug=slug,
+                    project_id=None,
+                    user_id=request.user.id,
+                )
+
+            if request.data.get("parent_id") and current_instance.get(
+                "parent_id"
+            ) != request.data.get("parent_id"):
+                nested_page_update.delay(
+                    page_id=page.id,
+                    action=PageAction.MOVED_INTERNALLY,
+                    slug=slug,
+                    project_id=None,
+                    user_id=request.user.id,
+                    extra={
+                        "old_parent_id": page.parent_id,
+                        "new_parent_id": request.data.get("parent_id"),
+                        "access": request.data.get("access", page.access),
+                    },
+                )
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
@@ -249,7 +343,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         ).delete()
         # Delete the deploy board
         DeployBoard.objects.filter(
-            entity_name="page", entity_identifier=pk, workspace__slug=slug
+            entity_name="teamspace_page", entity_identifier=pk, workspace__slug=slug
         ).delete()
 
         # Capture the team space activity
@@ -271,6 +365,53 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):
+    permission_classes = [TeamspacePermission]
+
+    def get(self, request, slug, team_space_id, page_id):
+        pages = (
+            Page.all_objects.filter(workspace__slug=slug, parent_id=page_id)
+            .annotate(
+                team=TeamspacePage.objects.filter(
+                    page_id=OuterRef("pk"),
+                    team_space_id=self.kwargs.get("team_space_id"),
+                ).values("team_space_id")
+            )
+            .annotate(
+                sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .filter(archived_at__isnull=True)
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+        serializer = TeamspacePageLiteSerializer(pages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
+    permission_classes = [TeamspacePermission]
+
+    def get(self, request, slug, team_space_id, page_id):
+        page_ids = get_all_parent_ids(page_id)
+
+        pages = Page.objects.filter(workspace__slug=slug, id__in=page_ids).annotate(
+            team=TeamspacePage.objects.filter(
+                page_id=OuterRef("pk"),
+                team_space_id=self.kwargs.get("team_space_id"),
+            ).values("team_space_id")
+        )
+
+        # Convert queryset to a dictionary keyed by id
+        page_map = {str(page.id): page for page in pages}
+
+        # Rebuild ordered list based on page_ids
+        ordered_pages = [page_map[str(pid)] for pid in page_ids if str(pid) in page_map]
+
+        serializer = TeamspacePageLiteSerializer(ordered_pages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):

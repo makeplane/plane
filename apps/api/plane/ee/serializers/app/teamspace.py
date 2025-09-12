@@ -88,10 +88,14 @@ class TeamspacePageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent", queryset=Page.objects.all(), required=False, allow_null=True
+    )
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     anchor = serializers.CharField(read_only=True)
     team = serializers.UUIDField(read_only=True)
+    sub_pages_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Page
@@ -116,6 +120,9 @@ class TeamspacePageSerializer(BaseSerializer):
             "label_ids",
             "anchor",
             "team",
+            "sort_order",
+            "sub_pages_count",
+            "parent_id",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
@@ -215,3 +222,31 @@ class TeamspaceActivitySerializer(BaseSerializer):
     class Meta:
         model = TeamspaceActivity
         fields = "__all__"
+
+
+class TeamspacePageLiteSerializer(BaseSerializer):
+    sub_pages_count = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
+    team = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "access",
+            "logo_props",
+            "is_locked",
+            "archived_at",
+            "parent_id",
+            "workspace",
+            "sub_pages_count",
+            "owned_by",
+            "deleted_at",
+            "is_description_empty",
+            "updated_at",
+            "moved_to_page",
+            "moved_to_project",
+            "is_shared",
+            "team",
+        ]

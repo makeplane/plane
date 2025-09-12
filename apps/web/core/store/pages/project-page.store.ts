@@ -575,7 +575,7 @@ export class ProjectPageStore implements IProjectPageStore {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
-              const { name, ...otherFields } = page;
+              const { name: _name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {
               // If new page, create a new instance with all data
@@ -681,14 +681,16 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true)];
+      const promises: Promise<TPage | TPage[]>[] = [
+        this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true),
+      ];
 
       if (shouldFetchSubPages) {
         promises.push(this.service.fetchSubPages(workspaceSlug, projectId, pageId));
       }
 
       const results = await Promise.all(promises);
-      const page = results[0] as TPage | undefined;
+      const page = results[0] as TPage;
       const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
 
       runInAction(() => {

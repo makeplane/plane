@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQueryParams } from "@/hooks/use-query-params";
 import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM } from "@/components/pages/navigation-pane";
+import { useQueryParams } from "@/hooks/use-query-params";
 import type { TPageNavigationPaneTab } from "../components/pages/navigation-pane";
 
 export const usePaneTabToggle = (targetTab: TPageNavigationPaneTab) => {

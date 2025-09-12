@@ -33,21 +33,16 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane web hooks
   const { getTeamspaceMemberIds } = useTeamspaces();
-  const {
-    getTeamspacePagesFilters,
-    updateFilters: updateTeamspaceFilters,
-    createPage,
-  } = usePageStore(EPageStoreType.TEAMSPACE);
+  const { filters, updateFilters, createPage } = usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
-  const filters = getTeamspacePagesFilters(teamspaceId);
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
   // handlers
-  const updateFilters = useCallback(
+  const handleFiltersUpdate = useCallback(
     <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
-      updateTeamspaceFilters(teamspaceId, filterKey, filterValue);
+      updateFilters(filterKey, filterValue);
     },
-    [updateTeamspaceFilters, teamspaceId]
+    [updateFilters]
   );
 
   const handleCreatePage = async () => {
@@ -89,14 +84,14 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
     <>
       <PageSearchInput
         searchQuery={filters.searchQuery}
-        updateSearchQuery={(val) => updateFilters("searchQuery", val)}
+        updateSearchQuery={(val) => handleFiltersUpdate("searchQuery", val)}
       />
       <PageOrderByDropdown
         sortBy={filters.sortBy}
         sortKey={filters.sortKey}
         onChange={(val) => {
-          if (val.key) updateFilters("sortKey", val.key);
-          if (val.order) updateFilters("sortBy", val.order);
+          if (val.key) handleFiltersUpdate("sortKey", val.key);
+          if (val.order) handleFiltersUpdate("sortBy", val.order);
         }}
       />
       <FiltersDropdown
@@ -107,7 +102,7 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
       >
         <PageFiltersSelection
           filters={filters}
-          handleFiltersUpdate={updateFilters}
+          handleFiltersUpdate={handleFiltersUpdate}
           memberIds={teamspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>

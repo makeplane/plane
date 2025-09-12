@@ -26,6 +26,8 @@ from plane.ee.views.app.teamspace import (
     TeamspacePageDuplicateEndpoint,
     TeamspaceProgressSummaryEndpoint,
     AddTeamspaceProjectEndpoint,
+    TeamspaceSubPageEndpoint,
+    TeamspaceParentPageEndpoint,
 )
 
 urlpatterns = [
@@ -81,6 +83,16 @@ urlpatterns = [
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/",
         TeamspacePageEndpoint.as_view(),
         name="teamspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/sub-pages/",
+        TeamspaceSubPageEndpoint.as_view(),
+        name="project-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/parent-pages/",
+        TeamspaceParentPageEndpoint.as_view(),
+        name="project-parent-pages",
     ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/duplicate/",

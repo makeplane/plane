@@ -566,7 +566,6 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   /**
    * @description fetch the details of a page
-   * @param {string} pageId
    */
   fetchPageDetails: IWorkspacePageStore["fetchPageDetails"] = async (pageId, options) => {
     const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
@@ -581,14 +580,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
+      const promises: Promise<TPage | TPage[]>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
 
       if (shouldFetchSubPages) {
         promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));
       }
 
       const results = await Promise.all(promises);
-      const page = results[0] as TPage | undefined;
+      const page = results[0] as TPage;
       const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
 
       runInAction(() => {

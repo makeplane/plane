@@ -18,6 +18,8 @@ from .page import (
     TeamspacePageLockEndpoint,
     TeamspacePageFavoriteEndpoint,
     TeamspacePageDuplicateEndpoint,
+    TeamspaceSubPageEndpoint,
+    TeamspaceParentPageEndpoint,
 )
 from .issue import TeamspaceIssueEndpoint, TeamspaceUserPropertiesEndpoint
 from .activity import TeamspaceActivityEndpoint

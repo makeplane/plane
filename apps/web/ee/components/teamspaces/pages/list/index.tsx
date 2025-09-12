@@ -5,14 +5,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import {
-  EPageAccess,
-  EUserPermissionsLevel,
-  PROJECT_PAGE_TRACKER_ELEMENTS,
-  PROJECT_PAGE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, type TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
+import type { TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -21,64 +16,66 @@ import { PageLoader } from "@/components/pages/loaders/page-loader";
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import useDebounce from "@/hooks/use-debounce";
-// plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
 
-const storeType = EPageStoreType.PROJECT;
+const storeType = EPageStoreType.TEAMSPACE;
 
 type Props = {
   pageType: TPageNavigationTabs;
   workspaceSlug: string;
-  projectId: string;
+  teamspaceId: string;
 };
 
-export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
-  const { pageType, workspaceSlug, projectId } = props;
+export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
+  const { pageType, workspaceSlug, teamspaceId } = props;
+
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   const [isRootDropping, setIsRootDropping] = useState(false);
+
   // refs
   const rootDropRef = useRef<HTMLDivElement>(null);
+
   // router
   const router = useRouter();
 
   // plane hooks
   const { t } = useTranslation();
+
   // store hooks
-  const { currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { getTeamspaceById } = useTeamspaces();
   const {
     filters,
     fetchPagesByType,
     filteredPublicPageIds,
     filteredArchivedPageIds,
-    filteredPrivatePageIds,
     createPage,
     movePageInternally,
     getPageById,
     isNestedPagesEnabled,
   } = usePageStore(storeType);
 
+  // derived values
+  const currentTeamspace = getTeamspaceById(teamspaceId);
+
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
 
-  // Use SWR to fetch the data but not for rendering
+  // Use SWR to fetch the data
   const { isLoading, data } = useSWR(
-    workspaceSlug && projectId && pageType
-      ? `PROJECT_PAGES_${projectId}_${pageType}_${debouncedSearchQuery || ""}`
+    workspaceSlug && teamspaceId && pageType
+      ? `TEAMSPACE_PAGES_${teamspaceId}_${pageType}_${debouncedSearchQuery || ""}`
       : null,
-    workspaceSlug && projectId && pageType
-      ? () => fetchPagesByType(workspaceSlug, projectId, pageType, debouncedSearchQuery)
+    workspaceSlug && teamspaceId && pageType
+      ? () => fetchPagesByType(workspaceSlug, teamspaceId, pageType, debouncedSearchQuery)
       : null,
     {
       revalidateOnFocus: true,
       revalidateIfStale: true,
-      dedupingInterval: 2000, // Disable deduping to ensure fresh requests
+      dedupingInterval: 2000,
     }
   );
 
@@ -91,44 +88,36 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     switch (pageType) {
       case "public":
         return filteredPublicPageIds;
-      case "private":
-        return filteredPrivatePageIds;
       case "archived":
         return filteredArchivedPageIds;
       default:
         return [];
     }
-  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, debouncedSearchQuery]);
-
-  // derived values - memoized for performance
-  const hasProjectMemberLevelPermissions = useMemo(
-    () => allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT),
-    [allowPermissions]
-  );
+  }, [pageType, filteredPublicPageIds, filteredArchivedPageIds, data, debouncedSearchQuery]);
 
   // handle page create
   const handleCreatePage = async (pageAccess?: EPageAccess) => {
     setIsCreatingPage(true);
 
     const payload: Partial<TPage> = {
-      access: pageAccess || (pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC),
+      access: pageAccess || EPageAccess.PUBLIC, // Always public for teamspaces
     };
 
     await createPage(payload)
       .then((res) => {
         captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
           payload: {
             id: res?.id,
             state: "SUCCESS",
           },
         });
-        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
         captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
           payload: {
             state: "ERROR",
           },
@@ -141,11 +130,6 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
       })
       .finally(() => setIsCreatingPage(false));
   };
-
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   // Root level drop target
   useEffect(() => {
@@ -171,23 +155,11 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
           parent_id: null,
         };
 
-        // Update access based on current section
-        let targetAccess: EPageAccess | undefined;
-        if (pageType === "public") {
-          targetAccess = EPageAccess.PUBLIC;
-        } else if (pageType === "private") {
-          targetAccess = EPageAccess.PRIVATE;
-        }
-
-        if (targetAccess && droppedPageDetails.access !== targetAccess) {
-          updatePayload.access = targetAccess;
-        }
-
         movePageInternally(droppedPageId, updatePayload);
       },
       canDrop: ({ source }) => {
         // Don't allow drops if user doesn't have permissions or in archived section
-        if (!hasProjectMemberLevelPermissions || pageType === "archived") {
+        if (pageType === "archived") {
           return false;
         }
 
@@ -200,33 +172,23 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
           sourcePage.isContentEditable &&
           isNestedPagesEnabled(workspaceSlug) &&
           !sourcePage.archived_at &&
-          // For shared pages, only the owner can move them
-          (!sourcePage.is_shared || sourcePage.isCurrentUserOwner)
+          sourcePage.isCurrentUserOwner
         );
       },
     });
-  }, [
-    hasProjectMemberLevelPermissions,
-    pageType,
-    getPageById,
-    isNestedPagesEnabled,
-    workspaceSlug,
-    movePageInternally,
-  ]);
+  }, [pageType, getPageById, isNestedPagesEnabled, workspaceSlug, movePageInternally]);
 
-  const generalPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/pages",
-  });
+  // Empty state images
   const publicPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/public",
-  });
-  const privatePageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/private",
   });
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
   });
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedFiltersImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/all-filters",
+    extension: "svg",
+  });
   const resolvedNameFilterImage = useResolvedAssetPath({
     basePath: "/empty-state/pages/name-filter",
     extension: "svg",
@@ -234,67 +196,36 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
 
   if (isLoading) return <PageLoader />;
 
-  // if no pages exist in the active page type
+  // Empty states
   if (pageIds.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
-          title={t("project_page.empty_state.public.title")}
-          description={t("project_page.empty_state.public.description")}
+          title="No public pages yet"
+          description="Create your first public page to get started"
           assetPath={publicPageResolvedPath}
           primaryButton={{
-            text: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
+            text: isCreatingPage ? "Creating" : "Create public page",
             onClick: () => {
               handleCreatePage();
-              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+              captureClick({ elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON });
             },
-            disabled: !canPerformEmptyStateActions || isCreatingPage,
+            disabled: isCreatingPage,
           }}
         />
       );
-    if (pageType === "private")
-      return (
-        <DetailedEmptyState
-          title={t("project_page.empty_state.private.title")}
-          description={t("project_page.empty_state.private.description")}
-          assetPath={privatePageResolvedPath}
-          primaryButton={{
-            text: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
-            onClick: () => {
-              handleCreatePage();
-              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
-            },
-            disabled: !canPerformEmptyStateActions || isCreatingPage,
-          }}
-        />
-      );
+
     if (pageType === "archived")
       return (
         <DetailedEmptyState
-          title={t("project_page.empty_state.archived.title")}
-          description={t("project_page.empty_state.archived.description")}
+          title="No archived pages"
+          description="Pages you archive will appear here"
           assetPath={archivedPageResolvedPath}
         />
       );
-    // General empty state when no pages are found
-    return (
-      <DetailedEmptyState
-        title={t("project_page.empty_state.general.title")}
-        description={t("project_page.empty_state.general.description")}
-        assetPath={generalPageResolvedPath}
-        primaryButton={{
-          text: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
-          onClick: () => {
-            handleCreatePage();
-            captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
-          },
-          disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
-        }}
-      />
-    );
   }
 
-  // if no pages match the filter criteria
+  // No matching filter results
   if (debouncedSearchQuery && pageIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">

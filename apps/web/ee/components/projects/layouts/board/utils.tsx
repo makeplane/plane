@@ -1,8 +1,8 @@
 // "states" | "state_groups" | "priority" | "created_by";
 
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
-import { IWorkspace, IWorkspaceMember } from "@plane/types";
 import { PriorityIcon } from "@plane/propel/icons";
+import { IWorkspace, IWorkspaceMember } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";

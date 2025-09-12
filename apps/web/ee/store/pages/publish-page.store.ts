@@ -98,7 +98,7 @@ export class PublishPageStore implements IPublishPageStore {
     }
 
     // Check if page exists in teamspace pages store
-    if (teamspaceId && this.rootStore.teamspaceRoot?.teamspacePage?.pageMap?.[teamspaceId]?.[pageID]) {
+    if (teamspaceId && this.rootStore.teamspaceRoot?.teamspacePage?.data?.[pageID]) {
       return { type: "teamspace" as const, teamspaceId };
     }
 
