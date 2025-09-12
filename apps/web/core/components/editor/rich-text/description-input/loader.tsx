@@ -10,12 +10,7 @@ export const DescriptionInputLoader: React.FC<Props> = (props) => {
   const { className } = props;
 
   return (
-    <Loader
-      className={cn(
-        "min-h-[120px] max-h-64 space-y-2 overflow-hidden rounded-md border border-custom-border-200 p-3 py-2 pt-3",
-        className
-      )}
-    >
+    <Loader className={cn("space-y-2", className)}>
       <Loader.Item width="100%" height="26px" />
       <div className="flex items-center gap-2">
         <Loader.Item width="26px" height="26px" />

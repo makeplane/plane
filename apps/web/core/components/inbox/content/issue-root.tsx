@@ -201,7 +201,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             initialValue={issue.description_html ?? "<p></p>"}
             onSubmit={async (value) => {
               if (!issue.id || !issue.project_id) return;
-              issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
                 description_html: value,
               });
             }}
