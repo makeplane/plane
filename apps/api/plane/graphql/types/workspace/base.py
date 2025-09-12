@@ -14,7 +14,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import Workspace, WorkspaceMember
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 

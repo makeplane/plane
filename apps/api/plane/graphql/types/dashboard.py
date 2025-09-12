@@ -4,7 +4,7 @@ from typing import Optional
 import strawberry
 
 # module imports
-from plane.graphql.types.users import UserType, ProfileType
+from plane.graphql.types.user import UserType, ProfileType
 from plane.graphql.types.workspace import WorkspaceType
 from plane.graphql.types.device import DeviceInformationType
 

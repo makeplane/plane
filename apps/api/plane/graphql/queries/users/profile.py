@@ -10,7 +10,7 @@ from strawberry.permission import PermissionExtension
 
 # Module Imports
 from plane.db.models import Profile
-from plane.graphql.types.users import ProfileType
+from plane.graphql.types.user import ProfileType
 from plane.graphql.permissions.workspace import IsAuthenticated
 
 

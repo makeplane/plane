@@ -12,7 +12,7 @@ from asgiref.sync import sync_to_async
 # Module imports
 from plane.db.models import User
 from plane.graphql.permissions.workspace import IsAuthenticated
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 
 
 @strawberry.type

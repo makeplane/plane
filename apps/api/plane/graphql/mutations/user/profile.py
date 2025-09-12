@@ -12,7 +12,7 @@ from strawberry.types import Info
 # Module imports
 from plane.db.models import Profile, WorkspaceMember
 from plane.graphql.permissions.workspace import IsAuthenticated
-from plane.graphql.types.users import ProfileType, ProfileUpdateInputType
+from plane.graphql.types.user import ProfileType, ProfileUpdateInputType
 
 
 @strawberry.type

@@ -11,7 +11,7 @@ from strawberry.scalars import JSON
 # Module Imports
 from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import Module, Issue, ModuleUserProperties
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 
 # Third-party library imports
 from asgiref.sync import sync_to_async
