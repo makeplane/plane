@@ -68,7 +68,7 @@ export const CommandModal: React.FC = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
   // states
-  const [placeholder, setPlaceholder] = useState("Type a command or search...");
+  const [placeholder, setPlaceholder] = useState("Type a command or search");
   const [resultsCount, setResultsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -126,7 +126,7 @@ export const CommandModal: React.FC = observer(() => {
 
   const openProjectSelection = (action: "navigate" | "cycle") => {
     if (!workspaceSlug) return;
-    setPlaceholder("Search projects...");
+    setPlaceholder("Search projects");
     setSearchTerm("");
     setProjectSelectionAction(action);
     setSelectedProjectId(null);
@@ -140,7 +140,7 @@ export const CommandModal: React.FC = observer(() => {
     const currentProject = projectId ? getPartialProjectById(projectId.toString()) : null;
     if (currentProject && currentProject.cycle_view) {
       setSelectedProjectId(projectId.toString());
-      setPlaceholder("Search cycles...");
+      setPlaceholder("Search cycles");
       setSearchTerm("");
       setPages((p) => [...p, "open-cycle"]);
       fetchAllCycles(workspaceSlug.toString(), projectId.toString());
@@ -151,7 +151,7 @@ export const CommandModal: React.FC = observer(() => {
 
   const openIssueList = () => {
     if (!workspaceSlug) return;
-    setPlaceholder("Search issues...");
+    setPlaceholder("Search issues");
     setSearchTerm("");
     setPages((p) => [...p, "open-issue"]);
     workspaceService
@@ -221,7 +221,7 @@ export const CommandModal: React.FC = observer(() => {
   const closePalette = () => {
     toggleCommandPaletteModal(false);
     setPages([]);
-    setPlaceholder("Type a command or search...");
+    setPlaceholder("Type a command or search");
     setProjectSelectionAction(null);
     setSelectedProjectId(null);
   };
@@ -374,9 +374,9 @@ export const CommandModal: React.FC = observer(() => {
                         const newPages = pages.slice(0, -1);
                         const newPage = newPages[newPages.length - 1];
                         setPages(newPages);
-                        if (!newPage) setPlaceholder("Type a command or search...");
-                        else if (newPage === "open-project") setPlaceholder("Search projects...");
-                        else if (newPage === "open-cycle") setPlaceholder("Search cycles...");
+                        if (!newPage) setPlaceholder("Type a command or search");
+                        else if (newPage === "open-project") setPlaceholder("Search projects");
+                        else if (newPage === "open-cycle") setPlaceholder("Search cycles");
                         if (page === "open-cycle") setSelectedProjectId(null);
                         if (page === "open-project" && !newPage) setProjectSelectionAction(null);
                       }
@@ -476,7 +476,7 @@ export const CommandModal: React.FC = observer(() => {
                               <Command.Item onSelect={openProjectList} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <Search className="h-3.5 w-3.5" />
-                                  Open project...
+                                  Open project
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <kbd>O</kbd>
@@ -486,7 +486,7 @@ export const CommandModal: React.FC = observer(() => {
                               <Command.Item onSelect={openCycleList} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <Search className="h-3.5 w-3.5" />
-                                  Open cycle...
+                                  Open cycle
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <kbd>O</kbd>
@@ -496,7 +496,7 @@ export const CommandModal: React.FC = observer(() => {
                               <Command.Item onSelect={openIssueList} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <Search className="h-3.5 w-3.5" />
-                                  Open issue...
+                                  Open recent work items
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <kbd>O</kbd>
@@ -555,7 +555,7 @@ export const CommandModal: React.FC = observer(() => {
                             <Command.Group heading="Workspace Settings">
                               <Command.Item
                                 onSelect={() => {
-                                  setPlaceholder("Search workspace settings...");
+                                  setPlaceholder("Search workspace settings");
                                   setSearchTerm("");
                                   setPages([...pages, "settings"]);
                                 }}
@@ -563,7 +563,7 @@ export const CommandModal: React.FC = observer(() => {
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <Settings className="h-3.5 w-3.5" />
-                                  Search settings...
+                                  Search settings
                                 </div>
                               </Command.Item>
                             </Command.Group>
@@ -577,7 +577,7 @@ export const CommandModal: React.FC = observer(() => {
                             </Command.Item>
                             <Command.Item
                               onSelect={() => {
-                                setPlaceholder("Change interface theme...");
+                                setPlaceholder("Change interface theme");
                                 setSearchTerm("");
                                 setPages([...pages, "change-interface-theme"]);
                               }}
@@ -585,7 +585,7 @@ export const CommandModal: React.FC = observer(() => {
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 <Settings className="h-3.5 w-3.5" />
-                                Change interface theme...
+                                Change interface theme
                               </div>
                             </Command.Item>
                           </Command.Group>
@@ -607,7 +607,7 @@ export const CommandModal: React.FC = observer(() => {
                             } else if (projectSelectionAction === "cycle") {
                               setSelectedProjectId(project.id);
                               setPages((p) => [...p, "open-cycle"]);
-                              setPlaceholder("Search cycles...");
+                              setPlaceholder("Search cycles");
                               fetchAllCycles(workspaceSlug.toString(), project.id);
                             }
                           }}
