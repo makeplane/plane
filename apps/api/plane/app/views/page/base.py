@@ -44,6 +44,22 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 
 
+def unarchive_archive_page_and_descendants(page_id, archived_at):
+    # Your SQL query
+    sql = """
+    WITH RECURSIVE descendants AS (
+        SELECT id FROM pages WHERE id = %s
+        UNION ALL
+        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
+    )
+    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
+    """
+
+    # Execute the SQL query
+    with connection.cursor() as cursor:
+        cursor.execute(sql, [page_id, archived_at])
+
+
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
     model = Page
@@ -309,6 +325,8 @@ class PageViewSet(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
         ).delete()
+
+        unarchive_archive_page_and_descendants(pk, datetime.now())
 
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
