@@ -3,42 +3,44 @@
 from django.db import migrations, models
 
 
+def set_page_sort_order(apps, schema_editor):
+    Page = apps.get_model("db", "Page")
+
+    batch_size = 3000
+    sort_order = 100
+
+    # Get page IDs ordered by name using the historical model
+    # This should include all pages regardless of soft-delete status
+    page_ids = list(Page.objects.all().order_by("name").values_list("id", flat=True))
+
+    updated_pages = []
+    for page_id in page_ids:
+        # Create page instance with minimal data
+        updated_pages.append(Page(id=page_id, sort_order=sort_order))
+        sort_order += 100
+
+        # Bulk update when batch is full
+        if len(updated_pages) >= batch_size:
+            Page.objects.bulk_update(
+                updated_pages, ["sort_order"], batch_size=batch_size
+            )
+            updated_pages = []
+
+    # Update remaining pages
+    if updated_pages:
+        Page.objects.bulk_update(updated_pages, ["sort_order"], batch_size=batch_size)
+
+
+def reverse_set_page_sort_order(apps, schema_editor):
+    Page = apps.get_model("db", "Page")
+    Page.objects.update(sort_order=65535)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
         ("db", "0105_alter_project_cycle_view_and_more"),
     ]
-
-    def set_page_sort_order(apps, schema_editor):
-        Page = apps.get_model("db", "Page")
-
-        batch_size = 3000
-        sort_order = 100
-
-        # Get page IDs ordered by name using the historical model
-        # This should include all pages regardless of soft-delete status
-        page_ids = list(
-            Page.objects.all().order_by("name").values_list("id", flat=True)
-        )
-
-        updated_pages = []
-        for page_id in page_ids:
-            # Create page instance with minimal data
-            updated_pages.append(Page(id=page_id, sort_order=sort_order))
-            sort_order += 100
-
-            # Bulk update when batch is full
-            if len(updated_pages) >= batch_size:
-                Page.objects.bulk_update(
-                    updated_pages, ["sort_order"], batch_size=batch_size
-                )
-                updated_pages = []
-
-        # Update remaining pages
-        if updated_pages:
-            Page.objects.bulk_update(
-                updated_pages, ["sort_order"], batch_size=batch_size
-            )
 
     operations = [
         migrations.AlterField(
@@ -48,5 +50,7 @@ class Migration(migrations.Migration):
                 default="blocked_by", max_length=20, verbose_name="Issue Relation Type"
             ),
         ),
-        migrations.RunPython(set_page_sort_order),
+        migrations.RunPython(
+            set_page_sort_order, reverse_code=reverse_set_page_sort_order
+        ),
     ]
