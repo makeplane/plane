@@ -38,6 +38,8 @@ class Instance(BaseModel):
     is_signup_screen_visited = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     is_test = models.BooleanField(default=False)
+    # field for validating if the current version is deprecated
+    is_current_version_deprecated = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance"
