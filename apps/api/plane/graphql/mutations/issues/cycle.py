@@ -101,13 +101,15 @@ class IssueCycleMutation:
                 updated_by_id=user.id,
             )
 
-            update_cycle_issue_activity = [
-                {
-                    "old_cycle_id": str(removed_cycle_id) if removed_cycle_id else None,
-                    "new_cycle_id": str(cycle),
-                    "issue_id": str(issue),
-                }
-            ]
+            update_cycle_issue_activity = []
+            if removed_cycle_id:
+                update_cycle_issue_activity = [
+                    {
+                        "old_cycle_id": str(removed_cycle_id),
+                        "new_cycle_id": str(new_cycle_id),
+                        "issue_id": str(issue),
+                    }
+                ]
 
             await sync_to_async(issue_activity.delay)(
                 type="cycle.activity.created",
