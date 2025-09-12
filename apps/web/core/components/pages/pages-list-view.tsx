@@ -30,12 +30,7 @@ export const PagesListView: React.FC<TPageView> = observer((props) => {
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       {/* tab header */}
       {isAnyPageAvailable && (
-        <PagesListHeaderRoot
-          pageType={pageType}
-          projectId={projectId}
-          storeType={storeType}
-          workspaceSlug={workspaceSlug}
-        />
+        <PagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
       )}
       <PagesListMainContent pageType={pageType} storeType={storeType}>
         {children}
