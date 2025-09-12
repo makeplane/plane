@@ -14,7 +14,7 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.db.models import CommentReaction
 from plane.graphql.helpers import (
     get_intake_work_item_async,

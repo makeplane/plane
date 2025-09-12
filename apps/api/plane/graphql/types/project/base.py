@@ -126,8 +126,8 @@ class ProjectMemberType:
 
 @strawberry_django.type(Project)
 class ProjectLiteType:
-    id: strawberry.ID
-    name: str
-    identifier: str
-    is_member: Optional[bool]
-    logo_props: JSON
+    id: Optional[strawberry.ID] = None
+    name: Optional[str] = None
+    identifier: Optional[str] = None
+    is_member: Optional[bool] = False
+    logo_props: Optional[JSON] = None

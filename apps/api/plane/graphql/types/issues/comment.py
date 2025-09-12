@@ -14,7 +14,7 @@ from strawberry.scalars import JSON
 
 # Module Imports
 from plane.db.models import IssueComment
-from plane.graphql.types.users import UserLiteType
+from plane.graphql.types.user import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 

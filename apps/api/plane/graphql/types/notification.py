@@ -13,7 +13,7 @@ from strawberry.scalars import JSON
 
 from plane.db.models import Issue, Notification
 from plane.graphql.types.project import ProjectType
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 from plane.graphql.utils.issue_activity import issue_activity_comment_string
 
 # Module imports

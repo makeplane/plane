@@ -33,8 +33,12 @@ from plane.graphql.types.catch_up import (
 def construct_catch_up_work_item(
     notification_data: dict,
 ) -> CatchUpWorkItemType:
-    workitem = notification_data.get("data", {}).get("issue", None)
+    workitem_id = None
+    workitem_name = None
+    workitem_project_identifier = None
+    workitem_sequence_id = None
 
+    workitem = notification_data.get("data", {}).get("issue", None)
     if workitem is not None:
         workitem_id = workitem["id"] or None
         workitem_name = workitem["name"] or None
@@ -55,15 +59,17 @@ def construct_catch_up_activity(
 ) -> CatchUpActivityType:
     activity_id = None
     activity_type = CatchUpActivityTypeEnum.ACTIVITY
-    activity_created_at = None
+    activity_updated_at = None
 
-    notification_created_at = notification_activity.get("created_at", None)
+    notification_updated_at = notification_activity.get("updated_at", None)
     notification_data = notification_activity.get("data", None)
 
-    workitem_activity = notification_data.get("issue_activity", None)
+    workitem_activity = (
+        notification_data.get("issue_activity", None) if notification_data else None
+    )
     if workitem_activity is not None:
         activity_id = workitem_activity.get("id", None)
-        activity_created_at = notification_created_at or None
+        activity_updated_at = notification_updated_at or None
         workitem_activity_field = workitem_activity.get("field", None)
         if workitem_activity_field is not None and workitem_activity_field == "comment":
             activity_type = CatchUpActivityTypeEnum.COMMENT
@@ -71,22 +77,22 @@ def construct_catch_up_activity(
     return CatchUpActivityType(
         id=activity_id,
         type=activity_type,
-        created_at=activity_created_at,
+        created_at=activity_updated_at,
     )
 
 
-def work_item_subquery(entity_identifier: str, field: str) -> QuerySet:
+def work_item_subquery(entity_identifier: OuterRef, field: str) -> QuerySet:
     return Issue.all_objects.filter(id=entity_identifier).values(field)[:1]
 
 
 def notification_subquery(
-    entity_identifier: str, order_by: str = "created_at"
+    entity_identifier: OuterRef, order_by: str = "updated_at"
 ) -> QuerySet:
     return (
         Notification.objects.filter(entity_identifier=entity_identifier)
         .filter(read_at__isnull=True)
         .order_by(order_by)
-        .annotate(json_data=JSONObject(created_at=F("created_at"), data=F("data")))
+        .annotate(json_data=JSONObject(updated_at=F("updated_at"), data=F("data")))
         .values("json_data")[:1]
     )
 
@@ -103,7 +109,7 @@ def get_catch_ups(
         Notification.objects.filter(project_teamspace_filter.query)
         .filter(workspace__slug=workspace_slug)
         .filter(receiver_id=user_id)
-        .filter(entity_name__in=["issue"])
+        .filter(entity_name__in=["issue", "epic"])
         .filter(read_at__isnull=True)
         .values("entity_identifier", "entity_name", "project_id")
         .annotate(count=Count("id"))
@@ -111,7 +117,7 @@ def get_catch_ups(
             first_unread=Subquery(
                 notification_subquery(
                     entity_identifier=OuterRef("entity_identifier"),
-                    order_by="created_at",
+                    order_by="updated_at",
                 ),
                 output_field=JSONField(),
             )
@@ -120,7 +126,7 @@ def get_catch_ups(
             last_unread=Subquery(
                 notification_subquery(
                     entity_identifier=OuterRef("entity_identifier"),
-                    order_by="-created_at",
+                    order_by="-updated_at",
                 ),
                 output_field=JSONField(),
             )
@@ -134,6 +140,7 @@ def get_catch_ups(
                 output_field=DateTimeField(),
             )
         )
+        .order_by("updated_at")
         .order_by("entity_identifier")
     )
 

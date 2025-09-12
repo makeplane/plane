@@ -212,10 +212,10 @@ class IntakeWorkItemMutation:
 
         # Track the issue activity
         await sync_to_async(issue_activity.delay)(
-            type="issue.activity.created",
+            type="intake.activity.created",
             origin=info.context.request.META.get("HTTP_ORIGIN"),
             epoch=int(timezone.now().timestamp()),
-            notification=True,
+            notification=False,
             project_id=str(project),
             issue_id=str(work_item_id),
             actor_id=str(user.id),

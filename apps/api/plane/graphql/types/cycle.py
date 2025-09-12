@@ -15,7 +15,7 @@ from asgiref.sync import sync_to_async
 
 # Module Imports
 from plane.db.models import Cycle, Issue, CycleUserProperties
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 
 
 @strawberry_django.type(Cycle)

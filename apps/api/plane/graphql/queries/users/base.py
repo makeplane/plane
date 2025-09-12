@@ -16,7 +16,7 @@ from strawberry.types import Info
 from plane.db.models import UserFavorite, UserRecentVisit
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import IsAuthenticated, WorkspaceBasePermission
-from plane.graphql.types.users import UserFavoriteType, UserRecentVisitType, UserType
+from plane.graphql.types.user import UserFavoriteType, UserRecentVisitType, UserType
 from plane.graphql.utils.timezone.user import user_timezone_converter
 
 
@@ -51,6 +51,7 @@ class UserFavoritesQuery:
                 | (Q(project__isnull=False) & Q(project_teamspace_filter.query)),
                 ~Q(entity_type="view"),
             )
+            .prefetch_related("project")
             .order_by("-created_at")
             .distinct()
         )
@@ -76,6 +77,7 @@ class UserRecentVisitQuery:
         recent_visits = await sync_to_async(
             lambda: list(
                 UserRecentVisit.objects.filter(workspace__slug=slug, user_id=user_id)
+                .prefetch_related("project")
                 .exclude(entity_name__in=["view", "workspace_page"])
                 .order_by("-visited_at")
             )
@@ -105,6 +107,7 @@ class UserRecentVisitQuery:
                 deleted_at=await user_timezone_converter(
                     user, visit.deleted_at if visit.deleted_at else None
                 ),
+                project_details=visit.project,
             )
             for visit in recent_visits
         ]

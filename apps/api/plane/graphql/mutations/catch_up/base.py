@@ -115,7 +115,7 @@ class CatchUpMarkAsReadMutation:
             workspace_slug=slug, user_id=user_id, type_id=type_id, type=type
         )
 
-        return is_marked
+        return bool(is_marked)
 
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
@@ -128,4 +128,4 @@ class CatchUpMarkAsReadMutation:
             workspace_slug=slug, user_id=user_id
         )
 
-        return is_marked
+        return bool(is_marked)

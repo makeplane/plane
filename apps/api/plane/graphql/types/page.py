@@ -172,7 +172,7 @@ class NestedParentPageLiteType:
     is_description_empty: bool
 
     @strawberry.field
-    def owned_by(self) -> list[ProjectLiteType]:
+    def owned_by(self) -> list[strawberry.ID]:
         return self.owned_by_id
 
     @strawberry.field
