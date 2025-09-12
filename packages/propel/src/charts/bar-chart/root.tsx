@@ -111,9 +111,10 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}
           onMouseLeave={() => setActiveBar(null)}
+          fill={getBarColor(data, bar.key)}
         />
       )),
-    [activeLegend, stackKeys, bars]
+    [activeLegend, stackKeys, bars, getBarColor, data]
   );
 
   return (
