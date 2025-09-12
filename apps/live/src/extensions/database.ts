@@ -2,21 +2,17 @@ import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
 import { logger } from "@plane/logger";
 // lib
 import { getPageService } from "@/services/page/handler";
-// types
-import { TDocumentTypes } from "@/types";
 // utils
 import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/utils";
 
-const onFetch = async ({ context, documentName, requestParameters }: any) => {
+const fetchDocument = async ({ context, documentName, requestParameters }: any) => {
   try {
     const params = {
       ...context,
       ...requestParameters,
       pageId: documentName,
     };
-
     const service = getPageService(params);
-
     // fetch details
     const response = await service.fetchDescriptionBinary(params.pageId);
     const binaryData = new Uint8Array(response);
@@ -36,7 +32,7 @@ const onFetch = async ({ context, documentName, requestParameters }: any) => {
   }
 };
 
-const onStore = async ({ context, state, documentName, requestParameters }: any) => {
+const storeDocument = async ({ context, state, documentName, requestParameters }: any) => {
   try {
     const params = {
       ...context,
@@ -61,6 +57,6 @@ const onStore = async ({ context, state, documentName, requestParameters }: any)
 
 export class Database extends HocuspocusDatabase {
   constructor() {
-    super({ fetch: onFetch, store: onStore });
+    super({ fetch: fetchDocument, store: storeDocument });
   }
 }

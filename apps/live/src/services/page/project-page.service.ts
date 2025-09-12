@@ -1,6 +1,6 @@
-import { PageCoreService } from "./core.service";
+import { PageService } from "./extended.service";
 
-export class ProjectPageService extends PageCoreService {
+export class ProjectPageService extends PageService {
   protected basePath: string;
 
   constructor(params: any) {
