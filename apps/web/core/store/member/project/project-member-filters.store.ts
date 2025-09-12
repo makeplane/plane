@@ -64,6 +64,7 @@ export class ProjectMemberFiltersStore implements IProjectMemberFiltersStore {
    * @param filters - partial filters to update
    */
   updateFilters = (projectId: string, filters: Partial<IMemberFilters>) => {
-    this.filtersMap[projectId] = { ...this.filtersMap[projectId], ...filters };
+    const current = this.filtersMap[projectId] ?? {};
+    this.filtersMap[projectId] = { ...current, ...filters };
   };
 }
