@@ -29,7 +29,7 @@ export class LocaleManager {
    */
   constructor() {
     this.rootPath = TRANSLATION_ROOT_PATH;
-    this.translationFiles = (TRANSLATION_FILES.split(",") as TranslationFile[]) || [];
+    this.translationFiles = TRANSLATION_FILES;
     this.translationFiles.forEach((f) => this.updateGeneratedTranslations(f));
   }
 
@@ -110,7 +110,7 @@ export class LocaleManager {
   async generateTranslationRows(file: TranslationFile): Promise<TranslationRow[]> {
     const locales = await this.getLocales();
     const translations: Record<TranslationLocale, Record<string, string>> = {
-      [BASE_LOCALE]: {},
+      en: {},
       cs: {},
       de: {},
       es: {},
