@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Projets",
+    "pages": "Pages",
+    "new_work_item": "Nouvel élément de travail",
+    "home": "Accueil",
+    "your_work": "Votre travail",
+    "inbox": "Boîte de réception",
+    "workspace": "Espace de travail",
+    "views": "Vues",
+    "analytics": "Analyses",
+    "work_items": "Éléments de travail",
+    "cycles": "Cycles",
+    "modules": "Modules",
+    "intake": "Intake",
+    "drafts": "Brouillons",
+    "favorites": "Favoris",
+    "pro": "Pro",
+    "upgrade": "Mettre à niveau"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "E-mail",
+        "placeholder": "nom@entreprise.com",
+        "errors": {
+          "required": "L'e-mail est requis",
+          "invalid": "L'e-mail est invalide"
+        }
+      },
+      "password": {
+        "label": "Mot de passe",
+        "set_password": "Définir un mot de passe",
+        "placeholder": "Entrer le mot de passe",
+        "confirm_password": {
+          "label": "Confirmer le mot de passe",
+          "placeholder": "Confirmer le mot de passe"
+        },
+        "current_password": {
+          "label": "Mot de passe actuel"
+        },
+        "new_password": {
+          "label": "Nouveau mot de passe",
+          "placeholder": "Entrer le nouveau mot de passe"
+        },
+        "change_password": {
+          "label": {
+            "default": "Changer le mot de passe",
+            "submitting": "Changement du mot de passe"
+          }
+        },
+        "errors": {
+          "match": "Les mots de passe ne correspondent pas",
+          "empty": "Veuillez entrer votre mot de passe",
+          "length": "Le mot de passe doit contenir plus de 8 caractères",
+          "strength": {
+            "weak": "Le mot de passe est faible",
+            "strong": "Le mot de passe est fort"
+          }
+        },
+        "submit": "Définir le mot de passe",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Succès !",
+              "message": "Mot de passe changé avec succès."
+            },
+            "error": {
+              "title": "Erreur !",
+              "message": "Une erreur s'est produite. Veuillez réessayer."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Code unique",
+        "placeholder": "obtient-définit-vole",
+        "paste_code": "Collez le code envoyé à votre e-mail",
+        "requesting_new_code": "Demande d'un nouveau code",
+        "sending_code": "Envoi du code"
+      },
+      "already_have_an_account": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "create_account": "Créer un compte",
+      "new_to_plane": "Nouveau sur Plane ?",
+      "back_to_sign_in": "Retour à la connexion",
+      "resend_in": "Renvoyer dans {seconds} secondes",
+      "sign_in_with_unique_code": "Se connecter avec un code unique",
+      "forgot_password": "Mot de passe oublié ?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Créez un compte pour commencer à gérer le travail avec votre équipe.",
+        "step": {
+          "email": {
+            "header": "S'inscrire"
+          },
+          "password": {
+            "header": "S'inscrire",
+            "sub_header": "Inscrivez-vous en utilisant une combinaison e-mail-mot de passe."
+          },
+          "unique_code": {
+            "header": "S'inscrire",
+            "sub_header": "Inscrivez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Essayez de définir un mot de passe fort pour continuer"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Connectez-vous pour commencer à gérer le travail avec votre équipe.",
+        "step": {
+          "email": {
+            "header": "Se connecter ou s'inscrire"
+          },
+          "password": {
+            "header": "Se connecter ou s'inscrire",
+            "sub_header": "Utilisez votre combinaison e-mail-mot de passe pour vous connecter."
+          },
+          "unique_code": {
+            "header": "Se connecter ou s'inscrire",
+            "sub_header": "Connectez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Réinitialiser votre mot de passe",
+      "description": "Entrez l'adresse e-mail vérifiée de votre compte utilisateur et nous vous enverrons un lien de réinitialisation du mot de passe.",
+      "email_sent": "Nous avons envoyé le lien de réinitialisation à votre adresse e-mail",
+      "send_reset_link": "Envoyer le lien de réinitialisation",
+      "errors": {
+        "smtp_not_enabled": "Nous constatons que votre administrateur n'a pas activé SMTP, nous ne pourrons pas envoyer de lien de réinitialisation du mot de passe"
+      },
+      "toast": {
+        "success": {
+          "title": "E-mail envoyé",
+          "message": "Vérifiez votre boîte de réception pour un lien de réinitialisation de votre mot de passe. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Une erreur s'est produite. Veuillez réessayer."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Définir un nouveau mot de passe",
+      "description": "Sécurisez votre compte avec un mot de passe fort"
+    },
+    "set_password": {
+      "title": "Sécurisez votre compte",
+      "description": "La définition d'un mot de passe vous permet de vous connecter en toute sécurité"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la déconnexion. Veuillez réessayer."
+        }
+      }
+    }
+  }
+}

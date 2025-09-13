@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projekty",
-    "pages": "Strony",
-    "new_work_item": "Nowy element pracy",
-    "home": "Strona główna",
-    "your_work": "Twoja praca",
-    "inbox": "Skrzynka odbiorcza",
-    "workspace": "Przestrzeń robocza",
-    "views": "Widoki",
-    "analytics": "Analizy",
-    "work_items": "Elementy pracy",
-    "cycles": "Cykle",
-    "modules": "Moduły",
-    "intake": "Zgłoszenia",
-    "drafts": "Szkice",
-    "favorites": "Ulubione",
-    "pro": "Pro",
-    "upgrade": "Uaktualnij"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "E-mail",
-        "placeholder": "imię@firma.pl",
-        "errors": {
-          "required": "E-mail jest wymagany",
-          "invalid": "E-mail jest nieprawidłowy"
-        }
-      },
-      "password": {
-        "label": "Hasło",
-        "set_password": "Ustaw hasło",
-        "placeholder": "Wpisz hasło",
-        "confirm_password": {
-          "label": "Potwierdź hasło",
-          "placeholder": "Potwierdź hasło"
-        },
-        "current_password": {
-          "label": "Obecne hasło"
-        },
-        "new_password": {
-          "label": "Nowe hasło",
-          "placeholder": "Wpisz nowe hasło"
-        },
-        "change_password": {
-          "label": {
-            "default": "Zmień hasło",
-            "submitting": "Trwa zmiana hasła"
-          }
-        },
-        "errors": {
-          "match": "Hasła nie pasują do siebie",
-          "empty": "Proszę wpisać swoje hasło",
-          "length": "Hasło musi mieć więcej niż 8 znaków",
-          "strength": {
-            "weak": "Hasło jest słabe",
-            "strong": "Hasło jest silne"
-          }
-        },
-        "submit": "Ustaw hasło",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Sukces!",
-              "message": "Hasło zostało pomyślnie zmienione."
-            },
-            "error": {
-              "title": "Błąd!",
-              "message": "Coś poszło nie tak. Spróbuj ponownie."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Unikalny kod",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Wklej kod wysłany na Twój e-mail",
-        "requesting_new_code": "Żądanie nowego kodu",
-        "sending_code": "Wysyłanie kodu"
-      },
-      "already_have_an_account": "Masz już konto?",
-      "login": "Zaloguj się",
-      "create_account": "Utwórz konto",
-      "new_to_plane": "Nowy w Plane?",
-      "back_to_sign_in": "Powrót do logowania",
-      "resend_in": "Wyślij ponownie za {seconds} sekund",
-      "sign_in_with_unique_code": "Zaloguj się za pomocą unikalnego kodu",
-      "forgot_password": "Zapomniałeś hasła?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Utwórz konto i zacznij zarządzać pracą ze swoim zespołem.",
-        "step": {
-          "email": {
-            "header": "Rejestracja",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Rejestracja",
-            "sub_header": "Zarejestruj się, korzystając z kombinacji e-maila i hasła."
-          },
-          "unique_code": {
-            "header": "Rejestracja",
-            "sub_header": "Zarejestruj się, używając unikalnego kodu wysłanego na powyższy adres e-mail."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Użyj silniejszego hasła, aby kontynuować"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Zaloguj się i zacznij zarządzać pracą ze swoim zespołem.",
-        "step": {
-          "email": {
-            "header": "Zaloguj się lub zarejestruj",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Zaloguj się lub zarejestruj",
-            "sub_header": "Użyj adresu e-mail i hasła, aby się zalogować."
-          },
-          "unique_code": {
-            "header": "Zaloguj się lub zarejestruj",
-            "sub_header": "Zaloguj się za pomocą unikalnego kodu wysłanego na powyższy adres e-mail."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Zresetuj swoje hasło",
-      "description": "Podaj zweryfikowany adres e-mail konta użytkownika, a wyślemy Ci link do resetowania hasła.",
-      "email_sent": "Wysłaliśmy link resetujący na Twój adres e-mail",
-      "send_reset_link": "Wyślij link do resetowania",
-      "errors": {
-        "smtp_not_enabled": "Administrator nie włączył SMTP, nie możemy wysłać linku do resetowania hasła"
-      },
-      "toast": {
-        "success": {
-          "title": "E-mail wysłany",
-          "message": "Sprawdź skrzynkę pocztową, aby znaleźć link do resetowania hasła. Jeśli nie pojawi się w ciągu kilku minut, sprawdź folder spam."
-        },
-        "error": {
-          "title": "Błąd!",
-          "message": "Coś poszło nie tak. Spróbuj ponownie."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Ustaw nowe hasło",
-      "description": "Zabezpiecz swoje konto silnym hasłem"
-    },
-    "set_password": {
-      "title": "Zabezpiecz swoje konto",
-      "description": "Ustawienie hasła pomoże Ci bezpiecznie się logować"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Błąd!",
-          "message": "Wylogowanie nie powiodło się. Spróbuj ponownie."
-        }
-      }
-    }
-  },
   "submit": "Wyślij",
   "cancel": "Anuluj",
   "loading": "Ładowanie",
@@ -795,7 +627,8 @@
       "clear_sorting": "Wyczyść sortowanie",
       "show_weekends": "Pokaż weekendy",
       "enable": "Włącz",
-      "disable": "Wyłącz"
+      "disable": "Wyłącz",
+      "copy_markdown": "Kopiuj markdown"
     },
     "name": "Nazwa",
     "discard": "Odrzuć",
@@ -885,7 +718,8 @@
     "planned": "Zaplanowane",
     "paused": "Wstrzymane",
     "no_of": "Liczba {entity}",
-    "resolved": "Rozwiązane"
+    "resolved": "Rozwiązane",
+    "overview": "Przegląd"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -1528,7 +1362,8 @@
             "max_length": "Nazwa przestrzeni nie może przekraczać 80 znaków"
           },
           "company_size": {
-            "required": "Rozmiar firmy jest wymagany"
+            "required": "Rozmiar firmy jest wymagany",
+            "select_a_range": "Wybierz zakres"
           }
         }
       },
@@ -1562,7 +1397,9 @@
         "title": "Rozliczenia i plany",
         "current_plan": "Obecny plan",
         "free_plan": "Używasz bezpłatnego planu",
-        "view_plans": "Wyświetl plany"
+        "view_plans": "Wyświetl plany",
+        "heading": "Rozliczenia i plany",
+        "description": "Wybierz swój plan, zarządzaj subskrypcjami i łatwo aktualizuj w miarę wzrostu potrzeb."
       },
       "exports": {
         "title": "Eksporty",
@@ -1581,7 +1418,11 @@
               "message": "Spróbuj ponownie."
             }
           }
-        }
+        },
+        "heading": "Eksporty",
+        "description": "Eksportuj dane projektu w różnych formatach i uzyskaj dostęp do historii eksportów z linkami do pobrania.",
+        "exporting_projects": "Eksportowanie projektów",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Webhooki",
@@ -1632,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Błąd podczas kopiowania klucza."
           }
-        }
+        },
+        "heading": "Webhooki",
+        "description": "Automatyzuj powiadomienia do usług zewnętrznych, gdy występują zdarzenia projektu."
       },
       "api_tokens": {
         "title": "Tokeny API",
@@ -1708,7 +1551,9 @@
       "security": "Bezpieczeństwo",
       "activity": "Aktywność",
       "appearance": "Wygląd",
-      "notifications": "Powiadomienia"
+      "notifications": "Powiadomienia",
+      "preferences": "Preferencje",
+      "api-tokens": "Osobiste tokeny dostępu"
     },
     "tabs": {
       "summary": "Podsumowanie",
@@ -1774,7 +1619,9 @@
       "empty_state": {
         "title": "Brak stanów w grupie {groupKey}",
         "description": "Utwórz nowy stan"
-      }
+      },
+      "heading": "Stany",
+      "description": "Definiuj i dostosowuj stany przepływu pracy, aby śledzić postęp elementów pracy."
     },
     "labels": {
       "label_title": "Nazwa etykiety",
@@ -1782,7 +1629,9 @@
       "label_max_char": "Nazwa etykiety nie może mieć więcej niż 255 znaków",
       "toast": {
         "error": "Błąd podczas aktualizacji etykiety"
-      }
+      },
+      "heading": "Etykiety",
+      "description": "Twórz niestandardowe etykiety do kategoryzacji i organizacji elementów pracy"
     },
     "estimates": {
       "label": "Szacunki",
@@ -1865,7 +1714,9 @@
           "label": "Czas",
           "hours": "Godziny"
         }
-      }
+      },
+      "heading": "Szacunki",
+      "enable_description": "Pomagają w komunikowaniu złożoności i obciążenia pracą zespołu."
     },
     "automations": {
       "label": "Automatyzacja",
@@ -1879,7 +1730,9 @@
         "description": "Plane będzie automatycznie zamykał elementy, które nie zostały ukończone lub anulowane.",
         "duration": "Zamknij elementy nieaktywne dłużej niż",
         "auto_close_status": "Status automatycznego zamknięcia"
-      }
+      },
+      "heading": "Automatyzacje",
+      "description": "Skonfiguruj zautomatyzowane działania, aby usprawnić proces zarządzania projektem i zmniejszyć ilość zadań manualnych."
     },
     "empty_state": {
       "labels": {
@@ -2530,5 +2383,34 @@
     "open_button": "Otwórz panel nawigacji",
     "close_button": "Zamknij panel nawigacji",
     "outline_floating_button": "Otwórz konspekt"
-  }
+  },
+  "preferences": "Preferencje",
+  "language_and_time": "Język i czas",
+  "timezone_setting": "Ustawienia strefy czasowej",
+  "language_setting": "Ustawienia języka",
+  "settings_moved_to_preferences": "Ustawienia strefy czasowej i języka zostały przeniesione do preferencji.",
+  "go_to_preferences": "Przejdź do preferencji",
+  "account_settings": {
+    "preferences": {
+      "heading": "Preferencje",
+      "description": "Dostosuj doświadczenie aplikacji do swojego sposobu pracy"
+    },
+    "notifications": {
+      "heading": "Powiadomienia e-mail",
+      "description": "Bądź na bieżąco z zadaniami, które subskrybujesz. Włącz to, aby otrzymywać powiadomienia."
+    },
+    "security": {
+      "heading": "Bezpieczeństwo"
+    },
+    "api_tokens": {
+      "heading": "Osobiste tokeny dostępu",
+      "description": "Generuj bezpieczne tokeny API do integracji danych z zewnętrznymi systemami i aplikacjami."
+    },
+    "activity": {
+      "heading": "Aktywność",
+      "description": "Śledź swoje ostatnie działania i zmiany we wszystkich projektach i zadaniach."
+    }
+  },
+  "settings_description": "Zarządzaj swoimi kontami, przestrzeniami roboczymi i preferencjami projektu w jednym miejscu. Przełączaj się między zakładkami, aby łatwo skonfigurować.",
+  "back_to_workspace": "Powrót do przestrzeni roboczej"
 }

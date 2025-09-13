@@ -1,173 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projeler",
-    "pages": "Sayfalar",
-    "new_work_item": "Yeni iş öğesi",
-    "home": "Ana Sayfa",
-    "your_work": "Çalışmalarınız",
-    "inbox": "Gelen Kutusu",
-    "workspace": "Çalışma Alanı",
-    "views": "Görünümler",
-    "analytics": "Analizler",
-    "work_items": "İş öğeleri",
-    "cycles": "Döngüler",
-    "modules": "Modüller",
-    "intake": "Talep",
-    "drafts": "Taslaklar",
-    "favorites": "Favoriler",
-    "pro": "Pro",
-    "upgrade": "Yükselt"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "E-posta",
-        "placeholder": "isim@şirket.com",
-        "errors": {
-          "required": "E-posta gerekli",
-          "invalid": "Geçersiz e-posta"
-        }
-      },
-      "password": {
-        "label": "Şifre",
-        "set_password": "Şifre belirle",
-        "placeholder": "Şifreyi girin",
-        "confirm_password": {
-          "label": "Şifreyi onayla",
-          "placeholder": "Şifreyi onayla"
-        },
-        "current_password": {
-          "label": "Mevcut şifre",
-          "placeholder": "Mevcut şifreyi girin"
-        },
-        "new_password": {
-          "label": "Yeni şifre",
-          "placeholder": "Yeni şifreyi girin"
-        },
-        "change_password": {
-          "label": {
-            "default": "Şifreyi değiştir",
-            "submitting": "Şifre değiştiriliyor"
-          }
-        },
-        "errors": {
-          "match": "Şifreler eşleşmiyor",
-          "empty": "Lütfen şifrenizi girin",
-          "length": "Şifre uzunluğu 8 karakterden fazla olmalı",
-          "strength": {
-            "weak": "Şifre zayıf",
-            "strong": "Şifre güçlü"
-          }
-        },
-        "submit": "Şifreyi belirle",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Başarılı!",
-              "message": "Şifre başarıyla değiştirildi."
-            },
-            "error": {
-              "title": "Hata!",
-              "message": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Benzersiz kod",
-        "placeholder": "alır-atar-uçar",
-        "paste_code": "E-postanıza gönderilen kodu yapıştırın",
-        "requesting_new_code": "Yeni kod isteniyor",
-        "sending_code": "Kod gönderiliyor"
-      },
-      "already_have_an_account": "Zaten bir hesabınız var mı?",
-      "login": "Giriş yap",
-      "create_account": "Hesap oluştur",
-      "new_to_plane": "Plane'e yeni mi geldiniz?",
-      "back_to_sign_in": "Giriş yapmaya geri dön",
-      "resend_in": "{seconds} saniye içinde tekrar gönder",
-      "sign_in_with_unique_code": "Benzersiz kod ile giriş yap",
-      "forgot_password": "Şifrenizi mi unuttunuz?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Ekibinizle işleri yönetmeye başlamak için bir hesap oluşturun.",
-        "step": {
-          "email": {
-            "header": "Kaydol",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Kaydol",
-            "sub_header": "E-posta-şifre kombinasyonu kullanarak kaydolun."
-          },
-          "unique_code": {
-            "header": "Kaydol",
-            "sub_header": "Yukarıdaki e-posta adresine gönderilen benzersiz bir kod kullanarak kaydolun."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Devam etmek için güçlü bir şifre belirlemeyi deneyin"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Ekibinizle işleri yönetmeye başlamak için giriş yapın.",
-        "step": {
-          "email": {
-            "header": "Giriş yap veya kaydol",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Giriş yap veya kaydol",
-            "sub_header": "Giriş yapmak için e-posta-şifre kombinasyonunuzu kullanın."
-          },
-          "unique_code": {
-            "header": "Giriş yap veya kaydol",
-            "sub_header": "Yukarıdaki e-posta adresine gönderilen benzersiz bir kod kullanarak giriş yapın."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Şifrenizi sıfırlayın",
-      "description": "Kullanıcı hesabınızın doğrulanmış e-posta adresini girin, size bir şifre sıfırlama bağlantısı göndereceğiz.",
-      "email_sent": "Sıfırlama bağlantısını e-posta adresinize gönderdik",
-      "send_reset_link": "Sıfırlama bağlantısı gönder",
-      "errors": {
-        "smtp_not_enabled": "Yöneticinizin SMTP'yi etkinleştirmediğini görüyoruz, bu yüzden şifre sıfırlama bağlantısı gönderemeyeceğiz"
-      },
-      "toast": {
-        "success": {
-          "title": "E-posta gönderildi",
-          "message": "Şifrenizi sıfırlamak için gelen kutunuzu kontrol edin. Birkaç dakika içinde gelmezse, spam klasörünüzü kontrol edin."
-        },
-        "error": {
-          "title": "Hata!",
-          "message": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Yeni şifre belirle",
-      "description": "Hesabınızı güçlü bir şifreyle güvence altına alın"
-    },
-    "set_password": {
-      "title": "Hesabınızı güvence altına alın",
-      "description": "Şifre belirlemek güvenli bir şekilde giriş yapmanıza yardımcı olur"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Hata!",
-          "message": "Çıkış yapılamadı. Lütfen tekrar deneyin."
-        }
-      }
-    }
-  },
   "submit": "Gönder",
   "cancel": "İptal",
   "loading": "Yükleniyor",
@@ -887,7 +718,8 @@
     "planned": "Planlandı",
     "paused": "Durduruldu",
     "no_of": "{entity} sayısı",
-    "resolved": "Çözüldü"
+    "resolved": "Çözüldü",
+    "overview": "Genel bakış"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -1565,7 +1397,9 @@
         "title": "Faturalandırma ve Planlar",
         "current_plan": "Mevcut plan",
         "free_plan": "Şu anda ücretsiz planı kullanıyorsunuz",
-        "view_plans": "Planları görüntüle"
+        "view_plans": "Planları görüntüle",
+        "heading": "Faturalama ve planlar",
+        "description": "Planınızı seçin, abonelikleri yönetin ve ihtiyaçlarınız arttıkça kolayca yükseltin."
       },
       "exports": {
         "title": "Dışa Aktarımlar",
@@ -1584,7 +1418,11 @@
               "message": "Dışa aktarma başarısız oldu. Lütfen tekrar deneyin."
             }
           }
-        }
+        },
+        "heading": "Dışa aktarmalar",
+        "description": "Proje verilerinizi çeşitli formatlarda dışa aktarın ve indirme bağlantıları ile dışa aktarma geçmişinize erişin.",
+        "exporting_projects": "Projeler dışa aktarılıyor",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Webhook'lar",
@@ -1635,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Gizli anahtar kopyalanırken hata oluştu."
           }
-        }
+        },
+        "heading": "Web kancaları",
+        "description": "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin."
       },
       "api_tokens": {
         "title": "API Token'ları",
@@ -1711,7 +1551,9 @@
       "security": "Güvenlik",
       "activity": "Aktivite",
       "appearance": "Görünüm",
-      "notifications": "Bildirimler"
+      "notifications": "Bildirimler",
+      "preferences": "Tercihler",
+      "api-tokens": "Kişisel erişim belirteçleri"
     },
     "tabs": {
       "summary": "Özet",
@@ -1777,7 +1619,9 @@
       "empty_state": {
         "title": "{groupKey} grubu için durum yok",
         "description": "Lütfen yeni bir durum oluşturun"
-      }
+      },
+      "heading": "Durumlar",
+      "description": "İş öğelerinizin ilerlemesini takip etmek için iş akışı durumlarını tanımlayın ve özelleştirin."
     },
     "labels": {
       "label_title": "Etiket başlığı",
@@ -1785,7 +1629,9 @@
       "label_max_char": "Etiket adı 255 karakteri geçmemeli",
       "toast": {
         "error": "Etiket güncellenirken hata oluştu"
-      }
+      },
+      "heading": "Etiketler",
+      "description": "İş öğelerinizi kategorize etmek ve düzenlemek için özel etiketler oluşturun"
     },
     "estimates": {
       "label": "Tahminler",
@@ -1797,7 +1643,9 @@
         "start_from_scratch": "Sıfırdan başla",
         "choose_template": "Şablon seç",
         "choose_estimate_system": "Tahmin sistemi seç",
-        "enter_estimate_point": "Tahmin puanı girin"
+        "enter_estimate_point": "Tahmin puanı girin",
+        "step": "Adım {step} / {total}",
+        "label": "Tahmin oluştur"
       },
       "toasts": {
         "created": {
@@ -1844,7 +1692,30 @@
         "character": "Tahmin puanı karakter değeri olmalı.",
         "empty": "Tahmin değeri boş olamaz.",
         "already_exists": "Tahmin değeri zaten var.",
-        "unsaved_changes": "Kaydedilmemiş değişiklikleriniz var, bitirmeden önce lütfen kaydedin"
+        "unsaved_changes": "Kaydedilmemiş değişiklikleriniz var, bitirmeden önce lütfen kaydedin",
+        "remove_empty": "Tahmin boş olamaz. Her alana bir değer girin veya değer olmayan alanları kaldırın."
+      },
+      "heading": "Tahminler",
+      "enable_description": "Ekibin karmaşıklığını ve iş yükünü iletmenize yardımcı olurlar.",
+      "new": "Yeni tahmin sistemi",
+      "systems": {
+        "points": {
+          "label": "Puanlar",
+          "fibonacci": "Fibonacci",
+          "linear": "Doğrusal",
+          "squares": "Kareler",
+          "custom": "Özel"
+        },
+        "categories": {
+          "label": "Kategoriler",
+          "t_shirt_sizes": "T-Shirt Bedenleri",
+          "easy_to_hard": "Kolaydan zora",
+          "custom": "Özel"
+        },
+        "time": {
+          "label": "Zaman",
+          "hours": "Saat"
+        }
       }
     },
     "automations": {
@@ -1859,7 +1730,9 @@
         "description": "Plane, tamamlanmamış veya iptal edilmemiş iş öğelerini otomatik kapatacak.",
         "duration": "Şu süre etkin olmayan iş öğelerini otomatik kapat",
         "auto_close_status": "Otomatik kapatma durumu"
-      }
+      },
+      "heading": "Otomatikleştirmeler",
+      "description": "Proje yönetimi iş akışınızı kolaylaştırmak ve manuel görevleri azaltmak için otomatik eylemler yapılandırın."
     },
     "empty_state": {
       "labels": {
@@ -2510,5 +2383,34 @@
     "open_button": "Navigasyon panelini aç",
     "close_button": "Navigasyon panelini kapat",
     "outline_floating_button": "Ana hatları aç"
-  }
+  },
+  "preferences": "Tercihler",
+  "language_and_time": "Dil ve zaman",
+  "timezone_setting": "Saat dilimi ayarı",
+  "language_setting": "Dil ayarı",
+  "settings_moved_to_preferences": "Saat dilimi ve dil ayarları tercihlere taşındı.",
+  "go_to_preferences": "Tercihlere git",
+  "account_settings": {
+    "preferences": {
+      "heading": "Tercihler",
+      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
+    },
+    "notifications": {
+      "heading": "E-posta bildirimleri",
+      "description": "Takip ettiğiniz görevler hakkında bilgi alın. Bildirim almak için bunu etkinleştirin."
+    },
+    "security": {
+      "heading": "Güvenlik"
+    },
+    "api_tokens": {
+      "heading": "Kişisel erişim belirteçleri",
+      "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API belirteçleri oluşturun."
+    },
+    "activity": {
+      "heading": "Etkinlik",
+      "description": "Tüm projelerdeki ve görevlerdeki son eylemlerinizi ve değişikliklerinizi takip edin."
+    }
+  },
+  "settings_description": "Hesaplarınızı, çalışma alanlarınızı ve proje tercihlerinizi tek bir yerde yönetin. Kolay yapılandırma için sekmeler arasında geçiş yapın.",
+  "back_to_workspace": "Çalışma alanına dön"
 }

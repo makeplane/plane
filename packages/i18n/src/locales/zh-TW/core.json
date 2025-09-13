@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "專案",
+    "pages": "頁面",
+    "new_work_item": "新工作項目",
+    "home": "首頁",
+    "your_work": "你的工作",
+    "inbox": "收件匣",
+    "workspace": "工作區",
+    "views": "視圖",
+    "analytics": "分析",
+    "work_items": "工作項目",
+    "cycles": "週期",
+    "modules": "模組",
+    "intake": "接收",
+    "drafts": "草稿",
+    "favorites": "收藏",
+    "pro": "專業版",
+    "upgrade": "升級"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "電子郵件",
+        "placeholder": "name@company.com",
+        "errors": {
+          "required": "必須填寫電子郵件",
+          "invalid": "電子郵件無效"
+        }
+      },
+      "password": {
+        "label": "密碼",
+        "set_password": "設定密碼",
+        "placeholder": "輸入密碼",
+        "confirm_password": {
+          "label": "確認密碼",
+          "placeholder": "確認密碼"
+        },
+        "current_password": {
+          "label": "目前密碼"
+        },
+        "new_password": {
+          "label": "新密碼",
+          "placeholder": "輸入新密碼"
+        },
+        "change_password": {
+          "label": {
+            "default": "更改密碼",
+            "submitting": "正在更改密碼"
+          }
+        },
+        "errors": {
+          "match": "密碼不匹配",
+          "empty": "請輸入密碼",
+          "length": "密碼長度應超過8個字符",
+          "strength": {
+            "weak": "密碼強度弱",
+            "strong": "密碼強度強"
+          }
+        },
+        "submit": "設定密碼",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "成功！",
+              "message": "密碼已成功更改。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "出現問題。請重試。"
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "唯一代碼",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "貼上傳送到您電子郵件的代碼",
+        "requesting_new_code": "正在請求新代碼",
+        "sending_code": "正在發送代碼"
+      },
+      "already_have_an_account": "已有帳戶？",
+      "login": "登入",
+      "create_account": "創建帳戶",
+      "new_to_plane": "初次使用Plane？",
+      "back_to_sign_in": "返回登入",
+      "resend_in": "{seconds}秒後重新發送",
+      "sign_in_with_unique_code": "使用唯一代碼登入",
+      "forgot_password": "忘記密碼？"
+    },
+    "sign_up": {
+      "header": {
+        "label": "創建帳戶開始與團隊一起管理工作。",
+        "step": {
+          "email": {
+            "header": "註冊"
+          },
+          "password": {
+            "header": "註冊",
+            "sub_header": "使用電子郵件-密碼組合註冊。"
+          },
+          "unique_code": {
+            "header": "註冊",
+            "sub_header": "使用發送到上述電子郵件的唯一代碼註冊。"
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "請設定強密碼以繼續"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "登入開始與團隊一起管理工作。",
+        "step": {
+          "email": {
+            "header": "登入或註冊"
+          },
+          "password": {
+            "header": "登入或註冊",
+            "sub_header": "使用您的電子郵件-密碼組合登入。"
+          },
+          "unique_code": {
+            "header": "登入或註冊",
+            "sub_header": "使用發送到上述電子郵件地址的唯一代碼登入。"
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "重設密碼",
+      "description": "輸入您的用戶帳戶已驗證的電子郵件地址，我們將向您發送密碼重設連結。",
+      "email_sent": "我們已將重設連結發送到您的電子郵件地址",
+      "send_reset_link": "發送重設連結",
+      "errors": {
+        "smtp_not_enabled": "我們發現您的管理員尚未啟用SMTP，我們將無法發送密碼重設連結"
+      },
+      "toast": {
+        "success": {
+          "title": "郵件已發送",
+          "message": "請查看您的收件箱以獲取重設密碼的連結。如果幾分鐘內未收到，請檢查垃圾郵件文件夾。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "出現問題。請重試。"
+        }
+      }
+    },
+    "reset_password": {
+      "title": "設定新密碼",
+      "description": "使用強密碼保護您的帳戶"
+    },
+    "set_password": {
+      "title": "保護您的帳戶",
+      "description": "設定密碼有助於您安全登入"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "錯誤！",
+          "message": "登出失敗。請重試。"
+        }
+      }
+    }
+  }
+}

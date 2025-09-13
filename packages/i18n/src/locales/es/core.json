@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Proyectos",
+    "pages": "Páginas",
+    "new_work_item": "Nuevo elemento de trabajo",
+    "home": "Inicio",
+    "your_work": "Tu trabajo",
+    "inbox": "Bandeja de entrada",
+    "workspace": "Espacio de trabajo",
+    "views": "Vistas",
+    "analytics": "Análisis",
+    "work_items": "Elementos de trabajo",
+    "cycles": "Ciclos",
+    "modules": "Módulos",
+    "intake": "Entrada",
+    "drafts": "Borradores",
+    "favorites": "Favoritos",
+    "pro": "Pro",
+    "upgrade": "Mejorar"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "nombre@empresa.com",
+        "errors": {
+          "required": "El correo electrónico es obligatorio",
+          "invalid": "El correo electrónico no es válido"
+        }
+      },
+      "password": {
+        "label": "Contraseña",
+        "set_password": "Establecer una contraseña",
+        "placeholder": "Ingresa la contraseña",
+        "confirm_password": {
+          "label": "Confirmar contraseña",
+          "placeholder": "Confirmar contraseña"
+        },
+        "current_password": {
+          "label": "Contraseña actual"
+        },
+        "new_password": {
+          "label": "Nueva contraseña",
+          "placeholder": "Ingresa nueva contraseña"
+        },
+        "change_password": {
+          "label": {
+            "default": "Cambiar contraseña",
+            "submitting": "Cambiando contraseña"
+          }
+        },
+        "errors": {
+          "match": "Las contraseñas no coinciden",
+          "empty": "Por favor ingresa tu contraseña",
+          "length": "La contraseña debe tener más de 8 caracteres",
+          "strength": {
+            "weak": "La contraseña es débil",
+            "strong": "La contraseña es fuerte"
+          }
+        },
+        "submit": "Establecer contraseña",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Contraseña cambiada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Algo salió mal. Por favor intenta de nuevo."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Código único",
+        "placeholder": "obtiene-establece-vuela",
+        "paste_code": "Pega el código enviado a tu correo electrónico",
+        "requesting_new_code": "Solicitando nuevo código",
+        "sending_code": "Enviando código"
+      },
+      "already_have_an_account": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión",
+      "create_account": "Crear una cuenta",
+      "new_to_plane": "¿Nuevo en Plane?",
+      "back_to_sign_in": "Volver a iniciar sesión",
+      "resend_in": "Reenviar en {seconds} segundos",
+      "sign_in_with_unique_code": "Iniciar sesión con código único",
+      "forgot_password": "¿Olvidaste tu contraseña?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Crea una cuenta para comenzar a gestionar el trabajo con tu equipo.",
+        "step": {
+          "email": {
+            "header": "Registrarse"
+          },
+          "password": {
+            "header": "Registrarse",
+            "sub_header": "Regístrate usando una combinación de correo electrónico y contraseña."
+          },
+          "unique_code": {
+            "header": "Registrarse",
+            "sub_header": "Regístrate usando un código único enviado a la dirección de correo electrónico anterior."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Intenta establecer una contraseña fuerte para continuar"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Inicia sesión para comenzar a gestionar el trabajo con tu equipo.",
+        "step": {
+          "email": {
+            "header": "Iniciar sesión o registrarse"
+          },
+          "password": {
+            "header": "Iniciar sesión o registrarse",
+            "sub_header": "Usa tu combinación de correo electrónico y contraseña para iniciar sesión."
+          },
+          "unique_code": {
+            "header": "Iniciar sesión o registrarse",
+            "sub_header": "Inicia sesión usando un código único enviado a la dirección de correo electrónico anterior."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Restablecer tu contraseña",
+      "description": "Ingresa la dirección de correo electrónico verificada de tu cuenta de usuario y te enviaremos un enlace para restablecer la contraseña.",
+      "email_sent": "Enviamos el enlace de restablecimiento a tu dirección de correo electrónico",
+      "send_reset_link": "Enviar enlace de restablecimiento",
+      "errors": {
+        "smtp_not_enabled": "Vemos que tu administrador no ha habilitado SMTP, no podremos enviar un enlace para restablecer la contraseña"
+      },
+      "toast": {
+        "success": {
+          "title": "Correo enviado",
+          "message": "Revisa tu bandeja de entrada para encontrar un enlace para restablecer tu contraseña. Si no aparece en unos minutos, revisa tu carpeta de spam."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Algo salió mal. Por favor intenta de nuevo."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Establecer nueva contraseña",
+      "description": "Asegura tu cuenta con una contraseña fuerte"
+    },
+    "set_password": {
+      "title": "Asegura tu cuenta",
+      "description": "Establecer una contraseña te ayuda a iniciar sesión de forma segura"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al cerrar sesión. Por favor intenta de nuevo."
+        }
+      }
+    }
+  }
+}

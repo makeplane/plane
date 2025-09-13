@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Projekte",
+    "pages": "Seiten",
+    "new_work_item": "Neues Arbeitselement",
+    "home": "Startseite",
+    "your_work": "Ihre Arbeit",
+    "inbox": "Posteingang",
+    "workspace": "Arbeitsbereich",
+    "views": "Ansichten",
+    "analytics": "Analysen",
+    "work_items": "Arbeitselemente",
+    "cycles": "Zyklen",
+    "modules": "Module",
+    "intake": "Eingang",
+    "drafts": "Entwürfe",
+    "favorites": "Favoriten",
+    "pro": "Pro",
+    "upgrade": "Upgrade"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "E-Mail",
+        "placeholder": "name@unternehmen.de",
+        "errors": {
+          "required": "E-Mail ist erforderlich",
+          "invalid": "E-Mail ist ungültig"
+        }
+      },
+      "password": {
+        "label": "Passwort",
+        "set_password": "Passwort festlegen",
+        "placeholder": "Passwort eingeben",
+        "confirm_password": {
+          "label": "Passwort bestätigen",
+          "placeholder": "Passwort bestätigen"
+        },
+        "current_password": {
+          "label": "Aktuelles Passwort"
+        },
+        "new_password": {
+          "label": "Neues Passwort",
+          "placeholder": "Neues Passwort eingeben"
+        },
+        "change_password": {
+          "label": {
+            "default": "Passwort ändern",
+            "submitting": "Passwort wird geändert"
+          }
+        },
+        "errors": {
+          "match": "Passwörter stimmen nicht überein",
+          "empty": "Bitte geben Sie Ihr Passwort ein",
+          "length": "Das Passwort sollte länger als 8 Zeichen sein",
+          "strength": {
+            "weak": "Das Passwort ist schwach",
+            "strong": "Das Passwort ist stark"
+          }
+        },
+        "submit": "Passwort festlegen",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Erfolg!",
+              "message": "Das Passwort wurde erfolgreich geändert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Einmaliger Code",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Fügen Sie den an Ihre E-Mail gesendeten Code ein",
+        "requesting_new_code": "Neuen Code anfordern",
+        "sending_code": "Code wird gesendet"
+      },
+      "already_have_an_account": "Haben Sie bereits ein Konto?",
+      "login": "Anmelden",
+      "create_account": "Konto erstellen",
+      "new_to_plane": "Neu bei Plane?",
+      "back_to_sign_in": "Zurück zur Anmeldung",
+      "resend_in": "Erneut senden in {seconds} Sekunden",
+      "sign_in_with_unique_code": "Mit einmaligem Code anmelden",
+      "forgot_password": "Passwort vergessen?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Erstellen Sie ein Konto und beginnen Sie, Ihre Arbeit mit Ihrem Team zu verwalten.",
+        "step": {
+          "email": {
+            "header": "Registrierung"
+          },
+          "password": {
+            "header": "Registrierung",
+            "sub_header": "Registrieren Sie sich mit einer Kombination aus E-Mail und Passwort."
+          },
+          "unique_code": {
+            "header": "Registrierung",
+            "sub_header": "Registrieren Sie sich mit einem einmaligen Code, der an die oben angegebene E-Mail-Adresse gesendet wurde."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Versuchen Sie, ein starkes Passwort zu wählen, um fortzufahren"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Melden Sie sich an und beginnen Sie, Ihre Arbeit mit Ihrem Team zu verwalten.",
+        "step": {
+          "email": {
+            "header": "Anmelden oder registrieren"
+          },
+          "password": {
+            "header": "Anmelden oder registrieren",
+            "sub_header": "Verwenden Sie Ihre E-Mail-Passwort-Kombination, um sich anzumelden."
+          },
+          "unique_code": {
+            "header": "Anmelden oder registrieren",
+            "sub_header": "Melden Sie sich mit einem einmaligen Code an, der an die oben angegebene E-Mail-Adresse gesendet wurde."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Passwort zurücksetzen",
+      "description": "Geben Sie die verifizierte E-Mail-Adresse Ihres Benutzerkontos ein, und wir senden Ihnen einen Link zum Zurücksetzen des Passworts.",
+      "email_sent": "Wir haben Ihnen einen Link zum Zurücksetzen an Ihre E-Mail-Adresse gesendet.",
+      "send_reset_link": "Link zum Zurücksetzen senden",
+      "errors": {
+        "smtp_not_enabled": "Wir sehen, dass Ihr Administrator SMTP nicht aktiviert hat; wir können keinen Link zum Zurücksetzen des Passworts senden."
+      },
+      "toast": {
+        "success": {
+          "title": "E-Mail gesendet",
+          "message": "Überprüfen Sie Ihren Posteingang auf den Link zum Zurücksetzen des Passworts. Sollte er innerhalb einiger Minuten nicht ankommen, sehen Sie bitte in Ihrem Spam-Ordner nach."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Neues Passwort festlegen",
+      "description": "Sichern Sie Ihr Konto mit einem starken Passwort"
+    },
+    "set_password": {
+      "title": "Sichern Sie Ihr Konto",
+      "description": "Das Festlegen eines Passworts hilft Ihnen, sich sicher anzumelden"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Fehler!",
+          "message": "Abmelden fehlgeschlagen. Bitte versuchen Sie es erneut."
+        }
+      }
+    }
+  }
+}

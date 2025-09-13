@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Proiecte",
+    "pages": "Documentație",
+    "new_work_item": "Activitate nouă",
+    "home": "Acasă",
+    "your_work": "Munca ta",
+    "inbox": "Căsuță de mesaje",
+    "workspace": "Spațiu de lucru",
+    "views": "Perspective",
+    "analytics": "Statistici",
+    "work_items": "Activități",
+    "cycles": "Cicluri",
+    "modules": "Module",
+    "intake": "Cereri",
+    "drafts": "Schițe",
+    "favorites": "Favorite",
+    "pro": "Pro",
+    "upgrade": "Treci la versiunea superioară"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "nume@companie.ro",
+        "errors": {
+          "required": "Email-ul este obligatoriu",
+          "invalid": "Email-ul nu este valid"
+        }
+      },
+      "password": {
+        "label": "Parolă",
+        "set_password": "Setează o parolă",
+        "placeholder": "Introdu parola",
+        "confirm_password": {
+          "label": "Confirmă parola",
+          "placeholder": "Confirmă parola"
+        },
+        "current_password": {
+          "label": "Parola curentă"
+        },
+        "new_password": {
+          "label": "Parolă nouă",
+          "placeholder": "Introdu parola nouă"
+        },
+        "change_password": {
+          "label": {
+            "default": "Schimbă parola",
+            "submitting": "Se schimbă parola"
+          }
+        },
+        "errors": {
+          "match": "Parolele nu se potrivesc",
+          "empty": "Te rugăm să introduci parola",
+          "length": "Parola trebuie să aibă mai mult de 8 caractere",
+          "strength": {
+            "weak": "Parola este slabă",
+            "strong": "Parola este puternică"
+          }
+        },
+        "submit": "Setează parola",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Succes!",
+              "message": "Parola a fost schimbată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Ceva nu a funcționat. Te rugăm să încerci din nou."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Cod unic",
+        "placeholder": "exemplu-cod-unic",
+        "paste_code": "Introdu codul trimis pe email",
+        "requesting_new_code": "Se solicită un cod nou",
+        "sending_code": "Se trimite codul"
+      },
+      "already_have_an_account": "Ai deja un cont?",
+      "login": "Autentificare",
+      "create_account": "Creează un cont",
+      "new_to_plane": "Ești nou în Plane?",
+      "back_to_sign_in": "Înapoi la autentificare",
+      "resend_in": "Retrimite în {seconds} secunde",
+      "sign_in_with_unique_code": "Autentificare cu cod unic",
+      "forgot_password": "Ți-ai uitat parola?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Creează un cont pentru a începe să-ți gestionezi activitatea împreună cu echipa ta.",
+        "step": {
+          "email": {
+            "header": "Înregistrare"
+          },
+          "password": {
+            "header": "Înregistrare",
+            "sub_header": "Înregistrează-te folosind o combinație email-parolă."
+          },
+          "unique_code": {
+            "header": "Înregistrare",
+            "sub_header": "Înregistrează-te folosind un cod unic trimis pe adresa de email de mai sus."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Setează o parolă puternică pentru a continua"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Autentifică-te pentru a începe să-ți gestionezi activitatea împreună cu echipa ta.",
+        "step": {
+          "email": {
+            "header": "Autentificare sau înregistrare"
+          },
+          "password": {
+            "header": "Autentificare sau înregistrare",
+            "sub_header": "Folosește combinația email-parolă pentru a te autentifica."
+          },
+          "unique_code": {
+            "header": "Autentificare sau înregistrare",
+            "sub_header": "Autentifică-te folosind un cod unic trimis pe adresa de email de mai sus."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Resetează-ți parola",
+      "description": "Introdu adresa de email verificată a contului tău și îți vom trimite un link pentru resetarea parolei.",
+      "email_sent": "Am trimis link-ul de resetare pe adresa ta de email",
+      "send_reset_link": "Trimite link-ul de resetare",
+      "errors": {
+        "smtp_not_enabled": "Se pare că administratorul nu a activat SMTP, nu putem trimite link-ul de resetare a parolei"
+      },
+      "toast": {
+        "success": {
+          "title": "Email trimis",
+          "message": "Verifică-ți căsuța de mesaje pentru link-ul de resetare a parolei. Dacă nu apare în câteva minute, verifică folderul de spam."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Ceva nu a funcționat. Te rugăm să încerci din nou."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Setează o parolă nouă",
+      "description": "Protejează-ți contul cu o parolă puternică"
+    },
+    "set_password": {
+      "title": "Protejează-ți contul",
+      "description": "Setarea parolei te ajută să te autentifici în siguranță"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Eroare!",
+          "message": "Deconectarea a eșuat. Te rugăm să încerci din nou."
+        }
+      }
+    }
+  }
+}

@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projek",
-    "pages": "Halaman",
-    "new_work_item": "Item kerja baru",
-    "home": "Beranda",
-    "your_work": "Pekerjaan anda",
-    "inbox": "Inbox",
-    "workspace": "Workspace",
-    "views": "Views",
-    "analytics": "Analitik",
-    "work_items": "Item kerja",
-    "cycles": "Siklus",
-    "modules": "Modul",
-    "intake": "Intake",
-    "drafts": "Draft",
-    "favorites": "Favorit",
-    "pro": "Pro",
-    "upgrade": "Upgrade"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Email",
-        "placeholder": "nama@perusahaan.com",
-        "errors": {
-          "required": "Email wajib diisi",
-          "invalid": "Email tidak valid"
-        }
-      },
-      "password": {
-        "label": "Password",
-        "set_password": "Atur password",
-        "placeholder": "Masukkan password",
-        "confirm_password": {
-          "label": "Konfirmasi password",
-          "placeholder": "Konfirmasi password"
-        },
-        "current_password": {
-          "label": "Password saat ini"
-        },
-        "new_password": {
-          "label": "Password baru",
-          "placeholder": "Masukkan password baru"
-        },
-        "change_password": {
-          "label": {
-            "default": "Ubah password",
-            "submitting": "Mengubah password"
-          }
-        },
-        "errors": {
-          "match": "Password tidak cocok",
-          "empty": "Silakan masukkan password anda",
-          "length": "Panjang password harus lebih dari 8 karakter",
-          "strength": {
-            "weak": "Password lemah",
-            "strong": "Password kuat"
-          }
-        },
-        "submit": "Atur password",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Berhasil!",
-              "message": "Password berhasil diubah."
-            },
-            "error": {
-              "title": "Error!",
-              "message": "Terjadi kesalahan. Silakan coba lagi."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Kode unik",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Tempelkan kode yang dikirim ke email anda",
-        "requesting_new_code": "Meminta kode baru",
-        "sending_code": "Mengirim kode"
-      },
-      "already_have_an_account": "Sudah punya akun?",
-      "login": "Masuk",
-      "create_account": "Buat akun",
-      "new_to_plane": "Baru di Plane?",
-      "back_to_sign_in": "Kembali ke halaman masuk",
-      "resend_in": "Kirim ulang dalam {seconds} detik",
-      "sign_in_with_unique_code": "Masuk dengan kode unik",
-      "forgot_password": "Lupa password?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Buat akun untuk mulai mengelola pekerjaan dengan tim anda.",
-        "step": {
-          "email": {
-            "header": "Daftar",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Daftar",
-            "sub_header": "Daftar menggunakan kombinasi email-password."
-          },
-          "unique_code": {
-            "header": "Daftar",
-            "sub_header": "Daftar menggunakan kode unik yang dikirim ke alamat email di atas."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Coba atur password yang lebih kuat untuk melanjutkan"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Masuk untuk mulai mengelola pekerjaan dengan tim anda.",
-        "step": {
-          "email": {
-            "header": "Masuk atau daftar",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Masuk atau daftar",
-            "sub_header": "Gunakan kombinasi email-password anda untuk masuk."
-          },
-          "unique_code": {
-            "header": "Masuk atau daftar",
-            "sub_header": "Masuk menggunakan kode unik yang dikirim ke alamat email di atas."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Reset password anda",
-      "description": "Masukkan alamat email akun anda yang telah diverifikasi dan kami akan mengirimkan link reset password.",
-      "email_sent": "Kami telah mengirim link reset ke alamat email anda",
-      "send_reset_link": "Kirim link reset",
-      "errors": {
-        "smtp_not_enabled": "Kami melihat bahwa admin anda belum mengaktifkan SMTP, kami tidak dapat mengirimkan link reset password"
-      },
-      "toast": {
-        "success": {
-          "title": "Email terkirim",
-          "message": "Periksa inbox anda untuk link reset password. Jika tidak muncul dalam beberapa menit, periksa folder spam."
-        },
-        "error": {
-          "title": "Error!",
-          "message": "Terjadi kesalahan. Silakan coba lagi."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Atur password baru",
-      "description": "Amankan akun anda dengan password yang kuat"
-    },
-    "set_password": {
-      "title": "Amankan akun anda",
-      "description": "Mengatur password membantu anda masuk dengan aman"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Error!",
-          "message": "Gagal keluar. Silakan coba lagi."
-        }
-      }
-    }
-  },
   "submit": "Kirim",
   "cancel": "Batal",
   "loading": "Memuat",
@@ -793,7 +625,8 @@
       "clear_sorting": "Hapus pengurutan",
       "show_weekends": "Tampilkan akhir pekan",
       "enable": "Aktifkan",
-      "disable": "Nonaktifkan"
+      "disable": "Nonaktifkan",
+      "copy_markdown": "Salin markdown"
     },
     "name": "Nama",
     "discard": "Buang",
@@ -883,7 +716,8 @@
     "planned": "Direncanakan",
     "paused": "Dijedaikan",
     "no_of": "Jumlah {entity}",
-    "resolved": "Terselesaikan"
+    "resolved": "Terselesaikan",
+    "overview": "Ikhtisar"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -1561,7 +1395,9 @@
         "title": "Penagihan & Rencana",
         "current_plan": "Rencana saat ini",
         "free_plan": "Anda saat ini menggunakan rencana gratis",
-        "view_plans": "Lihat rencana"
+        "view_plans": "Lihat rencana",
+        "heading": "Penagihan & Paket",
+        "description": "Pilih paket Anda, kelola langganan, dan tingkatkan dengan mudah seiring bertambahnya kebutuhan Anda."
       },
       "exports": {
         "title": "Ekspor",
@@ -1580,7 +1416,11 @@
               "message": "Ekspor tidak berhasil. Silakan coba lagi."
             }
           }
-        }
+        },
+        "heading": "Ekspor",
+        "description": "Ekspor data proyek Anda dalam berbagai format dan akses riwayat ekspor Anda dengan tautan unduhan.",
+        "exporting_projects": "Mengekspor proyek",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Webhook",
@@ -1631,7 +1471,9 @@
           "secret_key_not_copied": {
             "message": "Terjadi kesalahan saat menyalin kunci rahasia."
           }
-        }
+        },
+        "heading": "Webhook",
+        "description": "Otomatiskan notifikasi ke layanan eksternal saat terjadi peristiwa proyek."
       },
       "api_tokens": {
         "title": "Token API",
@@ -1707,7 +1549,9 @@
       "security": "Keamanan",
       "activity": "Aktivitas",
       "appearance": "Tampilan",
-      "notifications": "Notifikasi"
+      "notifications": "Notifikasi",
+      "preferences": "Preferensi",
+      "api-tokens": "Token akses pribadi"
     },
     "tabs": {
       "summary": "Ringkasan",
@@ -1773,7 +1617,9 @@
       "empty_state": {
         "title": "Tidak ada status yang tersedia untuk grup {groupKey}",
         "description": "Silakan buat status baru"
-      }
+      },
+      "heading": "Status",
+      "description": "Tentukan dan sesuaikan status alur kerja untuk melacak kemajuan item kerja Anda."
     },
     "labels": {
       "label_title": "Judul label",
@@ -1781,7 +1627,9 @@
       "label_max_char": "Nama label tidak boleh lebih dari 255 karakter",
       "toast": {
         "error": "Kesalahan saat memperbarui label"
-      }
+      },
+      "heading": "Label",
+      "description": "Buat label kustom untuk mengkategorikan dan mengatur item kerja Anda"
     },
     "estimates": {
       "label": "Perkiraan",
@@ -1864,7 +1712,9 @@
           "label": "Waktu",
           "hours": "Jam"
         }
-      }
+      },
+      "heading": "Estimasi",
+      "enable_description": "Membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim."
     },
     "automations": {
       "label": "Otomatisasi",
@@ -1878,7 +1728,9 @@
         "description": "Plane akan menutup secara otomatis item kerja yang belum selesai atau dibatalkan.",
         "duration": "Tutup otomatis item kerja yang tidak aktif selama",
         "auto_close_status": "Status penutupan otomatis"
-      }
+      },
+      "heading": "Otomatisasi",
+      "description": "Konfigurasikan tindakan otomatis untuk mengefisienkan alur kerja manajemen proyek Anda dan mengurangi tugas manual."
     },
     "empty_state": {
       "labels": {
@@ -2009,7 +1861,13 @@
         "title": "Belum ada siklus yang diarsipkan",
         "description": "Untuk membersihkan proyek Anda, arsipkan siklus yang telah diselesaikan. Temukan di sini setelah diarsipkan."
       }
-    }
+    },
+    "start_date": "Tanggal mulai",
+    "end_date": "Tanggal selesai",
+    "in_your_timezone": "Dalam zona waktu Anda",
+    "transfer_work_items": "Transfer {count} item kerja",
+    "date_range": "Rentang tanggal",
+    "add_date": "Tambah tanggal"
   },
   "project_issues": {
     "empty_state": {
@@ -2524,5 +2382,36 @@
     "open_button": "Buka panel navigasi",
     "close_button": "Tutup panel navigasi",
     "outline_floating_button": "Buka garis besar"
-  }
+  },
+  "preferences": "Preferensi",
+  "language_and_time": "Bahasa dan waktu",
+  "timezone_setting": "Pengaturan zona waktu",
+  "language_setting": "Pengaturan bahasa",
+  "settings_moved_to_preferences": "Pengaturan zona waktu & bahasa telah dipindahkan ke preferensi.",
+  "go_to_preferences": "Ke preferensi",
+  "account_settings": {
+    "preferences": {
+      "heading": "Preferensi",
+      "description": "Sesuaikan pengalaman aplikasi Anda sesuai cara kerja Anda"
+    },
+    "notifications": {
+      "heading": "Notifikasi email",
+      "description": "Tetap mendapat informasi tentang tugas yang Anda ikuti. Aktifkan ini untuk mendapatkan notifikasi."
+    },
+    "security": {
+      "heading": "Keamanan"
+    },
+    "api_tokens": {
+      "heading": "Token akses pribadi",
+      "description": "Hasilkan token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal."
+    },
+    "activity": {
+      "heading": "Aktivitas",
+      "description": "Lacak tindakan dan perubahan terbaru Anda di semua proyek dan tugas."
+    }
+  },
+  "edited": "diedit",
+  "bot": "Bot",
+  "settings_description": "Kelola akun, ruang kerja, dan preferensi proyek Anda di satu tempat. Beralih antar tab untuk konfigurasi yang mudah.",
+  "back_to_workspace": "Kembali ke ruang kerja"
 }

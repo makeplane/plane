@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Proyectos",
-    "pages": "Páginas",
-    "new_work_item": "Nuevo elemento de trabajo",
-    "home": "Inicio",
-    "your_work": "Tu trabajo",
-    "inbox": "Bandeja de entrada",
-    "workspace": "Espacio de trabajo",
-    "views": "Vistas",
-    "analytics": "Análisis",
-    "work_items": "Elementos de trabajo",
-    "cycles": "Ciclos",
-    "modules": "Módulos",
-    "intake": "Entrada",
-    "drafts": "Borradores",
-    "favorites": "Favoritos",
-    "pro": "Pro",
-    "upgrade": "Mejorar"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Correo electrónico",
-        "placeholder": "nombre@empresa.com",
-        "errors": {
-          "required": "El correo electrónico es obligatorio",
-          "invalid": "El correo electrónico no es válido"
-        }
-      },
-      "password": {
-        "label": "Contraseña",
-        "set_password": "Establecer una contraseña",
-        "placeholder": "Ingresa la contraseña",
-        "confirm_password": {
-          "label": "Confirmar contraseña",
-          "placeholder": "Confirmar contraseña"
-        },
-        "current_password": {
-          "label": "Contraseña actual"
-        },
-        "new_password": {
-          "label": "Nueva contraseña",
-          "placeholder": "Ingresa nueva contraseña"
-        },
-        "change_password": {
-          "label": {
-            "default": "Cambiar contraseña",
-            "submitting": "Cambiando contraseña"
-          }
-        },
-        "errors": {
-          "match": "Las contraseñas no coinciden",
-          "empty": "Por favor ingresa tu contraseña",
-          "length": "La contraseña debe tener más de 8 caracteres",
-          "strength": {
-            "weak": "La contraseña es débil",
-            "strong": "La contraseña es fuerte"
-          }
-        },
-        "submit": "Establecer contraseña",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "¡Éxito!",
-              "message": "Contraseña cambiada exitosamente."
-            },
-            "error": {
-              "title": "¡Error!",
-              "message": "Algo salió mal. Por favor intenta de nuevo."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Código único",
-        "placeholder": "obtiene-establece-vuela",
-        "paste_code": "Pega el código enviado a tu correo electrónico",
-        "requesting_new_code": "Solicitando nuevo código",
-        "sending_code": "Enviando código"
-      },
-      "already_have_an_account": "¿Ya tienes una cuenta?",
-      "login": "Iniciar sesión",
-      "create_account": "Crear una cuenta",
-      "new_to_plane": "¿Nuevo en Plane?",
-      "back_to_sign_in": "Volver a iniciar sesión",
-      "resend_in": "Reenviar en {seconds} segundos",
-      "sign_in_with_unique_code": "Iniciar sesión con código único",
-      "forgot_password": "¿Olvidaste tu contraseña?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Crea una cuenta para comenzar a gestionar el trabajo con tu equipo.",
-        "step": {
-          "email": {
-            "header": "Registrarse",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Registrarse",
-            "sub_header": "Regístrate usando una combinación de correo electrónico y contraseña."
-          },
-          "unique_code": {
-            "header": "Registrarse",
-            "sub_header": "Regístrate usando un código único enviado a la dirección de correo electrónico anterior."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Intenta establecer una contraseña fuerte para continuar"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Inicia sesión para comenzar a gestionar el trabajo con tu equipo.",
-        "step": {
-          "email": {
-            "header": "Iniciar sesión o registrarse",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Iniciar sesión o registrarse",
-            "sub_header": "Usa tu combinación de correo electrónico y contraseña para iniciar sesión."
-          },
-          "unique_code": {
-            "header": "Iniciar sesión o registrarse",
-            "sub_header": "Inicia sesión usando un código único enviado a la dirección de correo electrónico anterior."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Restablecer tu contraseña",
-      "description": "Ingresa la dirección de correo electrónico verificada de tu cuenta de usuario y te enviaremos un enlace para restablecer la contraseña.",
-      "email_sent": "Enviamos el enlace de restablecimiento a tu dirección de correo electrónico",
-      "send_reset_link": "Enviar enlace de restablecimiento",
-      "errors": {
-        "smtp_not_enabled": "Vemos que tu administrador no ha habilitado SMTP, no podremos enviar un enlace para restablecer la contraseña"
-      },
-      "toast": {
-        "success": {
-          "title": "Correo enviado",
-          "message": "Revisa tu bandeja de entrada para encontrar un enlace para restablecer tu contraseña. Si no aparece en unos minutos, revisa tu carpeta de spam."
-        },
-        "error": {
-          "title": "¡Error!",
-          "message": "Algo salió mal. Por favor intenta de nuevo."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Establecer nueva contraseña",
-      "description": "Asegura tu cuenta con una contraseña fuerte"
-    },
-    "set_password": {
-      "title": "Asegura tu cuenta",
-      "description": "Establecer una contraseña te ayuda a iniciar sesión de forma segura"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "¡Error!",
-          "message": "Error al cerrar sesión. Por favor intenta de nuevo."
-        }
-      }
-    }
-  },
   "submit": "Enviar",
   "cancel": "Cancelar",
   "loading": "Cargando",
@@ -796,7 +628,9 @@
       "clear_sorting": "Limpiar ordenamiento",
       "show_weekends": "Mostrar fines de semana",
       "enable": "Habilitar",
-      "disable": "Deshabilitar"
+      "disable": "Deshabilitar",
+      "restore": "Restaurar",
+      "copy_markdown": "Copiar markdown"
     },
     "name": "Nombre",
     "discard": "Descartar",
@@ -886,7 +720,8 @@
     "planned": "Planificado",
     "paused": "Pausado",
     "no_of": "N.º de {entity}",
-    "resolved": "Resuelto"
+    "resolved": "Resuelto",
+    "overview": "Resumen"
   },
   "chart": {
     "x_axis": "Eje X",
@@ -1400,7 +1235,8 @@
       "public": {
         "title": "Público",
         "description": "Cualquiera en el espacio de trabajo excepto Invitados puede unirse"
-      }
+      },
+      "label": "Red"
     },
     "error": {
       "permission": "No tienes permiso para realizar esta acción.",
@@ -1563,7 +1399,9 @@
         "title": "Facturación y Planes",
         "current_plan": "Plan actual",
         "free_plan": "Actualmente estás usando el plan gratuito",
-        "view_plans": "Ver planes"
+        "view_plans": "Ver planes",
+        "heading": "Facturación y planes",
+        "description": "Elija su plan, administre suscripciones y actualice fácilmente a medida que crecen sus necesidades."
       },
       "exports": {
         "title": "Exportaciones",
@@ -1582,7 +1420,11 @@
               "message": "La exportación no tuvo éxito. Por favor, inténtalo de nuevo."
             }
           }
-        }
+        },
+        "heading": "Exportaciones",
+        "description": "Exporte los datos de su proyecto en varios formatos y acceda a su historial de exportación con enlaces de descarga.",
+        "exporting_projects": "Exportando proyectos",
+        "format": "Formato"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1633,7 +1475,9 @@
           "secret_key_not_copied": {
             "message": "Ocurrió un error al copiar la clave secreta."
           }
-        }
+        },
+        "heading": "Webhooks",
+        "description": "Automatice notificaciones a servicios externos cuando ocurran eventos del proyecto."
       },
       "api_tokens": {
         "title": "Tokens de API",
@@ -1709,7 +1553,9 @@
       "security": "Seguridad",
       "activity": "Actividad",
       "appearance": "Apariencia",
-      "notifications": "Notificaciones"
+      "notifications": "Notificaciones",
+      "preferences": "Preferencias",
+      "api-tokens": "Tokens de acceso personal"
     },
     "tabs": {
       "summary": "Resumen",
@@ -1775,7 +1621,9 @@
       "empty_state": {
         "title": "No estados disponibles para el grupo {groupKey}",
         "description": "Por favor, crea un nuevo estado"
-      }
+      },
+      "heading": "Estados",
+      "description": "Defina y personalice estados de flujo de trabajo para rastrear el progreso de sus elementos de trabajo."
     },
     "labels": {
       "label_title": "Título de la etiqueta",
@@ -1783,7 +1631,9 @@
       "label_max_char": "El nombre de la etiqueta no debe exceder 255 caracteres",
       "toast": {
         "error": "Error al actualizar la etiqueta"
-      }
+      },
+      "heading": "Etiquetas",
+      "description": "Cree etiquetas personalizadas para categorizar y organizar sus elementos de trabajo"
     },
     "estimates": {
       "label": "Estimaciones",
@@ -1866,7 +1716,9 @@
           "label": "Tiempo",
           "hours": "Horas"
         }
-      }
+      },
+      "heading": "Estimaciones",
+      "enable_description": "Le ayudan a comunicar la complejidad y la carga de trabajo del equipo."
     },
     "automations": {
       "label": "Automatizaciones",
@@ -1880,7 +1732,9 @@
         "description": "Plane cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
         "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
         "auto_close_status": "Estado de cierre automático"
-      }
+      },
+      "heading": "Automatizaciones",
+      "description": "Configure acciones automatizadas para agilizar su flujo de trabajo de gestión de proyectos y reducir tareas manuales."
     },
     "empty_state": {
       "labels": {
@@ -2531,5 +2385,34 @@
     "open_button": "Abrir panel de navegación",
     "close_button": "Cerrar panel de navegación",
     "outline_floating_button": "Abrir esquema"
-  }
+  },
+  "preferences": "Preferencias",
+  "language_and_time": "Idioma y hora",
+  "timezone_setting": "Configuración de zona horaria",
+  "language_setting": "Configuración de idioma",
+  "settings_moved_to_preferences": "La configuración de zona horaria e idioma se ha movido a preferencias.",
+  "go_to_preferences": "Ir a preferencias",
+  "account_settings": {
+    "preferences": {
+      "heading": "Preferencias",
+      "description": "Personaliza tu experiencia en la aplicación según tu forma de trabajar"
+    },
+    "notifications": {
+      "heading": "Notificaciones por correo electrónico",
+      "description": "Mantente informado sobre las tareas que sigues. Habilita esto para recibir notificaciones."
+    },
+    "security": {
+      "heading": "Seguridad"
+    },
+    "api_tokens": {
+      "heading": "Tokens de acceso personal",
+      "description": "Genere tokens API seguros para integrar sus datos con sistemas y aplicaciones externos."
+    },
+    "activity": {
+      "heading": "Actividad",
+      "description": "Rastrea tus acciones y cambios recientes en todos los proyectos y tareas."
+    }
+  },
+  "settings_description": "Administre sus cuentas, espacios de trabajo y preferencias de proyecto en un solo lugar. Cambie entre pestañas para configurar fácilmente.",
+  "back_to_workspace": "Volver al espacio de trabajo"
 }

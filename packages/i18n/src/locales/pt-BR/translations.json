@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projetos",
-    "pages": "Páginas",
-    "new_work_item": "Novo item",
-    "home": "Home",
-    "your_work": "Seu trabalho",
-    "inbox": "Inbox",
-    "workspace": "Workspace",
-    "views": "Visualizações",
-    "analytics": "Analytics",
-    "work_items": "Itens",
-    "cycles": "Ciclos",
-    "modules": "Módulos",
-    "intake": "Intake",
-    "drafts": "Rascunhos",
-    "favorites": "Favoritos",
-    "pro": "Pro",
-    "upgrade": "Upgrade"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Email",
-        "placeholder": "nome@empresa.com",
-        "errors": {
-          "required": "Email é obrigatório",
-          "invalid": "Email inválido"
-        }
-      },
-      "password": {
-        "label": "Senha",
-        "set_password": "Definir senha",
-        "placeholder": "Digite a senha",
-        "confirm_password": {
-          "label": "Confirmar senha",
-          "placeholder": "Confirmar senha"
-        },
-        "current_password": {
-          "label": "Senha atual"
-        },
-        "new_password": {
-          "label": "Nova senha",
-          "placeholder": "Digite a nova senha"
-        },
-        "change_password": {
-          "label": {
-            "default": "Alterar senha",
-            "submitting": "Alterando senha"
-          }
-        },
-        "errors": {
-          "match": "As senhas não coincidem",
-          "empty": "Por favor digite sua senha",
-          "length": "A senha deve ter mais de 8 caracteres",
-          "strength": {
-            "weak": "Senha fraca",
-            "strong": "Senha forte"
-          }
-        },
-        "submit": "Definir senha",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Sucesso!",
-              "message": "Senha alterada com sucesso."
-            },
-            "error": {
-              "title": "Erro!",
-              "message": "Algo deu errado. Por favor, tente novamente."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Código único",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Cole o código enviado para seu email",
-        "requesting_new_code": "Solicitando novo código",
-        "sending_code": "Enviando código"
-      },
-      "already_have_an_account": "Já tem uma conta?",
-      "login": "Login",
-      "create_account": "Criar conta",
-      "new_to_plane": "Novo no Plane?",
-      "back_to_sign_in": "Voltar ao login",
-      "resend_in": "Reenviar em {seconds} segundos",
-      "sign_in_with_unique_code": "Login com código único",
-      "forgot_password": "Esqueceu sua senha?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Crie uma conta para começar a gerenciar trabalho com sua equipe.",
-        "step": {
-          "email": {
-            "header": "Cadastro",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Cadastro",
-            "sub_header": "Cadastre-se usando email e senha."
-          },
-          "unique_code": {
-            "header": "Cadastro",
-            "sub_header": "Cadastre-se usando um código único enviado para o email acima."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Tente definir uma senha forte para continuar"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Faça login para começar a gerenciar trabalho com sua equipe.",
-        "step": {
-          "email": {
-            "header": "Login ou cadastro",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Login ou cadastro",
-            "sub_header": "Use seu email e senha para fazer login."
-          },
-          "unique_code": {
-            "header": "Login ou cadastro",
-            "sub_header": "Faça login usando um código único enviado para o email acima."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Redefinir sua senha",
-      "description": "Digite o email verificado da sua conta e enviaremos um link para redefinir sua senha.",
-      "email_sent": "Enviamos o link de redefinição para seu email",
-      "send_reset_link": "Enviar link de redefinição",
-      "errors": {
-        "smtp_not_enabled": "Vemos que seu administrador não habilitou SMTP, não poderemos enviar um link de redefinição de senha"
-      },
-      "toast": {
-        "success": {
-          "title": "Email enviado",
-          "message": "Verifique sua caixa de entrada para um link de redefinição de senha. Se não aparecer em alguns minutos, verifique sua pasta de spam."
-        },
-        "error": {
-          "title": "Erro!",
-          "message": "Algo deu errado. Por favor, tente novamente."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Definir nova senha",
-      "description": "Proteja sua conta com uma senha forte"
-    },
-    "set_password": {
-      "title": "Proteja sua conta",
-      "description": "Definir uma senha ajuda você a fazer login com segurança"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Erro!",
-          "message": "Falha ao sair. Por favor, tente novamente."
-        }
-      }
-    }
-  },
   "submit": "Enviar",
   "cancel": "Cancelar",
   "loading": "Carregando",
@@ -795,7 +627,8 @@
       "clear_sorting": "Limpar ordenação",
       "show_weekends": "Mostrar fins de semana",
       "enable": "Habilitar",
-      "disable": "Desabilitar"
+      "disable": "Desabilitar",
+      "copy_markdown": "Copiar markdown"
     },
     "name": "Nome",
     "discard": "Descartar",
@@ -885,7 +718,8 @@
     "planned": "Planejado",
     "paused": "Pausado",
     "no_of": "Nº de {entity}",
-    "resolved": "Resolvido"
+    "resolved": "Resolvido",
+    "overview": "Visão geral"
   },
   "chart": {
     "x_axis": "Eixo X",
@@ -1563,7 +1397,9 @@
         "title": "Faturamento e planos",
         "current_plan": "Plano atual",
         "free_plan": "Você está usando o plano gratuito atualmente",
-        "view_plans": "Ver planos"
+        "view_plans": "Ver planos",
+        "heading": "Faturamento e planos",
+        "description": "Escolha seu plano, gerencie assinaturas e atualize facilmente conforme suas necessidades crescem."
       },
       "exports": {
         "title": "Exportações",
@@ -1582,7 +1418,11 @@
               "message": "A exportação não foi bem-sucedida. Tente novamente."
             }
           }
-        }
+        },
+        "heading": "Exportações",
+        "description": "Exporte os dados do seu projeto em vários formatos e acesse seu histórico de exportação com links para download.",
+        "exporting_projects": "Exportando projetos",
+        "format": "Formato"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1633,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Ocorreu um erro ao copiar a chave secreta."
           }
-        }
+        },
+        "heading": "Webhooks",
+        "description": "Automatize notificações para serviços externos quando ocorrerem eventos do projeto."
       },
       "api_tokens": {
         "title": "Tokens de API",
@@ -1709,7 +1551,9 @@
       "security": "Segurança",
       "activity": "Atividade",
       "appearance": "Aparência",
-      "notifications": "Notificações"
+      "notifications": "Notificações",
+      "preferences": "Preferências",
+      "api-tokens": "Tokens de acesso pessoal"
     },
     "tabs": {
       "summary": "Resumo",
@@ -1775,7 +1619,9 @@
       "empty_state": {
         "title": "Nenhum estado disponível para o grupo {groupKey}",
         "description": "Por favor, crie um novo estado"
-      }
+      },
+      "heading": "Estados",
+      "description": "Defina e personalize estados do fluxo de trabalho para acompanhar o progresso dos seus itens de trabalho."
     },
     "labels": {
       "label_title": "Título da etiqueta",
@@ -1783,7 +1629,9 @@
       "label_max_char": "O nome da etiqueta não deve exceder 255 caracteres",
       "toast": {
         "error": "Erro ao atualizar a etiqueta"
-      }
+      },
+      "heading": "Rótulos",
+      "description": "Crie rótulos personalizados para categorizar e organizar seus itens de trabalho"
     },
     "estimates": {
       "label": "Estimativas",
@@ -1866,7 +1714,9 @@
           "label": "Tempo",
           "hours": "Horas"
         }
-      }
+      },
+      "heading": "Estimativas",
+      "enable_description": "Eles ajudam você a comunicar a complexidade e a carga de trabalho da equipe."
     },
     "automations": {
       "label": "Automações",
@@ -1880,7 +1730,9 @@
         "description": "O Plane fechará automaticamente os itens de trabalho que não foram concluídos ou cancelados.",
         "duration": "Fechar automaticamente itens de trabalho que estão inativos por",
         "auto_close_status": "Status de fechamento automático"
-      }
+      },
+      "heading": "Automatizações",
+      "description": "Configure ações automatizadas para otimizar seu fluxo de gerenciamento de projeto e reduzir tarefas manuais."
     },
     "empty_state": {
       "labels": {
@@ -2011,7 +1863,13 @@
         "title": "Nenhum ciclo arquivado ainda",
         "description": "Para organizar seu projeto, arquive os ciclos concluídos. Encontre-os aqui quando forem arquivados."
       }
-    }
+    },
+    "start_date": "Data de início",
+    "end_date": "Data de término",
+    "in_your_timezone": "No seu fuso horário",
+    "transfer_work_items": "Transferir {count} itens de trabalho",
+    "date_range": "Intervalo de datas",
+    "add_date": "Adicionar data"
   },
   "project_issues": {
     "empty_state": {
@@ -2525,5 +2383,34 @@
     "open_button": "Abrir painel de navegação",
     "close_button": "Fechar painel de navegação",
     "outline_floating_button": "Abrir estrutura"
-  }
+  },
+  "preferences": "Preferências",
+  "language_and_time": "Idioma e hora",
+  "timezone_setting": "Configuração de fuso horário",
+  "language_setting": "Configuração de idioma",
+  "settings_moved_to_preferences": "As configurações de fuso horário e idioma foram movidas para preferências.",
+  "go_to_preferences": "Ir para preferências",
+  "account_settings": {
+    "preferences": {
+      "heading": "Preferências",
+      "description": "Personalize sua experiência no aplicativo de acordo com sua forma de trabalhar"
+    },
+    "notifications": {
+      "heading": "Notificações por e-mail",
+      "description": "Fique por dentro das tarefas que você acompanha. Ative isso para receber notificações."
+    },
+    "security": {
+      "heading": "Segurança"
+    },
+    "api_tokens": {
+      "heading": "Tokens de acesso pessoal",
+      "description": "Gere tokens API seguros para integrar seus dados com sistemas e aplicativos externos."
+    },
+    "activity": {
+      "heading": "Atividade",
+      "description": "Acompanhe suas ações e alterações recentes em todos os projetos e tarefas."
+    }
+  },
+  "settings_description": "Gerencie suas contas, espaços de trabalho e preferências de projeto em um só lugar. Alterne entre as guias para configurar facilmente.",
+  "back_to_workspace": "Voltar ao espaço de trabalho"
 }

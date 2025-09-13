@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Projetos",
+    "pages": "Páginas",
+    "new_work_item": "Novo item",
+    "home": "Home",
+    "your_work": "Seu trabalho",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Visualizações",
+    "analytics": "Analytics",
+    "work_items": "Itens",
+    "cycles": "Ciclos",
+    "modules": "Módulos",
+    "intake": "Intake",
+    "drafts": "Rascunhos",
+    "favorites": "Favoritos",
+    "pro": "Pro",
+    "upgrade": "Upgrade"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "nome@empresa.com",
+        "errors": {
+          "required": "Email é obrigatório",
+          "invalid": "Email inválido"
+        }
+      },
+      "password": {
+        "label": "Senha",
+        "set_password": "Definir senha",
+        "placeholder": "Digite a senha",
+        "confirm_password": {
+          "label": "Confirmar senha",
+          "placeholder": "Confirmar senha"
+        },
+        "current_password": {
+          "label": "Senha atual"
+        },
+        "new_password": {
+          "label": "Nova senha",
+          "placeholder": "Digite a nova senha"
+        },
+        "change_password": {
+          "label": {
+            "default": "Alterar senha",
+            "submitting": "Alterando senha"
+          }
+        },
+        "errors": {
+          "match": "As senhas não coincidem",
+          "empty": "Por favor digite sua senha",
+          "length": "A senha deve ter mais de 8 caracteres",
+          "strength": {
+            "weak": "Senha fraca",
+            "strong": "Senha forte"
+          }
+        },
+        "submit": "Definir senha",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Sucesso!",
+              "message": "Senha alterada com sucesso."
+            },
+            "error": {
+              "title": "Erro!",
+              "message": "Algo deu errado. Por favor, tente novamente."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Código único",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Cole o código enviado para seu email",
+        "requesting_new_code": "Solicitando novo código",
+        "sending_code": "Enviando código"
+      },
+      "already_have_an_account": "Já tem uma conta?",
+      "login": "Login",
+      "create_account": "Criar conta",
+      "new_to_plane": "Novo no Plane?",
+      "back_to_sign_in": "Voltar ao login",
+      "resend_in": "Reenviar em {seconds} segundos",
+      "sign_in_with_unique_code": "Login com código único",
+      "forgot_password": "Esqueceu sua senha?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Crie uma conta para começar a gerenciar trabalho com sua equipe.",
+        "step": {
+          "email": {
+            "header": "Cadastro"
+          },
+          "password": {
+            "header": "Cadastro",
+            "sub_header": "Cadastre-se usando email e senha."
+          },
+          "unique_code": {
+            "header": "Cadastro",
+            "sub_header": "Cadastre-se usando um código único enviado para o email acima."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Tente definir uma senha forte para continuar"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Faça login para começar a gerenciar trabalho com sua equipe.",
+        "step": {
+          "email": {
+            "header": "Login ou cadastro"
+          },
+          "password": {
+            "header": "Login ou cadastro",
+            "sub_header": "Use seu email e senha para fazer login."
+          },
+          "unique_code": {
+            "header": "Login ou cadastro",
+            "sub_header": "Faça login usando um código único enviado para o email acima."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Redefinir sua senha",
+      "description": "Digite o email verificado da sua conta e enviaremos um link para redefinir sua senha.",
+      "email_sent": "Enviamos o link de redefinição para seu email",
+      "send_reset_link": "Enviar link de redefinição",
+      "errors": {
+        "smtp_not_enabled": "Vemos que seu administrador não habilitou SMTP, não poderemos enviar um link de redefinição de senha"
+      },
+      "toast": {
+        "success": {
+          "title": "Email enviado",
+          "message": "Verifique sua caixa de entrada para um link de redefinição de senha. Se não aparecer em alguns minutos, verifique sua pasta de spam."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Algo deu errado. Por favor, tente novamente."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Definir nova senha",
+      "description": "Proteja sua conta com uma senha forte"
+    },
+    "set_password": {
+      "title": "Proteja sua conta",
+      "description": "Definir uma senha ajuda você a fazer login com segurança"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao sair. Por favor, tente novamente."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Projek",
+    "pages": "Halaman",
+    "new_work_item": "Item kerja baru",
+    "home": "Beranda",
+    "your_work": "Pekerjaan anda",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Views",
+    "analytics": "Analitik",
+    "work_items": "Item kerja",
+    "cycles": "Siklus",
+    "modules": "Modul",
+    "intake": "Intake",
+    "drafts": "Draft",
+    "favorites": "Favorit",
+    "pro": "Pro",
+    "upgrade": "Upgrade"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "nama@perusahaan.com",
+        "errors": {
+          "required": "Email wajib diisi",
+          "invalid": "Email tidak valid"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "set_password": "Atur password",
+        "placeholder": "Masukkan password",
+        "confirm_password": {
+          "label": "Konfirmasi password",
+          "placeholder": "Konfirmasi password"
+        },
+        "current_password": {
+          "label": "Password saat ini"
+        },
+        "new_password": {
+          "label": "Password baru",
+          "placeholder": "Masukkan password baru"
+        },
+        "change_password": {
+          "label": {
+            "default": "Ubah password",
+            "submitting": "Mengubah password"
+          }
+        },
+        "errors": {
+          "match": "Password tidak cocok",
+          "empty": "Silakan masukkan password anda",
+          "length": "Panjang password harus lebih dari 8 karakter",
+          "strength": {
+            "weak": "Password lemah",
+            "strong": "Password kuat"
+          }
+        },
+        "submit": "Atur password",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Password berhasil diubah."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Terjadi kesalahan. Silakan coba lagi."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Kode unik",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Tempelkan kode yang dikirim ke email anda",
+        "requesting_new_code": "Meminta kode baru",
+        "sending_code": "Mengirim kode"
+      },
+      "already_have_an_account": "Sudah punya akun?",
+      "login": "Masuk",
+      "create_account": "Buat akun",
+      "new_to_plane": "Baru di Plane?",
+      "back_to_sign_in": "Kembali ke halaman masuk",
+      "resend_in": "Kirim ulang dalam {seconds} detik",
+      "sign_in_with_unique_code": "Masuk dengan kode unik",
+      "forgot_password": "Lupa password?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Buat akun untuk mulai mengelola pekerjaan dengan tim anda.",
+        "step": {
+          "email": {
+            "header": "Daftar"
+          },
+          "password": {
+            "header": "Daftar",
+            "sub_header": "Daftar menggunakan kombinasi email-password."
+          },
+          "unique_code": {
+            "header": "Daftar",
+            "sub_header": "Daftar menggunakan kode unik yang dikirim ke alamat email di atas."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Coba atur password yang lebih kuat untuk melanjutkan"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Masuk untuk mulai mengelola pekerjaan dengan tim anda.",
+        "step": {
+          "email": {
+            "header": "Masuk atau daftar"
+          },
+          "password": {
+            "header": "Masuk atau daftar",
+            "sub_header": "Gunakan kombinasi email-password anda untuk masuk."
+          },
+          "unique_code": {
+            "header": "Masuk atau daftar",
+            "sub_header": "Masuk menggunakan kode unik yang dikirim ke alamat email di atas."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Reset password anda",
+      "description": "Masukkan alamat email akun anda yang telah diverifikasi dan kami akan mengirimkan link reset password.",
+      "email_sent": "Kami telah mengirim link reset ke alamat email anda",
+      "send_reset_link": "Kirim link reset",
+      "errors": {
+        "smtp_not_enabled": "Kami melihat bahwa admin anda belum mengaktifkan SMTP, kami tidak dapat mengirimkan link reset password"
+      },
+      "toast": {
+        "success": {
+          "title": "Email terkirim",
+          "message": "Periksa inbox anda untuk link reset password. Jika tidak muncul dalam beberapa menit, periksa folder spam."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Terjadi kesalahan. Silakan coba lagi."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Atur password baru",
+      "description": "Amankan akun anda dengan password yang kuat"
+    },
+    "set_password": {
+      "title": "Amankan akun anda",
+      "description": "Mengatur password membantu anda masuk dengan aman"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Error!",
+          "message": "Gagal keluar. Silakan coba lagi."
+        }
+      }
+    }
+  }
+}

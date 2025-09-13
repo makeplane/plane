@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projekty",
-    "pages": "Stránky",
-    "new_work_item": "Nová pracovná položka",
-    "home": "Domov",
-    "your_work": "Vaša práca",
-    "inbox": "Doručená pošta",
-    "workspace": "Pracovný priestor",
-    "views": "Pohľady",
-    "analytics": "Analytika",
-    "work_items": "Pracovné položky",
-    "cycles": "Cykly",
-    "modules": "Moduly",
-    "intake": "Príjem",
-    "drafts": "Koncepty",
-    "favorites": "Obľúbené",
-    "pro": "Pro",
-    "upgrade": "Upgrade"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "E-mail",
-        "placeholder": "meno@spolocnost.sk",
-        "errors": {
-          "required": "E-mail je povinný",
-          "invalid": "E-mail je neplatný"
-        }
-      },
-      "password": {
-        "label": "Heslo",
-        "set_password": "Nastaviť heslo",
-        "placeholder": "Zadajte heslo",
-        "confirm_password": {
-          "label": "Potvrďte heslo",
-          "placeholder": "Potvrďte heslo"
-        },
-        "current_password": {
-          "label": "Aktuálne heslo"
-        },
-        "new_password": {
-          "label": "Nové heslo",
-          "placeholder": "Zadajte nové heslo"
-        },
-        "change_password": {
-          "label": {
-            "default": "Zmeniť heslo",
-            "submitting": "Mení sa heslo"
-          }
-        },
-        "errors": {
-          "match": "Heslá sa nezhodujú",
-          "empty": "Zadajte prosím svoje heslo",
-          "length": "Dĺžka hesla by mala byť viac ako 8 znakov",
-          "strength": {
-            "weak": "Heslo je slabé",
-            "strong": "Heslo je silné"
-          }
-        },
-        "submit": "Nastaviť heslo",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Úspech!",
-              "message": "Heslo bolo úspešne zmenené."
-            },
-            "error": {
-              "title": "Chyba!",
-              "message": "Niečo sa pokazilo. Skúste to prosím znova."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Jedinečný kód",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Vložte kód zaslaný na váš e-mail",
-        "requesting_new_code": "Žiadam o nový kód",
-        "sending_code": "Odosielam kód"
-      },
-      "already_have_an_account": "Už máte účet?",
-      "login": "Prihlásiť sa",
-      "create_account": "Vytvoriť účet",
-      "new_to_plane": "Nový v Plane?",
-      "back_to_sign_in": "Späť na prihlásenie",
-      "resend_in": "Znova odoslať za {seconds} sekúnd",
-      "sign_in_with_unique_code": "Prihlásiť sa pomocou jedinečného kódu",
-      "forgot_password": "Zabudli ste heslo?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Vytvorte účet a začnite spravovať prácu so svojím tímom.",
-        "step": {
-          "email": {
-            "header": "Registrácia",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Registrácia",
-            "sub_header": "Zaregistrujte sa pomocou kombinácie e-mailu a hesla."
-          },
-          "unique_code": {
-            "header": "Registrácia",
-            "sub_header": "Zaregistrujte sa pomocou jedinečného kódu zaslaného na vyššie uvedenú e-mailovú adresu."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Skúste nastaviť silné heslo, aby ste mohli pokračovať"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Prihláste sa a začnite spravovať prácu so svojím tímom.",
-        "step": {
-          "email": {
-            "header": "Prihlásiť sa alebo zaregistrovať",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Prihlásiť sa alebo zaregistrovať",
-            "sub_header": "Použite svoju kombináciu e-mailu a hesla na prihlásenie."
-          },
-          "unique_code": {
-            "header": "Prihlásiť sa alebo zaregistrovať",
-            "sub_header": "Prihláste sa pomocou jedinečného kódu zaslaného na vyššie uvedenú e-mailovú adresu."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Obnovte svoje heslo",
-      "description": "Zadajte overenú e-mailovú adresu vášho používateľského účtu a my vám zašleme odkaz na obnovenie hesla.",
-      "email_sent": "Odoslali sme odkaz na obnovenie na vašu e-mailovú adresu",
-      "send_reset_link": "Odoslať odkaz na obnovenie",
-      "errors": {
-        "smtp_not_enabled": "Vidíme, že váš správca neaktivoval SMTP, nebudeme môcť odoslať odkaz na obnovenie hesla"
-      },
-      "toast": {
-        "success": {
-          "title": "E-mail odoslaný",
-          "message": "Skontrolujte si doručenú poštu pre odkaz na obnovenie hesla. Ak sa neobjaví v priebehu niekoľkých minút, skontrolujte si spam."
-        },
-        "error": {
-          "title": "Chyba!",
-          "message": "Niečo sa pokazilo. Skúste to prosím znova."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Nastaviť nové heslo",
-      "description": "Zabezpečte svoj účet silným heslom"
-    },
-    "set_password": {
-      "title": "Zabezpečte svoj účet",
-      "description": "Nastavenie hesla vám pomôže bezpečne sa prihlásiť"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Chyba!",
-          "message": "Nepodarilo sa odhlásiť. Skúste to prosím znova."
-        }
-      }
-    }
-  },
   "submit": "Odoslať",
   "cancel": "Zrušiť",
   "loading": "Načítavanie",
@@ -795,7 +627,8 @@
       "clear_sorting": "Vymazať triedenie",
       "show_weekends": "Zobraziť víkendy",
       "enable": "Povoliť",
-      "disable": "Zakázať"
+      "disable": "Zakázať",
+      "copy_markdown": "Kopírovať markdown"
     },
     "name": "Názov",
     "discard": "Zahodiť",
@@ -885,7 +718,8 @@
     "planned": "Plánované",
     "paused": "Pozastavené",
     "no_of": "Počet {entity}",
-    "resolved": "Vyriešené"
+    "resolved": "Vyriešené",
+    "overview": "Prehľad"
   },
   "chart": {
     "x_axis": "Os X",
@@ -1528,7 +1362,8 @@
             "max_length": "Názov priestoru nesmie presiahnuť 80 znakov"
           },
           "company_size": {
-            "required": "Veľkosť spoločnosti je povinná"
+            "required": "Veľkosť spoločnosti je povinná",
+            "select_a_range": "Vyberte rozsah"
           }
         }
       },
@@ -1562,7 +1397,9 @@
         "title": "Fakturácia a plány",
         "current_plan": "Aktuálny plán",
         "free_plan": "Používate bezplatný plán",
-        "view_plans": "Zobraziť plány"
+        "view_plans": "Zobraziť plány",
+        "heading": "Fakturácia a plány",
+        "description": "Vyberte si svoj plán, spravujte predplatné a jednoducho upgradujte podľa vašich potrieb."
       },
       "exports": {
         "title": "Exporty",
@@ -1581,7 +1418,11 @@
               "message": "Skúste to prosím znova."
             }
           }
-        }
+        },
+        "heading": "Exporty",
+        "description": "Exportujte údaje svojho projektu v rôznych formátoch a pristupujte k histórii exportov s odkazmi na stiahnutie.",
+        "exporting_projects": "Exportovanie projektov",
+        "format": "Formát"
       },
       "webhooks": {
         "title": "Webhooky",
@@ -1632,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Chyba pri kopírovaní kľúča."
           }
-        }
+        },
+        "heading": "Webhooky",
+        "description": "Automatizujte oznámenia externým službám pri udalostiach projektu."
       },
       "api_tokens": {
         "title": "API Tokeny",
@@ -1708,7 +1551,9 @@
       "security": "Zabezpečenie",
       "activity": "Aktivita",
       "appearance": "Vzhľad",
-      "notifications": "Oznámenia"
+      "notifications": "Oznámenia",
+      "preferences": "Predvoľby",
+      "api-tokens": "Osobné prístupové tokeny"
     },
     "tabs": {
       "summary": "Zhrnutie",
@@ -1774,7 +1619,9 @@
       "empty_state": {
         "title": "Žiadne stavy pre skupinu {groupKey}",
         "description": "Vytvorte nový stav"
-      }
+      },
+      "heading": "Stavy",
+      "description": "Definujte a prispôsobte stavy pracovného postupu na sledovanie priebehu vašich pracovných položiek."
     },
     "labels": {
       "label_title": "Názov štítka",
@@ -1782,7 +1629,9 @@
       "label_max_char": "Názov štítka nesmie presiahnuť 255 znakov",
       "toast": {
         "error": "Chyba pri aktualizácii štítka"
-      }
+      },
+      "heading": "Štítky",
+      "description": "Vytvárajte vlastné štítky na kategorizáciu a organizáciu vašich pracovných položiek"
     },
     "estimates": {
       "label": "Odhady",
@@ -1865,7 +1714,9 @@
           "label": "Čas",
           "hours": "Hodiny"
         }
-      }
+      },
+      "heading": "Odhady",
+      "enable_description": "Pomáhajú vám v komunikácii zložitosti a pracovnej záťaže tímu."
     },
     "automations": {
       "label": "Automatizácie",
@@ -1879,7 +1730,9 @@
         "description": "Plane uzavrie neaktívne položky.",
         "duration": "Uzatvoriť položky neaktívne dlhšie ako",
         "auto_close_status": "Stav pre automatické uzatvorenie"
-      }
+      },
+      "heading": "Automatizácie",
+      "description": "Nakonfigurujte automatizované akcie pre zefektívnenie vášho procesu riadenia projektu a zníženie manuálnych úloh."
     },
     "empty_state": {
       "labels": {
@@ -2530,5 +2383,34 @@
     "open_button": "Otvoriť navigačný panel",
     "close_button": "Zavrieť navigačný panel",
     "outline_floating_button": "Otvoriť osnovu"
-  }
+  },
+  "preferences": "Predvoľby",
+  "language_and_time": "Jazyk a čas",
+  "timezone_setting": "Nastavenie časového pásma",
+  "language_setting": "Nastavenie jazyka",
+  "settings_moved_to_preferences": "Nastavenia časového pásma a jazyka boli presunuté do predvolieb.",
+  "go_to_preferences": "Prejsť do predvolieb",
+  "account_settings": {
+    "preferences": {
+      "heading": "Predvoľby",
+      "description": "Prispôsobte si aplikáciu podľa svojho spôsobu práce"
+    },
+    "notifications": {
+      "heading": "E-mailové upozornenia",
+      "description": "Zostaňte informovaní o úlohách, ktoré sledujete. Povoľte toto pre zasielanie upozornení."
+    },
+    "security": {
+      "heading": "Zabezpečenie"
+    },
+    "api_tokens": {
+      "heading": "Osobné prístupové tokeny",
+      "description": "Generujte bezpečné API tokeny pre integráciu vašich dát s externými systémami a aplikáciami."
+    },
+    "activity": {
+      "heading": "Aktivita",
+      "description": "Sledujte svoje nedávne akcie a zmeny vo všetkých projektoch a úlohách."
+    }
+  },
+  "settings_description": "Spravujte svoje účty, pracovné priestory a predvoľby projektu na jednom mieste. Prepínajte medzi kartami pre jednoduchú konfiguráciu.",
+  "back_to_workspace": "Späť do pracovného priestoru"
 }

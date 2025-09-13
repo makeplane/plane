@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "项目",
-    "pages": "页面",
-    "new_work_item": "新工作项",
-    "home": "主页",
-    "your_work": "我的工作",
-    "inbox": "收件箱",
-    "workspace": "工作区",
-    "views": "视图",
-    "analytics": "分析",
-    "work_items": "工作项",
-    "cycles": "周期",
-    "modules": "模块",
-    "intake": "收集",
-    "drafts": "草稿",
-    "favorites": "收藏",
-    "pro": "专业版",
-    "upgrade": "升级"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "邮箱",
-        "placeholder": "name@company.com",
-        "errors": {
-          "required": "邮箱是必填项",
-          "invalid": "邮箱格式无效"
-        }
-      },
-      "password": {
-        "label": "密码",
-        "set_password": "设置密码",
-        "placeholder": "输入密码",
-        "confirm_password": {
-          "label": "确认密码",
-          "placeholder": "确认密码"
-        },
-        "current_password": {
-          "label": "当前密码"
-        },
-        "new_password": {
-          "label": "新密码",
-          "placeholder": "输入新密码"
-        },
-        "change_password": {
-          "label": {
-            "default": "修改密码",
-            "submitting": "正在修改密码"
-          }
-        },
-        "errors": {
-          "match": "密码不匹配",
-          "empty": "请输入密码",
-          "length": "密码长度应超过8个字符",
-          "strength": {
-            "weak": "密码强度较弱",
-            "strong": "密码强度较强"
-          }
-        },
-        "submit": "设置密码",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "成功！",
-              "message": "密码修改成功。"
-            },
-            "error": {
-              "title": "错误！",
-              "message": "出现错误。请重试。"
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "唯一码",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "粘贴发送到您邮箱的验证码",
-        "requesting_new_code": "正在请求新验证码",
-        "sending_code": "正在发送验证码"
-      },
-      "already_have_an_account": "已有账号？",
-      "login": "登录",
-      "create_account": "创建账号",
-      "new_to_plane": "首次使用 Plane？",
-      "back_to_sign_in": "返回登录",
-      "resend_in": "{seconds} 秒后重新发送",
-      "sign_in_with_unique_code": "使用唯一码登录",
-      "forgot_password": "忘记密码？"
-    },
-    "sign_up": {
-      "header": {
-        "label": "创建账号以开始与团队一起管理工作。",
-        "step": {
-          "email": {
-            "header": "注册",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "注册",
-            "sub_header": "使用邮箱-密码组合注册。"
-          },
-          "unique_code": {
-            "header": "注册",
-            "sub_header": "使用发送到上述邮箱的唯一码注册。"
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "请设置一个强密码以继续"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "登录以开始与团队一起管理工作。",
-        "step": {
-          "email": {
-            "header": "登录或注册",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "登录或注册",
-            "sub_header": "使用您的邮箱-密码组合登录。"
-          },
-          "unique_code": {
-            "header": "登录或注册",
-            "sub_header": "使用发送到上述邮箱的唯一码登录。"
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "重置密码",
-      "description": "输入您的用户账号已验证的邮箱地址，我们将向您发送密码重置链接。",
-      "email_sent": "我们已将重置链接发送到您的邮箱",
-      "send_reset_link": "发送重置链接",
-      "errors": {
-        "smtp_not_enabled": "我们发现您的管理员未启用 SMTP，我们将无法发送密码重置链接"
-      },
-      "toast": {
-        "success": {
-          "title": "邮件已发送",
-          "message": "请查看您的收件箱以获取重置密码的链接。如果几分钟内未收到，请检查垃圾邮件文件夹。"
-        },
-        "error": {
-          "title": "错误！",
-          "message": "出现错误。请重试。"
-        }
-      }
-    },
-    "reset_password": {
-      "title": "设置新密码",
-      "description": "使用强密码保护您的账号"
-    },
-    "set_password": {
-      "title": "保护您的账号",
-      "description": "设置密码有助于您安全登录"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "错误！",
-          "message": "登出失败。请重试。"
-        }
-      }
-    }
-  },
   "submit": "提交",
   "cancel": "取消",
   "loading": "加载中",
@@ -794,7 +626,9 @@
       "clear_sorting": "清除排序",
       "show_weekends": "显示周末",
       "enable": "启用",
-      "disable": "禁用"
+      "disable": "禁用",
+      "restore": "恢复",
+      "copy_markdown": "复制 markdown"
     },
     "name": "名称",
     "discard": "放弃",
@@ -884,7 +718,8 @@
     "planned": "已计划",
     "paused": "暂停",
     "no_of": "{entity} 的数量",
-    "resolved": "已解决"
+    "resolved": "已解决",
+    "overview": "概览"
   },
   "chart": {
     "x_axis": "X轴",
@@ -1398,7 +1233,8 @@
       "public": {
         "title": "公开",
         "description": "工作区中除访客外的任何人都可以加入"
-      }
+      },
+      "label": "网络"
     },
     "error": {
       "permission": "您没有执行此操作的权限。",
@@ -1561,7 +1397,9 @@
         "title": "账单与计划",
         "current_plan": "当前计划",
         "free_plan": "您目前使用的是免费计划",
-        "view_plans": "查看计划"
+        "view_plans": "查看计划",
+        "heading": "账单和计划",
+        "description": "选择您的计划，管理订阅，并随着需求增长轻松升级。"
       },
       "exports": {
         "title": "导出",
@@ -1580,7 +1418,11 @@
               "message": "导出未成功。请重试。"
             }
           }
-        }
+        },
+        "heading": "导出",
+        "description": "以各种格式导出项目数据，并访问带有下载链接的导出历史记录。",
+        "exporting_projects": "导出项目",
+        "format": "格式"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1631,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "复制密钥时出错。"
           }
-        }
+        },
+        "heading": "Webhook",
+        "description": "在项目事件发生时自动通知外部服务。"
       },
       "api_tokens": {
         "title": "API 令牌",
@@ -1707,7 +1551,9 @@
       "security": "安全",
       "activity": "活动",
       "appearance": "外观",
-      "notifications": "通知"
+      "notifications": "通知",
+      "preferences": "偏好设置",
+      "api-tokens": "个人访问令牌"
     },
     "tabs": {
       "summary": "摘要",
@@ -1773,7 +1619,9 @@
       "empty_state": {
         "title": "{groupKey} 组中没有状态",
         "description": "请创建一个新状态"
-      }
+      },
+      "heading": "状态",
+      "description": "定义和自定义工作流状态以跟踪工作项的进度。"
     },
     "labels": {
       "label_title": "标签标题",
@@ -1781,7 +1629,9 @@
       "label_max_char": "标签名称不应超过255个字符",
       "toast": {
         "error": "更新标签时出错"
-      }
+      },
+      "heading": "标签",
+      "description": "创建自定义标签以对工作项进行分类和组织"
     },
     "estimates": {
       "label": "估算",
@@ -1845,6 +1695,27 @@
         "already_exists": "估算值已存在。",
         "unsaved_changes": "您有未保存的更改，请在点击完成前保存。",
         "remove_empty": "估算不能为空。请在每个字段中输入值或删除没有值的字段。"
+      },
+      "heading": "估算",
+      "enable_description": "它们帮助您传达团队的复杂性和工作负载。",
+      "systems": {
+        "points": {
+          "label": "点数",
+          "fibonacci": "斐波那契",
+          "linear": "线性",
+          "squares": "平方",
+          "custom": "自定义"
+        },
+        "categories": {
+          "label": "类别",
+          "t_shirt_sizes": "T恤尺码",
+          "easy_to_hard": "从易到难",
+          "custom": "自定义"
+        },
+        "time": {
+          "label": "时间",
+          "hours": "小时"
+        }
       }
     },
     "automations": {
@@ -1859,7 +1730,9 @@
         "description": "Plane 将自动关闭尚未完成或取消的工作项。",
         "duration": "自动关闭不活跃",
         "auto_close_status": "自动关闭状态"
-      }
+      },
+      "heading": "自动化",
+      "description": "配置自动化操作以简化项目管理工作流程并减少手动任务。"
     },
     "empty_state": {
       "labels": {
@@ -2510,5 +2383,34 @@
     "open_button": "打开导航面板",
     "close_button": "关闭导航面板",
     "outline_floating_button": "打开大纲"
-  }
+  },
+  "preferences": "偏好设置",
+  "language_and_time": "语言和时间",
+  "timezone_setting": "时区设置",
+  "language_setting": "语言设置",
+  "settings_moved_to_preferences": "时区和语言设置已移至偏好设置。",
+  "go_to_preferences": "前往偏好设置",
+  "account_settings": {
+    "preferences": {
+      "heading": "偏好设置",
+      "description": "根据您的工作方式自定义应用体验"
+    },
+    "notifications": {
+      "heading": "电子邮件通知",
+      "description": "及时了解您订阅的工作项。启用此功能以接收通知。"
+    },
+    "security": {
+      "heading": "安全"
+    },
+    "api_tokens": {
+      "heading": "个人访问令牌",
+      "description": "生成安全的 API 令牌，以将您的数据与外部系统和应用程序集成。"
+    },
+    "activity": {
+      "heading": "活动",
+      "description": "跟踪您在所有项目和工作项中的最近操作和更改。"
+    }
+  },
+  "settings_description": "在一个地方管理您的账户、工作空间和项目偏好设置。在标签页之间切换以轻松配置。",
+  "back_to_workspace": "返回工作空间"
 }

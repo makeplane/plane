@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Progetti",
+    "pages": "Pagine",
+    "new_work_item": "Nuovo elemento di lavoro",
+    "home": "Home",
+    "your_work": "Il tuo lavoro",
+    "inbox": "Posta in arrivo",
+    "workspace": "workspace",
+    "views": "Visualizzazioni",
+    "analytics": "Analisi",
+    "work_items": "Elementi di lavoro",
+    "cycles": "Cicli",
+    "modules": "Moduli",
+    "intake": "Intake",
+    "drafts": "Bozze",
+    "favorites": "Preferiti",
+    "pro": "Pro",
+    "upgrade": "Aggiorna"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "nome@azienda.com",
+        "errors": {
+          "required": "Email è obbligatoria",
+          "invalid": "Email non valida"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "set_password": "Imposta una password",
+        "placeholder": "Inserisci la password",
+        "confirm_password": {
+          "label": "Conferma password",
+          "placeholder": "Conferma password"
+        },
+        "current_password": {
+          "label": "Password attuale"
+        },
+        "new_password": {
+          "label": "Nuova password",
+          "placeholder": "Inserisci nuova password"
+        },
+        "change_password": {
+          "label": {
+            "default": "Cambia password",
+            "submitting": "Cambiando password"
+          }
+        },
+        "errors": {
+          "match": "Le password non corrispondono",
+          "empty": "Per favore inserisci la tua password",
+          "length": "La lunghezza della password deve essere superiore a 8 caratteri",
+          "strength": {
+            "weak": "La password è debole",
+            "strong": "La password è forte"
+          }
+        },
+        "submit": "Imposta password",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Successo!",
+              "message": "Password cambiata con successo."
+            },
+            "error": {
+              "title": "Errore!",
+              "message": "Qualcosa è andato storto. Per favore riprova."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Codice unico",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Incolla il codice inviato alla tua email",
+        "requesting_new_code": "Richiesta di nuovo codice",
+        "sending_code": "Invio codice"
+      },
+      "already_have_an_account": "Hai già un account?",
+      "login": "Accedi",
+      "create_account": "Crea un account",
+      "new_to_plane": "Nuovo su Plane?",
+      "back_to_sign_in": "Torna al login",
+      "resend_in": "Reinvia in {seconds} secondi",
+      "sign_in_with_unique_code": "Accedi con codice unico",
+      "forgot_password": "Hai dimenticato la password?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Crea un account per iniziare a gestire il lavoro con il tuo team.",
+        "step": {
+          "email": {
+            "header": "Registrati"
+          },
+          "password": {
+            "header": "Registrati",
+            "sub_header": "Registrati utilizzando una combinazione email-password."
+          },
+          "unique_code": {
+            "header": "Registrati",
+            "sub_header": "Registrati utilizzando un codice unico inviato all'indirizzo email sopra."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Prova a impostare una password forte per procedere"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Accedi per iniziare a gestire il lavoro con il tuo team.",
+        "step": {
+          "email": {
+            "header": "Accedi o registrati"
+          },
+          "password": {
+            "header": "Accedi o registrati",
+            "sub_header": "Usa la tua combinazione email-password per accedere."
+          },
+          "unique_code": {
+            "header": "Accedi o registrati",
+            "sub_header": "Accedi utilizzando un codice unico inviato all'indirizzo email sopra."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Reimposta la tua password",
+      "description": "Inserisci l'indirizzo email verificato del tuo account utente e ti invieremo un link per reimpostare la password.",
+      "email_sent": "Abbiamo inviato il link di reimpostazione al tuo indirizzo email",
+      "send_reset_link": "Invia link di reimpostazione",
+      "errors": {
+        "smtp_not_enabled": "Vediamo che il tuo amministratore non ha abilitato SMTP, non saremo in grado di inviare un link di reimpostazione della password"
+      },
+      "toast": {
+        "success": {
+          "title": "Email inviata",
+          "message": "Controlla la tua inbox per un link per reimpostare la tua password. Se non appare entro pochi minuti, controlla la tua cartella spam."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Qualcosa è andato storto. Per favore riprova."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Imposta nuova password",
+      "description": "Proteggi il tuo account con una password forte"
+    },
+    "set_password": {
+      "title": "Proteggi il tuo account",
+      "description": "Impostare una password ti aiuta a accedere in modo sicuro"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile disconnettersi. Per favore riprova."
+        }
+      }
+    }
+  }
+}

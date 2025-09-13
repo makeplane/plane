@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "プロジェクト",
-    "pages": "ページ",
-    "new_work_item": "新規作業項目",
-    "home": "ホーム",
-    "your_work": "あなたの作業",
-    "inbox": "受信トレイ",
-    "workspace": "ワークスペース",
-    "views": "ビュー",
-    "analytics": "アナリティクス",
-    "work_items": "作業項目",
-    "cycles": "サイクル",
-    "modules": "モジュール",
-    "intake": "インテーク",
-    "drafts": "下書き",
-    "favorites": "お気に入り",
-    "pro": "プロ",
-    "upgrade": "アップグレード"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "メールアドレス",
-        "placeholder": "name@company.com",
-        "errors": {
-          "required": "メールアドレスは必須です",
-          "invalid": "メールアドレスが無効です"
-        }
-      },
-      "password": {
-        "label": "パスワード",
-        "set_password": "パスワードを設定",
-        "placeholder": "パスワードを入力",
-        "confirm_password": {
-          "label": "パスワードの確認",
-          "placeholder": "パスワードを確認"
-        },
-        "current_password": {
-          "label": "現在のパスワード"
-        },
-        "new_password": {
-          "label": "新しいパスワード",
-          "placeholder": "新しいパスワードを入力"
-        },
-        "change_password": {
-          "label": {
-            "default": "パスワードを変更",
-            "submitting": "パスワードを変更中"
-          }
-        },
-        "errors": {
-          "match": "パスワードが一致しません",
-          "empty": "パスワードを入力してください",
-          "length": "パスワードは8文字以上である必要があります",
-          "strength": {
-            "weak": "パスワードが弱すぎます",
-            "strong": "パスワードは十分な強度です"
-          }
-        },
-        "submit": "パスワードを設定",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "成功！",
-              "message": "パスワードが正常に変更されました。"
-            },
-            "error": {
-              "title": "エラー！",
-              "message": "問題が発生しました。もう一度お試しください。"
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "ユニークコード",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "メールで送信されたコードを貼り付けてください",
-        "requesting_new_code": "新しいコードをリクエスト中",
-        "sending_code": "コードを送信中"
-      },
-      "already_have_an_account": "すでにアカウントをお持ちですか？",
-      "login": "ログイン",
-      "create_account": "アカウントを作成",
-      "new_to_plane": "Planeは初めてですか？",
-      "back_to_sign_in": "サインインに戻る",
-      "resend_in": "{seconds}秒後に再送信",
-      "sign_in_with_unique_code": "ユニークコードでサインイン",
-      "forgot_password": "パスワードをお忘れですか？"
-    },
-    "sign_up": {
-      "header": {
-        "label": "チームと作業を管理するためのアカウントを作成してください。",
-        "step": {
-          "email": {
-            "header": "サインアップ",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "サインアップ",
-            "sub_header": "メールアドレスとパスワードの組み合わせでサインアップ。"
-          },
-          "unique_code": {
-            "header": "サインアップ",
-            "sub_header": "上記のメールアドレスに送信されたユニークコードでサインアップ。"
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "強力なパスワードを設定して続行してください"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "チームと作業を管理するためにログインしてください。",
-        "step": {
-          "email": {
-            "header": "ログインまたはサインアップ",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "ログインまたはサインアップ",
-            "sub_header": "メールアドレスとパスワードの組み合わせでログイン。"
-          },
-          "unique_code": {
-            "header": "ログインまたはサインアップ",
-            "sub_header": "上記のメールアドレスに送信されたユニークコードでログイン。"
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "パスワードをリセット",
-      "description": "確認済みのユーザーアカウントのメールアドレスを入力してください。パスワードリセットリンクを送信します。",
-      "email_sent": "リセットリンクをメールアドレスに送信しました",
-      "send_reset_link": "リセットリンクを送信",
-      "errors": {
-        "smtp_not_enabled": "管理者がSMTPを有効にしていないため、パスワードリセットリンクを送信できません"
-      },
-      "toast": {
-        "success": {
-          "title": "メール送信完了",
-          "message": "パスワードをリセットするためのリンクを受信トレイで確認してください。数分以内に表示されない場合は、迷惑メールフォルダを確認してください。"
-        },
-        "error": {
-          "title": "エラー！",
-          "message": "問題が発生しました。もう一度お試しください。"
-        }
-      }
-    },
-    "reset_password": {
-      "title": "新しいパスワードを設定",
-      "description": "強力なパスワードでアカウントを保護"
-    },
-    "set_password": {
-      "title": "アカウントを保護",
-      "description": "パスワードを設定して安全にログイン"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "エラー！",
-          "message": "サインアウトに失敗しました。もう一度お試しください。"
-        }
-      }
-    }
-  },
   "submit": "送信",
   "cancel": "キャンセル",
   "loading": "読み込み中",
@@ -794,7 +626,9 @@
       "clear_sorting": "並び替えをクリア",
       "show_weekends": "週末を表示",
       "enable": "有効化",
-      "disable": "無効化"
+      "disable": "無効化",
+      "restore": "復元",
+      "copy_markdown": "マークダウンをコピー"
     },
     "name": "名前",
     "discard": "破棄",
@@ -884,7 +718,8 @@
     "planned": "計画済み",
     "paused": "一時停止",
     "no_of": "{entity} の数",
-    "resolved": "解決済み"
+    "resolved": "解決済み",
+    "overview": "概要"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -1398,7 +1233,8 @@
       "public": {
         "title": "公開",
         "description": "ゲスト以外のワークスペースの全員が参加可能"
-      }
+      },
+      "label": "ネットワーク"
     },
     "error": {
       "permission": "この操作を実行する権限がありません。",
@@ -1561,7 +1397,9 @@
         "title": "請求とプラン",
         "current_plan": "現在のプラン",
         "free_plan": "現在フリープランを使用中です",
-        "view_plans": "プランを表示"
+        "view_plans": "プランを表示",
+        "heading": "請求とプラン",
+        "description": "プランを選択し、サブスクリプションを管理し、必要に応じて簡単にアップグレードできます。"
       },
       "exports": {
         "title": "エクスポート",
@@ -1580,7 +1418,11 @@
               "message": "エクスポートに失敗しました。もう一度お試しください。"
             }
           }
-        }
+        },
+        "heading": "エクスポート",
+        "description": "プロジェクトデータを様々な形式でエクスポートし、ダウンロードリンク付きのエクスポート履歴にアクセスできます。",
+        "exporting_projects": "プロジェクトをエクスポート中",
+        "format": "フォーマット"
       },
       "webhooks": {
         "title": "Webhook",
@@ -1631,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "シークレットキーのコピー中にエラーが発生しました。"
           }
-        }
+        },
+        "heading": "Webhook",
+        "description": "プロジェクトのイベント発生時に外部サービスへの通知を自動化します。"
       },
       "api_tokens": {
         "title": "APIトークン",
@@ -1707,7 +1551,9 @@
       "security": "セキュリティ",
       "activity": "アクティビティ",
       "appearance": "外観",
-      "notifications": "通知"
+      "notifications": "通知",
+      "preferences": "設定",
+      "api-tokens": "個人アクセストークン"
     },
     "tabs": {
       "summary": "サマリー",
@@ -1773,7 +1619,9 @@
       "empty_state": {
         "title": "{groupKey}グループのステータスがありません",
         "description": "新しいステータスを作成してください"
-      }
+      },
+      "heading": "ステータス",
+      "description": "ワークフローの状態を定義およびカスタマイズして、作業項目の進捗を追跡します。"
     },
     "labels": {
       "label_title": "ラベルタイトル",
@@ -1781,7 +1629,9 @@
       "label_max_char": "ラベル名は255文字を超えることはできません",
       "toast": {
         "error": "ラベルの更新中にエラーが発生しました"
-      }
+      },
+      "heading": "ラベル",
+      "description": "作業項目を分類・整理するためのカスタムラベルを作成"
     },
     "estimates": {
       "label": "見積もり",
@@ -1864,7 +1714,9 @@
           "label": "時間",
           "hours": "時間"
         }
-      }
+      },
+      "heading": "見積もり",
+      "enable_description": "チームの複雑さとワークロードを伝えるのに役立ちます。"
     },
     "automations": {
       "label": "自動化",
@@ -1878,7 +1730,9 @@
         "description": "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
         "duration": "非アクティブな作業項目を自動的に閉じる",
         "auto_close_status": "自動クローズステータス"
-      }
+      },
+      "heading": "自動化",
+      "description": "プロジェクト管理ワークフローを効率化し、手動タスクを削減するための自動化アクションを設定します。"
     },
     "empty_state": {
       "labels": {
@@ -2529,5 +2383,34 @@
     "open_button": "ナビゲーションパネルを開く",
     "close_button": "ナビゲーションパネルを閉じる",
     "outline_floating_button": "アウトラインを開く"
-  }
+  },
+  "preferences": "設定",
+  "language_and_time": "言語と時間",
+  "timezone_setting": "タイムゾーン設定",
+  "language_setting": "言語設定",
+  "settings_moved_to_preferences": "タイムゾーンと言語の設定は設定に移動しました。",
+  "go_to_preferences": "設定へ移動",
+  "account_settings": {
+    "preferences": {
+      "heading": "設定",
+      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズ"
+    },
+    "notifications": {
+      "heading": "メール通知",
+      "description": "フォローしているタスクの最新情報を受け取ります。通知を受け取るにはこれを有効にしてください。"
+    },
+    "security": {
+      "heading": "セキュリティ"
+    },
+    "api_tokens": {
+      "heading": "個人アクセストークン",
+      "description": "外部システムやアプリケーションとデータを統合するための安全なAPIトークンを生成します。"
+    },
+    "activity": {
+      "heading": "アクティビティ",
+      "description": "すべてのプロジェクトとタスクにおける最近のアクションと変更を追跡します。"
+    }
+  },
+  "settings_description": "アカウント、ワークスペース、プロジェクトの設定を1か所で管理。タブを切り替えて簡単に設定できます。",
+  "back_to_workspace": "ワークスペースに戻る"
 }

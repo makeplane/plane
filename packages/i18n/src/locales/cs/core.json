@@ -1,0 +1,168 @@
+{
+  "sidebar": {
+    "projects": "Projekty",
+    "pages": "Stránky",
+    "new_work_item": "Nová pracovní položka",
+    "home": "Domov",
+    "your_work": "Vaše práce",
+    "inbox": "Doručená pošta",
+    "workspace": "Pracovní prostor",
+    "views": "Pohledy",
+    "analytics": "Analytika",
+    "work_items": "Pracovní položky",
+    "cycles": "Cykly",
+    "modules": "Moduly",
+    "intake": "Příjem",
+    "drafts": "Koncepty",
+    "favorites": "Oblíbené",
+    "pro": "Pro",
+    "upgrade": "Upgrade"
+  },
+  "auth": {
+    "common": {
+      "email": {
+        "label": "E-mail",
+        "placeholder": "jmeno@spolecnost.cz",
+        "errors": {
+          "required": "E-mail je povinný",
+          "invalid": "E-mail je neplatný"
+        }
+      },
+      "password": {
+        "label": "Heslo",
+        "set_password": "Nastavit heslo",
+        "placeholder": "Zadejte heslo",
+        "confirm_password": {
+          "label": "Potvrďte heslo",
+          "placeholder": "Potvrďte heslo"
+        },
+        "current_password": {
+          "label": "Aktuální heslo"
+        },
+        "new_password": {
+          "label": "Nové heslo",
+          "placeholder": "Zadejte nové heslo"
+        },
+        "change_password": {
+          "label": {
+            "default": "Změnit heslo",
+            "submitting": "Mění se heslo"
+          }
+        },
+        "errors": {
+          "match": "Hesla se neshodují",
+          "empty": "Zadejte prosím své heslo",
+          "length": "Délka hesla by měla být více než 8 znaků",
+          "strength": {
+            "weak": "Heslo je slabé",
+            "strong": "Heslo je silné"
+          }
+        },
+        "submit": "Nastavit heslo",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Úspěch!",
+              "message": "Heslo bylo úspěšně změněno."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Něco se pokazilo. Zkuste to prosím znovu."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Jedinečný kód",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Vložte kód zaslaný na váš e-mail",
+        "requesting_new_code": "Žádám o nový kód",
+        "sending_code": "Odesílám kód"
+      },
+      "already_have_an_account": "Už máte účet?",
+      "login": "Přihlásit se",
+      "create_account": "Vytvořit účet",
+      "new_to_plane": "Nový v Plane?",
+      "back_to_sign_in": "Zpět k přihlášení",
+      "resend_in": "Znovu odeslat za {seconds} sekund",
+      "sign_in_with_unique_code": "Přihlásit se pomocí jedinečného kódu",
+      "forgot_password": "Zapomněli jste heslo?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Vytvořte účet a začněte spravovat práci se svým týmem.",
+        "step": {
+          "email": {
+            "header": "Registrace"
+          },
+          "password": {
+            "header": "Registrace",
+            "sub_header": "Zaregistrujte se pomocí kombinace e-mailu a hesla."
+          },
+          "unique_code": {
+            "header": "Registrace",
+            "sub_header": "Zaregistrujte se pomocí jedinečného kódu zaslaného na výše uvedenou e-mailovou adresu."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Zkuste nastavit silné heslo, abyste mohli pokračovat"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Přihlaste se a začněte spravovat práci se svým týmem.",
+        "step": {
+          "email": {
+            "header": "Přihlásit se nebo zaregistrovat"
+          },
+          "password": {
+            "header": "Přihlásit se nebo zaregistrovat",
+            "sub_header": "Použijte svou kombinaci e-mailu a hesla pro přihlášení."
+          },
+          "unique_code": {
+            "header": "Přihlásit se nebo zaregistrovat",
+            "sub_header": "Přihlaste se pomocí jedinečného kódu zaslaného na výše uvedenou e-mailovou adresu."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Obnovte své heslo",
+      "description": "Zadejte ověřenou e-mailovou adresu vašeho uživatelského účtu a my vám zašleme odkaz na obnovení hesla.",
+      "email_sent": "Odeslali jsme odkaz na obnovení na vaši e-mailovou adresu",
+      "send_reset_link": "Odeslat odkaz na obnovení",
+      "errors": {
+        "smtp_not_enabled": "Vidíme, že váš správce neaktivoval SMTP, nebudeme schopni odeslat odkaz na obnovení hesla"
+      },
+      "toast": {
+        "success": {
+          "title": "E-mail odeslán",
+          "message": "Zkontrolujte svou doručenou poštu pro odkaz na obnovení hesla. Pokud se neobjeví během několika minut, zkontrolujte svou složku se spamem."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Něco se pokazilo. Zkuste to prosím znovu."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Nastavit nové heslo",
+      "description": "Zabezpečte svůj účet silným heslem"
+    },
+    "set_password": {
+      "title": "Zabezpečte svůj účet",
+      "description": "Nastavení hesla vám pomůže bezpečně se přihlásit"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se odhlásit. Zkuste to prosím znovu."
+        }
+      }
+    }
+  }
+}

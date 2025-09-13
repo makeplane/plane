@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Dự án",
-    "pages": "Trang",
-    "new_work_item": "Mục công việc mới",
-    "home": "Trang chủ",
-    "your_work": "Công việc của tôi",
-    "inbox": "Hộp thư đến",
-    "workspace": "Không gian làm việc",
-    "views": "Chế độ xem",
-    "analytics": "Phân tích",
-    "work_items": "Mục công việc",
-    "cycles": "Chu kỳ",
-    "modules": "Mô-đun",
-    "intake": "Thu thập",
-    "drafts": "Bản nháp",
-    "favorites": "Yêu thích",
-    "pro": "Phiên bản Pro",
-    "upgrade": "Nâng cấp"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Email",
-        "placeholder": "name@company.com",
-        "errors": {
-          "required": "Email là bắt buộc",
-          "invalid": "Email không hợp lệ"
-        }
-      },
-      "password": {
-        "label": "Mật khẩu",
-        "set_password": "Đặt mật khẩu",
-        "placeholder": "Nhập mật khẩu",
-        "confirm_password": {
-          "label": "Xác nhận mật khẩu",
-          "placeholder": "Xác nhận mật khẩu"
-        },
-        "current_password": {
-          "label": "Mật khẩu hiện tại"
-        },
-        "new_password": {
-          "label": "Mật khẩu mới",
-          "placeholder": "Nhập mật khẩu mới"
-        },
-        "change_password": {
-          "label": {
-            "default": "Thay đổi mật khẩu",
-            "submitting": "Đang thay đổi mật khẩu"
-          }
-        },
-        "errors": {
-          "match": "Mật khẩu không khớp",
-          "empty": "Vui lòng nhập mật khẩu",
-          "length": "Mật khẩu phải dài hơn 8 ký tự",
-          "strength": {
-            "weak": "Mật khẩu yếu",
-            "strong": "Mật khẩu mạnh"
-          }
-        },
-        "submit": "Đặt mật khẩu",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Thành công!",
-              "message": "Mật khẩu đã được thay đổi thành công."
-            },
-            "error": {
-              "title": "Lỗi!",
-              "message": "Đã xảy ra lỗi. Vui lòng thử lại."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Mã duy nhất",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Dán mã xác minh đã gửi đến email của bạn",
-        "requesting_new_code": "Đang yêu cầu mã mới",
-        "sending_code": "Đang gửi mã"
-      },
-      "already_have_an_account": "Đã có tài khoản?",
-      "login": "Đăng nhập",
-      "create_account": "Tạo tài khoản",
-      "new_to_plane": "Lần đầu sử dụng Plane?",
-      "back_to_sign_in": "Quay lại đăng nhập",
-      "resend_in": "Gửi lại sau {seconds} giây",
-      "sign_in_with_unique_code": "Đăng nhập bằng mã duy nhất",
-      "forgot_password": "Quên mật khẩu?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Tạo tài khoản để bắt đầu quản lý công việc cùng nhóm của bạn.",
-        "step": {
-          "email": {
-            "header": "Đăng ký",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Đăng ký",
-            "sub_header": "Đăng ký bằng cách kết hợp email-mật khẩu."
-          },
-          "unique_code": {
-            "header": "Đăng ký",
-            "sub_header": "Đăng ký bằng mã duy nhất được gửi đến email trên."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Vui lòng đặt mật khẩu mạnh để tiếp tục"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Đăng nhập để bắt đầu quản lý công việc cùng nhóm của bạn.",
-        "step": {
-          "email": {
-            "header": "Đăng nhập hoặc đăng ký",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Đăng nhập hoặc đăng ký",
-            "sub_header": "Đăng nhập bằng cách kết hợp email-mật khẩu của bạn."
-          },
-          "unique_code": {
-            "header": "Đăng nhập hoặc đăng ký",
-            "sub_header": "Đăng nhập bằng mã duy nhất được gửi đến email trên."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Đặt lại mật khẩu",
-      "description": "Nhập địa chỉ email đã xác minh cho tài khoản người dùng của bạn và chúng tôi sẽ gửi cho bạn liên kết đặt lại mật khẩu.",
-      "email_sent": "Chúng tôi đã gửi liên kết đặt lại đến email của bạn",
-      "send_reset_link": "Gửi liên kết đặt lại",
-      "errors": {
-        "smtp_not_enabled": "Chúng tôi nhận thấy quản trị viên của bạn chưa bật SMTP, chúng tôi sẽ không thể gửi liên kết đặt lại mật khẩu"
-      },
-      "toast": {
-        "success": {
-          "title": "Email đã được gửi",
-          "message": "Hãy kiểm tra hộp thư đến của bạn để lấy liên kết đặt lại mật khẩu. Nếu bạn không nhận được trong vòng vài phút, vui lòng kiểm tra thư mục spam."
-        },
-        "error": {
-          "title": "Lỗi!",
-          "message": "Đã xảy ra lỗi. Vui lòng thử lại."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Đặt mật khẩu mới",
-      "description": "Bảo vệ tài khoản của bạn bằng mật khẩu mạnh"
-    },
-    "set_password": {
-      "title": "Bảo vệ tài khoản của bạn",
-      "description": "Đặt mật khẩu giúp bạn đăng nhập an toàn"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Lỗi!",
-          "message": "Không thể đăng xuất. Vui lòng thử lại."
-        }
-      }
-    }
-  },
   "submit": "Gửi",
   "cancel": "Hủy",
   "loading": "Đang tải",
@@ -794,7 +626,9 @@
       "clear_sorting": "Xóa sắp xếp",
       "show_weekends": "Hiển thị cuối tuần",
       "enable": "Bật",
-      "disable": "Tắt"
+      "disable": "Tắt",
+      "restore": "Khôi phục",
+      "copy_markdown": "Sao chép markdown"
     },
     "name": "Tên",
     "discard": "Hủy bỏ",
@@ -884,7 +718,8 @@
     "planned": "Đã lên kế hoạch",
     "paused": "Tạm dừng",
     "no_of": "Số lượng {entity}",
-    "resolved": "Đã giải quyết"
+    "resolved": "Đã giải quyết",
+    "overview": "Tổng quan"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1398,7 +1233,8 @@
       "public": {
         "title": "Công khai",
         "description": "Bất kỳ ai trong không gian làm việc ngoại trừ khách đều có thể tham gia"
-      }
+      },
+      "label": "Mạng"
     },
     "error": {
       "permission": "Bạn không có quyền thực hiện thao tác này.",
@@ -1561,7 +1397,9 @@
         "title": "Thanh toán và Kế hoạch",
         "current_plan": "Kế hoạch hiện tại",
         "free_plan": "Bạn đang sử dụng kế hoạch miễn phí",
-        "view_plans": "Xem kế hoạch"
+        "view_plans": "Xem kế hoạch",
+        "heading": "Thanh toán & Gói dịch vụ",
+        "description": "Chọn gói dịch vụ của bạn, quản lý đăng ký và dễ dàng nâng cấp khi nhu cầu của bạn tăng lên."
       },
       "exports": {
         "title": "Xuất",
@@ -1580,7 +1418,11 @@
               "message": "Xuất không thành công. Vui lòng thử lại."
             }
           }
-        }
+        },
+        "heading": "Xuất",
+        "description": "Xuất dữ liệu dự án của bạn ở nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
+        "exporting_projects": "Đang xuất dự án",
+        "format": "Định dạng"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1631,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Đã xảy ra lỗi khi sao chép khóa bí mật."
           }
-        }
+        },
+        "heading": "Webhook",
+        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi sự kiện dự án xảy ra."
       },
       "api_tokens": {
         "title": "Token API",
@@ -1707,7 +1551,9 @@
       "security": "Bảo mật",
       "activity": "Hoạt động",
       "appearance": "Giao diện",
-      "notifications": "Thông báo"
+      "notifications": "Thông báo",
+      "preferences": "Tùy chọn",
+      "api-tokens": "Mã thông báo truy cập cá nhân"
     },
     "tabs": {
       "summary": "Tóm tắt",
@@ -1773,7 +1619,9 @@
       "empty_state": {
         "title": "Không có trạng thái trong nhóm {groupKey}",
         "description": "Vui lòng tạo một trạng thái mới"
-      }
+      },
+      "heading": "Trạng thái",
+      "description": "Xác định và tùy chỉnh trạng thái quy trình làm việc để theo dõi tiến độ của các mục công việc của bạn."
     },
     "labels": {
       "label_title": "Tiêu đề nhãn",
@@ -1781,7 +1629,9 @@
       "label_max_char": "Tên nhãn không nên vượt quá 255 ký tự",
       "toast": {
         "error": "Đã xảy ra lỗi khi cập nhật nhãn"
-      }
+      },
+      "heading": "Nhãn",
+      "description": "Tạo nhãn tùy chỉnh để phân loại và tổ chức các mục công việc của bạn"
     },
     "estimates": {
       "label": "Ước tính",
@@ -1843,7 +1693,8 @@
         "character": "Điểm ước tính phải là ký tự",
         "empty": "Giá trị ước tính không được để trống",
         "already_exists": "Giá trị ước tính này đã tồn tại",
-        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'"
+        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
+        "remove_empty": "Ước tính không thể trống. Nhập giá trị vào mỗi trường hoặc xóa những trường không có giá trị."
       },
       "systems": {
         "points": {
@@ -1863,7 +1714,9 @@
           "label": "Thời gian",
           "hours": "Giờ"
         }
-      }
+      },
+      "heading": "Ước tính",
+      "enable_description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm."
     },
     "automations": {
       "label": "Tự động hóa",
@@ -1877,7 +1730,9 @@
         "description": "Plane sẽ tự động đóng các mục công việc chưa hoàn thành hoặc hủy.",
         "duration": "Tự động đóng không hoạt động",
         "auto_close_status": "Trạng thái tự động đóng"
-      }
+      },
+      "heading": "Tự động hóa",
+      "description": "Cấu hình các hành động tự động để tối ưu hóa quy trình quản lý dự án và giảm thiểu các tác vụ thủ công."
     },
     "empty_state": {
       "labels": {
@@ -2528,5 +2383,34 @@
     "open_button": "Mở bảng điều hướng",
     "close_button": "Đóng bảng điều hướng",
     "outline_floating_button": "Mở phác thảo"
-  }
+  },
+  "preferences": "Tùy chọn",
+  "language_and_time": "Ngôn ngữ và thời gian",
+  "timezone_setting": "Cài đặt múi giờ",
+  "language_setting": "Cài đặt ngôn ngữ",
+  "settings_moved_to_preferences": "Cài đặt múi giờ và ngôn ngữ đã được chuyển đến tùy chọn.",
+  "go_to_preferences": "Đi đến tùy chọn",
+  "account_settings": {
+    "preferences": {
+      "heading": "Tùy chọn",
+      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách làm việc của bạn"
+    },
+    "notifications": {
+      "heading": "Thông báo qua email",
+      "description": "Cập nhật thông tin về các công việc bạn theo dõi. Bật tính năng này để nhận thông báo."
+    },
+    "security": {
+      "heading": "Bảo mật"
+    },
+    "api_tokens": {
+      "heading": "Mã thông báo truy cập cá nhân",
+      "description": "Tạo mã thông báo API an toàn để tích hợp dữ liệu của bạn với các hệ thống và ứng dụng bên ngoài."
+    },
+    "activity": {
+      "heading": "Hoạt động",
+      "description": "Theo dõi các hành động và thay đổi gần đây của bạn trong tất cả các dự án và công việc."
+    }
+  },
+  "settings_description": "Quản lý tài khoản, không gian làm việc và tùy chọn dự án của bạn tại một nơi. Chuyển đổi giữa các tab để cấu hình dễ dàng.",
+  "back_to_workspace": "Quay lại không gian làm việc"
 }

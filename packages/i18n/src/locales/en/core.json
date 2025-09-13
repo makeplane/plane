@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Upgrade"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -94,8 +93,7 @@
         "label": "Create an account to start managing work with your team.",
         "step": {
           "email": {
-            "header": "Sign up",
-            "sub_header": ""
+            "header": "Sign up"
           },
           "password": {
             "header": "Sign up",
@@ -118,8 +116,7 @@
         "label": "Log in to start managing work with your team.",
         "step": {
           "email": {
-            "header": "Log in or sign up",
-            "sub_header": ""
+            "header": "Log in or sign up"
           },
           "password": {
             "header": "Log in or sign up",

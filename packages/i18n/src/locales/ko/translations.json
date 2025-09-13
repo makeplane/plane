@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "프로젝트",
-    "pages": "페이지",
-    "new_work_item": "새 작업 항목",
-    "home": "홈",
-    "your_work": "나의 작업",
-    "inbox": "받은 편지함",
-    "workspace": "작업 공간",
-    "views": "보기",
-    "analytics": "분석",
-    "work_items": "작업 항목",
-    "cycles": "주기",
-    "modules": "모듈",
-    "intake": "접수",
-    "drafts": "초안",
-    "favorites": "즐겨찾기",
-    "pro": "프로",
-    "upgrade": "업그레이드"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "이메일",
-        "placeholder": "name@company.com",
-        "errors": {
-          "required": "이메일이 필요합니다",
-          "invalid": "유효하지 않은 이메일입니다"
-        }
-      },
-      "password": {
-        "label": "비밀번호",
-        "set_password": "비밀번호 설정",
-        "placeholder": "비밀번호 입력",
-        "confirm_password": {
-          "label": "비밀번호 확인",
-          "placeholder": "비밀번호 확인"
-        },
-        "current_password": {
-          "label": "현재 비밀번호"
-        },
-        "new_password": {
-          "label": "새 비밀번호",
-          "placeholder": "새 비밀번호 입력"
-        },
-        "change_password": {
-          "label": {
-            "default": "비밀번호 변경",
-            "submitting": "비밀번호 변경 중"
-          }
-        },
-        "errors": {
-          "match": "비밀번호가 일치하지 않습니다",
-          "empty": "비밀번호를 입력해주세요",
-          "length": "비밀번호는 8자 이상이어야 합니다",
-          "strength": {
-            "weak": "비밀번호가 약합니다",
-            "strong": "비밀번호가 강합니다"
-          }
-        },
-        "submit": "비밀번호 설정",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "성공!",
-              "message": "비밀번호가 성공적으로 변경되었습니다."
-            },
-            "error": {
-              "title": "오류!",
-              "message": "문제가 발생했습니다. 다시 시도해주세요."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "고유 코드",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "이메일로 전송된 코드를 붙여넣기",
-        "requesting_new_code": "새 코드 요청 중",
-        "sending_code": "코드 전송 중"
-      },
-      "already_have_an_account": "이미 계정이 있으신가요?",
-      "login": "로그인",
-      "create_account": "계정 만들기",
-      "new_to_plane": "Plane을 처음 사용하시나요?",
-      "back_to_sign_in": "로그인으로 돌아가기",
-      "resend_in": "{seconds}초 후 다시 전송",
-      "sign_in_with_unique_code": "고유 코드로 로그인",
-      "forgot_password": "비밀번호를 잊으셨나요?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "팀과 함께 작업을 관리하려면 계정을 만드세요.",
-        "step": {
-          "email": {
-            "header": "가입",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "가입",
-            "sub_header": "이메일-비밀번호 조합으로 가입하세요."
-          },
-          "unique_code": {
-            "header": "가입",
-            "sub_header": "위 이메일 주소로 전송된 고유 코드로 가입하세요."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "강력한 비밀번호를 설정하여 진행하세요"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "팀과 함께 작업을 관리하려면 로그인하세요.",
-        "step": {
-          "email": {
-            "header": "로그인 또는 가입",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "로그인 또는 가입",
-            "sub_header": "이메일-비밀번호 조합을 사용하여 로그인하세요."
-          },
-          "unique_code": {
-            "header": "로그인 또는 가입",
-            "sub_header": "위 이메일 주소로 전송된 고유 코드로 로그인하세요."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "비밀번호 재설정",
-      "description": "사용자 계정의 인증된 이메일 주소를 입력하면 비밀번호 재설정 링크를 보내드립니다.",
-      "email_sent": "이메일 주소로 재설정 링크를 보냈습니다",
-      "send_reset_link": "재설정 링크 보내기",
-      "errors": {
-        "smtp_not_enabled": "SMTP가 활성화되지 않았습니다. 비밀번호 재설정 링크를 보낼 수 없습니다."
-      },
-      "toast": {
-        "success": {
-          "title": "이메일 전송됨",
-          "message": "비밀번호 재설정 링크를 확인하세요. 몇 분 내에 나타나지 않으면 스팸 폴더를 확인하세요."
-        },
-        "error": {
-          "title": "오류!",
-          "message": "문제가 발생했습니다. 다시 시도해주세요."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "새 비밀번호 설정",
-      "description": "강력한 비밀번호로 계정을 보호하세요"
-    },
-    "set_password": {
-      "title": "계정 보호",
-      "description": "비밀번호 설정은 안전한 로그인을 도와줍니다"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "오류!",
-          "message": "로그아웃에 실패했습니다. 다시 시도해주세요."
-        }
-      }
-    }
-  },
   "submit": "제출",
   "cancel": "취소",
   "loading": "로딩 중",
@@ -795,7 +627,8 @@
       "clear_sorting": "정렬 지우기",
       "show_weekends": "주말 표시",
       "enable": "활성화",
-      "disable": "비활성화"
+      "disable": "비활성화",
+      "copy_markdown": "마크다운 복사"
     },
     "name": "이름",
     "discard": "폐기",
@@ -885,7 +718,8 @@
     "planned": "계획된",
     "paused": "일시 중지됨",
     "no_of": "{entity} 수",
-    "resolved": "해결됨"
+    "resolved": "해결됨",
+    "overview": "개요"
   },
   "chart": {
     "x_axis": "X축",
@@ -1563,7 +1397,9 @@
         "title": "청구 및 플랜",
         "current_plan": "현재 플랜",
         "free_plan": "현재 무료 플랜을 사용 중입니다",
-        "view_plans": "플랜 보기"
+        "view_plans": "플랜 보기",
+        "heading": "결제 및 플랜",
+        "description": "플랜을 선택하고, 구독을 관리하며, 필요에 따라 쉽게 업그레이드하세요."
       },
       "exports": {
         "title": "내보내기",
@@ -1582,7 +1418,11 @@
               "message": "내보내기가 실패했습니다. 다시 시도해주세요."
             }
           }
-        }
+        },
+        "heading": "내보내기",
+        "description": "프로젝트 데이터를 다양한 형식으로 내보내고 다운로드 링크가 있는 내보내기 기록에 액세스하세요.",
+        "exporting_projects": "프로젝트 내보내기",
+        "format": "형식"
       },
       "webhooks": {
         "title": "웹훅",
@@ -1633,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "비밀 키를 복사하는 중 오류가 발생했습니다."
           }
-        }
+        },
+        "heading": "웹훅",
+        "description": "프로젝트 이벤트 발생 시 외부 서비스에 대한 알림을 자동화하세요."
       },
       "api_tokens": {
         "title": "API 토큰",
@@ -1709,7 +1551,9 @@
       "security": "보안",
       "activity": "활동",
       "appearance": "외관",
-      "notifications": "알림"
+      "notifications": "알림",
+      "preferences": "환경설정",
+      "api-tokens": "개인 액세스 토큰"
     },
     "tabs": {
       "summary": "요약",
@@ -1775,7 +1619,9 @@
       "empty_state": {
         "title": "{groupKey} 그룹에 사용할 수 있는 상태 없음",
         "description": "새 상태를 생성하세요"
-      }
+      },
+      "heading": "상태",
+      "description": "작업 항목의 진행 상황을 추적하기 위한 워크플로우 상태를 정의하고 사용자 지정하세요."
     },
     "labels": {
       "label_title": "레이블 제목",
@@ -1783,7 +1629,9 @@
       "label_max_char": "레이블 이름은 255자를 초과할 수 없습니다",
       "toast": {
         "error": "레이블 업데이트 중 오류 발생"
-      }
+      },
+      "heading": "레이블",
+      "description": "작업 항목을 분류하고 구성하기 위한 사용자 정의 레이블 만들기"
     },
     "estimates": {
       "label": "추정",
@@ -1866,7 +1714,9 @@
           "label": "시간",
           "hours": "시간"
         }
-      }
+      },
+      "heading": "추정",
+      "enable_description": "팀의 복잡성과 업무량을 전달하는 데 도움이 됩니다."
     },
     "automations": {
       "label": "자동화",
@@ -1880,7 +1730,9 @@
         "description": "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
         "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
-      }
+      },
+      "heading": "자동화",
+      "description": "프로젝트 관리 워크플로우를 간소화하고 수동 작업을 줄이기 위한 자동화 작업을 구성하세요."
     },
     "empty_state": {
       "labels": {
@@ -2531,5 +2383,34 @@
     "open_button": "네비게이션 패널 열기",
     "close_button": "네비게이션 패널 닫기",
     "outline_floating_button": "개요 열기"
-  }
+  },
+  "preferences": "환경설정",
+  "language_and_time": "언어 및 시간",
+  "timezone_setting": "시간대 설정",
+  "language_setting": "언어 설정",
+  "settings_moved_to_preferences": "시간대 및 언어 설정이 환경설정으로 이동되었습니다.",
+  "go_to_preferences": "환경설정으로 이동",
+  "account_settings": {
+    "preferences": {
+      "heading": "환경설정",
+      "description": "당신의 작업 방식에 맞게 앱 경험을 맞춤 설정하세요"
+    },
+    "notifications": {
+      "heading": "이메일 알림",
+      "description": "구독 중인 작업에 대한 최신 정보를 받으세요. 알림을 받으려면 이 기능을 활성화하세요."
+    },
+    "security": {
+      "heading": "보안"
+    },
+    "api_tokens": {
+      "heading": "개인 액세스 토큰",
+      "description": "외부 시스템 및 애플리케이션과 데이터를 통합하기 위한 안전한 API 토큰을 생성하세요."
+    },
+    "activity": {
+      "heading": "활동",
+      "description": "모든 프로젝트와 작업에서의 최근 활동과 변경사항을 추적하세요."
+    }
+  },
+  "settings_description": "계정, 작업 공간 및 프로젝트 환경설정을 한 곳에서 관리하세요. 탭을 전환하여 쉽게 구성할 수 있습니다.",
+  "back_to_workspace": "작업 공간으로 돌아가기"
 }

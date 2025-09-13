@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projekte",
-    "pages": "Seiten",
-    "new_work_item": "Neues Arbeitselement",
-    "home": "Startseite",
-    "your_work": "Ihre Arbeit",
-    "inbox": "Posteingang",
-    "workspace": "Arbeitsbereich",
-    "views": "Ansichten",
-    "analytics": "Analysen",
-    "work_items": "Arbeitselemente",
-    "cycles": "Zyklen",
-    "modules": "Module",
-    "intake": "Eingang",
-    "drafts": "Entwürfe",
-    "favorites": "Favoriten",
-    "pro": "Pro",
-    "upgrade": "Upgrade"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "E-Mail",
-        "placeholder": "name@unternehmen.de",
-        "errors": {
-          "required": "E-Mail ist erforderlich",
-          "invalid": "E-Mail ist ungültig"
-        }
-      },
-      "password": {
-        "label": "Passwort",
-        "set_password": "Passwort festlegen",
-        "placeholder": "Passwort eingeben",
-        "confirm_password": {
-          "label": "Passwort bestätigen",
-          "placeholder": "Passwort bestätigen"
-        },
-        "current_password": {
-          "label": "Aktuelles Passwort"
-        },
-        "new_password": {
-          "label": "Neues Passwort",
-          "placeholder": "Neues Passwort eingeben"
-        },
-        "change_password": {
-          "label": {
-            "default": "Passwort ändern",
-            "submitting": "Passwort wird geändert"
-          }
-        },
-        "errors": {
-          "match": "Passwörter stimmen nicht überein",
-          "empty": "Bitte geben Sie Ihr Passwort ein",
-          "length": "Das Passwort sollte länger als 8 Zeichen sein",
-          "strength": {
-            "weak": "Das Passwort ist schwach",
-            "strong": "Das Passwort ist stark"
-          }
-        },
-        "submit": "Passwort festlegen",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Erfolg!",
-              "message": "Das Passwort wurde erfolgreich geändert."
-            },
-            "error": {
-              "title": "Fehler!",
-              "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Einmaliger Code",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Fügen Sie den an Ihre E-Mail gesendeten Code ein",
-        "requesting_new_code": "Neuen Code anfordern",
-        "sending_code": "Code wird gesendet"
-      },
-      "already_have_an_account": "Haben Sie bereits ein Konto?",
-      "login": "Anmelden",
-      "create_account": "Konto erstellen",
-      "new_to_plane": "Neu bei Plane?",
-      "back_to_sign_in": "Zurück zur Anmeldung",
-      "resend_in": "Erneut senden in {seconds} Sekunden",
-      "sign_in_with_unique_code": "Mit einmaligem Code anmelden",
-      "forgot_password": "Passwort vergessen?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Erstellen Sie ein Konto und beginnen Sie, Ihre Arbeit mit Ihrem Team zu verwalten.",
-        "step": {
-          "email": {
-            "header": "Registrierung",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Registrierung",
-            "sub_header": "Registrieren Sie sich mit einer Kombination aus E-Mail und Passwort."
-          },
-          "unique_code": {
-            "header": "Registrierung",
-            "sub_header": "Registrieren Sie sich mit einem einmaligen Code, der an die oben angegebene E-Mail-Adresse gesendet wurde."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Versuchen Sie, ein starkes Passwort zu wählen, um fortzufahren"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Melden Sie sich an und beginnen Sie, Ihre Arbeit mit Ihrem Team zu verwalten.",
-        "step": {
-          "email": {
-            "header": "Anmelden oder registrieren",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Anmelden oder registrieren",
-            "sub_header": "Verwenden Sie Ihre E-Mail-Passwort-Kombination, um sich anzumelden."
-          },
-          "unique_code": {
-            "header": "Anmelden oder registrieren",
-            "sub_header": "Melden Sie sich mit einem einmaligen Code an, der an die oben angegebene E-Mail-Adresse gesendet wurde."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Passwort zurücksetzen",
-      "description": "Geben Sie die verifizierte E-Mail-Adresse Ihres Benutzerkontos ein, und wir senden Ihnen einen Link zum Zurücksetzen des Passworts.",
-      "email_sent": "Wir haben Ihnen einen Link zum Zurücksetzen an Ihre E-Mail-Adresse gesendet.",
-      "send_reset_link": "Link zum Zurücksetzen senden",
-      "errors": {
-        "smtp_not_enabled": "Wir sehen, dass Ihr Administrator SMTP nicht aktiviert hat; wir können keinen Link zum Zurücksetzen des Passworts senden."
-      },
-      "toast": {
-        "success": {
-          "title": "E-Mail gesendet",
-          "message": "Überprüfen Sie Ihren Posteingang auf den Link zum Zurücksetzen des Passworts. Sollte er innerhalb einiger Minuten nicht ankommen, sehen Sie bitte in Ihrem Spam-Ordner nach."
-        },
-        "error": {
-          "title": "Fehler!",
-          "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Neues Passwort festlegen",
-      "description": "Sichern Sie Ihr Konto mit einem starken Passwort"
-    },
-    "set_password": {
-      "title": "Sichern Sie Ihr Konto",
-      "description": "Das Festlegen eines Passworts hilft Ihnen, sich sicher anzumelden"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Fehler!",
-          "message": "Abmelden fehlgeschlagen. Bitte versuchen Sie es erneut."
-        }
-      }
-    }
-  },
   "submit": "Senden",
   "cancel": "Abbrechen",
   "loading": "Wird geladen",
@@ -793,7 +625,8 @@
       "clear_sorting": "Sortierung löschen",
       "show_weekends": "Wochenenden anzeigen",
       "enable": "Aktivieren",
-      "disable": "Deaktivieren"
+      "disable": "Deaktivieren",
+      "copy_markdown": "Markdown kopieren"
     },
     "name": "Name",
     "discard": "Verwerfen",
@@ -883,7 +716,8 @@
     "planned": "Geplant",
     "paused": "Pausiert",
     "no_of": "Anzahl {entity}",
-    "resolved": "Gelöst"
+    "resolved": "Gelöst",
+    "overview": "Übersicht"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -1526,7 +1360,8 @@
             "max_length": "Der Name des Arbeitsbereichs darf 80 Zeichen nicht überschreiten"
           },
           "company_size": {
-            "required": "Die Unternehmensgröße ist erforderlich"
+            "required": "Die Unternehmensgröße ist erforderlich",
+            "select_a_range": "Wählen Sie einen Bereich aus"
           }
         }
       },
@@ -1560,7 +1395,9 @@
         "title": "Abrechnung und Pläne",
         "current_plan": "Aktueller Plan",
         "free_plan": "Sie nutzen den kostenlosen Plan",
-        "view_plans": "Pläne anzeigen"
+        "view_plans": "Pläne anzeigen",
+        "heading": "Abrechnung & Pläne",
+        "description": "Wählen Sie Ihren Plan, verwalten Sie Abonnements und führen Sie einfach Upgrades durch, wenn Ihre Anforderungen wachsen."
       },
       "exports": {
         "title": "Exporte",
@@ -1579,7 +1416,11 @@
               "message": "Bitte versuchen Sie es erneut."
             }
           }
-        }
+        },
+        "heading": "Exporte",
+        "description": "Exportieren Sie Ihre Projektdaten in verschiedenen Formaten und greifen Sie auf Ihren Exportverlauf mit Download-Links zu.",
+        "exporting_projects": "Projekte exportieren",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1630,7 +1471,9 @@
           "secret_key_not_copied": {
             "message": "Fehler beim Kopieren des Schlüssels."
           }
-        }
+        },
+        "heading": "Webhooks",
+        "description": "Automatisieren Sie Benachrichtigungen an externe Dienste bei Projektereignissen."
       },
       "api_tokens": {
         "title": "API-Tokens",
@@ -1706,7 +1549,9 @@
       "security": "Sicherheit",
       "activity": "Aktivität",
       "appearance": "Aussehen",
-      "notifications": "Benachrichtigungen"
+      "notifications": "Benachrichtigungen",
+      "preferences": "Einstellungen",
+      "api-tokens": "Persönliche Zugriffstokens"
     },
     "tabs": {
       "summary": "Zusammenfassung",
@@ -1772,7 +1617,9 @@
       "empty_state": {
         "title": "Keine Status für die Gruppe {groupKey}",
         "description": "Erstellen Sie einen neuen Status"
-      }
+      },
+      "heading": "Status",
+      "description": "Definieren und passen Sie Workflow-Status an, um den Fortschritt Ihrer Arbeitsaufgaben zu verfolgen."
     },
     "labels": {
       "label_title": "Labelname",
@@ -1780,7 +1627,9 @@
       "label_max_char": "Der Labelname darf nicht mehr als 255 Zeichen enthalten",
       "toast": {
         "error": "Fehler beim Aktualisieren des Labels"
-      }
+      },
+      "heading": "Labels",
+      "description": "Erstellen Sie benutzerdefinierte Labels zur Kategorisierung und Organisation Ihrer Arbeitsaufgaben"
     },
     "estimates": {
       "label": "Schätzungen",
@@ -1863,7 +1712,9 @@
           "label": "Zeit",
           "hours": "Stunden"
         }
-      }
+      },
+      "heading": "Schätzungen",
+      "enable_description": "Sie helfen Ihnen bei der Kommunikation von Komplexität und Arbeitsbelastung des Teams."
     },
     "automations": {
       "label": "Automatisierungen",
@@ -1877,7 +1728,9 @@
         "description": "Plane wird Arbeitselemente automatisch schließen, die nicht abgeschlossen oder abgebrochen wurden.",
         "duration": "Inaktive Arbeitselemente automatisch schließen seit",
         "auto_close_status": "Status der automatischen Schließung"
-      }
+      },
+      "heading": "Automatisierungen",
+      "description": "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren."
     },
     "empty_state": {
       "labels": {
@@ -2528,5 +2381,36 @@
     "open_button": "Navigationsbereich öffnen",
     "close_button": "Navigationsbereich schließen",
     "outline_floating_button": "Gliederung öffnen"
-  }
+  },
+  "preferences": "Einstellungen",
+  "language_and_time": "Sprache und Zeit",
+  "timezone_setting": "Zeitzoneneinstellung",
+  "language_setting": "Spracheinstellung",
+  "settings_moved_to_preferences": "Zeitzone & Spracheinstellungen wurden in die Einstellungen verschoben.",
+  "go_to_preferences": "Zu den Einstellungen",
+  "account_settings": {
+    "preferences": {
+      "heading": "Einstellungen",
+      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an"
+    },
+    "notifications": {
+      "heading": "E-Mail-Benachrichtigungen",
+      "description": "Bleiben Sie über die Aufgaben informiert, die Sie abonniert haben. Aktivieren Sie dies, um benachrichtigt zu werden."
+    },
+    "security": {
+      "heading": "Sicherheit"
+    },
+    "api_tokens": {
+      "heading": "Persönliche Zugriffstokens",
+      "description": "Generieren Sie sichere API-Tokens zur Integration Ihrer Daten mit externen Systemen und Anwendungen."
+    },
+    "activity": {
+      "heading": "Aktivität",
+      "description": "Verfolgen Sie Ihre letzten Aktionen und Änderungen über alle Projekte und Aufgaben hinweg."
+    }
+  },
+  "edited": "bearbeitet",
+  "bot": "Bot",
+  "settings_description": "Verwalten Sie Ihre Konten, Arbeitsbereiche und Projekteinstellungen an einem Ort. Wechseln Sie zwischen den Registerkarten für eine einfache Konfiguration.",
+  "back_to_workspace": "Zurück zum Arbeitsbereich"
 }

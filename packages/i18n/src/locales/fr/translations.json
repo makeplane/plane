@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Projets",
-    "pages": "Pages",
-    "new_work_item": "Nouvel élément de travail",
-    "home": "Accueil",
-    "your_work": "Votre travail",
-    "inbox": "Boîte de réception",
-    "workspace": "Espace de travail",
-    "views": "Vues",
-    "analytics": "Analyses",
-    "work_items": "Éléments de travail",
-    "cycles": "Cycles",
-    "modules": "Modules",
-    "intake": "Intake",
-    "drafts": "Brouillons",
-    "favorites": "Favoris",
-    "pro": "Pro",
-    "upgrade": "Mettre à niveau"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "E-mail",
-        "placeholder": "nom@entreprise.com",
-        "errors": {
-          "required": "L'e-mail est requis",
-          "invalid": "L'e-mail est invalide"
-        }
-      },
-      "password": {
-        "label": "Mot de passe",
-        "set_password": "Définir un mot de passe",
-        "placeholder": "Entrer le mot de passe",
-        "confirm_password": {
-          "label": "Confirmer le mot de passe",
-          "placeholder": "Confirmer le mot de passe"
-        },
-        "current_password": {
-          "label": "Mot de passe actuel"
-        },
-        "new_password": {
-          "label": "Nouveau mot de passe",
-          "placeholder": "Entrer le nouveau mot de passe"
-        },
-        "change_password": {
-          "label": {
-            "default": "Changer le mot de passe",
-            "submitting": "Changement du mot de passe"
-          }
-        },
-        "errors": {
-          "match": "Les mots de passe ne correspondent pas",
-          "empty": "Veuillez entrer votre mot de passe",
-          "length": "Le mot de passe doit contenir plus de 8 caractères",
-          "strength": {
-            "weak": "Le mot de passe est faible",
-            "strong": "Le mot de passe est fort"
-          }
-        },
-        "submit": "Définir le mot de passe",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Succès !",
-              "message": "Mot de passe changé avec succès."
-            },
-            "error": {
-              "title": "Erreur !",
-              "message": "Une erreur s'est produite. Veuillez réessayer."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Code unique",
-        "placeholder": "obtient-définit-vole",
-        "paste_code": "Collez le code envoyé à votre e-mail",
-        "requesting_new_code": "Demande d'un nouveau code",
-        "sending_code": "Envoi du code"
-      },
-      "already_have_an_account": "Vous avez déjà un compte ?",
-      "login": "Se connecter",
-      "create_account": "Créer un compte",
-      "new_to_plane": "Nouveau sur Plane ?",
-      "back_to_sign_in": "Retour à la connexion",
-      "resend_in": "Renvoyer dans {seconds} secondes",
-      "sign_in_with_unique_code": "Se connecter avec un code unique",
-      "forgot_password": "Mot de passe oublié ?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Créez un compte pour commencer à gérer le travail avec votre équipe.",
-        "step": {
-          "email": {
-            "header": "S'inscrire",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "S'inscrire",
-            "sub_header": "Inscrivez-vous en utilisant une combinaison e-mail-mot de passe."
-          },
-          "unique_code": {
-            "header": "S'inscrire",
-            "sub_header": "Inscrivez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Essayez de définir un mot de passe fort pour continuer"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Connectez-vous pour commencer à gérer le travail avec votre équipe.",
-        "step": {
-          "email": {
-            "header": "Se connecter ou s'inscrire",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Se connecter ou s'inscrire",
-            "sub_header": "Utilisez votre combinaison e-mail-mot de passe pour vous connecter."
-          },
-          "unique_code": {
-            "header": "Se connecter ou s'inscrire",
-            "sub_header": "Connectez-vous en utilisant un code unique envoyé à l'adresse e-mail ci-dessus."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Réinitialiser votre mot de passe",
-      "description": "Entrez l'adresse e-mail vérifiée de votre compte utilisateur et nous vous enverrons un lien de réinitialisation du mot de passe.",
-      "email_sent": "Nous avons envoyé le lien de réinitialisation à votre adresse e-mail",
-      "send_reset_link": "Envoyer le lien de réinitialisation",
-      "errors": {
-        "smtp_not_enabled": "Nous constatons que votre administrateur n'a pas activé SMTP, nous ne pourrons pas envoyer de lien de réinitialisation du mot de passe"
-      },
-      "toast": {
-        "success": {
-          "title": "E-mail envoyé",
-          "message": "Vérifiez votre boîte de réception pour un lien de réinitialisation de votre mot de passe. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam."
-        },
-        "error": {
-          "title": "Erreur !",
-          "message": "Une erreur s'est produite. Veuillez réessayer."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Définir un nouveau mot de passe",
-      "description": "Sécurisez votre compte avec un mot de passe fort"
-    },
-    "set_password": {
-      "title": "Sécurisez votre compte",
-      "description": "La définition d'un mot de passe vous permet de vous connecter en toute sécurité"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Erreur !",
-          "message": "Échec de la déconnexion. Veuillez réessayer."
-        }
-      }
-    }
-  },
   "submit": "Soumettre",
   "cancel": "Annuler",
   "loading": "Chargement",
@@ -794,7 +626,9 @@
       "clear_sorting": "Effacer le tri",
       "show_weekends": "Afficher les week-ends",
       "enable": "Activer",
-      "disable": "Désactiver"
+      "disable": "Désactiver",
+      "restore": "Restaurer",
+      "copy_markdown": "Copier le markdown"
     },
     "name": "Nom",
     "discard": "Abandonner",
@@ -884,7 +718,8 @@
     "planned": "Planifié",
     "paused": "En pause",
     "no_of": "Nº de {entity}",
-    "resolved": "Résolu"
+    "resolved": "Résolu",
+    "overview": "Aperçu"
   },
   "chart": {
     "x_axis": "Axe X",
@@ -1398,7 +1233,8 @@
       "public": {
         "title": "Public",
         "description": "Accessible à tous dans l'espace de travail sauf les invités"
-      }
+      },
+      "label": "Réseau"
     },
     "error": {
       "permission": "Vous n'avez pas la permission d'effectuer cette action.",
@@ -1561,7 +1397,9 @@
         "title": "Facturation & Plans",
         "current_plan": "Plan actuel",
         "free_plan": "Vous utilisez actuellement le plan gratuit",
-        "view_plans": "Voir les plans"
+        "view_plans": "Voir les plans",
+        "heading": "Facturation et plans",
+        "description": "Choisissez votre plan, gérez les abonnements et mettez facilement à niveau à mesure que vos besoins augmentent."
       },
       "exports": {
         "title": "Exportations",
@@ -1580,7 +1418,11 @@
               "message": "L'exportation a échoué. Veuillez réessayer."
             }
           }
-        }
+        },
+        "heading": "Exportations",
+        "description": "Exportez vos données de projet dans différents formats et accédez à votre historique d'exportation avec des liens de téléchargement.",
+        "exporting_projects": "Exportation des projets",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Webhooks",
@@ -1631,7 +1473,9 @@
           "secret_key_not_copied": {
             "message": "Une erreur s'est produite lors de la copie de la clé secrète."
           }
-        }
+        },
+        "heading": "Webhooks",
+        "description": "Automatisez les notifications vers des services externes lors d'événements du projet."
       },
       "api_tokens": {
         "title": "Jetons API",
@@ -1707,7 +1551,9 @@
       "security": "Sécurité",
       "activity": "Activité",
       "appearance": "Apparence",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "preferences": "Préférences",
+      "api-tokens": "Jetons d'accès personnels"
     },
     "tabs": {
       "summary": "Résumé",
@@ -1773,7 +1619,9 @@
       "empty_state": {
         "title": "Aucun état disponible pour le groupe {groupKey}",
         "description": "Veuillez créer un nouvel état"
-      }
+      },
+      "heading": "États",
+      "description": "Définissez et personnalisez les états de flux de travail pour suivre la progression de vos éléments de travail."
     },
     "labels": {
       "label_title": "Titre de l'étiquette",
@@ -1781,7 +1629,9 @@
       "label_max_char": "Le nom de l'étiquette ne doit pas dépasser 255 caractères",
       "toast": {
         "error": "Erreur lors de la mise à jour de l'étiquette"
-      }
+      },
+      "heading": "Étiquettes",
+      "description": "Créez des étiquettes personnalisées pour catégoriser et organiser vos éléments de travail"
     },
     "estimates": {
       "label": "Estimations",
@@ -1864,7 +1714,9 @@
           "label": "Temps",
           "hours": "Heures"
         }
-      }
+      },
+      "heading": "Estimations",
+      "enable_description": "Ils vous aident à communiquer la complexité et la charge de travail de l'équipe."
     },
     "automations": {
       "label": "Automatisations",
@@ -1878,7 +1730,9 @@
         "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été complétés ou annulés.",
         "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
         "auto_close_status": "Statut de fermeture automatique"
-      }
+      },
+      "heading": "Automatisations",
+      "description": "Configurez des actions automatisées pour rationaliser votre flux de gestion de projet et réduire les tâches manuelles."
     },
     "empty_state": {
       "labels": {
@@ -2529,5 +2383,34 @@
     "open_button": "Ouvrir le panneau de navigation",
     "close_button": "Fermer le panneau de navigation",
     "outline_floating_button": "Ouvrir le plan"
-  }
+  },
+  "preferences": "Préférences",
+  "language_and_time": "Langue et heure",
+  "timezone_setting": "Paramètre de fuseau horaire",
+  "language_setting": "Paramètre de langue",
+  "settings_moved_to_preferences": "Les paramètres de fuseau horaire et de langue ont été déplacés dans les préférences.",
+  "go_to_preferences": "Aller aux préférences",
+  "account_settings": {
+    "preferences": {
+      "heading": "Préférences",
+      "description": "Personnalisez votre expérience de l'application selon votre façon de travailler"
+    },
+    "notifications": {
+      "heading": "Notifications par e-mail",
+      "description": "Restez informé des tâches que vous suivez. Activez ceci pour recevoir des notifications."
+    },
+    "security": {
+      "heading": "Sécurité"
+    },
+    "api_tokens": {
+      "heading": "Jetons d'accès personnels",
+      "description": "Générez des jetons API sécurisés pour intégrer vos données avec des systèmes et applications externes."
+    },
+    "activity": {
+      "heading": "Activité",
+      "description": "Suivez vos actions et modifications récentes à travers tous les projets et tâches."
+    }
+  },
+  "settings_description": "Gérez vos comptes, espaces de travail et préférences de projet en un seul endroit. Basculez entre les onglets pour configurer facilement.",
+  "back_to_workspace": "Retour à l'espace de travail"
 }

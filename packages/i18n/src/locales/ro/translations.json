@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "Proiecte",
-    "pages": "Documentație",
-    "new_work_item": "Activitate nouă",
-    "home": "Acasă",
-    "your_work": "Munca ta",
-    "inbox": "Căsuță de mesaje",
-    "workspace": "Spațiu de lucru",
-    "views": "Perspective",
-    "analytics": "Statistici",
-    "work_items": "Activități",
-    "cycles": "Cicluri",
-    "modules": "Module",
-    "intake": "Cereri",
-    "drafts": "Schițe",
-    "favorites": "Favorite",
-    "pro": "Pro",
-    "upgrade": "Treci la versiunea superioară"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "Email",
-        "placeholder": "nume@companie.ro",
-        "errors": {
-          "required": "Email-ul este obligatoriu",
-          "invalid": "Email-ul nu este valid"
-        }
-      },
-      "password": {
-        "label": "Parolă",
-        "set_password": "Setează o parolă",
-        "placeholder": "Introdu parola",
-        "confirm_password": {
-          "label": "Confirmă parola",
-          "placeholder": "Confirmă parola"
-        },
-        "current_password": {
-          "label": "Parola curentă"
-        },
-        "new_password": {
-          "label": "Parolă nouă",
-          "placeholder": "Introdu parola nouă"
-        },
-        "change_password": {
-          "label": {
-            "default": "Schimbă parola",
-            "submitting": "Se schimbă parola"
-          }
-        },
-        "errors": {
-          "match": "Parolele nu se potrivesc",
-          "empty": "Te rugăm să introduci parola",
-          "length": "Parola trebuie să aibă mai mult de 8 caractere",
-          "strength": {
-            "weak": "Parola este slabă",
-            "strong": "Parola este puternică"
-          }
-        },
-        "submit": "Setează parola",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "Succes!",
-              "message": "Parola a fost schimbată cu succes."
-            },
-            "error": {
-              "title": "Eroare!",
-              "message": "Ceva nu a funcționat. Te rugăm să încerci din nou."
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "Cod unic",
-        "placeholder": "exemplu-cod-unic",
-        "paste_code": "Introdu codul trimis pe email",
-        "requesting_new_code": "Se solicită un cod nou",
-        "sending_code": "Se trimite codul"
-      },
-      "already_have_an_account": "Ai deja un cont?",
-      "login": "Autentificare",
-      "create_account": "Creează un cont",
-      "new_to_plane": "Ești nou în Plane?",
-      "back_to_sign_in": "Înapoi la autentificare",
-      "resend_in": "Retrimite în {seconds} secunde",
-      "sign_in_with_unique_code": "Autentificare cu cod unic",
-      "forgot_password": "Ți-ai uitat parola?"
-    },
-    "sign_up": {
-      "header": {
-        "label": "Creează un cont pentru a începe să-ți gestionezi activitatea împreună cu echipa ta.",
-        "step": {
-          "email": {
-            "header": "Înregistrare",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Înregistrare",
-            "sub_header": "Înregistrează-te folosind o combinație email-parolă."
-          },
-          "unique_code": {
-            "header": "Înregistrare",
-            "sub_header": "Înregistrează-te folosind un cod unic trimis pe adresa de email de mai sus."
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "Setează o parolă puternică pentru a continua"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "Autentifică-te pentru a începe să-ți gestionezi activitatea împreună cu echipa ta.",
-        "step": {
-          "email": {
-            "header": "Autentificare sau înregistrare",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "Autentificare sau înregistrare",
-            "sub_header": "Folosește combinația email-parolă pentru a te autentifica."
-          },
-          "unique_code": {
-            "header": "Autentificare sau înregistrare",
-            "sub_header": "Autentifică-te folosind un cod unic trimis pe adresa de email de mai sus."
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "Resetează-ți parola",
-      "description": "Introdu adresa de email verificată a contului tău și îți vom trimite un link pentru resetarea parolei.",
-      "email_sent": "Am trimis link-ul de resetare pe adresa ta de email",
-      "send_reset_link": "Trimite link-ul de resetare",
-      "errors": {
-        "smtp_not_enabled": "Se pare că administratorul nu a activat SMTP, nu putem trimite link-ul de resetare a parolei"
-      },
-      "toast": {
-        "success": {
-          "title": "Email trimis",
-          "message": "Verifică-ți căsuța de mesaje pentru link-ul de resetare a parolei. Dacă nu apare în câteva minute, verifică folderul de spam."
-        },
-        "error": {
-          "title": "Eroare!",
-          "message": "Ceva nu a funcționat. Te rugăm să încerci din nou."
-        }
-      }
-    },
-    "reset_password": {
-      "title": "Setează o parolă nouă",
-      "description": "Protejează-ți contul cu o parolă puternică"
-    },
-    "set_password": {
-      "title": "Protejează-ți contul",
-      "description": "Setarea parolei te ajută să te autentifici în siguranță"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "Eroare!",
-          "message": "Deconectarea a eșuat. Te rugăm să încerci din nou."
-        }
-      }
-    }
-  },
   "submit": "Trimite",
   "cancel": "Anulează",
   "loading": "Se încarcă",
@@ -793,7 +625,8 @@
       "clear_sorting": "Șterge sortarea",
       "show_weekends": "Arată sfârșiturile de săptămână",
       "enable": "Activează",
-      "disable": "Dezactivează"
+      "disable": "Dezactivează",
+      "copy_markdown": "Copiază markdown"
     },
     "name": "Nume",
     "discard": "Renunță",
@@ -883,7 +716,8 @@
     "planned": "Planificat",
     "paused": "Pauzat",
     "no_of": "Nr. de {entity}",
-    "resolved": "Rezolvat"
+    "resolved": "Rezolvat",
+    "overview": "Prezentare generală"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -1561,7 +1395,9 @@
         "title": "Facturare și Abonamente",
         "current_plan": "Abonament curent",
         "free_plan": "Folosești în prezent abonamentul gratuit",
-        "view_plans": "Vezi abonamentele"
+        "view_plans": "Vezi abonamentele",
+        "heading": "Facturare și planuri",
+        "description": "Alegeți planul, gestionați abonamentele și actualizați cu ușurință pe măsură ce nevoile dvs. cresc."
       },
       "exports": {
         "title": "Exporturi",
@@ -1580,7 +1416,11 @@
               "message": "Exportul a eșuat. Te rugăm să încerci din nou."
             }
           }
-        }
+        },
+        "heading": "Exporturi",
+        "description": "Exportați datele proiectului în diferite formate și accesați istoricul exporturilor cu linkuri de descărcare.",
+        "exporting_projects": "Exportare proiecte",
+        "format": "Format"
       },
       "webhooks": {
         "title": "Puncte de notificare (Webhooks)",
@@ -1631,7 +1471,9 @@
           "secret_key_not_copied": {
             "message": "A apărut o eroare la copierea cheii secrete."
           }
-        }
+        },
+        "heading": "Webhook-uri",
+        "description": "Automatizați notificările către servicii externe când au loc evenimente în proiect."
       },
       "api_tokens": {
         "title": "Chei secrete API",
@@ -1707,7 +1549,9 @@
       "security": "Securitate",
       "activity": "Activitate",
       "appearance": "Aspect",
-      "notifications": "Notificări"
+      "notifications": "Notificări",
+      "preferences": "Preferințe",
+      "api-tokens": "Tokenuri de acces personal"
     },
     "tabs": {
       "summary": "Sumar",
@@ -1773,7 +1617,9 @@
       "empty_state": {
         "title": "Nicio stare disponibilă pentru grupul {groupKey}",
         "description": "Te rog să creezi o stare nouă"
-      }
+      },
+      "heading": "Stări",
+      "description": "Definiți și personalizați stările fluxului de lucru pentru a urmări progresul elementelor de lucru."
     },
     "labels": {
       "label_title": "Titlu etichetă",
@@ -1781,7 +1627,9 @@
       "label_max_char": "Numele etichetei nu trebuie să depășească 255 de caractere",
       "toast": {
         "error": "Eroare la actualizarea etichetei"
-      }
+      },
+      "heading": "Etichete",
+      "description": "Creați etichete personalizate pentru a categoriza și organiza elementele de lucru"
     },
     "estimates": {
       "label": "Estimări",
@@ -1864,7 +1712,9 @@
           "label": "Timp",
           "hours": "Ore"
         }
-      }
+      },
+      "heading": "Estimări",
+      "enable_description": "Vă ajută în comunicarea complexității și a volumului de muncă al echipei."
     },
     "automations": {
       "label": "Automatizări",
@@ -1878,7 +1728,9 @@
         "description": "Plane va închide automat activitățile care nu au fost finalizate sau anulate.",
         "duration": "Închide automat activitățile inactive de",
         "auto_close_status": "Stare închidere automată"
-      }
+      },
+      "heading": "Automatizări",
+      "description": "Configurați acțiuni automatizate pentru a eficientiza fluxul de lucru al gestionării proiectului și a reduce sarcinile manuale."
     },
     "empty_state": {
       "labels": {
@@ -2009,7 +1861,13 @@
         "title": "Niciun ciclu arhivat încă",
         "description": "Pentru a păstra proiectul ordonat, arhivează ciclurile completate. Le vei găsi aici după arhivare."
       }
-    }
+    },
+    "start_date": "Data de început",
+    "end_date": "Data de sfârșit",
+    "in_your_timezone": "În fusul dvs. orar",
+    "transfer_work_items": "Transferă {count} elemente de lucru",
+    "date_range": "Interval de date",
+    "add_date": "Adaugă dată"
   },
   "project_issues": {
     "empty_state": {
@@ -2523,5 +2381,36 @@
     "open_button": "Deschide panoul de navigare",
     "close_button": "Închide panoul de navigare",
     "outline_floating_button": "Deschide conturul"
-  }
+  },
+  "preferences": "Preferințe",
+  "language_and_time": "Limbă și timp",
+  "timezone_setting": "Setare fus orar",
+  "language_setting": "Setare limbă",
+  "settings_moved_to_preferences": "Setările de fus orar și limbă au fost mutate în preferințe.",
+  "go_to_preferences": "Mergi la preferințe",
+  "account_settings": {
+    "preferences": {
+      "heading": "Preferințe",
+      "description": "Personalizați experiența aplicației în funcție de modul dvs. de lucru"
+    },
+    "notifications": {
+      "heading": "Notificări prin e-mail",
+      "description": "Rămâneți la curent cu sarcinile pe care le urmăriți. Activați pentru a primi notificări."
+    },
+    "security": {
+      "heading": "Securitate"
+    },
+    "api_tokens": {
+      "heading": "Tokenuri de acces personal",
+      "description": "Generați tokenuri API sigure pentru integrarea datelor cu sisteme și aplicații externe."
+    },
+    "activity": {
+      "heading": "Activitate",
+      "description": "Urmăriți acțiunile și modificările recente în toate proiectele și sarcinile."
+    }
+  },
+  "edited": "editat",
+  "bot": "Bot",
+  "settings_description": "Gestionați-vă conturile, spațiile de lucru și preferințele proiectului într-un singur loc. Comutați între file pentru configurare ușoară.",
+  "back_to_workspace": "Înapoi la spațiul de lucru"
 }
