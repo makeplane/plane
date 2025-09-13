@@ -29,6 +29,12 @@ export const useIssueDetailShortcuts = ({
   }, [currentUser, issueOperations, workspaceSlug, projectId, issueId]);
 
   useEffect(() => {
+    const stopEvent = (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    };
+
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       if (
@@ -49,81 +55,81 @@ export const useIssueDetailShortcuts = ({
         el?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       };
 
-      if (cmdOrCtrl && key === "delete") {
-        e.preventDefault();
+      if (cmdOrCtrl && (key === "delete" || key === "backspace")) {
+        stopEvent(e);
         toggleDeleteIssueModal(true);
         return;
       }
 
       if (cmdOrCtrl && key === "m") {
-        e.preventDefault();
+        stopEvent(e);
         const editor = document.querySelector(`#add_comment_${issueId} .ProseMirror`) as HTMLElement | null;
         editor?.focus();
         return;
       }
 
       if (cmdOrCtrl && shift && key === "d") {
-        e.preventDefault();
+        stopEvent(e);
         issueOperations.update(workspaceSlug, projectId, issueId, { target_date: null });
         return;
       }
 
       if (shift && key === "d") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-due-date");
         return;
       }
 
       if (shift && key === "e") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-estimate");
         return;
       }
 
       if (shift && key === "c") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-cycle");
         return;
       }
 
       if (shift && key === "m") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-module");
         return;
       }
 
       if (key === "a") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-assignee");
         return;
       }
 
       if (key === "i") {
-        e.preventDefault();
+        stopEvent(e);
         assignToMe();
         return;
       }
 
       if (key === "s") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-state");
         return;
       }
 
       if (key === "p") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-priority");
         return;
       }
 
       if (key === "l") {
-        e.preventDefault();
+        stopEvent(e);
         clickByClass("js-issue-label");
       }
     };
 
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.addEventListener("keydown", handler, true);
+    return () => document.removeEventListener("keydown", handler, true);
   }, [
     assignToMe,
     issueOperations,
