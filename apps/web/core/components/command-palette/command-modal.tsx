@@ -8,15 +8,8 @@ import useSWR from "swr";
 import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  PROJECT_TRACKER_ELEMENTS,
-  WORK_ITEM_TRACKER_ELEMENTS,
-  WORKSPACE_DEFAULT_SEARCH_RESULT,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/propel/icons";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
@@ -27,7 +20,6 @@ import {
   ChangeIssueState,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
-  CommandPaletteProjectActions,
   CommandPaletteSearchResults,
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
@@ -35,23 +27,24 @@ import {
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import type { CommandGroupMap } from "./utils/registry";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const CommandModal: React.FC = observer(() => {
+type Props = { commandGroups: CommandGroupMap };
+
+export const CommandModal: React.FC<Props> = observer(({ commandGroups }) => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
@@ -72,11 +65,8 @@ export const CommandModal: React.FC = observer(() => {
     issue: { getIssueById },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
-  const { workspaceProjectIds } = useProject();
   const { platform, isMobile } = usePlatformOS();
-  const { canPerformAnyCreateAction } = useUser();
-  const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
-    useCommandPalette();
+  const { isCommandPaletteOpen, toggleCommandPaletteModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
@@ -341,52 +331,31 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          {workspaceSlug &&
-                            workspaceProjectIds &&
-                            workspaceProjectIds.length > 0 &&
-                            canPerformAnyCreateAction && (
-                              <Command.Group heading="Work item">
-                                <Command.Item
-                                  onSelect={() => {
-                                    closePalette();
-                                    captureClick({
-                                      elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
-                                    });
-                                    toggleCreateIssueModal(true);
-                                  }}
-                                  className="focus:bg-custom-background-80"
-                                >
-                                  <div className="flex items-center gap-2 text-custom-text-200">
-                                    <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new work item
-                                  </div>
-                                  <kbd>C</kbd>
-                                </Command.Item>
-                              </Command.Group>
-                            )}
-                          {workspaceSlug && canPerformWorkspaceActions && (
-                            <Command.Group heading="Project">
-                              <Command.Item
-                                onSelect={() => {
-                                  closePalette();
-                                  captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
-                                  toggleCreateProjectModal(true);
-                                }}
-                                className="focus:outline-none"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <FolderPlus className="h-3.5 w-3.5" />
-                                  Create new project
-                                </div>
-                                <kbd>P</kbd>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
 
-                          {/* project actions */}
-                          {projectId && canPerformAnyCreateAction && (
-                            <CommandPaletteProjectActions closePalette={closePalette} />
-                          )}
+                          {Object.entries(commandGroups).map(([heading, cmds]) => {
+                            const enabledCmds = cmds.filter((cmd) => !cmd.enabled || cmd.enabled());
+                            if (enabledCmds.length === 0) return null;
+                            return (
+                              <Command.Group heading={heading} key={heading}>
+                                {enabledCmds.map((cmd) => (
+                                  <Command.Item
+                                    key={cmd.id}
+                                    onSelect={() => {
+                                      closePalette();
+                                      cmd.run();
+                                    }}
+                                    className="focus:outline-none"
+                                  >
+                                    <div className="flex items-center gap-2 text-custom-text-200">
+                                      {cmd.icon}
+                                      {cmd.label}
+                                    </div>
+                                    {cmd.shortcut && <kbd>{cmd.shortcut}</kbd>}
+                                  </Command.Item>
+                                ))}
+                              </Command.Group>
+                            );
+                          })}
                           {canPerformWorkspaceActions && (
                             <Command.Group heading="Workspace Settings">
                               <Command.Item

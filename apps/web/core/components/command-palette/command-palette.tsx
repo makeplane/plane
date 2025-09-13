@@ -5,19 +5,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import {
   IssueLevelModals,
@@ -26,12 +26,9 @@ import {
 } from "@/plane-web/components/command-palette/modals";
 // plane web constants
 // plane web helpers
-import {
-  getGlobalShortcutsList,
-  getProjectShortcutsList,
-  getWorkspaceShortcutsList,
-  handleAdditionalKeyDownEvents,
-} from "@/plane-web/helpers/command-palette";
+import { handleAdditionalKeyDownEvents } from "@/plane-web/helpers/command-palette";
+import { useCommandRegistry } from "./utils/use-command-registry";
+import { getDefaultCommands } from "./utils/commands";
 
 export const CommandPalette: FC = observer(() => {
   // router params
@@ -41,8 +38,21 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
+  const {
+    toggleCommandPaletteModal,
+    isShortcutModalOpen,
+    toggleShortcutModal,
+    isAnyModalOpen,
+    toggleCreateIssueModal,
+    toggleCreateProjectModal,
+    toggleCreatePageModal,
+    toggleCreateModuleModal,
+    toggleCreateCycleModal,
+    toggleCreateViewModal,
+    toggleBulkDeleteIssueModal,
+  } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { workspaceProjectIds } = useProject();
 
   // derived values
   const projectIdentifier = workItem?.toString().split("-")[0];
@@ -145,18 +155,43 @@ export const CommandPalette: FC = observer(() => {
     [canPerformAnyCreateAction]
   );
 
-  const shortcutsList: {
-    global: Record<string, { title: string; description: string; action: () => void }>;
-    workspace: Record<string, { title: string; description: string; action: () => void }>;
-    project: Record<string, { title: string; description: string; action: () => void }>;
-  } = useMemo(
-    () => ({
-      global: getGlobalShortcutsList(),
-      workspace: getWorkspaceShortcutsList(),
-      project: getProjectShortcutsList(),
-    }),
-    []
+  const commandActions = useMemo(
+    () =>
+      getDefaultCommands({
+        toggleCreateIssueModal,
+        toggleCreateProjectModal,
+        toggleCreatePageModal,
+        toggleCreateModuleModal,
+        toggleCreateCycleModal,
+        toggleCreateViewModal,
+        toggleBulkDeleteIssueModal,
+        performAnyProjectCreateActions: () => performAnyProjectCreateActions(),
+        performWorkspaceCreateActions: () => performWorkspaceCreateActions(),
+        performProjectCreateActions: () => performProjectCreateActions(),
+        performProjectBulkDeleteActions: () => performProjectBulkDeleteActions(),
+        workspaceSlug: workspaceSlug?.toString(),
+        projectId: projectId?.toString(),
+        hasProjects: workspaceProjectIds && workspaceProjectIds.length > 0,
+      }),
+    [
+      performAnyProjectCreateActions,
+      performProjectBulkDeleteActions,
+      performProjectCreateActions,
+      performWorkspaceCreateActions,
+      workspaceProjectIds,
+      projectId,
+      toggleBulkDeleteIssueModal,
+      toggleCreateCycleModal,
+      toggleCreateIssueModal,
+      toggleCreateModuleModal,
+      toggleCreatePageModal,
+      toggleCreateProjectModal,
+      toggleCreateViewModal,
+      workspaceSlug,
+    ]
   );
+
+  const { groups: commandGroups, handleKeyDown: handleCommandKeyDown } = useCommandRegistry(commandActions);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -166,83 +201,51 @@ export const CommandPalette: FC = observer(() => {
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
       const shiftClicked = shiftKey;
-      const deleteKey = keyPressed === "backspace" || keyPressed === "delete";
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
         toggleCommandPaletteModal(true);
       }
 
-      // if on input, textarea or editor, don't do anything
+      const target = e.target as Element;
       if (
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLInputElement ||
-        (e.target as Element)?.classList?.contains("ProseMirror")
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target.classList.contains("ProseMirror")
       )
         return;
 
       if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
         e.preventDefault();
         toggleShortcutModal(true);
+        return;
       }
 
-      if (deleteKey) {
-        if (performProjectBulkDeleteActions()) {
-          shortcutsList.project.delete.action();
-        }
-      } else if (cmdClicked) {
+      if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
-        } else if (keyPressed === "b") {
+          return;
+        }
+        if (keyPressed === "b") {
           e.preventDefault();
           toggleSidebar();
-        }
-      } else if (!isAnyModalOpen) {
-        captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
-        if (
-          Object.keys(shortcutsList.global).includes(keyPressed) &&
-          ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
-        ) {
-          shortcutsList.global[keyPressed].action();
-        }
-        // workspace authorized actions
-        else if (
-          Object.keys(shortcutsList.workspace).includes(keyPressed) &&
-          workspaceSlug &&
-          performWorkspaceCreateActions()
-        ) {
-          e.preventDefault();
-          shortcutsList.workspace[keyPressed].action();
-        }
-        // project authorized actions
-        else if (
-          Object.keys(shortcutsList.project).includes(keyPressed) &&
-          projectId &&
-          performProjectCreateActions()
-        ) {
-          e.preventDefault();
-          // actions that can be performed only inside a project
-          shortcutsList.project[keyPressed].action();
+          return;
         }
       }
-      // Additional keydown events
+
+      if (handleCommandKeyDown(e)) return;
+
       handleAdditionalKeyDownEvents(e);
     },
     [
       copyIssueUrlToClipboard,
+      handleCommandKeyDown,
       isAnyModalOpen,
       platform,
-      performAnyProjectCreateActions,
-      performProjectBulkDeleteActions,
-      performProjectCreateActions,
-      performWorkspaceCreateActions,
-      projectId,
-      shortcutsList,
       toggleCommandPaletteModal,
       toggleShortcutModal,
       toggleSidebar,
-      workspaceSlug,
     ]
   );
 
@@ -261,7 +264,7 @@ export const CommandPalette: FC = observer(() => {
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
       <IssueLevelModals projectId={projectId} issueId={issueId} />
-      <CommandModal />
+      <CommandModal commandGroups={commandGroups} />
     </>
   );
 });
