@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import React, { useCallback, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -10,6 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
+import { useShortcuts, Shortcut } from "./use-shortcuts";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -158,98 +159,119 @@ export const CommandPalette: FC = observer(() => {
     []
   );
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
-      if (!key) return;
+  const isEditable = (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    return (
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLInputElement ||
+      target.isContentEditable ||
+      target.classList.contains("ProseMirror")
+    );
+  };
 
-      const keyPressed = key.toLowerCase();
-      const cmdClicked = ctrlKey || metaKey;
-      const shiftClicked = shiftKey;
-      const deleteKey = keyPressed === "backspace" || keyPressed === "delete";
+  const shortcuts: Shortcut[] = useMemo(() => {
+    const list: Shortcut[] = [
+      {
+        keys: ["meta", "k"],
+        handler: () => toggleCommandPaletteModal(true),
+        enabled: () => !isAnyModalOpen,
+      },
+      {
+        keys: ["control", "k"],
+        handler: () => toggleCommandPaletteModal(true),
+        enabled: () => !isAnyModalOpen,
+      },
+      {
+        keys: ["shift", "?"],
+        handler: () => toggleShortcutModal(true),
+        enabled: () => !isAnyModalOpen,
+      },
+      {
+        keys: ["shift", "/"],
+        handler: () => toggleShortcutModal(true),
+        enabled: () => !isAnyModalOpen,
+      },
+      {
+        keys: platform === "MacOS" ? ["control", "meta", "c"] : ["control", "alt", "c"],
+        handler: () => copyIssueUrlToClipboard(),
+        enabled: () => !!workItem,
+      },
+      {
+        keys: ["meta", "b"],
+        handler: () => toggleSidebar(),
+        enabled: (e) => !isEditable(e),
+      },
+      {
+        keys: ["control", "b"],
+        handler: () => toggleSidebar(),
+        enabled: (e) => !isEditable(e),
+      },
+    ];
 
-      if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
-        e.preventDefault();
-        toggleCommandPaletteModal(true);
-      }
+    Object.keys(shortcutsList.global).forEach((k) => {
+      list.push({
+        sequence: [k],
+        handler: () => {
+          captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
+          shortcutsList.global[k].action();
+        },
+        enabled: (e) =>
+          !isEditable(e) &&
+          !isAnyModalOpen &&
+          (((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())),
+      });
+    });
 
-      // if on input, textarea or editor, don't do anything
-      if (
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLInputElement ||
-        (e.target as Element)?.classList?.contains("ProseMirror")
-      )
-        return;
+    Object.keys(shortcutsList.workspace).forEach((k) => {
+      list.push({
+        sequence: [k],
+        handler: () => {
+          captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
+          shortcutsList.workspace[k].action();
+        },
+        enabled: (e) =>
+          !isEditable(e) &&
+          !isAnyModalOpen &&
+          !!workspaceSlug &&
+          performWorkspaceCreateActions(),
+      });
+    });
 
-      if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
-        e.preventDefault();
-        toggleShortcutModal(true);
-      }
+    Object.entries(shortcutsList.project).forEach(([k, v]) => {
+      const isDeleteKey = k === "delete" || k === "backspace";
+      list.push({
+        sequence: [k],
+        handler: () => {
+          captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
+          v.action();
+        },
+        enabled: (e) =>
+          !isEditable(e) &&
+          !isAnyModalOpen &&
+          !!projectId &&
+          (isDeleteKey ? performProjectBulkDeleteActions() : performProjectCreateActions()),
+      });
+    });
 
-      if (deleteKey) {
-        if (performProjectBulkDeleteActions()) {
-          shortcutsList.project.delete.action();
-        }
-      } else if (cmdClicked) {
-        if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
-          e.preventDefault();
-          copyIssueUrlToClipboard();
-        } else if (keyPressed === "b") {
-          e.preventDefault();
-          toggleSidebar();
-        }
-      } else if (!isAnyModalOpen) {
-        captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
-        if (
-          Object.keys(shortcutsList.global).includes(keyPressed) &&
-          ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
-        ) {
-          shortcutsList.global[keyPressed].action();
-        }
-        // workspace authorized actions
-        else if (
-          Object.keys(shortcutsList.workspace).includes(keyPressed) &&
-          workspaceSlug &&
-          performWorkspaceCreateActions()
-        ) {
-          e.preventDefault();
-          shortcutsList.workspace[keyPressed].action();
-        }
-        // project authorized actions
-        else if (
-          Object.keys(shortcutsList.project).includes(keyPressed) &&
-          projectId &&
-          performProjectCreateActions()
-        ) {
-          e.preventDefault();
-          // actions that can be performed only inside a project
-          shortcutsList.project[keyPressed].action();
-        }
-      }
-      // Additional keydown events
-      handleAdditionalKeyDownEvents(e);
-    },
-    [
-      copyIssueUrlToClipboard,
-      isAnyModalOpen,
-      platform,
-      performAnyProjectCreateActions,
-      performProjectBulkDeleteActions,
-      performProjectCreateActions,
-      performWorkspaceCreateActions,
-      projectId,
-      shortcutsList,
-      toggleCommandPaletteModal,
-      toggleShortcutModal,
-      toggleSidebar,
-      workspaceSlug,
-    ]
-  );
+    return list;
+  }, [
+    copyIssueUrlToClipboard,
+    isAnyModalOpen,
+    performAnyProjectCreateActions,
+    performProjectBulkDeleteActions,
+    performProjectCreateActions,
+    performWorkspaceCreateActions,
+    platform,
+    projectId,
+    shortcutsList,
+    toggleCommandPaletteModal,
+    toggleShortcutModal,
+    toggleSidebar,
+    workspaceSlug,
+    workItem,
+  ]);
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
+  useShortcuts(shortcuts, { additional: handleAdditionalKeyDownEvents });
 
   if (!currentUser) return null;
 
