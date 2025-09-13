@@ -13,6 +13,7 @@
     "check:lint": "eslint . --max-warnings 2",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:translations": "tsx scripts/check-missing-translations.ts",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
@@ -22,16 +23,17 @@
     "intl-messageformat": "^10.7.11",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "lodash": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "^22.5.4",
     "@types/lodash": "catalog:",
+    "@types/node": "^22.17.2",
     "@types/react": "catalog:",
+    "ansis": "^4.1.0",
     "tsdown": "catalog:",
+    "tsx": "^4.7.1",
     "typescript": "catalog:"
   }
 }

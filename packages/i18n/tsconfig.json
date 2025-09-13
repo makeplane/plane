@@ -5,6 +5,6 @@
     "lib": ["esnext", "dom"],
     "resolveJsonModule": true
   },
-  "include": ["./src"],
+  "include": ["./src", "./scripts"],
   "exclude": ["dist", "build", "node_modules"]
 }
