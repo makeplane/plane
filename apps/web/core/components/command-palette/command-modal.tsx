@@ -5,7 +5,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
+import { CommandIcon, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import {
@@ -16,7 +16,6 @@ import {
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/propel/icons";
 import {
   IWorkspaceSearchResults,
   ICycle,
@@ -41,9 +40,12 @@ import {
   CommandPaletteSearchResults,
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
-  useKeySequence,
 } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+// new command system
+import { useCommandRegistry, useKeySequenceHandler } from "@/components/command-palette/hooks";
+import { CommandGroup } from "@/components/command-palette/types";
+import { CommandRenderer } from "@/components/command-palette/command-renderer";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -162,11 +164,27 @@ export const CommandModal: React.FC = observer(() => {
       .catch(() => setRecentIssues([]));
   };
 
-  const handleKeySequence = useKeySequence({
-    op: openProjectList,
-    oc: openCycleList,
-    oi: openIssueList,
-  });
+  const closePalette = () => {
+    toggleCommandPaletteModal(false);
+    setPages([]);
+    setPlaceholder("Type a command or search");
+    setProjectSelectionAction(null);
+    setSelectedProjectId(null);
+  };
+
+  // Initialize command registry
+  const { registry, context, executionContext } = useCommandRegistry(
+    setPages,
+    setPlaceholder,
+    setSearchTerm,
+    closePalette,
+    openProjectList,
+    openCycleList,
+    openIssueList,
+    isWorkspaceLevel
+  );
+
+  const handleKeySequence = useKeySequenceHandler(registry, executionContext);
 
   useEffect(() => {
     if (!isCommandPaletteOpen || !activeEntity) return;
@@ -217,19 +235,6 @@ export const CommandModal: React.FC = observer(() => {
       setIsWorkspaceLevel(false);
     }
   }, [projectId]);
-
-  const closePalette = () => {
-    toggleCommandPaletteModal(false);
-    setPages([]);
-    setPlaceholder("Type a command or search");
-    setProjectSelectionAction(null);
-    setSelectedProjectId(null);
-  };
-
-  const createNewWorkspace = () => {
-    closePalette();
-    router.push("/create-workspace");
-  };
 
   useEffect(() => {
     if (!workspaceSlug) return;
@@ -471,124 +476,26 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          {workspaceSlug && joinedProjectIds.length > 0 && (
-                            <Command.Group heading="Navigate">
-                              <Command.Item onSelect={openProjectList} className="focus:outline-none">
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <Search className="h-3.5 w-3.5" />
-                                  Open project
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <kbd>O</kbd>
-                                  <kbd>P</kbd>
-                                </div>
-                              </Command.Item>
-                              <Command.Item onSelect={openCycleList} className="focus:outline-none">
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <Search className="h-3.5 w-3.5" />
-                                  Open cycle
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <kbd>O</kbd>
-                                  <kbd>C</kbd>
-                                </div>
-                              </Command.Item>
-                              <Command.Item onSelect={openIssueList} className="focus:outline-none">
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <Search className="h-3.5 w-3.5" />
-                                  Open recent work items
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <kbd>O</kbd>
-                                  <kbd>I</kbd>
-                                </div>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
-                          {workspaceSlug &&
-                            workspaceProjectIds &&
-                            workspaceProjectIds.length > 0 &&
-                            canPerformAnyCreateAction && (
-                              <Command.Group heading="Work item">
-                                <Command.Item
-                                  onSelect={() => {
-                                    closePalette();
-                                    captureClick({
-                                      elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
-                                    });
-                                    toggleCreateIssueModal(true);
-                                  }}
-                                  className="focus:bg-custom-background-80"
-                                >
-                                  <div className="flex items-center gap-2 text-custom-text-200">
-                                    <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new work item
-                                  </div>
-                                  <kbd>C</kbd>
-                                </Command.Item>
-                              </Command.Group>
-                            )}
-                          {workspaceSlug && canPerformWorkspaceActions && (
-                            <Command.Group heading="Project">
-                              <Command.Item
-                                onSelect={() => {
-                                  closePalette();
-                                  captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
-                                  toggleCreateProjectModal(true);
-                                }}
-                                className="focus:outline-none"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <FolderPlus className="h-3.5 w-3.5" />
-                                  Create new project
-                                </div>
-                                <kbd>P</kbd>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
+
+                          {/* New command renderer */}
+                          <CommandRenderer
+                            commands={registry.getVisibleCommands(context)}
+                            onCommandSelect={(command) => {
+                              if (command.id === "create-work-item") {
+                                captureClick({
+                                  elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
+                                });
+                              } else if (command.id === "create-project") {
+                                captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
+                              }
+                              command.action();
+                            }}
+                          />
 
                           {/* project actions */}
                           {projectId && canPerformAnyCreateAction && (
                             <CommandPaletteProjectActions closePalette={closePalette} />
                           )}
-                          {canPerformWorkspaceActions && (
-                            <Command.Group heading="Workspace Settings">
-                              <Command.Item
-                                onSelect={() => {
-                                  setPlaceholder("Search workspace settings");
-                                  setSearchTerm("");
-                                  setPages([...pages, "settings"]);
-                                }}
-                                className="focus:outline-none"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <Settings className="h-3.5 w-3.5" />
-                                  Search settings
-                                </div>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
-                          <Command.Group heading="Account">
-                            <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <FolderPlus className="h-3.5 w-3.5" />
-                                Create new workspace
-                              </div>
-                            </Command.Item>
-                            <Command.Item
-                              onSelect={() => {
-                                setPlaceholder("Change interface theme");
-                                setSearchTerm("");
-                                setPages([...pages, "change-interface-theme"]);
-                              }}
-                              className="focus:outline-none"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <Settings className="h-3.5 w-3.5" />
-                                Change interface theme
-                              </div>
-                            </Command.Item>
-                          </Command.Group>
 
                           {/* help options */}
                           <CommandPaletteHelpActions closePalette={closePalette} />

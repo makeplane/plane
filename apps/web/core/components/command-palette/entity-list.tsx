@@ -23,10 +23,7 @@ export const CommandPaletteEntityList = <T,>({
   renderItem,
   emptyText = "No results found",
 }: CommandPaletteEntityListProps<T>) => {
-  if (items.length === 0)
-    return (
-      <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>
-    );
+  if (items.length === 0) return <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>;
 
   return (
     <Command.Group heading={heading}>
@@ -43,4 +40,3 @@ export const CommandPaletteEntityList = <T,>({
     </Command.Group>
   );
 };
-

@@ -197,6 +197,7 @@ export const CommandPalette: FC = observer(() => {
         sequenceTimeout.current = window.setTimeout(() => {
           keySequence.current = "";
         }, 500);
+        // Check if the current key sequence matches a command
         const entityShortcutMap: Record<string, CommandPaletteEntity> = {
           op: "project",
           oc: "cycle",
