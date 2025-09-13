@@ -63,6 +63,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 
 const workspaceService = new WorkspaceService();
 
@@ -168,7 +169,9 @@ export const CommandModal: React.FC = observer(() => {
       .catch(() => setRecentIssues([]));
   }, [workspaceSlug]);
 
-  const entityHandlers = useMemo(
+  const entityHandlers = useMemo<
+    Partial<Record<CommandPaletteEntity, () => void>>
+  >(
     () => ({
       project: openProjectList,
       cycle: openCycleList,
@@ -497,7 +500,7 @@ export const CommandModal: React.FC = observer(() => {
                               {COMMAND_CONFIG.filter((cmd) => !cmd.enabled || cmd.enabled()).map((cmd) => (
                                 <Command.Item
                                   key={cmd.id}
-                                  onSelect={entityHandlers[cmd.entity]}
+                                  onSelect={() => entityHandlers[cmd.entity]?.()}
                                   className="focus:outline-none"
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
@@ -681,7 +684,7 @@ export const CommandModal: React.FC = observer(() => {
                               renderItem={(issue) => (
                                 <div className="flex items-center gap-2">
                                   <IssueIdentifier
-                                    projectId={issue.project_id}
+                                    projectId={issue.project_id ?? ""}
                                     projectIdentifier={issue.project__identifier}
                                     issueSequenceId={issue.sequence_id}
                                     textContainerClassName="text-sm text-custom-text-200"

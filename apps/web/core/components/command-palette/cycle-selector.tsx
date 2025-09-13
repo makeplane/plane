@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { ICycle } from "@/plane-web/types";
+import type { ICycle } from "@plane/types";
 import { CommandPaletteEntityList } from "./entity-list";
 
 interface Props {
