@@ -36,13 +36,13 @@ async function generateTypes() {
   });
 
   // Get all flat keys
-  const flatKeys = allTranslations.map((entry) => `"${entry.key}"`).join(" | ");
+  const flatKeys = allTranslations.map((entry) => `"${entry.key}"\n`).join(" | ");
 
   // Generate the type definition file content
   const typeContent = `// This file is auto-generated. DO NOT EDIT.
 
 // All translation keys as a union type
-export type TranslationKeys = ${flatKeys};
+export type TranslationKeys =\n | ${flatKeys};
 
 // Available languages
 export type AvailableLanguages = "${Object.keys(allTranslations[0].translations).join('" | "')}";
