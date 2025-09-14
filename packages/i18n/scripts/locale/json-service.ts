@@ -12,19 +12,19 @@ export class JsonService {
    * @returns A flattened object with dot-notation keys
    */
   flatten(obj: NestedTranslations, prefix = ""): Record<string, string> {
-    return Object.keys(obj).reduce(
-      (acc, key) => {
-        const newKey = prefix ? `${prefix}.${key}` : key;
-        if (_.isPlainObject(obj[key])) {
-          Object.assign(acc, this.flatten(obj[key] as NestedTranslations, newKey));
-        } else {
-          // Handle empty strings explicitly
-          acc[newKey] = obj[key] === "" ? "" : (obj[key] as string);
-        }
-        return acc;
-      },
-      {} as Record<string, string>
-    );
+    const result: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof value === "object" && value !== null) {
+        Object.assign(result, this.flatten(value as NestedTranslations, newKey));
+      } else {
+        result[newKey] = value === "" ? "" : (value as string);
+      }
+    }
+
+    return result;
   }
 
   /**
