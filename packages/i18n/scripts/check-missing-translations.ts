@@ -8,6 +8,8 @@ import { TranslationRow, TranslationStatus } from "./locale/types";
 async function checkMissingTranslations() {
   try {
     const manager = new LocaleManager();
+    await manager.updateAllGeneratedTranslations();
+
     const files = manager.translationFiles;
     let hasMissingTranslations = false;
 
