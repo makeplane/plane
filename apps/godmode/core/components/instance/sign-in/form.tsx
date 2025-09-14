@@ -4,11 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import {
-  API_BASE_URL,
-  EAdminAuthErrorCodes,
-  type TAdminAuthErrorInfo,
-} from "@plane/constants";
+import { API_BASE_URL, EAdminAuthErrorCodes, type TAdminAuthErrorInfo } from "@plane/constants";
 import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
@@ -58,18 +54,14 @@ export const InstanceSignInForm = () => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(
-    undefined
-  );
+  const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
     if (csrfToken === undefined)
-      authService
-        .requestCSRFToken()
-        .then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
   useEffect(() => {
@@ -115,9 +107,7 @@ export const InstanceSignInForm = () => {
 
   useEffect(() => {
     if (errorCode) {
-      const errorDetail = authErrorHandler(
-        errorCode?.toString() as EAdminAuthErrorCodes
-      );
+      const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
       if (errorDetail) {
         setErrorInfo(errorDetail);
       }
@@ -144,21 +134,13 @@ export const InstanceSignInForm = () => {
               <Banner type="error" message={errorData?.message} />
             ) : (
               <>
-                {errorInfo && (
-                  <AuthBanner
-                    bannerData={errorInfo}
-                    handleBannerData={(value) => setErrorInfo(value)}
-                  />
-                )}
+                {errorInfo && <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />}
               </>
             )}
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
             <div className="w-full space-y-1">
-              <label
-                className="text-sm text-custom-text-300 font-medium"
-                htmlFor="email"
-              >
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
                 Email <span className="text-red-500">*</span>
               </label>
               <Input
@@ -176,10 +158,7 @@ export const InstanceSignInForm = () => {
             </div>
 
             <div className="w-full space-y-1">
-              <label
-                className="text-sm text-custom-text-300 font-medium"
-                htmlFor="password"
-              >
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -214,17 +193,8 @@ export const InstanceSignInForm = () => {
               </div>
             </div>
             <div className="py-2">
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full"
-                disabled={isButtonDisabled}
-              >
-                {isSubmitting ? (
-                  <Spinner height="20px" width="20px" />
-                ) : (
-                  "Sign in"
-                )}
+              <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
               </Button>
             </div>
           </form>

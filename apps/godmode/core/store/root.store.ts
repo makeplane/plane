@@ -1,9 +1,9 @@
 import { enableStaticRendering } from "mobx-react";
 // stores
-import { IInstanceStore, InstanceStore } from "./instance.store";
-import { IThemeStore, ThemeStore } from "./theme.store";
-import { IUserStore, UserStore } from "./user.store";
-import { IWorkspaceStore, WorkspaceStore } from "./workspace.store";
+import { type IInstanceStore, InstanceStore } from "./instance.store";
+import { type IThemeStore, ThemeStore } from "./theme.store";
+import { type IUserStore, UserStore } from "./user.store";
+import { type IWorkspaceStore, WorkspaceStore } from "./workspace.store";
 
 enableStaticRendering(typeof window === "undefined");
 

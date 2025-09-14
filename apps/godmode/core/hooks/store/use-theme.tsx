@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // store
-import { StoreContext } from "@/app/(all)/store.provider";
-import { IThemeStore } from "@/store/theme.store";
+import { StoreContext } from "@/app/store.provider";
+import type { IThemeStore } from "@/store/theme.store";
 
 export const useTheme = (): IThemeStore => {
   const context = useContext(StoreContext);

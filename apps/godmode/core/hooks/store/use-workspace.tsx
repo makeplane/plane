@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // store
-import { StoreContext } from "@/app/(all)/store.provider";
-import { IWorkspaceStore } from "@/store/workspace.store";
+import { StoreContext } from "@/app/store.provider";
+import type { IWorkspaceStore } from "@/store/workspace.store";
 
 export const useWorkspace = (): IWorkspaceStore => {
   const context = useContext(StoreContext);
