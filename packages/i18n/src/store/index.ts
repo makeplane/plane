@@ -8,6 +8,7 @@ import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslat
 import { enCore, locales } from "../locales";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
+import { TranslationKeys } from "../types/generated-translations";
 
 /**
  * Mobx store class for handling translations and language changes in the application
@@ -183,7 +184,7 @@ export class TranslationStore {
    * @param locale - the locale to get the cache key for
    * @returns the cache key for the given key and locale
    */
-  private getCacheKey(key: string, locale: TLanguage): string {
+  private getCacheKey(key: TranslationKeys, locale: TLanguage): string {
     return `${locale}:${key}`;
   }
 
@@ -191,7 +192,7 @@ export class TranslationStore {
    * Gets the IntlMessageFormat instance for the given key and locale
    * Returns cached instance if available
    */
-  private getMessageInstance(key: string, locale: TLanguage): IntlMessageFormat | null {
+  private getMessageInstance(key: TranslationKeys, locale: TLanguage): IntlMessageFormat | null {
     const cacheKey = this.getCacheKey(key, locale);
 
     // Check if the cache already has the key
@@ -221,7 +222,7 @@ export class TranslationStore {
    * @param params - The params to format the translation with
    * @returns The translated string
    */
-  t(key: string, params?: Record<string, unknown>): string {
+  t(key: TranslationKeys, params?: Record<string, unknown>): string {
     try {
       // Try current locale
       let formatter = this.getMessageInstance(key, this.currentLocale);

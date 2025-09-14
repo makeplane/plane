@@ -14,6 +14,7 @@
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "check:translations": "tsx scripts/check-missing-translations.ts",
+    "generate-types": "tsx scripts/generate-types.ts",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"

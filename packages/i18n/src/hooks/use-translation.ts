@@ -3,9 +3,10 @@ import { useContext } from "react";
 import { TranslationContext } from "../context";
 // types
 import { ILanguageOption, TLanguage } from "../types";
+import { TranslationKeys } from "../types/generated-translations";
 
 export type TTranslationStore = {
-  t: (key: string, params?: Record<string, unknown>) => string;
+  t: (key: TranslationKeys, params?: Record<string, unknown>) => string;
   currentLocale: TLanguage;
   changeLanguage: (lng: TLanguage) => void;
   languages: ILanguageOption[];
