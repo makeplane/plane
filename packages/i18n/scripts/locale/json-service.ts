@@ -1,4 +1,3 @@
-// jsonService.ts
 import _ from "lodash";
 
 export interface NestedTranslations {
