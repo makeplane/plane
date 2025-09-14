@@ -2,13 +2,8 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-
-export interface IMarking {
-  type: "heading";
-  level: number;
-  text: string;
-  sequence: number;
-}
+// types
+import type { IMarking } from "@/types";
 
 export type HeadingExtensionStorage = {
   headings: IMarking[];

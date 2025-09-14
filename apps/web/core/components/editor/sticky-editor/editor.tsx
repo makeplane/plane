@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
@@ -15,7 +15,7 @@ import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<
-    ILiteTextEditorProps,
+    Omit<ILiteTextEditorProps, "extendedEditorProps">,
     "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
   > {
   workspaceSlug: string;
@@ -51,7 +51,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -59,7 +61,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -80,6 +81,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
+        extendedEditorProps={{}}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />

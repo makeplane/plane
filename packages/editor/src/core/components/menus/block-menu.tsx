@@ -1,15 +1,18 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import tippy, { Instance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { IEditorProps } from "@/types";
 
-interface BlockMenuProps {
+type Props = {
   editor: Editor;
-}
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  disabledExtensions?: IEditorProps["disabledExtensions"];
+};
 
-export const BlockMenu = (props: BlockMenuProps) => {
+export const BlockMenu = (props: Props) => {
   const { editor } = props;
   const menuRef = useRef<HTMLDivElement>(null);
   const popup = useRef<Instance | null>(null);

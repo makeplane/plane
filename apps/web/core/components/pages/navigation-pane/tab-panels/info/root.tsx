@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageNavigationPaneInfoTabActorsInfo } from "./actors-info";
 import { PageNavigationPaneInfoTabDocumentInfo } from "./document-info";

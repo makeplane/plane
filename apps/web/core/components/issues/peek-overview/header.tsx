@@ -7,27 +7,24 @@ import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, TNameDescriptionLoader } from "@plane/types";
-import {
-  CenterPanelIcon,
-  CustomSelect,
-  FullScreenPanelIcon,
-  SidePanelIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// components
-import { IssueSubscription, NameDescriptionUpdateStatus, WorkItemDetailQuickActions } from "@/components/issues";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
-// store hooks
-
-import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { IssueSubscription } from "../issue-detail/subscription";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [

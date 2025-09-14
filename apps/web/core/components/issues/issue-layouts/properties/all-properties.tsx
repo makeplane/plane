@@ -10,9 +10,9 @@ import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-r
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 import {
   cn,
   getDate,
@@ -21,21 +21,22 @@ import {
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
-import {
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  CycleDropdown,
-  StateDropdown,
-  DateRangeDropdown,
-  DateDropdown,
-} from "@/components/dropdowns";
-// constants
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
-// hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
+// hooks
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

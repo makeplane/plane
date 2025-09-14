@@ -1,35 +1,13 @@
 # Python imports
 import base64
-import json
-import re
+import nh3
+from plane.utils.exception_logger import log_exception
+from bs4 import BeautifulSoup
+from collections import defaultdict
 
 
 # Maximum allowed size for binary data (10MB)
 MAX_SIZE = 10 * 1024 * 1024
-
-# Maximum recursion depth to prevent stack overflow
-MAX_RECURSION_DEPTH = 20
-
-# Dangerous text patterns that could indicate XSS or script injection
-DANGEROUS_TEXT_PATTERNS = [
-    r"<script[^>]*>.*?</script>",
-    r"javascript\s*:",
-    r"data\s*:\s*text/html",
-    r"eval\s*\(",
-    r"document\s*\.",
-    r"window\s*\.",
-    r"location\s*\.",
-]
-
-# Dangerous attribute patterns for HTML attributes
-DANGEROUS_ATTR_PATTERNS = [
-    r"javascript\s*:",
-    r"data\s*:\s*text/html",
-    r"eval\s*\(",
-    r"alert\s*\(",
-    r"document\s*\.",
-    r"window\s*\.",
-]
 
 # Suspicious patterns for binary data content
 SUSPICIOUS_BINARY_PATTERNS = [
@@ -41,74 +19,11 @@ SUSPICIOUS_BINARY_PATTERNS = [
     "<iframe",
 ]
 
-# Malicious HTML patterns for content validation
-MALICIOUS_HTML_PATTERNS = [
-    # Script tags with any content
-    r"<script[^>]*>",
-    r"</script>",
-    # JavaScript URLs in various attributes
-    r'(?:href|src|action)\s*=\s*["\']?\s*javascript:',
-    # Data URLs with text/html (potential XSS)
-    r'(?:href|src|action)\s*=\s*["\']?\s*data:text/html',
-    # Dangerous event handlers with JavaScript-like content
-    r'on(?:load|error|click|focus|blur|change|submit|reset|select|resize|scroll|unload|beforeunload|hashchange|popstate|storage|message|offline|online)\s*=\s*["\']?[^"\']*(?:javascript|alert|eval|document\.|window\.|location\.|history\.)[^"\']*["\']?',
-    # Object and embed tags that could load external content
-    r"<(?:object|embed)[^>]*(?:data|src)\s*=",
-    # Base tag that could change relative URL resolution
-    r"<base[^>]*href\s*=",
-    # Dangerous iframe sources
-    r'<iframe[^>]*src\s*=\s*["\']?(?:javascript:|data:text/html)',
-    # Meta refresh redirects
-    r'<meta[^>]*http-equiv\s*=\s*["\']?refresh["\']?',
-    # Link tags - simplified patterns
-    r'<link[^>]*rel\s*=\s*["\']?stylesheet["\']?',
-    r'<link[^>]*href\s*=\s*["\']?https?://',
-    r'<link[^>]*href\s*=\s*["\']?//',
-    r'<link[^>]*href\s*=\s*["\']?(?:data:|javascript:)',
-    # Style tags with external imports
-    r"<style[^>]*>.*?@import.*?(?:https?://|//)",
-    # Link tags with dangerous rel types
-    r'<link[^>]*rel\s*=\s*["\']?(?:import|preload|prefetch|dns-prefetch|preconnect)["\']?',
-    # Forms with action attributes
-    r"<form[^>]*action\s*=",
-]
-
-# Dangerous JavaScript patterns for event handlers
-DANGEROUS_JS_PATTERNS = [
-    r"alert\s*\(",
-    r"eval\s*\(",
-    r"document\s*\.",
-    r"window\s*\.",
-    r"location\s*\.",
-    r"fetch\s*\(",
-    r"XMLHttpRequest",
-    r"innerHTML\s*=",
-    r"outerHTML\s*=",
-    r"document\.write",
-    r"script\s*>",
-]
-
-# HTML self-closing tags that don't need closing tags
-SELF_CLOSING_TAGS = {
-    "img",
-    "br",
-    "hr",
-    "input",
-    "meta",
-    "link",
-    "area",
-    "base",
-    "col",
-    "embed",
-    "source",
-    "track",
-    "wbr",
-}
-
 
 def validate_binary_data(data):
     """
-    Validate that binary data appears to be valid document format and doesn't contain malicious content.
+    Validate that binary data appears to be a valid document format
+    and doesn't contain malicious content.
 
     Args:
         data (bytes or str): The binary data to validate, or base64-encoded string
@@ -149,209 +64,180 @@ def validate_binary_data(data):
     return True, None
 
 
-def validate_html_content(html_content):
+# Combine custom components and editor-specific nodes into a single set of tags
+CUSTOM_TAGS = {
+    # editor node/tag names
+    "mention-component",
+    "label",
+    "input",
+    "image-component",
+}
+ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS
+
+# Merge nh3 defaults with all attributes used across our custom components
+ATTRIBUTES = {
+    "*": {
+        "class",
+        "id",
+        "title",
+        "role",
+        "aria-label",
+        "aria-hidden",
+        "style",
+        "start",
+        "type",
+        # common editor data-* attributes seen in stored HTML
+        # (wildcards like data-* are NOT supported by nh3; we add known keys
+        # here and dynamically include all data-* seen in the input below)
+        "data-tight",
+        "data-node-type",
+        "data-type",
+        "data-checked",
+        "data-background-color",
+        "data-text-color",
+        "data-name",
+        # callout attributes
+        "data-icon-name",
+        "data-icon-color",
+        "data-background",
+        "data-emoji-unicode",
+        "data-emoji-url",
+        "data-logo-in-use",
+        "data-block-type",
+    },
+    "a": {"href", "target"},
+    # editor node/tag attributes
+    "image-component": {
+        "id",
+        "width",
+        "height",
+        "aspectRatio",
+        "aspectratio",
+        "src",
+        "alignment",
+    },
+    "img": {
+        "width",
+        "height",
+        "aspectRatio",
+        "aspectratio",
+        "alignment",
+        "src",
+        "alt",
+        "title",
+    },
+    "mention-component": {"id", "entity_identifier", "entity_name"},
+    "th": {
+        "colspan",
+        "rowspan",
+        "colwidth",
+        "background",
+        "hideContent",
+        "hidecontent",
+        "style",
+    },
+    "td": {
+        "colspan",
+        "rowspan",
+        "colwidth",
+        "background",
+        "textColor",
+        "textcolor",
+        "hideContent",
+        "hidecontent",
+        "style",
+    },
+    "tr": {"background", "textColor", "textcolor", "style"},
+    "pre": {"language"},
+    "code": {"language", "spellcheck"},
+    "input": {"type", "checked"},
+}
+
+SAFE_PROTOCOLS = {"http", "https", "mailto", "tel"}
+
+
+def _compute_html_sanitization_diff(before_html: str, after_html: str):
     """
-    Validate that HTML content is safe and doesn't contain malicious patterns.
+    Compute a coarse diff between original and sanitized HTML.
 
-    Args:
-        html_content (str): The HTML content to validate
+    Returns a dict with:
+    - removed_tags: mapping[tag] -> removed_count
+    - removed_attributes: mapping[tag] -> sorted list of attribute names removed
+    """
+    try:
 
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
+        def collect(soup):
+            tag_counts = defaultdict(int)
+            attrs_by_tag = defaultdict(set)
+            for el in soup.find_all(True):
+                tag_name = (el.name or "").lower()
+                if not tag_name:
+                    continue
+                tag_counts[tag_name] += 1
+                for attr_name in list(el.attrs.keys()):
+                    if isinstance(attr_name, str) and attr_name:
+                        attrs_by_tag[tag_name].add(attr_name.lower())
+            return tag_counts, attrs_by_tag
+
+        soup_before = BeautifulSoup(before_html or "", "html.parser")
+        soup_after = BeautifulSoup(after_html or "", "html.parser")
+
+        counts_before, attrs_before = collect(soup_before)
+        counts_after, attrs_after = collect(soup_after)
+
+        removed_tags = {}
+        for tag, cnt_before in counts_before.items():
+            cnt_after = counts_after.get(tag, 0)
+            if cnt_after < cnt_before:
+                removed = cnt_before - cnt_after
+                removed_tags[tag] = removed
+
+        removed_attributes = {}
+        for tag, before_set in attrs_before.items():
+            after_set = attrs_after.get(tag, set())
+            removed = before_set - after_set
+            if removed:
+                removed_attributes[tag] = sorted(list(removed))
+
+        return {"removed_tags": removed_tags, "removed_attributes": removed_attributes}
+    except Exception:
+        # Best-effort only; if diffing fails we don't block the request
+        return {"removed_tags": {}, "removed_attributes": {}}
+
+
+def validate_html_content(html_content: str):
+    """
+    Sanitize HTML content using nh3.
+    Returns a tuple: (is_valid, error_message, clean_html)
     """
     if not html_content:
-        return True, None  # Empty is OK
+        return True, None, None
 
     # Size check - 10MB limit (consistent with binary validation)
     if len(html_content.encode("utf-8")) > MAX_SIZE:
-        return False, "HTML content exceeds maximum size limit (10MB)"
+        return False, "HTML content exceeds maximum size limit (10MB)", None
 
-    # Check for specific malicious patterns (simplified and more reliable)
-    for pattern in MALICIOUS_HTML_PATTERNS:
-        if re.search(pattern, html_content, re.IGNORECASE | re.DOTALL):
-            return (
-                False,
-                f"HTML content contains potentially malicious patterns: {pattern}",
+    try:
+        clean_html = nh3.clean(
+            html_content,
+            tags=ALLOWED_TAGS,
+            attributes=ATTRIBUTES,
+            url_schemes=SAFE_PROTOCOLS,
+        )
+        # Report removals to logger (Sentry) if anything was stripped
+        diff = _compute_html_sanitization_diff(html_content, clean_html)
+        if diff.get("removed_tags") or diff.get("removed_attributes"):
+            try:
+                import json
+
+                summary = json.dumps(diff)
+            except Exception:
+                summary = str(diff)
+            log_exception(
+                f"HTML sanitization removals: {summary}",
+                warning=True,
             )
-
-    # Additional check for inline event handlers that contain suspicious content
-    # This is more permissive - only blocks if the event handler contains actual dangerous code
-    event_handler_pattern = r'on\w+\s*=\s*["\']([^"\']*)["\']'
-    event_matches = re.findall(event_handler_pattern, html_content, re.IGNORECASE)
-
-    for handler_content in event_matches:
-        for js_pattern in DANGEROUS_JS_PATTERNS:
-            if re.search(js_pattern, handler_content, re.IGNORECASE):
-                return (
-                    False,
-                    f"HTML content contains dangerous JavaScript in event handler: {handler_content[:100]}",
-                )
-
-    # Basic HTML structure validation - check for common malformed tags
-    try:
-        # Count opening and closing tags for basic structure validation
-        opening_tags = re.findall(r"<(\w+)[^>]*>", html_content)
-        closing_tags = re.findall(r"</(\w+)>", html_content)
-
-        # Filter out self-closing tags from opening tags
-        opening_tags_filtered = [
-            tag for tag in opening_tags if tag.lower() not in SELF_CLOSING_TAGS
-        ]
-
-        # Basic check - if we have significantly more opening than closing tags, it might be malformed
-        if len(opening_tags_filtered) > len(closing_tags) + 10:  # Allow some tolerance
-            return False, "HTML content appears to be malformed (unmatched tags)"
-
-    except Exception:
-        # If HTML parsing fails, we'll allow it
-        pass
-
-    return True, None
-
-
-def validate_json_content(json_content):
-    """
-    Validate that JSON content is safe and doesn't contain malicious patterns.
-
-    Args:
-        json_content (dict): The JSON content to validate
-
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
-    """
-    if not json_content:
-        return True, None  # Empty is OK
-
-    try:
-        # Size check - 10MB limit (consistent with other validations)
-        json_str = json.dumps(json_content)
-        if len(json_str.encode("utf-8")) > MAX_SIZE:
-            return False, "JSON content exceeds maximum size limit (10MB)"
-
-        # Basic structure validation for page description JSON
-        if isinstance(json_content, dict):
-            # Check for expected page description structure
-            # This is based on ProseMirror/Tiptap JSON structure
-            if "type" in json_content and json_content.get("type") == "doc":
-                # Valid document structure
-                if "content" in json_content and isinstance(
-                    json_content["content"], list
-                ):
-                    # Recursively check content for suspicious patterns
-                    is_valid, error_msg = _validate_json_content_array(
-                        json_content["content"]
-                    )
-                    if not is_valid:
-                        return False, error_msg
-            elif "type" not in json_content and "content" not in json_content:
-                # Allow other JSON structures but validate for suspicious content
-                is_valid, error_msg = _validate_json_content_recursive(json_content)
-                if not is_valid:
-                    return False, error_msg
-        else:
-            return False, "JSON description must be a valid object"
-
-    except (TypeError, ValueError) as e:
-        return False, "Invalid JSON structure"
+        return True, None, clean_html
     except Exception as e:
-        return False, "Failed to validate JSON content"
-
-    return True, None
-
-
-def _validate_json_content_array(content, depth=0):
-    """
-    Validate JSON content array for suspicious patterns.
-
-    Args:
-        content (list): Array of content nodes to validate
-        depth (int): Current recursion depth (default: 0)
-
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
-    """
-    # Check recursion depth to prevent stack overflow
-    if depth > MAX_RECURSION_DEPTH:
-        return False, f"Maximum recursion depth ({MAX_RECURSION_DEPTH}) exceeded"
-
-    if not isinstance(content, list):
-        return True, None
-
-    for node in content:
-        if isinstance(node, dict):
-            # Check text content for suspicious patterns (more targeted)
-            if node.get("type") == "text" and "text" in node:
-                text_content = node["text"]
-                for pattern in DANGEROUS_TEXT_PATTERNS:
-                    if re.search(pattern, text_content, re.IGNORECASE):
-                        return (
-                            False,
-                            "JSON content contains suspicious script patterns in text",
-                        )
-
-            # Check attributes for suspicious content (more targeted)
-            if "attrs" in node and isinstance(node["attrs"], dict):
-                for attr_name, attr_value in node["attrs"].items():
-                    if isinstance(attr_value, str):
-                        # Only check specific attributes that could be dangerous
-                        if attr_name.lower() in [
-                            "href",
-                            "src",
-                            "action",
-                            "onclick",
-                            "onload",
-                            "onerror",
-                        ]:
-                            for pattern in DANGEROUS_ATTR_PATTERNS:
-                                if re.search(pattern, attr_value, re.IGNORECASE):
-                                    return (
-                                        False,
-                                        f"JSON content contains dangerous pattern in {attr_name} attribute",
-                                    )
-
-            # Recursively check nested content
-            if "content" in node and isinstance(node["content"], list):
-                is_valid, error_msg = _validate_json_content_array(
-                    node["content"], depth + 1
-                )
-                if not is_valid:
-                    return False, error_msg
-
-    return True, None
-
-
-def _validate_json_content_recursive(obj, depth=0):
-    """
-    Recursively validate JSON object for suspicious content.
-
-    Args:
-        obj: JSON object (dict, list, or primitive) to validate
-        depth (int): Current recursion depth (default: 0)
-
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
-    """
-    # Check recursion depth to prevent stack overflow
-    if depth > MAX_RECURSION_DEPTH:
-        return False, f"Maximum recursion depth ({MAX_RECURSION_DEPTH}) exceeded"
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            if isinstance(value, str):
-                # Check for dangerous patterns using module constants
-                for pattern in DANGEROUS_TEXT_PATTERNS:
-                    if re.search(pattern, value, re.IGNORECASE):
-                        return (
-                            False,
-                            "JSON content contains suspicious script patterns",
-                        )
-            elif isinstance(value, (dict, list)):
-                is_valid, error_msg = _validate_json_content_recursive(value, depth + 1)
-                if not is_valid:
-                    return False, error_msg
-    elif isinstance(obj, list):
-        for item in obj:
-            is_valid, error_msg = _validate_json_content_recursive(item, depth + 1)
-            if not is_valid:
-                return False, error_msg
-
-    return True, None
+        log_exception(e)
+        return False, "Failed to sanitize HTML", None

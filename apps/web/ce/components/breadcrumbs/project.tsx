@@ -4,11 +4,12 @@ import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Logo } from "@plane/ui";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
 // components
-import { SwitcherLabel } from "@/components/common";
+import { Logo } from "@/components/common/logo";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types";
 

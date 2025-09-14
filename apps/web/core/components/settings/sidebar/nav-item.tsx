@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks
-import { useUserSettings } from "@/hooks/store";
+import { useUserSettings } from "@/hooks/store/user";
 
 export type TSettingItem = {
   key: string;

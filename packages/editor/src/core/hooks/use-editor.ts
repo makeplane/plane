@@ -20,6 +20,7 @@ export const useEditor = (props: TEditorHookProps) => {
     editorClassName = "",
     editorProps = {},
     enableHistory,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
@@ -27,9 +28,11 @@ export const useEditor = (props: TEditorHookProps) => {
     handleEditorReady,
     id = "",
     initialValue,
+    isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,
@@ -52,11 +55,13 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
-          editable,
           disabledExtensions,
+          editable,
           enableHistory,
+          extendedEditorProps,
           fileHandler,
           flaggedExtensions,
+          isTouchDevice,
           mentionHandler,
           placeholder,
           tabIndex,
@@ -70,6 +75,7 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
+      onFocus: onEditorFocus,
     },
     [editable]
   );

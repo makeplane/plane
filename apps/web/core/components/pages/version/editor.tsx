@@ -1,18 +1,22 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TDisplayConfig } from "@plane/editor";
-import { TPageVersion } from "@plane/types";
+import type { TDisplayConfig } from "@plane/editor";
+import type { JSONContent, TPageVersion } from "@plane/types";
+import { isJSONContentEmpty } from "@plane/utils";
 import { Loader } from "@plane/ui";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
   versionDetails: TPageVersion | undefined;
+  storeType: EPageStoreType;
 };
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
@@ -74,7 +78,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       </div>
     );
 
-  const description = versionDetails?.description_json;
+  const description = isJSONContentEmpty(versionDetails?.description_json as JSONContent)
+    ? versionDetails?.description_html
+    : versionDetails?.description_json;
+
   if (!description) return null;
 
   return (

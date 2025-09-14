@@ -7,17 +7,15 @@ import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 // components
-import {
-  ActiveCycleProductivity,
-  ActiveCycleProgress,
-  ActiveCycleStats,
-  CycleListGroupHeader,
-  CyclesListItem,
-} from "@/components/cycles";
+import { ActiveCycleStats } from "@/components/cycles/active-cycle/cycle-stats";
+import { ActiveCycleProductivity } from "@/components/cycles/active-cycle/productivity";
+import { ActiveCycleProgress } from "@/components/cycles/active-cycle/progress";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { CycleListGroupHeader } from "@/components/cycles/list/cycle-list-group-header";
+import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 

@@ -6,8 +6,6 @@ import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
-// components
-import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -16,7 +14,10 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageActions, TPageActions } from "../../dropdowns";
+import { ExportPageModal } from "../../modals/export-page-modal";
 import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM } from "../../navigation-pane";
 
 type Props = {

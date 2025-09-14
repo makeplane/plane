@@ -1,7 +1,7 @@
 import { Tooltip2 } from "@blueprintjs/popover2";
 import React, { useEffect, useRef, useState } from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TPosition =
   | "top"
@@ -24,7 +24,7 @@ interface ITooltipProps {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
   position?: TPosition;
-  children: JSX.Element;
+  children: React.ReactElement;
   disabled?: boolean;
   className?: string;
   openDelay?: number;

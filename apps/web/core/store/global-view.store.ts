@@ -5,12 +5,12 @@ import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EIssueFilterType } from "@plane/constants";
-import { EViewAccess, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IGlobalViewStore {
   // observables
@@ -50,15 +50,18 @@ export class GlobalViewStore implements IGlobalViewStore {
       // actions
       fetchAllGlobalViews: action,
       fetchGlobalViewDetails: action,
-      createGlobalView: action,
-      updateGlobalView: action,
       deleteGlobalView: action,
+      updateGlobalView: action,
+      createGlobalView: action,
     });
 
     // root store
     this.rootStore = _rootStore;
     // services
     this.workspaceService = new WorkspaceService();
+
+    this.createGlobalView = this.createGlobalView.bind(this);
+    this.updateGlobalView = this.updateGlobalView.bind(this);
   }
 
   /**
@@ -130,18 +133,19 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param workspaceSlug
    * @param data
    */
-  createGlobalView = async (workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> => {
-    const response = await this.workspaceService.createView(workspaceSlug, data);
-    runInAction(() => {
-      set(this.globalViewMap, response.id, response);
-    });
+  async createGlobalView(workspaceSlug: string, data: Partial<IWorkspaceView>) {
+    try {
+      const response = await this.workspaceService.createView(workspaceSlug, data);
+      runInAction(() => {
+        set(this.globalViewMap, response.id, response);
+      });
 
-    if (data.access === EViewAccess.PRIVATE) {
-      await this.updateViewAccess(workspaceSlug, response.id, EViewAccess.PRIVATE);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-
-    return response;
-  };
+  }
 
   /**
    * @description update global view
@@ -149,11 +153,11 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param viewId
    * @param data
    */
-  updateGlobalView = async (
+  async updateGlobalView(
     workspaceSlug: string,
     viewId: string,
     data: Partial<IWorkspaceView>
-  ): Promise<IWorkspaceView | undefined> => {
+  ): Promise<IWorkspaceView | undefined> {
     const currentViewData = this.getViewDetailsById(viewId) ? cloneDeep(this.getViewDetailsById(viewId)) : undefined;
     try {
       Object.keys(data).forEach((key) => {
@@ -161,14 +165,7 @@ export class GlobalViewStore implements IGlobalViewStore {
         set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
       });
 
-      const promiseRequests = [];
-      promiseRequests.push(this.workspaceService.updateView(workspaceSlug, viewId, data));
-
-      if (data.access !== undefined && data.access !== currentViewData?.access) {
-        promiseRequests.push(this.updateViewAccess(workspaceSlug, viewId, data.access));
-      }
-
-      const [currentView] = await Promise.all(promiseRequests);
+      const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
 
       // applying the filters in the global view
       if (!isEqual(currentViewData?.filters || {}, currentView?.filters || {})) {
@@ -205,7 +202,7 @@ export class GlobalViewStore implements IGlobalViewStore {
         if (currentViewData) set(this.globalViewMap, [viewId, currentKey], currentViewData[currentKey]);
       });
     }
-  };
+  }
 
   /**
    * @description delete global view
@@ -218,73 +215,4 @@ export class GlobalViewStore implements IGlobalViewStore {
         delete this.globalViewMap[viewId];
       });
     });
-
-  /** Locks view
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  lockView = async (workspaceSlug: string, viewId: string) => {
-    try {
-      const currentView = this.getViewDetailsById(viewId);
-      if (currentView?.is_locked) return;
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "is_locked"], true);
-      });
-      await this.workspaceService.lockView(workspaceSlug, viewId);
-    } catch (error) {
-      console.error("Failed to lock the view in view store", error);
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "is_locked"], false);
-      });
-    }
-  };
-
-  /**
-   * unlocks View
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @returns
-   */
-  unLockView = async (workspaceSlug: string, viewId: string) => {
-    try {
-      const currentView = this.getViewDetailsById(viewId);
-      if (!currentView?.is_locked) return;
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "is_locked"], false);
-      });
-      await this.workspaceService.unLockView(workspaceSlug, viewId);
-    } catch (error) {
-      console.error("Failed to unlock view in view store", error);
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "is_locked"], true);
-      });
-    }
-  };
-
-  /**
-   * Updates View access
-   * @param workspaceSlug
-   * @param projectId
-   * @param viewId
-   * @param access
-   * @returns
-   */
-  updateViewAccess = async (workspaceSlug: string, viewId: string, access: EViewAccess) => {
-    const currentView = this.getViewDetailsById(viewId);
-    const currentAccess = currentView?.access;
-    try {
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "access"], access);
-      });
-      await this.workspaceService.updateViewAccess(workspaceSlug, viewId, access);
-    } catch (error) {
-      console.error("Failed to update Access for view", error);
-      runInAction(() => {
-        set(this.globalViewMap, [viewId, "access"], currentAccess);
-      });
-    }
-  };
 }

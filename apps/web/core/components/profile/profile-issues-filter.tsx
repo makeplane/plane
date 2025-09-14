@@ -15,10 +15,16 @@ import {
 } from "@plane/types";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FilterSelection,
+  FiltersDropdown,
+  LayoutSelection,
+} from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useIssues, useLabel } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
 
 export const ProfileIssuesFilter = observer(() => {
   // i18n

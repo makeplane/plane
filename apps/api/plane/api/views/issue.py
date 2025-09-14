@@ -75,7 +75,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
-
+from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
     label_docs,
@@ -144,6 +144,22 @@ from plane.utils.openapi import (
     WORKSPACE_NOT_FOUND_RESPONSE,
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
+
+def user_has_issue_permission(
+    user_id, project_id, issue=None, allowed_roles=None, allow_creator=True
+):
+    if allow_creator and issue is not None and user_id == issue.created_by_id:
+        return True
+
+    qs = ProjectMember.objects.filter(
+        project_id=project_id,
+        member_id=user_id,
+        is_active=True,
+    )
+    if allowed_roles is not None:
+        qs = qs.filter(role__in=allowed_roles)
+
+    return qs.exists()
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -331,6 +347,10 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             )
         )
 
+        total_issue_queryset = Issue.issue_objects.filter(
+            project_id=project_id, workspace__slug=slug
+        )
+
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
@@ -390,6 +410,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
+            total_count_queryset=total_issue_queryset,
             on_results=lambda issues: IssueSerializer(
                 issues, many=True, fields=self.fields, expand=self.expand
             ).data,
@@ -947,7 +968,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class LabelDetailAPIEndpoint(BaseAPIView):
+class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
     """Label Detail Endpoint"""
 
     serializer_class = LabelSerializer
@@ -1012,14 +1033,16 @@ class LabelDetailAPIEndpoint(BaseAPIView):
             if (
                 str(request.data.get("external_id"))
                 and (label.external_id != str(request.data.get("external_id")))
-                and Issue.objects.filter(
+                and Label.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
                     external_source=request.data.get(
                         "external_source", label.external_source
                     ),
                     external_id=request.data.get("external_id"),
-                ).exists()
+                )
+                .exclude(id=pk)
+                .exists()
             ):
                 return Response(
                     {
@@ -1465,7 +1488,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=None,
                 actor_id=request.user.id,
@@ -1780,7 +1803,6 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
-    permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
     @issue_attachment_docs(
@@ -1863,6 +1885,22 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         Generate presigned URL for uploading file attachments to a work item.
         Validates file type and size before creating the attachment record.
         """
+        issue = Issue.objects.get(
+            pk=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        # if the user is creator or admin,member then allow the upload
+        if not user_has_issue_permission(
+            request.user.id,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to upload this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         name = request.data.get("name")
         type = request.data.get("type", False)
         size = request.data.get("size")
@@ -1987,7 +2025,6 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     """Issue Attachment Detail Endpoint"""
 
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [ProjectEntityPermission]
     model = FileAsset
     use_read_replica = True
 
@@ -2010,6 +2047,22 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Soft delete an attachment from a work item by marking it as deleted.
         Records deletion activity and triggers metadata cleanup.
         """
+        issue = Issue.objects.get(
+            pk=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        # if the request user is creator or admin then delete the attachment
+        if not user_has_issue_permission(
+            request.user,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to delete this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
@@ -2072,6 +2125,19 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
         Retrieve details of a specific attachment.
         """
+        # if the user is part of the project then allow the download
+        if not user_has_issue_permission(
+            request.user,
+            project_id=project_id,
+            issue=None,
+            allowed_roles=None,
+            allow_creator=False,
+        ):
+            return Response(
+                {"error": "You are not allowed to download this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # Get the asset
         asset = FileAsset.objects.get(
             id=pk, workspace__slug=slug, project_id=project_id
@@ -2126,6 +2192,23 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Mark an attachment as uploaded after successful file transfer to storage.
         Triggers activity logging and metadata extraction.
         """
+
+        issue = Issue.objects.get(
+            pk=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        # if the user is creator or admin then allow the upload
+        if not user_has_issue_permission(
+            request.user,
+            project_id=project_id,
+            issue=issue,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allow_creator=True,
+        ):
+            return Response(
+                {"error": "You are not allowed to upload this attachment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )

@@ -9,9 +9,9 @@ import { TableCellSelectionOutlinePlugin } from "./plugins/selection-outline/plu
 import { DEFAULT_COLUMN_WIDTH } from "./table";
 import { isCellSelection } from "./table/utilities/helpers";
 
-export interface TableCellOptions {
-  HTMLAttributes: Record<string, any>;
-}
+type TableCellOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 export const TableCell = Node.create<TableCellOptions>({
   name: CORE_EXTENSIONS.TABLE_CELL,
@@ -46,6 +46,9 @@ export const TableCell = Node.create<TableCellOptions>({
       },
       textColor: {
         default: null,
+      },
+      hideContent: {
+        default: false,
       },
     };
   },
@@ -107,7 +110,8 @@ export const TableCell = Node.create<TableCellOptions>({
     return [
       "td",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}; color: ${node.attrs.textColor}`,
+        class: node.attrs.hideContent ? "content-hidden" : "",
+        style: `background-color: ${node.attrs.background}; color: ${node.attrs.textColor};`,
       }),
       0,
     ];

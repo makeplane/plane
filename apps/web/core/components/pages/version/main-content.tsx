@@ -2,14 +2,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
-// plane types
+// plane imports
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { TVersionEditorProps } from "@/components/pages";
 // helpers
+import { EPageStoreType } from "@/plane-web/hooks/store";
+// local imports
+import { TVersionEditorProps } from "./editor";
 
 type Props = {
   activeVersion: string | null;
@@ -19,11 +19,20 @@ type Props = {
   handleRestore: (descriptionHTML: string) => Promise<void>;
   pageId: string;
   restoreEnabled: boolean;
+  storeType: EPageStoreType;
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } =
-    props;
+  const {
+    activeVersion,
+    editorComponent,
+    fetchVersionDetails,
+    handleClose,
+    handleRestore,
+    pageId,
+    restoreEnabled,
+    storeType,
+  } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -109,7 +118,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <VersionEditor activeVersion={activeVersion} versionDetails={versionDetails} />
+            <VersionEditor activeVersion={activeVersion} storeType={storeType} versionDetails={versionDetails} />
           </div>
         </>
       )}

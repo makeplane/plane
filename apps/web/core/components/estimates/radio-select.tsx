@@ -81,5 +81,3 @@ export const RadioInput = ({
     </div>
   );
 };
-
-export default RadioInput;

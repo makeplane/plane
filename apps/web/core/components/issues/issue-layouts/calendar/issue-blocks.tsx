@@ -3,10 +3,11 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue, TPaginationData } from "@plane/types";
 // components
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarIssueBlockRoot } from "./issue-block-root";
+import { CalendarQuickAddIssueActions } from "./quick-add-issue-actions";
 // types
 
 type Props = {

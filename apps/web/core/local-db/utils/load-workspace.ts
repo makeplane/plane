@@ -99,7 +99,7 @@ export const getEstimatePoints = async (workspaceSlug: string) => {
 };
 
 export const getMembers = async (workspaceSlug: string) => {
-  const workspaceService = new WorkspaceService(API_BASE_URL);
+  const workspaceService = new WorkspaceService();
   const members = await workspaceService.fetchWorkspaceMembers(workspaceSlug);
   const objects = members.map((member: IWorkspaceMember) => member.member);
   return objects;

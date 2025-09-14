@@ -1,14 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ProjectIssueQuickActions } from "@/components/issues";
-import { useUserPermissions } from "@/hooks/store";
-
-// components
-// types
-// constants
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
 export const ProfileIssuesListLayout: FC = observer(() => {

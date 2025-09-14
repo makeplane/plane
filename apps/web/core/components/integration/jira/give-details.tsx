@@ -13,7 +13,8 @@ import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProject } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 // types
 
 export const JiraGetImportDetail: React.FC = observer(() => {
@@ -180,7 +181,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     )}
                   </span>
                 }
-                optionsClassName="w-full"
               >
                 {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
                   workspaceProjectIds.map((projectId) => {

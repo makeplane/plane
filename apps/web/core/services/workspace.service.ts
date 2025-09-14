@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@plane/constants";
 import {
   IWorkspace,
   IWorkspaceMemberMe,
@@ -23,8 +24,8 @@ import {
 import { APIService } from "@/services/api.service";
 
 export class WorkspaceService extends APIService {
-  constructor(baseUrl: string) {
-    super(baseUrl);
+  constructor() {
+    super(API_BASE_URL);
   }
 
   async userWorkspaces(): Promise<IWorkspace[]> {

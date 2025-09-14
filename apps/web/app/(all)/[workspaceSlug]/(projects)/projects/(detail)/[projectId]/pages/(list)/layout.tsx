@@ -2,7 +2,8 @@
 
 import { ReactNode } from "react";
 // components
-import { ContentWrapper, AppHeader } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { PagesListHeader } from "./header";
 

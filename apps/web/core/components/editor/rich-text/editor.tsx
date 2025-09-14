@@ -4,15 +4,15 @@ import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, ty
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
@@ -42,7 +42,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { richText: richTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -73,6 +75,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
+      extendedEditorProps={{}}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

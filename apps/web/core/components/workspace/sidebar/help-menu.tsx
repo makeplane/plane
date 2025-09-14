@@ -6,13 +6,17 @@ import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu, ToggleSwitch } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
 // hooks
-import { useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useTransient } from "@/hooks/store/use-transient";
+import { useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";

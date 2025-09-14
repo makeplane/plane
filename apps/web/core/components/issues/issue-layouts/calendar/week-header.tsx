@@ -4,7 +4,7 @@ import { getOrderedDays } from "@plane/utils";
 import { DAYS_LIST } from "@/constants/calendar";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 type Props = {
   isLoading: boolean;

@@ -16,6 +16,8 @@ import {
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ContrastIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
   ICustomSearchSelectOption,
@@ -24,30 +26,28 @@ import {
   IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
 import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
-import { SwitcherLabel } from "@/components/common";
-import { CycleQuickActions } from "@/components/cycles";
+import { SwitcherLabel } from "@/components/common/switcher-label";
+import { CycleQuickActions } from "@/components/cycles/quick-actions";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
   FilterSelection,
   LayoutSelection,
   MobileLayoutSelection,
-} from "@/components/issues";
+} from "@/components/issues/issue-layouts/filters";
 // hooks
-import {
-  useCommandPalette,
-  useCycle,
-  useIssues,
-  useLabel,
-  useMember,
-  useProject,
-  useProjectState,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports

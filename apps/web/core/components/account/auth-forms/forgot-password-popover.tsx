@@ -38,7 +38,7 @@ export const ForgotPasswordPopover = () => {
       <Popover.Panel className="fixed z-10">
         {({ close }) => (
           <div
-            className="border border-onboarding-border-300 bg-onboarding-background-100 rounded z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left ml-3"
+            className="border border-custom-border-300 bg-custom-background-100 rounded z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left ml-3"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -51,7 +51,7 @@ export const ForgotPasswordPopover = () => {
               onClick={() => close()}
               aria-label={t("aria_labels.auth_forms.close_popover")}
             >
-              <X className="size-3 text-onboarding-text-200" />
+              <X className="size-3 text-custom-text-200" />
             </button>
           </div>
         )}

@@ -11,23 +11,27 @@ import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane helpers
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
-// components
+import { ArchiveIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { Logo } from "@/components/common/logo";
-import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
-// helpers
+import { LeaveProjectModal } from "@/components/project/leave-project-modal";
+import { PublishProjectModal } from "@/components/project/publish-project/modal";
 // hooks
-import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web components
+// plane web imports
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
-// constants
+// local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -232,7 +236,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 tooltipContent={
                   project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
                 }
-                position="top-right"
+                position="top-end"
                 disabled={isDragging}
               >
                 <button

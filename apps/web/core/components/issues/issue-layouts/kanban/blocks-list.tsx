@@ -1,10 +1,10 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-//types
+// plane imports
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
-import { KanbanIssueBlock } from "@/components/issues";
+// local imports
 import { TRenderQuickActions } from "../list/list-view-types";
-// components
+import { KanbanIssueBlock } from "./block";
 
 interface IssueBlocksListProps {
   sub_group_id: string;

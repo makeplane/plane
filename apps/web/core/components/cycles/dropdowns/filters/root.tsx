@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
+// plane imports
 import { TCycleFilters, TCycleGroups } from "@plane/types";
-// components
-import { FilterEndDate, FilterStartDate, FilterStatus } from "@/components/cycles";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
+// local imports
+import { FilterEndDate } from "./end-date";
+import { FilterStartDate } from "./start-date";
+import { FilterStatus } from "./status";
 
 type Props = {
   filters: TCycleFilters;

@@ -1,6 +1,6 @@
 import { useContext } from "react";
-// context
-import { IssueModalContext, TIssueModalContext } from "@/components/issues";
+// components
+import { IssueModalContext, type TIssueModalContext } from "@/components/issues/issue-modal/context";
 
 export const useIssueModal = (): TIssueModalContext => {
   const context = useContext(IssueModalContext);

@@ -10,7 +10,7 @@ import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button, CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 
 type TNotificationSnoozeModal = {
@@ -195,7 +195,6 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
                                 )}
                               </div>
                             }
-                            optionsClassName="w-full"
                             input
                           >
                             <div className="mb-2 flex h-9 w-full overflow-hidden rounded">

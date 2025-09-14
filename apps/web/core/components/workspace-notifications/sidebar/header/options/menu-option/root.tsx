@@ -1,16 +1,17 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon, PopoverMenu } from "@plane/ui";
-// components
-import { NotificationMenuOptionItem } from "@/components/workspace-notifications";
-// constants
+import { PopoverMenu } from "@plane/ui";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+// local imports
+import { NotificationMenuOptionItem } from "./menu-item";
 
 export type TPopoverMenuOptions = {
   key: string;

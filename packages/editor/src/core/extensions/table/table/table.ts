@@ -7,6 +7,7 @@ import {
   addRowBefore,
   CellSelection,
   columnResizing,
+  deleteCellSelection,
   deleteTable,
   fixTables,
   goToNextCell,
@@ -17,12 +18,13 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
-import { Decoration } from "@tiptap/pm/view";
+import type { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableColumnDragHandlePlugin } from "../plugins/drag-handles/column/plugin";
+import { TableRowDragHandlePlugin } from "../plugins/drag-handles/row/plugin";
 import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
-import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";
 import { deleteColumnOrTable } from "./utilities/delete-column";
@@ -32,14 +34,14 @@ import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 import { DEFAULT_COLUMN_WIDTH } from ".";
 
-export interface TableOptions {
-  HTMLAttributes: Record<string, any>;
+type TableOptions = {
+  HTMLAttributes: Record<string, unknown>;
   resizable: boolean;
   handleWidth: number;
   cellMinWidth: number;
   lastColumnResizable: boolean;
   allowTableNodeSelection: boolean;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -57,6 +59,7 @@ declare module "@tiptap/core" {
       toggleHeaderColumn: () => ReturnType;
       toggleHeaderRow: () => ReturnType;
       toggleHeaderCell: () => ReturnType;
+      clearSelectedCells: () => ReturnType;
       mergeOrSplit: () => ReturnType;
       setCellAttribute: (name: string, value: any) => ReturnType;
       goToNextCell: () => ReturnType;
@@ -174,6 +177,10 @@ export const Table = Node.create<TableOptions>({
         () =>
         ({ state, dispatch }) =>
           toggleHeaderCell(state, dispatch),
+      clearSelectedCells:
+        () =>
+        ({ state, dispatch }) =>
+          deleteCellSelection(state, dispatch),
       mergeOrSplit:
         () =>
         ({ state, dispatch }) => {
@@ -254,10 +261,10 @@ export const Table = Node.create<TableOptions>({
   },
 
   addNodeView() {
-    return ({ editor, getPos, node, decorations }) => {
+    return ({ editor, node, decorations, getPos }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations as Decoration[], editor, getPos as () => number);
+      return new TableView(node, cellMinWidth, decorations as Decoration[], editor, getPos);
     };
   },
 
@@ -268,8 +275,9 @@ export const Table = Node.create<TableOptions>({
       tableEditing({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
-      tableControls(),
       TableInsertPlugin(this.editor),
+      TableColumnDragHandlePlugin(this.editor),
+      TableRowDragHandlePlugin(this.editor),
     ];
 
     if (isResizable) {

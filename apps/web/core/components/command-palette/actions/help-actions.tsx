@@ -3,9 +3,10 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // ui
-import { DiscordIcon } from "@plane/ui";
+import { DiscordIcon } from "@plane/propel/icons";
 // hooks
-import { useCommandPalette, useTransient } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useTransient } from "@/hooks/store/use-transient";
 
 type Props = {
   closePalette: () => void;

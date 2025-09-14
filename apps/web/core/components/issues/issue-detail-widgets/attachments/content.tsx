@@ -2,9 +2,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
-// components
-import { IssueAttachmentItemList } from "@/components/issues/attachment";
-// helper
+// local imports
+import { IssueAttachmentItemList } from "../../attachment/attachment-item-list";
 import { useAttachmentOperations } from "./helper";
 
 type Props = {

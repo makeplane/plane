@@ -8,7 +8,7 @@ import { getNumberCount } from "@plane/utils";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TNotificationAppSidebarOption = {
   workspaceSlug: string;

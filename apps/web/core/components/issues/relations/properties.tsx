@@ -3,9 +3,11 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { EIssueServiceType, TIssuePriorities, TIssueServiceType } from "@plane/types";
-import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 

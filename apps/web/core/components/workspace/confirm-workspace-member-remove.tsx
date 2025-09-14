@@ -8,7 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 
 export type Props = {
   isOpen: boolean;

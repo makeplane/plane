@@ -1,7 +1,8 @@
 "use client";
 import React, { FC } from "react";
 // ui
-import { ControlLink, Row, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ControlLink, Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -12,9 +13,9 @@ interface IListItemProps {
   title: string;
   itemLink: string;
   onItemClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  prependTitleElement?: JSX.Element;
-  appendTitleElement?: JSX.Element;
-  actionableItems?: JSX.Element;
+  prependTitleElement?: React.ReactNode;
+  appendTitleElement?: React.ReactNode;
+  actionableItems?: React.ReactNode;
   isMobile?: boolean;
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
@@ -22,8 +23,8 @@ interface IListItemProps {
   itemClassName?: string;
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
-  quickActionElement?: JSX.Element;
-  preventDefaultNProgress?: boolean;
+  quickActionElement?: React.ReactNode;
+  preventDefaultProgress?: boolean;
   leftElementClassName?: string;
   rightElementClassName?: string;
 }
@@ -45,7 +46,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
     isSidebarOpen = false,
     quickActionElement,
     itemClassName = "",
-    preventDefaultNProgress = false,
+    preventDefaultProgress = false,
     leftElementClassName = "",
     rightElementClassName = "",
   } = props;
@@ -76,7 +77,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
             target="_self"
             onClick={handleControlLinkClick}
             disabled={disableLink}
-            data-prevent-nprogress={preventDefaultNProgress}
+            data-prevent-progress={preventDefaultProgress}
           >
             <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}

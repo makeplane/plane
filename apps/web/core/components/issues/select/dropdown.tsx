@@ -1,8 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, IIssueLabel } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { TWorkItemLabelSelectBaseProps, WorkItemLabelSelectBase } from "./base";
 
@@ -15,13 +18,25 @@ export const IssueLabelSelect: React.FC<TWorkItemLabelSelectProps> = observer((p
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getProjectLabelIds, getLabelById, fetchProjectLabels } = useLabel();
+  const { allowPermissions } = useUserPermissions();
+  const { getProjectLabelIds, getLabelById, fetchProjectLabels, createLabel } = useLabel();
   // derived values
   const projectLabelIds = getProjectLabelIds(projectId);
+
+  const canCreateLabel =
+    projectId &&
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug?.toString(), projectId);
 
   const onDropdownOpen = () => {
     if (projectLabelIds === undefined && workspaceSlug && projectId)
       fetchProjectLabels(workspaceSlug.toString(), projectId);
+  };
+
+  const handleCreateLabel = (data: Partial<IIssueLabel>) => {
+    if (!workspaceSlug || !projectId) {
+      throw new Error("Workspace slug or project ID is missing");
+    }
+    return createLabel(workspaceSlug.toString(), projectId, data);
   };
 
   return (
@@ -30,6 +45,8 @@ export const IssueLabelSelect: React.FC<TWorkItemLabelSelectProps> = observer((p
       getLabelById={getLabelById}
       labelIds={projectLabelIds ?? []}
       onDropdownOpen={onDropdownOpen}
+      createLabel={handleCreateLabel}
+      createLabelEnabled={!!canCreateLabel}
     />
   );
 });

@@ -8,15 +8,18 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { WebhookSettingsLoader } from "@/components/ui";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const WebhooksListPage = observer(() => {

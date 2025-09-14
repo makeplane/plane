@@ -15,7 +15,7 @@ import {
   WebhookSecretKey,
   WebhookToggle,
 } from "@/components/web-hooks";
-import { useWebhook } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
 // components
 // ui
 // types

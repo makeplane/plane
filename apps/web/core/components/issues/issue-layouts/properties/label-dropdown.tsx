@@ -13,7 +13,8 @@ import { EUserProjectRoles, IIssueLabel } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
 // hooks
-import { useLabel, useUserPermissions } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -276,7 +277,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                     </Combobox.Option>
                   ))
                 ) : submitting ? (
-                  <Loader className="spin  h-3.5 w-3.5" />
+                  <Loader className="animate-spin h-3.5 w-3.5" />
                 ) : canCreateLabel ? (
                   <p
                     onClick={() => {

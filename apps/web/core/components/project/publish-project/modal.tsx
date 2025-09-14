@@ -13,7 +13,7 @@ import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, Modal
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
-import { useProjectPublish } from "@/hooks/store";
+import { useProjectPublish } from "@/hooks/store/use-project-publish";
 
 type Props = {
   isOpen: boolean;

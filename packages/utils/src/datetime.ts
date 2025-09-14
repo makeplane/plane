@@ -24,7 +24,7 @@ export const renderFormattedDate = (
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
     formattedDate = format(parsedDate, formatToken);
-  } catch (e) {
+  } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
     formattedDate = format(parsedDate, "MMM dd, yyyy");
   }
@@ -287,7 +287,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
 
     return new Date(year, month - 1, day);
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 };
@@ -530,4 +530,45 @@ export const formatDateRange = (
   }
 
   return "";
+};
+
+// Duration Helpers
+/**
+ * @returns {string} formatted duration in human readable format
+ * @description Converts seconds to human readable duration format (e.g., "1 hr 20 min 5 sec")
+ * @param {number} seconds - The duration in seconds
+ * @example formatDuration(3665) // "1 hr 1 min 5 sec"
+ * @example formatDuration(125) // "2 min 5 sec"
+ * @example formatDuration(45) // "45 sec"
+ */
+export const formatDuration = (seconds: number | undefined | null): string => {
+  // Return "N/A" if seconds is not a valid number
+  if (!isNumber(seconds) || seconds === null || seconds === undefined || seconds < 0) {
+    return "N/A";
+  }
+
+  // Round to nearest second
+  const totalSeconds = Math.round(seconds);
+
+  // Calculate hours, minutes, and seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  // Build the formatted string
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours} hr${hours !== 1 ? "" : ""}`); // Always use "hr" for consistency
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} min`);
+  }
+
+  if (remainingSeconds > 0 || parts.length === 0) {
+    parts.push(`${remainingSeconds} sec`);
+  }
+
+  return parts.join(" ");
 };

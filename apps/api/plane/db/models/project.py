@@ -18,6 +18,12 @@ from .base import BaseModel
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
+class ROLE(Enum):
+    ADMIN = 20
+    MEMBER = 15
+    GUEST = 5
+
+
 class ProjectNetwork(Enum):
     SECRET = 0
     PUBLIC = 2
@@ -89,9 +95,9 @@ class Project(BaseModel):
     )
     emoji = models.CharField(max_length=255, null=True, blank=True)
     icon_prop = models.JSONField(null=True)
-    module_view = models.BooleanField(default=True)
-    cycle_view = models.BooleanField(default=True)
-    issue_views_view = models.BooleanField(default=True)
+    module_view = models.BooleanField(default=False)
+    cycle_view = models.BooleanField(default=False)
+    issue_views_view = models.BooleanField(default=False)
     page_view = models.BooleanField(default=True)
     intake_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=False)

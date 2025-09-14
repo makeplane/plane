@@ -2,7 +2,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import { IUserProfileStore } from "@/store/user/profile.store";
+import type { IUserProfileStore } from "@/store/user/profile.store";
 
 export const useUserProfile = (): IUserProfileStore => {
   const context = useContext(StoreContext);

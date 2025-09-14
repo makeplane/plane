@@ -5,7 +5,7 @@ import { CalendarClock } from "lucide-react";
 import { TIssue } from "@plane/types";
 // components
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-import { DateDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 
 type Props = {

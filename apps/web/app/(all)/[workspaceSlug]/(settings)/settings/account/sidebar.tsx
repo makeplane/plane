@@ -5,7 +5,7 @@ import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Block
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { getFileURL } from "@plane/utils";
 // components
-import { SettingsSidebar } from "@/components/settings";
+import { SettingsSidebar } from "@/components/settings/sidebar";
 // hooks
 import { useUser } from "@/hooks/store/user";
 

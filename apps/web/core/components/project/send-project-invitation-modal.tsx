@@ -13,7 +13,8 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast 
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   isOpen: boolean;
@@ -163,7 +164,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 
@@ -292,7 +293,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       </div>
                                     }
                                     input
-                                    optionsClassName="w-full"
                                   >
                                     {Object.entries(
                                       checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))
