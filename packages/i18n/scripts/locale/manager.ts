@@ -1,4 +1,3 @@
-// translationManager.ts
 import { promises as fs } from "fs";
 import path from "path";
 import { TRANSLATION_ROOT_PATH, TRANSLATION_FILES, BASE_LOCALE } from "./constants";
