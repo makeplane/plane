@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { LocaleManager } from "./locale/manager";
 
 interface TranslationEntry {
   id: string;
@@ -14,9 +15,26 @@ interface TranslationEntry {
   >;
 }
 
-function generateTypes() {
+async function ensureGeneratedFiles() {
+  const tempDir = path.join(__dirname, "locale/.temp");
+
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+
+  const manager = new LocaleManager();
+  await manager.updateGeneratedTranslations("core");
+  await manager.updateGeneratedTranslations("translations");
+  await manager.updateGeneratedTranslations("accessibility");
+  await manager.updateGeneratedTranslations("editor");
+}
+
+async function generateTypes() {
   const tempDir = path.join(__dirname, "locale/.temp");
   const outputFile = path.join(__dirname, "../src/types/generated-translations.d.ts");
+
+  // Ensure generated files exist
+  await ensureGeneratedFiles();
 
   // Read all generated JSON files
   const files = fs.readdirSync(tempDir).filter((file) => file.startsWith("generated-") && file.endsWith(".json"));
@@ -38,7 +56,6 @@ function generateTypes() {
 // All translation keys as a union type
 export type TranslationKeys = ${flatKeys};
 
-
 // Available languages
 export type AvailableLanguages = "${Object.keys(allTranslations[0].translations).join('" | "')}";
 `;
@@ -48,4 +65,12 @@ export type AvailableLanguages = "${Object.keys(allTranslations[0].translations)
   console.log(`Generated types at: ${outputFile}`);
 }
 
-generateTypes();
+// Make the main function async
+(async () => {
+  try {
+    await generateTypes();
+  } catch (error) {
+    console.error("Error generating types:", error);
+    process.exit(1);
+  }
+})();
