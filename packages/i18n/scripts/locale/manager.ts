@@ -1,4 +1,3 @@
-// translationManager.ts
 import { promises as fs } from "fs";
 import path from "path";
 import { TRANSLATION_ROOT_PATH, TRANSLATION_FILES, BASE_LOCALE } from "./constants";
@@ -30,7 +29,6 @@ export class LocaleManager {
   constructor() {
     this.rootPath = TRANSLATION_ROOT_PATH;
     this.translationFiles = TRANSLATION_FILES;
-    this.translationFiles.forEach((f) => this.updateGeneratedTranslations(f));
   }
 
   /**
@@ -41,6 +39,15 @@ export class LocaleManager {
   private async getLocales(): Promise<TranslationLocale[]> {
     const files = await fs.readdir(this.rootPath);
     return files.filter((f) => isValidLocaleDirectory(f)) as TranslationLocale[];
+  }
+
+  /**
+   * Update all the generated translation files in the memory
+   */
+  async updateAllGeneratedTranslations(): Promise<void> {
+    for (const file of this.translationFiles) {
+      await this.updateGeneratedTranslations(file);
+    }
   }
 
   /**
