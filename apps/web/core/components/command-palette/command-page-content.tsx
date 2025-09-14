@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { observer } from "mobx-react";
 // plane types
 import { IWorkspaceSearchResults } from "@plane/types";
 // components
@@ -43,7 +44,7 @@ interface ICommandPageContentProps {
   isWorkspaceLevel?: boolean;
 }
 
-export const CommandPageContent: React.FC<ICommandPageContentProps> = (props) => {
+export const CommandPageContent: React.FC<ICommandPageContentProps> = observer((props) => {
   const {
     page,
     workspaceSlug,
@@ -168,4 +169,4 @@ export const CommandPageContent: React.FC<ICommandPageContentProps> = (props) =>
   }
 
   return null;
-};
+});

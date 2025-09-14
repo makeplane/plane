@@ -28,7 +28,10 @@ export const ProjectSelectionPage: React.FC<IProjectSelectionPageProps> = (props
   const { joinedProjectIds, getPartialProjectById } = useProject();
   const { toggleCommandPaletteModal } = useCommandPalette();
 
+  // Get projects data - ensure reactivity to store changes
   const projectOptions = useMemo(() => {
+    if (!joinedProjectIds?.length) return [];
+
     const list: IPartialProject[] = [];
     joinedProjectIds.forEach((id) => {
       const project = getPartialProjectById(id);

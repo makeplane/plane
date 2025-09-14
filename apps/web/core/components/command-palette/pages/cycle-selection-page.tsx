@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useEffect } from "react";
+import { observer } from "mobx-react";
 // plane types
 import { ICycle } from "@plane/types";
 import { joinUrlPath } from "@plane/utils";
@@ -16,26 +17,29 @@ interface ICycleSelectionPageProps {
   selectedProjectId: string | null;
 }
 
-export const CycleSelectionPage: React.FC<ICycleSelectionPageProps> = (props) => {
+export const CycleSelectionPage: React.FC<ICycleSelectionPageProps> = observer((props) => {
   const { workspaceSlug, selectedProjectId } = props;
   // router
   const router = useAppRouter();
   // store
   const { getProjectCycleIds, getCycleById, fetchAllCycles } = useCycle();
   const { toggleCommandPaletteModal } = useCommandPalette();
+  // derived values
+  const projectCycleIds = selectedProjectId ? getProjectCycleIds(selectedProjectId) : null;
 
   const cycleOptions = useMemo(() => {
     const cycles: ICycle[] = [];
-    if (selectedProjectId) {
-      const cycleIds = getProjectCycleIds(selectedProjectId) || [];
-      cycleIds.forEach((cid) => {
-        const cycle = getCycleById(cid);
-        const status = cycle?.status ? cycle.status.toLowerCase() : "";
-        if (cycle && ["current", "upcoming"].includes(status)) cycles.push(cycle);
-      });
+    if (projectCycleIds) {
+      if (projectCycleIds) {
+        projectCycleIds.forEach((cid) => {
+          const cycle = getCycleById(cid);
+          const status = cycle?.status ? cycle.status.toLowerCase() : "";
+          if (cycle && ["current", "upcoming"].includes(status)) cycles.push(cycle);
+        });
+      }
     }
     return cycles.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
-  }, [selectedProjectId, getProjectCycleIds, getCycleById]);
+  }, [projectCycleIds, getCycleById]);
 
   useEffect(() => {
     if (workspaceSlug && selectedProjectId) {
@@ -54,4 +58,4 @@ export const CycleSelectionPage: React.FC<ICycleSelectionPageProps> = (props) =>
       }}
     />
   );
-};
+});

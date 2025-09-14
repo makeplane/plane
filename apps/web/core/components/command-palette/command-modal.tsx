@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -192,12 +192,17 @@ export const CommandModal: React.FC = observer(() => {
     }
   }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, page]);
 
-  // Initialize command registry - only once when the modal is opened
-  useEffect(() => {
-    if (isCommandPaletteOpen) {
-      initializeCommands();
-    }
-  }, [isCommandPaletteOpen, initializeCommands]);
+  // Track initialization to prevent multiple calls
+  const isInitializedRef = useRef(false);
+
+  // Initialize commands immediately when modal is first opened
+  if (isCommandPaletteOpen && !isInitializedRef.current) {
+    initializeCommands();
+    isInitializedRef.current = true;
+  } else if (!isCommandPaletteOpen && isInitializedRef.current) {
+    // Reset initialization flag when modal closes
+    isInitializedRef.current = false;
+  }
 
   const handleCommandSelect = useCallback((command: { id: string; action: () => void }) => {
     if (command.id === "create-work-item") {
