@@ -50,7 +50,10 @@ export class ThemeStore implements IThemeStore {
   toggleSidebar = (isCollapsed: boolean) => {
     if (isCollapsed === undefined) this.isSidebarCollapsed = !this.isSidebarCollapsed;
     else this.isSidebarCollapsed = isCollapsed;
-    localStorage.setItem("god_mode_sidebar_collapsed", isCollapsed.toString());
+    // Only access localStorage on client side to prevent hydration issues
+    if (typeof window !== "undefined") {
+      localStorage.setItem("god_mode_sidebar_collapsed", isCollapsed.toString());
+    }
   };
 
   /**
@@ -59,7 +62,10 @@ export class ThemeStore implements IThemeStore {
    */
   setTheme = async (currentTheme: TTheme) => {
     try {
-      localStorage.setItem("theme", currentTheme);
+      // Only access localStorage on client side to prevent hydration issues
+      if (typeof window !== "undefined") {
+        localStorage.setItem("theme", currentTheme);
+      }
       this.theme = currentTheme;
     } catch (error) {
       console.error("setting user theme error", error);

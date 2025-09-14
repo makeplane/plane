@@ -65,19 +65,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className={`antialiased`}>
-        <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <ToastWithTheme />
-          <StoreProvider>
-            <InstanceProvider>
-              <UserProvider>{children}</UserProvider>
-            </InstanceProvider>
-          </StoreProvider>
-        </ThemeProvider>
+        {/* <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+
+        </ThemeProvider> */}
+
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
+}
+
+{
+  /* <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+<ToastWithTheme />
+<StoreProvider>
+  <InstanceProvider>
+    <UserProvider>{children}</UserProvider>
+  </InstanceProvider>
+</StoreProvider>
+</ThemeProvider> */
 }
 
 export default function App() {

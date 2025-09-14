@@ -1,3 +1,5 @@
+"use client";
+
 import { useTheme } from "next-themes";
 // import { Toast } from "@plane/propel/toast";
 // import { resolveGeneralTheme } from "@plane/utils";

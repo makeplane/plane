@@ -24,9 +24,12 @@ export const UserProvider: FC<IUserProvider> = observer(({ children }) => {
   useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());
 
   useEffect(() => {
-    const localValue = localStorage && localStorage.getItem("god_mode_sidebar_collapsed");
-    const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
-    if (isSidebarCollapsed === undefined && localBoolValue != isSidebarCollapsed) toggleSidebar(localBoolValue);
+    // Only access localStorage after component has mounted to prevent hydration mismatch
+    if (typeof window !== "undefined") {
+      const localValue = localStorage.getItem("god_mode_sidebar_collapsed");
+      const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
+      if (isSidebarCollapsed === undefined && localBoolValue != isSidebarCollapsed) toggleSidebar(localBoolValue);
+    }
   }, [isSidebarCollapsed, currentUser, toggleSidebar]);
 
   return <>{children}</>;

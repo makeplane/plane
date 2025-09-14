@@ -28,7 +28,10 @@ export abstract class CoreRootStore {
   }
 
   resetOnSignOut() {
-    localStorage.setItem("theme", "system");
+    // Only access localStorage on client side to prevent hydration issues
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", "system");
+    }
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);

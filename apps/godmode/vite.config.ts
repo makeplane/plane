@@ -16,6 +16,29 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["process"],
+    include: [
+      "process",
+      "@plane/constants",
+      "@plane/services",
+      "@plane/types",
+      "@plane/hooks",
+      "@plane/ui",
+      "@plane/utils",
+      "@plane/i18n",
+    ],
+  },
+  build: {
+    commonjsOptions: {
+      include: [
+        /node_modules/,
+        /@plane\/constants/,
+        /@plane\/services/,
+        /@plane\/types/,
+        /@plane\/hooks/,
+        /@plane\/ui/,
+        /@plane\/utils/,
+        /@plane\/i18n/,
+      ],
+    },
   },
 });
