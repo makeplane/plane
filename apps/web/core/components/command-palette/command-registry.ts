@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandConfig, CommandContext, CommandExecutionContext, CommandGroup } from "./types";
+import { CommandConfig, CommandExecutionContext, CommandGroup } from "./types";
 
 export class CommandRegistry {
   private commands = new Map<string, CommandConfig>();
@@ -37,7 +37,7 @@ export class CommandRegistry {
     return commandId ? this.commands.get(commandId) : undefined;
   }
 
-  getVisibleCommands(context: CommandContext): CommandConfig[] {
+  getVisibleCommands(): CommandConfig[] {
     return Array.from(this.commands.values()).filter((command) => {
       if (command.isVisible && !command.isVisible()) {
         return false;
@@ -49,18 +49,18 @@ export class CommandRegistry {
     });
   }
 
-  getCommandsByGroup(group: CommandGroup, context: CommandContext): CommandConfig[] {
-    return this.getVisibleCommands(context).filter((command) => command.group === group);
+  getCommandsByGroup(group: CommandGroup): CommandConfig[] {
+    return this.getVisibleCommands().filter((command) => command.group === group);
   }
 
-  executeCommand(commandId: string, executionContext: CommandExecutionContext): void {
+  executeCommand(commandId: string, _executionContext: CommandExecutionContext): void {
     const command = this.getCommand(commandId);
     if (command && (!command.isEnabled || command.isEnabled())) {
       command.action();
     }
   }
 
-  executeKeySequence(sequence: string, executionContext: CommandExecutionContext): boolean {
+  executeKeySequence(sequence: string, _executionContext: CommandExecutionContext): boolean {
     const command = this.getCommandByKeySequence(sequence);
     if (command && (!command.isEnabled || command.isEnabled())) {
       command.action();
@@ -69,7 +69,7 @@ export class CommandRegistry {
     return false;
   }
 
-  executeShortcut(shortcut: string, executionContext: CommandExecutionContext): boolean {
+  executeShortcut(shortcut: string, _executionContext: CommandExecutionContext): boolean {
     const command = this.getCommandByShortcut(shortcut);
     if (command && (!command.isEnabled || command.isEnabled())) {
       command.action();

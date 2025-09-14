@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { commandRegistry } from "../command-registry";
 import {
   createNavigationCommands,
   createCreationCommands,
@@ -16,7 +15,11 @@ import {
 } from "../commands";
 import { CommandContext, CommandExecutionContext } from "../types";
 
-export const useCommandRegistry = (
+/**
+ * Centralized hook for accessing the command registry from MobX store
+ * This should only be used to initialize the registry with commands once
+ */
+export const useCommandRegistryInitializer = (
   setPages: (pages: string[] | ((pages: string[]) => string[])) => void,
   setPlaceholder: (placeholder: string) => void,
   setSearchTerm: (term: string) => void,
@@ -28,12 +31,13 @@ export const useCommandRegistry = (
 ) => {
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();
-  const { workspaceProjectIds, joinedProjectIds } = useProject();
+  const { toggleCreateIssueModal, toggleCreateProjectModal, getCommandRegistry } = useCommandPalette();
+  const { workspaceProjectIds } = useProject();
   const { canPerformAnyCreateAction } = useUser();
   const { allowPermissions } = useUserPermissions();
 
   const projectId = routerProjectId?.toString();
+  const registry = getCommandRegistry();
 
   const canPerformWorkspaceActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -93,8 +97,9 @@ export const useCommandRegistry = (
     setPages((pages) => [...pages, "settings"]);
   }, [setPlaceholder, setSearchTerm, setPages]);
 
-  useEffect(() => {
-    commandRegistry.clear();
+  const initializeCommands = useCallback(() => {
+    // Clear existing commands to avoid duplicates
+    registry.clear();
 
     const commands = [
       ...createNavigationCommands(openProjectList, openCycleList, openIssueList),
@@ -110,8 +115,9 @@ export const useCommandRegistry = (
       ...createSettingsCommands(openWorkspaceSettings, () => canPerformWorkspaceActions),
     ];
 
-    commandRegistry.registerMultiple(commands);
+    registry.registerMultiple(commands);
   }, [
+    registry,
     workspaceSlug,
     workspaceProjectIds,
     canPerformAnyCreateAction,
@@ -127,8 +133,20 @@ export const useCommandRegistry = (
   ]);
 
   return {
-    registry: commandRegistry,
+    registry,
     context,
     executionContext,
+    initializeCommands,
   };
+};
+
+/**
+ * Simple hook to access the centralized command registry from MobX store
+ * Use this in child components that only need to access the registry
+ */
+export const useCommandRegistry = () => {
+  const { getCommandRegistry } = useCommandPalette();
+  const registry = getCommandRegistry();
+
+  return { registry };
 };

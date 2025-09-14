@@ -1,3 +1,5 @@
+import { AppRouterProgressInstance } from "@bprogress/next";
+
 export type CommandType = "navigation" | "action" | "creation" | "search" | "settings";
 export type CommandGroup = "navigate" | "create" | "project" | "workspace" | "account" | "help";
 
@@ -34,9 +36,13 @@ export interface CommandGroupConfig {
 
 export interface CommandExecutionContext {
   closePalette: () => void;
-  router: any;
+  router: AppRouterProgressInstance;
   setPages: (pages: string[] | ((pages: string[]) => string[])) => void;
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   context: CommandContext;
+}
+
+export interface ICommandRegistry {
+  getVisibleCommands: (context: CommandContext) => CommandConfig[];
 }

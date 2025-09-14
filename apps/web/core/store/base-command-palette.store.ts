@@ -7,6 +7,7 @@ import {
   TCreatePageModal,
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
+import { CommandRegistry } from "@/components/command-palette/command-registry";
 
 export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
@@ -33,8 +34,10 @@ export interface IBaseCommandPaletteStore {
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
   activeEntity: CommandPaletteEntity | null;
+  commandRegistry: CommandRegistry;
   activateEntity: (entity: CommandPaletteEntity) => void;
   clearActiveEntity: () => void;
+  getCommandRegistry: () => CommandRegistry;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -67,6 +70,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
   activeEntity: CommandPaletteEntity | null = null;
+  commandRegistry: CommandRegistry = new CommandRegistry();
 
   constructor() {
     makeObservable(this, {
@@ -86,7 +90,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       allStickiesModal: observable,
       projectListOpenMap: observable,
       activeEntity: observable,
-      // projectPages: computed,
+      commandRegistry: observable.ref,
       // toggle actions
       toggleCommandPaletteModal: action,
       toggleShortcutModal: action,
@@ -102,6 +106,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleProjectListOpen: action,
       activateEntity: action,
       clearActiveEntity: action,
+      getCommandRegistry: action,
     });
   }
 
@@ -151,6 +156,11 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   clearActiveEntity = () => {
     this.activeEntity = null;
   };
+
+  /**
+   * Get the command registry instance
+   */
+  getCommandRegistry = (): CommandRegistry => this.commandRegistry;
 
   /**
    * Toggles the command palette modal

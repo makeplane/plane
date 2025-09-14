@@ -178,11 +178,15 @@ export const CommandPalette: FC = observer(() => {
         toggleCommandPaletteModal(true);
       }
 
-      // if on input, textarea or editor, don't do anything
+      // if on input, textarea, editor, or clickable elements, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLInputElement ||
-        (e.target as Element)?.classList?.contains("ProseMirror")
+        (e.target as Element)?.classList?.contains("ProseMirror") ||
+        (e.target as Element)?.tagName === "A" ||
+        (e.target as Element)?.tagName === "BUTTON" ||
+        (e.target as Element)?.closest("a") ||
+        (e.target as Element)?.closest("button")
       )
         return;
 

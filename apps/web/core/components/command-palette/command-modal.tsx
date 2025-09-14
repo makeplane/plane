@@ -1,73 +1,44 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { CommandIcon, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import {
-  EUserPermissions,
-  EUserPermissionsLevel,
   PROJECT_TRACKER_ELEMENTS,
   WORK_ITEM_TRACKER_ELEMENTS,
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import {
-  IWorkspaceSearchResults,
-  ICycle,
-  TActivityEntityData,
-  TIssueEntityData,
-  TIssueSearchResponse,
-  TPartialProject,
-} from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
-import { cn, getTabIndex, generateWorkItemLink } from "@plane/utils";
+import { IWorkspaceSearchResults } from "@plane/types";
+import { getTabIndex } from "@plane/utils";
 // components
 import {
-  ChangeIssueAssignee,
-  ChangeIssuePriority,
-  ChangeIssueState,
-  CommandPaletteCycleSelector,
-  CommandPaletteEntityList,
-  CommandPaletteHelpActions,
-  CommandPaletteIssueActions,
-  CommandPaletteProjectActions,
-  CommandPaletteProjectSelector,
-  CommandPaletteSearchResults,
-  CommandPaletteThemeActions,
-  CommandPaletteWorkspaceSettingsActions,
+  CommandInputHeader,
+  CommandSearchResults,
+  CommandPageContent,
+  CommandModalFooter,
 } from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// new command system
-import { useCommandRegistry, useKeySequenceHandler } from "@/components/command-palette/hooks";
-import { CommandGroup } from "@/components/command-palette/types";
-import { CommandRenderer } from "@/components/command-palette/command-renderer";
+import { useCommandRegistryInitializer, useKeySequenceHandler } from "@/components/command-palette/hooks";
 // helpers
-// hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-// plane web services
+// plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
 export const CommandModal: React.FC = observer(() => {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search");
@@ -79,30 +50,17 @@ export const CommandModal: React.FC = observer(() => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
-  const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
-  const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
   const [projectSelectionAction, setProjectSelectionAction] = useState<"navigate" | "cycle" | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  // plane hooks
-  const { t } = useTranslation();
-  // hooks
+  // store hooks
   const {
     issue: { getIssueById },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
-  const { workspaceProjectIds, joinedProjectIds, getPartialProjectById } = useProject();
-  const { getProjectCycleIds, getCycleById, fetchAllCycles } = useCycle();
+  const { fetchAllCycles } = useCycle();
+  const { getPartialProjectById } = useProject();
   const { platform, isMobile } = usePlatformOS();
-  const { canPerformAnyCreateAction } = useUser();
-  const {
-    isCommandPaletteOpen,
-    toggleCommandPaletteModal,
-    toggleCreateIssueModal,
-    toggleCreateProjectModal,
-    activeEntity,
-    clearActiveEntity,
-  } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { isCommandPaletteOpen, toggleCommandPaletteModal, activeEntity, clearActiveEntity } = useCommandPalette();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
   // fetch work item details using identifier
@@ -112,7 +70,6 @@ export const CommandModal: React.FC = observer(() => {
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
-
   // derived values
   const issueDetails = workItemDetailsSWR ? getIssueById(workItemDetailsSWR?.id) : null;
   const issueId = issueDetails?.id;
@@ -120,24 +77,23 @@ export const CommandModal: React.FC = observer(() => {
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
-  const canPerformWorkspaceActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
-  const openProjectSelection = (action: "navigate" | "cycle") => {
-    if (!workspaceSlug) return;
-    setPlaceholder("Search projects");
-    setSearchTerm("");
-    setProjectSelectionAction(action);
-    setSelectedProjectId(null);
-    setPages((p) => [...p, "open-project"]);
-  };
+  const openProjectSelection = useCallback(
+    (action: "navigate" | "cycle") => {
+      if (!workspaceSlug) return;
+      setPlaceholder("Search projects");
+      setSearchTerm("");
+      setProjectSelectionAction(action);
+      setSelectedProjectId(null);
+      setPages((p) => [...p, "open-project"]);
+    },
+    [workspaceSlug]
+  );
 
-  const openProjectList = () => openProjectSelection("navigate");
+  const openProjectList = useCallback(() => openProjectSelection("navigate"), [openProjectSelection]);
 
-  const openCycleList = () => {
+  const openCycleList = useCallback(() => {
     if (!workspaceSlug) return;
     const currentProject = projectId ? getPartialProjectById(projectId.toString()) : null;
     if (currentProject && currentProject.cycle_view) {
@@ -149,31 +105,25 @@ export const CommandModal: React.FC = observer(() => {
     } else {
       openProjectSelection("cycle");
     }
-  };
+  }, [openProjectSelection, workspaceSlug, projectId, getPartialProjectById, fetchAllCycles]);
 
-  const openIssueList = () => {
+  const openIssueList = useCallback(() => {
     if (!workspaceSlug) return;
     setPlaceholder("Search issues");
     setSearchTerm("");
     setPages((p) => [...p, "open-issue"]);
-    workspaceService
-      .fetchWorkspaceRecents(workspaceSlug.toString(), "issue")
-      .then((res) =>
-        setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
-      )
-      .catch(() => setRecentIssues([]));
-  };
+  }, [workspaceSlug]);
 
-  const closePalette = () => {
+  const closePalette = useCallback(() => {
     toggleCommandPaletteModal(false);
     setPages([]);
     setPlaceholder("Type a command or search");
     setProjectSelectionAction(null);
     setSelectedProjectId(null);
-  };
+  }, [toggleCommandPaletteModal]);
 
   // Initialize command registry
-  const { registry, context, executionContext } = useCommandRegistry(
+  const { registry, executionContext, initializeCommands } = useCommandRegistryInitializer(
     setPages,
     setPlaceholder,
     setSearchTerm,
@@ -193,34 +143,7 @@ export const CommandModal: React.FC = observer(() => {
     if (activeEntity === "cycle") openCycleList();
     if (activeEntity === "issue") openIssueList();
     clearActiveEntity();
-  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity]);
-
-  const projectOptions = useMemo(() => {
-    const list: TPartialProject[] = [];
-    joinedProjectIds.forEach((id) => {
-      const project = getPartialProjectById(id);
-      if (project) list.push(project);
-    });
-    return list.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
-  }, [joinedProjectIds, getPartialProjectById]);
-
-  const cycleOptions = useMemo(() => {
-    const cycles: ICycle[] = [];
-    if (selectedProjectId) {
-      const cycleIds = getProjectCycleIds(selectedProjectId) || [];
-      cycleIds.forEach((cid) => {
-        const cycle = getCycleById(cid);
-        const status = cycle?.status ? cycle.status.toLowerCase() : "";
-        if (cycle && ["current", "upcoming"].includes(status)) cycles.push(cycle);
-      });
-    }
-    return cycles.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
-  }, [selectedProjectId, getProjectCycleIds, getCycleById]);
-
-  useEffect(() => {
-    if (page !== "open-cycle" || !workspaceSlug || !selectedProjectId) return;
-    fetchAllCycles(workspaceSlug.toString(), selectedProjectId);
-  }, [page, workspaceSlug, selectedProjectId, fetchAllCycles]);
+  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, openProjectList, openCycleList, openIssueList]);
 
   useEffect(() => {
     if (issueDetails && isCommandPaletteOpen) {
@@ -234,6 +157,7 @@ export const CommandModal: React.FC = observer(() => {
     } else {
       setIsWorkspaceLevel(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   useEffect(() => {
@@ -241,51 +165,54 @@ export const CommandModal: React.FC = observer(() => {
 
     setIsLoading(true);
 
-    if (debouncedSearchTerm) {
+    if (debouncedSearchTerm && page !== "open-issue") {
       setIsSearching(true);
-      if (page === "open-issue") {
-        workspaceService
-          .searchEntity(workspaceSlug.toString(), {
-            count: 10,
-            query: debouncedSearchTerm,
-            query_type: ["issue"],
-            ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
-          })
-          .then((res) => {
-            setIssueResults(res.issue || []);
-            setResultsCount(res.issue?.length || 0);
-          })
-          .finally(() => {
-            setIsLoading(false);
-            setIsSearching(false);
-          });
-      } else {
-        workspaceService
-          .searchWorkspace(workspaceSlug.toString(), {
-            ...(projectId ? { project_id: projectId.toString() } : {}),
-            search: debouncedSearchTerm,
-            workspace_search: !projectId ? true : isWorkspaceLevel,
-          })
-          .then((results) => {
-            setResults(results);
-            const count = Object.keys(results.results).reduce(
-              (accumulator, key) => (results.results as any)[key].length + accumulator,
-              0
-            );
-            setResultsCount(count);
-          })
-          .finally(() => {
-            setIsLoading(false);
-            setIsSearching(false);
-          });
-      }
+      workspaceService
+        .searchWorkspace(workspaceSlug.toString(), {
+          ...(projectId ? { project_id: projectId.toString() } : {}),
+          search: debouncedSearchTerm,
+          workspace_search: !projectId ? true : isWorkspaceLevel,
+        })
+        .then((results) => {
+          setResults(results);
+          const count = Object.keys(results.results).reduce(
+            (accumulator, key) => (results.results as any)[key]?.length + accumulator,
+            0
+          );
+          setResultsCount(count);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          setIsSearching(false);
+        });
     } else {
       setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
-      setIssueResults([]);
       setIsLoading(false);
       setIsSearching(false);
     }
   }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, page]);
+
+  // Initialize command registry - only once when the modal is opened
+  useEffect(() => {
+    if (isCommandPaletteOpen) {
+      initializeCommands();
+    }
+  }, [isCommandPaletteOpen, initializeCommands]);
+
+  const handleCommandSelect = useCallback((command: { id: string; action: () => void }) => {
+    if (command.id === "create-work-item") {
+      captureClick({
+        elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
+      });
+    } else if (command.id === "create-project") {
+      captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
+    }
+    command.action();
+  }, []);
+
+  if (!isCommandPaletteOpen) {
+    return null;
+  }
 
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
@@ -387,287 +314,60 @@ export const CommandModal: React.FC = observer(() => {
                       }
                     }}
                   >
-                    <div className="relative flex items-center px-4 border-0 border-b border-custom-border-200">
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Search
-                          className="h-4 w-4 text-custom-text-200 flex-shrink-0"
-                          aria-hidden="true"
-                          strokeWidth={2}
-                        />
-                        {searchInIssue && issueDetails && (
-                          <>
-                            <span className="flex items-center text-sm">Update in:</span>
-                            <span className="flex items-center gap-1 rounded px-1.5 py-1 text-sm bg-custom-primary-100/10 ">
-                              {issueDetails.project_id && (
-                                <IssueIdentifier
-                                  issueId={issueDetails.id}
-                                  projectId={issueDetails.project_id}
-                                  textContainerClassName="text-sm text-custom-primary-200"
-                                />
-                              )}
-                              <X
-                                size={12}
-                                strokeWidth={2}
-                                className="flex-shrink-0 cursor-pointer"
-                                onClick={() => {
-                                  setSearchInIssue(false);
-                                }}
-                              />
-                            </span>
-                          </>
-                        )}
-                      </div>
-                      <Command.Input
-                        className={cn(
-                          "w-full bg-transparent p-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
-                        )}
-                        placeholder={placeholder}
-                        value={searchTerm}
-                        onValueChange={(e) => setSearchTerm(e)}
-                        autoFocus
-                        tabIndex={baseTabIndex}
-                      />
-                    </div>
+                    <CommandInputHeader
+                      placeholder={placeholder}
+                      searchTerm={searchTerm}
+                      onSearchTermChange={setSearchTerm}
+                      baseTabIndex={baseTabIndex}
+                      searchInIssue={searchInIssue}
+                      issueDetails={issueDetails}
+                      onClearSearchInIssue={() => setSearchInIssue(false)}
+                    />
 
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
-                      {searchTerm !== "" && (
-                        <h5 className="mx-[3px] my-4 text-xs text-custom-text-100">
-                          Search results for{" "}
-                          <span className="font-medium">
-                            {'"'}
-                            {searchTerm}
-                            {'"'}
-                          </span>{" "}
-                          in {!projectId || isWorkspaceLevel ? "workspace" : "project"}:
-                        </h5>
-                      )}
-
-                      {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                          <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
-                        </div>
-                      )}
-
-                      {(isLoading || isSearching) && (
-                        <Command.Loading>
-                          <Loader className="space-y-3">
-                            <Loader.Item height="40px" />
-                            <Loader.Item height="40px" />
-                            <Loader.Item height="40px" />
-                            <Loader.Item height="40px" />
-                          </Loader>
-                        </Command.Loading>
-                      )}
-
-                      {debouncedSearchTerm !== "" && page !== "open-issue" && (
-                        <CommandPaletteSearchResults closePalette={closePalette} results={results} />
-                      )}
-
-                      {!page && (
-                        <>
-                          {/* issue actions */}
-                          {issueId && issueDetails && searchInIssue && (
-                            <CommandPaletteIssueActions
-                              closePalette={closePalette}
-                              issueDetails={issueDetails}
-                              pages={pages}
-                              setPages={(newPages) => setPages(newPages)}
-                              setPlaceholder={(newPlaceholder) => setPlaceholder(newPlaceholder)}
-                              setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
-                            />
-                          )}
-
-                          {/* New command renderer */}
-                          <CommandRenderer
-                            commands={registry.getVisibleCommands(context)}
-                            onCommandSelect={(command) => {
-                              if (command.id === "create-work-item") {
-                                captureClick({
-                                  elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
-                                });
-                              } else if (command.id === "create-project") {
-                                captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
-                              }
-                              command.action();
-                            }}
-                          />
-
-                          {/* project actions */}
-                          {projectId && canPerformAnyCreateAction && (
-                            <CommandPaletteProjectActions closePalette={closePalette} />
-                          )}
-
-                          {/* help options */}
-                          <CommandPaletteHelpActions closePalette={closePalette} />
-                        </>
-                      )}
-
-                      {page === "open-project" && workspaceSlug && (
-                        <CommandPaletteProjectSelector
-                          projects={projectOptions.filter((p) =>
-                            projectSelectionAction === "cycle" ? p.cycle_view : true
-                          )}
-                          onSelect={(project) => {
-                            if (projectSelectionAction === "navigate") {
-                              closePalette();
-                              router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-                            } else if (projectSelectionAction === "cycle") {
-                              setSelectedProjectId(project.id);
-                              setPages((p) => [...p, "open-cycle"]);
-                              setPlaceholder("Search cycles");
-                              fetchAllCycles(workspaceSlug.toString(), project.id);
-                            }
-                          }}
+                      <CommandSearchResults
+                        searchTerm={searchTerm}
+                        debouncedSearchTerm={debouncedSearchTerm}
+                        resultsCount={resultsCount}
+                        isLoading={isLoading}
+                        isSearching={isSearching}
+                        projectId={projectId?.toString()}
+                        isWorkspaceLevel={isWorkspaceLevel}
+                        resolvedPath={resolvedPath}
+                      >
+                        <CommandPageContent
+                          page={page}
+                          workspaceSlug={workspaceSlug?.toString()}
+                          projectId={projectId?.toString()}
+                          issueId={issueId}
+                          issueDetails={issueDetails || null}
+                          searchTerm={searchTerm}
+                          debouncedSearchTerm={debouncedSearchTerm}
+                          isLoading={isLoading}
+                          isSearching={isSearching}
+                          searchInIssue={searchInIssue}
+                          projectSelectionAction={projectSelectionAction}
+                          selectedProjectId={selectedProjectId}
+                          results={results}
+                          resolvedPath={resolvedPath}
+                          pages={pages}
+                          setPages={setPages}
+                          setPlaceholder={setPlaceholder}
+                          setSearchTerm={setSearchTerm}
+                          setSelectedProjectId={setSelectedProjectId}
+                          fetchAllCycles={fetchAllCycles}
+                          onCommandSelect={handleCommandSelect}
+                          isWorkspaceLevel={isWorkspaceLevel}
                         />
-                      )}
-
-                      {page === "open-cycle" && workspaceSlug && selectedProjectId && (
-                        <CommandPaletteCycleSelector
-                          cycles={cycleOptions}
-                          onSelect={(cycle) => {
-                            closePalette();
-                            router.push(`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`);
-                          }}
-                        />
-                      )}
-
-                      {page === "open-issue" && workspaceSlug && (
-                        <>
-                          {searchTerm === "" ? (
-                            recentIssues.length > 0 ? (
-                              <CommandPaletteEntityList
-                                heading="Issues"
-                                items={recentIssues}
-                                getKey={(issue) => issue.id}
-                                getLabel={(issue) => `${issue.project_identifier}-${issue.sequence_id} ${issue.name}`}
-                                renderItem={(issue) => (
-                                  <div className="flex items-center gap-2">
-                                    <IssueIdentifier
-                                      projectId={issue.project_id}
-                                      projectIdentifier={issue.project_identifier}
-                                      issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-sm text-custom-text-200"
-                                    />
-                                    <span className="truncate">{issue.name}</span>
-                                  </div>
-                                )}
-                                onSelect={(issue) => {
-                                  closePalette();
-                                  router.push(
-                                    generateWorkItemLink({
-                                      workspaceSlug: workspaceSlug.toString(),
-                                      projectId: issue.project_id,
-                                      issueId: issue.id,
-                                      projectIdentifier: issue.project_identifier,
-                                      sequenceId: issue.sequence_id,
-                                      isEpic: issue.is_epic,
-                                    })
-                                  );
-                                }}
-                                emptyText="Search for issue id or issue title"
-                              />
-                            ) : (
-                              <div className="px-3 py-8 text-center text-sm text-custom-text-300">
-                                Search for issue id or issue title
-                              </div>
-                            )
-                          ) : issueResults.length > 0 ? (
-                            <CommandPaletteEntityList
-                              heading="Issues"
-                              items={issueResults}
-                              getKey={(issue) => issue.id}
-                              getLabel={(issue) => `${issue.project__identifier}-${issue.sequence_id} ${issue.name}`}
-                              renderItem={(issue) => (
-                                <div className="flex items-center gap-2">
-                                  {issue.project_id && issue.project__identifier && issue.sequence_id && (
-                                    <IssueIdentifier
-                                      projectId={issue.project_id}
-                                      projectIdentifier={issue.project__identifier}
-                                      issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-sm text-custom-text-200"
-                                    />
-                                  )}
-                                  <span className="truncate">{issue.name}</span>
-                                </div>
-                              )}
-                              onSelect={(issue) => {
-                                closePalette();
-                                router.push(
-                                  generateWorkItemLink({
-                                    workspaceSlug: workspaceSlug.toString(),
-                                    projectId: issue.project_id,
-                                    issueId: issue.id,
-                                    projectIdentifier: issue.project__identifier,
-                                    sequenceId: issue.sequence_id,
-                                  })
-                                );
-                              }}
-                              emptyText={t("command_k.empty_state.search.title") as string}
-                            />
-                          ) : (
-                            !isLoading &&
-                            !isSearching && (
-                              <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-                                <SimpleEmptyState
-                                  title={t("command_k.empty_state.search.title")}
-                                  assetPath={resolvedPath}
-                                />
-                              </div>
-                            )
-                          )}
-                        </>
-                      )}
-
-                      {/* workspace settings actions */}
-                      {page === "settings" && workspaceSlug && (
-                        <CommandPaletteWorkspaceSettingsActions closePalette={closePalette} />
-                      )}
-
-                      {/* issue details page actions */}
-                      {page === "change-issue-state" && issueDetails && (
-                        <ChangeIssueState closePalette={closePalette} issue={issueDetails} />
-                      )}
-                      {page === "change-issue-priority" && issueDetails && (
-                        <ChangeIssuePriority closePalette={closePalette} issue={issueDetails} />
-                      )}
-                      {page === "change-issue-assignee" && issueDetails && (
-                        <ChangeIssueAssignee closePalette={closePalette} issue={issueDetails} />
-                      )}
-
-                      {/* theme actions */}
-                      {page === "change-interface-theme" && (
-                        <CommandPaletteThemeActions
-                          closePalette={() => {
-                            closePalette();
-                            setPages((pages) => pages.slice(0, -1));
-                          }}
-                        />
-                      )}
+                      </CommandSearchResults>
                     </Command.List>
-                  </Command>
-                </div>
-                {/* Bottom overlay */}
-                <div className="w-full flex items-center justify-between px-4 py-2 border-t border-custom-border-200 bg-custom-background-90/80 rounded-b-lg">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-custom-text-300">Actions</span>
-                    <div className="flex items-center gap-1">
-                      <div className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
-                        {platform === "MacOS" ? <CommandIcon className="h-2.5 w-2.5 text-custom-text-200" /> : "Ctrl"}
-                      </div>
-                      <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded bg-custom-background-80 border-[0.5px] border-custom-border-200 px-1.5 text-[10px] text-custom-text-200">
-                        K
-                      </kbd>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-custom-text-300">Workspace Level</span>
-                    <ToggleSwitch
-                      value={isWorkspaceLevel}
-                      onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-                      disabled={!projectId}
-                      size="sm"
+                    <CommandModalFooter
+                      platform={platform}
+                      isWorkspaceLevel={isWorkspaceLevel}
+                      projectId={projectId?.toString()}
+                      onWorkspaceLevelChange={setIsWorkspaceLevel}
                     />
-                  </div>
+                  </Command>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

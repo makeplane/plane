@@ -11,3 +11,8 @@ export * from "./command-registry";
 export * from "./command-renderer";
 export * from "./commands";
 export * from "./hooks";
+export * from "./command-input-header";
+export * from "./command-search-results";
+export * from "./command-page-content";
+export * from "./command-modal-footer";
+export * from "./pages";
