@@ -1,19 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { LocaleManager } from "./locale/manager";
-
-interface TranslationEntry {
-  id: string;
-  key: string;
-  fullPath: string;
-  translations: Record<
-    string,
-    {
-      status: string;
-      value: string;
-    }
-  >;
-}
+import { TranslationRow } from "./locale/types";
 
 async function ensureGeneratedFiles() {
   const tempDir = path.join(__dirname, "locale/.temp");
@@ -39,7 +27,7 @@ async function generateTypes() {
   // Read all generated JSON files
   const files = fs.readdirSync(tempDir).filter((file) => file.startsWith("generated-") && file.endsWith(".json"));
 
-  let allTranslations: TranslationEntry[] = [];
+  let allTranslations: TranslationRow[] = [];
 
   // Combine all translations
   files.forEach((file) => {
