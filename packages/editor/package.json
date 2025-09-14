@@ -4,15 +4,10 @@
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
     "./lib": {

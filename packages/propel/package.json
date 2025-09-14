@@ -16,36 +16,148 @@
     "build-storybook": "storybook build"
   },
   "exports": {
-    "./accordion": "./dist/accordion/index.js",
-    "./animated-counter": "./dist/animated-counter/index.js",
-    "./avatar": "./dist/avatar/index.js",
-    "./button": "./dist/button/index.js",
-    "./calendar": "./dist/calendar/index.js",
-    "./card": "./dist/card/index.js",
-    "./charts/*": "./dist/charts/*/index.js",
-    "./collapsible": "./dist/collapsible/index.js",
-    "./combobox": "./dist/combobox/index.js",
-    "./command": "./dist/command/index.js",
-    "./context-menu": "./dist/context-menu/index.js",
-    "./dialog": "./dist/dialog/index.js",
-    "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
-    "./emoji-reaction": "./dist/emoji-reaction/index.js",
-    "./emoji-reaction-picker": "./dist/emoji-reaction-picker/index.js",
-    "./icons": "./dist/icons/index.js",
-    "./menu": "./dist/menu/index.js",
-    "./pill": "./dist/pill/index.js",
-    "./popover": "./dist/popover/index.js",
-    "./scrollarea": "./dist/scrollarea/index.js",
-    "./skeleton": "./dist/skeleton/index.js",
+    "./accordion": {
+      "types": "./dist/accordion/index.d.ts",
+      "import": "./dist/accordion/index.mjs",
+      "require": "./dist/accordion/index.js"
+    },
+    "./animated-counter": {
+      "types": "./dist/animated-counter/index.d.ts",
+      "import": "./dist/animated-counter/index.mjs",
+      "require": "./dist/animated-counter/index.js"
+    },
+    "./avatar": {
+      "types": "./dist/avatar/index.d.ts",
+      "import": "./dist/avatar/index.mjs",
+      "require": "./dist/avatar/index.js"
+    },
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.mjs",
+      "require": "./dist/button/index.js"
+    },
+    "./calendar": {
+      "types": "./dist/calendar/index.d.ts",
+      "import": "./dist/calendar/index.mjs",
+      "require": "./dist/calendar/index.js"
+    },
+    "./card": {
+      "types": "./dist/card/index.d.ts",
+      "import": "./dist/card/index.mjs",
+      "require": "./dist/card/index.js"
+    },
+    "./charts/*": {
+      "types": "./dist/charts/*/index.d.ts",
+      "import": "./dist/charts/*/index.mjs",
+      "require": "./dist/charts/*/index.js"
+    },
+    "./collapsible": {
+      "types": "./dist/collapsible/index.d.ts",
+      "import": "./dist/collapsible/index.mjs",
+      "require": "./dist/collapsible/index.js"
+    },
+    "./combobox": {
+      "types": "./dist/combobox/index.d.ts",
+      "import": "./dist/combobox/index.mjs",
+      "require": "./dist/combobox/index.js"
+    },
+    "./command": {
+      "types": "./dist/command/index.d.ts",
+      "import": "./dist/command/index.mjs",
+      "require": "./dist/command/index.js"
+    },
+    "./context-menu": {
+      "types": "./dist/context-menu/index.d.ts",
+      "import": "./dist/context-menu/index.mjs",
+      "require": "./dist/context-menu/index.js"
+    },
+    "./dialog": {
+      "types": "./dist/dialog/index.d.ts",
+      "import": "./dist/dialog/index.mjs",
+      "require": "./dist/dialog/index.js"
+    },
+    "./emoji-icon-picker": {
+      "types": "./dist/emoji-icon-picker/index.d.ts",
+      "import": "./dist/emoji-icon-picker/index.mjs",
+      "require": "./dist/emoji-icon-picker/index.js"
+    },
+    "./emoji-reaction": {
+      "types": "./dist/emoji-reaction/index.d.ts",
+      "import": "./dist/emoji-reaction/index.mjs",
+      "require": "./dist/emoji-reaction/index.js"
+    },
+    "./emoji-reaction-picker": {
+      "types": "./dist/emoji-reaction-picker/index.d.ts",
+      "import": "./dist/emoji-reaction-picker/index.mjs",
+      "require": "./dist/emoji-reaction-picker/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.mjs",
+      "require": "./dist/icons/index.js"
+    },
+    "./menu": {
+      "types": "./dist/menu/index.d.ts",
+      "import": "./dist/menu/index.mjs",
+      "require": "./dist/menu/index.js"
+    },
+    "./pill": {
+      "types": "./dist/pill/index.d.ts",
+      "import": "./dist/pill/index.mjs",
+      "require": "./dist/pill/index.js"
+    },
+    "./popover": {
+      "types": "./dist/popover/index.d.ts",
+      "import": "./dist/popover/index.mjs",
+      "require": "./dist/popover/index.js"
+    },
+    "./scrollarea": {
+      "types": "./dist/scrollarea/index.d.ts",
+      "import": "./dist/scrollarea/index.mjs",
+      "require": "./dist/scrollarea/index.js"
+    },
+    "./skeleton": {
+      "types": "./dist/skeleton/index.d.ts",
+      "import": "./dist/skeleton/index.mjs",
+      "require": "./dist/skeleton/index.js"
+    },
     "./styles/fonts": "./dist/styles/fonts/index.css",
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
-    "./switch": "./dist/switch/index.js",
-    "./table": "./dist/table/index.js",
-    "./tabs": "./dist/tabs/index.js",
-    "./toast": "./dist/toast/index.js",
-    "./toolbar": "./dist/toolbar/index.js",
-    "./tooltip": "./dist/tooltip/index.js",
-    "./utils": "./dist/utils/index.js"
+    "./switch": {
+      "types": "./dist/switch/index.d.ts",
+      "import": "./dist/switch/index.mjs",
+      "require": "./dist/switch/index.js"
+    },
+    "./table": {
+      "types": "./dist/table/index.d.ts",
+      "import": "./dist/table/index.mjs",
+      "require": "./dist/table/index.js"
+    },
+    "./tabs": {
+      "types": "./dist/tabs/index.d.ts",
+      "import": "./dist/tabs/index.mjs",
+      "require": "./dist/tabs/index.js"
+    },
+    "./toast": {
+      "types": "./dist/toast/index.d.ts",
+      "import": "./dist/toast/index.mjs",
+      "require": "./dist/toast/index.js"
+    },
+    "./toolbar": {
+      "types": "./dist/toolbar/index.d.ts",
+      "import": "./dist/toolbar/index.mjs",
+      "require": "./dist/toolbar/index.js"
+    },
+    "./tooltip": {
+      "types": "./dist/tooltip/index.d.ts",
+      "import": "./dist/tooltip/index.mjs",
+      "require": "./dist/tooltip/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.js"
+    }
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",

@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
-import { Button } from "@plane/ui/src/button";
+import { Button } from "@plane/ui";
 // utils
 import { cn } from "@plane/utils";
 
