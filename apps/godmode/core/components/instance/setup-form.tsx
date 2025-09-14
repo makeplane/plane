@@ -1,7 +1,7 @@
 "use client";
 
-import { FC, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { type FC, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
@@ -10,9 +10,9 @@ import { AuthService } from "@plane/services";
 import { Button, Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { Banner } from "@/components/common/banner";
 import { FormHeader } from "@/components/instance/form-header";
+import { AuthHeader } from "@/components/instance/sign-in/header";
 
 // service initialization
 const authService = new AuthService();
@@ -55,7 +55,7 @@ const defaultFromData: TFormData = {
 export const InstanceSetupForm: FC = (props) => {
   const {} = props;
   // search params
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const firstNameParam = searchParams.get("first_name") || undefined;
   const lastNameParam = searchParams.get("last_name") || undefined;
   const companyParam = searchParams.get("company") || undefined;

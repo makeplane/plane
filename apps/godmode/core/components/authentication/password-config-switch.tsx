@@ -2,12 +2,11 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-// hooks
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+// plane imports
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
+// hooks
 import { useInstance } from "@/hooks/store";
-// ui
-// types
 
 type Props = {
   disabled: boolean;

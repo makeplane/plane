@@ -6,4 +6,16 @@ import commonjs from "vite-plugin-commonjs";
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), commonjs()],
+  define: {
+    global: "globalThis",
+    "process.env": JSON.stringify(process.env),
+  },
+  resolve: {
+    alias: {
+      process: "process/browser",
+    },
+  },
+  optimizeDeps: {
+    include: ["process"],
+  },
 });

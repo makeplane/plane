@@ -1,9 +1,8 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { KeyRound, Mails } from "lucide-react";
 // types
-import {
+import type {
   TGetBaseAuthenticationModeProps,
   TInstanceAuthenticationMethodKeys,
   TInstanceAuthenticationModes,
@@ -56,7 +55,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
@@ -64,7 +63,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -77,14 +76,14 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "oidc",
     name: "OIDC",
     description: "Authenticate your users via the OpenID Connect protocol.",
-    icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
+    icon: <img src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
     config: <UpgradeButton />,
     unavailable: true,
   },
@@ -92,7 +91,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "saml",
     name: "SAML",
     description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-    icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
+    icon: <img src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
     config: <UpgradeButton />,
     unavailable: true,
   },

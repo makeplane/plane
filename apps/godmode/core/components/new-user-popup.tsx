@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
+import { Link } from "react-router";
 import { useTheme as nextUseTheme } from "next-themes";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
@@ -26,32 +26,21 @@ export const NewUserPopup: React.FC = observer(() => {
         <div className="grow">
           <div className="text-base font-semibold">Create workspace</div>
           <div className="py-2 text-sm font-medium text-custom-text-300">
-            Instance setup done! Welcome to Plane instance portal. Start your
-            journey with by creating your first workspace.
+            Instance setup done! Welcome to Plane instance portal. Start your journey with by creating your first
+            workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <Link
-              href="/workspace/create"
-              className={getButtonStyling("primary", "sm")}
-            >
+            <Link to="/workspace/create" className={getButtonStyling("primary", "sm")}>
               Create workspace
             </Link>
-            <Button
-              variant="neutral-primary"
-              size="sm"
-              onClick={toggleNewUserPopup}
-            >
+            <Button variant="neutral-primary" size="sm" onClick={toggleNewUserPopup}>
               Close
             </Button>
           </div>
         </div>
         <div className="shrink-0 flex items-center justify-center">
           <img
-            src={
-              resolveGeneralTheme(resolvedTheme) === "dark"
-                ? TakeoffIconDark
-                : TakeoffIconLight
-            }
+            src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}
             alt="Plane icon"

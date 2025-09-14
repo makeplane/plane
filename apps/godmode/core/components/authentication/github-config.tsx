@@ -6,7 +6,7 @@ import { Link } from "react-router";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
