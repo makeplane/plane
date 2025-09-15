@@ -78,6 +78,7 @@ class PageAccess(IntEnum):
 class Page(BaseModel):
     PRIVATE_ACCESS = PageAccess.PRIVATE
     PUBLIC_ACCESS = PageAccess.PUBLIC
+    DEFAULT_SORT_ORDER = 65535
 
     ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
 
@@ -116,11 +117,12 @@ class Page(BaseModel):
     )
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
-    sort_order = models.FloatField(default=65535)
-    objects = PageManager()
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
     external_id = models.CharField(max_length=255, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
 
+    objects = PageManager()
+    
     class Meta:
         verbose_name = "Page"
         verbose_name_plural = "Pages"
