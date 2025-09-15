@@ -1,3 +1,5 @@
+from urllib.parse import urljoin, urlencode
+
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -66,7 +68,7 @@ class MagicSignInSpaceEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -81,7 +83,7 @@ class MagicSignInSpaceEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -95,16 +97,14 @@ class MagicSignInSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path
+                base_url=base_host(request=request, is_space=True), next_path=next_path
             )
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
             base_url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path
+                base_url=base_host(request=request, is_space=True), next_path=next_path
             )
             url = urljoin(base_url, "?" + urlencode(params))
             return HttpResponseRedirect(url)
@@ -128,7 +128,7 @@ class MagicSignUpSpaceEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
         # Existing User
@@ -143,7 +143,7 @@ class MagicSignUpSpaceEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -156,8 +156,7 @@ class MagicSignUpSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path
+                base_url=base_host(request=request, is_space=True), next_path=next_path
             )
             return HttpResponseRedirect(url)
 
@@ -166,6 +165,6 @@ class MagicSignUpSpaceEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
