@@ -14,6 +14,9 @@
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "check:translations": "tsx scripts/check-missing-translations.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
@@ -32,6 +35,9 @@
     "@types/node": "^22.17.2",
     "@types/react": "catalog:",
     "ansis": "^4.1.0",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1",
+    "@types/jest": "^30.0.0",
     "tsdown": "catalog:",
     "tsx": "^4.7.1",
     "typescript": "catalog:"

@@ -1,46 +1,26 @@
 #!/usr/bin/env node
 
 import { blue, yellow, white, red, green } from "ansis";
-import { BASE_LOCALE } from "./locale/constants";
-import { LocaleManager } from "./locale/manager";
-import { TranslationRow, TranslationStatus } from "./locale/types";
+import { checkMissingTranslations } from "./locale/check-translations";
 
-async function checkMissingTranslations() {
+async function runTranslationCheck() {
   try {
-    const manager = new LocaleManager();
-    await manager.updateAllGeneratedTranslations();
-
-    const files = manager.translationFiles;
-    let hasMissingTranslations = false;
-
     console.log(blue`\nChecking for missing translations...\n`);
 
-    for (const file of files) {
-      console.log(yellow`\nChecking 📄 ${file}:`);
-      const rows = await manager.generateTranslationRows(file);
+    const result = await checkMissingTranslations();
+    const { hasMissingTranslations, missingTranslations } = result;
 
-      const missingTranslations = rows.filter((row: TranslationRow) =>
-        Object.entries(row.translations).some(
-          ([locale, translation]: [string, TranslationStatus]) =>
-            locale !== BASE_LOCALE && translation.status === "missing"
-        )
-      );
-
-      if (missingTranslations.length > 0) {
-        hasMissingTranslations = true;
-
-        missingTranslations.forEach((row: TranslationRow) => {
-          console.log(white`\n🔑 Key: ${row.key}`);
-          Object.entries(row.translations).forEach(([locale, translation]: [string, TranslationStatus]) => {
-            if (locale !== "en" && translation.status === "missing") {
-              console.log(red`  - Missing in 📂 locales/${locale}/${file}.json`);
-            }
-          });
+    if (missingTranslations.length > 0) {
+      missingTranslations.forEach(({ key, file, missingLocales }) => {
+        console.log(yellow`\nChecking 📄 ${file}:`);
+        console.log(white`\n🔑 Key: ${key}`);
+        missingLocales.forEach((locale) => {
+          console.log(red`  - Missing in 📂 locales/${locale}/${file}.json`);
         });
-        console.log(); // Add empty line for readability
-      } else {
-        console.log(green`✓ All translations present`);
-      }
+        console.log();
+      });
+    } else {
+      console.log(green`✓ All translations present`);
     }
 
     if (hasMissingTranslations) {
@@ -56,4 +36,4 @@ async function checkMissingTranslations() {
   }
 }
 
-checkMissingTranslations();
+runTranslationCheck();
