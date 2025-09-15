@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urlencode, urljoin
-
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -75,7 +72,7 @@ class MagicSignInEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -91,7 +88,7 @@ class MagicSignInEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -120,7 +117,7 @@ class MagicSignInEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=path,
-                params={}
+                params={},
             )
             return HttpResponseRedirect(url)
 
@@ -129,7 +126,7 @@ class MagicSignInEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -152,7 +149,7 @@ class MagicSignUpEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
         # Existing user
@@ -168,7 +165,7 @@ class MagicSignUpEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -191,7 +188,7 @@ class MagicSignUpEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=path,
-                params={}
+                params={},
             )
             return HttpResponseRedirect(url)
 
@@ -200,6 +197,6 @@ class MagicSignUpEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)

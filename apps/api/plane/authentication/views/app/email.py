@@ -35,7 +35,7 @@ class SignInAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -55,10 +55,10 @@ class SignInAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             # Next path
-            base_url = get_safe_redirect_url(
+            url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -76,7 +76,7 @@ class SignInAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -92,7 +92,7 @@ class SignInAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -117,7 +117,7 @@ class SignInAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=path,
-                params={}
+                params={},
             )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
@@ -125,7 +125,7 @@ class SignInAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -145,7 +145,7 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -165,7 +165,7 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -183,7 +183,7 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -201,7 +201,7 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -225,7 +225,7 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=path,
-                params={}
+                params={},
             )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
@@ -233,6 +233,6 @@ class SignUpAuthEndpoint(View):
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,
-                params=params
+                params=params,
             )
             return HttpResponseRedirect(url)
