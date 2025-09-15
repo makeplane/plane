@@ -26,6 +26,7 @@
     "intl-messageformat": "^10.7.11",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
+    "lodash": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
