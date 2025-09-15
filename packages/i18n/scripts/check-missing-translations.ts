@@ -12,7 +12,6 @@ async function runTranslationCheck() {
 
     if (missingTranslations.length > 0) {
       missingTranslations.forEach(({ key, file, missingLocales }) => {
-        console.log(yellow`\nChecking 📄 ${file}:`);
         console.log(white`\n🔑 Key: ${key}`);
         missingLocales.forEach((locale) => {
           console.log(red`  - Missing in 📂 locales/${locale}/${file}.json`);
