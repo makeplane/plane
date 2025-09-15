@@ -15,6 +15,9 @@ catalogs:
     '@types/react-dom':
       specifier: 18.3.1
       version: 18.3.1
+    '@types/uuid':
+      specifier: 9.0.8
+      version: 9.0.8
     axios:
       specifier: 1.12.0
       version: 1.12.0
@@ -1095,9 +1098,27 @@ importers:
 
   packages/shared-state:
     dependencies:
+      '@plane/constants':
+        specifier: workspace*
+        version: link:../constants
+      '@plane/types':
+        specifier: workspace*
+        version: link:../types
+      '@plane/utils':
+        specifier: workspace*
+        version: link:../utils
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
+      mobx-utils:
+        specifier: 'catalog:'
+        version: 6.0.8(mobx@6.12.0)
+      uuid:
+        specifier: 'catalog:'
+        version: 10.0.0
       zod:
         specifier: ^3.22.2
         version: 3.25.76
@@ -1108,9 +1129,15 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.20
       '@types/node':
         specifier: ^22.5.4
         version: 22.18.0
+      '@types/uuid':
+        specifier: 'catalog:'
+        version: 9.0.8
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -1584,14 +1611,17 @@ packages:
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
-  '@emnapi/core@1.5.0':
-    resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
+  '@emnapi/core@1.4.5':
+    resolution: {integrity: sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q==}
+
+  '@emnapi/runtime@1.4.5':
+    resolution: {integrity: sha512-++LApOtY0pEEz1zrd9vy1/zXVaVJJ/EbAF3u0fXIzPJEDtnITsBGbbK0EkM72amhl/R5b+5xx0Y/QhcVOpuulg==}
 
   '@emnapi/runtime@1.5.0':
     resolution: {integrity: sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==}
 
-  '@emnapi/wasi-threads@1.1.0':
-    resolution: {integrity: sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==}
+  '@emnapi/wasi-threads@1.0.4':
+    resolution: {integrity: sha512-PJR+bOmMOPH8AtcTGAyYNiuJ3/Fcoj2XN/gBEWzDIKh254XO+mM9XoXHk5GNEhodxeMznbg7BlRojVbKN+gC6g==}
 
   '@emotion/babel-plugin@11.13.5':
     resolution: {integrity: sha512-pxHCpT2ex+0q+HH91/zsdHkw/lXd468DIN2zvfvLtPKLLMo6gQj7oLObq8PhkrxOZb/gGCq03S3Z7PDhS8pduQ==}
@@ -8401,9 +8431,14 @@ snapshots:
 
   '@date-fns/tz@1.4.1': {}
 
-  '@emnapi/core@1.5.0':
+  '@emnapi/core@1.4.5':
     dependencies:
-      '@emnapi/wasi-threads': 1.1.0
+      '@emnapi/wasi-threads': 1.0.4
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/runtime@1.4.5':
+    dependencies:
       tslib: 2.8.1
     optional: true
 
@@ -8412,7 +8447,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@emnapi/wasi-threads@1.1.0':
+  '@emnapi/wasi-threads@1.0.4':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -8982,15 +9017,15 @@ snapshots:
 
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
-      '@emnapi/core': 1.5.0
-      '@emnapi/runtime': 1.5.0
+      '@emnapi/core': 1.4.5
+      '@emnapi/runtime': 1.4.5
       '@tybys/wasm-util': 0.10.0
     optional: true
 
   '@napi-rs/wasm-runtime@1.0.3':
     dependencies:
-      '@emnapi/core': 1.5.0
-      '@emnapi/runtime': 1.5.0
+      '@emnapi/core': 1.4.5
+      '@emnapi/runtime': 1.4.5
       '@tybys/wasm-util': 0.10.0
     optional: true
 
@@ -11137,7 +11172,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   camelcase-css@2.0.1: {}
 
@@ -11148,7 +11183,7 @@ snapshots:
   capital-case@1.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case-first: 2.0.2
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
@@ -11190,7 +11225,7 @@ snapshots:
       path-case: 3.0.4
       sentence-case: 3.0.4
       snake-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   character-entities@2.0.2: {}
 
@@ -11331,7 +11366,7 @@ snapshots:
   constant-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case: 2.0.2
 
   constants-browserify@1.0.0: {}
@@ -11659,7 +11694,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   dotenv@16.0.3: {}
 
@@ -12509,7 +12544,7 @@ snapshots:
   header-case@2.0.4:
     dependencies:
       capital-case: 1.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   helmet@7.2.0: {}
 
@@ -13049,7 +13084,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   lowlight@2.9.0:
     dependencies:
@@ -13421,7 +13456,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   node-abort-controller@3.1.1: {}
 
@@ -13604,7 +13639,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   parent-module@1.0.1:
     dependencies:
@@ -13628,14 +13663,14 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   path-browserify@1.0.1: {}
 
   path-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   path-exists@4.0.0: {}
 
@@ -14542,7 +14577,7 @@ snapshots:
   sentence-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case-first: 2.0.2
 
   serialize-javascript@6.0.2:
@@ -14663,7 +14698,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   sonic-boom@2.8.0:
     dependencies:
@@ -15301,11 +15336,11 @@ snapshots:
 
   upper-case-first@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   upper-case@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   uri-js@4.4.1:
     dependencies:
