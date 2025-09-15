@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "인테그레이션"
+        "title": "인테그레이션",
+        "page_title": "Plane 데이터를 사용 가능한 앱이나 본인 소유 앱에서 활용하세요.",
+        "page_description": "이 워크스페이스 또는 사용자가 사용하는 모든 통합을 확인하세요."
       },
       "imports": {
         "title": "임포트"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "앱 멘션 활성화",
         "enable_app_mentions_tooltip": "이 기능을 활성화하면 사용자가 워크 아이템을 이 애플리케이션에 언급하거나 할당할 수 있습니다.",
         "build_your_own_app": "나만의 앱 만들기",
-        "edit_app_details": "앱 세부정보 편집"
+        "edit_app_details": "앱 세부정보 편집",
+        "internal": "내부"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

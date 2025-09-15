@@ -545,7 +545,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Intégrations"
+        "title": "Intégrations",
+        "page_title": "Travaillez avec vos données Plane dans les applications disponibles ou dans les vôtres.",
+        "page_description": "Affichez toutes les intégrations utilisées par cet espace de travail ou par vous."
       },
       "imports": {
         "title": "Importations"
@@ -723,7 +725,8 @@
         },
         "app_consent_no_access_description": "Cette application ne peut être installée qu'après qu'un administrateur de l'espace de travail l'ait installée. Contactez l'administrateur de votre espace de travail pour continuer.",
         "enable_app_mentions": "Activer les mentions de l'application",
-        "enable_app_mentions_tooltip": "Lorsque cela est activé, les utilisateurs peuvent mentionner ou attribuer des éléments de travail à cette application."
+        "enable_app_mentions_tooltip": "Lorsque cela est activé, les utilisateurs peuvent mentionner ou attribuer des éléments de travail à cette application.",
+        "internal": "Interne"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

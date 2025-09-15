@@ -562,7 +562,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Entegrasyonlar"
+        "title": "Entegrasyonlar",
+        "page_title": "Plane verilerinizi mevcut uygulamalarda veya kendi uygulamalarınızda kullanın.",
+        "page_description": "Bu çalışma alanı veya sizin tarafınızdan kullanılan tüm entegrasyonları görüntüleyin."
       },
       "imports": {
         "title": "İmportlar"
@@ -740,7 +742,8 @@
         "enable_app_mentions": "Uygulama bahsini etkinleştir",
         "enable_app_mentions_tooltip": "Bu etkinleştirildiğinde, kullanıcılar Çalışma Öğelerini bu uygulamaya atayabilir veya bahsedebilir.",
         "build_your_own_app": "Kendi uygulamanızı oluşturun",
-        "edit_app_details": "Uygulama ayrıntılarını düzenle"
+        "edit_app_details": "Uygulama ayrıntılarını düzenle",
+        "internal": "Dahili"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

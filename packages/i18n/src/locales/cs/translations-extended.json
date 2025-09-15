@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrace"
+        "title": "Integrace",
+        "page_title": "Pracujte se svými daty Plane v dostupných aplikacích nebo ve svých vlastních.",
+        "page_description": "Zobrazte všechny integrace používané tímto pracovním prostorem nebo vámi."
       },
       "imports": {
         "title": "Importy"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "Povolit zmínky o aplikaci",
         "enable_app_mentions_tooltip": "Když je tato možnost povolena, uživatelé mohou zmínit nebo přiřadit pracovní položky této aplikaci.",
         "build_your_own_app": "Vytvořte si vlastní aplikaci",
-        "edit_app_details": "Upravit detaily aplikace"
+        "edit_app_details": "Upravit detaily aplikace",
+        "internal": "Interní"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

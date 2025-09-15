@@ -2,15 +2,14 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
 import { AppList } from "@/plane-web/components/marketplace";
 import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 
-import GitHubLogo from "@/public/services/github.svg";
-import GitlabLogo from "@/public/services/gitlab.svg";
-import SentryLogo from "@/public/services/sentry.svg";
-import SlackLogo from "@/public/services/slack.png";
+import GitHubLogo from "@/public/logos/integrations/github.png";
+import GitlabLogo from "@/public/logos/integrations/gitlab.png";
+import SentryLogo from "@/public/logos/integrations/sentry.png";
+import SlackLogo from "@/public/logos/integrations/slack.png";
 
 // list all the applications
 // have tabs to filter by category
@@ -84,10 +83,9 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
       short_description: `${integration.key}_integration.description`,
       logo_url: integration.logoUrl,
       is_owned: false,
-      is_internal: true,
       is_not_supported: !supportedIntegrations.includes(integration.key.toUpperCase() as E_INTEGRATION_KEYS),
       is_hardcoded: true,
-      is_installed: false,
+      is_installed: true,
       installation_id: "",
       created_at: new Date().toISOString(),
       is_mentionable: false,
@@ -101,6 +99,7 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
       attachments_urls: [],
       privacy_policy_url: "",
       terms_of_service_url: "",
+      is_default: true,
     });
   });
 
@@ -108,53 +107,33 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
 };
 
 export const AppListRoot: React.FC<AppListProps> = observer((props) => {
-  const { apps, supportedIntegrations } = props;
-  const { t } = useTranslation();
-  const ownedApps = apps.filter((app) => app.is_owned);
+  const { supportedIntegrations } = props;
   const internalApps = getInternalApps(supportedIntegrations);
+  // filter apps which has same slug as internal apps
+  const apps = props.apps.filter((app) => !internalApps.some((internalApp) => internalApp.slug === app.slug));
+  const isInstalled = (app: TUserApplication) => app.is_installed;
+  const isInternal = (app: TUserApplication) => app.is_internal;
 
-  const allApps = apps
-    .filter((app) => !app.is_owned)
-    .filter((app) => !internalApps.some((internalApp) => internalApp.slug === app.slug));
-  const installedApps = [...allApps, ...ownedApps].filter((app) => app.is_installed);
-  installedApps.unshift(...internalApps);
+  /**
+   * Sort the apps by the following priority:
+   * 1. Installed apps
+   * 2. Internal apps
+   * 3. Other apps
+   */
 
-  const yourApps = ownedApps.filter((app) => !app.is_installed);
+  apps.sort((a, b) => {
+    if (isInstalled(a) && isInstalled(b)) return 0;
+    if (isInternal(a) && isInternal(b)) return 0;
+    if (isInstalled(a)) return -1;
+    if (isInternal(a)) return 1;
+    return 0;
+  });
+
+  const allApps = [...internalApps, ...apps];
 
   return (
-    <div className="flex w-full h-full mt-5 flex-col space-y-8">
-      {installedApps.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-custom-text-100">
-            {t("workspace_settings.settings.applications.installed_apps")}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AppList apps={installedApps} />
-          </div>
-        </div>
-      )}
-
-      {allApps.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-custom-text-100">
-            {t("workspace_settings.settings.applications.all_apps")}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AppList apps={allApps} />
-          </div>
-        </div>
-      )}
-
-      {yourApps.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-custom-text-100">
-            {t("workspace_settings.settings.applications.internal_apps")}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AppList apps={yourApps} />
-          </div>
-        </div>
-      )}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <AppList apps={allApps} />
     </div>
   );
 });

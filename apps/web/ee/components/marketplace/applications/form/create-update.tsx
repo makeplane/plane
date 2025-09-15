@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Camera } from "lucide-react";
+import { Book, Camera } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TUserApplication } from "@plane/types";
@@ -170,13 +170,27 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleAppFormSubmit}>
-      <SettingsHeading
-        title={
-          !watch("id")
-            ? t("workspace_settings.settings.applications.build_your_own_app")
-            : t("workspace_settings.settings.applications.edit_app_details")
-        }
-      />
+      <div className="flex justify-between items-center">
+        <SettingsHeading
+          title={
+            !watch("id")
+              ? t("workspace_settings.settings.applications.build_your_own_app")
+              : t("workspace_settings.settings.applications.edit_app_details")
+          }
+        />
+        <Button
+          type="button"
+          className="flex items-center gap-2 hover:bg-custom-background-100"
+          variant="link-neutral"
+          prependIcon={<Book className="h-4 shrink-0" />}
+          onClick={() => {
+            window.open("https://developers.plane.so/api-reference/byoa/build-plane-app", "_blank");
+          }}
+        >
+          {t("docs")}
+        </Button>
+      </div>
+
       <div className="space-y-5 flew-grow w-full">
         <FormSection title={"Basic information"}>
           <AppImageUploadModal
@@ -339,7 +353,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             placeholder={t("workspace_settings.settings.applications.webhook_url.placeholder")}
             register={register}
             validation={{
-              required: t("workspace_settings.settings.applications.webhook_url_error"),
               pattern: {
                 value: singleUrlRegex,
                 message: t("workspace_settings.settings.applications.invalid_webhook_url_error"),

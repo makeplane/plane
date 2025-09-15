@@ -32,6 +32,7 @@ export type TApplication = {
   is_internal?: boolean;
   is_not_supported?: boolean;
   is_hardcoded?: boolean;
+  is_default?: boolean;
 };
 
 export type TUserApplication = TApplication & {

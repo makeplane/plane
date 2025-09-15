@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -22,6 +23,8 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 const IntegrationsListPage = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -59,8 +62,8 @@ const IntegrationsListPage = observer(() => {
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <SettingsHeading
-          title={"Work with your Plane data in third-party apps or you own."}
-          description="View all the integrations in use by this workspace or you"
+          title={t("workspace_settings.settings.integrations.page_title")}
+          description={t("workspace_settings.settings.integrations.page_description")}
           appendToRight={
             <Link href={`create`}>
               <Button variant="primary">Build your own</Button>

@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "整合"
+        "title": "整合",
+        "page_title": "在可用的應用程式或您自己的應用程式中使用您的 Plane 資料。",
+        "page_description": "查看此工作區或您正在使用的所有整合。"
       },
       "imports": {
         "title": "導入"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "啟用應用程式提及",
         "enable_app_mentions_tooltip": "啟用此功能後，使用者可以提及或指派工作項目給此應用程式。",
         "build_your_own_app": "建立您自己的應用程式",
-        "edit_app_details": "編輯應用程式詳情"
+        "edit_app_details": "編輯應用程式詳情",
+        "internal": "內部"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

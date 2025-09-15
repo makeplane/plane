@@ -545,7 +545,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "インテグレーション"
+        "title": "インテグレーション",
+        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
+        "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
       },
       "imports": {
         "title": "インポート"
@@ -723,7 +725,8 @@
         },
         "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
         "enable_app_mentions": "アプリのメンションを有効にする",
-        "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。"
+        "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。",
+        "internal": "内部"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

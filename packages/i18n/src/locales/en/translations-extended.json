@@ -630,7 +630,9 @@
       "integrations": {
         "title": "Integrations",
         "heading": "Integrations",
-        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem."
+        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem.",
+        "page_title": "Work with your Plane data in available apps or your own.",
+        "page_description": "View all the integrations in use by this workspace or you."
       },
       "imports": {
         "title": "Imports",
@@ -678,6 +680,7 @@
         "cancel_error_message": "Try again, please."
       },
       "applications": {
+        "internal": "Internal",
         "title": "Applications",
         "applicationId_copied": "Application ID copied to clipboard",
         "clientId_copied": "Client ID copied to clipboard",

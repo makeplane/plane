@@ -536,7 +536,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Tích hợp"
+        "title": "Tích hợp",
+        "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
+        "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
       },
       "imports": {
         "title": "Nhập dữ liệu"
@@ -714,7 +716,8 @@
         "enable_app_mentions": "Bật đề cập ứng dụng",
         "enable_app_mentions_tooltip": "Khi bật tính năng này, người dùng có thể đề cập hoặc gán Work Items cho ứng dụng này.",
         "build_your_own_app": "Tạo ứng dụng của riêng bạn",
-        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng"
+        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng",
+        "internal": "Nội bộ"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

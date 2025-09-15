@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrasi"
+        "title": "Integrasi",
+        "page_title": "Gunakan data Plane Anda di aplikasi yang tersedia atau aplikasi Anda sendiri.",
+        "page_description": "Lihat semua integrasi yang digunakan oleh workspace ini atau oleh Anda."
       },
       "imports": {
         "title": "Impor"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "Aktifkan penyebutan aplikasi",
         "enable_app_mentions_tooltip": "Saat ini diaktifkan, pengguna dapat menyebut atau menetapkan Work Items ke aplikasi ini.",
         "build_your_own_app": "Bangun aplikasi Anda sendiri",
-        "edit_app_details": "Edit detail aplikasi"
+        "edit_app_details": "Edit detail aplikasi",
+        "internal": "Internal"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

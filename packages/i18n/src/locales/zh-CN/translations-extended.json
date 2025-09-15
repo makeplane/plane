@@ -545,7 +545,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "集成"
+        "title": "集成",
+        "page_title": "在可用的应用或您自己的应用中使用您的 Plane 数据。",
+        "page_description": "查看此工作区或您正在使用的所有集成。"
       },
       "imports": {
         "title": "导入"
@@ -723,7 +725,8 @@
         },
         "app_consent_no_access_description": "此应用只能在工作区管理员安装后才能安装。请联系您的工作区管理员以继续。",
         "enable_app_mentions": "启用应用提及",
-        "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。"
+        "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。",
+        "internal": "内部"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

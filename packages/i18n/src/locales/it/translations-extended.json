@@ -544,7 +544,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrazioni"
+        "title": "Integrazioni",
+        "page_title": "Lavora con i tuoi dati Plane nelle app disponibili o nelle tue.",
+        "page_description": "Visualizza tutte le integrazioni utilizzate da questo workspace o da te."
       },
       "imports": {
         "title": "Importazioni"
@@ -722,7 +724,8 @@
         "enable_app_mentions": "Abilita menzioni dell'app",
         "enable_app_mentions_tooltip": "Quando è abilitato, gli utenti possono menzionare o assegnare Work Item a questa applicazione.",
         "build_your_own_app": "Crea la tua app",
-        "edit_app_details": "Modifica i dettagli dell'app"
+        "edit_app_details": "Modifica i dettagli dell'app",
+        "internal": "Interno"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

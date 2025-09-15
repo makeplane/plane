@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Інтеграції"
+        "title": "Інтеграції",
+        "page_title": "Працюйте зі своїми даними Plane у доступних додатках або у власних.",
+        "page_description": "Перегляньте всі інтеграції, які використовує цей робочий простір або ви."
       },
       "imports": {
         "title": "Імпорти"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "Увімкнути згадки додатка",
         "enable_app_mentions_tooltip": "Коли це увімкнено, користувачі можуть згадувати або призначати робочі елементи цьому додатку.",
         "build_your_own_app": "Створіть власний додаток",
-        "edit_app_details": "Редагувати деталі додатку"
+        "edit_app_details": "Редагувати деталі додатку",
+        "internal": "Внутрішній"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",

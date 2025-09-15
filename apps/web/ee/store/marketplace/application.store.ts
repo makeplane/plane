@@ -293,6 +293,7 @@ export class ApplicationStore implements IApplicationStore {
           this.applicationsLoader = "loaded";
           // just update the secret
           set(this.applicationsMap, workspaceSlug, {
+            ...this.applicationsMap[workspaceSlug],
             [response.slug]: {
               ...this.applicationsMap[workspaceSlug][response.slug],
               client_secret: response.client_secret,

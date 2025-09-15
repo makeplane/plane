@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrationen"
+        "title": "Integrationen",
+        "page_title": "Arbeiten Sie mit Ihren Plane-Daten in verfügbaren Apps oder in Ihren eigenen.",
+        "page_description": "Sehen Sie sich alle Integrationen an, die von diesem Workspace oder von Ihnen verwendet werden."
       },
       "imports": {
         "title": "Importe"
@@ -724,7 +726,8 @@
         },
         "app_consent_no_access_description": "Diese App kann nur installiert werden, nachdem ein Workspace-Administrator sie installiert hat. Wenden Sie sich an Ihren Workspace-Administrator, um fortzufahren.",
         "enable_app_mentions": "App-Erwähnungen aktivieren",
-        "enable_app_mentions_tooltip": "Wenn dies aktiviert ist, können Benutzer Arbeitsaufgaben an diese Anwendung erwähnen oder zuweisen."
+        "enable_app_mentions_tooltip": "Wenn dies aktiviert ist, können Benutzer Arbeitsaufgaben an diese Anwendung erwähnen oder zuweisen.",
+        "internal": "Intern"
       }
     }
   },

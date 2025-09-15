@@ -546,7 +546,9 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrări"
+        "title": "Integrări",
+        "page_title": "Lucrează cu datele tale Plane în aplicațiile disponibile sau în ale tale proprii.",
+        "page_description": "Vizualizează toate integrările utilizate de acest spațiu de lucru sau de tine."
       },
       "imports": {
         "title": "Importuri"
@@ -724,7 +726,8 @@
         "enable_app_mentions": "Activează mențiunile aplicației",
         "enable_app_mentions_tooltip": "Când aceasta este activată, utilizatorii pot menționa sau atribui Work Items acestei aplicații.",
         "build_your_own_app": "Construiți propria aplicație",
-        "edit_app_details": "Editează detaliile aplicației"
+        "edit_app_details": "Editează detaliile aplicației",
+        "internal": "Intern"
       },
       "plane-intelligence": {
         "title": "Plane Intelligence",
