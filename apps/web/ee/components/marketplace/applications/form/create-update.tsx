@@ -307,7 +307,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             placeholder={t("workspace_settings.settings.applications.website.placeholder")}
             register={register}
             validation={{
-              required: t("workspace_settings.settings.applications.website_error"),
               pattern: {
                 value: singleUrlRegex,
                 message: t("workspace_settings.settings.applications.invalid_website_error"),
