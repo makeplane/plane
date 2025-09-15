@@ -1,22 +1,15 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter } from "lucide-react";
 // plane imports
 import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-import { calculateTotalFilters } from "@plane/utils";
 // components
-import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { PageFiltersSelection } from "@/components/pages/list/filters";
-import { PageOrderByDropdown } from "@/components/pages/list/order-by";
-import { PageSearchInput } from "@/components/pages/list/search-input";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type TeamspacePagesListHeaderActionsProps = {
   teamspaceId: string;
@@ -32,18 +25,7 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane web hooks
-  const { getTeamspaceMemberIds } = useTeamspaces();
-  const { filters, updateFilters, createPage } = usePageStore(EPageStoreType.TEAMSPACE);
-  // derived values
-  const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
-  const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
-  // handlers
-  const handleFiltersUpdate = useCallback(
-    <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
-      updateFilters(filterKey, filterValue);
-    },
-    [updateFilters]
-  );
+  const { filters, createPage } = usePageStore(EPageStoreType.TEAMSPACE);
 
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
@@ -82,30 +64,6 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
 
   return (
     <>
-      <PageSearchInput
-        searchQuery={filters.searchQuery}
-        updateSearchQuery={(val) => handleFiltersUpdate("searchQuery", val)}
-      />
-      <PageOrderByDropdown
-        sortBy={filters.sortBy}
-        sortKey={filters.sortKey}
-        onChange={(val) => {
-          if (val.key) handleFiltersUpdate("sortKey", val.key);
-          if (val.order) handleFiltersUpdate("sortBy", val.order);
-        }}
-      />
-      <FiltersDropdown
-        icon={<ListFilter className="h-3 w-3" />}
-        title="Filters"
-        placement="bottom-end"
-        isFiltersApplied={isFiltersApplied}
-      >
-        <PageFiltersSelection
-          filters={filters}
-          handleFiltersUpdate={handleFiltersUpdate}
-          memberIds={teamspaceMemberIds ?? undefined}
-        />
-      </FiltersDropdown>
       {isEditingAllowed && (
         <Button
           variant="primary"
