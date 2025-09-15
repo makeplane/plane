@@ -34,6 +34,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
 )
 from plane.utils.ip_address import get_client_ip
+from plane.utils.path_validator import get_safe_redirect_url
 from plane.silo.bgtasks.integration_apps_task import create_integration_applications
 
 
@@ -395,7 +396,12 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(base_host(request=request, is_admin=True))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_admin=True), next_path=""
+            )
             return HttpResponseRedirect(url)
         except Exception:
-            return HttpResponseRedirect(base_host(request=request, is_admin=True))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_admin=True), next_path=""
+            )
+            return HttpResponseRedirect(url)
