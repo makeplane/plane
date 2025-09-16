@@ -1,0 +1,148 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "66BZC97RPM.com.plane.so"
+        ],
+        "components": [
+          {
+            "/": "/workspace-invitations/*"
+          },
+          {
+            "/": "/*/browse/*"
+          },
+          {
+            "/": "/*/projects/*"
+          },
+          {
+            "/": "/*/projects/*/cycles"
+          },
+          {
+            "/": "/*/projects/*/cycles/*"
+          },
+          {
+            "/": "/*/projects/*/modules"
+          },
+          {
+            "/": "/*/projects/*/modules/*"
+          },
+          {
+            "/": "/*/projects/*/issues"
+          },
+          {
+            "/": "/*/projects/*/issues/*"
+          },
+          {
+            "/": "/*/projects/*/pages"
+          },
+          {
+            "/": "/*/projects/*/pages/*"
+          },
+          {
+            "/": "/*/wiki/*"
+          },
+          {
+            "/": "/admin/*",
+            "exclude": true
+          }
+        ]
+      },
+      {
+        "appIDs": [
+          "66BZC97RPM.com.plane.so.staging"
+        ],
+        "components": [
+          {
+            "/": "/workspace-invitations/*"
+          },
+          {
+            "/": "/*/browse/*"
+          },
+          {
+            "/": "/*/projects/*"
+          },
+          {
+            "/": "/*/projects/*/cycles"
+          },
+          {
+            "/": "/*/projects/*/cycles/*"
+          },
+          {
+            "/": "/*/projects/*/modules"
+          },
+          {
+            "/": "/*/projects/*/modules/*"
+          },
+          {
+            "/": "/*/projects/*/issues"
+          },
+          {
+            "/": "/*/projects/*/issues/*"
+          },
+          {
+            "/": "/*/projects/*/pages"
+          },
+          {
+            "/": "/*/projects/*/pages/*"
+          },
+          {
+            "/": "/*/wiki/*"
+          },
+          {
+            "/": "/admin/*",
+            "exclude": true
+          }
+        ]
+      },
+      {
+        "appIDs": [
+          "66BZC97RPM.com.plane.so.development"
+        ],
+        "components": [
+          {
+            "/": "/workspace-invitations/*"
+          },
+          {
+            "/": "/*/browse/*"
+          },
+          {
+            "/": "/*/projects/*"
+          },
+          {
+            "/": "/*/projects/*/cycles"
+          },
+          {
+            "/": "/*/projects/*/cycles/*"
+          },
+          {
+            "/": "/*/projects/*/modules"
+          },
+          {
+            "/": "/*/projects/*/modules/*"
+          },
+          {
+            "/": "/*/projects/*/issues"
+          },
+          {
+            "/": "/*/projects/*/issues/*"
+          },
+          {
+            "/": "/*/projects/*/pages"
+          },
+          {
+            "/": "/*/projects/*/pages/*"
+          },
+          {
+            "/": "/*/wiki/*"
+          },
+          {
+            "/": "/admin/*",
+            "exclude": true
+          }
+        ]
+      }
+    ]
+  }
+}

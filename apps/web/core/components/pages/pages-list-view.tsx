@@ -1,45 +1,33 @@
 import { observer } from "mobx-react";
-import useSWR from "swr";
+// types
 import { TPageNavigationTabs } from "@plane/types";
+// components
+import { PagesListHeaderRoot } from "@/components/pages/header";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// local imports
-import { PagesListHeaderRoot } from "./header";
-import { PagesListMainContent } from "./pages-list-main-content";
+import { ProjectPagesListRoot } from "./list";
+
+const storeType = EPageStoreType.PROJECT;
 
 type TPageView = {
-  children: React.ReactNode;
   pageType: TPageNavigationTabs;
   projectId: string;
-  storeType: EPageStoreType;
   workspaceSlug: string;
 };
 
-export const PagesListView: React.FC<TPageView> = observer((props) => {
-  const { children, pageType, projectId, storeType, workspaceSlug } = props;
+export const ProjectPagesListView: React.FC<TPageView> = observer((props) => {
+  const { pageType, workspaceSlug, projectId } = props;
   // store hooks
-  const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);
-  // fetching pages list
-  useSWR(
-    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}` : null,
-    workspaceSlug && projectId && pageType ? () => fetchPagesList(workspaceSlug, projectId, pageType) : null
-  );
+  const { isAnyPageAvailable } = usePageStore(storeType);
 
   // pages loader
   return (
     <div className="relative w-full h-full overflow-hidden flex flex-col">
       {/* tab header */}
       {isAnyPageAvailable && (
-        <PagesListHeaderRoot
-          pageType={pageType}
-          projectId={projectId}
-          storeType={storeType}
-          workspaceSlug={workspaceSlug}
-        />
+        <PagesListHeaderRoot pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
       )}
-      <PagesListMainContent pageType={pageType} storeType={storeType}>
-        {children}
-      </PagesListMainContent>
+      <ProjectPagesListRoot pageType={pageType} workspaceSlug={workspaceSlug} projectId={projectId} />
     </div>
   );
 });
