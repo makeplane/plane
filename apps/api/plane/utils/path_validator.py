@@ -84,7 +84,7 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     Returns:
         str: The safe redirect URL
     """
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode, quote
 
     # Validate the next path
     validated_path = validate_next_path(next_path)
@@ -94,5 +94,5 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
         params["next_path"] = validated_path
 
     # Return the safe redirect URL
-    return f"{base_url.rstrip('/')}?{urlencode(params)}"
+    return f"{base_url.rstrip('/')}?{urlencode(params, quote_via=lambda s, safe, encoding, errors: quote(s, safe="/"))}"
     

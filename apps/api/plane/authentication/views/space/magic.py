@@ -94,9 +94,7 @@ class MagicSignInSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True), next_path=next_path
-            )
+            url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
@@ -154,9 +152,7 @@ class MagicSignUpSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True), next_path=next_path
-            )
+            url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
