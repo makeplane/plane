@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { ControlLink, CustomMenu } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

@@ -7,9 +7,9 @@ import { Check } from "lucide-react";
 // plane constants
 import { ISSUE_PRIORITIES } from "@plane/constants";
 // plane types
+import { PriorityIcon } from "@plane/propel/icons";
 import { EIssueServiceType, TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
-import { PriorityIcon } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // ui
 // types

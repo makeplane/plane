@@ -1,6 +1,5 @@
 # Python imports
 import uuid
-from urllib.parse import urlencode
 
 # Django import
 from django.http import HttpResponseRedirect
@@ -15,7 +14,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url
 
 
 class GitHubOauthInitiateSpaceEndpoint(View):
@@ -23,9 +22,6 @@ class GitHubOauthInitiateSpaceEndpoint(View):
         # Get host and next path
         request.session["host"] = base_host(request=request, is_space=True)
         next_path = request.GET.get("next_path")
-        if next_path:
-            request.session["next_path"] = str(next_path)
-
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
@@ -34,9 +30,11 @@ class GitHubOauthInitiateSpaceEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         try:
@@ -47,9 +45,11 @@ class GitHubOauthInitiateSpaceEndpoint(View):
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
 
@@ -66,9 +66,11 @@ class GitHubCallbackSpaceEndpoint(View):
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         if not code:
@@ -77,9 +79,11 @@ class GitHubCallbackSpaceEndpoint(View):
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         try:
@@ -89,11 +93,17 @@ class GitHubCallbackSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # Process workspace and project invitations
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)

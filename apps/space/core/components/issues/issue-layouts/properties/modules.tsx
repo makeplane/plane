@@ -2,7 +2,8 @@
 
 import { observer } from "mobx-react";
 // plane ui
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { DiceIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks

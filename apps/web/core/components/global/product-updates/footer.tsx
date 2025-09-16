@@ -1,7 +1,8 @@
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { getButtonStyling, PlaneLogo } from "@plane/ui";
+import { PlaneLogo } from "@plane/propel/icons";
+import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

@@ -883,7 +883,8 @@
     "in_progress": "進行中",
     "planned": "計画済み",
     "paused": "一時停止",
-    "no_of": "{entity} の数"
+    "no_of": "{entity} の数",
+    "resolved": "解決済み"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -917,6 +918,10 @@
     "add": {
       "success": "{entity}を追加しました",
       "failed": "{entity}の追加中にエラーが発生しました"
+    },
+    "remove": {
+      "success": "{entity}を削除しました",
+      "failed": "{entity}の削除中にエラーが発生しました"
     }
   },
   "epic": {
@@ -2486,7 +2491,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {

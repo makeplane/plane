@@ -42,6 +42,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           <ImageAlignmentAction
             activeAlignment={alignment}
             handleChange={handleAlignmentChange}
+            isTouchDevice={isTouchDevice}
             toggleToolbarViewStatus={setShouldShowToolbar}
           />
         )}

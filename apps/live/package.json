@@ -1,14 +1,14 @@
 {
   "name": "live",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./src/server.ts",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
-    "build": "tsc --noEmit && tsup",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "start": "node --env-file=.env dist/server.js",
     "check:lint": "eslint . --max-warnings 10",
     "check:types": "tsc --noEmit",
@@ -28,7 +28,7 @@
     "@plane/types": "workspace:*",
     "@tiptap/core": "^2.22.3",
     "@tiptap/html": "^2.22.3",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "compression": "1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -36,11 +36,11 @@
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "morgan": "1.10.1",
     "pino-http": "^10.3.0",
     "pino-pretty": "^11.2.2",
-    "uuid": "^10.0.0",
+    "uuid": "catalog:",
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.20"
@@ -58,8 +58,8 @@
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
     "ws": "^8.18.3"
   }
 }

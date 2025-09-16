@@ -16,7 +16,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";
+import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
 const MembersSettingsPage = observer(() => {

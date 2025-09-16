@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 // hooks
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";

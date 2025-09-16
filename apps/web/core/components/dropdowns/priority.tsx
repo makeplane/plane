@@ -8,9 +8,11 @@ import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssuePriorities } from "@plane/types";
 // ui
-import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 // components
 import { PoweredBy } from "@/components/common/powered-by";
 import { UserAvatar } from "@/components/issues/navbar/user-avatar";

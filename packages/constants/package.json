@@ -1,6 +1,6 @@
 {
   "name": "@plane/constants",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0",
   "files": [
@@ -17,8 +17,8 @@
     }
   },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsc --noEmit && tsup",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -33,8 +33,8 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/react": "^18.3.11",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

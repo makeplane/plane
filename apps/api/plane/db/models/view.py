@@ -58,6 +58,7 @@ class IssueView(WorkspaceBaseModel):
     filters = models.JSONField(default=dict)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )

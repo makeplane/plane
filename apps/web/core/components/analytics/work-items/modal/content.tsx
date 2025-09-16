@@ -16,10 +16,11 @@ type Props = {
   projectDetails: IProject | undefined;
   cycleDetails: ICycle | undefined;
   moduleDetails: IModule | undefined;
+  isEpic?: boolean;
 };
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
-  const { projectDetails, cycleDetails, moduleDetails, fullScreen } = props;
+  const { projectDetails, cycleDetails, moduleDetails, fullScreen, isEpic } = props;
   const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalytics();
   const [isModalConfigured, setIsModalConfigured] = useState(false);
 
@@ -70,7 +71,7 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
     <div className="flex flex-col gap-14 overflow-y-auto p-6">
       <TotalInsights analyticsType="work-items" peekView={!fullScreen} />
       <CreatedVsResolved />
-      <CustomizedInsights peekView={!fullScreen} />
+      <CustomizedInsights peekView={!fullScreen} isEpic={isEpic} />
       <WorkItemsInsightTable />
     </div>
   );
