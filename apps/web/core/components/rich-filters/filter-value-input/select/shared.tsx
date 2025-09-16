@@ -7,7 +7,7 @@ import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
 type TLoadOptionsProps<V extends TFilterValue> = {
   config: TSupportedFilterFieldConfigs<V>;
   setOptions: (options: IFilterOption<V>[]) => void;
-  setLoading: (loading: boolean) => void;
+  setLoading?: (loading: boolean) => void;
 };
 
 export const loadOptions = async <V extends TFilterValue>(props: TLoadOptionsProps<V>) => {
@@ -15,14 +15,14 @@ export const loadOptions = async <V extends TFilterValue>(props: TLoadOptionsPro
 
   // if the config has a getOptions function, load the options
   if ("getOptions" in config && typeof config.getOptions === "function") {
-    setLoading(true);
+    setLoading?.(true);
     try {
       const result = await config.getOptions();
       setOptions(result);
     } catch (error) {
       console.error("Failed to load options:", error);
     } finally {
-      setLoading(false);
+      setLoading?.(false);
     }
   }
 };
