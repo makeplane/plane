@@ -410,13 +410,14 @@ class IntakeIssueViewSet(BaseViewSet):
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
 
-            issue_data = {
-                "name": issue_data.get("name", issue.name),
-                "description_html": issue_data.get(
-                    "description_html", issue.description_html
-                ),
-                "description": issue_data.get("description", issue.description),
-            }
+            if project_member and project_member.role <= 5:
+                issue_data = {
+                    "name": issue_data.get("name", issue.name),
+                    "description_html": issue_data.get(
+                        "description_html", issue.description_html
+                    ),
+                    "description": issue_data.get("description", issue.description),
+                }
 
             current_instance = json.dumps(
                 IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
