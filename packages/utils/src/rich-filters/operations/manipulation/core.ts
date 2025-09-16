@@ -89,6 +89,10 @@ export const updateNodeInExpression = <P extends TFilterProperty>(
   // Helper function to recursively update nodes
   const updateNode = (node: TFilterExpression<P>): void => {
     if (node.id === targetId) {
+      if (!isConditionNode<P, TFilterValue>(node)) {
+        console.warn("updateNodeInExpression: targetId matched a group; ignoring updates");
+        return;
+      }
       Object.assign(node, updates);
       return;
     }

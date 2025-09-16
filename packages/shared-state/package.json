@@ -15,9 +15,9 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/constants": "workspace*",
-    "@plane/types": "workspace*",
-    "@plane/utils": "workspace*",
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/utils": "workspace:*",
     "lodash": "catalog:",
     "mobx": "catalog:",
     "mobx-utils": "catalog:",
