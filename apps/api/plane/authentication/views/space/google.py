@@ -14,7 +14,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.utils.path_validator import get_safe_redirect_url
+from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 
 class GoogleOauthInitiateSpaceEndpoint(View):
@@ -90,11 +90,8 @@ class GoogleCallbackSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
-            )
+            next_path = validate_next_path(next_path=next_path)
+            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
