@@ -1,5 +1,10 @@
+# Django imports
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
+
 # Python imports
 from urllib.parse import urlparse
+
 
 def _contains_suspicious_patterns(path: str) -> bool:
     """
@@ -36,6 +41,21 @@ def _contains_suspicious_patterns(path: str) -> bool:
             return True
     
     return False
+
+
+def get_allowed_hosts() -> list[str]:
+    """Get the allowed hosts from the settings."""
+    base_origin = settings.WEB_URL or settings.APP_BASE_URL
+    allowed_hosts = [base_origin]
+    if settings.ADMIN_BASE_URL:
+        # Get only the host
+        host = urlparse(settings.ADMIN_BASE_URL).netloc
+        allowed_hosts.append(host)
+    if settings.SPACE_BASE_URL:
+        # Get only the host
+        host = urlparse(settings.SPACE_BASE_URL).netloc
+        allowed_hosts.append(host)
+    return allowed_hosts
 
 
 def validate_next_path(next_path: str) -> str:
@@ -92,7 +112,14 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     base_url = base_url.rstrip('/')
     if params:
         encoded_params = urlencode(params)
-        return f"{base_url}/?next_path={validated_path}&{encoded_params}"
+        url = f"{base_url}/?next_path={validated_path}&{encoded_params}"
+    else:
+        url = f"{base_url}/?next_path={validated_path}"
 
-    return f"{base_url}/?next_path={validated_path}"
+    # Check if the URL is allowed
+    if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
+        return url
+    
+    # Return the base URL if the URL is not allowed
+    return base_url
     
