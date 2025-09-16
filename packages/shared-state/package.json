@@ -15,13 +15,21 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/utils": "workspace:*",
+    "lodash": "catalog:",
     "mobx": "catalog:",
+    "mobx-utils": "catalog:",
+    "uuid": "catalog:",
     "zod": "^3.22.2"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
+    "@types/lodash": "catalog:",
+    "@types/uuid": "catalog:",
     "typescript": "catalog:"
   }
 }
