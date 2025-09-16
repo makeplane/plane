@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urlencode
-
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -23,7 +20,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 
 class MagicGenerateSpaceEndpoint(APIView):
@@ -66,9 +63,11 @@ class MagicSignInSpaceEndpoint(View):
                 error_message="MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
 
         existing_user = User.objects.filter(email=email).first()
@@ -79,9 +78,11 @@ class MagicSignInSpaceEndpoint(View):
                 error_message="USER_DOES_NOT_EXIST",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
 
         # Active User
@@ -93,15 +94,17 @@ class MagicSignInSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            path = str(next_path) if next_path else ""
-            url = f"{base_host(request=request, is_space=True)}{path}"
+            next_path = validate_next_path(next_path=next_path)
+            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
 
 
@@ -120,9 +123,11 @@ class MagicSignUpSpaceEndpoint(View):
                 error_message="MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
         # Existing User
         existing_user = User.objects.filter(email=email).first()
@@ -133,9 +138,11 @@ class MagicSignUpSpaceEndpoint(View):
                 error_message="USER_ALREADY_EXIST",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
 
         try:
@@ -146,12 +153,15 @@ class MagicSignUpSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            next_path = validate_next_path(next_path=next_path)
+            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
