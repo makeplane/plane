@@ -62,7 +62,8 @@ def api_key_client(api_client, api_token):
 
 @pytest.fixture
 def session_client(api_client, create_user):
-    """Return a session authenticated API client for app API testing, which is what plane.app uses"""
+    """Return a session authenticated API client for app API testing, which
+    is what plane.app uses"""
     api_client.force_authenticate(user=create_user)
     return api_client
 

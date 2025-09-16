@@ -336,7 +336,10 @@ ORDER_BY_PARAMETER = OpenApiParameter(
         OpenApiExample(
             name="State group",
             value="state__group",
-            description="Order by state group (backlog, unstarted, started, completed, cancelled)",
+            description=(
+                "Order by state group (backlog, unstarted, started, "
+                "completed, cancelled)"
+            ),
         ),
         OpenApiExample(
             name="Assignee name",

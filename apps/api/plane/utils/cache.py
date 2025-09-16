@@ -58,7 +58,8 @@ def invalidate_cache_directly(
 ):
     if url_params and path:
         path_with_values = path
-        # Assuming `kwargs` could be passed directly if needed, otherwise, skip this part
+        # Assuming `kwargs` could be passed directly if needed, otherwise,
+        # skip this part
         for key, value in request.resolver_match.kwargs.items():
             path_with_values = path_with_values.replace(f":{key}", str(value))
         custom_path = path_with_values

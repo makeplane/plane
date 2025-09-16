@@ -8,7 +8,7 @@ from django.conf import settings
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiExample, OpenApiRequest, OpenApiTypes
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -106,7 +106,8 @@ class UserAssetEndpoint(BaseAPIView):
     def post(self, request):
         """Generate presigned URL for user asset upload.
 
-        Create a presigned URL for uploading user profile assets (avatar or cover image).
+        Create a presigned URL for uploading user profile assets (avatar or cover
+        image).
         This endpoint generates the necessary credentials for direct S3 upload.
         """
         # get the asset key
@@ -201,8 +202,10 @@ class UserAssetEndpoint(BaseAPIView):
     def patch(self, request, asset_id):
         """Update user asset after upload completion.
 
-        Update the asset status and attributes after the file has been uploaded to S3.
-        This endpoint should be called after completing the S3 upload to mark the asset as uploaded.
+        Update the asset status and attributes after the file has been uploaded to
+        S3.
+        This endpoint should be called after completing the S3 upload to mark the
+        asset as uploaded.
         """
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
@@ -361,7 +364,8 @@ class UserServerAssetEndpoint(BaseAPIView):
         """Update user server asset after upload completion.
 
         Update the asset status and attributes after the file has been uploaded to S3 using server credentials.
-        This endpoint should be called after completing the S3 upload to mark the asset as uploaded.
+        This endpoint should be called after completing the S3 upload to mark the
+        asset as uploaded.
         """
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)

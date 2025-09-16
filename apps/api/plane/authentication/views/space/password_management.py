@@ -120,7 +120,8 @@ class ResetPasswordSpaceEndpoint(View):
                     error_message="INVALID_PASSWORD_TOKEN",
                 )
                 params = exc.get_error_dict()
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(params)}"
+                base_url = base_host(request=request, is_space=True)
+                url = f"{base_url}/accounts/reset-password/?{urlencode(params)}"
                 return HttpResponseRedirect(url)
 
             password = request.POST.get("password", False)
@@ -130,7 +131,8 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
+                base_url = base_host(request=request, is_space=True)
+                url = f"{base_url}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
                 return HttpResponseRedirect(url)
 
             # Check the password complexity
@@ -140,7 +142,8 @@ class ResetPasswordSpaceEndpoint(View):
                     error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                     error_message="INVALID_PASSWORD",
                 )
-                url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
+                base_url = base_host(request=request, is_space=True)
+                url = f"{base_url}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"
                 return HttpResponseRedirect(url)
 
             # set_password also hashes the password that the user will get

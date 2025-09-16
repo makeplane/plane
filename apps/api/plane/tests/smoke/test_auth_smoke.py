@@ -27,7 +27,8 @@ class TestAuthSmoke:
         assert response.status_code != 404, "Authentication endpoint should exist"
 
         if response.status_code == 200:
-            # If API returns 200 for failures, check the response body for error indication
+            # If API returns 200 for failures, check the response body for
+            # error indication
             if hasattr(response, "json"):
                 try:
                     data = response.json()
@@ -57,7 +58,8 @@ class TestAuthSmoke:
 
         # Successful auth should not be a client error or server error
         assert response.status_code not in range(400, 600), (
-            f"Authentication with valid credentials failed with status {response.status_code}"
+            f"Authentication with valid credentials failed with status "
+            f"{response.status_code}"
         )
 
         # Specific validation based on response type

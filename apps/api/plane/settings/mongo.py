@@ -19,7 +19,8 @@ class MongoConnection:
     """
     A singleton class that manages MongoDB connections.
 
-    This class ensures only one MongoDB connection is maintained throughout the application.
+    This class ensures only one MongoDB connection is maintained throughout the
+    application.
     It provides methods to access the MongoDB client, database, and collections.
 
     Attributes:
@@ -47,7 +48,8 @@ class MongoConnection:
 
                 if not mongo_url or not mongo_db_database:
                     logger.warning(
-                        "MongoDB connection parameters not configured. MongoDB functionality will be disabled."
+                        "MongoDB connection parameters not configured. "
+                        "MongoDB functionality will be disabled."
                     )
                     return cls._instance
 
@@ -59,7 +61,8 @@ class MongoConnection:
                 logger.info("MongoDB connection established successfully")
             except Exception as e:
                 logger.warning(
-                    f"Failed to initialize MongoDB connection: {str(e)}. MongoDB functionality will be disabled."
+                    f"Failed to initialize MongoDB connection: {str(e)}. "
+                    f"MongoDB functionality will be disabled."
                 )
         return cls._instance
 
@@ -96,13 +99,15 @@ class MongoConnection:
             collection_name (str): The name of the collection to retrieve
 
         Returns:
-            Optional[Collection]: The MongoDB collection instance or None if not configured
+            Optional[Collection]: The MongoDB collection instance or None if
+            not configured
         """
         try:
             db = cls.get_db()
             if db is None:
                 logger.warning(
-                    f"Cannot access collection '{collection_name}': MongoDB not configured"
+                    f"Cannot access collection '{collection_name}': "
+                    f"MongoDB not configured"
                 )
                 return None
             return db[collection_name]

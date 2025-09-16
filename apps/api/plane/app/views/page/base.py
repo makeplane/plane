@@ -1,6 +1,5 @@
 # Python imports
 import json
-import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -164,7 +163,8 @@ class PageViewSet(BaseViewSet):
             ):
                 return Response(
                     {
-                        "error": "Access cannot be updated since this page is owned by someone else"
+                        "error": "Access cannot be updated since this page is owned by "
+                        "someone else"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -346,7 +346,8 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # if parent page is archived then the page will be un archived breaking the hierarchy
+        # if parent page is archived then the page will be un archived breaking
+        # the hierarchy
         if page.parent_id and page.parent.archived_at:
             page.parent = None
             page.save(update_fields=["parent"])

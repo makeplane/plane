@@ -155,7 +155,8 @@ class Workspace(BaseModel):
         self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any
     ):
         """
-        Override the delete method to append epoch timestamp to the slug when soft deleting.
+        Override the delete method to append epoch timestamp to the slug when
+        soft deleting.
 
         Args:
             using: The database alias to use for the deletion.

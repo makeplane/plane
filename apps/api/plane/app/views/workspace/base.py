@@ -39,9 +39,6 @@ from plane.db.models import (
     Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
@@ -393,7 +390,8 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         rows = [
             (
                 activity.actor.display_name,
-                f"{activity.project.identifier} - {activity.issue.sequence_id if activity.issue else ''}",
+                f"{activity.project.identifier} - "
+                f"{activity.issue.sequence_id if activity.issue else ''}",
                 activity.project.name,
                 activity.created_at,
                 activity.updated_at,

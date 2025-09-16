@@ -221,7 +221,8 @@ class GroupedOffsetPaginator(OffsetPaginator):
         self.group_by_field_name = group_by_field_name
         # Set the group by fields
         self.group_by_fields = group_by_fields
-        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
+        # Set the count filter - this are extra filters that need to be
+        # passed to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=50, cursor=None):
@@ -434,7 +435,8 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         self.sub_group_by_field_name = sub_group_by_field_name
         self.sub_group_by_fields = sub_group_by_fields
 
-        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
+        # Set the count filter - this are extra filters that need to be
+        # passed to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=30, cursor=None):

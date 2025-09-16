@@ -89,7 +89,8 @@ class GitLabCallbackSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # Process workspace and project invitations
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            base_url = base_host(request=request, is_space=True)
+            url = f"{base_url}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()

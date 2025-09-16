@@ -147,7 +147,8 @@ def get_analytics_filters(
         user: The current user
         type: The type of filter ("analytics" or "chart")
         date_filter: Optional date filter string
-        project_ids: Optional list of project IDs or comma-separated string of project IDs
+        project_ids: Optional list of project IDs or comma-separated string of
+        project IDs
 
     Returns:
         dict: A dictionary containing:

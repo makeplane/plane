@@ -369,11 +369,13 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                                 assignees__avatar_asset__isnull=False,
                                 then=Concat(
                                     Value("/api/assets/v2/static/"),
-                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or
+                                    # relevant field
                                     Value("/"),
                                 ),
                             ),
-                            # If `avatar_asset` is None, fall back to using `avatar` field directly
+                            # If `avatar_asset` is None, fall back to using `avatar` field
+                            # directly
                             When(
                                 assignees__avatar_asset__isnull=True,
                                 then="assignees__avatar",
@@ -480,11 +482,13 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or
+                                # relevant field
                                 Value("/"),
                             ),
                         ),
-                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        # If `avatar_asset` is None, fall back to using `avatar` field
+                        # directly
                         When(
                             assignees__avatar_asset__isnull=True,
                             then="assignees__avatar",

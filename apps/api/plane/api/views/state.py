@@ -4,7 +4,7 @@ from django.db import IntegrityError
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import StateSerializer

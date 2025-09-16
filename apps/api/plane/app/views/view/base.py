@@ -147,7 +147,8 @@ class WorkspaceViewViewSet(BaseViewSet):
 class WorkspaceViewIssuesViewSet(BaseViewSet):
     def _get_project_permission_filters(self):
         """
-        Get common project permission filters for guest users and role-based access control.
+        Get common project permission filters for guest users and role-based
+        access control.
         Returns Q object for filtering issues based on user role and project settings.
         """
         return Q(

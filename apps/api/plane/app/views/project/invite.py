@@ -64,7 +64,8 @@ class ProjectInvitationsViewset(BaseViewSet):
             if workspace_role in [5, 20] and workspace_role != email.get("role", 5):
                 return Response(
                     {
-                        "error": "You cannot invite a user with different role than workspace role"
+                        "error": "You cannot invite a user with different role than "
+                        "workspace role"
                     }
                 )
 
@@ -91,7 +92,8 @@ class ProjectInvitationsViewset(BaseViewSet):
             except ValidationError:
                 return Response(
                     {
-                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        "error": f"Invalid email - {email} provided a valid email address "
+                        f"is required to send the invite"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -234,7 +236,8 @@ class ProjectJoinEndpoint(BaseAPIView):
                     workspace_member.is_active = True
                     workspace_member.save()
 
-                # Check if the user was already a member of project then activate the user
+                # Check if the user was already a member of project then activate
+                # the user
                 project_member = ProjectMember.objects.filter(
                     workspace_id=project_invite.workspace_id, member=user
                 ).first()

@@ -37,7 +37,8 @@ class Command(BaseCommand):
         if workspace.deleted_at is None:
             self.stdout.write(
                 self.style.WARNING(
-                    f"Workspace '{workspace.name}' (slug: {workspace.slug}) is not deleted."
+                    f"Workspace '{workspace.name}' (slug: {workspace.slug}) "
+                    f"is not deleted."
                 )
             )
             return
@@ -46,7 +47,8 @@ class Command(BaseCommand):
         if "__" in workspace.slug and workspace.slug.split("__")[-1].isdigit():
             self.stdout.write(
                 self.style.WARNING(
-                    f"Workspace '{workspace.name}' (slug: {workspace.slug}) already has a timestamp appended."
+                    f"Workspace '{workspace.name}' (slug: {workspace.slug}) "
+                    f"already has a timestamp appended."
                 )
             )
             return
@@ -59,7 +61,8 @@ class Command(BaseCommand):
 
         if dry_run:
             self.stdout.write(
-                f"Would update workspace '{workspace.name}' slug from '{workspace.slug}' to '{new_slug}'"
+                f"Would update workspace '{workspace.name}' slug from "
+                f"'{workspace.slug}' to '{new_slug}'"
             )
         else:
             try:
@@ -68,7 +71,8 @@ class Command(BaseCommand):
                     workspace.save(update_fields=["slug"])
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f"Updated workspace '{workspace.name}' slug from '{workspace.slug}' to '{new_slug}'"
+                            f"Updated workspace '{workspace.name}' slug from "
+                            f"'{workspace.slug}' to '{new_slug}'"
                         )
                     )
             except Exception as e:

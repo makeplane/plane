@@ -61,7 +61,8 @@ class Command(BaseCommand):
                 )
             )
             with transaction.atomic():
-                # This ensures only one transaction per project can execute this code at a time
+                # This ensures only one transaction per project can execute this
+                # code at a time
                 lock_key = convert_uuid_to_integer(project.id)
 
                 # Acquire an exclusive lock using the project ID as the lock key

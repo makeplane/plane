@@ -27,7 +27,11 @@ class TestCopyS3Objects:
             name="Test Issue",
             workspace=workspace,
             project_id=project.id,
-            description_html=f'<div><image-component src="35e8b958-6ee5-43ce-ae56-fb0e776f421e"></image-component><image-component src="97988198-274f-4dfe-aa7a-4c0ffc684214"></image-component></div>',
+            description_html=(
+                '<div><image-component src="35e8b958-6ee5-43ce-ae56-'
+                'fb0e776f421e"></image-component><image-component src="'
+                '97988198-274f-4dfe-aa7a-4c0ffc684214"></image-component></div>'
+            ),
         )
 
     @pytest.fixture

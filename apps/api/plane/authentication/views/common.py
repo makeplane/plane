@@ -108,7 +108,8 @@ class SetUserPasswordEndpoint(APIView):
                 error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_ALREADY_SET"],
                 error_message="PASSWORD_ALREADY_SET",
                 payload={
-                    "error": "Your password is already set please change your password from profile"
+                    "error": "Your password is already set please change your password "
+                    "from profile"
                 },
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)

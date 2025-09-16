@@ -106,7 +106,8 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 from django.db import connection
 
                 print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
+                    f"{request.method} - {request.get_full_path()} of Queries: "
+                    f"{len(connection.queries)}"
                 )
 
             return response
@@ -191,7 +192,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 from django.db import connection
 
                 print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
+                    f"{request.method} - {request.get_full_path()} of Queries: "
+                    f"{len(connection.queries)}"
                 )
             return response
 

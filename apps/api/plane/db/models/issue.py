@@ -210,7 +210,8 @@ class Issue(ProjectBaseModel):
         if self._state.adding:
             with transaction.atomic():
                 # Create a lock for this specific project using an advisory lock
-                # This ensures only one transaction per project can execute this code at a time
+                # This ensures only one transaction per project can execute this
+                # code at a time
                 lock_key = convert_uuid_to_integer(self.project.id)
 
                 with connection.cursor() as cursor:
@@ -553,7 +554,8 @@ class IssueSequence(ProjectBaseModel):
         Issue,
         on_delete=models.SET_NULL,
         related_name="issue_sequence",
-        null=True,  # This is set to null because we want to keep the sequence even if the issue is deleted
+        null=True,  # This is set to null because we want to keep the sequence
+        # even if the issue is deleted
     )
     sequence = models.PositiveBigIntegerField(default=1, db_index=True)
     deleted = models.BooleanField(default=False)

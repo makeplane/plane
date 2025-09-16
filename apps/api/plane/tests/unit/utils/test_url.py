@@ -2,7 +2,6 @@ import pytest
 from plane.utils.url import (
     contains_url,
     is_valid_url,
-    get_url_components,
     normalize_url_path,
 )
 
@@ -103,7 +102,8 @@ class TestContainsURL:
 
     def test_contains_url_line_length_scenarios(self):
         """Test contains_url with realistic line length scenarios"""
-        # Test with multiline input where total is under 1000 but we test line processing
+        # Test with multiline input where total is under 1000 but we test
+        # line processing
         # Short lines with URL
         multiline_short = "Line 1\nLine 2 with https://example.com\nLine 3"
         assert contains_url(multiline_short) is True
@@ -118,7 +118,8 @@ class TestContainsURL:
     def test_contains_url_total_length_vs_line_length(self):
         """Test the interaction between total length limit and line processing"""
         # Test that total length limit takes precedence
-        # Even if individual lines would be processed, total > 1000 means immediate False
+        # Even if individual lines would be processed, total > 1000 means
+        # immediate False
         over_limit_text = "a" * 1001  # No URL, but over total limit
         assert contains_url(over_limit_text) is False
 

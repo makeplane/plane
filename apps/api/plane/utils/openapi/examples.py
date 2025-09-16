@@ -499,7 +499,9 @@ ISSUE_COMMENT_EXAMPLE = OpenApiExample(
     name="IssueComment",
     value={
         "id": "550e8400-e29b-41d4-a716-446655440000",
-        "comment_html": "<p>This issue has been resolved by implementing OAuth 2.0 flow.</p>",
+        "comment_html": (
+            "<p>This issue has been resolved by implementing OAuth 2.0 flow.</p>"
+        ),
         "comment_json": {
             "type": "doc",
             "content": [
@@ -508,7 +510,10 @@ ISSUE_COMMENT_EXAMPLE = OpenApiExample(
                     "content": [
                         {
                             "type": "text",
-                            "text": "This issue has been resolved by implementing OAuth 2.0 flow.",
+                            "text": (
+                                "This issue has been resolved by implementing "
+                                "OAuth 2.0 flow."
+                            ),
                         }
                     ],
                 }
@@ -551,7 +556,9 @@ ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE = OpenApiExample(
         "error": "The asset is not uploaded.",
         "status": False,
     },
-    description="Error when trying to download an attachment that hasn't been uploaded yet",
+    description=(
+        "Error when trying to download an attachment that hasn't been uploaded yet"
+    ),
 )
 
 # Intake Issue Response Examples
@@ -733,7 +740,10 @@ SAMPLE_STATE = {
 
 SAMPLE_COMMENT = {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "comment_html": "<p>This issue needs more investigation. I'll look into the database connection timeout.</p>",
+    "comment_html": (
+        "<p>This issue needs more investigation. I'll look into the "
+        "database connection timeout.</p>"
+    ),
     "created_at": "2024-01-15T14:20:00Z",
     "actor": {"id": "550e8400-e29b-41d4-a716-446655440002", "display_name": "John Doe"},
 }

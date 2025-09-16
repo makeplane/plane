@@ -79,7 +79,8 @@ class UserEndpoint(BaseViewSet):
         if InstanceAdmin.objects.filter(user=user).exists():
             return Response(
                 {
-                    "error": "You cannot deactivate your account since you are an instance admin"
+                    "error": "You cannot deactivate your account since you are an "
+                    "instance admin"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -107,7 +108,8 @@ class UserEndpoint(BaseViewSet):
             else:
                 return Response(
                     {
-                        "error": "You cannot deactivate account as you are the only admin in some projects."
+                        "error": "You cannot deactivate account as you are the only admin "
+                        "in some projects."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -132,7 +134,8 @@ class UserEndpoint(BaseViewSet):
             else:
                 return Response(
                     {
-                        "error": "You cannot deactivate account as you are the only admin in some workspaces."
+                        "error": "You cannot deactivate account as you are the only admin "
+                        "in some workspaces."
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

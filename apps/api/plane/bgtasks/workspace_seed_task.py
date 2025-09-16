@@ -76,7 +76,8 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
 
     if not project_seeds:
         logger.warning(
-            "Task: workspace_seed_task -> No project seeds found. Skipping project creation."
+            "Task: workspace_seed_task -> No project seeds found. "
+            "Skipping project creation."
         )
         return projects_map
 
@@ -235,7 +236,8 @@ def create_project_issues(
         for field in required_fields:
             if field not in issue_seed:
                 logger.error(
-                    f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed"
+                    f"Task: workspace_seed_task -> Required field '{field}' "
+                    f"missing in issue seed"
                 )
                 continue
 
@@ -318,6 +320,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         return
     except Exception as e:
         logger.error(
-            f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}"
+            f"Task: workspace_seed_task -> Failed to seed workspace "
+            f"{workspace_id}: {str(e)}"
         )
         raise e

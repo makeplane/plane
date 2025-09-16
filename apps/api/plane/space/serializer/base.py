@@ -22,7 +22,8 @@ class DynamicBaseSerializer(BaseSerializer):
         """
         Adjust the serializer's fields based on the provided 'fields' list.
 
-        :param fields: List or dictionary specifying which fields to include in the serializer.
+        :param fields: List or dictionary specifying which fields to include
+        in the serializer.
         :return: The updated fields for the serializer.
         """
         # Check each field_name in the provided fields.

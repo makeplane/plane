@@ -436,7 +436,7 @@ def webhook_activity(
 def model_activity(
     model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None
 ):
-    """Function takes in two json and computes differences between keys of both the json"""
+    """Function takes in two json and computes differences between keys of both the json."""
     if current_instance is None:
         webhook_activity.delay(
             event=model_name,
@@ -458,7 +458,8 @@ def model_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    # Loop through all keys in requested data and check the current value and requested value
+    # Loop through all keys in requested data and check the current value and
+    # requested value
     for key in requested_data:
         # Check if key is present in current instance or not
         if key in current_instance:

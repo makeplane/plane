@@ -26,7 +26,8 @@ class TestWorkspaceAPI:
     ):
         """Test creating a workspace with valid data"""
         url = reverse("workspace")
-        user = create_user  # Use the create_user fixture directly as it returns a user object
+        user = create_user  # Use the create_user fixture directly as it
+        # returns a user object
 
         # Test with valid data - include all required fields
         workspace_data = {
@@ -75,5 +76,6 @@ class TestWorkspaceAPI:
         # The API returns 400 BAD REQUEST for duplicate slugs, not 409 CONFLICT
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-        # Optionally check the error message to confirm it's related to the duplicate slug
+        # Optionally check the error message to confirm it's related to the
+        # duplicate slug
         assert "slug" in response.data

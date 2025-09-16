@@ -39,7 +39,8 @@ class ProjectMemberViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
-        # Get the list of members to be added to the project and their roles i.e. the user_id and the role
+        # Get the list of members to be added to the project and their roles
+        # i.e. the user_id and the role
         members = request.data.get("members", [])
 
         # get the project
@@ -69,7 +70,8 @@ class ProjectMemberViewSet(BaseViewSet):
             if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
                 return Response(
                     {
-                        "error": "You cannot add a user with role lower than the workspace role"
+                        "error": "You cannot add a user with role lower than the "
+                        "workspace role"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -77,12 +79,14 @@ class ProjectMemberViewSet(BaseViewSet):
             if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
                 return Response(
                     {
-                        "error": "You cannot add a user with role higher than the workspace role"
+                        "error": "You cannot add a user with role higher than the "
+                        "workspace role"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        # Update roles in the members array based on the member_roles dictionary and set is_active to True
+        # Update roles in the members array based on the member_roles dictionary
+        # and set is_active to True
         for project_member in ProjectMember.objects.filter(
             project_id=project_id,
             member_id__in=[member.get("member_id") for member in members],
@@ -253,7 +257,8 @@ class ProjectMemberViewSet(BaseViewSet):
         if str(project_member.id) == str(requesting_project_member.id):
             return Response(
                 {
-                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
+                    "error": "You cannot remove yourself from the workspace. Please use "
+                    "leave workspace"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -287,7 +292,9 @@ class ProjectMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin"
+                    "error": "You cannot leave the project as your the only admin of the "
+                    "project you will have to either delete the project or create an "
+                    "another admin"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

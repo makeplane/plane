@@ -304,7 +304,9 @@ class IssueCreateSerializer(BaseSerializer):
         if "description_binary" in data and data["description_binary"]:
             is_valid, error_msg = validate_binary_data(data["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
+                raise serializers.ValidationError(
+                    {"description_binary": "Invalid binary data"}
+                )
 
         return data
 

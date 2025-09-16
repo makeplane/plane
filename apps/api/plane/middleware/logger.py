@@ -22,7 +22,8 @@ class RequestLoggerMiddleware:
 
     def _should_log_route(self, request: Request | HttpRequest) -> bool:
         """
-        Determines whether a route should be logged based on the request and status code.
+        Determines whether a route should be logged based on the request and
+        status code.
         """
         # Don't log health checks
         if request.path == "/" and request.method == "GET":
@@ -136,6 +137,7 @@ class APITokenLogMiddleware:
 
             except Exception as e:
                 api_logger.exception(e)
-                # If the token does not exist, you can decide whether to log this as an invalid attempt
+                # If the token does not exist, you can decide whether to log
+                # this as an invalid attempt
 
         return None

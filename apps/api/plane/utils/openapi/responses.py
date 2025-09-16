@@ -221,7 +221,10 @@ EXTERNAL_ID_EXISTS_RESPONSE = OpenApiResponse(
         OpenApiExample(
             name="External ID Exists",
             value={
-                "error": "Resource with the same external id and external source already exists",
+                "error": (
+                    "Resource with the same external id and external source "
+                    "already exists"
+                ),
                 "id": "550e8400-e29b-41d4-a716-446655440000",
             },
         )

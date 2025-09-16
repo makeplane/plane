@@ -1,6 +1,5 @@
 import pytest
 from rest_framework import status
-from django.db import IntegrityError
 from uuid import uuid4
 
 from plane.db.models import Label, Project, ProjectMember
@@ -159,7 +158,10 @@ class TestLabelDetailAPIEndpoint:
 
     def get_label_detail_url(self, workspace_slug, project_id, label_id):
         """Helper to get label detail endpoint URL"""
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/labels/{label_id}/"
+        return (
+            f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/"
+            f"labels/{label_id}/"
+        )
 
     @pytest.mark.django_db
     def test_get_label_success(self, api_key_client, workspace, project, create_label):

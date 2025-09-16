@@ -113,7 +113,8 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             except ValidationError:
                 return Response(
                     {
-                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        "error": f"Invalid email - {email} provided a valid email address "
+                        f"is required to send the invite"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -185,7 +186,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
                 # If the user is present then create the workspace member
                 if user is not None:
-                    # Check if the user was already a member of workspace then activate the user
+                    # Check if the user was already a member of workspace then
+                    # activate the user
                     workspace_member = WorkspaceMember.objects.filter(
                         workspace=workspace_invite.workspace, member=user
                     ).first()
@@ -262,7 +264,8 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             pk__in=invitations, email=request.user.email
         ).order_by("-created_at")
 
-        # If the user is already a member of workspace and was deactivated then activate the user
+        # If the user is already a member of workspace and was deactivated then
+        # activate the user
         for invitation in workspace_invitations:
             invalidate_cache_directly(
                 path=f"/api/workspaces/{invitation.workspace.slug}/members/",

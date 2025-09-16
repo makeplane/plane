@@ -155,7 +155,8 @@ class ReadReplicaRoutingMiddleware:
         # provides extra protection specifically for view exceptions
         clear_read_replica_context()
         logger.debug(
-            f"Cleaned up read replica context due to exception: {type(exception).__name__}"
+            f"Cleaned up read replica context due to exception: "
+            f"{type(exception).__name__}"
         )
 
         # Return None to let the exception continue propagating

@@ -99,7 +99,8 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         if str(workspace_member.id) == str(requesting_workspace_member.id):
             return Response(
                 {
-                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
+                    "error": "You cannot remove yourself from the workspace. Please use "
+                    "leave workspace"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -126,7 +127,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."
+                    "error": "User is a part of some projects where they are the only "
+                    "admin, they should either leave that project or promote another "
+                    "user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -166,7 +169,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You cannot leave the workspace as you are the only admin of the workspace you will have to either delete the workspace or promote another user to admin."
+                    "error": "You cannot leave the workspace as you are the only admin of "
+                    "the workspace you will have to either delete the workspace or "
+                    "promote another user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -187,7 +192,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."
+                    "error": "You are a part of some projects where you are the only "
+                    "admin, you should either leave the project or promote another "
+                    "user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

@@ -8,7 +8,8 @@ from plane.utils.cache import invalidate_cache_directly
 
 
 def process_workspace_project_invitations(user):
-    """This function takes in User and adds him to all workspace and projects that the user has accepted invited of"""
+    """This function takes in User and adds him to all workspace and projects
+    that the user has accepted invited of"""
 
     # Check if user has any accepted invites for workspace and add them to workspace
     workspace_member_invites = WorkspaceMemberInvite.objects.filter(

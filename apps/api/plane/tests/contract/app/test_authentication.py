@@ -39,7 +39,10 @@ def setup_instance(db):
 def django_client():
     """Return a Django test client with User-Agent header for handling redirects"""
     client = Client(
-        HTTP_USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+        HTTP_USER_AGENT=(
+            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) "
+            "Gecko/20100101 Firefox/15.0.1"
+        )
     )
     return client
 
@@ -216,7 +219,8 @@ class TestSignInEndpoint:
         assert "error_code" not in response.url
 
         # In a real browser, the next_path would be used to build the absolute URL
-        # Since we're just testing the authentication logic, we won't check for the exact URL structure
+        # Since we're just testing the authentication logic, we won't check for
+        # the exact URL structure
         # Instead, just verify that we're authenticated
         assert "_auth_user_id" in django_client.session
 
@@ -291,7 +295,8 @@ class TestMagicSignIn:
         # Check that the token generation was successful
         assert response.status_code == status.HTTP_200_OK
 
-        # Since we're mocking the magic_link task, we need to manually get the token from Redis
+        # Since we're mocking the magic_link task, we need to manually get
+        # the token from Redis
         ri = redis_instance()
         user_data = json.loads(ri.get("magic_user@plane.so"))
         token = user_data["token"]
@@ -322,7 +327,8 @@ class TestMagicSignIn:
         # Check that the token generation was successful
         assert response.status_code == status.HTTP_200_OK
 
-        # Since we're mocking the magic_link task, we need to manually get the token from Redis
+        # Since we're mocking the magic_link task, we need to manually get
+        # the token from Redis
         ri = redis_instance()
         user_data = json.loads(ri.get("magic_user@plane.so"))
         token = user_data["token"]
@@ -407,7 +413,8 @@ class TestMagicSignUp:
         # Check that the token generation was successful
         assert response.status_code == status.HTTP_200_OK
 
-        # Since we're mocking the magic_link task, we need to manually get the token from Redis
+        # Since we're mocking the magic_link task, we need to manually get
+        # the token from Redis
         ri = redis_instance()
         user_data = json.loads(ri.get(f"magic_{email}"))
         token = user_data["token"]
@@ -443,7 +450,8 @@ class TestMagicSignUp:
         # Check that the token generation was successful
         assert response.status_code == status.HTTP_200_OK
 
-        # Since we're mocking the magic_link task, we need to manually get the token from Redis
+        # Since we're mocking the magic_link task, we need to manually get
+        # the token from Redis
         ri = redis_instance()
         user_data = json.loads(ri.get(f"magic_{email}"))
         token = user_data["token"]
@@ -460,7 +468,8 @@ class TestMagicSignUp:
         assert "error_code" not in response.url
 
         # In a real browser, the next_path would be used to build the absolute URL
-        # Since we're just testing the authentication logic, we won't check for the exact URL structure
+        # Since we're just testing the authentication logic, we won't check for
+        # the exact URL structure
 
         # Check if user was created
         assert User.objects.filter(email=email).exists()

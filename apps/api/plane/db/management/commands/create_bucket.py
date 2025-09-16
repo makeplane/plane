@@ -62,7 +62,8 @@ class Command(BaseCommand):
                 # Access to the bucket is forbidden
                 self.stdout.write(
                     self.style.ERROR(
-                        f"Access to the bucket '{bucket_name}' is forbidden. Check permissions."
+                        f"Access to the bucket '{bucket_name}' is forbidden. "
+                        f"Check permissions."
                     )
                 )
             else:

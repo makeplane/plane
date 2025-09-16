@@ -95,7 +95,8 @@ class SignInAuthSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to next path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            base_url = base_host(request=request, is_space=True)
+            url = f"{base_url}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
@@ -179,7 +180,8 @@ class SignUpAuthSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            base_url = base_host(request=request, is_space=True)
+            url = f"{base_url}{str(next_path) if next_path else ''}"
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()

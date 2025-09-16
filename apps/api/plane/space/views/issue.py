@@ -148,7 +148,8 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 if group_by == sub_group_by:
                     return Response(
                         {
-                            "error": "Group by and sub group by cannot have same parameters"
+                            "error": "Group by and sub group by cannot have same "
+                            "parameters"
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )

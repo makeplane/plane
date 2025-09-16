@@ -52,7 +52,8 @@ def mock_mongodb():
     """
     Mock MongoDB for testing without actual MongoDB connection.
 
-    This fixture patches PyMongo to return a MagicMock that behaves like a MongoDB client.
+    This fixture patches PyMongo to return a MagicMock that behaves like a
+    MongoDB client.
     """
     # Create mock MongoDB clients and collections
     mock_mongo_client = MagicMock()

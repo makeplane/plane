@@ -22,8 +22,10 @@ class SignOutAuthSpaceEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
+            base_url = base_host(request=request, is_space=True)
+            url = f"{base_url}{str(validate_next_path(next_path)) if next_path else ''}"
             return HttpResponseRedirect(url)
         except Exception:
-            url = f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
+            base_url = base_host(request=request, is_space=True)
+            url = f"{base_url}{str(validate_next_path(next_path)) if next_path else ''}"
             return HttpResponseRedirect(url)
