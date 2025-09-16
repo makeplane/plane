@@ -4,15 +4,14 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Crown, Info } from "lucide-react";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
-import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum, EUserWorkspaceRoles, TUserApplication } from "@plane/types";
 import { Button, cn, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
-import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
 
 // display app details like name, logo, description
@@ -32,10 +31,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
 
   // if app is internal check for it's feature flag
-  const isAppInternal = app.is_internal || false;
-  const appFeatureFlag = `${convertAppSlugToIntegrationKey(app.slug).toUpperCase()}_INTEGRATION` as E_FEATURE_FLAGS;
-  const isFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), appFeatureFlag);
-  if (!isFeatureFlagEnabled && isAppInternal) return null;
+  const isAppDefault = app.is_default || false;
 
   // derived values
   const showConfigureButton = app.is_default;
@@ -45,7 +41,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
 
   const handleConfigure = () => {
-    if (isAppInternal) {
+    if (isAppDefault) {
       router.push(`/${workspaceSlug}/settings/integrations/${app.slug}`);
     } else {
       if (!app.configuration_url) {
@@ -105,7 +101,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
               {(!isFreePlan || app.is_owned) && (
                 <div className="flex gap-1 items-center h-fit">
                   {/* Installed Badge */}
-                  {app.is_installed && (
+                  {app.is_installed && !app.is_default && (
                     <div className="px-2  text-xs font-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
                       {t("workspace_settings.settings.applications.installed")}
                     </div>
