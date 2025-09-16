@@ -47,10 +47,10 @@ export const AutomationDetailsMainContentTriggerCondition: React.FC<Props> = obs
           <section>
             {filter && (
               <div className="flex flex-col gap-y-2 items-start">
-                {filter.allConditions.map((condition, index) => (
+                {filter.allConditionsForDisplay.map((condition, index) => (
                   <div key={condition.id} className="flex flex-col gap-y-2 items-start">
                     <AutomationDetailsMainContentTriggerConditionItem filter={filter} condition={condition} />
-                    {index < filter.allConditions.length - 1 && (
+                    {index < filter.allConditionsForDisplay.length - 1 && (
                       <ConjunctionLabel text={t("automations.conjunctions.and")} />
                     )}
                   </div>

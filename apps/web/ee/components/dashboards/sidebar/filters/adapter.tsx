@@ -1,11 +1,11 @@
-import { toJS } from "mobx";
+import { FilterAdapter } from "@plane/shared-state";
 import {
-  COLLECTION_OPERATORS,
-  EQUALITY_OPERATORS,
+  COLLECTION_OPERATOR,
+  EQUALITY_OPERATOR,
   EXTERNAL_WIDGET_OPERATOR_SEPARATOR,
   LOGICAL_OPERATOR,
   SingleOrArray,
-  TAllOperators,
+  TSupportedOperators,
   TDashboardWidgetFilterKeys,
   TExternalDashboardWidgetFilterExpression,
   TExternalDashboardWidgetFilterExpressionData,
@@ -14,17 +14,25 @@ import {
   TInternalDashboardWidgetFilterExpression,
   TLogicalOperator,
 } from "@plane/types";
-import { isAndGroupNode, isConditionNode, isNotGroupNode, isOrGroupNode } from "@plane/utils";
-import { FilterAdapter } from "@/plane-web/store/rich-filters/adapter";
+import {
+  createAndGroupNode,
+  createConditionNode,
+  createNotGroupNode,
+  createOrGroupNode,
+  isAndGroupNode,
+  isConditionNode,
+  isNotGroupNode,
+  isOrGroupNode,
+} from "@plane/utils";
 
 export const createExternalFilterKey = (params: {
   property: string;
-  operator: TAllOperators;
+  operator: TSupportedOperators;
   value: TFilterValue;
 }): { [key: string]: TFilterValue } => {
   const { property, operator, value } = params;
 
-  const suffix = operator === COLLECTION_OPERATORS.IN ? EXTERNAL_WIDGET_OPERATOR_SEPARATOR + "in" : "";
+  const suffix = operator === COLLECTION_OPERATOR.IN ? EXTERNAL_WIDGET_OPERATOR_SEPARATOR + "in" : "";
   const externalKey = property + suffix;
 
   return {
@@ -57,11 +65,11 @@ export class DashboardWidgetFilterAdapter extends FilterAdapter<
     return {};
   }
 
-  private _getOperatorAndField(key: string): { operator: TAllOperators; key: string } {
-    const operator = key.split(EXTERNAL_WIDGET_OPERATOR_SEPARATOR)[1] || EQUALITY_OPERATORS.IS;
+  private _getOperatorAndField(key: string): { operator: TSupportedOperators; key: string } {
+    const operator = key.split(EXTERNAL_WIDGET_OPERATOR_SEPARATOR)[1] || EQUALITY_OPERATOR.EXACT;
     const field = key.split(EXTERNAL_WIDGET_OPERATOR_SEPARATOR)[0];
 
-    return { operator: operator as TAllOperators, key: field };
+    return { operator: operator as TSupportedOperators, key: field };
   }
 
   private _parseFilterValue(value: SingleOrArray<TFilterValue>): SingleOrArray<TFilterValue> {
@@ -80,13 +88,14 @@ export class DashboardWidgetFilterAdapter extends FilterAdapter<
   ): TInternalDashboardWidgetFilterExpression {
     const expressionOperator = Object.keys(expression)[0];
     if (!Object.values(LOGICAL_OPERATOR).includes(expressionOperator as TLogicalOperator)) {
+      // It's a condition node
       const { operator, key } = this._getOperatorAndField(expressionOperator);
       const value = expression[expressionOperator as keyof TExternalDashboardWidgetFilterExpressionData];
 
       // array values will be comma separated in the external filter
       const parsedValue = this._parseFilterValue(value);
 
-      return this._createConditionNode({
+      return createConditionNode({
         property: key as TDashboardWidgetFilterKeys,
         operator: operator,
         value: parsedValue,
@@ -98,21 +107,21 @@ export class DashboardWidgetFilterAdapter extends FilterAdapter<
       const conditions = expression[LOGICAL_OPERATOR.AND].map((item) =>
         this._convertExpressionToInternal(item as TExternalDashboardWidgetFilterExpressionData)
       );
-      return this._createGroupNode(LOGICAL_OPERATOR.AND, conditions);
+      return createAndGroupNode(conditions);
     }
 
     if (LOGICAL_OPERATOR.OR in expression) {
       const conditions = expression[LOGICAL_OPERATOR.OR].map((item) =>
         this._convertExpressionToInternal(item as TExternalDashboardWidgetFilterExpressionData)
       );
-      return this._createGroupNode(LOGICAL_OPERATOR.OR, conditions);
+      return createOrGroupNode(conditions);
     }
 
     if (LOGICAL_OPERATOR.NOT in expression) {
       const condition = this._convertExpressionToInternal(
         expression[LOGICAL_OPERATOR.NOT] as TExternalDashboardWidgetFilterExpressionData
       );
-      return this._createGroupNode(LOGICAL_OPERATOR.NOT, [condition]);
+      return createNotGroupNode(condition);
     }
 
     throw new Error("Invalid expression: unknown structure");

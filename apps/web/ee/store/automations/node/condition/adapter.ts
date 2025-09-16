@@ -1,4 +1,5 @@
 // plane imports
+import { FilterAdapter } from "@plane/shared-state";
 import {
   LOGICAL_OPERATOR,
   TAutomationConditionFilterExpressionData,
@@ -6,9 +7,16 @@ import {
   TAutomationConditionFilterProperty,
   TAutomationConditionFilterExpression,
 } from "@plane/types";
-import { isAndGroupNode, isOrGroupNode, isNotGroupNode, isConditionNode, isSingleValueOperator } from "@plane/utils";
-// local imports
-import { FilterAdapter } from "@/plane-web/store/rich-filters/adapter";
+import {
+  isAndGroupNode,
+  isOrGroupNode,
+  isNotGroupNode,
+  isConditionNode,
+  createConditionNode,
+  createAndGroupNode,
+  createOrGroupNode,
+  createNotGroupNode,
+} from "@plane/utils";
 
 class AutomationConditionFilterAdapter extends FilterAdapter<
   TAutomationConditionFilterProperty,
@@ -27,7 +35,7 @@ class AutomationConditionFilterAdapter extends FilterAdapter<
   ): TFilterExpression<TAutomationConditionFilterProperty> {
     // Check if it's a simple condition (has field property)
     if ("field" in expression) {
-      return this._createConditionNode({
+      return createConditionNode({
         property: expression.field,
         operator: expression.operator,
         value: expression.value,
@@ -37,17 +45,17 @@ class AutomationConditionFilterAdapter extends FilterAdapter<
     // It's a logical group - check which type
     if (LOGICAL_OPERATOR.AND in expression) {
       const conditions = expression[LOGICAL_OPERATOR.AND].map((item) => this._convertExpressionToInternal(item));
-      return this._createGroupNode(LOGICAL_OPERATOR.AND, conditions);
+      return createAndGroupNode(conditions);
     }
 
     if (LOGICAL_OPERATOR.OR in expression) {
       const conditions = expression[LOGICAL_OPERATOR.OR].map((item) => this._convertExpressionToInternal(item));
-      return this._createGroupNode(LOGICAL_OPERATOR.OR, conditions);
+      return createOrGroupNode(conditions);
     }
 
     if (LOGICAL_OPERATOR.NOT in expression) {
       const condition = this._convertExpressionToInternal(expression[LOGICAL_OPERATOR.NOT]);
-      return this._createGroupNode(LOGICAL_OPERATOR.NOT, [condition]);
+      return createNotGroupNode(condition);
     }
 
     throw new Error("Invalid expression: unknown structure");
@@ -71,10 +79,7 @@ class AutomationConditionFilterAdapter extends FilterAdapter<
       return {
         field: expression.property,
         operator: expression.operator,
-        value:
-          isSingleValueOperator(expression.operator) && Array.isArray(expression.value)
-            ? expression.value[0]
-            : expression.value,
+        value: expression.value,
       };
     } else {
       // It's a group node

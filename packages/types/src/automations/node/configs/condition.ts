@@ -1,4 +1,4 @@
-import { LOGICAL_OPERATOR, TAllOperators, TFilterValue } from "../../../rich-filters";
+import { LOGICAL_OPERATOR, TSupportedOperators, TFilterValue } from "../../../rich-filters";
 import { SingleOrArray } from "../../../utils";
 
 export type TAutomationConditionFilterProperty =
@@ -11,7 +11,7 @@ export type TAutomationConditionFilterProperty =
 
 export type TAutomationConditionFilterData = {
   field: TAutomationConditionFilterProperty;
-  operator: TAllOperators;
+  operator: TSupportedOperators;
   value: SingleOrArray<TFilterValue>;
 };
 

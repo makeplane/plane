@@ -544,12 +544,12 @@ export const formatDateRange = (
  */
 export const formatDuration = (seconds: number | undefined | null): string => {
   // Return "N/A" if seconds is not a valid number
-  if (!isNumber(seconds) || seconds === null || seconds === undefined || seconds < 0) {
+  if (seconds == null || typeof seconds !== "number" || !Number.isFinite(seconds) || seconds < 0) {
     return "N/A";
   }
 
   // If less than 1 second, show in ms (2 decimal places)
-  if (seconds < 1) {
+  if (seconds > 0 && seconds < 1) {
     const ms = seconds * 1000;
     return `${ms.toFixed(2)} ms`;
   }
@@ -579,3 +579,11 @@ export const formatDuration = (seconds: number | undefined | null): string => {
 
   return parts.join(" ");
 };
+
+/**
+ * Checks if a date is valid
+ * @param date The date to check
+ * @returns Whether the date is valid or not
+ */
+export const isValidDate = (date: unknown): date is string | Date =>
+  (typeof date === "string" || typeof date === "object") && date !== null && !isNaN(Date.parse(date as string));

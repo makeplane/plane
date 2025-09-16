@@ -1,31 +1,41 @@
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import type { IFilterInstance } from "@plane/shared-state";
 import type {
+  IFilterOption,
   TAutomationConditionFilterExpression,
   TAutomationConditionFilterProperty,
   TExternalFilter,
-  TFilterConditionNode,
+  TFilterConditionNodeForDisplay,
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
-import { getOperatorLabel } from "@plane/utils";
-// plane web imports
-import type { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 // local imports
-import { AutomationDetailsMainContentTriggerConditionItemValue } from "./condition-item-value";
+import { SelectedOptionsDisplay } from "@/components/rich-filters/filter-value-input/select/selected-options-display";
+import { loadOptions } from "@/components/rich-filters/filter-value-input/select/shared";
 
 interface FilterItemProps<K extends TFilterProperty, E extends TExternalFilter> {
   filter: IFilterInstance<K, E>;
-  condition: TFilterConditionNode<K, TFilterValue>;
+  condition: TFilterConditionNodeForDisplay<K, TFilterValue>;
 }
 
 export const AutomationDetailsMainContentTriggerConditionItem: React.FC<
   FilterItemProps<TAutomationConditionFilterProperty, TAutomationConditionFilterExpression>
 > = observer((props) => {
   const { filter, condition } = props;
+  // states
+  const [options, setOptions] = useState<IFilterOption<TFilterValue>[]>([]);
   // derived values
-  const config = condition?.property ? filter.configManager.getConfigById(condition.property) : undefined;
+  const config = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
+  const selectedOperatorFieldConfig = config?.getOperatorConfig(condition.operator);
+  const selectedOperatorOption = config?.getDisplayOperatorByValue(condition.operator, condition.value as TFilterValue);
   const isFilterEnabled = config?.isEnabled;
+
+  useEffect(() => {
+    if (!selectedOperatorFieldConfig) return;
+    loadOptions({ config: selectedOperatorFieldConfig, setOptions });
+  }, [selectedOperatorFieldConfig]);
 
   if (!isFilterEnabled) return null;
 
@@ -38,9 +48,10 @@ export const AutomationDetailsMainContentTriggerConditionItem: React.FC<
       )}
       <span className="shrink-0 truncate font-medium">{config.label}</span>
       <span className="shrink-0 font-mono p-0.5 bg-custom-background-80 uppercase rounded-sm font-medium">
-        {getOperatorLabel(condition.operator)}
+        {config.getLabelForOperator(selectedOperatorOption)}
       </span>
-      <AutomationDetailsMainContentTriggerConditionItemValue config={config} filter={condition} />
+      {/* TODO: Handle date values */}
+      <SelectedOptionsDisplay selectedValue={condition.value} options={options} displayCount={3} />
     </div>
   );
 });

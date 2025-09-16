@@ -2,9 +2,8 @@ import { ComponentType, useEffect, useRef } from "react";
 /**
  * plane imports
  */
-
+import { FilterInstance, IFilterInstance } from "@plane/shared-state";
 import { TDashboardWidget, TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression } from "@plane/types";
-import { FilterInstance, IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 /**
  * local imports
  */

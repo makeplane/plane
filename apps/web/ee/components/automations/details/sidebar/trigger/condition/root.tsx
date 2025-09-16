@@ -4,8 +4,8 @@ import { useTranslation } from "@plane/i18n";
 import { TAutomationConditionFilterExpression } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
-import { AddFilterButton } from "@/plane-web/components/rich-filters/add-filters-button";
-import { FilterItem } from "@/plane-web/components/rich-filters/filter-item";
+import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
+import { FilterItem } from "@/components/rich-filters/filter-item";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationConditionFilterHOC } from "./filter-provider";
@@ -40,12 +40,12 @@ export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = obs
             <div className="space-y-2 px-4">
               <p className="text-xs font-medium">{t("automations.condition.label")}</p>
               <div className="flex flex-col items-start">
-                {filter.allConditions.map((condition, index) => (
+                {filter.allConditionsForDisplay.map((condition, index) => (
                   <div key={condition.id} className="flex flex-col items-start">
                     <div className="w-fit">
                       <FilterItem filter={filter} condition={condition} showTransition={false} />
                     </div>
-                    {index < filter.allConditions.length - 1 && (
+                    {index < filter.allConditionsForDisplay.length - 1 && (
                       <div className="flex flex-col items-center">
                         <div className="h-2 border-l border-dashed border-custom-border-300" />
                         <span className="text-xs font-medium uppercase text-custom-text-400 px-2 py-0.5 bg-custom-background-80 rounded-sm">
@@ -58,7 +58,7 @@ export const AutomationDetailsSidebarTriggerConditionRoot: React.FC<Props> = obs
                 ))}
                 <div
                   className={cn("w-fit", {
-                    "pt-3": filter.allConditions.length > 0,
+                    "pt-3": filter.allConditionsForDisplay.length > 0,
                   })}
                 >
                   <AddFilterButton

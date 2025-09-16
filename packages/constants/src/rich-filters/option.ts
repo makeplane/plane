@@ -1,41 +1,63 @@
+import { TExternalFilter } from "@plane/types";
+
 /**
  * Filter config options.
- * - allowSameFilters: Whether to allow multiple filters of the same type.
  */
-export type TConfigOptions = {
-  allowSameFilters: boolean;
-};
+export type TConfigOptions = Record<string, unknown>;
 
 /**
  * Default filter config options.
- * - allowSameFilters: Whether to allow multiple filters of the same type.
  */
-export const DEFAULT_FILTER_CONFIG_OPTIONS: TConfigOptions = {
-  allowSameFilters: false,
+export const DEFAULT_FILTER_CONFIG_OPTIONS: TConfigOptions = {};
+
+/**
+ * Clear filter config.
+ */
+export type TClearFilterOptions = {
+  label?: string;
+  onFilterClear: () => void | Promise<void>;
+  isDisabled?: boolean;
+};
+
+/**
+ * Save view config.
+ */
+export type TSaveViewOptions<E extends TExternalFilter> = {
+  label?: string;
+  onViewSave: (expression: E) => void | Promise<void>;
+  isDisabled?: boolean;
+};
+
+/**
+ * Update view config.
+ */
+export type TUpdateViewOptions<E extends TExternalFilter> = {
+  label?: string;
+  hasAdditionalChanges?: boolean;
+  onViewUpdate: (expression: E) => void | Promise<void>;
+  isDisabled?: boolean;
 };
 
 /**
  * Filter expression options.
- * - trackChanges: Whether to track changes to the filter expression.
  */
-export type TExpressionOptions = {
-  trackChanges: boolean;
+export type TExpressionOptions<E extends TExternalFilter> = {
+  clearFilterOptions?: TClearFilterOptions;
+  saveViewOptions?: TSaveViewOptions<E>;
+  updateViewOptions?: TUpdateViewOptions<E>;
 };
 
 /**
  * Default filter expression options.
- * - trackChanges: Whether to track changes to the filter expression.
  */
-export const DEFAULT_FILTER_EXPRESSION_OPTIONS: TExpressionOptions = {
-  trackChanges: false,
-};
+export const DEFAULT_FILTER_EXPRESSION_OPTIONS: TExpressionOptions<TExternalFilter> = {};
 
 /**
  * Filter options.
  * - expression: Filter expression options.
  * - config: Filter config options.
  */
-export type TFilterOptions = {
-  expression: Partial<TExpressionOptions>;
+export type TFilterOptions<E extends TExternalFilter> = {
+  expression: Partial<TExpressionOptions<E>>;
   config: Partial<TConfigOptions>;
 };

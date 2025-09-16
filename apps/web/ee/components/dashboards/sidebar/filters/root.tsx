@@ -8,6 +8,7 @@ import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "
  */
 
 import { CycleGroupIcon, DiceIcon, PriorityIcon } from "@plane/propel/icons";
+import { IFilterInstance } from "@plane/shared-state";
 import {
   ICycle,
   IIssueLabel,
@@ -37,17 +38,15 @@ import {
  * local imports
  */
 
+import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
+import { FilterItem } from "@/components/rich-filters/filter-item";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
-
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
-import { AddFilterButton } from "@/plane-web/components/rich-filters/add-filters-button";
-import { FilterItem } from "@/plane-web/components/rich-filters/filter-item";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { IFilterInstance } from "@/plane-web/store/rich-filters/filter";
 import { withFilters } from "./with-filters";
 
 type Props = {
@@ -261,11 +260,11 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
       <section className="space-y-2 w-full overflow-auto">
         {filters && (
           <div className="flex flex-col items-start">
-            {filters.allConditions.map((condition, index) => (
+            {filters.allConditionsForDisplay.map((condition, index) => (
               <div key={condition.id} className="flex flex-col items-start">
                 <FilterItem filter={filters} condition={condition} showTransition={false} />
 
-                {index < filters.allConditions.length - 1 && (
+                {index < filters.allConditionsForDisplay.length - 1 && (
                   <div className="flex flex-col items-center">
                     <div className="h-2 border-l border-dashed border-custom-border-300" />
                     <span className="text-xs font-medium uppercase text-custom-text-400 px-2 py-0.5 bg-custom-background-80 rounded-sm">
@@ -278,7 +277,7 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
             ))}
             <div
               className={cn("w-fit", {
-                "pt-3": filters.allConditions.length > 0,
+                "pt-3": filters.allConditionsForDisplay.length > 0,
               })}
             >
               <AddFilterButton
