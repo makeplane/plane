@@ -1,3 +1,4 @@
+export * from "./activity";
 // enterprise
 export * from "./active-cycle";
 export * from "./activity";
