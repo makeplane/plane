@@ -374,9 +374,9 @@ class IntakeIssueViewSet(BaseViewSet):
             )
 
         # Only project members admins and created_by users can access this endpoint
-        if (project_member.role <= 5 or not is_workspace_admin) and str(
-            intake_issue.created_by_id
-        ) != str(request.user.id):
+        if (
+            (project_member and project_member.role <= 5) or not is_workspace_admin
+        ) and str(intake_issue.created_by_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot edit intake issues"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -409,15 +409,15 @@ class IntakeIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
-            # Only allow guests to edit name and description
-            if project_member.role <= 5 or is_workspace_admin:
-                issue_data = {
-                    "name": issue_data.get("name", issue.name),
-                    "description_html": issue_data.get(
-                        "description_html", issue.description_html
-                    ),
-                    "description": issue_data.get("description", issue.description),
-                }
+
+            issue_data = {
+                "name": issue_data.get("name", issue.name),
+                "description_html": issue_data.get(
+                    "description_html", issue.description_html
+                ),
+                "description": issue_data.get("description", issue.description),
+            }
+
             current_instance = json.dumps(
                 IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
             )
@@ -455,7 +455,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 )
 
         # Only project admins can edit intake issue attributes
-        if project_member.role > 15 or is_workspace_admin:
+        if (project_member and project_member.role > 15) or is_workspace_admin:
             serializer = IntakeIssueSerializer(
                 intake_issue, data=request.data, partial=True
             )
