@@ -1,20 +1,19 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
-  IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
   IssuePaginationOptions,
+  TWorkItemFilterExpression,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { IssueFiltersService } from "@/services/issue_filter.service";
@@ -37,11 +36,16 @@ export interface IArchivedIssuesFilter extends IBaseIssueFilterStore {
   getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
+  updateFilterExpression: (
+    workspaceSlug: string,
+    projectId: string,
+    filters: TWorkItemFilterExpression
+  ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 
@@ -102,8 +106,8 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.filters as IIssueFilterOptions,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters?.richFilters,
+      userFilters?.displayFilters,
       filteredParams
     );
 
@@ -128,7 +132,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
     const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.ARCHIVED, workspaceSlug, projectId, undefined);
 
-    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const richFilters: TWorkItemFilterExpression = _filters?.richFilters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
       ..._filters?.display_filters,
       sub_issue: true,
@@ -142,51 +146,57 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
     kanbanFilters.sub_group_by = _filters?.kanban_filters?.sub_group_by || [];
 
     runInAction(() => {
-      set(this.filters, [projectId, "filters"], filters);
+      set(this.filters, [projectId, "richFilters"], richFilters);
       set(this.filters, [projectId, "displayFilters"], displayFilters);
       set(this.filters, [projectId, "displayProperties"], displayProperties);
       set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
     });
   };
 
-  updateFilters = async (
-    workspaceSlug: string,
-    projectId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+  /**
+   * NOTE: This method is designed as a fallback function for the work item filter store.
+   * Only use this method directly when initializing filter instances.
+   * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
+   */
+  updateFilterExpression: IArchivedIssuesFilter["updateFilterExpression"] = async (
+    workspaceSlug,
+    projectId,
+    filters
   ) => {
     try {
-      if (isEmpty(this.filters) || isEmpty(this.filters[projectId]) || isEmpty(filters)) return;
+      runInAction(() => {
+        set(this.filters, [projectId, "richFilters"], filters);
+      });
+
+      this.rootIssueStore.archivedIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+      this.handleIssuesLocalFilters.set(
+        EIssuesStoreType.ARCHIVED,
+        EIssueFilterType.FILTERS,
+        workspaceSlug,
+        projectId,
+        undefined,
+        {
+          rich_filters: filters,
+        }
+      );
+    } catch (error) {
+      console.log("error while updating rich filters", error);
+      throw error;
+    }
+  };
+
+  updateFilters: IArchivedIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters) => {
+    try {
+      if (isEmpty(this.filters) || isEmpty(this.filters[projectId])) return;
 
       const _filters = {
-        filters: this.filters[projectId].filters as IIssueFilterOptions,
+        richFilters: this.filters[projectId].richFilters,
         displayFilters: this.filters[projectId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[projectId].kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS: {
-          const updatedFilters = filters as IIssueFilterOptions;
-          _filters.filters = { ..._filters.filters, ...updatedFilters };
-
-          runInAction(() => {
-            Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [projectId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-            });
-          });
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.archivedIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
-          this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
-            filters: _filters.filters,
-          });
-          break;
-        }
         case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };

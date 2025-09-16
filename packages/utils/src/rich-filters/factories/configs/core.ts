@@ -1,11 +1,11 @@
 // plane imports
 import {
   FILTER_FIELD_TYPE,
-  TFilterValue,
-  TFilterProperty,
-  TFilterConfig,
-  TSupportedOperators,
   TBaseFilterFieldConfig,
+  TFilterConfig,
+  TFilterProperty,
+  TFilterValue,
+  TSupportedOperators,
 } from "@plane/types";
 // local imports
 import {

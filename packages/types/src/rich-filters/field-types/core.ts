@@ -1,6 +1,6 @@
 import { TFilterValue } from "../expression";
 import { TSupportedOperators } from "../operators";
-import { TBaseFilterFieldConfig, IFilterOption } from "./shared";
+import { IFilterOption, TBaseFilterFieldConfig } from "./shared";
 
 /**
  * Core filter types
