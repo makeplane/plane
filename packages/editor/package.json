@@ -46,7 +46,6 @@
     "@plane/hooks": "workspace:*",
     "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
-    "@plane/propel": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tiptap/core": "^2.22.3",
