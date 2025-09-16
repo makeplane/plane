@@ -160,8 +160,6 @@ class MagicSignUpEndpoint(View):
                 error_message="USER_ALREADY_EXIST",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
                 next_path=next_path,

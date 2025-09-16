@@ -1,5 +1,3 @@
-from urllib.parse import urljoin, urlencode
-
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -106,7 +104,11 @@ class MagicSignInSpaceEndpoint(View):
             base_url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True), next_path=next_path
             )
-            url = urljoin(base_url, "?" + urlencode(params))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
+            )
             return HttpResponseRedirect(url)
 
 
