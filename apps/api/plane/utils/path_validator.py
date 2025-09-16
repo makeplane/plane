@@ -1,7 +1,6 @@
 # Python imports
 from urllib.parse import urlparse
 
-
 def _contains_suspicious_patterns(path: str) -> bool:
     """
     Check for suspicious patterns that might indicate malicious intent.
@@ -90,9 +89,10 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     validated_path = validate_next_path(next_path)
     
     # Add the next path to the parameters
-    if validated_path:
-        params["next_path"] = validated_path
+    base_url = base_url.rstrip('/')
+    if params:
+        encoded_params = urlencode(params)
+        return f"{base_url}/?next_path={validated_path}&{encoded_params}"
 
-    # Return the safe redirect URL
-    return f"{base_url.rstrip('/')}?{urlencode(params, quote_via=lambda s, safe, encoding, errors: quote(s, safe="/"))}"
+    return f"{base_url}/?next_path={validated_path}"
     
