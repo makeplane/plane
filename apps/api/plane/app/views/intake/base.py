@@ -28,6 +28,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     IssueDescriptionVersion,
+    WorkspaceMember,
 )
 from plane.app.serializers import (
     IssueCreateSerializer,
@@ -348,13 +349,20 @@ class IntakeIssueViewSet(BaseViewSet):
             project_id=project_id,
             intake_id=intake_id,
         )
-        # Get the project member
-        project_member = ProjectMember.objects.get(
+
+        project_member = ProjectMember.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             member=request.user,
             is_active=True,
-        )
+        ).first()
+
+        if project_member is None:
+            project_member = WorkspaceMember.objects.get(
+                workspace__slug=slug,
+                is_active=True,
+                member=request.user,
+            )
         # Only project members admins and created_by users can access this endpoint
         if project_member.role <= 5 and str(intake_issue.created_by_id) != str(
             request.user.id
