@@ -10,8 +10,8 @@ export const toFilterArray = <V extends TFilterValue>(value: SingleOrArray<V>): 
   }
 
   return Array.isArray(value)
-    ? (value.filter(Boolean) as NonNullable<V>[])
-    : ([value].filter(Boolean) as NonNullable<V>[]);
+    ? (value as NonNullable<V>[])
+    : ([value] as NonNullable<V>[]);
 };
 
 /**

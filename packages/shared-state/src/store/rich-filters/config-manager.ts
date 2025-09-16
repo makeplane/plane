@@ -168,6 +168,6 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
    * @returns The initialized config options.
    */
   private _initializeConfigOptions(options?: Partial<TConfigOptions>): TConfigOptions {
-    return DEFAULT_FILTER_CONFIG_OPTIONS ? { ...DEFAULT_FILTER_CONFIG_OPTIONS, ...options } : options;
+    return DEFAULT_FILTER_CONFIG_OPTIONS ? { ...DEFAULT_FILTER_CONFIG_OPTIONS, ...options } : options || {};
   }
 }

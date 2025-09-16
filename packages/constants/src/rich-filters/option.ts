@@ -3,7 +3,7 @@ import { TExternalFilter } from "@plane/types";
 /**
  * Filter config options.
  */
-export type TConfigOptions = unknown;
+export type TConfigOptions = Record<string, unknown>;
 
 /**
  * Default filter config options.

@@ -1102,13 +1102,13 @@ importers:
   packages/shared-state:
     dependencies:
       '@plane/constants':
-        specifier: workspace*
+        specifier: workspace:*
         version: link:../constants
       '@plane/types':
-        specifier: workspace*
+        specifier: workspace:*
         version: link:../types
       '@plane/utils':
-        specifier: workspace*
+        specifier: workspace:*
         version: link:../utils
       lodash:
         specifier: 'catalog:'
