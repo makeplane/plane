@@ -1,5 +1,3 @@
-from urllib.parse import urljoin, urlencode
-
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -103,10 +101,11 @@ class MagicSignInSpaceEndpoint(View):
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            base_url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True), next_path=next_path
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params,
             )
-            url = urljoin(base_url, "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
