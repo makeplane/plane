@@ -4,8 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import { StateGroupIcon } from "@plane/propel/icons";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import {
   IIssueFilterOptions,
   IIssueFilters,

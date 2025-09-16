@@ -21,7 +21,14 @@ type TTabListProps<TKey extends string> = {
   onTabChange?: (key: TKey) => void;
 };
 
-export const TabList = <TKey extends string>({ tabs, tabListClassName, tabClassName, size = "md", selectedTab, onTabChange }: TTabListProps<TKey>) => (
+export const TabList = <TKey extends string>({
+  tabs,
+  tabListClassName,
+  tabClassName,
+  size = "md",
+  selectedTab,
+  onTabChange,
+}: TTabListProps<TKey>) => (
   <Tab.List
     className={cn(
       "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60",

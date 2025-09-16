@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TAnalyticsTabsBase } from "@plane/types";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+import { TAnalyticsTabsBase } from "@plane/types";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";

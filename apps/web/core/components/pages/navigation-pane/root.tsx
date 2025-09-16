@@ -2,9 +2,9 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 // plane imports
-import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -106,10 +106,10 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (
           <Tabs
-        value={activeTab}
-        onValueChange={handleTabChange}
-        className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
-      >
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
+          >
             <PageNavigationPaneTabsList />
             <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
           </Tabs>
