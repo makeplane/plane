@@ -885,7 +885,8 @@
     "in_progress": "En progreso",
     "planned": "Planificado",
     "paused": "Pausado",
-    "no_of": "N.º de {entity}"
+    "no_of": "N.º de {entity}",
+    "resolved": "Resuelto"
   },
   "chart": {
     "x_axis": "Eje X",
@@ -919,6 +920,10 @@
     "add": {
       "success": "{entity} agregado correctamente",
       "failed": "Error al agregar {entity}"
+    },
+    "remove": {
+      "success": "{entity} eliminado correctamente",
+      "failed": "Error al eliminar {entity}"
     }
   },
   "epic": {
@@ -2488,7 +2493,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane no se inició. Esto podría deberse a que uno o más servicios de Plane fallaron al iniciar.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Selecciona View Logs desde setup.sh y los logs de Docker para estar seguro."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {

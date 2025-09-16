@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

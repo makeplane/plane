@@ -1,12 +1,12 @@
 import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
-// lib
-import { handleAuthentication } from "@/core/lib/authentication.js";
-// extensions
-import { getExtensions } from "@/core/extensions/index.js";
-import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 // editor types
 import { TUserDetails } from "@plane/editor";
+import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
+// extensions
+import { getExtensions } from "@/core/extensions/index.js";
+// lib
+import { handleAuthentication } from "@/core/lib/authentication.js";
 // types
 import { type HocusPocusServerContext } from "@/core/types/common.js";
 

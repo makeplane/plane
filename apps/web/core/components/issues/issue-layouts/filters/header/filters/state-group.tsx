@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 

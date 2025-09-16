@@ -146,7 +146,6 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
-              optionsClassName="w-full"
               input
             >
               {Object.keys(ROLE).map((item) => (

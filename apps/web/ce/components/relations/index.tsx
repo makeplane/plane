@@ -1,5 +1,5 @@
 import { CircleDot, CopyPlus, XCircle } from "lucide-react";
-import { RelatedIcon } from "@plane/ui";
+import { RelatedIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 import type { TIssueRelationTypes } from "../../types";
 

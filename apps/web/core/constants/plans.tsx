@@ -1,7 +1,7 @@
 import { Mail, MessageCircle } from "lucide-react";
+import { DiscordIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { DiscordIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 export type TPlanFeatureData = React.ReactNode | boolean | null;

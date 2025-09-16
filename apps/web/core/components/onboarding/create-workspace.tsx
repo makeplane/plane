@@ -268,7 +268,6 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-300 !shadow-none !rounded-md"
                   input
-                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>

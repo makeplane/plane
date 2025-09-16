@@ -8,6 +8,7 @@ import { Layers } from "lucide-react";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 // types
 import {
   EViewAccess,
@@ -18,13 +19,8 @@ import {
   EIssueLayoutTypes,
 } from "@plane/types";
 // ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
-import {
-  convertHexEmojiToDecimal,
-  getComputedDisplayFilters,
-  getComputedDisplayProperties,
-  getTabIndex,
-} from "@plane/utils";
+import { Button, Input, TextArea } from "@plane/ui";
+import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import {
@@ -163,7 +159,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
-            <EmojiIconPicker
+            <EmojiPicker
+              iconType="lucide"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
               className="flex items-center justify-center flex-shrink0"
@@ -179,13 +176,13 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   </>
                 </span>
               }
-              onChange={(val) => {
+              // TODO: fix types
+              onChange={(val: any) => {
                 let logoValue = {};
 
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 

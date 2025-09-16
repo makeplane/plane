@@ -293,7 +293,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       </div>
                                     }
                                     input
-                                    optionsClassName="w-full"
                                   >
                                     {Object.entries(
                                       checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))

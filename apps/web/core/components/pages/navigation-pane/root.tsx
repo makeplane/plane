@@ -5,17 +5,20 @@ import { ArrowRightCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
 import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
+import { type EPageStoreType } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
+import { INavigationPaneExtension } from "./types/extensions";
+
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
@@ -28,10 +31,14 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
+  // Generic extension system for additional navigation pane content
+  extensions?: INavigationPaneExtension[];
+  storeType: EPageStoreType;
 };
 
 export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
-  const { handleClose, isNavigationPaneOpen, page, versionHistory } = props;
+  const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
+
   // navigation
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,6 +49,22 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
     PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
   ) as TPageNavigationPaneTab | null;
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
+  const selectedIndex = PAGE_NAVIGATION_PANE_TAB_KEYS.indexOf(activeTab);
+
+  // Check if any extension is currently active based on query parameters
+  const ActiveExtension = extensions.find((extension) => {
+    const paneTabValue = searchParams.get(PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM);
+    const hasVersionParam = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
+
+    // Extension is active ONLY when paneTab matches AND no regular navigation params are present
+    return paneTabValue === extension.triggerParam && !hasVersionParam;
+  });
+
+  // Don't show tabs when an extension is active
+  const showNavigationTabs = !ActiveExtension && isNavigationPaneOpen;
+
+  // Use extension width if available, otherwise fall back to default
+  const paneWidth = ActiveExtension?.width ?? PAGE_NAVIGATION_PANE_WIDTH;
   // translation
   const { t } = useTranslation();
 
@@ -60,10 +83,10 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
 
   return (
     <aside
-      className="flex-shrink-0 h-full flex flex-col bg-custom-background-100 pt-3.5 border-l border-custom-border-200 transition-all duration-300 ease-in-out"
+      className="flex-shrink-0 h-full flex flex-col bg-custom-background-100 pt-3.5 border-l border-custom-border-200 transition-all duration-300 ease-out"
       style={{
-        width: `${PAGE_NAVIGATION_PANE_WIDTH}px`,
-        marginRight: isNavigationPaneOpen ? "0px" : `-${PAGE_NAVIGATION_PANE_WIDTH}px`,
+        width: `${paneWidth}px`,
+        marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
       }}
     >
       <div className="mb-3.5 px-3.5">
@@ -78,14 +101,21 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
           </button>
         </Tooltip>
       </div>
-      <Tabs
+
+      <div className="flex-1 flex flex-col overflow-hidden animate-slide-in-right">
+        {ActiveExtension ? (
+          <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
+        ) : showNavigationTabs ? (
+          <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
         className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
       >
-        <PageNavigationPaneTabsList />
-        <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
-      </Tabs>
+            <PageNavigationPaneTabsList />
+            <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
+          </Tabs>
+        ) : null}
+      </div>
     </aside>
   );
 });

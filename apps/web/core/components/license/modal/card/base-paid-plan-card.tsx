@@ -19,7 +19,6 @@ export type TBasePaidPlanCardProps = {
   extraFeatures?: string | React.ReactNode;
   renderPriceContent: (price: TSubscriptionPrice) => React.ReactNode;
   renderActionButton: (price: TSubscriptionPrice) => React.ReactNode;
-  isSelfHosted: boolean;
 };
 
 export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => {
@@ -31,11 +30,10 @@ export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => 
     extraFeatures,
     renderPriceContent,
     renderActionButton,
-    isSelfHosted,
   } = props;
   // states
   const [selectedPlan, setSelectedPlan] = useState<TBillingFrequency>("month");
-  const basePlan = getBaseSubscriptionName(planVariant, isSelfHosted);
+  const basePlan = getBaseSubscriptionName(planVariant);
   const upgradeCardVariantStyle = getUpgradeCardVariantStyle(planVariant);
   // Plane details
   const planeName = getSubscriptionName(planVariant);

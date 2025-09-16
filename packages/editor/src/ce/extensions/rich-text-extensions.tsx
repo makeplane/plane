@@ -6,7 +6,7 @@ import { IEditorProps, TExtensions } from "@/types";
 
 export type TRichTextEditorAdditionalExtensionsProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "extendedEditorProps"
 >;
 
 /**

@@ -20,6 +20,7 @@ export const useEditor = (props: TEditorHookProps) => {
     editorClassName = "",
     editorProps = {},
     enableHistory,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
@@ -54,9 +55,10 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
-          editable,
           disabledExtensions,
+          editable,
           enableHistory,
+          extendedEditorProps,
           fileHandler,
           flaggedExtensions,
           isTouchDevice,

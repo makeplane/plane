@@ -2,9 +2,10 @@
 
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IApiToken } from "@plane/types";
 // ui
-import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers
 // types

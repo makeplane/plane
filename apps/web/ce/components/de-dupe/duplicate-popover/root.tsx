@@ -18,15 +18,6 @@ type TDeDupeIssuePopoverRootProps = {
 };
 
 export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    rootIssueId,
-    issues,
-    issueOperations,
-    disabled = false,
-    renderDeDupeActionModals = true,
-    isIntakeIssue = false,
-  } = props;
+  const {} = props;
   return <></>;
 });

@@ -1,8 +1,6 @@
-/** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["@plane/eslint-config/library.js"],
-  parser: "@typescript-eslint/parser",
+  extends: ["@plane/eslint-config/library.js", "plugin:storybook/recommended"],
   rules: {
     "import/order": [
       "warn",

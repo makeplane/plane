@@ -59,9 +59,10 @@ class IssueSearchEndpoint(BaseAPIView):
         )
 
         related_issue_ids = [item for sublist in related_issue_ids for item in sublist]
+        related_issue_ids.append(issue_id)
 
         if issue:
-            issues = issues.filter(~Q(pk=issue_id), ~Q(pk__in=related_issue_ids))
+            issues = issues.exclude(pk__in=related_issue_ids)
 
         return issues
 

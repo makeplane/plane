@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 

@@ -29,7 +29,6 @@ export enum EIssuesStoreType {
   TEAM_VIEW = "TEAM_VIEW",
   PROJECT_VIEW = "PROJECT_VIEW",
   ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
   EPIC = "EPIC",
@@ -70,6 +69,7 @@ export type TBaseIssue = {
 
   is_draft: boolean;
   is_epic?: boolean;
+  is_intake?: boolean;
 };
 
 export type IssueRelation = {

@@ -6,10 +6,12 @@ import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 import { renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
@@ -132,7 +134,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               projectId={projectId}
                               textContainerClassName="text-xs text-custom-text-200"
                             />
-                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>

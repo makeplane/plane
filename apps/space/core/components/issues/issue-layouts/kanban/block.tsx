@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
+import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueDisplayProperties } from "@plane/types";
 // plane ui
-import { Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components

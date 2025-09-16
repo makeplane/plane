@@ -1,7 +1,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value, QuerySet
+from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 
 # Module imports
@@ -14,6 +14,9 @@ from plane.db.models import (
     ProjectMember,
     State,
     WorkspaceMember,
+    IssueAssignee,
+    ModuleIssue,
+    IssueLabel,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
 
@@ -39,33 +42,52 @@ def issue_queryset_grouper(
         if group_key in GROUP_FILTER_MAPPER:
             queryset = queryset.filter(GROUP_FILTER_MAPPER[group_key])
 
+    issue_assignee_subquery = Subquery(
+        IssueAssignee.objects.filter(
+            issue_id=OuterRef("pk"),
+            deleted_at__isnull=True,
+        )
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+        .values("arr")
+    )
+
+    issue_module_subquery = Subquery(
+        ModuleIssue.objects.filter(
+            issue_id=OuterRef("pk"),
+            deleted_at__isnull=True,
+            module__archived_at__isnull=True,
+        )
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("module_id", distinct=True))
+        .values("arr")
+    )
+
+    issue_label_subquery = Subquery(
+        IssueLabel.objects.filter(issue_id=OuterRef("pk"), deleted_at__isnull=True)
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("label_id", distinct=True))
+        .values("arr")
+    )
+
     annotations_map: Dict[str, Tuple[str, Q]] = {
-        "assignee_ids": (
-            "assignees__id",
-            ~Q(assignees__id__isnull=True) & Q(issue_assignee__deleted_at__isnull=True),
+        "assignee_ids": Coalesce(
+            issue_assignee_subquery, Value([], output_field=ArrayField(UUIDField()))
         ),
-        "label_ids": (
-            "labels__id",
-            ~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True),
+        "label_ids": Coalesce(
+            issue_label_subquery, Value([], output_field=ArrayField(UUIDField()))
         ),
-        "module_ids": (
-            "issue_module__module_id",
-            (
-                ~Q(issue_module__module_id__isnull=True)
-                & Q(issue_module__module__archived_at__isnull=True)
-                & Q(issue_module__deleted_at__isnull=True)
-            ),
+        "module_ids": Coalesce(
+            issue_module_subquery, Value([], output_field=ArrayField(UUIDField()))
         ),
     }
 
-    default_annotations: Dict[str, Any] = {
-        key: Coalesce(
-            ArrayAgg(field, distinct=True, filter=condition),
-            Value([], output_field=ArrayField(UUIDField())),
-        )
-        for key, (field, condition) in annotations_map.items()
-        if FIELD_MAPPER.get(key) != group_by or FIELD_MAPPER.get(key) != sub_group_by
-    }
+    default_annotations: Dict[str, Any] = {}
+
+    for key, expression in annotations_map.items():
+        if FIELD_MAPPER.get(key) in {group_by, sub_group_by}:
+            continue
+        default_annotations[key] = expression
 
     return queryset.annotate(**default_annotations)
 
