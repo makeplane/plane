@@ -367,7 +367,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 role=ROLE.ADMIN.value,
             ).exists()
 
-        if not project_member or not is_workspace_admin:
+        if not project_member and not is_workspace_admin:
             return Response(
                 {"error": "Only admin or creator can update the intake work items"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -375,7 +375,7 @@ class IntakeIssueViewSet(BaseViewSet):
 
         # Only project members admins and created_by users can access this endpoint
         if (
-            (project_member and project_member.role <= 5) or not is_workspace_admin
+            (project_member and project_member.role <= 5) and not is_workspace_admin
         ) and str(intake_issue.created_by_id) != str(request.user.id):
             return Response(
                 {"error": "You cannot edit intake issues"},
