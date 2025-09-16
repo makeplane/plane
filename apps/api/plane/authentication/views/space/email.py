@@ -1,11 +1,9 @@
-# Python imports
-from urllib.parse import urlencode
-
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
+from django.utils.http import url_has_allowed_host_and_scheme
 
 # Module imports
 from plane.authentication.provider.credentials.email import EmailProvider
@@ -17,7 +15,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 
 
 class SignInAuthSpaceEndpoint(View):
@@ -32,9 +30,11 @@ class SignInAuthSpaceEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         # set the referer as session to redirect after login
@@ -51,9 +51,11 @@ class SignInAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         # Validate email
@@ -67,9 +69,11 @@ class SignInAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         # Existing User
@@ -82,9 +86,11 @@ class SignInAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         try:
@@ -95,13 +101,19 @@ class SignInAuthSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to next path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params={}
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
 
@@ -117,9 +129,11 @@ class SignUpAuthSpaceEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         email = request.POST.get("email", False)
@@ -135,9 +149,11 @@ class SignUpAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
         # Validate the email
         email = email.strip().lower()
@@ -151,9 +167,11 @@ class SignUpAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         # Existing User
@@ -166,9 +184,11 @@ class SignUpAuthSpaceEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)
 
         try:
@@ -179,11 +199,17 @@ class SignUpAuthSpaceEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
-            return HttpResponseRedirect(url)
+            next_path = validate_next_path(next_path=next_path)
+            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
+            if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
+                return HttpResponseRedirect(url)
+            else:
+                return HttpResponseRedirect(base_host(request=request, is_space=True))
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_space=True),
+                next_path=next_path,
+                params=params
+            )
             return HttpResponseRedirect(url)

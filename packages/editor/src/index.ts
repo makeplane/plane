@@ -18,3 +18,6 @@ export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 // types
 export * from "@/types";
+
+// additional exports
+export { TrailingNode } from "./core/extensions/trailing-node";

@@ -181,7 +181,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     )}
                   </span>
                 }
-                optionsClassName="w-full"
               >
                 {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
                   workspaceProjectIds.map((projectId) => {

@@ -18,7 +18,7 @@ import {
   TProjectMembership,
 } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";
@@ -118,7 +118,11 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    */
   protected getProjectRole = computedFn((workspaceSlug: string, projectId: string): EUserPermissions | undefined => {
     if (!workspaceSlug || !projectId) return undefined;
-    return this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId] || undefined;
+    const projectRole = this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
+    if (!projectRole) return undefined;
+    const workspaceRole = this.workspaceUserInfo?.[workspaceSlug]?.role;
+    if (workspaceRole === EUserWorkspaceRoles.ADMIN) return EUserPermissions.ADMIN;
+    else return projectRole;
   });
 
   /**

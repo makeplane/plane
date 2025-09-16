@@ -1,6 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { Button } from "@plane/ui";
-import { LockedComponent } from "../icons/locked-component";
 
 type Props = {
   isLocked: boolean;
@@ -14,16 +13,8 @@ type Props = {
 };
 
 export const UpdateViewComponent = (props: Props) => {
-  const {
-    isLocked,
-    areFiltersEqual,
-    isOwner,
-    isAuthorizedUser,
-    setIsModalOpen,
-    handleUpdateView,
-    lockedTooltipContent,
-    trackerElement,
-  } = props;
+  const { isLocked, areFiltersEqual, isOwner, isAuthorizedUser, setIsModalOpen, handleUpdateView, trackerElement } =
+    props;
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -54,24 +45,19 @@ export const UpdateViewComponent = (props: Props) => {
 
   return (
     <div className="flex gap-2 h-fit">
-      {isLocked ? (
-        <LockedComponent toolTipContent={lockedTooltipContent} />
-      ) : (
-        !areFiltersEqual &&
-        isAuthorizedUser && (
-          <>
-            <Button
-              variant="outline-primary"
-              size="md"
-              className="flex-shrink-0"
-              data-ph-element={trackerElement}
-              onClick={() => setIsModalOpen(true)}
-            >
-              Save as
-            </Button>
-            {isOwner && <>{updateButton}</>}
-          </>
-        )
+      {!isLocked && !areFiltersEqual && isAuthorizedUser && (
+        <>
+          <Button
+            variant="outline-primary"
+            size="md"
+            className="flex-shrink-0"
+            data-ph-element={trackerElement}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Save as
+          </Button>
+          {isOwner && <>{updateButton}</>}
+        </>
       )}
     </div>
   );

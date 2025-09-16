@@ -2,40 +2,36 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// plane imports
-import { API_BASE_URL } from "@plane/constants";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 // layouts
+import { Button } from "@plane/ui";
+import { useAppRouter } from "@/hooks/use-app-router";
 import DefaultLayout from "@/layouts/default-layout";
 // images
 import maintenanceModeDarkModeImage from "@/public/instance/maintenance-mode-dark.svg";
 import maintenanceModeLightModeImage from "@/public/instance/maintenance-mode-light.svg";
-// services
-import { AuthService } from "@/services/auth.service";
 
-// services
-const authService = new AuthService();
+const linkMap = [
+  {
+    key: "mail_to",
+    label: "Contact Support",
+    value: "mailto:support@plane.so",
+  },
+  {
+    key: "status",
+    label: "Status Page",
+    value: "https://status.plane.so/",
+  },
+  {
+    key: "twitter_handle",
+    label: "@planepowers",
+    value: "https://x.com/planepowers",
+  },
+];
 
 export default function CustomErrorComponent() {
-  // routers
-  const router = useAppRouter();
   // hooks
   const { resolvedTheme } = useTheme();
-
-  const handleSignOut = async () => {
-    await authService
-      .signOut(API_BASE_URL)
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
-        })
-      )
-      .finally(() => router.push("/"));
-  };
+  const router = useAppRouter();
 
   // derived values
   const maintenanceModeImage = resolvedTheme === "dark" ? maintenanceModeDarkModeImage : maintenanceModeLightModeImage;
@@ -55,33 +51,32 @@ export default function CustomErrorComponent() {
         <div className="w-full relative flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-2.5">
             <h1 className="text-xl font-semibold text-custom-text-100 text-left">
-              &#x1F6A7; Yikes! That doesn&apos;t look good.
+              &#x1F6A7; Looks like something went wrong!
             </h1>
             <span className="text-base font-medium text-custom-text-200 text-left">
-              That crashed Plane, pun intended. No worries, though. Our engineers have been notified. If you have more
-              details, please write to{" "}
-              <a href="mailto:support@plane.so" className="text-custom-primary">
-                support@plane.so
-              </a>{" "}
-              or on our{" "}
-              <a
-                href="https://discord.com/invite/A92xrEGCge"
-                target="_blank"
-                className="text-custom-primary"
-                rel="noopener noreferrer"
-              >
-                Discord
-              </a>
-              .
+              We track these errors automatically and working on getting things back up and running. If the problem
+              persists feel free to contact us. In the meantime, try refreshing.
             </span>
           </div>
 
-          <div className="flex items-center justify-start gap-2">
+          <div className="flex items-center justify-start gap-6 mt-1">
+            {linkMap.map((link) => (
+              <div key={link.key}>
+                <a
+                  href={link.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-custom-primary-100 hover:underline text-sm"
+                >
+                  {link.label}
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-start gap-6">
             <Button variant="primary" size="md" onClick={() => router.push("/")}>
               Go to home
-            </Button>
-            <Button variant="neutral-primary" size="md" onClick={handleSignOut}>
-              Sign out
             </Button>
           </div>
         </div>
