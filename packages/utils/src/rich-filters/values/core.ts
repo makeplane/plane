@@ -9,9 +9,7 @@ export const toFilterArray = <V extends TFilterValue>(value: SingleOrArray<V>): 
     return [];
   }
 
-  return Array.isArray(value)
-    ? (value as NonNullable<V>[])
-    : ([value] as NonNullable<V>[]);
+  return Array.isArray(value) ? (value as NonNullable<V>[]) : ([value] as NonNullable<V>[]);
 };
 
 /**
