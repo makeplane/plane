@@ -1093,6 +1093,9 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         )
 
         cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
+        cycle_properties.rich_filters = request.data.get(
+            "rich_filters", cycle_properties.rich_filters
+        )
         cycle_properties.display_filters = request.data.get(
             "display_filters", cycle_properties.display_filters
         )
