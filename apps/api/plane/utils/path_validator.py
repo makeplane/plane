@@ -48,9 +48,13 @@ def get_allowed_hosts() -> list[str]:
     base_origin = settings.WEB_URL or settings.APP_BASE_URL
     allowed_hosts = [base_origin]
     if settings.ADMIN_BASE_URL:
-        allowed_hosts.append(settings.ADMIN_BASE_URL)
+        # Get only the host
+        host = urlparse(settings.ADMIN_BASE_URL).netloc
+        allowed_hosts.append(host)
     if settings.SPACE_BASE_URL:
-        allowed_hosts.append(settings.SPACE_BASE_URL)
+        # Get only the host
+        host = urlparse(settings.SPACE_BASE_URL).netloc
+        allowed_hosts.append(host)
     return allowed_hosts
 
 
