@@ -10,13 +10,13 @@ export type TabContent = {
   content: React.ReactNode;
 };
 
-export type TabItem<TKey = string> = TabListItem<TKey> & TabContent;
+export type TabItem = TabListItem & TabContent;
 
-type TTabsProps<TTabs extends TabItem<string>[]> = {
-  tabs: TTabs;
+type TTabsProps = {
+  tabs: TabItem[];
   storageKey?: string;
   actions?: React.ReactNode;
-  defaultTab?: TTabs[number]["key"];
+  defaultTab?: string;
   containerClassName?: string;
   tabListContainerClassName?: string;
   tabListClassName?: string;
@@ -26,7 +26,7 @@ type TTabsProps<TTabs extends TabItem<string>[]> = {
   storeInLocalStorage?: boolean;
 };
 
-export const Tabs = <TTabs extends TabItem<string>[]>(props: TTabsProps<TTabs>) => {
+export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
   const {
     tabs,
     storageKey,

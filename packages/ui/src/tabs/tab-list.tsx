@@ -4,32 +4,33 @@ import React, { FC } from "react";
 // helpers
 import { cn } from "../utils";
 
-export type TabListItem<TKey = string> = {
-  key: TKey;
+export type TabListItem = {
+  key: string;
   icon?: FC<LucideProps>;
   label?: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
 };
 
-type TTabListProps<TKey extends string> = {
-  tabs: TabListItem<TKey>[];
+type TTabListProps = {
+  tabs: TabListItem[];
   tabListClassName?: string;
   tabClassName?: string;
   size?: "sm" | "md" | "lg";
-  selectedTab?: TKey;
-  onTabChange?: (key: TKey) => void;
+  selectedTab?: string;
+  onTabChange?: (key: string) => void;
 };
 
-export const TabList = <TKey extends string>({
+export const TabList: FC<TTabListProps> = ({
   tabs,
   tabListClassName,
   tabClassName,
   size = "md",
   selectedTab,
   onTabChange,
-}: TTabListProps<TKey>) => (
+}) => (
   <Tab.List
+    as="div"
     className={cn(
       "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60",
       tabListClassName

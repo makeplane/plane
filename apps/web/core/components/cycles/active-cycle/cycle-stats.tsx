@@ -79,8 +79,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     </Loader>
   );
 
-  const handleTabChange = (value: string) => {
-    setTab(value as TActiveCycleStatsTab);
+  const handleTabChange = (value: TActiveCycleStatsTab) => {
+    setTab(value);
   };
 
   return cycleId ? (
