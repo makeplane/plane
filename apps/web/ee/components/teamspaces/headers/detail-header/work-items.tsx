@@ -1,15 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-// plane constants
-// components
 import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web imports
 import { TeamspaceProjectWorkItemFilters } from "@/plane-web/components/teamspaces/projects/filters";
-import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 type TeamspaceProjectDetailHeaderActionsProps = {
   teamspaceId: string;
@@ -23,9 +21,6 @@ export const TeamspaceProjectDetailHeaderActions = observer((props: TeamspacePro
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { getTeamspaceProjectIds } = useTeamspaces();
-  // derived values
-  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
 
   if (!workspaceSlug) return;
 
@@ -42,7 +37,7 @@ export const TeamspaceProjectDetailHeaderActions = observer((props: TeamspacePro
         <Button
           data-ph-element={TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_WORK_ITEM_BUTTON}
           onClick={() => {
-            toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
+            toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);
           }}
           size="sm"
         >

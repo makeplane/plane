@@ -1,4 +1,5 @@
 # Python imports
+import copy
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
@@ -56,6 +57,8 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
@@ -91,22 +94,12 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
-    def get(self, request, slug, user_id):
-        filters = issue_filters(request.query_params, "GET")
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
-        order_by_param = request.GET.get("order_by", "-created_at")
-        issue_queryset = (
-            Issue.issue_objects.filter(
-                Q(assignees__in=[user_id])
-                | Q(created_by_id=user_id)
-                | Q(issue_subscribers__subscriber_id=user_id),
-                workspace__slug=slug,
-            )
-            .accessible_to(request.user.id, slug)
-            .filter(**filters)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+    def apply_annotations(self, issues):
+        return (
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -134,8 +127,31 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .order_by("created_at")
-        ).distinct()
+            .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+
+    def get(self, request, slug, user_id):
+        filters = issue_filters(request.query_params, "GET")
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+        issue_queryset = Issue.issue_objects.filter(
+            Q(assignees__in=[user_id])
+            | Q(created_by_id=user_id)
+            | Q(issue_subscribers__subscriber_id=user_id),
+            workspace__slug=slug,
+        ).accessible_to(request.user.id, slug)
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Apply annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -156,7 +172,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 if group_by == sub_group_by:
                     return Response(
                         {
-                            "error": "Group by and sub group by cannot have same parameters"
+                            "error": "Group by and sub group by cannot have same parameters"  # noqa: E501
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
@@ -165,15 +181,22 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
-                            field=group_by, slug=slug, filters=filters
+                            field=group_by,
+                            slug=slug,
+                            filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
-                            field=sub_group_by, slug=slug, filters=filters
+                            field=sub_group_by,
+                            slug=slug,
+                            filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -192,12 +215,16 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
-                        field=group_by, slug=slug, filters=filters
+                        field=group_by,
+                        slug=slug,
+                        filters=filters,
+                        queryset=total_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -214,6 +241,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
@@ -230,6 +258,9 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
 
         workspace_properties.filters = request.data.get(
             "filters", workspace_properties.filters
+        )
+        workspace_properties.rich_filters = request.data.get(
+            "rich_filters", workspace_properties.rich_filters
         )
         workspace_properties.display_filters = request.data.get(
             "display_filters", workspace_properties.display_filters

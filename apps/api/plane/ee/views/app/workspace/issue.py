@@ -5,9 +5,9 @@ import json
 from django.utils import timezone
 from django.views.decorators.gzip import gzip_page
 from django.utils.decorators import method_decorator
-from django.db.models import Count, F, Subquery, OuterRef, Prefetch, Q, Func
+from django.db.models import Prefetch, Q
 
-
+# Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -27,9 +27,14 @@ from plane.db.models import (
     Issue,
     IssueRelation,
 )
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class WorkspaceIssueDetailEndpoint(BaseAPIView):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
     def _get_project_permission_filters(self):
         """
         Get common project permission filters for guest users and role-based access control.
@@ -101,9 +106,11 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
             return "-created_at"
 
     def get_queryset(self):
+        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
+
+    def apply_annotations(self, issues):
         return (
-            Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("state")
+            issues.select_related("state")
             .prefetch_related(
                 Prefetch(
                     "issue_assignee",
@@ -134,16 +141,24 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
+        queryset = self.get_queryset()
+
+        # Apply filtering from filterset
+        queryset = self.filter_queryset(queryset)
+
         # Validate the order_by_param
         order_by_param = self._validate_order_by_field(order_by_param)
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = queryset.filter(**filters)
 
         # Get common project permission filters
         permission_filters = self._get_project_permission_filters()
 
         # Apply project permission filters to the issue queryset
         issue_queryset = issue_queryset.filter(permission_filters)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         # Add additional prefetch based on expand parameter
         if self.expand:

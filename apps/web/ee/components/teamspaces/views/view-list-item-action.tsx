@@ -11,7 +11,6 @@ import {
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles, EViewAccess, TTeamspaceView } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
-import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
@@ -43,7 +42,6 @@ export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
-  const totalFilters = calculateTotalFilters(view.filters ?? {});
   const access = view.access;
   const isFavoriteOperationAllowed = false; // TODO: Favorite operation is not supported for teamspace views right now
 
@@ -90,10 +88,6 @@ export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
 
   return (
     <>
-      <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
-        {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
-      </p>
-
       <div className="cursor-default text-custom-text-300">
         <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
           {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}

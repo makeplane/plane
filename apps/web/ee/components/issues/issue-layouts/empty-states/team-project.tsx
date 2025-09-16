@@ -1,50 +1,47 @@
-import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
+// plane imports
 import {
-  EIssueFilterType,
   EUserPermissionsLevel,
   TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
   TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
-// types
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EUserWorkspaceRoles, IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
+// helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web imports
-import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   // router
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId } = useParams();
+  const {
+    workspaceSlug: routerWorkspaceSlug,
+    projectId: routerProjectId,
+    teamspaceId: routerTeamspaceId,
+  } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { issuesFilter } = useIssues(EIssuesStoreType.TEAM);
   const { allowPermissions } = useUserPermissions();
-  const { getTeamspaceProjectIds } = useTeamspaces();
   // derived values
-  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
-  const userFilters = issuesFilter?.issueFilters?.filters;
+  const teamspaceProjectWorkItemFilter = projectId
+    ? useWorkItemFilterInstance(EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, projectId)
+    : undefined;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-  const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
+  const additionalPath = teamspaceProjectWorkItemFilter?.hasActiveFilters ? (activeLayout ?? "list") : undefined;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -58,20 +55,15 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   });
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !teamspaceId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
-    });
-    issuesFilter
-      .updateFilters(workspaceSlug.toString(), teamspaceId.toString(), EIssueFilterType.FILTERS, {
-        ...newFilters,
-      })
+    if (!teamspaceProjectWorkItemFilter || !teamspaceId || !projectId) return;
+    teamspaceProjectWorkItemFilter
+      .clearFilters()
       .then(() => {
         captureSuccess({
           eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
           payload: {
-            teamspace_id: teamspaceId.toString(),
+            teamspace_id: teamspaceId,
+            project_id: projectId,
           },
         });
       })
@@ -79,17 +71,18 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
         captureError({
           eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
           payload: {
-            teamspace_id: teamspaceId.toString(),
+            teamspace_id: teamspaceId,
+            project_id: projectId,
           },
         });
       });
   };
 
-  if (!workspaceSlug || !teamspaceId) return null;
+  if (!workspaceSlug || !teamspaceId || !projectId) return null;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      {issueFilterCount > 0 ? (
+      {teamspaceProjectWorkItemFilter?.hasActiveFilters ? (
         <DetailedEmptyState
           title={t("teamspace_work_items.empty_state.work_items_empty_filter.title")}
           description={t("teamspace_work_items.empty_state.work_items_empty_filter.description")}
@@ -102,7 +95,7 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
               });
               handleClearAllFilters();
             },
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceProjectWorkItemFilter,
           }}
         />
       ) : (
@@ -119,7 +112,7 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
                 captureClick({
                   elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
                 });
-                toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
+                toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);
               }}
               disabled={!hasWorkspaceMemberLevelPermissions}
             />

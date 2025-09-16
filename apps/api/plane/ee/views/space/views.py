@@ -1,3 +1,6 @@
+# Python imports
+import copy
+
 # Django imports
 from django.db.models import F, Q, Prefetch, OuterRef, Func
 
@@ -31,6 +34,8 @@ from plane.ee.serializers import ViewsPublicSerializer, ViewsPublicMetaSerialize
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class ViewsMetaDataEndpoint(BaseAPIView):
@@ -94,6 +99,44 @@ class ViewsPublicEndpoint(BaseAPIView):
 
 class IssueViewsPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def apply_annotations(self, issue_queryset):
+        return (
+            issue_queryset.annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    issue_id=OuterRef("id"),
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
+            )
+        )
 
     def get(self, request, anchor):
         # Get the deploy board object
@@ -118,46 +161,21 @@ class IssueViewsPublicEndpoint(BaseAPIView):
             order_by_param = request.GET.get("order_by", "-created_at")
 
             issue_queryset = (
-                Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
-                .filter(**view.query)
-                .select_related("workspace", "project", "state", "parent")
-                .prefetch_related("assignees", "labels", "issue_module__module")
-                .prefetch_related(
-                    Prefetch(
-                        "issue_reactions",
-                        queryset=IssueReaction.objects.select_related("actor"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "votes", queryset=IssueVote.objects.select_related("actor")
-                    )
-                )
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=FileAsset.objects.filter(
-                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                        issue_id=OuterRef("id"),
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(cycle_id=F("issue_cycle__cycle_id"))
+                Issue.issue_objects.filter(
+                    workspace__slug=slug, project_id=project_id
+                ).filter(**view.query)
             ).distinct()
 
+            # Apply filtering from filterset
+            issue_queryset = self.filter_queryset(issue_queryset)
+
+            # Apply legacy filters
             issue_queryset = issue_queryset.filter(**filters)
+            # Total count queryset
+            total_issue_queryset = copy.deepcopy(issue_queryset)
+
+            # Applying annotations to the issue queryset
+            issue_queryset = self.apply_annotations(issue_queryset)
 
             # Issue queryset
             issue_queryset, order_by_param = order_issue_queryset(
@@ -187,6 +205,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                             request=request,
                             order_by=order_by_param,
                             queryset=issue_queryset,
+                            total_count_queryset=total_issue_queryset,
                             on_results=lambda issues: issue_on_results(
                                 group_by=group_by,
                                 issues=issues,
@@ -222,6 +241,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -247,6 +267,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                     order_by=order_by_param,
                     request=request,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),

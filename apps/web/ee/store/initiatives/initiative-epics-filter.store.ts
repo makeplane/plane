@@ -6,16 +6,20 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  IIssueFilters,
+  ISubWorkItemFilters,
   TIssue,
 } from "@plane/types";
-import { getFilteredWorkItems, getGroupedWorkItemIds, updateFilters } from "@/store/issue/helpers/base-issues-utils";
+import {
+  getFilteredWorkItems,
+  getGroupedWorkItemIds,
+  updateSubWorkItemFilters,
+} from "@/store/issue/helpers/base-issues-utils";
 import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
 import { InitiativeEpicStore } from "./initiative-epics.store";
 
 export interface IInitiativeEpicsFilterStore {
-  initiativeEpicsFiltersMap: Record<string, Partial<IIssueFilters>>;
-  getInitiativeEpicsFiltersById: (initiativeId: string) => Partial<IIssueFilters> | undefined;
+  initiativeEpicsFiltersMap: Record<string, Partial<ISubWorkItemFilters>>;
+  getInitiativeEpicsFiltersById: (initiativeId: string) => Partial<ISubWorkItemFilters> | undefined;
   updateEpicsFilters: (
     workspaceSlug: string,
     filterType: EIssueFilterType,
@@ -30,7 +34,7 @@ export interface IInitiativeEpicsFilterStore {
 }
 
 export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
-  initiativeEpicsFiltersMap: Record<string, Partial<IIssueFilters>> = {};
+  initiativeEpicsFiltersMap: Record<string, Partial<ISubWorkItemFilters>> = {};
   initiativeEpicStore: InitiativeEpicStore;
 
   constructor(initiativeEpicStore: InitiativeEpicStore) {
@@ -83,7 +87,7 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
     initiativeId: string
   ) => {
     runInAction(() => {
-      updateFilters(this.initiativeEpicsFiltersMap, filterType, filters, initiativeId);
+      updateSubWorkItemFilters(this.initiativeEpicsFiltersMap, filterType, filters, initiativeId);
     });
   };
 

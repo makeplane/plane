@@ -25,130 +25,7 @@ from plane.payment.flags.flag_decorator import (
     check_feature_flag,
     check_workspace_feature_flag,
 )
-from plane.utils.filters.complex_filter import ComplexFilterBackend
-
-
-class DashboardWidgetIssueFilterSet(FilterSet):
-    # Custom filter methods to handle soft delete exclusion for relations
-
-    assignee_id = filters.UUIDFilter(method="filter_assignee_id")
-    assignee_id__in = filters.UUIDFilter(method="filter_assignee_id_in")
-
-    cycle_id = filters.UUIDFilter(method="filter_cycle_id")
-    cycle_id__in = filters.UUIDFilter(method="filter_cycle_id_in")
-
-    module_id = filters.UUIDFilter(method="filter_module_id")
-    module_id__in = filters.UUIDFilter(method="filter_module_id_in")
-
-    mention_id = filters.UUIDFilter(method="filter_mention_id")
-    mention_id__in = filters.UUIDFilter(method="filter_mention_id_in")
-
-    label_id = filters.UUIDFilter(method="filter_label_id")
-    label_id__in = filters.UUIDFilter(method="filter_label_id_in")
-
-    # Direct field lookups remain the same
-    created_by_id = filters.UUIDFilter(field_name="created_by_id", lookup_expr="exact")
-    created_by_id__in = filters.UUIDFilter(field_name="created_by_id", lookup_expr="in")
-
-    is_archived = filters.BooleanFilter(method="filter_is_archived")
-
-    state_group = filters.CharFilter(field_name="state__group", lookup_expr="exact")
-    state_group__in = filters.CharFilter(field_name="state__group", lookup_expr="in")
-
-    class Meta:
-        model = Issue
-        fields = {
-            "state_id": ["exact", "in"],
-            "type_id": ["exact", "in"],
-            "created_by_id": ["exact", "in"],
-            "start_date": ["exact", "gte", "lte", "range"],
-            "target_date": ["exact", "gte", "lte", "range"],
-            "is_draft": ["exact"],
-            "priority": ["exact", "in"],
-        }
-
-    def filter_is_archived(self, queryset, name, value):
-        """
-        Convenience filter: archived=true -> archived_at is not null,
-        archived=false -> archived_at is null
-        """
-        if value in (True, "true", "True", 1, "1"):
-            return queryset.filter(archived_at__isnull=False)
-        if value in (False, "false", "False", 0, "0"):
-            return queryset.filter(archived_at__isnull=True)
-        return queryset
-
-    # Filter methods with soft delete exclusion for relations
-
-    def filter_assignee_id(self, queryset, name, value):
-        """Filter by assignee ID, excluding soft deleted users"""
-        return queryset.filter(
-            issue_assignee__assignee_id=value,
-            issue_assignee__deleted_at__isnull=True,
-        )
-
-    def filter_assignee_id_in(self, queryset, name, value):
-        """Filter by assignee IDs (in), excluding soft deleted users"""
-        return queryset.filter(
-            issue_assignee__assignee_id__in=value,
-            issue_assignee__deleted_at__isnull=True,
-        )
-
-    def filter_cycle_id(self, queryset, name, value):
-        """Filter by cycle ID, excluding soft deleted cycles"""
-        return queryset.filter(
-            issue_cycle__cycle_id=value,
-            issue_cycle__deleted_at__isnull=True,
-        )
-
-    def filter_cycle_id_in(self, queryset, name, value):
-        """Filter by cycle IDs (in), excluding soft deleted cycles"""
-        return queryset.filter(
-            issue_cycle__cycle_id__in=value,
-            issue_cycle__deleted_at__isnull=True,
-        )
-
-    def filter_module_id(self, queryset, name, value):
-        """Filter by module ID, excluding soft deleted modules"""
-        return queryset.filter(
-            issue_module__module_id=value,
-            issue_module__deleted_at__isnull=True,
-        )
-
-    def filter_module_id_in(self, queryset, name, value):
-        """Filter by module IDs (in), excluding soft deleted modules"""
-        return queryset.filter(
-            issue_module__module_id__in=value,
-            issue_module__deleted_at__isnull=True,
-        )
-
-    def filter_mention_id(self, queryset, name, value):
-        """Filter by mention ID, excluding soft deleted users"""
-        return queryset.filter(
-            issue_mention__mention_id=value,
-            issue_mention__deleted_at__isnull=True,
-        )
-
-    def filter_mention_id_in(self, queryset, name, value):
-        """Filter by mention IDs (in), excluding soft deleted users"""
-        return queryset.filter(
-            issue_mention__mention_id__in=value,
-            issue_mention__deleted_at__isnull=True,
-        )
-
-    def filter_label_id(self, queryset, name, value):
-        """Filter by label ID, excluding soft deleted labels"""
-        return queryset.filter(
-            label_issue__label_id=value,
-            label_issue__deleted_at__isnull=True,
-        )
-
-    def filter_label_id_in(self, queryset, name, value):
-        """Filter by label IDs (in), excluding soft deleted labels"""
-        return queryset.filter(
-            label_issue__label_id__in=value,
-            label_issue__deleted_at__isnull=True,
-        )
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 
 
 class WidgetEndpoint(BaseAPIView):
@@ -230,7 +107,7 @@ class WidgetEndpoint(BaseAPIView):
 
 
 class WidgetListEndpoint(BaseAPIView):
-    filterset_class = DashboardWidgetIssueFilterSet
+    filterset_class = IssueFilterSet
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")

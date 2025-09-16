@@ -1,25 +1,25 @@
-import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
+// plane imports
 import {
-  EIssueFilterType,
   EUserPermissionsLevel,
   TEAMSPACE_VIEW_TRACKER_ELEMENTS,
   TEAMSPACE_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
-// types
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EUserWorkspaceRoles, IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
+// helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 export const TeamViewEmptyState: React.FC = observer(() => {
@@ -36,15 +36,12 @@ export const TeamViewEmptyState: React.FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { getTeamspaceProjectIds } = useTeamspaces();
   // derived values
+  const teamspaceViewWorkItemFilter = viewId
+    ? useWorkItemFilterInstance(EIssuesStoreType.TEAM_VIEW, viewId)
+    : undefined;
   const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
-  const userFilters = issuesFilter?.issueFilters?.filters;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-  const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
+  const additionalPath = teamspaceViewWorkItemFilter?.hasActiveFilters ? (activeLayout ?? "list") : undefined;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -58,27 +55,15 @@ export const TeamViewEmptyState: React.FC = observer(() => {
   });
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !teamspaceId || !viewId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
-    });
-    issuesFilter
-      .updateFilters(
-        workspaceSlug,
-        teamspaceId,
-        EIssueFilterType.FILTERS,
-        {
-          ...newFilters,
-        },
-        viewId
-      )
+    if (!teamspaceViewWorkItemFilter || !teamspaceId || !viewId) return;
+    teamspaceViewWorkItemFilter
+      .clearFilters()
       .then(() => {
         captureSuccess({
           eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.EMPTY_STATE_CLEAR_WORK_ITEM_FILTERS,
           payload: {
-            teamspace_id: teamspaceId.toString(),
-            view_id: viewId.toString(),
+            teamspace_id: teamspaceId,
+            view_id: viewId,
           },
         });
       })
@@ -86,8 +71,8 @@ export const TeamViewEmptyState: React.FC = observer(() => {
         captureError({
           eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.EMPTY_STATE_CLEAR_WORK_ITEM_FILTERS,
           payload: {
-            teamspace_id: teamspaceId.toString(),
-            view_id: viewId.toString(),
+            teamspace_id: teamspaceId,
+            view_id: viewId,
           },
         });
       });
@@ -97,7 +82,7 @@ export const TeamViewEmptyState: React.FC = observer(() => {
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      {issueFilterCount > 0 ? (
+      {teamspaceViewWorkItemFilter?.hasActiveFilters ? (
         <DetailedEmptyState
           title={t("teamspace_work_items.empty_state.work_items_empty_filter.title")}
           description={t("teamspace_work_items.empty_state.work_items_empty_filter.description")}
@@ -110,7 +95,7 @@ export const TeamViewEmptyState: React.FC = observer(() => {
               });
               handleClearAllFilters();
             },
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceViewWorkItemFilter,
           }}
         />
       ) : (

@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions, ILayoutDisplayFiltersOptions, IState } from "@plane/types";
+import { IIssueFilterOptions, IState } from "@plane/types";
 import { cn } from "@plane/utils";
 import {
   FilterAssignees,
@@ -21,20 +21,19 @@ type TSubIssueFiltersProps = {
   filters: IIssueFilterOptions;
   memberIds: string[] | undefined;
   states?: IState[];
-  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
+  availableFilters: (keyof IIssueFilterOptions)[];
 };
 
 export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
-  const { handleFiltersUpdate, filters, memberIds, states, layoutDisplayFiltersOptions } = props;
-
+  const { handleFiltersUpdate, filters, memberIds, states, availableFilters } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
-  const isFilterEnabled = (filter: keyof IIssueFilterOptions) =>
-    !!layoutDisplayFiltersOptions?.filters.includes(filter);
+  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => !!availableFilters.includes(filter);
+
   const isFilterApplied = useMemo(() => isFiltersApplied(filters), [filters]);
-  // hooks
-  const { t } = useTranslation();
 
   return (
     <>

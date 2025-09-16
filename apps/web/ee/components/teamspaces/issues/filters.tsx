@@ -10,28 +10,13 @@ import {
   TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  EIssueLayoutTypes,
-} from "@plane/types";
-import { isIssueFilterActive } from "@plane/utils";
+import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 // components
-import {
-  DisplayFiltersSelection,
-  FiltersDropdown,
-  FilterSelection,
-  LayoutSelection,
-} from "@/components/issues/issue-layouts/filters";
+import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-// plane web imports
-import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type Props = {
   teamspaceId: string;
@@ -45,32 +30,9 @@ export const TeamHeaderFilters = observer((props: Props) => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.TEAM);
-  const { workspaceLabels } = useLabel();
-  const { getTeamspaceMemberIds } = useTeamspaces();
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
 
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !teamspaceId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.FILTERS, { [key]: newValues });
-    },
-    [workspaceSlug, teamspaceId, issueFilters, updateFilters]
-  );
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !teamspaceId) return;
@@ -146,27 +108,10 @@ export const TeamHeaderFilters = observer((props: Props) => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <FiltersDropdown
-        title={t("common.filters")}
-        placement="bottom-end"
-        isFiltersApplied={isIssueFilterActive(issueFilters)}
-      >
-        <FilterSelection
-          filters={issueFilters?.filters ?? {}}
-          handleFiltersUpdate={handleFiltersUpdate}
-          displayFilters={issueFilters?.displayFilters ?? {}}
-          handleDisplayFiltersUpdate={handleDisplayFilters}
-          layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
-          }
-          labels={workspaceLabels}
-          memberIds={teamspaceMemberIds ?? undefined}
-        />
-      </FiltersDropdown>
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[activeLayout] : undefined
           }
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}

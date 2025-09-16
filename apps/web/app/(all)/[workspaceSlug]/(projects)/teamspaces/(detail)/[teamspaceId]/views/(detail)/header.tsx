@@ -4,11 +4,9 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
-// plane constants
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
-// i18n
-import { useTranslation } from "@plane/i18n";
 // plane imports
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TeamsIcon } from "@plane/propel/icons";
 // types
 import {
@@ -18,27 +16,19 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   EIssueLayoutTypes,
-  IIssueFilterOptions,
   ICustomSearchSelectOption,
 } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
-import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
+import { getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
-import {
-  DisplayFiltersSelection,
-  FiltersDropdown,
-  FilterSelection,
-  LayoutSelection,
-} from "@/components/issues/issue-layouts/filters";
+import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -60,10 +50,6 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   } = useIssues(EIssuesStoreType.TEAM_VIEW);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
   const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
   const { getViewById, getTeamspaceViewIds } = useTeamspaceViews();
   // derived values
@@ -104,33 +90,6 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
       );
     },
     [workspaceSlug, teamspaceId, viewId, updateFilters]
-  );
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !teamspaceId || !viewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        teamspaceId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        viewId.toString()
-      );
-    },
-    [workspaceSlug, teamspaceId, viewId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -259,28 +218,10 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
-            <FiltersDropdown
-              title={t("common.filters")}
-              placement="bottom-end"
-              disabled={!canUserCreateIssue}
-              isFiltersApplied={isIssueFilterActive(issueFilters)}
-            >
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
-                }
-                labels={workspaceLabels}
-                memberIds={workspaceMemberIds ?? undefined}
-              />
-            </FiltersDropdown>
             <FiltersDropdown title={t("common.display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}

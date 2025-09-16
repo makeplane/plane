@@ -1,5 +1,6 @@
 # Python imports
 import json
+import copy
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -67,40 +68,18 @@ from plane.utils.issue_filters import issue_filters
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
-    def get(self, request, anchor):
-        filters = issue_filters(request.query_params, "GET")
-        order_by_param = request.GET.get("order_by", "-created_at")
-
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
-        if not deploy_board:
-            return Response(
-                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        project_id = deploy_board.entity_identifier
-        slug = deploy_board.workspace.slug
-
-        issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
-            .annotate(
+    def apply_annotations(self, issue_queryset):
+        return (
+            issue_queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -128,9 +107,48 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
+            )
+        )
+
+    def get(self, request, anchor):
+        filters = issue_filters(request.query_params, "GET")
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        deploy_board = DeployBoard.objects.filter(
+            anchor=anchor, entity_name="project"
+        ).first()
+        if not deploy_board:
+            return Response(
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        project_id = deploy_board.entity_identifier
+        slug = deploy_board.workspace.slug
+
+        issue_queryset = (
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
         ).distinct()
 
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
         issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -160,6 +178,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -193,6 +212,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -218,6 +238,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),

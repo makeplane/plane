@@ -1,20 +1,22 @@
 import { useCallback } from "react";
-import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { EIssueFilterType } from "@plane/constants";
+// plane imports
+import { TWorkItemFilterCondition } from "@plane/shared-state";
 import {
   EIssuesStoreType,
   IActiveCycle,
   ICycle,
-  IIssueFilterOptions,
   TCycleEstimateType,
   TCyclePlotType,
   TCycleEstimateSystemAdvanced,
 } from "@plane/types";
+// hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
+// local imports
 import { formatActiveCycle } from "./formatter";
 
 interface IActiveCycleDetails {
@@ -29,8 +31,9 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   const router = useRouter();
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { updateFilterExpression },
   } = useIssues(EIssuesStoreType.CYCLE);
+  const { updateFilterExpressionFromConditions } = useWorkItemFilters();
   const {
     fetchActiveCycleAnalytics,
     fetchActiveCycleProgress,
@@ -111,29 +114,19 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   };
 
   const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => {
+    async (conditions: TWorkItemFilterCondition[]) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
 
-      const newFilters: IIssueFilterOptions = {};
-      Object.keys(issueFilters?.filters ?? {}).forEach((key) => {
-        newFilters[key as keyof IIssueFilterOptions] = [];
-      });
-
-      let newValues: string[] = [];
-
-      if (isEqual(newValues, value)) newValues = [];
-      else newValues = value;
-
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { ...newFilters, [key]: newValues },
-        cycleId.toString()
+      updateFilterExpressionFromConditions(
+        EIssuesStoreType.CYCLE,
+        cycleId,
+        conditions,
+        updateFilterExpression.bind(updateFilterExpression, workspaceSlug, projectId, cycleId)
       );
-      if (redirect) router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`);
+
+      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`);
     },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters, router]
+    [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateFilterExpression, router]
   );
   return {
     projectId,

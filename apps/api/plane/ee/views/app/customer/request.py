@@ -2,6 +2,13 @@
 import re
 import json
 
+# Django imports
+from django.utils import timezone
+from django.db.models import OuterRef, Func, F, CharField, Subquery, Q, Value, UUIDField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models.functions import Cast, Coalesce
+from django.contrib.postgres.fields import ArrayField
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,14 +23,6 @@ from plane.ee.serializers import CustomerRequestSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
-
-
-# Django imports
-from django.utils import timezone
-from django.db.models import OuterRef, Func, F, CharField, Subquery, Q, Value, UUIDField
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models.functions import Cast, Coalesce
-from django.contrib.postgres.fields import ArrayField
 
 
 class CustomerRequestEndpoint(BaseAPIView):

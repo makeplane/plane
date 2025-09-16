@@ -1,5 +1,6 @@
 # Python imports
 import json
+import copy
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -69,17 +70,17 @@ from plane.bgtasks.issue_description_version_task import issue_description_versi
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class EpicViewSet(BaseViewSet):
-    def get_queryset(self):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def apply_annotations(self, issues):
         return (
-            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            .annotate(
+            issues.annotate(
                 cycle_id=Case(
                     When(
                         issue_cycle__cycle__deleted_at__isnull=True,
@@ -190,6 +191,14 @@ class EpicViewSet(BaseViewSet):
                     queryset=InitiativeEpic.objects.filter(deleted_at__isnull=True),
                 )
             )
+            .prefetch_related("assignees", "labels")
+        )
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(workspace__slug=self.kwargs.get("slug"))
         ).distinct()
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -265,12 +274,24 @@ class EpicViewSet(BaseViewSet):
         search = request.GET.get("search", None)
 
         filters = issue_filters(request.query_params, "GET")
-        epics = self.get_queryset().filter(**filters)
+        epics = self.get_queryset()
+
+        # Apply filtering from filterset
+        epics = self.filter_queryset(epics)
+
+        # Apply legacy filters
+        epics = epics.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
 
         # Add search functionality
         if search:
             epics = epics.filter(Q(name__icontains=search))
+
+        # Keeping a copy of the queryset before applying annotations
+        filtered_issue_queryset = copy.deepcopy(epics)
+
+        # Applying annotations to the epic queryset
+        epics = self.apply_annotations(epics)
 
         # epics queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -295,6 +316,7 @@ class EpicViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=filtered_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by,
                             issues=issues,
@@ -334,6 +356,7 @@ class EpicViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=filtered_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by,
                         issues=issues,
@@ -364,6 +387,7 @@ class EpicViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by,
                     issues=issues,
@@ -391,8 +415,11 @@ class EpicViewSet(BaseViewSet):
                     )
                 )
             )
-            .first()
         )
+
+        epic = self.apply_annotations(epic)
+
+        epic = epic.first()
         if not epic:
             return Response(
                 {"error": "The required object does not exist."},
@@ -558,6 +585,9 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
         )
 
         epic_property.filters = request.data.get("filters", epic_property.filters)
+        epic_property.rich_filters = request.data.get(
+            "rich_filters", epic_property.rich_filters
+        )
         epic_property.display_filters = request.data.get(
             "display_filters", epic_property.display_filters
         )
@@ -610,16 +640,12 @@ class EpicAnalyticsEndpoint(BaseAPIView):
 
 
 class EpicDetailEndpoint(BaseAPIView):
-    @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def get(self, request, slug, project_id):
-        filters = issue_filters(request.query_params, "GET")
-        epics = (
-            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
-            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def apply_annotations(self, epics):
+        return (
+            epics.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -684,8 +710,29 @@ class EpicDetailEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related("assignees", "labels", "issue_module__module")
         )
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+        epics = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
+
+        # Apply filtering from filterset
+        epics = self.filter_queryset(epics)
+
+        # Apply legacy filters
         epics = epics.filter(**filters)
+
+        # Keeping a copy of the queryset before applying annotations
+        filtered_epics = copy.deepcopy(epics)
+
+        # Applying annotations to the epic queryset
+        epics = self.apply_annotations(epics)
+
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
         epics, order_by_param = order_issue_queryset(
@@ -694,7 +741,8 @@ class EpicDetailEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             order_by=order_by_param,
-            queryset=(epics),
+            queryset=epics,
+            total_count_queryset=filtered_epics,
             on_results=lambda epics: EpicSerializer(
                 epics, many=True, fields=self.fields, expand=self.expand
             ).data,

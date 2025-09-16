@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { IProjectView } from "@plane/types";
+import { IPublishedProjectView } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
@@ -18,10 +18,10 @@ export class SitesViewPublishService extends APIService {
   /**
    * Retrieves publish settings for a specific anchor.
    * @param {string} anchor - The anchor identifier
-   * @returns {Promise<IProjectView>} The publish settings
+   * @returns {Promise<IPublishedProjectView>} The publish settings
    * @throws {Error} If the API request fails
    */
-  async retrieve(anchor: string): Promise<IProjectView> {
+  async retrieve(anchor: string): Promise<IPublishedProjectView> {
     return this.get(`/api/public/anchor/${anchor}/views/`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -1,5 +1,6 @@
 # Python imports
 import json
+import copy
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -40,28 +41,19 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.utils.error_codes import ERROR_CODES
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class EpicArchiveViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
-    def get_queryset(self):
+    def apply_annotations(self, issues):
         return (
-            Issue.objects.annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
-            .filter(deleted_at__isnull=True)
-            .filter(archived_at__isnull=False)
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -89,6 +81,16 @@ class EpicArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(deleted_at__isnull=True)
+            .filter(archived_at__isnull=False)
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
         )
 
     @method_decorator(gzip_page)
@@ -100,13 +102,28 @@ class EpicArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        # Get queryset
+        issues = self.get_queryset()
 
+        # Apply filtering from filterset
+        issues = self.filter_queryset(issues)
+
+        # Apply legacy filters
+        issue_queryset = issues.filter(**filters)
+
+        # Apply annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
+
+        # Apply sub issues filter to the issue queryset
         issue_queryset = (
             issue_queryset
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
+
+        # Keeping a copy of the queryset before applying annotations
+        filtered_issue_queryset = copy.deepcopy(issue_queryset)
+
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
@@ -137,6 +154,7 @@ class EpicArchiveViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=filtered_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -173,6 +191,7 @@ class EpicArchiveViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=filtered_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -200,6 +219,7 @@ class EpicArchiveViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
@@ -233,7 +253,11 @@ class EpicArchiveViewSet(BaseViewSet):
                     )
                 )
             )
-        ).first()
+        )
+
+        issue = self.apply_annotations(issue)
+
+        issue = issue.first()
         if not issue:
             return Response(
                 {"error": "The required object does not exist."},

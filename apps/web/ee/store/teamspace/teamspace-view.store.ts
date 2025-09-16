@@ -17,8 +17,6 @@ import {
   orderViews,
   shouldFilterView,
 } from "@/plane-web/helpers/teamspace-view-helper";
-// services
-import { ViewService as ProjectViewService } from "@/plane-web/services";
 // plane web services
 import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // plane web store
@@ -59,7 +57,7 @@ export interface ITeamspaceViewStore {
     teamspaceId: string,
     viewId: string,
     data: Partial<TTeamspaceView>
-  ) => Promise<void>;
+  ) => Promise<TTeamspaceView>;
   deleteView: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
   updateFilters: <T extends keyof TViewFilters>(
     teamspaceId: string,
@@ -320,14 +318,14 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    * @param teamspaceId
    * @param viewId
    * @param data
-   * @returns Promise<void>
+   * @returns Promise<TTeamspaceView>
    */
   updateView = async (
     workspaceSlug: string,
     teamspaceId: string,
     viewId: string,
     data: Partial<TTeamspaceView>
-  ): Promise<void> => {
+  ): Promise<TTeamspaceView> => {
     const currentView = this.getViewById(teamspaceId, viewId);
     // update view
     const promiseRequests = [];
@@ -346,6 +344,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
         delete this.viewMap[teamspaceId][viewId];
       });
     }
+    return this.getViewById(teamspaceId, viewId);
   };
 
   /**

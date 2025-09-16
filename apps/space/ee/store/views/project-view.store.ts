@@ -2,7 +2,7 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { SitesViewPublishService } from "@plane/services";
-import { IIssueFilterOptions, IProjectView } from "@plane/types";
+import { IIssueFilterOptions, IPublishedProjectView } from "@plane/types";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
 import {
@@ -15,17 +15,17 @@ import {
 
 export interface IProjectViewStore {
   // observables
-  viewData: IProjectView | undefined;
+  viewData: IPublishedProjectView | undefined;
   // computed
   possibleFiltersForView: { [key in keyof IIssueFilterOptions]: boolean | string[] } | undefined;
   requiredData: { [key in keyof IIssueFilterOptions]: boolean } | undefined;
-  getViewData: () => IProjectView | undefined;
+  getViewData: () => IPublishedProjectView | undefined;
   // fetch actions
-  fetchViewDetails: (anchor: string) => Promise<IProjectView>;
+  fetchViewDetails: (anchor: string) => Promise<IPublishedProjectView>;
 }
 
 export class ProjectViewStore implements IProjectViewStore {
-  viewData: IProjectView | undefined = undefined;
+  viewData: IPublishedProjectView | undefined = undefined;
   // root store
   rootStore;
   // services
@@ -132,9 +132,9 @@ export class ProjectViewStore implements IProjectViewStore {
    * @param workspaceSlug
    * @param projectId
    * @param viewId
-   * @returns Promise<IProjectView>
+   * @returns Promise<IPublishedProjectView>
    */
-  fetchViewDetails = async (anchor: string): Promise<IProjectView> =>
+  fetchViewDetails = async (anchor: string): Promise<IPublishedProjectView> =>
     await this.viewPublishService.retrieve(anchor).then((response) => {
       runInAction(() => {
         this.viewData = response;

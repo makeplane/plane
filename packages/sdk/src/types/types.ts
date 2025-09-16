@@ -137,9 +137,6 @@ export interface IModule {
   sub_issues?: number;
   is_favorite: boolean;
   sort_order: number;
-  // view_props: {
-  // 	filters: IIssueFilterOptions;
-  // };
   status?: TModuleStatus;
   archived_at: string | null;
   start_date: string | null;

@@ -1,45 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
-// types
 import {
   EViewAccess,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   TTeamspaceView,
   EIssueLayoutTypes,
+  EIssuesStoreType,
+  IIssueFilters,
 } from "@plane/types";
-// ui
 import { Button, Input, TextArea } from "@plane/ui";
-// components
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
+// components
 import { Logo } from "@/components/common/logo";
 import { LayoutDropDown } from "@/components/dropdowns/layout";
-import {
-  AppliedFiltersList,
-  DisplayFiltersSelection,
-  FiltersDropdown,
-  FilterSelection,
-} from "@/components/issues/issue-layouts/filters";
-// hooks
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
+import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+// plane web imports
+import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
 
 type Props = {
   data?: TTeamspaceView | null;
   handleClose: () => void;
   handleFormSubmit: (values: TTeamspaceView) => Promise<void>;
   preLoadedData?: Partial<TTeamspaceView> | null;
+  teamspaceId: string;
+  workspaceSlug: string;
 };
 
-const defaultValues: Partial<TTeamspaceView> = {
+const DEFAULT_VALUES: Partial<TTeamspaceView> = {
   name: "",
   description: "",
   access: EViewAccess.PUBLIC,
@@ -50,63 +46,33 @@ const defaultValues: Partial<TTeamspaceView> = {
 };
 
 export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
-  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { handleFormSubmit, handleClose, data, preLoadedData, teamspaceId, workspaceSlug } = props;
   // state
   const [isOpen, setIsOpen] = useState(false);
-  // store hooks
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
-
   // form info
+  const defaultValues = {
+    ...DEFAULT_VALUES,
+    ...preLoadedData,
+    ...data,
+  };
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
+    getValues,
     setValue,
     watch,
   } = useForm<TTeamspaceView>({
     defaultValues,
   });
-
+  // derived values
   const logoValue = watch("logo_props");
-
-  const selectedFilters: IIssueFilterOptions = {};
-  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-
-    if (Array.isArray(value) && value.length === 0) return;
-
-    selectedFilters[key as keyof IIssueFilterOptions] = value;
-  });
-
-  // for removing filters from a key
-  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    // If value is null then remove all the filters of that key
-    if (!value) {
-      setValue("filters", {
-        ...selectedFilters,
-        [key]: null,
-      });
-      return;
-    }
-
-    const newValues = selectedFilters?.[key] ?? [];
-
-    if (Array.isArray(value)) {
-      value.forEach((val) => {
-        if (newValues.includes(val)) newValues.splice(newValues.indexOf(val), 1);
-      });
-    } else {
-      if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-    }
-
-    setValue("filters", {
-      ...selectedFilters,
-      [key]: newValues,
-    });
+  const workItemFilters: IIssueFilters = {
+    richFilters: getValues("rich_filters"),
+    displayFilters: getValues("display_filters"),
+    displayProperties: getValues("display_properties"),
+    kanbanFilters: undefined,
   };
 
   const handleCreateUpdateView = async (formData: TTeamspaceView) => {
@@ -114,7 +80,7 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
       name: formData.name,
       description: formData.description,
       logo_props: formData.logo_props,
-      filters: formData.filters,
+      rich_filters: formData.rich_filters,
       display_filters: formData.display_filters,
       display_properties: formData.display_properties,
       access: formData.access,
@@ -124,20 +90,6 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
       ...defaultValues,
     });
   };
-
-  const clearAllFilters = () => {
-    if (!selectedFilters) return;
-
-    setValue("filters", {});
-  };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...preLoadedData,
-      ...data,
-    });
-  }, [data, preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
@@ -248,36 +200,6 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                     value={displayFilters.layout}
                     disabledLayouts={[EIssueLayoutTypes.GANTT]}
                   />
-                  {/* filters dropdown */}
-                  <Controller
-                    control={control}
-                    name="filters"
-                    render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title="Filters" tabIndex={3}>
-                        <FilterSelection
-                          filters={filters ?? {}}
-                          handleFiltersUpdate={(key, value) => {
-                            const newValues = filters?.[key] ?? [];
-                            if (Array.isArray(value)) {
-                              value.forEach((val) => {
-                                if (!newValues.includes(val)) newValues.push(val);
-                              });
-                            } else {
-                              if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                              else newValues.push(value);
-                            }
-                            onChange({
-                              ...filters,
-                              [key]: newValues,
-                            });
-                          }}
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[displayFilters.layout]}
-                          labels={workspaceLabels ?? undefined}
-                          memberIds={workspaceMemberIds ?? undefined}
-                        />
-                      </FiltersDropdown>
-                    )}
-                  />
                   {/* display filters dropdown */}
                   <Controller
                     control={control}
@@ -285,7 +207,9 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
                       <FiltersDropdown title="Display" tabIndex={4}>
                         <DisplayFiltersSelection
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[displayFilters.layout]}
+                          layoutDisplayFiltersOptions={
+                            ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[displayFilters.layout]
+                          }
                           displayFilters={displayFilters ?? {}}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
@@ -310,16 +234,31 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
-            <div>
-              <AppliedFiltersList
-                appliedFilters={selectedFilters}
-                handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={handleRemoveFilter}
-                labels={workspaceLabels ?? []}
-              />
-            </div>
-          )}
+          <div>
+            {/* filters dropdown */}
+            <Controller
+              control={control}
+              name="rich_filters"
+              render={({ field: { onChange: onFiltersChange } }) => (
+                <TeamspaceLevelWorkItemFiltersHOC
+                  entityId={data?.id}
+                  entityType={EIssuesStoreType.TEAM_VIEW}
+                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
+                  initialWorkItemFilters={workItemFilters}
+                  isTemporary
+                  updateFilters={(updatedFilters) => onFiltersChange(updatedFilters)}
+                  teamspaceId={teamspaceId}
+                  workspaceSlug={workspaceSlug}
+                >
+                  {({ filter: teamspaceViewWorkItemsFilter }) =>
+                    teamspaceViewWorkItemsFilter && (
+                      <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} variant="default" />
+                    )
+                  }
+                </TeamspaceLevelWorkItemFiltersHOC>
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">

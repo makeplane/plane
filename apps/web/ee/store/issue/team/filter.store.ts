@@ -4,17 +4,18 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   IIssueFilters,
   IssuePaginationOptions,
   TIssueKanbanFilters,
   TIssueParams,
+  TSupportedFilterForUpdate,
+  TWorkItemFilterExpression,
 } from "@plane/types";
 // helpers
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
@@ -36,11 +37,16 @@ export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
   getIssueFilters(teamspaceId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
+  updateFilterExpression: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    filters: TWorkItemFilterExpression
+  ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     teamspaceId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 
@@ -115,8 +121,8 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     if (!filteredParams) return undefined;
     // get the computed filtered params
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.filters as IIssueFilterOptions,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters?.richFilters,
+      userFilters?.displayFilters,
       filteredParams
     );
     // return the computed filtered params
@@ -153,7 +159,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
         teamspaceId
       );
       // compute the filters
-      const filters = this.computedFilters(_filters?.filters);
+      const richFilters = _filters?.rich_filters;
       const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       // fetching the kanban toggle helpers in the local storage
@@ -174,7 +180,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
       }
       // set the filters
       runInAction(() => {
-        set(this.filters, [teamspaceId, "filters"], filters);
+        set(this.filters, [teamspaceId, "richFilters"], richFilters);
         set(this.filters, [teamspaceId, "displayFilters"], displayFilters);
         set(this.filters, [teamspaceId, "displayProperties"], displayProperties);
         set(this.filters, [teamspaceId, "kanbanFilters"], kanbanFilters);
@@ -185,40 +191,40 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     }
   };
 
-  updateFilters = async (
-    workspaceSlug: string,
-    teamspaceId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-  ) => {
+  /**
+   * NOTE: This method is designed as a fallback function for the work item filter store.
+   * Only use this method directly when initializing filter instances.
+   * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
+   */
+  updateFilterExpression: ITeamIssuesFilter["updateFilterExpression"] = async (workspaceSlug, teamspaceId, filters) => {
+    try {
+      runInAction(() => {
+        set(this.filters, [teamspaceId, "richFilters"], filters);
+      });
+
+      this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamspaceId, "mutation");
+      await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
+        rich_filters: filters,
+      });
+    } catch (error) {
+      console.log("error while updating rich filters", error);
+      throw error;
+    }
+  };
+
+  updateFilters: ITeamIssuesFilter["updateFilters"] = async (workspaceSlug, teamspaceId, type, filters) => {
     try {
       // check if the filters are empty
-      if (isEmpty(this.filters) || isEmpty(this.filters[teamspaceId]) || isEmpty(filters)) return;
+      if (isEmpty(this.filters) || isEmpty(this.filters[teamspaceId])) return;
       // get the filters
       const _filters = {
-        filters: this.filters[teamspaceId].filters as IIssueFilterOptions,
+        richFilters: this.filters[teamspaceId].richFilters as TWorkItemFilterExpression,
         displayFilters: this.filters[teamspaceId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[teamspaceId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[teamspaceId].kanbanFilters as TIssueKanbanFilters,
       };
       // update the filters based on the type
       switch (type) {
-        case EIssueFilterType.FILTERS: {
-          const updatedFilters = filters as IIssueFilterOptions;
-          _filters.filters = { ..._filters.filters, ...updatedFilters };
-
-          runInAction(() => {
-            Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [teamspaceId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-            });
-          });
-
-          this.rootIssueStore.teamIssues.fetchIssuesWithExistingPagination(workspaceSlug, teamspaceId, "mutation");
-          await this.teamspaceWorkItemFilterService.patchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId, {
-            filters: _filters.filters,
-          });
-          break;
-        }
         case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };

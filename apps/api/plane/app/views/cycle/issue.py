@@ -1,4 +1,5 @@
 # Python imports
+import copy
 import json
 
 # Django imports
@@ -31,11 +32,15 @@ from plane.utils.host import base_host
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
     webhook_event = "cycle_issue"
     bulk = True
@@ -65,24 +70,9 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
-    @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    def list(self, request, slug, project_id, cycle_id):
-        order_by_param = request.GET.get("order_by", "created_at")
-        filters = issue_filters(request.query_params, "GET")
-        issue_queryset = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True
-            )
-            .filter(project_id=project_id)
-            .filter(workspace__slug=slug)
-            .filter(**filters)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-            )
-            .filter(**filters)
-            .annotate(
+    def apply_annotations(self, issues):
+        return (
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -110,11 +100,36 @@ class CycleIssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related(
+                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
+            )
         )
+
+    @method_decorator(gzip_page)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def list(self, request, slug, project_id, cycle_id):
         filters = issue_filters(request.query_params, "GET")
+        issue_queryset = (
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True
+            )
+            .filter(project_id=project_id)
+            .filter(workspace__slug=slug)
+        )
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         order_by_param = request.GET.get("order_by", "-created_at")
-        issue_queryset = issue_queryset.filter(**filters)
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
@@ -145,6 +160,7 @@ class CycleIssueViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -179,6 +195,7 @@ class CycleIssueViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -205,6 +222,7 @@ class CycleIssueViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),

@@ -2,280 +2,67 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
-import {
-  IIssueFilterOptions,
-  IIssueFilters,
-  TCycleDistribution,
-  TCycleEstimateDistribution,
-  TCyclePlotType,
-  TStateGroups,
-} from "@plane/types";
-import { Avatar } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+import { TWorkItemFilterCondition } from "@plane/shared-state";
+import { TCycleDistribution, TCycleEstimateDistribution, TCyclePlotType } from "@plane/types";
+import { cn, toFilterArray } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { AssigneeStatComponent, TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
+import { LabelStatComponent, TLabelData } from "@/components/core/sidebar/progress-stats/label";
+import {
+  createFilterUpdateHandler,
+  PROGRESS_STATS,
+  TSelectedFilterProgressStats,
+} from "@/components/core/sidebar/progress-stats/shared";
+import { StateGroupStatComponent, TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
+// helpers
 // hooks
-import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
-// public
-import emptyLabel from "@/public/empty-state/empty_label.svg";
-import emptyMembers from "@/public/empty-state/empty_members.svg";
-
-// assignee types
-type TAssigneeData = {
-  id: string | undefined;
-  title: string | undefined;
-  avatar_url: string | undefined;
-  completed: number;
-  total: number;
-}[];
-
-type TAssigneeStatComponent = {
-  distribution: TAssigneeData;
-  isEditable?: boolean;
-  filters?: IIssueFilters | undefined;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-};
-
-// labelTypes
-type TLabelData = {
-  id: string | undefined;
-  title: string | undefined;
-  color: string | undefined;
-  completed: number;
-  total: number;
-}[];
-
-type TLabelStatComponent = {
-  distribution: TLabelData;
-  isEditable?: boolean;
-  filters?: IIssueFilters | undefined;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-};
-
-// stateTypes
-type TStateData = {
-  state: string | undefined;
-  completed: number;
-  total: number;
-}[];
-
-type TStateStatComponent = {
-  distribution: TStateData;
-  totalIssuesCount: number;
-  isEditable?: boolean;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-};
-
-export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
-  const { distribution, isEditable, filters, handleFiltersUpdate } = props;
-  const { t } = useTranslation();
-  return (
-    <div>
-      {distribution && distribution.length > 0 ? (
-        distribution.map((assignee, index) => {
-          if (assignee?.id)
-            return (
-              <SingleProgressStats
-                key={assignee?.id}
-                title={
-                  <div className="flex items-center gap-2">
-                    <Avatar name={assignee?.title ?? undefined} src={getFileURL(assignee?.avatar_url ?? "")} />
-                    <span>{assignee?.title ?? ""}</span>
-                  </div>
-                }
-                completed={assignee?.completed ?? 0}
-                total={assignee?.total ?? 0}
-                {...(isEditable && {
-                  onClick: () => handleFiltersUpdate("assignees", assignee.id ?? ""),
-                  selected: filters?.filters?.assignees?.includes(assignee.id ?? ""),
-                })}
-              />
-            );
-          else
-            return (
-              <SingleProgressStats
-                key={`unassigned-${index}`}
-                title={
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                      <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
-                    </div>
-                    <span>{t("no_assignee")}</span>
-                  </div>
-                }
-                completed={assignee?.completed ?? 0}
-                total={assignee?.total ?? 0}
-              />
-            );
-        })
-      ) : (
-        <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
-            <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
-          </div>
-          <h6 className="text-base text-custom-text-300">{t("no_assignee")}</h6>
-        </div>
-      )}
-    </div>
-  );
-});
-
-export const LabelStatComponent = observer((props: TLabelStatComponent) => {
-  const { distribution, isEditable, filters, handleFiltersUpdate } = props;
-  const { t } = useTranslation();
-  return (
-    <div>
-      {distribution && distribution.length > 0 ? (
-        distribution.map((label, index) => {
-          if (label.id) {
-            return (
-              <SingleProgressStats
-                key={label.id}
-                title={
-                  <div className="flex items-center gap-2 truncate">
-                    <span
-                      className="block h-3 w-3 rounded-full flex-shrink-0"
-                      style={{
-                        backgroundColor: label.color ?? "transparent",
-                      }}
-                    />
-                    <span className="text-xs text-ellipsis truncate">{label.title ?? t("no_labels_yet")}</span>
-                  </div>
-                }
-                completed={label.completed}
-                total={label.total}
-                {...(isEditable && {
-                  onClick: () => handleFiltersUpdate("labels", label.id ?? ""),
-                  selected: filters?.filters?.labels?.includes(label.id ?? `no-label-${index}`),
-                })}
-              />
-            );
-          } else {
-            return (
-              <SingleProgressStats
-                key={`no-label-${index}`}
-                title={
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="block h-3 w-3 rounded-full"
-                      style={{
-                        backgroundColor: label.color ?? "transparent",
-                      }}
-                    />
-                    <span className="text-xs">{label.title ?? t("no_labels_yet")}</span>
-                  </div>
-                }
-                completed={label.completed}
-                total={label.total}
-              />
-            );
-          }
-        })
-      ) : (
-        <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
-            <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
-          </div>
-          <h6 className="text-base text-custom-text-300">{t("no_labels_yet")}</h6>
-        </div>
-      )}
-    </div>
-  );
-});
-
-export const StateStatComponent = observer((props: TStateStatComponent) => {
-  const { distribution, isEditable, totalIssuesCount, handleFiltersUpdate } = props;
-  // hooks
-  const { groupedProjectStates } = useProjectState();
-  // derived values
-  const getStateGroupState = (stateGroup: string) => {
-    const stateGroupStates = groupedProjectStates?.[stateGroup];
-    const stateGroupStatesId = stateGroupStates?.map((state) => state.id);
-    return stateGroupStatesId;
-  };
-
-  return (
-    <div>
-      {distribution.map((group, index) => (
-        <SingleProgressStats
-          key={index}
-          title={
-            <div className="flex items-center gap-2">
-              <StateGroupIcon stateGroup={group.state as TStateGroups} />
-              <span className="text-xs capitalize">{group.state}</span>
-            </div>
-          }
-          completed={group.completed}
-          total={totalIssuesCount}
-          {...(isEditable && {
-            onClick: () => group.state && handleFiltersUpdate("state", getStateGroupState(group.state) ?? []),
-          })}
-        />
-      ))}
-    </div>
-  );
-});
-
-const progressStats = [
-  {
-    key: "stat-states",
-    i18n_title: "common.states",
-  },
-  {
-    key: "stat-assignees",
-    i18n_title: "common.assignees",
-  },
-  {
-    key: "stat-labels",
-    i18n_title: "common.labels",
-  },
-];
 
 type TCycleProgressStats = {
   cycleId: string;
-  plotType: TCyclePlotType;
   distribution: TCycleDistribution | TCycleEstimateDistribution | undefined;
   groupedIssues: Record<string, number>;
-  totalIssuesCount: number;
+  handleFiltersUpdate: (condition: TWorkItemFilterCondition) => void;
   isEditable?: boolean;
-  filters?: IIssueFilters | undefined;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-  size?: "xs" | "sm";
-  roundedTab?: boolean;
   noBackground?: boolean;
+  plotType: TCyclePlotType;
+  roundedTab?: boolean;
+  selectedFilters: TSelectedFilterProgressStats;
+  size?: "xs" | "sm";
+  totalIssuesCount: number;
 };
 
 export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
   const {
     cycleId,
-    plotType,
     distribution,
     groupedIssues,
-    totalIssuesCount,
-    isEditable = false,
-    filters,
     handleFiltersUpdate,
-    size = "sm",
-    roundedTab = false,
+    isEditable = false,
     noBackground = false,
+    plotType,
+    roundedTab = false,
+    selectedFilters,
+    size = "sm",
+    totalIssuesCount,
   } = props;
-  // hooks
+  // plane imports
+  const { t } = useTranslation();
+  // store imports
   const { storedValue: currentTab, setValue: setCycleTab } = useLocalStorage(
     `cycle-analytics-tab-${cycleId}`,
     "stat-assignees"
   );
-  const { t } = useTranslation();
   // derived values
-  const currentTabIndex = (tab: string): number => progressStats.findIndex((stat) => stat.key === tab);
-
+  const currentTabIndex = (tab: string): number => PROGRESS_STATS.findIndex((stat) => stat.key === tab);
   const currentDistribution = distribution as TCycleDistribution;
   const currentEstimateDistribution = distribution as TCycleEstimateDistribution;
+  const selectedAssigneeIds = toFilterArray(selectedFilters?.assignees?.value || []) as string[];
+  const selectedLabelIds = toFilterArray(selectedFilters?.labels?.value || []) as string[];
+  const selectedStateGroups = toFilterArray(selectedFilters?.stateGroups?.value || []) as string[];
 
   const distributionAssigneeData: TAssigneeData =
     plotType === "burndown"
@@ -311,11 +98,23 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
           total: label.total_estimates,
         }));
 
-  const distributionStateData: TStateData = Object.keys(groupedIssues || {}).map((state) => ({
+  const distributionStateData: TStateGroupData = Object.keys(groupedIssues || {}).map((state) => ({
     state: state,
     completed: groupedIssues?.[state] || 0,
     total: totalIssuesCount || 0,
   }));
+
+  const handleAssigneeFiltersUpdate = createFilterUpdateHandler(
+    "assignee_id",
+    selectedAssigneeIds,
+    handleFiltersUpdate
+  );
+  const handleLabelFiltersUpdate = createFilterUpdateHandler("label_id", selectedLabelIds, handleFiltersUpdate);
+  const handleStateGroupFiltersUpdate = createFilterUpdateHandler(
+    "state_group",
+    selectedStateGroups,
+    handleFiltersUpdate
+  );
 
   return (
     <div>
@@ -329,7 +128,7 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
             size === "xs" ? `text-xs` : `text-sm`
           )}
         >
-          {progressStats.map((stat) => (
+          {PROGRESS_STATS.map((stat) => (
             <Tab
               className={cn(
                 `p-1 w-full text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all`,
@@ -347,27 +146,28 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
         </Tab.List>
         <Tab.Panels className="py-3 text-custom-text-200">
           <Tab.Panel key={"stat-states"}>
-            <StateStatComponent
+            <StateGroupStatComponent
               distribution={distributionStateData}
-              totalIssuesCount={totalIssuesCount}
+              handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
               isEditable={isEditable}
-              handleFiltersUpdate={handleFiltersUpdate}
+              selectedStateGroups={selectedStateGroups}
+              totalIssuesCount={totalIssuesCount}
             />
           </Tab.Panel>
           <Tab.Panel key={"stat-assignees"}>
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
+              handleAssigneeFiltersUpdate={handleAssigneeFiltersUpdate}
               isEditable={isEditable}
-              filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
+              selectedAssigneeIds={selectedAssigneeIds}
             />
           </Tab.Panel>
           <Tab.Panel key={"stat-labels"}>
             <LabelStatComponent
               distribution={distributionLabelData}
+              handleLabelFiltersUpdate={handleLabelFiltersUpdate}
               isEditable={isEditable}
-              filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
+              selectedLabelIds={selectedLabelIds}
             />
           </Tab.Panel>
         </Tab.Panels>

@@ -14,7 +14,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
     at `plane/utils/filters/README.md`.
     """
 
-    filter_param = "filter"
+    filter_param = "filters"
     default_max_depth = 5
 
     def filter_queryset(self, request, queryset, view, filter_data=None):
@@ -38,6 +38,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             # Propagate validation errors unchanged
             raise
         except Exception as e:
+            raise
             # Convert unexpected errors to ValidationError to keep response consistent
             raise ValidationError(f"Filter error: {str(e)}")
 
@@ -122,19 +123,19 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
 
     def _evaluate_node(self, node, base_queryset, view):
         """
-        Recursively evaluate a JSON node into a combined queryset using set operations.
+        Recursively evaluate a JSON node into a combined queryset using branch-based filtering.
 
         Rules:
         - leaf dict → evaluated through DjangoFilterBackend as a mini-querystring
         - {"or": [...]} → union (|) of children
-        - {"and": [...]} → intersection (&) of children
+        - {"and": [...]} → collect field conditions per branch and apply together
         - {"not": {...}} → exclude child's rows from the base queryset
           (complement within base scope)
         """
         if not isinstance(node, dict):
             return None
 
-        # 'or' combination
+        # 'or' combination - requires set operations between children
         if "or" in node:
             children = node["or"]
             if not isinstance(children, list) or not children:
@@ -147,18 +148,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 combined = child_qs if combined is None else (combined | child_qs)
             return combined
 
-        # 'and' combination
+        # 'and' combination - collect field conditions per branch
         if "and" in node:
             children = node["and"]
             if not isinstance(children, list) or not children:
                 return None
-            combined = None
-            for child in children:
-                child_qs = self._evaluate_node(child, base_queryset, view)
-                if child_qs is None:
-                    continue
-                combined = child_qs if combined is None else (combined & child_qs)
-            return combined
+            return self._evaluate_and_branch(children, base_queryset, view)
 
         # 'not' negation
         if "not" in node:
@@ -175,6 +170,56 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         # Leaf dict: evaluate via DjangoFilterBackend using FilterSet
         return self._filter_leaf_via_backend(node, base_queryset, view)
 
+    def _evaluate_and_branch(self, children, base_queryset, view):
+        """
+        Evaluate an AND branch by collecting field conditions and applying them together.
+
+        This approach is more efficient than individual leaf evaluation because:
+        - Field conditions within the same AND branch are collected and applied together
+        - Only logical operation children require separate evaluation and set intersection
+        - Reduces the number of intermediate querysets and database queries
+        """
+        collected_conditions = {}
+        logical_querysets = []
+
+        # Separate field conditions from logical operations
+        for child in children:
+            if not isinstance(child, dict):
+                continue
+
+            # Check if this child contains logical operators
+            has_logical = any(
+                k.lower() in ("or", "and", "not")
+                for k in child.keys()
+                if isinstance(k, str)
+            )
+
+            if has_logical:
+                # This child has logical operators, evaluate separately
+                child_qs = self._evaluate_node(child, base_queryset, view)
+                if child_qs is not None:
+                    logical_querysets.append(child_qs)
+            else:
+                # This is a leaf with field conditions, collect them
+                collected_conditions.update(child)
+
+        # Start with base queryset
+        result_qs = base_queryset
+
+        # Apply collected field conditions together if any exist
+        if collected_conditions:
+            result_qs = self._filter_leaf_via_backend(
+                collected_conditions, result_qs, view
+            )
+            if result_qs is None:
+                return None
+
+        # Intersect with any logical operation results
+        for logical_qs in logical_querysets:
+            result_qs = result_qs & logical_qs
+
+        return result_qs
+
     def _filter_leaf_via_backend(self, leaf_conditions, base_queryset, view):
         """Evaluate a leaf dict by delegating to DjangoFilterBackend once.
 
@@ -188,16 +233,6 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         # Build a QueryDict from the leaf conditions
         qd = QueryDict(mutable=True)
         for key, value in leaf_conditions.items():
-            # Special validation for __range to ensure two values
-            if key.endswith("__range"):
-                if not isinstance(value, (list, tuple)) or len(value) != 2:
-                    raise ValidationError(
-                        f"Range lookup for '{key}' needs exactly 2 values; got: {value}"
-                    )
-                # Pass as two values under the same key (works for RangeFilter)
-                qd.setlist(key, [str(value[0]), str(value[1])])
-                continue
-
             # Default serialization to string; QueryDict expects strings
             if isinstance(value, list):
                 # Repeat key for list values (e.g., __in)
@@ -322,16 +357,6 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 raise ValidationError(
                     "Logical operators cannot appear in a leaf filter object"
                 )
-
-            # __range special case: must be sequence of exactly two scalars
-            if isinstance(key, str) and key.endswith("__range"):
-                if not isinstance(value, (list, tuple)) or len(value) != 2:
-                    raise ValidationError(
-                        f"Range lookup for '{key}' needs exactly 2 values; got: {value}"
-                    )
-                if not (self._is_scalar(value[0]) and self._is_scalar(value[1])):
-                    raise ValidationError(f"Values for '{key}' must be scalar types")
-                continue
 
             # Lists/Tuples must contain only scalar values
             if isinstance(value, (list, tuple)):

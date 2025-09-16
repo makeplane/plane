@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react";
 // components
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
-import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // local imports
 import { WorkspaceGanttChart } from "./workspace-gantt-chart";
 
@@ -26,8 +25,6 @@ export const WorkspaceGanttRoot: React.FC<Props> = observer((props: Props) => {
         fetchNextPages={fetchNextPages}
         issuesLoading={issuesLoading}
       />
-      {/* peek overview */}
-      <IssuePeekOverview />
     </TimeLineTypeContext.Provider>
   );
 });

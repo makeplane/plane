@@ -4,7 +4,6 @@ import get from "lodash/get";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
 import orderBy from "lodash/orderBy";
 import pull from "lodash/pull";
 import set from "lodash/set";

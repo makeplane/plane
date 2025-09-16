@@ -2,14 +2,31 @@ import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
-import { IIssueFilterOptions, TCycleEstimateSystemAdvanced, TCycleProgress } from "@plane/types";
+// plane imports
+import { TWorkItemFilterCondition } from "@plane/shared-state";
+import { TCycleEstimateSystemAdvanced, TCycleProgress, TStateGroups } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { useProjectState } from "@/hooks/store/use-project-state";
+// plane web imports
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
+// local imports
 import { getColors } from "./cycle-chart/helper";
 import { summaryDataFormatter } from "./formatter";
 import ScopeDelta from "./scope-delta";
+
+type StateGroupItem = {
+  groupLabel: string;
+  key: string;
+  showBg?: boolean;
+  dashed?: boolean;
+  color?: string;
+  stateGroups?: TStateGroups[];
+};
+
+type TSummaryStateGroups = {
+  primaryStates: StateGroupItem[];
+  secondaryStates: StateGroupItem[];
+};
 
 type Props = {
   data: Partial<TCycleProgress>[] | null;
@@ -17,16 +34,13 @@ type Props = {
   estimateType: TCycleEstimateSystemAdvanced | undefined;
   parentWidth?: number;
   setAreaToHighlight: (area: string) => void;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
 };
 
 const Summary = observer((props: Props) => {
   const { setAreaToHighlight, data, plotType, estimateType = "issues", handleFiltersUpdate, parentWidth } = props;
-
   // store hooks
-  const { groupedProjectStates } = useProjectState();
   const { resolvedTheme } = useTheme();
-
   // derived values
   const today = format(startOfToday(), "yyyy-MM-dd");
   const dataToday = data?.find((d) => d.date === today);
@@ -48,45 +62,45 @@ const Summary = observer((props: Props) => {
     return acc;
   }, 0);
 
-  const stateGroups = {
+  const stateGroups: TSummaryStateGroups = {
     primaryStates: [
       {
-        group: `Today’s ideal ${plotType === "burndown" ? "Pending" : "Done"}`,
+        groupLabel: `Today's ideal ${plotType === "burndown" ? "Pending" : "Done"}`,
         key: "ideal",
         showBg: false,
         dashed: true,
         color: colors.idealStroke,
       },
       {
-        group: plotType === "burndown" ? "Pending" : "Done",
+        groupLabel: plotType === "burndown" ? "Pending" : "Done",
         key: "actual",
         showBg: true,
         color: colors.actual,
-        states: plotType === "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
+        stateGroups: plotType === "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
       },
       {
-        group: "Started",
+        groupLabel: "Started",
         key: "started",
         showBg: true,
         color: colors.startedStroke,
-        states: ["started"],
+        stateGroups: ["started"],
       },
       {
-        group: "Scope",
+        groupLabel: "Scope",
         key: "scope",
         showBg: false,
         color: colors.scopeStroke,
-        states: ["started", "unstarted", "backlog", "completed"],
+        stateGroups: ["started", "unstarted", "backlog", "completed"],
       },
     ],
     secondaryStates: [
       {
-        group: plotType !== "burndown" ? "Pending" : "Done",
+        groupLabel: plotType !== "burndown" ? "Pending" : "Done",
         key: plotType !== "burndown" ? "pending" : "completed",
-        states: plotType !== "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
+        stateGroups: plotType !== "burndown" ? ["started", "unstarted", "backlog"] : ["completed"],
       },
-      { group: "Unstarted", key: "unstarted", states: ["unstarted"] },
-      { group: "Backlog", key: "backlog", states: ["backlog"] },
+      { groupLabel: "Unstarted", key: "unstarted", stateGroups: ["unstarted"] },
+      { groupLabel: "Backlog", key: "backlog", stateGroups: ["backlog"] },
     ],
   };
 
@@ -130,16 +144,14 @@ const Summary = observer((props: Props) => {
         {stateGroups.primaryStates.map((group, index) => (
           <div
             key={index}
-            className="flex text-sm w-full justify-between cursor-pointer p-2 rounded hover:bg-custom-background-90"
+            className={cn("flex text-sm w-full justify-between p-2 rounded hover:bg-custom-background-90", {
+              "cursor-default": group.stateGroups,
+            })}
             onMouseEnter={() => setAreaToHighlight(group.key)}
             onMouseLeave={() => setAreaToHighlight("")}
             onClick={() => {
-              if (groupedProjectStates) {
-                const states = group.states?.reduce(
-                  (acc, state) => acc.concat(groupedProjectStates[state].map((state) => state.id)),
-                  [] as string[]
-                );
-                handleFiltersUpdate("state", states || [], true);
+              if (group.stateGroups) {
+                handleFiltersUpdate([{ property: "state_group", operator: "in", value: group.stateGroups }]);
               }
             }}
           >
@@ -148,7 +160,7 @@ const Summary = observer((props: Props) => {
                 className={cn(`my-auto border-[1px]  w-[12px] ${group.dashed && "border-dashed"} mr-2`)}
                 style={{ borderColor: group.color }}
               />
-              <span className="my-auto">{group.group}</span>
+              <span className="my-auto">{group.groupLabel}</span>
             </div>
             <div className="flex gap-2">
               {group.key === "scope" && <ScopeDelta data={data} dataToday={dataToday} />}
@@ -174,19 +186,17 @@ const Summary = observer((props: Props) => {
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
-            className="flex text-sm cursor-pointer p-2 rounded hover:bg-custom-background-90 justify-between"
+            className={cn("flex text-sm p-2 rounded hover:bg-custom-background-90 justify-between", {
+              "cursor-default": group.stateGroups,
+            })}
             key={index}
             onClick={() => {
-              if (groupedProjectStates) {
-                const states = group.states?.reduce(
-                  (acc, state) => acc.concat(groupedProjectStates[state].map((state) => state.id)),
-                  [] as string[]
-                );
-                handleFiltersUpdate("state", states, true);
+              if (group.stateGroups) {
+                handleFiltersUpdate([{ property: "state_group", operator: "in", value: group.stateGroups }]);
               }
             }}
           >
-            <span>{group.group}</span>
+            <span>{group.groupLabel}</span>
             <span className="text-end font-bold text-custom-text-350 flex justify-end flex-shrink-0">
               {!data ? (
                 <Loader.Item width="20px" height="20px" />

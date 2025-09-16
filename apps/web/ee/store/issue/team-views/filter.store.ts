@@ -4,16 +4,18 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   IIssueFilters,
   IssuePaginationOptions,
   TIssueKanbanFilters,
   TIssueParams,
+  TSupportedFilterForUpdate,
+  TTeamspaceView,
+  TWorkItemFilterExpression,
 } from "@plane/types";
 // helpers
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
@@ -33,15 +35,24 @@ export interface ITeamViewIssuesFilter extends IBaseIssueFilterStore {
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   getIssueFilters(viewId: string): IIssueFilters | undefined;
+  // helper actions
+  mutateFilters: (workspaceSlug: string, viewId: string, viewDetails: TTeamspaceView) => void;
   // action
   fetchFilters: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
+  updateFilterExpression: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    viewId: string,
+    filters: TWorkItemFilterExpression
+  ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     teamspaceId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate,
     viewId: string
   ) => Promise<void>;
+  resetFilters: (workspaceSlug: string, teamspaceId: string, viewId: string) => void;
 }
 
 export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITeamViewIssuesFilter {
@@ -63,6 +74,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
       // actions
       fetchFilters: action,
       updateFilters: action,
+      resetFilters: action,
     });
     // root store
     this.rootIssueStore = _rootStore;
@@ -101,7 +113,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.filters as IIssueFilterOptions,
+      userFilters?.richFilters,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
       filteredParams
     );
@@ -124,79 +136,86 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
     }
   );
 
+  mutateFilters: ITeamViewIssuesFilter["mutateFilters"] = action((workspaceSlug, viewId, viewDetails) => {
+    const richFilters = viewDetails?.rich_filters;
+    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(viewDetails?.display_filters);
+    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(viewDetails?.display_properties);
+
+    // fetching the kanban toggle helpers in the local storage
+    const kanbanFilters = {
+      group_by: [],
+      sub_group_by: [],
+    };
+    const currentUserId = this.rootIssueStore.currentUserId;
+    if (currentUserId) {
+      const _kanbanFilters = this.handleIssuesLocalFilters.get(
+        EIssuesStoreType.TEAM_VIEW,
+        workspaceSlug,
+        viewId,
+        currentUserId
+      );
+      kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
+      kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
+    }
+
+    runInAction(() => {
+      set(this.filters, [viewId, "richFilters"], richFilters);
+      set(this.filters, [viewId, "displayFilters"], displayFilters);
+      set(this.filters, [viewId, "displayProperties"], displayProperties);
+      set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
+    });
+  });
+
   fetchFilters = async (workspaceSlug: string, teamspaceId: string, viewId: string) => {
     try {
-      const _filters = await this.teamspaceViewService.getViewDetails(workspaceSlug, teamspaceId, viewId);
-
-      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
-      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
-
-      // fetching the kanban toggle helpers in the local storage
-      const kanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
-      };
-      const currentUserId = this.rootIssueStore.currentUserId;
-      if (currentUserId) {
-        const _kanbanFilters = this.handleIssuesLocalFilters.get(
-          EIssuesStoreType.TEAM_VIEW,
-          workspaceSlug,
-          viewId,
-          currentUserId
-        );
-        kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
-        kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
-      }
-
-      runInAction(() => {
-        set(this.filters, [viewId, "filters"], filters);
-        set(this.filters, [viewId, "displayFilters"], displayFilters);
-        set(this.filters, [viewId, "displayProperties"], displayProperties);
-        set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
-      });
+      const viewDetails = await this.teamspaceViewService.getViewDetails(workspaceSlug, teamspaceId, viewId);
+      this.mutateFilters(workspaceSlug, viewId, viewDetails);
     } catch (error) {
       console.log("error while fetching teamspace view filters", error);
       throw error;
     }
   };
 
-  updateFilters = async (
-    workspaceSlug: string,
-    teamspaceId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string
+  /**
+   * NOTE: This method is designed as a fallback function for the work item filter store.
+   * Only use this method directly when initializing filter instances.
+   * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
+   */
+  updateFilterExpression: ITeamViewIssuesFilter["updateFilterExpression"] = async (
+    workspaceSlug,
+    teamspaceId,
+    viewId,
+    filters
   ) => {
     try {
-      if (isEmpty(this.filters) || isEmpty(this.filters[viewId]) || isEmpty(filters)) return;
+      runInAction(() => {
+        set(this.filters, [viewId, "richFilters"], filters);
+      });
+
+      this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination(
+        workspaceSlug,
+        teamspaceId,
+        viewId,
+        "mutation"
+      );
+    } catch (error) {
+      console.log("error while updating rich filters", error);
+      throw error;
+    }
+  };
+
+  updateFilters: ITeamViewIssuesFilter["updateFilters"] = async (workspaceSlug, teamspaceId, type, filters, viewId) => {
+    try {
+      if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
       const _filters = {
-        filters: this.filters[viewId].filters as IIssueFilterOptions,
+        richFilters: this.filters[viewId].richFilters as TWorkItemFilterExpression,
         displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS: {
-          const updatedFilters = filters as IIssueFilterOptions;
-          _filters.filters = { ..._filters.filters, ...updatedFilters };
-
-          runInAction(() => {
-            Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [viewId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-            });
-          });
-
-          this.rootIssueStore.teamViewIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            teamspaceId,
-            viewId,
-            "mutation"
-          );
-          break;
-        }
         case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };
@@ -291,4 +310,16 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
       throw error;
     }
   };
+
+  /**
+   * @description resets the filters for a teamspace view
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param viewId
+   */
+  resetFilters: ITeamViewIssuesFilter["resetFilters"] = action((workspaceSlug, teamspaceId, viewId) => {
+    const viewDetails = this.rootIssueStore.rootStore.teamspaceRoot.teamspaceView.getViewById(teamspaceId, viewId);
+    if (!viewDetails) return;
+    this.mutateFilters(workspaceSlug, viewId, viewDetails);
+  });
 }

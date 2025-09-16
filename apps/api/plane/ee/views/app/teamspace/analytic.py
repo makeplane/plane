@@ -22,6 +22,8 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.utils.issue_filters import issue_filters
 from .base import TeamspaceBaseEndpoint
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
@@ -413,9 +415,19 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
     def project_tree(self, team_space_id, project_ids, filters):
         # Get team space issues queryset
         issues_queryset = Issue.issue_objects.filter(project_id__in=project_ids)
+
+        # Apply filtering from filterset
+        issues_queryset = self.filter_queryset(issues_queryset)
+
+        # Apply legacy filters
+        issues_queryset = issues_queryset.filter(**filters)
+
         # Get all team member ids
         team_member_ids = TeamspaceMember.objects.filter(
             team_space_id=team_space_id
@@ -430,7 +442,6 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
 
         issue_map = (
             issues_queryset.filter(**issue_filter)
-            .filter(**filters)
             .annotate(identifier=F("project_id"))
             .values("identifier")
             .annotate(count=Count("id"))
@@ -444,11 +455,16 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
-        issue_ids = (
-            Issue.issue_objects.filter(project_id__in=project_ids)
-            .filter(**filters)
-            .values_list("id", flat=True)
-        )
+        issue_ids = Issue.issue_objects.filter(project_id__in=project_ids)
+
+        # Apply filtering from filterset
+        issue_ids = self.filter_queryset(issue_ids)
+
+        # Apply legacy filters
+        issue_ids = issue_ids.filter(**filters)
+
+        # Get the issue ids
+        issue_ids = issue_ids.values_list("id", flat=True)
 
         # Generate assignee filter
         assignee_filter = {

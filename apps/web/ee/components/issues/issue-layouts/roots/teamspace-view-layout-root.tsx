@@ -1,26 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane constants
+// plane imports
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// ui
 import { Spinner } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // plane web components
-import { TeamspaceViewAppliedFiltersRoot } from "@/plane-web/components/issues/filters/applied-filters/roots";
 import { TeamspaceViewBoardLayout } from "@/plane-web/components/issues/issue-layouts/board/teamspace-view-root";
 import { TeamspaceViewCalendarLayout } from "@/plane-web/components/issues/issue-layouts/calendar/teamspace-view-root";
 import { TeamspaceViewListLayout } from "@/plane-web/components/issues/issue-layouts/list/teamspace-view-root";
 import { TeamspaceViewTableLayout } from "@/plane-web/components/issues/issue-layouts/table/teamspace-view-root";
+import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
+import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 
-const TeamspaceViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {
+const TeamspaceViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <TeamspaceViewListLayout />;
@@ -37,11 +39,27 @@ const TeamspaceViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | und
 
 export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
   // router
-  const { workspaceSlug, teamspaceId, viewId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.TEAM_VIEW);
+  const { getViewById } = useTeamspaceViews();
+  // derived values
+  const teamspaceView = teamspaceId && viewId ? getViewById(teamspaceId, viewId) : undefined;
+  const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
+  const activeLayout = workItemFilters?.displayFilters?.layout;
+  const initialWorkItemFilters = teamspaceView
+    ? {
+        displayFilters: workItemFilters?.displayFilters,
+        displayProperties: workItemFilters?.displayProperties,
+        kanbanFilters: workItemFilters?.kanbanFilters,
+        richFilters: teamspaceView.rich_filters,
+      }
+    : undefined;
   // swr hook for fetching issue properties
-  useWorkspaceIssueProperties(workspaceSlug?.toString());
+  useWorkspaceIssueProperties(workspaceSlug);
   // fetch teamspace view issue filters
   const { isLoading } = useSWR(
     workspaceSlug && teamspaceId && viewId
@@ -49,18 +67,23 @@ export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
       : null,
     async () => {
       if (workspaceSlug && teamspaceId && viewId) {
-        await issuesFilter?.fetchFilters(workspaceSlug.toString(), teamspaceId.toString(), viewId.toString());
+        await issuesFilter?.fetchFilters(workspaceSlug, teamspaceId, viewId);
+      }
+    }
+  );
+
+  useEffect(
+    () => () => {
+      if (workspaceSlug && teamspaceId && viewId) {
+        issuesFilter?.resetFilters(workspaceSlug, teamspaceId, viewId);
       }
     },
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    [issuesFilter, workspaceSlug, teamspaceId, viewId]
   );
-  // get teamspace view issue filters
-  const issueFilters = issuesFilter?.getIssueFilters(viewId?.toString());
-  const activeLayout = issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !teamspaceId || !viewId) return <></>;
 
-  if (isLoading && !issueFilters) {
+  if (isLoading && !workItemFilters) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />
@@ -70,20 +93,44 @@ export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.TEAM_VIEW}>
-      <div className="relative flex h-full w-full flex-col overflow-hidden">
-        <TeamspaceViewAppliedFiltersRoot />
-        <div className="relative h-full w-full overflow-auto">
-          {/* mutation loader */}
-          {issues?.getIssueLoader() === "mutation" && (
-            <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-              <Spinner className="w-4 h-4" />
+      <TeamspaceLevelWorkItemFiltersHOC
+        enableSaveView
+        saveViewOptions={{
+          label: "Save as",
+        }}
+        enableUpdateView
+        entityId={viewId}
+        entityType={EIssuesStoreType.TEAM_VIEW}
+        filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.filters}
+        initialWorkItemFilters={initialWorkItemFilters}
+        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, teamspaceId, viewId)}
+        teamspaceId={teamspaceId}
+        workspaceSlug={workspaceSlug}
+      >
+        {({ filter: teamspaceViewWorkItemsFilter }) => (
+          <div className="relative flex h-full w-full flex-col overflow-hidden">
+            {teamspaceViewWorkItemsFilter && (
+              <WorkItemFiltersRow
+                filter={teamspaceViewWorkItemsFilter}
+                trackerElements={{
+                  saveView: TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON,
+                }}
+              />
+            )}
+            <div className="relative h-full w-full overflow-auto">
+              {/* mutation loader */}
+              {issues?.getIssueLoader() === "mutation" && (
+                <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+                  <Spinner className="w-4 h-4" />
+                </div>
+              )}
+              <TeamspaceViewIssueLayout activeLayout={activeLayout} />
             </div>
-          )}
-          <TeamspaceViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
-        </div>
-        {/* peek overview */}
-        <IssuePeekOverview />
-      </div>
+            {/* peek overview */}
+            <IssuePeekOverview />
+          </div>
+        )}
+      </TeamspaceLevelWorkItemFiltersHOC>
     </IssuesStoreContext.Provider>
   );
 });

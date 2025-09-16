@@ -1,18 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import { TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  IssuePaginationOptions,
-  TIssue,
-  TIssueKanbanFilters,
-  TLoader,
-} from "@plane/types";
+import { EIssuesStoreType, IssuePaginationOptions, TIssue, TLoader, TSupportedFilterForUpdate } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssueActions } from "@/hooks/use-issues-actions";
@@ -70,11 +61,7 @@ export const useTeamIssueActions: () => IssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters);
     },
@@ -149,11 +136,7 @@ export const useTeamViewIssueActions: () => IssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!viewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters, viewId);
     },
@@ -232,11 +215,7 @@ export const useTeamProjectWorkItemsActions: () => IssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!projectId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, teamspaceId, filterType, filters, projectId);
     },

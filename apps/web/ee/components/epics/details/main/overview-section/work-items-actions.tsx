@@ -1,7 +1,11 @@
 import { FC, useCallback } from "react";
 // constants
 import { observer } from "mobx-react";
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import {
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE,
+} from "@plane/constants";
 // types
 import {
   EIssueServiceType,
@@ -82,7 +86,7 @@ export const SubWorkItemsActions: FC<TSubWorkItemsActionsProps> = observer((prop
     [workspaceSlug, projectId, subIssueFilters?.filters, updateSubWorkItemFilters, workItemId]
   );
 
-  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"]?.["list"];
+  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"]?.layoutOptions["list"];
 
   return (
     <div className="flex items-center gap-2">
@@ -99,7 +103,7 @@ export const SubWorkItemsActions: FC<TSubWorkItemsActionsProps> = observer((prop
         filters={subIssueFilters?.filters ?? {}}
         memberIds={projectMemberIds ?? undefined}
         states={projectStates}
-        layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
+        availableFilters={SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE}
       />
       <SubIssuesActionButton issueId={workItemId} issueServiceType={workItemServiceType} disabled={disabled} />
     </div>
