@@ -101,9 +101,6 @@ class MagicSignInSpaceEndpoint(View):
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            base_url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True), next_path=next_path
-            )
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_space=True),
                 next_path=next_path,
