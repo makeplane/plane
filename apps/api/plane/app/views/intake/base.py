@@ -357,6 +357,8 @@ class IntakeIssueViewSet(BaseViewSet):
             is_active=True,
         ).first()
 
+        is_workspace_admin = False
+
         if not project_member:
             is_workspace_admin = WorkspaceMember.objects.filter(
                 workspace__slug=slug,
