@@ -1,5 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
-import { action, makeObservable, observable, runInAction, set } from "mobx";
+import set from "lodash/set";
+import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { EStartOfTheWeek, IUserTheme, TUserProfile } from "@plane/types";
 // services
@@ -86,8 +87,20 @@ export class ProfileStore implements IUserProfileStore {
   // helper action
   mutateUserProfile = (data: Partial<TUserProfile>) => {
     if (!data) return;
-    // Use MobX set for proper observable updates
-    set(this.data, data);
+    // Use lodash set with proper MobX reactivity for each property
+    Object.entries(data).forEach(([key, value]) => {
+      if (key in this.data) {
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          // For nested objects, update each nested property
+          Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            set(this.data, `${key}.${nestedKey}`, nestedValue);
+          });
+        } else {
+          // For primitive values, set directly
+          set(this.data, key, value);
+        }
+      }
+    });
   };
 
   // actions
