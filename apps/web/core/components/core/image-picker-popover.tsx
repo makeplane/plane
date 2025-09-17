@@ -195,72 +195,74 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                 })}
               </TabsList>
 
-              <TabsContent value="unsplash" className="pt-4">
-                <div className="flex gap-x-2">
-                  <Controller
-                    control={control}
-                    name="search"
-                    render={({ field: { value, ref, onChange } }) => (
-                      <Input
-                        id="search"
-                        name="search"
-                        type="text"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            setSearchParams(value);
-                          }
-                        }}
-                        value={value}
-                        onChange={(e) => {
-                          onChange(e.target.value);
-                          setFormData({ ...formData, search: e.target.value });
-                        }}
-                        ref={ref}
-                        placeholder="Search for images"
-                        className="w-full text-sm"
-                      />
-                    )}
-                  />
-                  <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
-                    Search
-                  </Button>
-                </div>
-                {unsplashImages ? (
-                  unsplashImages.length > 0 ? (
-                    <div className="grid grid-cols-4 gap-4">
-                      {unsplashImages.map((image) => (
-                        <div
-                          key={image.id}
-                          className="relative col-span-2 aspect-video md:col-span-1"
-                          onClick={() => {
-                            setIsOpen(false);
-                            onChange(image.urls.regular);
+              <TabsContent value="unsplash" className="pt-4 h-full overflow-hidden">
+                <div className="flex flex-col h-full">
+                  <div className="flex gap-x-2">
+                    <Controller
+                      control={control}
+                      name="search"
+                      render={({ field: { value, ref, onChange } }) => (
+                        <Input
+                          id="search"
+                          name="search"
+                          type="text"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              setSearchParams(value);
+                            }
                           }}
-                        >
-                          <img
-                            src={image.urls.small}
-                            alt={image.alt_description}
-                            className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                          value={value}
+                          onChange={(e) => {
+                            onChange(e.target.value);
+                            setFormData({ ...formData, search: e.target.value });
+                          }}
+                          ref={ref}
+                          placeholder="Search for images"
+                          className="w-full text-sm"
+                        />
+                      )}
+                    />
+                    <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
+                      Search
+                    </Button>
+                  </div>
+                  {unsplashImages ? (
+                    unsplashImages.length > 0 ? (
+                      <div className="grid grid-cols-4 gap-4 flex-1 overflow-y-auto pt-4">
+                        {unsplashImages.map((image) => (
+                          <div
+                            key={image.id}
+                            className="relative col-span-2 aspect-video md:col-span-1"
+                            onClick={() => {
+                              setIsOpen(false);
+                              onChange(image.urls.regular);
+                            }}
+                          >
+                            <img
+                              src={image.urls.small}
+                              alt={image.alt_description}
+                              className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                    )
                   ) : (
-                    <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
-                  )
-                ) : (
-                  <Loader className="grid grid-cols-4 gap-4">
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                    <Loader.Item height="80px" width="100%" />
-                  </Loader>
-                )}
+                    <Loader className="grid grid-cols-4 gap-4 flex-1 overflow-y-auto pt-4">
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                      <Loader.Item height="80px" width="100%" />
+                    </Loader>
+                  )}
+                </div>
               </TabsContent>
 
               {(!projectCoverImages || projectCoverImages.length !== 0) && (
