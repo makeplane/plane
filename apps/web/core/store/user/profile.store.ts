@@ -177,7 +177,9 @@ export class ProfileStore implements IUserProfileStore {
       Promise.all([
         this.fetchUserProfile(),
         this.store.user.userSettings.fetchCurrentUserSettings(true), // Cache-busting enabled
-      ]);
+      ]).catch((error) => {
+        console.error("Background sync failed:", error);
+      });
     } catch (error) {
       runInAction(() => {
         this.error = {
