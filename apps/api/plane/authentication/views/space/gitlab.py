@@ -18,6 +18,7 @@ from plane.authentication.adapter.error import (
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
 
 
+
 class GitLabOauthInitiateSpaceEndpoint(View):
     def get(self, request):
         # Get host and next path
@@ -96,7 +97,8 @@ class GitLabCallbackSpaceEndpoint(View):
             # Process workspace and project invitations
             # redirect to referer path
             next_path = validate_next_path(next_path=next_path)
-            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
+
+            url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
                 return HttpResponseRedirect(url)
             else:
