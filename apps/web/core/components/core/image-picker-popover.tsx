@@ -199,7 +199,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                   <Controller
                     control={control}
                     name="search"
-                    render={({ field: { value, ref } }) => (
+                    render={({ field: { value, ref, onChange } }) => (
                       <Input
                         id="search"
                         name="search"
@@ -207,11 +207,14 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
-                            setSearchParams(formData.search);
+                            setSearchParams(value);
                           }
                         }}
                         value={value}
-                        onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                        onChange={(e) => {
+                          onChange(e.target.value);
+                          setFormData({ ...formData, search: e.target.value });
+                        }}
                         ref={ref}
                         placeholder="Search for images"
                         className="w-full text-sm"

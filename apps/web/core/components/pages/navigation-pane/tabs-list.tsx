@@ -9,7 +9,7 @@ export const PageNavigationPaneTabsList = () => {
   const { t } = useTranslation();
 
   return (
-    <TabsList>
+    <TabsList aria-label="Page navigation tabs">
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
         <TabsTrigger key={tab.key} value={tab.key} type="button">
           {t(tab.i18n_label)}
