@@ -15,8 +15,8 @@ import {
   IFilterIconConfig,
   TCreateFilterConfig,
   TCreateFilterConfigParams,
+  createOperatorConfigEntry,
 } from "../../../rich-filters";
-
 
 // ------------ State group filter ------------
 
@@ -66,7 +66,9 @@ export const getStateGroupFilterConfig =
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
-        [COLLECTION_OPERATOR.IN, getStateGroupMultiSelectConfig(params, EQUALITY_OPERATOR.EXACT)],
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getStateGroupMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
       ]),
     });
 
@@ -117,5 +119,9 @@ export const getStateFilterConfig =
       label: "State",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getStateMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getStateMultiSelectConfig(updatedParams)
+        ),
+      ]),
     });

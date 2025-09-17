@@ -8,6 +8,7 @@ import {
 } from "@plane/types";
 // local imports
 import {
+  createOperatorConfigEntry,
   getDatePickerConfig,
   getDateRangePickerConfig,
   getMultiSelectConfig,
@@ -20,8 +21,10 @@ import {
 
 export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
   new Map([
-    [EQUALITY_OPERATOR.EXACT, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.RANGE, getDateRangePickerConfig(params)],
+    createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
+      getDateRangePickerConfig(updatedParams)
+    ),
   ]);
 
 // ------------ Project filter ------------

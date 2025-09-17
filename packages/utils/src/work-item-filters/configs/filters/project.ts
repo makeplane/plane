@@ -1,10 +1,7 @@
 // plane imports
 import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfig,
-} from "../../../rich-filters";
+import { createFilterConfig, createOperatorConfigEntry, TCreateFilterConfig } from "../../../rich-filters";
 import { getProjectMultiSelectConfig, TCreateProjectFilterParams } from "./shared";
 
 // ------------ Project filter ------------
@@ -24,6 +21,8 @@ export const getProjectFilterConfig =
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
-        [COLLECTION_OPERATOR.IN, getProjectMultiSelectConfig(params, EQUALITY_OPERATOR.EXACT)],
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getProjectMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
       ]),
     });

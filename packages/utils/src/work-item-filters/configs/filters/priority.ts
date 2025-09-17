@@ -1,10 +1,6 @@
 // plane imports
 import { ISSUE_PRIORITIES, TIssuePriorities } from "@plane/constants";
-import {
-  EQUALITY_OPERATOR,
-  TFilterProperty,
-  COLLECTION_OPERATOR,
-} from "@plane/types";
+import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR, TSupportedOperators } from "@plane/types";
 // local imports
 import {
   createFilterConfig,
@@ -12,6 +8,7 @@ import {
   IFilterIconConfig,
   TCreateFilterConfig,
   getMultiSelectConfig,
+  createOperatorConfigEntry,
 } from "../../../rich-filters";
 
 // ------------ Priority filter ------------
@@ -26,7 +23,10 @@ export type TCreatePriorityFilterParams = TCreateFilterConfigParams & IFilterIco
  * @param params - The filter params
  * @returns The priority multi select config
  */
-export const getPriorityMultiSelectConfig = (params: TCreatePriorityFilterParams) =>
+export const getPriorityMultiSelectConfig = (
+  params: TCreatePriorityFilterParams,
+  singleValueOperator: TSupportedOperators
+) =>
   getMultiSelectConfig<{ key: TIssuePriorities; title: string }, TIssuePriorities, TIssuePriorities>(
     {
       items: ISSUE_PRIORITIES,
@@ -36,8 +36,8 @@ export const getPriorityMultiSelectConfig = (params: TCreatePriorityFilterParams
       getIconData: (priority) => priority.key,
     },
     {
-      singleValueOperator: EQUALITY_OPERATOR.EXACT,
-      operatorLabel: params.operatorLabel,
+      singleValueOperator,
+      ...params,
     },
     {
       getOptionIcon: params.getOptionIcon,
@@ -58,5 +58,9 @@ export const getPriorityFilterConfig =
       label: "Priority",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getPriorityMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getPriorityMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
+      ]),
     });
