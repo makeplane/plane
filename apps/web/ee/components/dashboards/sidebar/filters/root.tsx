@@ -252,7 +252,7 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full overflow-hidden">
+    <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
       <div className="flex items-center justify-between w-full">
         <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
       </div>

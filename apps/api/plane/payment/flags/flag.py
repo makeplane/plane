@@ -90,8 +90,6 @@ class FeatureFlag(Enum):
     PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS"
     # Recurring Work Items
     RECURRING_WORKITEMS = "RECURRING_WORKITEMS"
-    # Dashboard widgets filters
-    DASHBOARD_WIDGET_FILTERS = "DASHBOARD_WIDGET_FILTERS"
 
 
 class AdminFeatureFlag(Enum):

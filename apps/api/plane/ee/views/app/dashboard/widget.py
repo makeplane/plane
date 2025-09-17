@@ -155,15 +155,12 @@ class WidgetListEndpoint(BaseAPIView):
             project_id__in=dashboard_project_ids,
         )
 
-        if check_workspace_feature_flag(
-            FeatureFlag.DASHBOARD_WIDGET_FILTERS, slug, user_id=str(request.user.id)
-        ):
-            # get the widget filter
-            if dashboard_widget.filters:
-                # use the complex filter backend using dashboard widget filters
-                issues = ComplexFilterBackend().filter_queryset(
-                    request, issues, self, dashboard_widget.filters
-                )
+        # get the widget filter
+        if dashboard_widget.filters:
+            # use the complex filter backend using dashboard widget filters
+            issues = ComplexFilterBackend().filter_queryset(
+                request, issues, self, dashboard_widget.filters
+            )
 
         issues = (
             issues.filter(

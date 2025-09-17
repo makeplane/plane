@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 
 // plane imports
@@ -11,7 +10,7 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 // plane web hooks
-import { useDashboards, useFlag } from "@/plane-web/hooks/store";
+import { useDashboards } from "@/plane-web/hooks/store";
 
 // local components
 import { WidgetConfigSidebarAxisConfig } from "./axis-config";
@@ -27,7 +26,6 @@ type Props = {
 
 export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((props) => {
   const { className, dashboardId } = props;
-  const { workspaceSlug } = useParams();
 
   // store hooks
   const { getDashboardById } = useDashboards();
@@ -38,7 +36,6 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
   // translation
   const { t } = useTranslation();
   // feature flag
-  const isDashboardWidgetsFiltersEnabled = useFlag(workspaceSlug?.toString(), "DASHBOARD_WIDGET_FILTERS");
 
   const { isEditingWidget: widgetIdToEdit, getWidgetById, toggleEditWidget, toggleDeleteWidget } = widgetsStore ?? {};
   const isEditingWidget = !!widgetIdToEdit;
@@ -145,7 +142,7 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={cn(className, "w-[308px] -mr-[308px] flex flex-col gap-y-4 p-4 transition-all", {
+      className={cn(className, "w-[358px] -mr-[358px] flex flex-col gap-y-4 p-4 transition-all", {
         "mr-0": shouldShowSidebar,
       })}
     >
@@ -157,13 +154,11 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
         <div className="flex-shrink-0 h-px bg-custom-background-80" />
         <WidgetConfigSidebarStyleConfig handleSubmit={handleFormSubmit} />
         <div className="flex-shrink-0 h-px bg-custom-background-80" />
-        {isDashboardWidgetsFiltersEnabled && (
-          <WidgetConfigSidebarFilters
-            handleSubmit={handleFormSubmit}
-            projectIds={project_ids}
-            initialFilters={filters ?? undefined}
-          />
-        )}
+        <WidgetConfigSidebarFilters
+          handleSubmit={handleFormSubmit}
+          projectIds={project_ids}
+          initialFilters={filters ?? undefined}
+        />
       </FormProvider>
     </form>
   );
