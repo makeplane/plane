@@ -18,7 +18,8 @@ export interface IUserSettingsStore {
   sidebarCollapsed: boolean;
   isScrolled: boolean;
   // actions
-  fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
+  fetchCurrentUserSettings: (bustCache?: boolean) => Promise<IUserSettings | undefined>;
+  toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleIsScrolled: (isScrolled?: boolean) => void;
 }
@@ -78,13 +79,13 @@ export class UserSettingsStore implements IUserSettingsStore {
    * @description fetches user profile information
    * @returns {Promise<IUserSettings | undefined>}
    */
-  fetchCurrentUserSettings = async () => {
+  fetchCurrentUserSettings = async (bustCache: boolean = false) => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = undefined;
       });
-      const userSettings = await this.userService.currentUserSettings();
+      const userSettings = await this.userService.currentUserSettings(bustCache);
       runInAction(() => {
         this.isLoading = false;
         this.data = userSettings;
