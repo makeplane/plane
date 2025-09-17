@@ -5,7 +5,11 @@ export type TFiltersOperatorConfigs = {
   allowNegative: boolean;
 };
 
-export const useFiltersOperatorConfigs = (): TFiltersOperatorConfigs => ({
+export type TUseFiltersOperatorConfigsProps = {
+  workspaceSlug: string;
+};
+
+export const useFiltersOperatorConfigs = (_props: TUseFiltersOperatorConfigsProps): TFiltersOperatorConfigs => ({
   allowedOperators: new Set(Object.values(CORE_OPERATORS)),
   allowNegative: false,
 });
