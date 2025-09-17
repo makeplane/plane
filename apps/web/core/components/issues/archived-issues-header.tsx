@@ -55,7 +55,9 @@ export const ArchivedIssuesHeader: FC = observer(() => {
             displayProperties={issueFilters?.displayProperties || {}}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-            layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_issues.layoutOptions[activeLayout] : undefined}
+            layoutDisplayFiltersOptions={
+              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_issues.layoutOptions[activeLayout] : undefined
+            }
             cycleViewDisabled={!currentProjectDetails?.cycle_view}
             moduleViewDisabled={!currentProjectDetails?.module_view}
           />
