@@ -1,4 +1,5 @@
 import { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@plane/types";
+import { isNegativeOperator, toPositiveOperator } from "./extended";
 
 /**
  * Result type for operator conversion
@@ -14,8 +15,8 @@ export type TOperatorForPayload = {
  * @returns Object with supported operator and negation flag
  */
 export const getOperatorForPayload = (displayOperator: TAllAvailableOperatorsForDisplay): TOperatorForPayload => {
-  const isNegation = false;
-  const operator = displayOperator;
+  const isNegation = isNegativeOperator(displayOperator);
+  const operator = isNegation ? toPositiveOperator(displayOperator) : displayOperator;
 
   return {
     operator,

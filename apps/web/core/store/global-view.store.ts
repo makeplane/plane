@@ -1,12 +1,10 @@
 import cloneDeep from "lodash/cloneDeep";
-import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType } from "@plane/constants";
-import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
-// constants
+// plane imports
+import { IWorkspaceView } from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
@@ -28,7 +26,8 @@ export interface IGlobalViewStore {
   updateGlobalView: (
     workspaceSlug: string,
     viewId: string,
-    data: Partial<IWorkspaceView>
+    data: Partial<IWorkspaceView>,
+    shouldSyncFilters?: boolean
   ) => Promise<IWorkspaceView | undefined>;
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
@@ -156,7 +155,8 @@ export class GlobalViewStore implements IGlobalViewStore {
   async updateGlobalView(
     workspaceSlug: string,
     viewId: string,
-    data: Partial<IWorkspaceView>
+    data: Partial<IWorkspaceView>,
+    shouldSyncFilters: boolean = true
   ): Promise<IWorkspaceView | undefined> {
     const currentViewData = this.getViewDetailsById(viewId) ? cloneDeep(this.getViewDetailsById(viewId)) : undefined;
     try {
@@ -168,31 +168,12 @@ export class GlobalViewStore implements IGlobalViewStore {
       const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
 
       // applying the filters in the global view
-      if (!isEqual(currentViewData?.filters || {}, currentView?.filters || {})) {
-        if (!currentView?.filters || isEmpty(currentView?.filters)) {
-          const currentGlobalViewFilters: IIssueFilterOptions = this.rootStore.issue.workspaceIssuesFilter.filters[
-            viewId
-          ].filters as IIssueFilterOptions;
-          const newFilters: IIssueFilterOptions = {};
-          Object.keys(currentGlobalViewFilters ?? {}).forEach((key) => {
-            newFilters[key as keyof IIssueFilterOptions] = [];
-          });
-          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
-            workspaceSlug,
-            undefined,
-            EIssueFilterType.FILTERS,
-            newFilters,
-            viewId
-          );
-        } else {
-          await this.rootStore.issue.workspaceIssuesFilter.updateFilters(
-            workspaceSlug,
-            undefined,
-            EIssueFilterType.FILTERS,
-            currentView?.filters,
-            viewId
-          );
-        }
+      if (shouldSyncFilters && !isEqual(currentViewData?.rich_filters || {}, currentView?.rich_filters || {})) {
+        await this.rootStore.issue.workspaceIssuesFilter.updateFilterExpression(
+          workspaceSlug,
+          viewId,
+          currentView?.rich_filters || {}
+        );
         this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
       }
       return currentView as IWorkspaceView;

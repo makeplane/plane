@@ -1,0 +1,30 @@
+{
+  "name": "@plane/sdk",
+  "version": "0.23.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown --minify",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 26",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+  },
+  "dependencies": {
+    "axios": "catalog:"
+  },
+  "devDependencies": {
+    "@plane/types": "workspace:*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  }
+}

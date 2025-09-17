@@ -50,17 +50,19 @@ export class ProfileStore implements IUserProfileStore {
       workspace_create: false,
       workspace_invite: false,
     },
+    is_smooth_cursor_enabled: false,
     is_onboarded: false,
     is_tour_completed: false,
     use_case: undefined,
     billing_address_country: undefined,
     billing_address: undefined,
     has_billing_address: false,
-    has_marketing_email_consent: false,
+    has_marketing_email_consent: true,
     created_at: "",
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    is_app_rail_docked: true,
   };
 
   // services
@@ -104,7 +106,8 @@ export class ProfileStore implements IUserProfileStore {
       const userProfile = await this.userService.getCurrentUserProfile();
       runInAction(() => {
         this.isLoading = false;
-        this.data = userProfile;
+        this.mutateUserProfile(userProfile);
+        // this.data = userProfile;
       });
       return userProfile;
     } catch (error) {

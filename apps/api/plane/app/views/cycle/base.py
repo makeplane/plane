@@ -1,6 +1,8 @@
 # Python imports
 import json
 import pytz
+from datetime import date, timedelta
+from dateutil.parser import parse as datetime_parse
 
 
 # Django imports
@@ -27,9 +29,12 @@ from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
@@ -54,7 +59,14 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
-from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
+from plane.utils.timezone_converter import (
+    convert_to_utc,
+    user_timezone_converter,
+)
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
+from plane.ee.models import EntityProgress
 
 
 class CycleViewSet(BaseViewSet):
@@ -88,10 +100,6 @@ class CycleViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .filter(project__archived_at__isnull=True)
             .select_related("project", "workspace", "owned_by")
             .prefetch_related(
@@ -179,6 +187,7 @@ class CycleViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -285,7 +294,7 @@ class CycleViewSet(BaseViewSet):
                 data=request.data, context={"project_id": project_id}
             )
             if serializer.is_valid():
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id, owned_by=request.user, version=2)
                 cycle = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
@@ -382,8 +391,76 @@ class CycleViewSet(BaseViewSet):
         serializer = CycleWriteSerializer(
             cycle, data=request.data, partial=True, context={"project_id": project_id}
         )
+
+        if request_data.get("start_date", None) and cycle.start_date and cycle.end_date:
+            if (
+                cycle.start_date.date() <= date.today()
+                and cycle.end_date.date() >= date.today()
+            ):
+                # Convert the given string date
+                parsed_request_start_date = datetime_parse(
+                    request_data["start_date"]
+                ).date()
+
+                last_entity_progress = (
+                    EntityProgress.objects.filter(
+                        cycle_id=pk, workspace__slug=slug, entity_type="CYCLE"
+                    )
+                    .order_by("progress_date")
+                    .first()
+                )
+                if parsed_request_start_date < cycle.start_date.date():
+                    # Find all the dates between the requested start date and the cycle's start date
+                    start_date = parsed_request_start_date
+                    end_date = cycle.start_date.date()
+
+                    delta = (end_date - start_date).days
+
+                    dates = []
+
+                    for i in range(delta):
+                        day = start_date + timedelta(days=i)
+                        dates.append(day)
+
+                    if last_entity_progress:
+                        EntityProgress.objects.bulk_create(
+                            [
+                                EntityProgress(
+                                    cycle_id=pk,
+                                    progress_date=date,
+                                    entity_type="CYCLE",
+                                    total_issues=last_entity_progress.total_issues,
+                                    total_estimate_points=last_entity_progress.total_estimate_points,
+                                    backlog_issues=last_entity_progress.backlog_issues,
+                                    unstarted_issues=last_entity_progress.unstarted_issues,
+                                    started_issues=last_entity_progress.started_issues,
+                                    completed_issues=last_entity_progress.completed_issues,
+                                    cancelled_issues=last_entity_progress.cancelled_issues,
+                                    backlog_estimate_points=last_entity_progress.backlog_estimate_points,
+                                    unstarted_estimate_points=last_entity_progress.unstarted_estimate_points,
+                                    started_estimate_points=last_entity_progress.started_estimate_points,
+                                    completed_estimate_points=last_entity_progress.completed_estimate_points,
+                                    cancelled_estimate_points=last_entity_progress.cancelled_estimate_points,
+                                    created_at=timezone.now(),
+                                    updated_at=timezone.now(),
+                                    workspace_id=last_entity_progress.workspace.id,
+                                )
+                                for date in dates
+                            ]
+                        )
+                elif parsed_request_start_date > cycle.start_date.date():
+                    EntityProgress.objects.filter(
+                        progress_date__lte=(
+                            parsed_request_start_date - timedelta(days=1)
+                        ),
+                        workspace__slug=slug,
+                        entity_type="CYCLE",
+                    ).delete()
+                    last_entity_progress.delete()
+
         if serializer.is_valid():
             serializer.save()
+
             cycle = queryset.values(
                 # necessary fields
                 "id",
@@ -1042,6 +1119,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             issue__state__group__in=["backlog", "unstarted", "started"],
+            issue__deleted_at__isnull=True,
         )
 
         updated_cycles = []
@@ -1057,8 +1135,28 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
+        _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
+
+        # Trigger the entity issue state activity task for removal of issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(cycle_id)}
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
+
+        # trigger the entity issue state activity task for adding issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(new_cycle_id)}
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="ADDED",
         )
 
         # Capture Issue Activity
@@ -1093,6 +1191,9 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         )
 
         cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
+        cycle_properties.rich_filters = request.data.get(
+            "rich_filters", cycle_properties.rich_filters
+        )
         cycle_properties.display_filters = request.data.get(
             "display_filters", cycle_properties.display_filters
         )
@@ -1283,6 +1384,11 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             )
             .first()
         )
+
+        if not cycle:
+            return Response(
+                {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if not cycle.start_date or not cycle.end_date:
             return Response(

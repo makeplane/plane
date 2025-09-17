@@ -6,7 +6,6 @@ import { IStateLite } from "./state";
 import { IUserLite } from "./users";
 import {
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueGroupingFilters,
@@ -219,7 +218,6 @@ export interface IIssueListRow {
 }
 
 export interface ILayoutDisplayFiltersOptions {
-  filters: (keyof IIssueFilterOptions)[];
   display_properties: (keyof IIssueDisplayProperties)[];
   display_filters: {
     group_by?: TIssueGroupByOptions[];

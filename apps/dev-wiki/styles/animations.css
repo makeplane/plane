@@ -1,0 +1,199 @@
+/* Comment animations */
+@keyframes stagger-comments {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expand-reply {
+  0% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expand {
+  0% {
+    opacity: 0;
+    max-height: 0;
+  }
+  100% {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+@keyframes expand-action {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes expand-down {
+  0% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-line {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes button-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation classes */
+.animate-stagger-comments > * {
+  animation: stagger-comments 0.25s var(--ease-out-cubic) forwards;
+}
+
+.animate-stagger-comments > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.animate-stagger-comments > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.animate-stagger-comments > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.animate-stagger-comments > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.animate-stagger-comments > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.animate-stagger-comments > *:nth-child(n + 6) {
+  animation-delay: 250ms;
+}
+
+/* Smooth filtering animation - no delays to prevent jitter */
+.animate-smooth-comments > * {
+  animation: stagger-comments 0.2s var(--ease-out-cubic) forwards;
+}
+
+/* Subtle transition for comment items during filtering */
+.animate-comment-item {
+  transition: all 0.15s var(--ease-out-cubic);
+}
+
+.animate-expand-reply {
+  animation: expand-reply 0.3s var(--ease-out-cubic) forwards;
+}
+
+.animate-expand {
+  animation: expand 0.25s var(--ease-out-quad) forwards;
+}
+
+.animate-expand-action {
+  animation: expand-action 0.2s var(--ease-out-quad) forwards;
+}
+
+.animate-expand-down {
+  animation: expand-down 0.3s var(--ease-out-cubic) forwards;
+}
+
+.animate-scale-line {
+  animation: scale-line 0.3s var(--ease-out-quad) forwards;
+  transform-origin: center;
+}
+
+.animate-button-fade-up {
+  animation: button-fade-up 0.25s var(--ease-out-cubic) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s var(--ease-out-cubic) forwards;
+}
+
+/* Smooth filtering animations */
+.animate-comment-filter {
+  transition: all 0.2s var(--ease-out-cubic);
+}
+
+.animate-comment-filter.entering {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.animate-comment-filter.entered {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-comment-filter.exiting {
+  opacity: 0;
+  transform: translateY(10px);
+  max-height: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Accessibility: Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger-comments > *,
+  .animate-smooth-comments > *,
+  .animate-expand-reply,
+  .animate-expand,
+  .animate-expand-action,
+  .animate-expand-down,
+  .animate-scale-line,
+  .animate-button-fade-up,
+  .animate-fade-in-up,
+  .animate-comment-filter,
+  .animate-comment-item {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    max-height: none !important;
+  }
+}

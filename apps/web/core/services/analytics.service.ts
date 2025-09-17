@@ -96,6 +96,6 @@ export class AnalyticsService extends APIService {
       }
       processedUrl += `/projects/${projectId}`;
     }
-    return `${processedUrl}/${endpoint}`;
+    return `${processedUrl}/${endpoint}/`;
   }
 }
