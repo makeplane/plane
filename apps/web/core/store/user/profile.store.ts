@@ -1,6 +1,5 @@
 import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction, set } from "mobx";
 // types
 import { EStartOfTheWeek, IUserTheme, TUserProfile } from "@plane/types";
 // services
@@ -75,8 +74,10 @@ export class ProfileStore implements IUserProfileStore {
       // actions
       fetchUserProfile: action,
       updateUserProfile: action,
+      finishUserOnboarding: action,
       updateTourCompleted: action,
       updateUserTheme: action,
+      mutateUserProfile: action,
     });
     // services
     this.userService = new UserService();
@@ -85,9 +86,8 @@ export class ProfileStore implements IUserProfileStore {
   // helper action
   mutateUserProfile = (data: Partial<TUserProfile>) => {
     if (!data) return;
-    Object.entries(data).forEach(([key, value]) => {
-      if (key in this.data) set(this.data, key, value);
-    });
+    // Use MobX set for proper observable updates
+    set(this.data, data);
   };
 
   // actions
@@ -168,8 +168,10 @@ export class ProfileStore implements IUserProfileStore {
       // update user onboarding status
       await this.userService.updateUserOnBoard();
 
-      // refetch user profile to ensure we have the latest state from backend
-      await this.fetchUserProfile();
+      // update the user profile store locally
+      runInAction(() => {
+        this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
+      });
     } catch (error) {
       runInAction(() => {
         this.error = {
