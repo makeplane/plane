@@ -15,7 +15,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
 
 
 class SignInAuthSpaceEndpoint(View):
@@ -100,13 +100,13 @@ class SignInAuthSpaceEndpoint(View):
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
-            # redirect to next path
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params={}
-            )
-            return HttpResponseRedirect(url)
+            # redirect to referer path
+            next_path = validate_next_path(next_path=next_path)
+            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
+            if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
+                return HttpResponseRedirect(url)
+            else:
+                return HttpResponseRedirect(base_host(request=request, is_space=True))
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
