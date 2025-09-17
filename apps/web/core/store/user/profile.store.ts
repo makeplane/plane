@@ -172,6 +172,12 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });
+
+      // Also fetch from backend to ensure consistency and refresh user settings with cache-busting
+      Promise.all([
+        this.fetchUserProfile(),
+        this.store.user.userSettings.fetchCurrentUserSettings(true), // Cache-busting enabled
+      ]);
     } catch (error) {
       runInAction(() => {
         this.error = {
