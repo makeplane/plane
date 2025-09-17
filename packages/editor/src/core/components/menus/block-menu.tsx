@@ -30,7 +30,6 @@ export const BlockMenu = (props: Props) => {
   const virtualReferenceRef = useRef<{ getBoundingClientRect: () => DOMRect }>({
     getBoundingClientRect: () => new DOMRect(),
   });
-  // const { t } = useTranslation();
 
   // Set up Floating UI with virtual reference element
   const { refs, floatingStyles, context } = useFloating({
@@ -73,35 +72,6 @@ export const BlockMenu = (props: Props) => {
     },
     [refs]
   );
-
-  // useEffect(() => {
-  //   if (menuRef.current) {
-  //     menuRef.current.remove();
-  //     menuRef.current.style.visibility = "visible";
-
-  //     // @ts-expect-error - Tippy types are incorrect
-  //     popup.current = tippy(document.body, {
-  //       getReferenceClientRect: null,
-  //       content: menuRef.current,
-  //       appendTo: () => document.querySelector(".frame-renderer"),
-  //       trigger: "manual",
-  //       interactive: true,
-  //       arrow: false,
-  //       placement: "left-start",
-  //       animation: "shift-away",
-  //       maxWidth: 500,
-  //       hideOnClick: true,
-  //       onShown: () => {
-  //         menuRef.current?.focus();
-  //       },
-  //     });
-  //   }
-
-  //   return () => {
-  //     popup.current?.destroy();
-  //     popup.current = null;
-  //   };
-  // }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -251,7 +221,6 @@ export const BlockMenu = (props: Props) => {
             >
               <item.icon className="h-3 w-3" />
               {item.label}
-              {/* {t(item.label)} */}
             </button>
           );
         })}
