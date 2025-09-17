@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { mutate } from "swr";
 // types
 import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
@@ -9,6 +7,7 @@ import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types"
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
@@ -129,22 +128,27 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     const payload: Partial<ICycle> = {
       ...formData,
+      start_date: renderFormattedPayloadDate(formData.start_date),
+      end_date: renderFormattedPayloadDate(formData.end_date),
     };
 
     let isDateValid: boolean = true;
 
     if (payload.start_date && payload.end_date) {
-      if (data?.start_date && data?.end_date)
+      if (data?.start_date && data?.end_date) {
+        // Update existing cycle - include cycle_id for validation
         isDateValid = await dateChecker(payload.project_id ?? projectId, {
-          start_date: format(payload.start_date, "yyyy-MM-dd"),
-          end_date: format(payload.end_date, "yyyy-MM-dd"),
+          start_date: payload.start_date,
+          end_date: payload.end_date,
           cycle_id: data.id,
         });
-      else
+      } else {
+        // Create new cycle - no cycle_id needed
         isDateValid = await dateChecker(payload.project_id ?? projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
         });
+      }
     }
 
     if (isDateValid) {
