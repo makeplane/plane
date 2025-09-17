@@ -357,15 +357,12 @@ class IntakeIssueViewSet(BaseViewSet):
             is_active=True,
         ).first()
 
-        is_workspace_admin = False
-
-        if not project_member:
-            is_workspace_admin = WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                is_active=True,
-                member=request.user,
-                role=ROLE.ADMIN.value,
-            ).exists()
+        is_workspace_admin = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_active=True,
+            member=request.user,
+            role=ROLE.ADMIN.value,
+        ).exists()
 
         if not project_member and not is_workspace_admin:
             return Response(
