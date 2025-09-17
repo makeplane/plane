@@ -257,3 +257,40 @@ export function extractURLComponents(url: URL | string): IURLComponents | undefi
     return undefined;
   }
 }
+
+/**
+ * Validates that a next_path parameter is safe for redirection.
+ * Only allows relative paths starting with "/" to prevent open redirect vulnerabilities.
+ *
+ * @param url - The next_path URL to validate
+ * @returns True if the URL is a safe relative path, false otherwise
+ *
+ * @example
+ * isValidNextPath("/dashboard") // true
+ * isValidNextPath("/workspace/123") // true
+ * isValidNextPath("https://malicious.com") // false
+ * isValidNextPath("javascript:alert(1)") // false
+ * isValidNextPath("") // false
+ * isValidNextPath("dashboard") // false (must start with /)
+ */
+export function isValidNextPath(url: string): boolean {
+  if (!url || typeof url !== "string") return false;
+
+  // Only allow relative paths starting with /
+  if (!url.startsWith("/")) return false;
+
+  // Disallow external URLs (http, https, ftp) for security
+  const disallowedSchemes = /^(https?|ftp):\/\//i;
+  if (disallowedSchemes.test(url)) return false;
+
+  // Additional security checks for malicious patterns
+  const maliciousPatterns = [
+    /javascript:/i,
+    /data:/i,
+    /vbscript:/i,
+    /<script/i,
+    /on\w+=/i, // Event handlers like onclick=, onload=
+  ];
+
+  return !maliciousPatterns.some((pattern) => pattern.test(url));
+}
