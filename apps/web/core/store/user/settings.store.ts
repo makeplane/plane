@@ -19,7 +19,6 @@ export interface IUserSettingsStore {
   isScrolled: boolean;
   // actions
   fetchCurrentUserSettings: (bustCache?: boolean) => Promise<IUserSettings | undefined>;
-  toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleIsScrolled: (isScrolled?: boolean) => void;
 }
