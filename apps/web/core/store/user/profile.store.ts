@@ -168,10 +168,8 @@ export class ProfileStore implements IUserProfileStore {
       // update user onboarding status
       await this.userService.updateUserOnBoard();
 
-      // update the user profile store
-      runInAction(() => {
-        this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
-      });
+      // refetch user profile to ensure we have the latest state from backend
+      await this.fetchUserProfile();
     } catch (error) {
       runInAction(() => {
         this.error = {
