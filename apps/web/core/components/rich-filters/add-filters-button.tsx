@@ -15,7 +15,7 @@ export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternal
     defaultOpen?: boolean;
     iconConfig?: {
       shouldShowIcon: boolean;
-      iconComponent?: React.ReactNode;
+      iconComponent?: React.ElementType;
     };
     isDisabled?: boolean;
   };
@@ -34,6 +34,8 @@ export const AddFilterButton = observer(
       iconConfig = { shouldShowIcon: true },
       isDisabled = false,
     } = buttonConfig || {};
+    // derived values
+    const FilterIcon = iconConfig.iconComponent || ListFilter;
 
     // Transform available filter configs to CustomSearchSelect options format
     const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
@@ -91,11 +93,10 @@ export const AddFilterButton = observer(
           maxHeight="full"
           placement="bottom-start"
           disabled={isDisabled}
-          customButtonClassName={cn(getButtonStyling(variant, "sm"), className)}
+          customButtonClassName={cn(getButtonStyling(variant, "sm"), "py-[5px]", className)}
           customButton={
             <div className="flex items-center gap-1">
-              {iconConfig.shouldShowIcon &&
-                (iconConfig.iconComponent || <ListFilter className="size-4 text-custom-text-200" />)}
+              {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
               {label}
             </div>
           }
