@@ -4,7 +4,9 @@
     "outDir": "dist",
     "rootDir": "src",
     "allowSyntheticDefaultImports": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

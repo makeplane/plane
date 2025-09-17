@@ -5,11 +5,12 @@
   "version": "1.0.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     }
   },
   "scripts": {

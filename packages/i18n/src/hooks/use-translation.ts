@@ -1,8 +1,8 @@
 import { useContext } from "react";
+// types
+import { ILanguageOption, TLanguage } from "@plane/types";
 // context
 import { TranslationContext } from "../context";
-// types
-import { ILanguageOption, TLanguage } from "../types";
 
 export type TTranslationStore = {
   t: (key: string, params?: Record<string, unknown>) => string;

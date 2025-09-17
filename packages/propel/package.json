@@ -15,148 +15,149 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
+  "type": "module",
   "exports": {
     "./accordion": {
       "types": "./dist/accordion/index.d.ts",
-      "import": "./dist/accordion/index.mjs",
-      "require": "./dist/accordion/index.js"
+      "import": "./dist/accordion/index.js",
+      "require": "./dist/accordion/index.cjs"
     },
     "./animated-counter": {
       "types": "./dist/animated-counter/index.d.ts",
-      "import": "./dist/animated-counter/index.mjs",
-      "require": "./dist/animated-counter/index.js"
+      "import": "./dist/animated-counter/index.js",
+      "require": "./dist/animated-counter/index.cjs"
     },
     "./avatar": {
       "types": "./dist/avatar/index.d.ts",
-      "import": "./dist/avatar/index.mjs",
-      "require": "./dist/avatar/index.js"
+      "import": "./dist/avatar/index.js",
+      "require": "./dist/avatar/index.cjs"
     },
     "./button": {
       "types": "./dist/button/index.d.ts",
-      "import": "./dist/button/index.mjs",
-      "require": "./dist/button/index.js"
+      "import": "./dist/button/index.js",
+      "require": "./dist/button/index.cjs"
     },
     "./calendar": {
       "types": "./dist/calendar/index.d.ts",
-      "import": "./dist/calendar/index.mjs",
-      "require": "./dist/calendar/index.js"
+      "import": "./dist/calendar/index.js",
+      "require": "./dist/calendar/index.cjs"
     },
     "./card": {
       "types": "./dist/card/index.d.ts",
-      "import": "./dist/card/index.mjs",
-      "require": "./dist/card/index.js"
+      "import": "./dist/card/index.js",
+      "require": "./dist/card/index.cjs"
     },
     "./charts/*": {
       "types": "./dist/charts/*/index.d.ts",
-      "import": "./dist/charts/*/index.mjs",
-      "require": "./dist/charts/*/index.js"
+      "import": "./dist/charts/*/index.js",
+      "require": "./dist/charts/*/index.cjs"
     },
     "./collapsible": {
       "types": "./dist/collapsible/index.d.ts",
-      "import": "./dist/collapsible/index.mjs",
-      "require": "./dist/collapsible/index.js"
+      "import": "./dist/collapsible/index.js",
+      "require": "./dist/collapsible/index.cjs"
     },
     "./combobox": {
       "types": "./dist/combobox/index.d.ts",
-      "import": "./dist/combobox/index.mjs",
-      "require": "./dist/combobox/index.js"
+      "import": "./dist/combobox/index.js",
+      "require": "./dist/combobox/index.cjs"
     },
     "./command": {
       "types": "./dist/command/index.d.ts",
-      "import": "./dist/command/index.mjs",
-      "require": "./dist/command/index.js"
+      "import": "./dist/command/index.js",
+      "require": "./dist/command/index.cjs"
     },
     "./context-menu": {
       "types": "./dist/context-menu/index.d.ts",
-      "import": "./dist/context-menu/index.mjs",
-      "require": "./dist/context-menu/index.js"
+      "import": "./dist/context-menu/index.js",
+      "require": "./dist/context-menu/index.cjs"
     },
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
-      "import": "./dist/dialog/index.mjs",
-      "require": "./dist/dialog/index.js"
+      "import": "./dist/dialog/index.js",
+      "require": "./dist/dialog/index.cjs"
     },
     "./emoji-icon-picker": {
       "types": "./dist/emoji-icon-picker/index.d.ts",
-      "import": "./dist/emoji-icon-picker/index.mjs",
-      "require": "./dist/emoji-icon-picker/index.js"
+      "import": "./dist/emoji-icon-picker/index.js",
+      "require": "./dist/emoji-icon-picker/index.cjs"
     },
     "./emoji-reaction": {
       "types": "./dist/emoji-reaction/index.d.ts",
-      "import": "./dist/emoji-reaction/index.mjs",
-      "require": "./dist/emoji-reaction/index.js"
+      "import": "./dist/emoji-reaction/index.js",
+      "require": "./dist/emoji-reaction/index.cjs"
     },
     "./emoji-reaction-picker": {
       "types": "./dist/emoji-reaction-picker/index.d.ts",
-      "import": "./dist/emoji-reaction-picker/index.mjs",
-      "require": "./dist/emoji-reaction-picker/index.js"
+      "import": "./dist/emoji-reaction-picker/index.js",
+      "require": "./dist/emoji-reaction-picker/index.cjs"
     },
     "./icons": {
       "types": "./dist/icons/index.d.ts",
-      "import": "./dist/icons/index.mjs",
-      "require": "./dist/icons/index.js"
+      "import": "./dist/icons/index.js",
+      "require": "./dist/icons/index.cjs"
     },
     "./menu": {
       "types": "./dist/menu/index.d.ts",
-      "import": "./dist/menu/index.mjs",
-      "require": "./dist/menu/index.js"
+      "import": "./dist/menu/index.js",
+      "require": "./dist/menu/index.cjs"
     },
     "./pill": {
       "types": "./dist/pill/index.d.ts",
-      "import": "./dist/pill/index.mjs",
-      "require": "./dist/pill/index.js"
+      "import": "./dist/pill/index.js",
+      "require": "./dist/pill/index.cjs"
     },
     "./popover": {
       "types": "./dist/popover/index.d.ts",
-      "import": "./dist/popover/index.mjs",
-      "require": "./dist/popover/index.js"
+      "import": "./dist/popover/index.js",
+      "require": "./dist/popover/index.cjs"
     },
     "./scrollarea": {
       "types": "./dist/scrollarea/index.d.ts",
-      "import": "./dist/scrollarea/index.mjs",
-      "require": "./dist/scrollarea/index.js"
+      "import": "./dist/scrollarea/index.js",
+      "require": "./dist/scrollarea/index.cjs"
     },
     "./skeleton": {
       "types": "./dist/skeleton/index.d.ts",
-      "import": "./dist/skeleton/index.mjs",
-      "require": "./dist/skeleton/index.js"
+      "import": "./dist/skeleton/index.js",
+      "require": "./dist/skeleton/index.cjs"
     },
     "./styles/fonts": "./dist/styles/fonts/index.css",
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
     "./switch": {
       "types": "./dist/switch/index.d.ts",
-      "import": "./dist/switch/index.mjs",
-      "require": "./dist/switch/index.js"
+      "import": "./dist/switch/index.js",
+      "require": "./dist/switch/index.cjs"
     },
     "./table": {
       "types": "./dist/table/index.d.ts",
-      "import": "./dist/table/index.mjs",
-      "require": "./dist/table/index.js"
+      "import": "./dist/table/index.js",
+      "require": "./dist/table/index.cjs"
     },
     "./tabs": {
       "types": "./dist/tabs/index.d.ts",
-      "import": "./dist/tabs/index.mjs",
-      "require": "./dist/tabs/index.js"
+      "import": "./dist/tabs/index.js",
+      "require": "./dist/tabs/index.cjs"
     },
     "./toast": {
       "types": "./dist/toast/index.d.ts",
-      "import": "./dist/toast/index.mjs",
-      "require": "./dist/toast/index.js"
+      "import": "./dist/toast/index.js",
+      "require": "./dist/toast/index.cjs"
     },
     "./toolbar": {
       "types": "./dist/toolbar/index.d.ts",
-      "import": "./dist/toolbar/index.mjs",
-      "require": "./dist/toolbar/index.js"
+      "import": "./dist/toolbar/index.js",
+      "require": "./dist/toolbar/index.cjs"
     },
     "./tooltip": {
       "types": "./dist/tooltip/index.d.ts",
-      "import": "./dist/tooltip/index.mjs",
-      "require": "./dist/tooltip/index.js"
+      "import": "./dist/tooltip/index.js",
+      "require": "./dist/tooltip/index.cjs"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.js"
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
     }
   },
   "dependencies": {

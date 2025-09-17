@@ -917,6 +917,9 @@ importers:
 
   packages/i18n:
     dependencies:
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../types
       '@plane/utils':
         specifier: workspace:*
         version: link:../utils

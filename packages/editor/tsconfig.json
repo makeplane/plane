@@ -3,12 +3,11 @@
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM"],
     "module": "ESNext",
+    "target": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "ESNext",
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/core/*"],

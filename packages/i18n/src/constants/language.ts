@@ -1,4 +1,4 @@
-import { TLanguage, ILanguageOption } from "../types";
+import { TLanguage, ILanguageOption } from "@plane/types";
 
 export const FALLBACK_LANGUAGE: TLanguage = "en";
 

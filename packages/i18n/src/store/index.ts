@@ -2,12 +2,12 @@ import IntlMessageFormat from "intl-messageformat";
 import get from "lodash/get";
 import merge from "lodash/merge";
 import { makeAutoObservable, runInAction } from "mobx";
+// types
+import { TLanguage, ILanguageOption, ITranslations } from "@plane/types";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
 import { enCore, locales } from "../locales";
-// types
-import { TLanguage, ILanguageOption, ITranslations } from "../types";
 
 /**
  * Mobx store class for handling translations and language changes in the application
