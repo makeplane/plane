@@ -123,7 +123,7 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     if validated_path:
         query_parts.append(f"next_path={validated_path}")
 
-    # Add the parameters to the parameters
+    # Add additional parameters
     if params:
         encoded_params = urlencode(params)
         query_parts.append(encoded_params)
@@ -134,7 +134,6 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
         url = f"{base_url}/?{query_string}"
     else:
         url = base_url
-
 
     # Check if the URL is allowed
     if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
