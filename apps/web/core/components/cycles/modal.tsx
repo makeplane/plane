@@ -128,23 +128,23 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
     const payload: Partial<ICycle> = {
       ...formData,
-      start_date: renderFormattedPayloadDate(formData.start_date),
-      end_date: renderFormattedPayloadDate(formData.end_date),
+      start_date: renderFormattedPayloadDate(formData.start_date) ?? null,
+      end_date: renderFormattedPayloadDate(formData.end_date) ?? null,
     };
 
     let isDateValid: boolean = true;
 
     if (payload.start_date && payload.end_date) {
-      if (data?.start_date && data?.end_date) {
-        // Update existing cycle - include cycle_id for validation
-        isDateValid = await dateChecker(payload.project_id ?? projectId, {
+      if (data?.id) {
+        // Update existing cycle - always include cycle_id for validation
+        isDateValid = await dateChecker(projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
           cycle_id: data.id,
         });
       } else {
         // Create new cycle - no cycle_id needed
-        isDateValid = await dateChecker(payload.project_id ?? projectId, {
+        isDateValid = await dateChecker(projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
         });
@@ -152,7 +152,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await handleUpdateCycle(data.id, payload);
+      if (data?.id) await handleUpdateCycle(data.id, payload);
       else {
         await handleCreateCycle(payload).then(() => {
           setCycleTab("all");
