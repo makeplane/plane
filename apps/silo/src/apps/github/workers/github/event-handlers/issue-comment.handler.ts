@@ -1,19 +1,21 @@
-import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
-import { GithubWebhookPayload, transformGitHubComment, WebhookGitHubComment } from "@plane/etl/github";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import {
+  EGithubEntityConnectionType,
+  GithubWebhookPayload,
+  transformGitHubComment,
+  WebhookGitHubComment,
+} from "@plane/etl/github";
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
-import { TGithubWorkspaceConnection } from "@plane/types";
+import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
-import { getConnectionDetails } from "@/apps/github/helpers/helpers";
-import { GithubEntityConnection } from "@/apps/github/types";
+import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 
 import { env } from "@/env";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 import { shouldSync } from "./issue.handler";
-
-const apiClient = getAPIClient();
 
 export type GithubCommentAction = "created" | "edited" | "deleted";
 
@@ -29,7 +31,7 @@ export const handleIssueComment = async (store: Store, action: GithubCommentActi
     // @ts-expect-error
     const exist = await store.get(`silo:comment:${data.comment.id}`);
     if (exist) {
-      logger.info("[GITHUB][COMMENT] Event Processed Successfully, confirmed by target");
+      logger.info(`[ISSUE-COMMENT] Event Processed Successfully, confirmed by target`);
       // Remove the webhook from the store
       // @ts-expect-error
       await store.del(`silo:comment:${data.comment.id}`);
@@ -47,35 +49,54 @@ export const syncCommentWithPlane = async (
   action: GithubCommentAction,
   data: GithubCommentWebhookPayload
 ) => {
+  const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
   if (!data.installation || !shouldSync(data.issue.labels) || data.comment.user?.type !== "User") {
+    logger.info(
+      `${ghIntegrationKey}[COMMENT] No installation or should sync or comment user type is not user, skipping`,
+      { repositoryId: data.repository.id, ghIntegrationKey }
+    );
     return;
   }
-  const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
-  const [planeCredentials] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    source: ghIntegrationKey,
-    source_access_token: data.installation.id.toString(),
-  });
-  const accountId = data.organization ? data.organization.id : data.repository.owner.id;
+  const { userCredentials, wsAdminCredentials } =
+    await integrationConnectionHelper.getUserAndWSAdminCredentialsWithAdminFallback(
+      ghIntegrationKey,
+      data.installation.id.toString(),
+      data.sender.id.toString()
+    );
 
-  const { workspaceConnection, entityConnection } = await getConnectionDetails({
-    accountId: accountId.toString(),
-    credentials: planeCredentials as TServiceCredentials,
-    installationId: data.installation.id.toString(),
-    repositoryId: data.repository.id.toString(),
-    isEnterprise: data.isEnterprise,
-  });
+  if (!userCredentials || !wsAdminCredentials) {
+    logger.info(`${ghIntegrationKey}[ISSUE-COMMENT] No plane credentials found, skipping`, {
+      installationId: data.installation.id,
+      repositoryId: data.repository.id,
+    });
+    return;
+  }
+
+  const { workspaceConnection, entityConnectionForRepository: entityConnection } =
+    await getConnDetailsForGithubToPlaneSync({
+      wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+      type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
+      repositoryId: data.repository.id.toString(),
+      isEnterprise: data.isEnterprise,
+    });
 
   if (!workspaceConnection.target_hostname) {
     throw new Error("Target hostname not found");
   }
 
-  if (!entityConnection) return;
+  if (!entityConnection) {
+    logger.info(`${ghIntegrationKey}[ISSUE-COMMENT] No entity connection found, skipping`, {
+      repositoryId: data.repository.id,
+      ghIntegrationKey,
+    });
+    return;
+  }
 
-  const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
+  const planeClient = await getPlaneAPIClient(userCredentials, ghIntegrationKey);
 
   const ghService = getGithubService(
     workspaceConnection as TGithubWorkspaceConnection,
-    data.installation.id.toString(),
+    data.installation?.id.toString(),
     data.isEnterprise
   );
   const commentHtml = await ghService.getCommentHtml(
@@ -86,6 +107,17 @@ export const syncCommentWithPlane = async (
   );
 
   const issue = await getPlaneIssue(planeClient, entityConnection, data.issue.number.toString(), ghIntegrationKey);
+
+  if (!issue) {
+    logger.error(`${ghIntegrationKey}[ISSUE-COMMENT] Issue not found in Plane, skipping`, {
+      workspace: workspaceConnection.workspace_slug,
+      project: entityConnection.project_id ?? "",
+      repositoryId: data.repository.id,
+      ghIntegrationKey,
+      issueId: data.issue.number.toString(),
+    });
+    return;
+  }
 
   const userMap: Record<string, string> = Object.fromEntries(
     workspaceConnection.config.userMap.map((obj: any) => [obj.githubUser.login, obj.planeUser.id])
@@ -145,9 +177,9 @@ export const syncCommentWithPlane = async (
 
 const getPlaneIssue = async (
   planeClient: PlaneClient,
-  entityConnection: GithubEntityConnection,
+  entityConnection: TGithubEntityConnection,
   issueId: string,
-  ghIntegrationKey: string
+  ghIntegrationKey: E_INTEGRATION_KEYS
 ) => {
   try {
     return await planeClient.issue.getIssueWithExternalId(
@@ -157,6 +189,6 @@ const getPlaneIssue = async (
       ghIntegrationKey
     );
   } catch {
-    throw new Error("Issue not found in Plane");
+    return null;
   }
 };

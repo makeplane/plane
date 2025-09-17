@@ -1,4 +1,31 @@
+import { IState } from "../state";
 import { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
+
+// entity types
+export enum E_STATE_MAP_KEYS {
+  DRAFT_MR_OPENED = "DRAFT_MR_OPENED",
+  MR_OPENED = "MR_OPENED",
+  MR_REVIEW_REQUESTED = "MR_REVIEW_REQUESTED",
+  MR_READY_FOR_MERGE = "MR_READY_FOR_MERGE",
+  MR_MERGED = "MR_MERGED",
+  MR_CLOSED = "MR_CLOSED",
+}
+export type TStateMapKeys = keyof typeof E_STATE_MAP_KEYS;
+
+// entity types
+export enum E_ISSUE_STATE_MAP_KEYS {
+  ISSUE_OPEN = "ISSUE_OPEN",
+  ISSUE_CLOSED = "ISSUE_CLOSED",
+}
+export type TIssueStateMapKeys = keyof typeof E_ISSUE_STATE_MAP_KEYS;
+
+export type TStateMap = {
+  [key in TStateMapKeys]: IState | undefined;
+};
+
+export type TIssueStateMap = {
+  [key in TIssueStateMapKeys]: IState | undefined;
+};
 
 export type TGithubMergeRequestEvent =
   | "DRAFT_MR_OPENED"
@@ -13,11 +40,16 @@ export type TGithubExState = {
   name: string;
 };
 
+export type TGithubRepository = {
+  id: number;
+  name: string;
+  full_name: string;
+};
+
 // github entity connection config
-export type TGithubEntityConnectionConfig = {
-  states: {
-    mergeRequestEventMapping: Record<TGithubMergeRequestEvent, TGithubExState>;
-  };
+export type TGithubEntityConnectionConfig = object & {
+  states: { mergeRequestEventMapping?: TStateMap; issueEventMapping?: TIssueStateMap };
+  allowBidirectionalSync?: boolean;
 };
 
 // github connection config
@@ -94,6 +126,7 @@ export type TGithubWorkspaceConnectionData =
       id: number;
       node_id: string;
       name: string;
+      login: string;
       slug: string;
       created_at: string | null;
       updated_at: string | null;
@@ -118,4 +151,15 @@ export type TGithubWorkspaceConnection = TWorkspaceConnection<
 >;
 
 // github entity connection
-export type TGithubEntityConnection = TWorkspaceEntityConnection<TGithubEntityConnectionConfig>;
+export type TGithubEntityConnection = TWorkspaceEntityConnection<TGithubEntityConnectionConfig> & {
+  entity_data: object & {
+    id: number;
+    name: string;
+    full_name: string;
+  };
+};
+
+// github workspace user connection
+export type TGithubWorkspaceUserConnection = {
+  isConnected: boolean;
+};

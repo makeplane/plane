@@ -1,17 +1,21 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { GithubIssueDedupPayload, transformGitHubIssue, WebhookGitHubIssue } from "@plane/etl/github";
+import {
+  EGithubEntityConnectionType,
+  GithubIssueDedupPayload,
+  transformGitHubIssue,
+  WebhookGitHubIssue,
+} from "@plane/etl/github";
 import { ExIssue } from "@plane/sdk";
 import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
-import { getConnectionDetails } from "@/apps/github/helpers/helpers";
+import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 import { env } from "@/env";
 import { GITHUB_LABEL } from "@/helpers/constants";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
-
-const apiClient = getAPIClient();
 
 export type IssueWebhookActions =
   | "assigned"
@@ -40,7 +44,7 @@ export const handleIssueEvents = async (store: Store, action: IssueWebhookAction
     // @ts-expect-error
     const exist = await store.get(`silo:issue:${data.issueNumber}`);
     if (exist) {
-      logger.info("[GITHUB][ISSUES] Event Processed Successfully, confirmed by target");
+      logger.info(`[GITHUB][ISSUE] Event Processed Successfully, confirmed by target`);
       // Remove the webhook from the store
       // @ts-expect-error
       await store.del(`silo:issue:${data.issueNumber}`);
@@ -59,12 +63,14 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
   try {
     const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
     logger.info(`${ghIntegrationKey}[ISSUE] Received webhook event from github 🐱 --------- [CREATE|UPDATE]`);
-    const [planeCredentials] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-      source: ghIntegrationKey,
-      source_access_token: data.installationId.toString(),
-    });
+    const { userCredentials, wsAdminCredentials } =
+      await integrationConnectionHelper.getUserAndWSAdminCredentialsWithAdminFallback(
+        ghIntegrationKey,
+        data.installationId.toString(),
+        data.eventActorId
+      );
 
-    if (!planeCredentials) {
+    if (!userCredentials || !wsAdminCredentials) {
       logger.info(`${ghIntegrationKey}[ISSUE] No plane credentials found, skipping`, {
         installationId: data.installationId,
         accountId: data.accountId,
@@ -73,20 +79,20 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       return;
     }
 
-    const { workspaceConnection, entityConnection } = await getConnectionDetails({
-      accountId: data.accountId.toString(),
-      credentials: planeCredentials as TWorkspaceCredential,
-      installationId: data.installationId.toString(),
-      repositoryId: data.repositoryId.toString(),
-      isEnterprise: data.isEnterprise,
-    });
+    const { workspaceConnection, entityConnectionForRepository: entityConnection } =
+      await getConnDetailsForGithubToPlaneSync({
+        wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+        isEnterprise: data.isEnterprise,
+        type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
+        repositoryId: data.repositoryId.toString(),
+      });
 
     if (!workspaceConnection.target_hostname) {
       throw new Error("Target hostname not found");
     }
 
     // If the Plane GitHub App client ID or client secret is not found, return
-    const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
+    const planeClient = await getPlaneAPIClient(wsAdminCredentials, ghIntegrationKey);
 
     let issue: ExIssue | null = null;
 
@@ -99,7 +105,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
     // replace the issue body with the html body
 
-    if (!entityConnection) return;
+    if (!entityConnection) {
+      logger.info(`${ghIntegrationKey}[ISSUE sync] No entity connection found, skipping`, {
+        repositoryId: data.repositoryId,
+      });
+      return;
+    }
 
     try {
       issue = await planeClient.issue.getIssueWithExternalId(
@@ -116,6 +127,8 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       workspaceConnection.config.userMap.map((obj: any) => [obj.githubUser.login, obj.planeUser.id])
     );
 
+    // get the issue state mapping from the entity connection to set the issue state
+    const issueStateMap = entityConnection.config.states?.issueEventMapping;
     const planeIssue = await transformGitHubIssue(
       ghIssue.data as WebhookGitHubIssue,
       bodyHtml ?? "<p></p>",
@@ -123,10 +136,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       planeClient,
       data.repositoryName,
       userMap,
+      issueStateMap,
       entityConnection.workspace_slug,
       entityConnection.project_id ?? "",
       planeUsers,
       ghService,
+      ghIntegrationKey,
       issue ? true : false
     );
 
@@ -229,7 +244,12 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
           entityConnection.workspace_slug,
           entityConnection.project_id ?? ""
         );
-        const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${createdIssue.sequence_id} ${createdIssue.name}](${env.APP_BASE_URL}/${entityConnection.workspace_slug}/projects/${entityConnection.project_id}/issues/${createdIssue.id})`;
+        const issueUrl = getIssueUrlFromSequenceId(
+          entityConnection.workspace_slug,
+          project.identifier ?? "",
+          createdIssue.sequence_id.toString()
+        );
+        const comment = `Synced with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[[${project.identifier}-${createdIssue.sequence_id}] ${createdIssue.name}](${issueUrl})`;
         await ghService.createIssueComment(data.owner, data.repositoryName, Number(data.issueNumber), comment);
       };
 

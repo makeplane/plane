@@ -3,25 +3,29 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
 import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
+import { TGithubEntityConnection, TStateMap } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { ProjectForm, StateForm } from "@/plane-web/components/integrations/github";
+import { SelectProject } from "@/plane-web/components/integrations/github/common";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TGithubEntityConnection, TProjectMap, TStateMap } from "@/plane-web/types/integrations";
+import { TProjectMap } from "@/plane-web/types/integrations";
+
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
+import { MapProjectPRState } from "./common";
 
-type TFormCreate = {
+type TCreatePRStateMappingForm = {
   modal: boolean;
   handleModal: Dispatch<SetStateAction<boolean>>;
   isEnterprise: boolean;
 };
 
-export const FormCreate: FC<TFormCreate> = observer((props) => {
+export const CreatePRStateMappingForm: FC<TCreatePRStateMappingForm> = observer((props) => {
   // props
   const { modal, handleModal, isEnterprise } = props;
 
@@ -29,7 +33,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
   const {
     workspace,
     fetchStates,
-    entity: { createEntity },
+    entity: { createEntity, entityById, entityIds },
   } = useGithubIntegration(isEnterprise);
   const { t } = useTranslation();
 
@@ -40,6 +44,17 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
 
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
+  const entityConnections = entityIds
+    .map((id) => {
+      const entity = entityById(id);
+      if (entity?.type !== EGithubEntityConnectionType.PROJECT_PR_AUTOMATION) return undefined;
+      return entity;
+    })
+    .filter((entity) => entity !== undefined);
+
+  const existingProjectIds = entityConnections
+    .map((entity) => entity?.project_id)
+    .filter((id) => id !== undefined && id !== null);
 
   // handlers
   const handleProjectMapChange = <T extends keyof TProjectMap>(key: T, value: TProjectMap[T]) => {
@@ -63,11 +78,11 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
       setIsSubmitting(true);
 
       const payload: Partial<TGithubEntityConnection> = {
-        entity_id: projectMap.entityId,
         project_id: projectMap.projectId,
         config: {
           states: { mergeRequestEventMapping: stateMap },
         },
+        type: EGithubEntityConnectionType.PROJECT_PR_AUTOMATION,
       };
       await createEntity(payload);
       captureSuccess({
@@ -97,10 +112,15 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
       <div className="space-y-5 p-5">
-        <div className="text-xl font-medium text-custom-text-200">{t("github_integration.link")}</div>
+        <div className="text-xl font-medium text-custom-text-200">{t("github_integration.add_pr_state_mapping")}</div>
 
         <div className="space-y-4">
-          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
+          <SelectProject
+            value={projectMap}
+            handleChange={handleProjectMapChange}
+            isEnterprise={isEnterprise}
+            excludeProjectIds={existingProjectIds}
+          />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
@@ -110,7 +130,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
               </div>
             </div>
             <div className="p-3">
-              <StateForm
+              <MapProjectPRState
                 projectId={projectMap?.projectId || undefined}
                 value={stateMap}
                 handleChange={handleStateMapChange}
@@ -121,10 +141,10 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
 
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
-              {isSubmitting ? t("common.processing") : t("common.continue")}
+              {isSubmitting ? t("common.processing") : t("github_integration.save")}
             </Button>
           </div>
         </div>

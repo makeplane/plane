@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { GithubAuthorizeState, GithubUserAuthState } from "@plane/etl/github";
 // plane web types
-import { TGithubAppConfig } from "@plane/types";
-import { TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@/plane-web/types/integrations";
+import { TGithubAppConfig, TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@plane/types";
 
 export class GithubAuthService {
   protected baseURL: string;

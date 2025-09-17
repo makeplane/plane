@@ -6,12 +6,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
+import { TGithubEntityConnection } from "@plane/types";
 import { GithubEntityService } from "@/plane-web/services/integrations/github";
 // plane web store
 import { IGithubStore } from "@/plane-web/store/integrations";
-// plane web types
-import { TGithubEntityConnection } from "@/plane-web/types/integrations";
 
 export interface IGithubEntityStore {
   // store instances
@@ -152,11 +152,18 @@ export class GithubEntityStore implements IGithubEntityStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceSlug || !workspaceConnectionId) return;
 
-      const githubRepoId = entity?.entity_id || undefined;
-      if (!githubRepoId) return;
+      let entitySlug;
+      let entityData;
 
-      const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
-      if (!githubRepo) return;
+      if (entity?.type === EGithubEntityConnectionType.PROJECT_ISSUE_SYNC) {
+        const githubRepoId = entity?.entity_id || undefined;
+        if (!githubRepoId) return;
+        const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
+        if (!githubRepo) return;
+
+        entitySlug = githubRepo.full_name;
+        entityData = githubRepo;
+      }
 
       const payload: Partial<TGithubEntityConnection> = {
         workspace_id: workspaceId,
@@ -165,9 +172,10 @@ export class GithubEntityStore implements IGithubEntityStore {
         workspace_connection_id: workspaceConnectionId,
         entity_id: entity.entity_id,
         entity_type: this.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
-        entity_slug: githubRepo.full_name,
-        entity_data: githubRepo,
+        entity_slug: entitySlug,
+        entity_data: entityData,
         config: entity.config,
+        type: entity.type,
       };
 
       const response = await this.service.createEntityConnection(workspaceId, workspaceConnectionId, payload);
@@ -202,11 +210,18 @@ export class GithubEntityStore implements IGithubEntityStore {
       const workspaceConnectionId = this.store.auth.workspaceConnectionIds[0] || undefined;
       if (!workspaceId || !workspaceSlug || !workspaceConnectionId || !entityId) return;
 
-      const githubRepoId = entity?.entity_id || undefined;
-      if (!githubRepoId) return;
+      let entitySlug = undefined;
+      let entityData = undefined;
 
-      const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
-      if (!githubRepo) return;
+      if (entity?.type === EGithubEntityConnectionType.PROJECT_ISSUE_SYNC) {
+        const githubRepoId = entity?.entity_id || undefined;
+        if (!githubRepoId) return;
+        const githubRepo = this.store.data.githubRepositoryById(githubRepoId) || undefined;
+        if (!githubRepo) return;
+
+        entitySlug = githubRepo.full_name;
+        entityData = githubRepo;
+      }
 
       const payload: Partial<TGithubEntityConnection> = {
         workspace_id: workspaceId,
@@ -214,9 +229,10 @@ export class GithubEntityStore implements IGithubEntityStore {
         project_id: entity.project_id,
         workspace_connection_id: workspaceConnectionId,
         entity_id: entity.entity_id,
-        entity_slug: githubRepo.full_name,
-        entity_data: githubRepo,
+        entity_slug: entitySlug,
+        entity_data: entityData,
         config: entity.config,
+        type: entity.type,
       };
 
       const response = await this.service.updateEntityConnection(workspaceId, workspaceConnectionId, entityId, payload);

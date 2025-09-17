@@ -719,6 +719,7 @@ export default class GithubController {
             repositoryId: issuePayload.repository.id,
             repositoryName: issuePayload.repository.name,
             issueNumber: issuePayload.issue.number,
+            eventActorId: issuePayload?.sender?.id,
           },
           Number(env.DEDUP_INTERVAL)
         );
@@ -740,6 +741,7 @@ export default class GithubController {
             repositoryId: pullRequestPayload.repository.id,
             repositoryName: pullRequestPayload.repository.name,
             pullRequestNumber: pullRequestPayload.pull_request.number,
+            eventActorId: pullRequestPayload?.sender?.id,
           },
           Number(env.DEDUP_INTERVAL)
         );

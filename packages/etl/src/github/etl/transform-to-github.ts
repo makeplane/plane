@@ -1,4 +1,5 @@
 import { Client, ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
+import { E_ISSUE_STATE_MAP_KEYS, TIssueStateMap } from "@plane/types";
 import { ContentParser } from "../helpers/content-parser";
 import { GithubIssue, WebhookGitHubLabel, WebhookGitHubMilestone, WebhookGitHubUser } from "../types";
 
@@ -9,6 +10,7 @@ export const transformPlaneIssue = async (
   owner: string,
   repo: string,
   userMap: Record<string, WebhookGitHubUser>,
+  issueStateMap: TIssueStateMap | undefined,
   planeClient: Client,
   workspaceSlug: string,
   projectId: string
@@ -41,6 +43,7 @@ export const transformPlaneIssue = async (
   // Convert the cleaned HTML to GitHub markdown using our ContentParser
   const githubBody = ContentParser.toMarkdown(cleanHtml, imgSrcPrefix);
 
+  // set the target state based on the issue state
   let targetState: string | undefined = undefined;
   if (issue.state) {
     const states = (await planeClient.state.list(workspaceSlug, projectId)).results;
@@ -48,6 +51,19 @@ export const transformPlaneIssue = async (
     if (issueState?.group === "completed") {
       targetState = "CLOSED";
     } else {
+      targetState = "OPEN";
+    }
+  }
+
+  // if they have configured the issue state map, use it to set the target state
+  if (issueStateMap && Object.keys(issueStateMap).length > 0) {
+    const planeStateForIssueClosed = issueStateMap[E_ISSUE_STATE_MAP_KEYS.ISSUE_CLOSED]?.id;
+    const planeStateForIssueOpen = issueStateMap[E_ISSUE_STATE_MAP_KEYS.ISSUE_OPEN]?.id;
+    // if customer mark the issue as a state that they have configured as closed, set the target state to closed
+    // if customer mark the issue as a state that they have configured as open, set the target state to open
+    if (planeStateForIssueClosed && issue.state === planeStateForIssueClosed) {
+      targetState = "CLOSED";
+    } else if (planeStateForIssueOpen && issue.state === planeStateForIssueOpen) {
       targetState = "OPEN";
     }
   }

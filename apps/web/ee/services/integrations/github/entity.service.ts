@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 // plane web types
-import { TGithubEntityConnection } from "@/plane-web/types/integrations";
+import { TGithubEntityConnection } from "@plane/types";
 
 export class GithubEntityService {
   protected baseURL: string;

@@ -79,6 +79,7 @@ export type BaseDedupPayload = {
   installationId: string;
   repositoryName: string;
   isEnterprise: boolean;
+  eventActorId: string;
 };
 
 export type GithubIssueDedupPayload = BaseDedupPayload & {

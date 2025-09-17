@@ -193,6 +193,7 @@ export default class GithubEnterpriseController {
             repositoryName: issuePayload.repository.name,
             issueNumber: issuePayload.issue.number,
             isEnterprise: true,
+            eventActorId: issuePayload?.sender?.id,
           },
           Number(env.DEDUP_INTERVAL)
         );
@@ -215,6 +216,7 @@ export default class GithubEnterpriseController {
             repositoryName: pullRequestPayload.repository.name,
             pullRequestNumber: pullRequestPayload.pull_request.number,
             isEnterprise: true,
+            eventActorId: pullRequestPayload?.sender?.id,
           },
           Number(env.DEDUP_INTERVAL)
         );

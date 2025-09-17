@@ -1,6 +1,7 @@
 // This file is a wrapper for the db connection for silo tables in plane
 // this accepts data in single format for all integrations/importers and returns the data in single format
 import { TClickUpRelationMap } from "@plane/etl/clickup";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import {
   TImportJob,
   TImportReport,
@@ -8,6 +9,7 @@ import {
   TWorkspaceCredential,
   TWorkspaceEntityConnection,
 } from "@plane/types";
+import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 class IntegrationConnectionHelper {
   private apiClient: APIClient;
@@ -439,6 +441,37 @@ class IntegrationConnectionHelper {
       source,
       status,
     });
+  }
+
+  async getUserAndWSAdminCredentialsWithAdminFallback(
+    source: E_INTEGRATION_KEYS,
+    source_access_token: string,
+    source_identifier: string
+  ) {
+    // Get the admin credentials
+    let planeCredentials: TWorkspaceCredential | null = null;
+    const [planeAdminCredentials] = await this.apiClient.workspaceCredential.listWorkspaceCredentials({
+      source: source,
+      source_access_token: source_access_token,
+    });
+    planeCredentials = planeAdminCredentials;
+    // If the source identifier is provided, check for the user credentials
+    if (source_identifier) {
+      const [planeUserCredentials] = await this.apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[source],
+        source_identifier: source_identifier,
+      });
+      if (planeUserCredentials) {
+        logger.info(`${source} Plane user credentials found`, {
+          source: source,
+          source_access_token: source_access_token,
+          source_identifier: source_identifier,
+        });
+        planeCredentials = planeUserCredentials;
+      }
+    }
+    // Return the plane credentials
+    return { userCredentials: planeCredentials, wsAdminCredentials: planeAdminCredentials };
   }
 }
 

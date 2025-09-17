@@ -7,13 +7,11 @@ import { computedFn } from "mobx-utils";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { GithubAuthorizeState, GithubUserAuthState } from "@plane/etl/github";
 // plane web services
-import { TGithubAppConfig } from "@plane/types";
+import { TGithubAppConfig, TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@plane/types";
 import { GithubAuthService } from "@/plane-web/services/integrations/github";
 // plane web store
 import { ApplicationService } from "@/plane-web/services/marketplace";
 import { IGithubStore } from "@/plane-web/store/integrations";
-// plane web types
-import { TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@/plane-web/types/integrations";
 
 export interface IGithubAuthStore {
   // observables

@@ -5,14 +5,19 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
 import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
+import { E_STATE_MAP_KEYS, TGithubEntityConnection, TStateMap } from "@plane/types";
 import { Button } from "@plane/ui";
 // plane web components
-import { EntityConnectionItem, FormCreate } from "@/plane-web/components/integrations/github";
+import {
+  PRStateMappingEntityItem,
+  CreatePRStateMappingForm,
+} from "@/plane-web/components/integrations/github/sections/pr-state-mapping";
 //  plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { E_STATE_MAP_KEYS, TGithubEntityConnection, TProjectMap, TStateMap } from "@/plane-web/types/integrations";
+import { TProjectMap } from "@/plane-web/types/integrations";
 import { MappingLoader } from "../../../ui";
 
 export const projectMapInit: TProjectMap = {
@@ -29,18 +34,16 @@ export const stateMapInit: TStateMap = {
   [E_STATE_MAP_KEYS.MR_CLOSED]: undefined,
 };
 
-interface IRepositoryMappingRootProps {
+interface IProjectPRStateMappingRootProps {
   isEnterprise: boolean;
 }
 
-export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer(({ isEnterprise }) => {
+export const ProjectPRStateMappingRoot: FC<IProjectPRStateMappingRootProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
     fetchProjects,
     getProjectById,
-    auth: { workspaceConnectionIds },
-    data: { fetchGithubRepositories },
     entity: { entityIds, entityById, fetchEntities },
   } = useGithubIntegration(isEnterprise);
   const { t } = useTranslation();
@@ -51,11 +54,11 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
   // derived values
   const workspaceId = workspace?.id || undefined;
   const workspaceSlug = workspace?.slug || undefined;
-  const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const entityConnectionMap = entityIds.map((id) => entityById(id));
+  // filter out non-project PR automation entities
   const entityConnection = entityConnectionMap.reduce(
     (result: { [key: string]: TGithubEntityConnection[] }, entity) => {
-      if (!entity) return result;
+      if (entity?.type !== EGithubEntityConnectionType.PROJECT_PR_AUTOMATION) return result;
 
       const projectId = entity?.project_id || "default";
 
@@ -65,13 +68,6 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
       return result;
     },
     {}
-  );
-
-  // fetching external api token
-  const { isLoading: isGithubReposLoading } = useSWR(
-    workspaceConnectionId && workspaceId ? `INTEGRATION_GITHUB_REPOS_${workspaceId}_${workspaceConnectionId}` : null,
-    workspaceConnectionId && workspaceId ? async () => fetchGithubRepositories() : null,
-    { errorRetryCount: 0 }
   );
 
   // fetching plane projects
@@ -89,7 +85,7 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
   );
 
   // Loading state with skeleton loader
-  if (isEntitiesLoading) {
+  if (isEntitiesLoading || isProjectsLoading) {
     return <MappingLoader />;
   }
   return (
@@ -97,8 +93,8 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
       {/* Header */}
       <div className="flex flex-row items-center justify-between py-5 px-5 bg-custom-background-90 border-b border-custom-border-200">
         <div className="space-y-1">
-          <div className="text-base font-medium">{t("github_integration.repo_mapping")}</div>
-          <div className="text-sm text-custom-text-200">{t("github_integration.repo_mapping_description")}</div>
+          <div className="text-base font-medium">{t("github_integration.pr_state_mapping")}</div>
+          <div className="text-sm text-custom-text-200">{t("github_integration.pr_state_mapping_description")}</div>
         </div>
         <Button
           variant="neutral-primary"
@@ -122,7 +118,7 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
               <div key={index}>
                 <div className="space-y-4">
                   {(entityConnection[projectId] || []).map((connection, index) => (
-                    <EntityConnectionItem
+                    <PRStateMappingEntityItem
                       key={index}
                       project={project}
                       entityConnection={connection}
@@ -136,7 +132,7 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
         </div>
       )}
 
-      <FormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} isEnterprise={isEnterprise} />
+      <CreatePRStateMappingForm modal={modalCreateOpen} handleModal={setModalCreateOpen} isEnterprise={isEnterprise} />
     </div>
   );
 });

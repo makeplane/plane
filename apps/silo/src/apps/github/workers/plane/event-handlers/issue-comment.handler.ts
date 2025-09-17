@@ -1,10 +1,9 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubService, ContentParser } from "@plane/etl/github";
 import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
-import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
-import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
-import { getConnectionDetailsForPlane } from "@/helpers/connection";
+import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -40,14 +39,30 @@ export const handleIssueCommentWebhook = async (
 const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => {
   try {
     const ghIntegrationKey = payload.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
-    const { workspaceConnection, entityConnection, credentials } = await getConnectionDetailsForPlane(
+    const { workspaceConnection, entityConnection, credentials } = await getConnDetailsForPlaneToGithubSync(
       payload.workspace,
       payload.project,
       payload.isEnterprise
     );
 
     if (!workspaceConnection.target_hostname || !credentials.target_access_token) {
-      logger.error("Target hostname or target access token not found");
+      logger.error("Target hostname or target access token not found", {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
+      return;
+    }
+
+    // Check if bidirectional sync is enabled
+    if (!entityConnection.config.allowBidirectionalSync) {
+      logger.info("Bidirectional sync is disabled, skipping issue comment sync via Plane", {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
       return;
     }
 
@@ -62,11 +77,21 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     );
 
     if (!issue || !issue.external_id || !issue.external_source) {
-      return logger.info(`Issue ${payload.issue} not synced with GitHub, aborting comment sync`);
+      return logger.info(`Issue ${payload.issue} not synced with GitHub, aborting comment sync`, {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
     }
 
     if (!credentials.source_access_token) {
-      logger.error("Source access token not found");
+      logger.error("Source access token not found", {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
       return;
     }
 
@@ -111,7 +136,10 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       );
     }
   } catch (error) {
-    logger.error("Error handling comment create/update event", error);
+    logger.error("[Plane][Github] Error handling issue comment create/update event", error, {
+      workspace: payload.workspace,
+      project: payload.project,
+    });
   }
 };
 
@@ -119,8 +147,8 @@ const createOrUpdateGitHubComment = async (
   githubService: GithubService,
   issue: ExIssue,
   comment: ExIssueComment,
-  workspaceConnection: GithubWorkspaceConnection,
-  entityConnection: GithubEntityConnection,
+  workspaceConnection: TGithubWorkspaceConnection,
+  entityConnection: TGithubEntityConnection,
   credentials: TWorkspaceCredential,
   ghIntegrationKey: E_INTEGRATION_KEYS
 ) => {
@@ -152,6 +180,7 @@ const createOrUpdateGitHubComment = async (
   }
 
   if (comment.external_id && comment.external_source && comment.external_source === ghIntegrationKey) {
+    logger.info("Comment already exists in GitHub, updating the comment", { commentId: comment.id, ghIntegrationKey });
     return userGithubService.updateIssueComment(owner, repo, Number(comment.external_id), markdown);
   } else {
     return userGithubService.createIssueComment(owner, repo, Number(issue.external_id), markdown);

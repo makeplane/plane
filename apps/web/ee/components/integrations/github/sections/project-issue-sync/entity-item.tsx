@@ -5,27 +5,26 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import { IProject, TGithubEntityConnection } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { FormEdit } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TGithubEntityConnection } from "@/plane-web/types/integrations";
 // public images
 import GithubDarkLogo from "@/public/services/github-dark.svg";
 import GithubLightLogo from "@/public/services/github-light.svg";
 import { IntegrationsMapping } from "../../../ui/integrations-mapping";
+import { EditProjectIssueSyncForm } from "./form/edit";
 
-type TEntityConnectionItem = {
+type TProjectIssueSyncEntityItem = {
   project: IProject;
   entityConnection: TGithubEntityConnection;
   isEnterprise: boolean;
 };
 
-export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) => {
+export const ProjectIssueSyncEntityItem: FC<TProjectIssueSyncEntityItem> = observer((props) => {
   // props
   const { project, entityConnection, isEnterprise } = props;
 
@@ -83,12 +82,16 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       <ModalCore isOpen={deleteModal} handleClose={handleDeleteClose}>
         <div className="space-y-5 p-5">
           <div className="space-y-2">
-            <div className="text-xl font-medium text-custom-text-200">{t("github_integration.remove_entity")}</div>
-            <div className="text-sm text-custom-text-300">{t("github_integration.remove_entity_confirmation")}</div>
+            <div className="text-xl font-medium text-custom-text-200">
+              {t("github_integration.remove_project_issue_sync")}
+            </div>
+            <div className="text-sm text-custom-text-300">
+              {t("github_integration.remove_project_issue_sync_confirmation")}
+            </div>
           </div>
           <div className="relative flex justify-end items-center gap-2">
             <Button variant="neutral-primary" size="sm" onClick={handleDeleteClose} disabled={deleteLoader}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -97,13 +100,18 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
               loading={deleteLoader}
               disabled={deleteLoader}
             >
-              {deleteLoader ? "Processing" : "Continue"}
+              {deleteLoader ? t("common.processing") : t("common.remove")}
             </Button>
           </div>
         </div>
       </ModalCore>
 
-      <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} isEnterprise={isEnterprise} />
+      <EditProjectIssueSyncForm
+        modal={editModal}
+        handleModal={setEditModal}
+        data={entityConnection}
+        isEnterprise={isEnterprise}
+      />
 
       <IntegrationsMapping
         entityName={`${entityConnection?.entity_data?.name} (${entityConnection?.entity_data?.full_name})`}
@@ -111,6 +119,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
         connectorLogo={githubLogo}
         handleEditOpen={handleEditOpen}
         handleDeleteOpen={handleDeleteOpen}
+        bidirectionalSync={entityConnection?.config?.allowBidirectionalSync}
       />
     </>
   );

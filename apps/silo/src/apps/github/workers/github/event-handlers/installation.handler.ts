@@ -1,6 +1,7 @@
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubWebhookPayload } from "@plane/etl/github";
 import { E_GITHUB_DISCONNECT_SOURCE } from "@/apps/github/types";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth/auth";
 
@@ -23,7 +24,7 @@ export const handleInstallationEvents = async (action: string, data: unknown): P
 };
 
 export const handleInstallationDeletion = async (data: GithubWebhookInstallationDeleted) => {
-  const installationId = data.installation.id;
+  const installationId = data.installation?.id;
   const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
 
   const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
@@ -39,7 +40,13 @@ export const handleInstallationDeletion = async (data: GithubWebhookInstallation
       credential_id: credential.id,
     });
 
-    if (connections.length === 0) return;
+    if (connections.length === 0) {
+      logger.info(`${ghIntegrationKey}[INSTALLATION] No connections found, skipping`, {
+        installationId,
+        ghIntegrationKey,
+      });
+      return;
+    }
 
     const connection = connections[0];
     // Delete the workspace connection associated with the team

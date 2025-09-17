@@ -1,63 +1,95 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
-import { GithubPullRequest } from "@plane/etl/github";
-import { TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import { EGithubEntityConnectionType, GithubPullRequest } from "@plane/etl/github";
+import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getAPIClient } from "@/services/client";
-import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
-import { githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 const apiClient = getAPIClient();
 
-export const getConnectionDetails = async (props: {
-  accountId: string;
-  credentials: TWorkspaceCredential;
-  installationId: string;
-  repositoryId: string;
+export const getConnDetailsForGithubToPlaneSync = async (props: {
+  wsAdminCredentials: TWorkspaceCredential;
   isEnterprise: boolean;
+  type: EGithubEntityConnectionType;
+  repositoryId?: string;
+  planeProjectId?: string;
 }): Promise<{
-  workspaceConnection: ReturnType<typeof verifyWorkspaceConnection>;
-  allEntityConnectionsForRepository: ReturnType<typeof verifyEntityConnections>;
-  entityConnection?: ReturnType<typeof verifyEntityConnection>;
+  workspaceConnection: TGithubWorkspaceConnection;
+  entityConnectionForRepository: TGithubEntityConnection;
+  projectConnection: TGithubEntityConnection;
+  allEntityConnections: TGithubEntityConnection[];
 }> => {
+  const { wsAdminCredentials: credentials, isEnterprise, type, repositoryId, planeProjectId } = props;
   // Get the workspace connection for the installation
   const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
-    workspace_id: props.credentials.workspace_id!,
-    credential_id: props.credentials.id,
+    workspace_id: credentials.workspace_id!,
+    credential_id: credentials.id,
   });
 
   if (workspaceConnection.length === 0) {
     throw new Error("No workspace connection found for the given installation");
   }
 
-  // Get the entity connection for the given repository
-  let entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-    workspace_id: props.credentials.workspace_id!,
-    entity_type: props.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
-    entity_id: props.repositoryId.toString(),
+  const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: credentials.workspace_id!,
+    entity_type: isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
+    type: type,
   });
 
-  if (entityConnections.length > 0) {
-    entityConnections = entityConnections.filter((entityConnection) => entityConnection?.type === null);
-  }
-
-  // Parse the config for the workspace connection
-  const verifiedWorkspaceConnection = verifyWorkspaceConnection(
-    githubWorkspaceConnectionSchema,
-    workspaceConnection[0] as any
+  const projectConnection = entityConnections.find(
+    (entityConnection) => entityConnection.project_id === planeProjectId
   );
 
-  // Only verify entity connection if it exists
-  const verifiedEntityConnection =
-    entityConnections.length > 0
-      ? verifyEntityConnection(githubEntityConnectionSchema, entityConnections[0] as any)
-      : undefined;
-
-  const verifiedEntityConnections = verifyEntityConnections(githubEntityConnectionSchema, entityConnections as any);
+  const entityConnectionForRepository = entityConnections.find(
+    (entityConnection) => entityConnection.entity_id === repositoryId
+  );
 
   return {
-    workspaceConnection: verifiedWorkspaceConnection,
-    entityConnection: verifiedEntityConnection,
-    allEntityConnectionsForRepository: verifiedEntityConnections,
+    workspaceConnection: workspaceConnection[0] as TGithubWorkspaceConnection,
+    entityConnectionForRepository: entityConnectionForRepository as TGithubEntityConnection,
+    projectConnection: projectConnection as TGithubEntityConnection,
+    allEntityConnections: entityConnections as TGithubEntityConnection[],
+  };
+};
+
+export const getConnDetailsForPlaneToGithubSync = async (
+  workspace: string,
+  project: string,
+  isEnterprise: boolean
+): Promise<{
+  credentials: TWorkspaceCredential;
+  entityConnection: TGithubEntityConnection;
+  workspaceConnection: TGithubWorkspaceConnection;
+}> => {
+  const entityConnectionArray = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+    workspace_id: workspace,
+    type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
+    entity_type: isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
+    project_id: project,
+  });
+
+  if (!entityConnectionArray || entityConnectionArray.length === 0) {
+    throw new Error("Entity connection not found");
+  }
+
+  const entityConnection = entityConnectionArray[0] as TGithubEntityConnection;
+
+  const workspaceConnnectionData = await apiClient.workspaceConnection.getWorkspaceConnection(
+    entityConnection.workspace_connection_id
+  );
+
+  if (!workspaceConnnectionData) {
+    throw new Error("Workspace connection not found");
+  }
+
+  const workspaceConnection = workspaceConnnectionData as TGithubWorkspaceConnection;
+
+  // Get the credentials from the workspace connection
+  const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
+
+  return {
+    credentials: credentials as TWorkspaceCredential,
+    entityConnection: entityConnection as TGithubEntityConnection,
+    workspaceConnection: workspaceConnection as TGithubWorkspaceConnection,
   };
 };
 

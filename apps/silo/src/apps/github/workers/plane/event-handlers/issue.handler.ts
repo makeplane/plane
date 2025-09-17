@@ -1,12 +1,12 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubIssue, GithubService, transformPlaneIssue, WebhookGitHubUser } from "@plane/etl/github";
 import { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
-import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
+import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { env } from "@/env";
-import { getConnectionDetailsForPlane } from "@/helpers/connection";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
@@ -39,14 +39,30 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
   try {
     const ghIntegrationKey = payload.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
     // Get the entity connection
-    const { workspaceConnection, entityConnection, credentials } = await getConnectionDetailsForPlane(
+    const { workspaceConnection, entityConnection, credentials } = await getConnDetailsForPlaneToGithubSync(
       payload.workspace,
       payload.project,
       payload.isEnterprise
     );
 
     if (!workspaceConnection.target_hostname || !credentials.target_access_token || !credentials.source_access_token) {
-      logger.error("Target hostname or target access token or source access token not found");
+      logger.error("Target hostname or target access token or source access token not found", {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
+      return;
+    }
+
+    // Check if bidirectional sync is enabled
+    if (!entityConnection.config.allowBidirectionalSync) {
+      logger.info("Bidirectional sync is disabled, skipping issue sync via Plane", {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+      });
       return;
     }
 
@@ -108,7 +124,11 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     // Add the issue number to the store
     await store.set(`silo:issue:${githubIssue?.data.number}`, "true");
   } catch (error) {
-    logger.error("Error handling issue create/update event", error);
+    logger.error("[Plane][Github] Error handling issue create/update event", {
+      error: error,
+      workspace: payload.workspace,
+      project: payload.project,
+    });
   }
 };
 
@@ -117,8 +137,8 @@ const createOrUpdateGitHubIssue = async (
   planeClient: PlaneClient,
   issue: ExIssue,
   credentials: TWorkspaceCredential,
-  workspaceConnection: GithubWorkspaceConnection,
-  entityConnection: GithubEntityConnection,
+  workspaceConnection: TGithubWorkspaceConnection,
+  entityConnection: TGithubEntityConnection,
   labels: ExIssueLabel[],
   ghIntegrationKey: E_INTEGRATION_KEYS
 ) => {
@@ -131,7 +151,7 @@ const createOrUpdateGitHubIssue = async (
   const owner = (entityConnection.entity_slug ?? "").split("/")[0];
   const repo = (entityConnection.entity_slug ?? "").split("/")[1];
   const issueImagePrefix = imagePrefix + workspaceConnection.workspace_id + "/" + credentials.user_id;
-
+  const issueStateMap = entityConnection.config.states?.issueEventMapping;
   const transformedGithubIssue = await transformPlaneIssue(
     issue,
     issueImagePrefix,
@@ -139,6 +159,7 @@ const createOrUpdateGitHubIssue = async (
     owner,
     repo,
     userMap,
+    issueStateMap,
     planeClient,
     entityConnection.workspace_slug,
     entityConnection.project_id ?? ""
@@ -164,6 +185,7 @@ const createOrUpdateGitHubIssue = async (
 
   // If the issue has already been created with the external source as GITHUB, update the issue
   if (issue.external_id && issue.external_source && issue.external_source === ghIntegrationKey) {
+    logger.info("Issue already exists in GitHub, updating the issue", { issueId: issue.id, ghIntegrationKey });
     return githubUserService.updateIssue(Number(issue.external_id), transformedGithubIssue as GithubIssue);
   } else {
     const createdIssue = await githubUserService.createIssue(transformedGithubIssue as GithubIssue);
@@ -173,7 +195,12 @@ const createOrUpdateGitHubIssue = async (
       entityConnection.project_id ?? ""
     );
 
-    const comment = `Synced Issue with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[${project.identifier}-${issue.sequence_id} ${issue.name}](${env.APP_BASE_URL}/${entityConnection.workspace_slug}/projects/${entityConnection.project_id}/issues/${issue.id})`;
+    const issueUrl = getIssueUrlFromSequenceId(
+      entityConnection.workspace_slug,
+      project.identifier ?? "",
+      issue.sequence_id.toString()
+    );
+    const comment = `Synced with [Plane](${env.APP_BASE_URL}) Workspace 🔄\n\n[[${project.identifier}-${issue.sequence_id}] ${issue.name}](${issueUrl})`;
     await githubService.createIssueComment(owner, repo, Number(createdIssue.data.number), comment);
 
     return createdIssue;

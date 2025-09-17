@@ -1,5 +1,3 @@
-"use client";
-
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Ban } from "lucide-react";
@@ -9,14 +7,14 @@ import { IState } from "@plane/types";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 
-type TStateFormSelection = {
+type TSelectProjectState = {
   title: string;
   value: string | undefined;
   handleValue: (value: IState | undefined) => void;
   planeStates: IState[];
 };
 
-export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
+export const SelectProjectState: FC<TSelectProjectState> = observer((props) => {
   const { title, value, handleValue, planeStates } = props;
   const { t } = useTranslation();
 
@@ -32,7 +30,7 @@ export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
             data: state,
           }))}
           value={value}
-          placeHolder={t("integrations.select_state")}
+          placeHolder={t("integrations.set_state")}
           onChange={(value: string | undefined) => {
             if (value) {
               const state = planeStates.find((state) => state.id === value);

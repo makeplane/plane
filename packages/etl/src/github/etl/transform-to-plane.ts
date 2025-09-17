@@ -1,4 +1,5 @@
 import { Client, ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import { E_ISSUE_STATE_MAP_KEYS, TIssueStateMap } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@/core";
 import { ContentParser, replaceIssueNumber, replaceMentionedGhUsers } from "../helpers";
 import { GithubService } from "../services";
@@ -11,10 +12,12 @@ export const transformGitHubIssue = async (
   planeClient: Client,
   repository: string,
   userMap: Record<string, string>,
+  issueStateMap: TIssueStateMap | undefined,
   workspaceSlug: string,
   projectId: string,
   planeUsers: PlaneUser[],
   githubService: GithubService,
+  ghIntegrationKey: E_INTEGRATION_KEYS,
   isUpdate: boolean = false
 ): Promise<Partial<PlaneIssue>> => {
   const links = [
@@ -92,9 +95,18 @@ export const transformGitHubIssue = async (
     }
   }
 
+  // if they have configured the issue state map, use it to set the target state
+  if (issueStateMap && Object.keys(issueStateMap).length > 0) {
+    if (issue.state === "open") {
+      targetState = issueStateMap[E_ISSUE_STATE_MAP_KEYS.ISSUE_OPEN]?.id;
+    } else if (issue.state === "closed") {
+      targetState = issueStateMap[E_ISSUE_STATE_MAP_KEYS.ISSUE_CLOSED]?.id;
+    }
+  }
+
   return {
     external_id: issue.number.toString(),
-    external_source: E_INTEGRATION_KEYS.GITHUB,
+    external_source: ghIntegrationKey,
     created_by: creator,
     name: issue.title,
     description_html: issue_html,
