@@ -162,6 +162,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                         "max-h-48": maxHeight === "md",
                         "max-h-36": maxHeight === "rg",
                         "max-h-28": maxHeight === "sm",
+                        "max-h-full": maxHeight === "full",
                       })}
                     >
                       {filteredOptions ? (
