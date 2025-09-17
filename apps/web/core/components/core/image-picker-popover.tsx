@@ -7,13 +7,14 @@ import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
-import { Tab, Popover } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 import { EFileAssetType } from "@plane/types";
 import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
@@ -302,98 +303,74 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                 </TabsContent>
               )}
 
-              <TabsContent value="upload" className="pt-4">
-                <div className="flex flex-1 w-full flex-col gap-y-2">
+              <TabsContent value="upload" className="pt-4 h-full">
+                <div className="flex h-full w-full flex-col gap-y-2">
                   <div className="flex w-full flex-1 items-center gap-3">
                     <div
                       {...getRootProps()}
-                      className={`flex h-32 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed transition-colors ${
-                        isDragActive
-                          ? "border-custom-primary bg-custom-primary/10"
-                          : "border-custom-border-200 hover:border-custom-border-300"
+                      className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        (image === null && isDragActive) || !value
+                          ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
+                          : ""
                       }`}
                     >
-                      <input {...getInputProps()} />
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-custom-background-80">
-                            <svg
-                              className="h-4 w-4 text-custom-text-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                              />
-                            </svg>
-                          </div>
-                          <span className="text-sm font-medium text-custom-text-200">
+                      <button
+                        type="button"
+                        className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                      >
+                        Edit
+                      </button>
+                      {image !== null || (value && value !== "") ? (
+                        <>
+                          <Image
+                            layout="fill"
+                            objectFit="cover"
+                            src={image ? URL.createObjectURL(image) : value ? (getFileURL(value) ?? "") : ""}
+                            alt="image"
+                            className="rounded-lg"
+                          />
+                        </>
+                      ) : (
+                        <div>
+                          <span className="mt-2 block text-sm font-medium text-custom-text-200">
                             {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                           </span>
                         </div>
-                        <span className="text-xs text-custom-text-400">
-                          {Object.keys(ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE).join(", ")} (Max{" "}
-                          {MAX_FILE_SIZE / 1024 / 1024}MB)
-                        </span>
-                      </div>
+                      )}
+
+                      <input {...getInputProps()} />
                     </div>
                   </div>
-                  {image && (
-                    <div className="flex w-full items-center gap-3">
-                      <div className="relative h-16 w-16 flex-shrink-0">
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt="Preview"
-                          className="h-full w-full rounded object-cover"
-                        />
-                      </div>
-                      <div className="flex flex-1 flex-col gap-1">
-                        <p className="text-sm font-medium text-custom-text-100">{image.name}</p>
-                        <p className="text-xs text-custom-text-400">{(image.size / 1024 / 1024).toFixed(2)} MB</p>
-                      </div>
-                      <Button
-                        variant="neutral-primary"
-                        size="sm"
-                        onClick={() => setImage(null)}
-                        disabled={isImageUploading}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
                   {fileRejections.length > 0 && (
-                    <div className="flex w-full items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
-                        <svg className="h-4 w-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="flex flex-1 flex-col gap-1">
-                        <p className="text-sm font-medium text-red-800">File rejected</p>
-                        <p className="text-xs text-red-600">{fileRejections[0].errors[0].message}</p>
-                      </div>
-                    </div>
+                    <p className="text-sm text-red-500">
+                      {fileRejections[0].errors[0].code === "file-too-large"
+                        ? "The image size cannot exceed 5 MB."
+                        : "Please upload a file in a valid format."}
+                    </p>
                   )}
-                  {image && (
+
+                  <p className="text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
+
+                  <div className="flex h-12 items-start justify-end gap-2">
+                    <Button
+                      variant="neutral-primary"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setImage(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      className="w-full"
                       onClick={handleSubmit}
-                      disabled={isImageUploading}
-                      className="mt-auto"
+                      disabled={!image}
+                      loading={isImageUploading}
                     >
                       {isImageUploading ? "Uploading..." : "Upload & Save"}
                     </Button>
-                  )}
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
