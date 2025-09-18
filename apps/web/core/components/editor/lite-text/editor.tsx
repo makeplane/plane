@@ -14,7 +14,7 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-// plane web services
+// plane web service
 import { WorkspaceService } from "@/plane-web/services";
 import { LiteToolbar } from "./lite-toolbar";
 const workspaceService = new WorkspaceService();
@@ -31,9 +31,8 @@ type LiteTextEditorWrapperProps = MakeOptional<
   showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
-  showLiteToolbar?: boolean;
   showToolbarInitially?: boolean;
-  showToolbar?: boolean;
+  variant?: "full" | "lite" | "none";
   issue_id?: string;
   parentClassName?: string;
   editorClassName?: string;
@@ -62,8 +61,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     showToolbarInitially = true,
-    showToolbar = true,
-    showLiteToolbar = false,
+    variant = "full",
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
@@ -71,7 +69,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     ...rest
   } = props;
   // states
-  const [isFocused, setIsFocused] = useState(showToolbarInitially);
+  const isLiteVariant = variant === "lite";
+  const isFullVariant = variant === "full";
+  const [isFocused, setIsFocused] = useState(isFullVariant ? showToolbarInitially : true);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -100,17 +100,17 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       className={cn(
         "relative border border-custom-border-200 rounded",
         {
-          "p-3": editable && !showLiteToolbar,
+          "p-3": editable && !isLiteVariant,
         },
         parentClassName
       )}
-      onFocus={() => !showToolbarInitially && setIsFocused(true)}
-      onBlur={() => !showToolbarInitially && setIsFocused(false)}
+      onFocus={() => isFullVariant && !showToolbarInitially && setIsFocused(true)}
+      onBlur={() => isFullVariant && !showToolbarInitially && setIsFocused(false)}
     >
       {/* Wrapper for lite toolbar layout */}
-      <div className={cn(showLiteToolbar && editable ? "flex items-end gap-1" : "")}>
+      <div className={cn(isLiteVariant && editable ? "flex items-end gap-1" : "")}>
         {/* Main Editor - always rendered once */}
-        <div className={cn(showLiteToolbar && editable ? "flex-1 min-w-0" : "")}>
+        <div className={cn(isLiteVariant && editable ? "flex-1 min-w-0" : "")}>
           <LiteTextEditorWithRef
             ref={ref}
             disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
@@ -144,7 +144,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         </div>
 
         {/* Lite Toolbar - conditionally rendered */}
-        {showLiteToolbar && editable && (
+        {isLiteVariant && editable && (
           <LiteToolbar
             executeCommand={(item) => {
               // TODO: update this while toolbar homogenization
@@ -162,7 +162,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       </div>
 
       {/* Full Toolbar - conditionally rendered */}
-      {showToolbar && editable && !showLiteToolbar && (
+      {isFullVariant && editable && (
         <div
           className={cn(
             "transition-all duration-300 ease-out origin-top overflow-hidden",
