@@ -811,7 +811,9 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
         )
 
         # fetch all the issues in which user is part of
-        issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, archived_at__isnull=True
+        )
 
         result = []
         for epic_id in epics:
