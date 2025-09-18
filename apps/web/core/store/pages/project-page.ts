@@ -4,8 +4,6 @@ import { computedFn } from "mobx-utils";
 // constants
 import { EPageAccess, EUserPermissions } from "@plane/constants";
 import { TPage } from "@plane/types";
-// utils
-import { getPageName } from "@plane/utils";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -93,9 +91,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
-    const sortedPages = filteredPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
+    const sortedPages = filteredPages.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }

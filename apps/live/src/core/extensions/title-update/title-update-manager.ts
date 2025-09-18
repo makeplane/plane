@@ -49,16 +49,16 @@ export class TitleUpdateManager {
    * Update the title - will be called by the debounce manager
    */
   private async updateTitle(title: string, signal?: AbortSignal): Promise<void> {
-    if (!this.documentHandler.updateTitle) {
+    if (!this.documentHandler.updatePageProperties) {
       logger.warn(`No updateTitle method found for document ${this.documentName}`);
       return;
     }
 
     try {
-      await this.documentHandler.updateTitle({
+      await this.documentHandler.updatePageProperties({
         context: this.context,
         pageId: this.documentName,
-        title: title,
+        data: { name: title },
         abortSignal: signal,
       });
 

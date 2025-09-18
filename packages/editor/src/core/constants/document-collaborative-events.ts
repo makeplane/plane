@@ -1,5 +1,5 @@
 import { EPageAccess } from "@plane/constants";
-import { EPageSharedUserAccess, TCollaborator } from "@plane/types";
+import { EPageSharedUserAccess, TCollaborator, TPage } from "@plane/types";
 import { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.
@@ -11,7 +11,7 @@ export type MadePublicPayload = CreatePayload<{ access: EPageAccess }>;
 export type MadePrivatePayload = CreatePayload<{ access: EPageAccess }>;
 export type DeletedPayload = CreatePayload<{ deleted_at: Date | null }>;
 export type DuplicatedPayload = CreatePayload<{ new_page_id: string }>;
-export type TitleUpdatedPayload = CreatePayload<{ title: string }>;
+export type PropertyUpdatedPayload = CreatePayload<Partial<TPage>>;
 export type MovedInternallyPayload = CreatePayload<{
   parent_id?: string | null;
   sub_pages_count?: number;
@@ -97,10 +97,10 @@ export const DocumentCollaborativeEvents = {
     server: "duplicate",
     payloadType: {} as DuplicatedPayload,
   },
-  title_update: {
-    client: "title_updated",
-    server: "title_update",
-    payloadType: {} as TitleUpdatedPayload,
+  property_update: {
+    client: "property_updated",
+    server: "property_update",
+    payloadType: {} as PropertyUpdatedPayload,
   },
   move_internally: {
     client: "moved_internally",

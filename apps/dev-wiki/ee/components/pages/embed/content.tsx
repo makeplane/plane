@@ -1,20 +1,14 @@
-import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
-import { EPageAccess } from "@plane/constants";
-import { TPageEmbedConfig } from "@plane/editor";
+import type { TPageEmbedConfig } from "@plane/editor";
 import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
-// utils
-import { cn } from "@plane/utils";
-// components
-import { Logo } from "@/components/common";
-// helpers
-import { getPageName } from "@/helpers/page.helper";
+import { cn, getPageName } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 // hooks
-import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { ArchivedBadge, PageEmbedPreview, PlaceholderEmbed } from "@/plane-web/components/pages";
@@ -75,15 +69,12 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
 
   // derived values
   const { logo_props, name, archived_at, is_description_empty, description_html } = page ?? {};
-  const { data: currentUser } = useUser();
 
+  const hasAccess = storePageData?.canCurrentUserAccessPage;
   const isDescriptionEmpty = useMemo(
     () => is_description_empty || description_html === "<p></p>",
     [is_description_empty, description_html]
   );
-  const isCurrentUserOwner = useMemo(() => page?.owned_by === currentUser?.id, [page?.owned_by, currentUser?.id]);
-  const isPagePublic = useMemo(() => page?.access === EPageAccess.PUBLIC, [page?.access]);
-  const userHasAccess = isCurrentUserOwner || isPagePublic;
 
   const [displayState, setDisplayState] = useState<PageDisplayState>({
     text: getPageName(name),
@@ -94,7 +85,10 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
 
     const getPage = async () => {
       if (storeType === EPageStoreType.WORKSPACE && isNestedPagesEnabled(workspaceSlug?.toString() ?? "")) {
-        await fetchPageDetails(embedPageId, false);
+        // @ts-expect-error - fix this
+        await fetchPageDetails(embedPageId, {
+          shouldFetchSubPages: false,
+        });
       }
     };
     if (!storePageData) {
@@ -111,12 +105,12 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
           modalTitle: "Upgrade plan",
           modalDescription: "Please upgrade your plan to view this nested page",
         };
-      if (archived_at && userHasAccess) {
+      if (archived_at && hasAccess) {
         return {
           text: getPageName(name),
           badge: <ArchivedBadge />,
         };
-      } else if (!userHasAccess && page?.id) {
+      } else if (!hasAccess && page?.id) {
         return {
           logo: <RestrictedPageIcon className="size-4" />,
           text: "Restricted Page",
@@ -130,7 +124,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     };
 
     setDisplayState(getDisplayState());
-  }, [name, archived_at, page?.id, userHasAccess, description_html, isNestedPagesEnabled, workspaceSlug]);
+  }, [name, archived_at, page?.id, hasAccess, description_html, isNestedPagesEnabled, workspaceSlug]);
 
   // Function to determine the appropriate logo to display
   const pageEmbedLogo = useMemo(() => {
@@ -287,7 +281,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
 
   // Determine if we should show the preview based on various conditions
   const shouldShowPreview =
-    !previewDisabled && userHasAccess && showPreview && page && isNestedPagesEnabled(workspaceSlug?.toString());
+    !previewDisabled && hasAccess && showPreview && page && isNestedPagesEnabled(workspaceSlug?.toString());
 
   return (
     <>
@@ -326,7 +320,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
         >
           {pageEmbedLogo}
           <div className="flex-shrink-0 flex items-center gap-3">
-            <p className="not-prose text-base font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+            <p className="not-prose text-[--font-size-regular] font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
               {displayState.text}
             </p>
             {displayState?.badge}

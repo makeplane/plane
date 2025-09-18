@@ -130,14 +130,14 @@ export abstract class BasePageHandler<TService extends BasePageService, TConfig 
   /**
    * Updates the title of a page
    */
-  public async updatePageTitle({
+  public async updatePageProperties({
     context,
     pageId,
-    title,
+    data,
     abortSignal,
   }: {
     pageId: string;
-    title: string;
+    data: Partial<TPage>;
     abortSignal?: AbortSignal;
     context: HocusPocusServerContext;
   }): Promise<void> {
@@ -146,14 +146,10 @@ export abstract class BasePageHandler<TService extends BasePageService, TConfig 
 
     if (!pageId) return;
 
-    const payload = {
-      name: title,
-    };
-
-    await this.service.updateTitle({
+    await this.service.updatePageProperties({
       config,
       pageId,
-      data: payload,
+      data,
       cookie,
       abortSignal,
     });
@@ -218,7 +214,7 @@ export abstract class BasePageHandler<TService extends BasePageService, TConfig 
       fetch: this.fetchPageDescriptionBinary.bind(this),
       store: this.updatePageDescription.bind(this),
       fetchTitle: this.fetchPageTitle.bind(this),
-      updateTitle: this.updatePageTitle.bind(this),
+      updatePageProperties: this.updatePageProperties.bind(this),
       fetchSubPages: this.fetchPageSubPageDetails.bind(this),
     };
 

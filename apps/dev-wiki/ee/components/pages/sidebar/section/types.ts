@@ -2,7 +2,7 @@ import { Dispatch, RefObject, SetStateAction } from "react";
 import { LucideIcon } from "lucide-react";
 // plane imports
 import { ISvgIcons } from "@plane/propel/icons";
-import { TPageNavigationTabs } from "@plane/types";
+import { TPage, TPageNavigationTabs } from "@plane/types";
 
 // Basic section details type
 export type SectionDetails = {
@@ -19,7 +19,6 @@ export type SectionDetailsMap = {
 export interface SectionHeaderProps {
   sectionType: TPageNavigationTabs;
   sectionDetails: SectionDetails;
-  isCollapsed: boolean;
   isCreatingPage: TPageNavigationTabs | null;
   handleCreatePage: (pageType: TPageNavigationTabs) => void;
   buttonRef?: RefObject<HTMLButtonElement>;
@@ -28,7 +27,6 @@ export interface SectionHeaderProps {
 
 // Props for section content
 export interface SectionContentProps {
-  isCollapsed: boolean;
   pageIds: string[];
   sectionType: TPageNavigationTabs;
   expandedPageIds?: string[];
@@ -37,10 +35,10 @@ export interface SectionContentProps {
 
 // Props for main section component
 export interface SectionRootProps {
-  expandedPageIds?: string[];
-  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
-  sectionType: TPageNavigationTabs;
   currentPageId?: string;
+  expandedPageIds?: string[];
+  sectionType: TPageNavigationTabs;
+  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
 }
 
 // Return type for drag and drop hook

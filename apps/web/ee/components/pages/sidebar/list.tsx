@@ -24,14 +24,14 @@ export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
   const currentPageId = pageId ? pageId.toString() : undefined;
 
   return (
-    <div className="vertical-scrollbar h-full space-y-4 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
+    <div className="vertical-scrollbar h-full !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
       {Object.values(sectionsList).map((section) => (
         <WikiSidebarListSectionRoot
           key={section}
-          expandedPageIds={expandedPageIds}
-          setExpandedPageIds={setExpandedPageIds}
-          sectionType={section}
           currentPageId={currentPageId}
+          expandedPageIds={expandedPageIds}
+          sectionType={section}
+          setExpandedPageIds={setExpandedPageIds}
         />
       ))}
     </div>

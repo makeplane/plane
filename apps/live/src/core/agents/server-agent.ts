@@ -212,9 +212,16 @@ export class ServerAgentManager {
             pageId,
           });
         }
-
+        
         // Process the document using our extensible system
-        DocumentProcessor.process(xmlFragment, subPagesFromBackend || [], options);
+        DocumentProcessor.process({
+          xmlFragment,
+          subPages: subPagesFromBackend || [],
+          options,
+          context,
+          instance: this.hocuspocusServer,
+          documentName: pageId,
+        });
       },
       {
         ...context,

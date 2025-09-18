@@ -1,12 +1,15 @@
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { ReactNodeViewRenderer, NodeViewWrapper, Editor } from "@tiptap/react";
-import { v4 as uuidv4 } from "uuid";
-// types
+import { ReactNodeViewRenderer, NodeViewWrapper, type Editor } from "@tiptap/react";
+// helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
+// plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { TPageEmbedConfig } from "@/types";
+// types
+import type { TPageEmbedConfig } from "@/types";
 // extension config
+import { pageEmbedCommands } from "./commands";
 import { PageEmbedExtensionAttributes, PageEmbedExtensionConfig } from "./extension-config";
+import { PageEmbedOrderTrackerPlugin } from "./plugins/order-tracker-plugin";
 import { PreventPageEmbedDeletionPlugin } from "./plugins/prevent-deletion-page-embed";
 
 type Props = {
@@ -15,6 +18,7 @@ type Props = {
   unarchivePage?: TPageEmbedConfig["unarchivePage"];
   deletePage?: TPageEmbedConfig["deletePage"];
   getPageDetailsCallback?: TPageEmbedConfig["getPageDetailsCallback"];
+  onNodesPosChanged?: TPageEmbedConfig["onNodesPosChanged"];
 };
 
 declare module "@tiptap/core" {
@@ -39,66 +43,7 @@ export const PageEmbedExtension = (props: Props) =>
     draggable: true,
 
     addCommands() {
-      return {
-        insertPageEmbed:
-          ({ pageId, workspaceSlug, position }) =>
-          ({ commands, chain, editor, dispatch }) => {
-            const transactionId = uuidv4();
-            let success = false;
-
-            if (position) {
-              // Insert at specific position
-              success = commands.insertContentAt(position, {
-                type: this.name,
-                attrs: {
-                  id: transactionId,
-                  entity_identifier: pageId,
-                  workspace_identifier: workspaceSlug,
-                  entity_name: "sub_page",
-                } as PageEmbedExtensionAttributes,
-              });
-
-              if (success && dispatch && editor) {
-                // Find the inserted node to determine its end position
-                const nodeEndPos = position + (editor.state?.doc.nodeAt(position)?.nodeSize || 0);
-
-                // Check if there's already a paragraph after this node
-                const nodeAfter = editor.state.doc.nodeAt(nodeEndPos);
-
-                if (!nodeAfter || nodeAfter.type.name !== "paragraph") {
-                  // No paragraph after, create one
-                  chain()
-                    .insertContentAt(nodeEndPos, { type: "paragraph" })
-                    .setTextSelection(nodeEndPos + 1)
-                    .run();
-                } else {
-                  // Paragraph exists, just move cursor there
-                  chain()
-                    .setTextSelection(nodeEndPos + 1)
-                    .run();
-                }
-              }
-            } else {
-              // Insert at current position
-              success = commands.insertContent({
-                type: this.name,
-                attrs: {
-                  id: transactionId,
-                  entity_identifier: pageId,
-                  workspace_identifier: workspaceSlug,
-                  entity_name: "sub_page",
-                } as PageEmbedExtensionAttributes,
-              });
-
-              if (success && dispatch) {
-                // After insertion, create a paragraph or focus on existing one
-                chain().createParagraphNear().focus().run();
-              }
-            }
-
-            return success;
-          },
-      };
+      return pageEmbedCommands(this.type);
     },
 
     addNodeView() {
@@ -177,6 +122,9 @@ export const PageEmbedExtension = (props: Props) =>
             // if the transaction makes changes, return it.
             return tr.docChanged ? tr : null;
           },
+        }),
+        PageEmbedOrderTrackerPlugin({
+          onNodesUpdated: props.onNodesPosChanged,
         }),
       ];
     },

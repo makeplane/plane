@@ -3,6 +3,7 @@ import type { Editor } from "@tiptap/react";
 import type { TPage } from "@plane/types";
 import { ExternalEmbedNodeViewProps, TEmbedItem } from "@/types";
 import type { PageEmbedExtensionAttributes } from "../extensions/page-embed/extension-config";
+import type { TPageNodesInfo } from "../extensions/page-embed/plugins/order-tracker-plugin";
 
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
@@ -34,7 +35,7 @@ export type TIssueEmbedConfig = {
 };
 
 export type TPageEmbedConfig = {
-  createCallback?: () => Promise<
+  createCallback?: (index: number) => Promise<
     | {
         pageId: string;
         workspaceSlug: string;
@@ -60,6 +61,7 @@ export type TPageEmbedConfig = {
   deletePage?: (id: string[]) => Promise<void>;
   updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   workspaceSlug: string;
+  onNodesPosChanged?: (nodes: TPageNodesInfo[]) => void;
 };
 
 export type TPageEmbedNodeViewRendererProps = {

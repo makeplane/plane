@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// document-editor
+// plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
@@ -29,11 +29,8 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
-// plane web types
-import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages/use-extended-editor-extensions";
-// plane web store
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-// plane web hooks
+import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -227,7 +224,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isPageLoading = pageId === undefined || !realtimeConfig;
+  const isPageLoading = pageId === undefined || !realtimeConfig || !extendedEditorProps;
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
@@ -280,7 +277,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             id={pageId}
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
-            embedHandler={extendedEditorProps.embedHandler ?? {}}
             ref={editorForwardRef}
             titleRef={titleEditorRef}
             containerClassName="h-full p-0 pb-64"

@@ -1,5 +1,5 @@
 // types
-import { TDocumentPayload } from "@plane/types";
+import type { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { API_BASE_URL, APIService } from "@/core/services/api.service";
 import { env } from "@/env";
@@ -13,10 +13,11 @@ export type IBasePageParams<TConfig extends Record<string, any> = Record<string,
 
 export type IFetchDetailsParams<TConfig extends Record<string, any> = Record<string, any>> = IBasePageParams<TConfig>;
 
-export type IUpdateTitleParams<TConfig extends Record<string, any> = Record<string, any>> = IBasePageParams<TConfig> & {
-  data: { name: string };
-  abortSignal?: AbortSignal;
-};
+export type IUpdatePagePropertiesParams<TConfig extends Record<string, any> = Record<string, any>> =
+  IBasePageParams<TConfig> & {
+    data: Partial<TPage>;
+    abortSignal?: AbortSignal;
+  };
 
 export type IUpdateDescriptionParams<TConfig extends Record<string, any> = Record<string, any>> =
   IBasePageParams<TConfig> & {
@@ -87,7 +88,7 @@ export abstract class BasePageService extends APIService {
   /**
    * Updates the title of a page
    */
-  async updateTitle<TConfig extends Record<string, any>>(params: IUpdateTitleParams<TConfig>) {
+  async updatePageProperties<TConfig extends Record<string, any>>(params: IUpdatePagePropertiesParams<TConfig>) {
     const { config, pageId, data, cookie, abortSignal } = params;
 
     // Early abort check

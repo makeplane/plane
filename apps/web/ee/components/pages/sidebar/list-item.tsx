@@ -1,17 +1,21 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
 import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -22,13 +26,32 @@ type Props = {
   pageId: string;
   isHovered?: boolean;
   canShowAddButton?: boolean;
+  expandedPageIds: string[];
+  sectionType?: TPageNavigationTabs;
+  setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsDropping: React.Dispatch<React.SetStateAction<boolean>>;
+  setLocalIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const WikiPageSidebarListItemComponent = observer((props: Props) => {
-  const { handleToggleExpanded, isExpanded, paddingLeft, pageId, isHovered, canShowAddButton } = props;
+  const {
+    handleToggleExpanded,
+    isExpanded,
+    paddingLeft,
+    pageId,
+    isHovered,
+    canShowAddButton,
+    expandedPageIds,
+    setExpandedPageIds,
+    sectionType,
+    setIsDropping,
+    setLocalIsExpanded,
+  } = props;
   // states
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  // refs
+  const listItemContentRef = useRef<HTMLDivElement>(null);
   // navigation
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -39,7 +62,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     pageId,
     storeType: EPageStoreType.WORKSPACE,
   });
-  const { isNestedPagesEnabled } = usePageStore(EPageStoreType.WORKSPACE);
+  const { isNestedPagesEnabled, getPageById } = usePageStore(EPageStoreType.WORKSPACE);
   const {
     fetchSubPages,
     is_description_empty,
@@ -176,29 +199,6 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     [handleNavigate]
   );
 
-  // Memoize class names
-  const linkClassName = useMemo(
-    () =>
-      cn(
-        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90",
-        {
-          "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 text-custom-primary-100 font-medium": isPageActive,
-          "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
-          "cursor-default": !pageContent?.status.hasAccess || isPageActive,
-        }
-      ),
-    [isPageActive, pageContent?.status.hasAccess]
-  );
-
-  const contentContainerClassName = useMemo(
-    () =>
-      cn("flex items-center gap-1 truncate", {
-        "max-w-[calc(100%-28px)] pr-3": showAddButton,
-        "w-full pr-1": !showAddButton,
-      }),
-    [showAddButton]
-  );
-
   const contentStyle = useMemo(() => ({ paddingLeft: `${paddingLeft + 4}px` }), [paddingLeft]);
 
   const chevronClassName = useMemo(
@@ -209,13 +209,113 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     [isExpanded]
   );
 
+  // drop as a sub-page
+  useEffect(() => {
+    const element = listItemContentRef.current;
+    if (!element || !page || !page.id) return;
+
+    return combine(
+      dropTargetForElements({
+        element,
+        onDragEnter: () => {
+          setIsDropping(true);
+          if (setExpandedPageIds) {
+            if (!expandedPageIds.includes(pageId)) {
+              setExpandedPageIds([...expandedPageIds, pageId]);
+            }
+          } else {
+            setLocalIsExpanded(true);
+          }
+        },
+        onDragLeave: () => {
+          setIsDropping(false);
+        },
+        onDrop: ({ location, self, source }) => {
+          // toggle drop state to off
+          setIsDropping(false);
+
+          if (location.current.dropTargets[0]?.element !== self.element) return;
+          // get data of the dropped page(source)
+          const { id: droppedPageId } = source.data as TPageDragPayload;
+          const droppedPageDetails = getPageById(droppedPageId);
+          if (!droppedPageDetails) return;
+          // prepare update payload with the new parent_id
+          const updatePayload: { parent_id?: string; access?: EPageAccess } = {
+            parent_id: page.id,
+          };
+          // get the access of the parent page based on the section type
+          let targetAccess: EPageAccess | undefined;
+          if (sectionType === "public") {
+            targetAccess = EPageAccess.PUBLIC;
+          } else if (sectionType === "private") {
+            targetAccess = EPageAccess.PRIVATE;
+          }
+          // check if access needs to be updated (section has changed)
+          if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
+            updatePayload.access = targetAccess;
+          }
+          // make the API call to update the page
+          droppedPageDetails.update(updatePayload);
+        },
+        canDrop: ({ source }) => {
+          // check if the page is editable
+          if (
+            !page.canCurrentUserEditPage ||
+            !page.isContentEditable ||
+            !isNestedPagesEnabled(workspaceSlug.toString()) ||
+            page.archived_at
+          ) {
+            return false;
+          }
+          // get the data of the page being dropped(source)
+          const { id: droppedPageId, parentId: droppedPageParentId } = source.data as TPageDragPayload;
+          if (!droppedPageId) return false;
+          // get the source page instance
+          const sourcePage = getPageById(droppedPageId);
+          if (!sourcePage) return false;
+          // check if the page being dragged is the same page or the immediate parent or any level child
+          const isSamePage = droppedPageId === page.id;
+          const isImmediateParent = droppedPageParentId === page.id;
+          const isAnyLevelChild = page.parentPageIds?.includes(droppedPageId);
+
+          if (isSamePage || isImmediateParent || isAnyLevelChild) return false;
+
+          // Allow dropping shared pages onto any accessible page
+          if (sourcePage.is_shared) {
+            return true;
+          }
+
+          return true;
+        },
+      })
+    );
+  }, [
+    expandedPageIds,
+    getPageById,
+    page,
+    pageId,
+    setExpandedPageIds,
+    setIsDropping,
+    setLocalIsExpanded,
+    isNestedPagesEnabled,
+    workspaceSlug,
+    sectionType,
+  ]);
+
   if (!page) return null;
 
   return (
     <div
       role="button"
       tabIndex={0}
-      className={linkClassName}
+      className={cn(
+        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90",
+        {
+          "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 text-custom-primary-100 font-medium": isPageActive,
+          "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
+          "cursor-default": !pageContent?.status.hasAccess || isPageActive,
+        }
+      )}
       onClick={handleNavigate}
       onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
@@ -225,7 +325,14 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
       aria-disabled={pageContent?.status.hasAccess ?? true}
       aria-current={isPageActive ? "page" : undefined}
     >
-      <div className={contentContainerClassName} style={contentStyle}>
+      <div
+        ref={listItemContentRef}
+        className={cn("flex items-center gap-1 truncate", {
+          "max-w-[calc(100%-28px)] pr-3": showAddButton,
+          "w-full pr-1": !showAddButton,
+        })}
+        style={contentStyle}
+      >
         <div className="size-4 flex-shrink-0 grid place-items-center">
           {shouldShowSubPagesButton && isHovering ? (
             <button

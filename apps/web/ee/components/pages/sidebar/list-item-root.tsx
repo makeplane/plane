@@ -3,16 +3,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+  type Edge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
 import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TPageDragPayload } from "@plane/types";
+import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { DropIndicator } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -27,22 +32,33 @@ type Props = {
   pageId: string;
   expandedPageIds?: string[];
   setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
-  sectionType?: "public" | "private" | "archived" | "shared";
+  sectionType?: TPageNavigationTabs;
+  handleReorderPages?: (pageId: string, targetId: string, position: "before" | "after") => void;
+  isLastChild: boolean;
 };
 
 export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => {
-  const { paddingLeft, pageId, expandedPageIds = [], setExpandedPageIds, sectionType } = props;
+  const {
+    paddingLeft,
+    pageId,
+    expandedPageIds = [],
+    setExpandedPageIds,
+    sectionType,
+    handleReorderPages,
+    isLastChild,
+  } = props;
   // states
   const [localIsExpanded, setLocalIsExpanded] = useState(false);
   const [subPagesLoaded, setSubPagesLoaded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isDropping, setIsDropping] = useState(false);
+  const [dropIndicatorEdge, setDropIndicatorEdge] = useState<Edge | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // refs
   const listItemRef = useRef<HTMLDivElement>(null);
   const itemContentRef = useRef<HTMLDivElement>(null);
-  // router and params
+  // navigation
   const router = useAppRouter();
   const { workspaceSlug, pageId: currentPageIdParam } = useParams();
   // store hooks
@@ -53,11 +69,9 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
   });
   // derived values
   const { sub_pages_count, subPageIds } = page ?? {};
-
-  // Check if this is the active page
+  // check if this is the active page
   const isActivePage = currentPageIdParam && currentPageIdParam.toString() === pageId;
-
-  // Auto-scroll to active page when sidebar renders
+  // auto-scroll to active page when sidebar renders
   useEffect(() => {
     if (isActivePage && listItemRef.current) {
       // Wait a short delay to ensure sidebar is fully rendered
@@ -227,7 +241,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
     [getPageById, router, createPage, page]
   );
 
-  // drag and drop
+  // drag and drop with reordering
   useEffect(() => {
     const element = listItemRef.current;
     if (!element || !page || !page.id) return;
@@ -236,6 +250,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
       id: page.id,
       parentId: page.parent_id ?? null,
     };
+
     return combine(
       draggable({
         element,
@@ -257,110 +272,48 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
       }),
       dropTargetForElements({
         element,
-        onDragEnter: () => {
-          setIsDropping(true);
-          if (setExpandedPageIds) {
-            if (!expandedPageIds.includes(pageId)) {
-              setExpandedPageIds([...expandedPageIds, pageId]);
-            }
-          } else {
-            setLocalIsExpanded(true);
+        getData: ({ input, element }) =>
+          attachClosestEdge(initialData, {
+            element,
+            input,
+            allowedEdges: ["top", "bottom"],
+          }),
+        onDragEnter: ({ self }) => {
+          const closestEdge = extractClosestEdge(self.data);
+          if (!(self.data as TPageDragPayload).parentId) {
+            setDropIndicatorEdge(closestEdge);
           }
         },
         onDragLeave: () => {
-          setIsDropping(false);
+          setDropIndicatorEdge(null);
         },
-        onDragStart: () => {
-          setIsDropping(true);
-        },
-        onDrop: async ({ location, self, source }) => {
-          setIsDropping(false);
+        onDrop: ({ location, self, source }) => {
+          setDropIndicatorEdge(null);
+
           if (location.current.dropTargets[0]?.element !== self.element) return;
+
           const { id: droppedPageId } = source.data as TPageDragPayload;
-          const droppedPageDetails = getPageById(droppedPageId);
-          if (!droppedPageDetails) return;
 
-          // Prepare update payload
-          const updatePayload: { parent_id?: string; access?: EPageAccess } = {
-            parent_id: page.id,
-          };
-
-          // Map sectionType to access value
-          let targetAccess: EPageAccess | undefined;
-          if (sectionType === "public") {
-            targetAccess = EPageAccess.PUBLIC;
-          } else if (sectionType === "private") {
-            targetAccess = EPageAccess.PRIVATE;
-          }
-
-          // Check if access needs to be updated (section has changed)
-          if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
-            updatePayload.access = targetAccess;
-          }
-
-          try {
-            await droppedPageDetails.update(updatePayload);
-            captureSuccess({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
-              payload: {
-                id: page.id,
-                state: "SUCCESS",
-                updated: {
-                  from_access: page.access,
-                  to_access: droppedPageDetails.access,
-                  from_parent: page.parent_id,
-                  to_parent: droppedPageDetails.parent_id,
-                },
-              },
-            });
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Page moved successfully.",
-            });
-          } catch (error) {
-            captureError({
-              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
-              payload: {
-                id: page.id,
-                state: "ERROR",
-                updated: {
-                  from_access: page.access,
-                  to_access: droppedPageDetails.access,
-                  from_parent: page.parent_id,
-                  to_parent: droppedPageDetails.parent_id,
-                },
-              },
-            });
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "Failed to move page. Please try again later.",
-            });
+          const closestEdge = extractClosestEdge(self.data);
+          if (closestEdge) {
+            const position = closestEdge === "top" ? "before" : "after";
+            handleReorderPages?.(droppedPageId, pageId, position);
           }
         },
         canDrop: ({ source }) => {
-          if (
-            !page.canCurrentUserEditPage ||
-            !page.isContentEditable ||
-            !isNestedPagesEnabled(workspaceSlug.toString()) ||
-            page.archived_at
-          ) {
+          if (isDropping || !isNestedPagesEnabled(workspaceSlug.toString())) {
             return false;
           }
 
-          const { id: droppedPageId, parentId: droppedPageParentId } = source.data as TPageDragPayload;
+          // Cannot drop into shared section
+          if (sectionType === "shared" || sectionType === "archived") return false;
+
+          const { id: droppedPageId } = source.data as TPageDragPayload;
           if (!droppedPageId) return false;
 
           // Get the source page to check additional properties
           const sourcePage = getPageById(droppedPageId);
           if (!sourcePage) return false;
-
-          const isSamePage = droppedPageId === page.id;
-          const isImmediateParent = droppedPageParentId === page.id;
-          const isAnyLevelChild = page.parentPageIds.includes(droppedPageId);
-
-          if (isSamePage || isImmediateParent || isAnyLevelChild) return false;
 
           // Allow dropping shared pages onto any accessible page (they will inherit the target's access)
           if (sourcePage.is_shared) {
@@ -375,6 +328,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
     expandedPageIds,
     getPageById,
     isDragging,
+    isDropping,
     localIsExpanded,
     page,
     pageId,
@@ -382,6 +336,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
     isNestedPagesEnabled,
     workspaceSlug,
     sectionType,
+    handleReorderPages,
   ]);
 
   if (!page) return null;
@@ -394,7 +349,19 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         "is-dragging": isDropping,
       })}
     >
-      <div ref={itemContentRef} className="relative">
+      {/* Drop Indicator */}
+      <DropIndicator
+        classNames={cn({
+          "is-reordering": dropIndicatorEdge === "top",
+        })}
+        isVisible={dropIndicatorEdge === "top" && !isDropping}
+      />
+      <div
+        ref={itemContentRef}
+        className={cn("relative", {
+          "opacity-30": isDragging,
+        })}
+      >
         <WikiPageSidebarListItem
           handleToggleExpanded={handleToggleExpanded}
           isDragging={isDragging}
@@ -403,6 +370,11 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           pageId={pageId}
           isHovered={isHovered}
           canShowAddButton={canShowAddButton}
+          expandedPageIds={expandedPageIds}
+          setExpandedPageIds={setExpandedPageIds}
+          sectionType={sectionType}
+          setIsDropping={setIsDropping}
+          setLocalIsExpanded={setLocalIsExpanded}
         />
         {isHovered && canShowAddButton && (
           <button
@@ -427,7 +399,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           leaveTo="opacity-0"
         >
           <div>
-            {subPageIds?.map((subPageId) => (
+            {subPageIds?.map((subPageId, index) => (
               <WikiPageSidebarListItemRoot
                 key={subPageId}
                 paddingLeft={paddingLeft + 16}
@@ -435,8 +407,19 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
                 expandedPageIds={expandedPageIds}
                 setExpandedPageIds={setExpandedPageIds}
                 sectionType={sectionType}
+                handleReorderPages={handleReorderPages}
+                isLastChild={index === subPageIds.length - 1}
               />
             ))}
+            {/* Drop Indicator */}
+            {isLastChild && (
+              <DropIndicator
+                classNames={cn({
+                  "is-reordering": dropIndicatorEdge === "bottom",
+                })}
+                isVisible={dropIndicatorEdge === "bottom" && !isDropping}
+              />
+            )}
           </div>
         </Transition>
       )}

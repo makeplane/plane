@@ -26,4 +26,5 @@ export type TPageExtended = {
   parent_id: string | null | undefined;
   anchor?: string | null | undefined;
   sharedUsers: TPageSharedUser[]; // Users the page is shared with
+  sort_order: number | undefined;
 };

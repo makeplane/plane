@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from "react";
-import { EventToPayloadMap } from "@plane/editor";
-import { IUserLite, TCollaborator } from "@plane/types";
+// plane imports
+import type { EventToPayloadMap } from "@plane/editor";
+import type { IUserLite, TCollaborator } from "@plane/types";
 import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { TEditorBodyHandlers } from "@/components/pages";
+import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -40,9 +41,10 @@ export const useRealtimePageEvents = ({
 }: UsePageEventsProps) => {
   const router = useAppRouter();
   const { removePage, getPageById, getOrFetchPageInstance } = usePageStore(storeType);
+
   const { data: currentUser } = useUser();
   // derived values
-  const editorRef = page.editor.editorRef;
+  const { editorRef } = page.editor;
 
   // Helper function to safely get user display text
   const getUserDisplayText = useCallback(
@@ -118,10 +120,12 @@ export const useRealtimePageEvents = ({
           }
         });
       },
-      title_updated: ({ pageIds, data }) => {
+      property_updated: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem && data.title != null) pageItem.updateTitle(data.title);
+          const pageInstance = getPageById(pageId);
+          const { name: updatedName, ...rest } = data;
+          if (updatedName != null) pageInstance?.updateTitle(updatedName);
+          pageInstance?.mutateProperties(rest);
         });
       },
       moved_internally: ({ pageIds, data }) => {
@@ -168,6 +172,7 @@ export const useRealtimePageEvents = ({
               name: col.name,
               color: col.color,
               id: col.id,
+              clientId: col.clientId,
             }));
             pageItem.updateCollaborators(collaboratorsForPageStore);
           }
@@ -218,6 +223,41 @@ export const useRealtimePageEvents = ({
             });
           else if (page.id === pageId) router.push(handlers.getRedirectionLink());
         });
+      },
+      shared: async ({ data }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, access, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.appendSharedUsers([
+                {
+                  user_id,
+                  access,
+                },
+              ]);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(access);
+              }
+            }
+          }
+        }
+      },
+      unshared: async ({ data }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.removeSharedUser(user_id);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(null);
+              }
+            }
+          }
+        }
       },
       duplicated: async ({ pageIds, data }) => {
         const duplicatedPage = data.new_page_id;

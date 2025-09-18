@@ -51,9 +51,16 @@ export interface IWorkspacePageStore {
   fetchAllPages: () => Promise<TPage[] | undefined>;
   fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (pageId: string, shouldFetchSubPages?: boolean | undefined) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    pageId: string,
+    options?: {
+      trackVisit?: boolean;
+      shouldFetchSubPages?: boolean;
+    }
+  ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
   getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
@@ -352,7 +359,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
     // ---------- PUBLIC PAGES ----------
-    // Unfiltered public pages (sorted alphabetically by name)
+    // Unfiltered public pages
     const publicPages = workspacePages.filter(
       (page) =>
         page.access === EPageAccess.PUBLIC &&
@@ -361,10 +368,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         !page.deleted_at &&
         !page.is_shared
     );
-    const sortedPublicPages = publicPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newPublicPageIds = publicPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered public pages (with all filters applied)
     const filteredPublicPages = publicPages.filter(
@@ -392,10 +399,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
     const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
-    const sortedPrivatePages = combinedPrivatePages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newPrivatePageIds = combinedPrivatePages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered private pages (with all filters applied)
     const filteredPrivatePages = combinedPrivatePages.filter(
@@ -420,10 +427,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       const rootParent = this.findRootParent(page);
       return !rootParent?.archived_at;
     });
-    const sortedArchivedPages = topLevelArchivedPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newArchivedPageIds = sortedArchivedPages
+    const newArchivedPageIds = topLevelArchivedPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
       .map((page) => page.id)
       .filter((id): id is string => id !== undefined);
 
@@ -455,10 +460,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       const parentPage = this.getPageById(page.parent_id);
       return !parentPage?.is_shared;
     });
-    const sortedSharedPages = sharedPages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
-    );
-    const newSharedPageIds = sortedSharedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newSharedPageIds = sharedPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered shared pages (with all filters applied)
     const filteredSharedPages = sharedPages.filter(
@@ -559,9 +564,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   /**
    * @description fetch the details of a page
-   * @param {string} pageId
    */
-  fetchPageDetails = async (pageId: string, shouldFetchSubPages: boolean | undefined = true) => {
+  fetchPageDetails: IWorkspacePageStore["fetchPageDetails"] = async (pageId, options) => {
+    const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
+    const trackVisit = options?.trackVisit ?? true;
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;
@@ -572,14 +578,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId)];
+      const promises: Promise<TPage | TPage[]>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
 
       if (shouldFetchSubPages) {
         promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));
       }
 
       const results = await Promise.all(promises);
-      const page = results[0] as TPage | undefined;
+      const page = results[0] as TPage;
       const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
 
       runInAction(() => {
@@ -712,6 +718,71 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         };
       });
       throw error;
+    }
+  };
+
+  /**
+   * @description move a page internally within the project hierarchy
+   * @param {string} pageId - The ID of the page to move
+   * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
+   */
+  movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    try {
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      runInAction(() => {
+        // Handle parent_id changes and update sub_pages_count accordingly
+        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
+          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
+        }
+
+        // Apply all updates to the page instance
+        Object.keys(updatePayload).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
+        });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        pageInstance.updated_at = new Date();
+      });
+
+      await pageInstance.update(updatePayload);
+    } catch (error) {
+      console.error("Unable to move page internally", error);
+      runInAction(() => {
+        this.error = {
+          title: "Failed",
+          description: "Failed to move page internally, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description Helper method to update sub_pages_count when moving pages between parents
+   * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
+   * @param {string | null} newParentId - The new parent ID (can be null for root pages)
+   * @private
+   */
+  private updateParentSubPageCounts = (oldParentId: string | null, newParentId: string | null) => {
+    // Decrement count for old parent (if it exists)
+    if (oldParentId) {
+      const oldParentPageInstance = this.getPageById(oldParentId);
+      if (oldParentPageInstance) {
+        const newCount = Math.max(0, (oldParentPageInstance.sub_pages_count ?? 1) - 1);
+        oldParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+
+    // Increment count for new parent (if it exists)
+    if (newParentId) {
+      const newParentPageInstance = this.getPageById(newParentId);
+      if (newParentPageInstance) {
+        const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
+        newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
     }
   };
 

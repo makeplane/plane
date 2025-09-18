@@ -35,10 +35,10 @@ export interface SectionContentProps {
 
 // Props for main section component
 export interface SectionRootProps {
-  expandedPageIds?: string[];
-  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
-  sectionType: TPageNavigationTabs;
   currentPageId?: string;
+  expandedPageIds?: string[];
+  sectionType: TPageNavigationTabs;
+  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
 }
 
 // Return type for drag and drop hook

@@ -4,7 +4,7 @@ import base64
 from datetime import datetime, timedelta
 
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Subquery, Count, F, Func
+from django.db.models import Exists, OuterRef, Q, Subquery, Count, F, Func, Max
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -106,6 +106,12 @@ class WorkspacePageViewSet(BaseViewSet):
             .distinct()
         )
 
+    def get_largest_sort_order(self, slug, parent_id):
+        largest_sort_order = Page.objects.filter(
+            workspace__slug=slug, parent_id=parent_id
+        ).aggregate(largest=Max("sort_order"))["largest"]
+        return largest_sort_order + 10000 if largest_sort_order else 65535
+
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -117,6 +123,13 @@ class WorkspacePageViewSet(BaseViewSet):
                 "workspace_id": workspace.id,
             },
         )
+
+        if request.data.get("parent_id") and request.data.get("sort_order") is None:
+            largest_sort_order = self.get_largest_sort_order(
+                slug, request.data.get("parent_id")
+            )
+            if largest_sort_order is not None:
+                request.data["sort_order"] = largest_sort_order
 
         if serializer.is_valid():
             serializer.save(is_global=True)
@@ -164,6 +177,21 @@ class WorkspacePageViewSet(BaseViewSet):
                 )
 
             current_instance = WorkspacePageDetailSerializer(page).data
+
+            moved_internally = False
+            if request.data.get("parent_id") and current_instance.get(
+                "parent_id"
+            ) != request.data.get("parent_id"):
+                moved_internally = True
+                if request.data.get("sort_order") is None:
+                    # get the largest sort order for the new parent
+                    largest_sort_order = self.get_largest_sort_order(
+                        slug, request.data.get("parent_id")
+                    )
+                    # Page ordering
+                    if largest_sort_order is not None:
+                        page.sort_order = largest_sort_order
+
             serializer = WorkspacePageDetailSerializer(
                 page, data=request.data, partial=True
             )
@@ -182,9 +210,7 @@ class WorkspacePageViewSet(BaseViewSet):
                         user_id=request.user.id,
                     )
 
-                if request.data.get("parent_id") and current_instance.get(
-                    "parent_id"
-                ) != request.data.get("parent_id"):
+                if moved_internally:
                     nested_page_update.delay(
                         page_id=page_id,
                         action=PageAction.MOVED_INTERNALLY,
@@ -359,6 +385,7 @@ class WorkspacePageViewSet(BaseViewSet):
             self.get_queryset()
             .annotate(sub_pages_count=Subquery(sub_pages_count))
             .filter(filters)
+            .order_by("sort_order", "-created_at")
         )
 
         pages = WorkspacePageSerializer(queryset, many=True).data
@@ -503,7 +530,8 @@ class WorkspacePageViewSet(BaseViewSet):
                     )
                 )
             )
-        )
+        ).order_by("sort_order", "-created_at")
+
         serializer = WorkspacePageLiteSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

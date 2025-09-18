@@ -5,8 +5,20 @@ from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    UUIDField,
+    Func,
+    F,
+    Count,
+    Subquery,
+    Max,
+)
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -117,6 +129,12 @@ class PageViewSet(BaseViewSet):
             .distinct()
         )
 
+    def get_largest_sort_order(self, slug, parent_id):
+        largest_sort_order = Page.objects.filter(
+            workspace__slug=slug, parent_id=parent_id
+        ).aggregate(largest=Max("sort_order"))["largest"]
+        return largest_sort_order + 10000 if largest_sort_order else 65535
+
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
@@ -128,6 +146,13 @@ class PageViewSet(BaseViewSet):
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
         )
+
+        if request.data.get("parent_id") and request.data.get("sort_order") is None:
+            largest_sort_order = self.get_largest_sort_order(
+                slug, request.data.get("parent_id")
+            )
+            if largest_sort_order is not None:
+                request.data["sort_order"] = largest_sort_order
 
         if serializer.is_valid():
             serializer.save()
@@ -166,7 +191,6 @@ class PageViewSet(BaseViewSet):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             serializer = PageDetailSerializer(page, data=request.data, partial=True)
             page_description = page.description_html
             if serializer.is_valid():

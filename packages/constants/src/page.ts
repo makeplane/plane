@@ -12,3 +12,6 @@ export const DEFAULT_CREATE_PAGE_MODAL_DATA: TCreatePageModal = {
   isOpen: false,
   pageAccess: EPageAccess.PUBLIC,
 };
+
+export const DEFAULT_PAGE_SORT_ORDER = 65535;
+export const PAGE_SORT_ORDER_INCREMENT = 1000;

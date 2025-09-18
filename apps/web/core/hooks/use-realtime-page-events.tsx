@@ -120,10 +120,12 @@ export const useRealtimePageEvents = ({
           }
         });
       },
-      title_updated: ({ pageIds, data }) => {
+      property_updated: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem && data.title != null) pageItem.updateTitle(data.title);
+          const pageInstance = getPageById(pageId);
+          const { name: updatedName, ...rest } = data;
+          if (updatedName != null) pageInstance?.updateTitle(updatedName);
+          pageInstance?.mutateProperties(rest);
         });
       },
       moved_internally: ({ pageIds, data }) => {

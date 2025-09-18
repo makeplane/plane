@@ -1,12 +1,14 @@
 import { RefObject, useEffect, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+// plane imports
 import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-// types
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { TPageInstance } from "@/store/pages/base-page";
+// store
+import type { TPageInstance } from "@/store/pages/base-page";
+// local imports
 import { DragAndDropHookReturn } from "../types";
 
 /**
@@ -19,8 +21,10 @@ import { DragAndDropHookReturn } from "../types";
 export const useSectionDragAndDrop = (
   listSectionRef: RefObject<HTMLDivElement>,
   getPageById: (id: string) => TPageInstance | undefined,
-  sectionType: TPageNavigationTabs
+  sectionType: TPageNavigationTabs,
+  isSectionEmpty: boolean
 ): DragAndDropHookReturn => {
+  // states
   const [isDropping, setIsDropping] = useState(false);
 
   useEffect(() => {
@@ -102,20 +106,28 @@ export const useSectionDragAndDrop = (
           }
         },
         canDrop: ({ source }) => {
+          if (!isSectionEmpty) return false;
           const sourceData = source.data as TPageDragPayload;
+          const { id: draggedPageId, parentId: draggedPageParentId } = sourceData;
 
           // Cannot drop into shared section
           if (sectionType === "shared" || sectionType === "archived") return false;
 
           // Get the source page to check its current state
-          const sourcePage = getPageById(sourceData.id);
+          const sourcePage = getPageById(draggedPageId);
           if (!sourcePage) return false;
+
+          const isDroppingOnTheSameSection =
+            (sourcePage.access === EPageAccess.PUBLIC && sectionType === "public") ||
+            (sourcePage.access === EPageAccess.PRIVATE && sectionType === "private");
+
+          if (!draggedPageParentId && isDroppingOnTheSameSection) return false;
 
           return true;
         },
       })
     );
-  }, [getPageById, isDropping, listSectionRef, sectionType]);
+  }, [getPageById, isDropping, isSectionEmpty, listSectionRef, sectionType]);
 
   return { isDropping };
 };

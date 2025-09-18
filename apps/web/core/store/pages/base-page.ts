@@ -166,9 +166,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.color = page?.color || undefined;
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
-    this.access = page?.access || EPageAccess.PUBLIC;
-    this.is_favorite = page?.is_favorite || false;
-    this.is_locked = page?.is_locked || false;
+    this.access = page?.access ?? EPageAccess.PUBLIC;
+    this.is_favorite = !!page?.is_favorite;
+    this.is_locked = !!page?.is_locked;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
     this.project_ids = page?.project_ids || undefined;
@@ -375,6 +375,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
    */
   update = async (pageData: Partial<TPage>) => {
     const currentPage = { ...this.asJSON };
+
     try {
       runInAction(() => {
         if (pageData.hasOwnProperty("parent_id") && pageData.parent_id !== this.parent_id) {
@@ -391,7 +392,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
 
         Object.keys(pageData).forEach((key) => {
           const currentPageKey = key as keyof TPage;
-          set(this, key, pageData[currentPageKey] || undefined);
+          set(this, key, pageData[currentPageKey] ?? undefined);
         });
 
         // Update the updated_at field locally to ensure reactions trigger

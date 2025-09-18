@@ -87,9 +87,9 @@ export class TitleSyncExtension implements Extension {
         const event = createRealtimeEvent({
           user_id: context.userId,
           workspace_slug: context.workspaceSlug as string,
-          action: "title_updated",
+          action: "property_updated",
           page_id: documentName,
-          data: { title },
+          data: { name: title },
           descendants_ids: [],
         });
 

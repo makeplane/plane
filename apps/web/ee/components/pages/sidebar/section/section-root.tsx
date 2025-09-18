@@ -24,16 +24,14 @@ import { SectionRootProps } from "./types";
 
 const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((props) => {
   const { expandedPageIds, sectionType, setExpandedPageIds, currentPageId } = props;
-
   // states
   const [isCreatingPage, setIsCreatingPage] = useState<TPageNavigationTabs | null>(null);
-
   // refs
   const listSectionRef = useRef<HTMLDivElement>(null);
-
-  // hooks
+  // navigation
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
+  // store hooks
   const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
     EPageStoreType.WORKSPACE
   );
@@ -45,10 +43,6 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
   if (sectionType === "shared" && !isSharedPagesEnabled) {
     return null;
   }
-
-  // Custom hooks
-  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType);
-  const { isLoading } = useSectionPages(sectionType);
 
   // Get page IDs based on section type
   const pageIds = useMemo(() => {
@@ -65,6 +59,10 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
         return [];
     }
   }, [publicPageIds, privatePageIds, archivedPageIds, sharedPageIds, sectionType]);
+
+  // Custom hooks
+  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType, pageIds.length === 0);
+  const { isLoading } = useSectionPages(sectionType);
 
   const sectionDetails = SECTION_DETAILS[sectionType];
   const sectionPages = useMemo(() => new Set(pageIds), [pageIds]);

@@ -48,10 +48,10 @@ export const useRealtimeEvents = (props: {
           return;
         }
 
-        if (event.action === "title_updated") {
+        if (event.action === "property_updated") {
           const currentPage = event.affectedPages.currentPage;
 
-          if (event.data.title != null && currentPage) {
+          if (event.data.name != null && currentPage) {
             updatePageProperties(currentPage, event.action, event.data, true);
           }
           return;

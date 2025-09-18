@@ -18,6 +18,7 @@ import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCursor } from "./collaboration-cursor";
 import { CommentsExtension } from "./comments";
+import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 
 /**
  * Registry for slash commands
@@ -52,9 +53,9 @@ const slashCommandRegistry: {
     getOption: ({ extendedEditorProps }) => {
       // Only enable if page config with createCallback exists
       const pageConfig = extendedEditorProps.embedHandler?.page;
-      if (!pageConfig?.createCallback) return null;
+      const createCallback = pageConfig?.createCallback;
+      if (!createCallback) return null;
 
-      const createCallback = pageConfig.createCallback;
       return {
         commandKey: "page-embed",
         key: "page-embed",
@@ -63,7 +64,12 @@ const slashCommandRegistry: {
         searchTerms: ["page", "link", "embed", "sub-page"],
         icon: <FileText className="size-3.5" />,
         command: async ({ editor, range }) => {
-          const res = await createCallback();
+          const currentPos = editor.state.selection.from;
+          let pageEmbedNodesBeforeCurrentPos = 0;
+          editor.state.doc.nodesBetween(0, currentPos, (node) => {
+            if (node.type.name === ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT) pageEmbedNodesBeforeCurrentPos++;
+          });
+          const res = await createCallback(pageEmbedNodesBeforeCurrentPos);
           if (!res) return;
           insertPageEmbed(
             {
@@ -175,6 +181,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         unarchivePage: pageConfig.unarchivePage,
         deletePage: pageConfig.deletePage,
         getPageDetailsCallback: pageConfig.getPageDetailsCallback,
+        onNodesPosChanged: pageConfig.onNodesPosChanged,
       });
     },
   },

@@ -67,6 +67,7 @@ class PageSerializer(BaseSerializer):
             "sub_pages_count",
             "shared_access",
             "is_shared",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
@@ -175,6 +176,7 @@ class PageLiteSerializer(BaseSerializer):
             "moved_to_page",
             "moved_to_project",
             "is_shared",
+            "sort_order",
         ]
 class PageVersionSerializer(BaseSerializer):
     class Meta:
@@ -255,7 +257,6 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
 
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
-
 
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""

@@ -1,5 +1,5 @@
-import { RawCommands } from "@tiptap/core";
-import { NodeType } from "@tiptap/pm/model";
+import type { RawCommands } from "@tiptap/core";
+import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { getExtensionStorage } from "@/helpers/get-extension-storage";

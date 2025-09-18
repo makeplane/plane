@@ -55,6 +55,7 @@ class WorkspacePageSerializer(BaseSerializer):
             "sub_pages_count",
             "shared_access",
             "is_shared",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor", "shared_access"]
 
@@ -217,6 +218,7 @@ class WorkspacePageLiteSerializer(BaseSerializer):
             "updated_at",
             "moved_to_page",
             "moved_to_project",
+            "sort_order",
         ]
 
 

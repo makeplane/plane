@@ -4,7 +4,6 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
 import { EUserWorkspaceRoles, TPage } from "@plane/types";
-import { getPageName } from "@plane/utils";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
@@ -92,9 +91,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
-    const sortedPages = filteredPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
+    const sortedPages = filteredPages.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
@@ -286,7 +283,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
 
   getRedirectionLink = computedFn(() => {
     const { workspaceSlug } = this.rootStore.router;
-    return `/${workspaceSlug}/pages/${this.id}`;
+    return `/${workspaceSlug}/wiki/${this.id}`;
   });
 
   fetchSubPages = async () => {

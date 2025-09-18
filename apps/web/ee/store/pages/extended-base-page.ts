@@ -79,6 +79,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
   team: string | null | undefined;
   parent_id: string | null | undefined;
   anchor?: string | null | undefined;
+  sort_order: number | undefined;
   sharedUsers: TPageSharedUser[];
   comments: CommentStore;
 
@@ -98,6 +99,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
     this.team = page?.team || null;
     this.parent_id = page?.parent_id === null ? null : page?.parent_id;
     this.anchor = page?.anchor || undefined;
+    this.sort_order = page?.sort_order || undefined;
     this.sharedUsers = [];
 
     // Initialize modals state
@@ -121,6 +123,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       team: observable.ref,
       parent_id: observable.ref,
       anchor: observable.ref,
+      sort_order: observable.ref,
       sharedUsers: observable,
       // modals state
       deletePageModal: observable,
@@ -153,6 +156,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       team: this.team,
       parent_id: this.parent_id,
       anchor: this.anchor,
+      sort_order: this.sort_order,
       sharedUsers: this.sharedUsers,
     };
   }

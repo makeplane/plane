@@ -24,10 +24,10 @@ export interface DocumentTitleFetchParams {
   context: HocusPocusServerContext;
 }
 
-export interface DocumentTitleUpdateParams {
+export interface PagePropertiesUpdateParams {
   context: HocusPocusServerContext;
   pageId: string;
-  title: string;
+  data: Partial<TPage>;
   abortSignal?: AbortSignal;
 }
 
@@ -56,9 +56,9 @@ export interface DocumentHandler {
   fetchTitle?: (params: DocumentTitleFetchParams) => Promise<string | undefined>;
 
   /**
-   * Update title
+   * Update page properties
    */
-  updateTitle?: (params: DocumentTitleUpdateParams) => Promise<void>;
+  updatePageProperties?: (params: PagePropertiesUpdateParams) => Promise<void>;
 
   fetchSubPages?: (params: DocumentSubPagesFetchParams) => Promise<TPage[] | undefined>;
 }

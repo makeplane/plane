@@ -98,6 +98,11 @@ const nextConfig = {
         destination: "/:workspaceSlug/settings/account/api-tokens",
         permanent: true,
       },
+      {
+        source: "/:workspaceSlug/pages/:path*",
+        destination: "/:workspaceSlug/wiki/:path*",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
