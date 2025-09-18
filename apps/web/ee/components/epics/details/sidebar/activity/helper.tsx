@@ -184,33 +184,76 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     icon: activity.field ? ISSUE_RELATION_OPTIONS[activity.field as TIssueRelationTypes]?.icon(14) : <></>,
     message: (
       <>
-        <span className={commonTextClassName}>{getRelationActivityContent(activity)}</span>
+        <span className={commonTextClassName}>
+          {getRelationActivityContent(activity)}{" "}
+          {activity.old_value === "" ? (
+            <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+          ) : (
+            <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+          )}
+        </span>
       </>
     ),
   }),
-  link_created: () => ({
+  link_created: (activity: TIssueActivity) => ({
     icon: <Link className={commonIconClassName} />,
-    message: <>created a link</>,
+    message: (
+      <>
+        added{" "}
+        <a
+          href={`${activity.new_value}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        >
+          link
+        </a>
+      </>
+    ),
   }),
-  link_updated: () => ({
+  link_updated: (activity: TIssueActivity) => ({
     icon: <Link className={commonIconClassName} />,
-    message: <>updated the link</>,
+    message: (
+      <>
+        updated the{" "}
+        <a
+          href={`${activity.old_value}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        >
+          link
+        </a>
+      </>
+    ),
   }),
-  link_deleted: () => ({
+  link_deleted: (activity: TIssueActivity) => ({
     icon: <Link className={commonIconClassName} />,
-    message: <>deleted the link</>,
+    message: (
+      <>
+        removed this{" "}
+        <a
+          href={`${activity.old_value}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        >
+          link
+        </a>
+      </>
+    ),
   }),
   attachment_created: () => ({
     icon: <Paperclip className={commonIconClassName} />,
-    message: <>created an attachment</>,
+    message: <>uploaded a new attachment</>,
   }),
   attachment_updated: () => ({
     icon: <Paperclip className={commonIconClassName} />,
-    message: <>updated the attachment</>,
+    message: <>updated an attachment</>,
   }),
   attachment_deleted: () => ({
     icon: <Paperclip className={commonIconClassName} />,
-    message: <>deleted the attachment</>,
+    message: <>removed an attachment</>,
   }),
   customer_request_created: (activity: TIssueActivity) => ({
     icon: <CustomersIcon className={commonIconClassName} />,
