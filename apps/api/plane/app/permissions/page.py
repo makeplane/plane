@@ -26,11 +26,11 @@ class ProjectPagePermission(BasePermission):
 
         user_id = request.user.id
         slug = view.kwargs.get("slug")
-        project_id = view.kwargs.get("project_id")
         page_id = view.kwargs.get("page_id")
+        project_id = view.kwargs.get("project_id")
 
         # Hook for extended validation
-        extended_access = self._check_access(
+        extended_access, role = self._check_access_and_get_role(
             request, slug, project_id
         )
         if extended_access is False:
@@ -45,32 +45,37 @@ class ProjectPagePermission(BasePermission):
 
             # Handle private page access
             if page.access == Page.PRIVATE_ACCESS:
-                return self._has_private_page_action_access(request, slug, page, project_id)
+                return self._has_private_page_action_access(
+                    request, slug, page, project_id
+                )
 
         # Handle public page access
-        return self._has_public_page_action_access(request, slug, project_id)
-
+        return self._has_public_page_action_access(request, role)
 
     def _check_project_member_access(self, request, slug, project_id):
         """
         Check if the user is a project member.
         """
-        return ProjectMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            project_id=project_id,
-        ).exists()
+        return (
+            ProjectMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                project_id=project_id,
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
 
-    def _check_access(self, request, slug, project_id):
+    def _check_access_and_get_role(self, request, slug, project_id):
         """
         Hook for extended access checking
         Returns: True (allow), False (deny), None (continue with normal flow)
         """
-        project_member_exists = self._check_project_member_access(request, slug, project_id)
-        if not project_member_exists:
-            return False
-        return True
+        role = self._check_project_member_access(request, slug, project_id)
+        if not role:
+            return False, None
+        return True, role
 
     def _has_private_page_action_access(self, request, slug, page, project_id):
         """
@@ -79,59 +84,42 @@ class ProjectPagePermission(BasePermission):
         # Base implementation: only owner can access private pages
         return False
 
-    def _check_project_action_access(self, request, slug, project_id):
-        user_id = request.user.id
+    def _check_project_action_access(self, request, role):
         method = request.method
 
         # Only admins can create (POST) pages
         if method == "POST":
-            return ProjectMember.objects.filter(
-                member_id=user_id,
-                workspace__slug=slug,
-                project_id=project_id,
-                role__in=[ADMIN, MEMBER],
-                is_active=True,
-            ).exists()
+            if role in [ADMIN, MEMBER]:
+                return True
+            return False
 
         # Safe methods (GET, HEAD, OPTIONS) allowed for all active roles
         if method in SAFE_METHODS:
-            return ProjectMember.objects.filter(
-                member_id=user_id,
-                workspace__slug=slug,
-                role__in=[ADMIN, MEMBER, GUEST],
-                project_id=project_id,
-                is_active=True,
-            ).exists()
+            if role in [ADMIN, MEMBER, GUEST]:
+                return True
+            return False
 
         # PUT/PATCH: Admins and members can update
         if method in ["PUT", "PATCH"]:
-            return ProjectMember.objects.filter(
-                member_id=user_id,
-                workspace__slug=slug,
-                role__in=[ADMIN, MEMBER],
-                project_id=project_id,
-                is_active=True,
-            ).exists()
+            if role in [ADMIN, MEMBER]:
+                return True
+            return False
 
         # DELETE: Only admins can delete
         if method == "DELETE":
-            return ProjectMember.objects.filter(
-                member_id=user_id,
-                workspace__slug=slug,
-                role=ADMIN,
-                project_id=project_id,
-                is_active=True,
-            ).exists()
+            if role in [ADMIN]:
+                return True
+            return False
 
         # Deny by default
         return False
 
-    def _has_public_page_action_access(self, request, slug, project_id):
+    def _has_public_page_action_access(self, request, role):
         """
         Check if the user has permission to access a public page
         and can perform operations on the page.
         """
-        project_member_exists = self._check_project_action_access(request, slug, project_id)
+        project_member_exists = self._check_project_action_access(request, role)
         if not project_member_exists:
             return False
         return True

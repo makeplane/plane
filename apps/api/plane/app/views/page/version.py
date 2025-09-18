@@ -9,7 +9,6 @@ from plane.app.serializers import PageVersionSerializer, PageVersionDetailSerial
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.permissions import ProjectPagePermission
 
-
 class PageVersionEndpoint(BaseAPIView):
 
     permission_classes = [ProjectPagePermission]

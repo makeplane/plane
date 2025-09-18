@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import type { IEditorProps, IEditorPropsExtended, TAIHandler, TDisplayConfig } from "@/types";
+import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, IEditorPropsExtended, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -15,6 +15,7 @@ type Props = {
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
+  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;

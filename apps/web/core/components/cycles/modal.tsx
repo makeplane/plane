@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 // types
@@ -10,6 +8,7 @@ import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types"
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
@@ -133,26 +132,31 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = observer((props
 
     const payload: Partial<ICycle> = {
       ...formData,
+      start_date: renderFormattedPayloadDate(formData.start_date) ?? null,
+      end_date: renderFormattedPayloadDate(formData.end_date) ?? null,
     };
 
     let isDateValid: boolean = true;
 
     if (payload.start_date && payload.end_date) {
-      if (data?.start_date && data?.end_date)
-        isDateValid = await dateChecker(payload.project_id ?? projectId, {
-          start_date: format(payload.start_date, "yyyy-MM-dd"),
-          end_date: format(payload.end_date, "yyyy-MM-dd"),
+      if (data?.id) {
+        // Update existing cycle - always include cycle_id for validation
+        isDateValid = await dateChecker(projectId, {
+          start_date: payload.start_date,
+          end_date: payload.end_date,
           cycle_id: data.id,
         });
-      else
-        isDateValid = await dateChecker(payload.project_id ?? projectId, {
+      } else {
+        // Create new cycle - no cycle_id needed
+        isDateValid = await dateChecker(projectId, {
           start_date: payload.start_date,
           end_date: payload.end_date,
         });
+      }
     }
 
     if (isDateValid) {
-      if (data) await handleUpdateCycle(data.id, payload);
+      if (data?.id) await handleUpdateCycle(data.id, payload);
       else {
         await handleCreateCycle(payload).then(() => {
           setCycleTab("all");

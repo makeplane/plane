@@ -44,40 +44,41 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     realtimeConfig,
     serverHandler,
     tabIndex,
-    titleRef,
     user,
+    extendedDocumentEditorProps,
+    titleRef,
     updatePageProperties,
   } = props;
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
-    useCollaborativeEditor({
-      disabledExtensions,
-      editable,
-      editorClassName,
-      editorProps,
-      extendedEditorProps,
-      extensions,
-      fileHandler,
-      flaggedExtensions,
-      forwardedRef,
-      handleEditorReady,
-      id,
-      dragDropEnabled,
-      isTouchDevice,
-      mentionHandler,
-      onAssetChange,
-      onChange,
-      onEditorFocus,
-      onTransaction,
-      placeholder,
-      realtimeConfig,
-      serverHandler,
-      tabIndex,
-      titleRef,
-      updatePageProperties,
-      user,
-    });
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } = useCollaborativeEditor({
+    disabledExtensions,
+    editable,
+    editorClassName,
+    editorProps,
+    extendedEditorProps,
+    extensions,
+    fileHandler,
+    flaggedExtensions,
+    forwardedRef,
+    handleEditorReady,
+    id,
+    dragDropEnabled,
+    isTouchDevice,
+    mentionHandler,
+    onAssetChange,
+    onChange,
+    onEditorFocus,
+    onTransaction,
+    placeholder,
+    realtimeConfig,
+    serverHandler,
+    tabIndex,
+    user,
+    extendedDocumentEditorProps,
+    titleRef,
+    updatePageProperties,
+  });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -105,6 +106,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         displayConfig={displayConfig}
         documentLoaderClassName={documentLoaderClassName}
         disabledExtensions={disabledExtensions}
+        extendedDocumentEditorProps={extendedDocumentEditorProps}
         editor={editor}
         flaggedExtensions={flaggedExtensions}
         titleEditor={titleEditor}

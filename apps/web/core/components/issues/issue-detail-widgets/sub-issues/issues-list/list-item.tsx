@@ -111,7 +111,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center gap-3 pr-2 py-1 transition-all hover:bg-custom-background-90"
+            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-custom-background-90"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
             <div className="flex size-5 items-center justify-center flex-shrink-0">

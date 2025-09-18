@@ -210,9 +210,7 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -293,9 +291,7 @@ class PageViewSet(BaseViewSet):
             and page.owned_by_id != request.user.id
         ):
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

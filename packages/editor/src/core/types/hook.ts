@@ -51,7 +51,10 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
   > &
-  Pick<ICollaborativeDocumentEditorProps, "dragDropEnabled" | "realtimeConfig" | "serverHandler" | "user"> & {
+  Pick<
+    ICollaborativeDocumentEditorProps,
+    "dragDropEnabled" | "extendedDocumentEditorProps" | "realtimeConfig" | "serverHandler" | "user"
+  > & {
     titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
     updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   };
