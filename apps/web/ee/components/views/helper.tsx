@@ -110,9 +110,11 @@ export const useViewMenuItems = (props: TMenuItemsFactoryProps): TContextMenuIte
 
   const isViewLockEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.VIEW_LOCK);
 
+  const isOwner = props.isOwner || false;
+
   return [
     factory.editMenuItem(),
-    isViewLockEnabled ? factory.toggleLockMenuItem() : null,
+    isViewLockEnabled && isOwner ? factory.toggleLockMenuItem() : null,
     factory.openInNewTabMenuItem(),
     factory.copyLinkMenuItem(),
     factory.deleteMenuItem(),
