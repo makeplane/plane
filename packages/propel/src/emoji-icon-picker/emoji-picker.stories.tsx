@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmojiPicker } from "./emoji-picker";
-import { EmojiIconPickerTypes } from "./helper";
+import { EmojiIconPickerTypes, TChangeHandlerProps } from "./helper";
 
 const meta: Meta<typeof EmojiPicker> = {
-  title: "EmojiPicker",
+  title: "Components/Emoji/EmojiPicker",
   component: EmojiPicker,
   parameters: {
     layout: "centered",
@@ -17,7 +17,7 @@ type Story = StoryObj<typeof EmojiPicker>;
 
 const EmojiPickerWithState = (args: React.ComponentProps<typeof EmojiPicker>) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState<any>(null);
+  const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
 
   return (
     <div className="space-y-4">
@@ -27,7 +27,6 @@ const EmojiPickerWithState = (args: React.ComponentProps<typeof EmojiPicker>) =>
         handleToggle={setIsOpen}
         onChange={(value) => {
           setSelectedValue(value);
-          console.log("Selected:", value);
         }}
       />
       {selectedValue && <div className="text-sm text-gray-600">Selected: {JSON.stringify(selectedValue, null, 2)}</div>}
