@@ -288,5 +288,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         </TabsContent>
       </Tabs>
     </div>
-  ) : null;
+  ) : (
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+      <Loader.Item width="100%" height="17rem" />
+    </Loader>
+  );
 });
