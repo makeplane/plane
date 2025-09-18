@@ -142,7 +142,7 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={cn(className, "w-[358px] -mr-[358px] flex flex-col gap-y-4 p-4 transition-all", {
+      className={cn(className, "w-[408px] -mr-[408px] flex flex-col gap-y-4 p-4 transition-all", {
         "mr-0": shouldShowSidebar,
       })}
     >

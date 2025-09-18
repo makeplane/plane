@@ -8,7 +8,7 @@ import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "
  */
 
 import { CycleGroupIcon, DiceIcon, PriorityIcon } from "@plane/propel/icons";
-import { IFilterInstance } from "@plane/shared-state";
+import { FilterInstance } from "@plane/shared-state";
 import {
   ICycle,
   IIssueLabel,
@@ -21,7 +21,7 @@ import {
   TIssuePriorities,
   TIssueType,
 } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar, Loader } from "@plane/ui";
 import {
   cn,
   getAssigneeFilterConfig,
@@ -39,7 +39,6 @@ import {
  */
 
 import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
-import { FilterItem } from "@/components/rich-filters/filter-item";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -48,16 +47,29 @@ import { useProject } from "@/hooks/store/use-project";
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import { withFilters } from "./with-filters";
+import { DashboardWidgetFilterAdapter } from "./adapter";
+import { FilterConditions } from "./filter-conditions";
 
 type Props = {
-  filters: IFilterInstance<TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression> | null;
   projectIds?: string[];
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
+  initialFilters?: TExternalDashboardWidgetFilterExpression;
 };
 
-const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
-  const { filters, projectIds } = props;
+const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, handleSubmit }) => {
+  const filterInstance = useMemo(
+    () =>
+      new FilterInstance<TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression>({
+        adapter: new DashboardWidgetFilterAdapter(),
+        initialExpression: initialFilters,
+        onExpressionChange: (expression) => {
+          handleSubmit({
+            filters: expression,
+          });
+        },
+      }),
+    []
+  );
 
   /**
    * store hooks
@@ -249,8 +261,8 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
     [joinedProjectData.workItemTypes, operatorConfigs]
   );
 
-  if (filters) {
-    filters.configManager.registerAll([
+  if (filterInstance) {
+    filterInstance.configManager.registerAll([
       assigneeFilterConfig,
       cycleFilterConfig,
       moduleFilterConfig,
@@ -263,51 +275,38 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
-      <div className="flex items-center justify-between w-full">
-        <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+    <section className="space-y-2 w-full overflow-auto">
+      <div className="flex flex-col items-start">
+        <FilterConditions filters={filterInstance} />
+        <div
+          className={cn("w-fit", {
+            "pt-3": filterInstance.allConditionsForDisplay.length > 0,
+          })}
+        >
+          <AddFilterButton
+            filter={filterInstance}
+            buttonConfig={{
+              label: "Add filter",
+              variant: "accent-primary",
+              defaultOpen: false,
+              iconConfig: {
+                shouldShowIcon: false,
+              },
+            }}
+          />
+        </div>
       </div>
-
-      <section className="space-y-2 w-full overflow-auto">
-        {filters && (
-          <div className="flex flex-col items-start">
-            {filters.allConditionsForDisplay.map((condition, index) => (
-              <div key={condition.id} className="flex flex-col items-start">
-                <FilterItem filter={filters} condition={condition} showTransition={false} />
-
-                {index < filters.allConditionsForDisplay.length - 1 && (
-                  <div className="flex flex-col items-center">
-                    <div className="h-2 border-l border-dashed border-custom-border-300" />
-                    <span className="text-xs font-medium uppercase text-custom-text-400 px-2 py-0.5 bg-custom-background-80 rounded-sm">
-                      And
-                    </span>
-                    <div className="h-2 border-l border-dashed border-custom-border-300" />
-                  </div>
-                )}
-              </div>
-            ))}
-            <div
-              className={cn("w-fit", {
-                "pt-3": filters.allConditionsForDisplay.length > 0,
-              })}
-            >
-              <AddFilterButton
-                filter={filters}
-                buttonConfig={{
-                  label: "Add filter",
-                  variant: "accent-primary",
-                  defaultOpen: false,
-                  iconConfig: {
-                    shouldShowIcon: false,
-                  },
-                }}
-              />
-            </div>
-          </div>
-        )}
-      </section>
-    </div>
+    </section>
   );
 });
 
-export const WidgetConfigSidebarFilters = withFilters(WidgetConfigSidebarFiltersRoot);
+const WidgetConfigSidebarFilters: React.FC<Props> = observer((props) => (
+  <div className="flex flex-col gap-4 w-full overflow-x-hidden flex-shrink-0">
+    <div className="flex items-center justify-between w-full">
+      <h6 className="font-semibold text-custom-text-200 text-sm">Filters</h6>
+    </div>
+    {props.initialFilters ? <FilterContent {...props} /> : <Loader.Item height="24px" width="100%" />}
+  </div>
+));
+
+export { WidgetConfigSidebarFilters };

@@ -136,7 +136,7 @@ export type TDashboardWidget = {
   x_axis_property: EWidgetXAxisProperty | null | undefined;
   y_axis_coord: number | undefined;
   y_axis_metric: EWidgetYAxisMetric | null | undefined;
-  filters: TExternalDashboardWidgetFilterExpression | null;
+  filters: TExternalDashboardWidgetFilterExpression | undefined;
 };
 
 export type TDashboardWidgetsLayoutPayload = Pick<
