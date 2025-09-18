@@ -46,6 +46,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { withFilters } from "./with-filters";
 
@@ -73,6 +74,8 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
   /**
    * derived values
    */
+
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug: workspaceSlug?.toString() });
 
   const joinedProjectData = useMemo(() => {
     if (!workspaceSlug || !projectIds?.length) {
@@ -154,8 +157,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         getOptionIcon: (assignee: IUserLite) => (
           <Avatar src={assignee.avatar_url} name={assignee.display_name} size="sm" />
         ),
+        ...operatorConfigs,
       }),
-    [joinedProjectData.members]
+    [joinedProjectData.members, operatorConfigs]
   );
 
   const cycleFilterConfig = useMemo(
@@ -165,8 +169,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         filterIcon: DiceIcon,
         cycles: joinedProjectData.cycles,
         getOptionIcon: (cycle: TCycleGroups) => <CycleGroupIcon cycleGroup={cycle} />,
+        ...operatorConfigs,
       }),
-    [joinedProjectData.cycles]
+    [joinedProjectData.cycles, operatorConfigs]
   );
 
   const moduleFilterConfig = useMemo(
@@ -176,8 +181,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         filterIcon: Files,
         modules: joinedProjectData.modules,
         getOptionIcon: () => <DiceIcon className="h-3 w-3 flex-shrink-0" />,
+        ...operatorConfigs,
       }),
-    [joinedProjectData.modules]
+    [joinedProjectData.modules, operatorConfigs]
   );
 
   const mentionFilterConfig = useMemo(
@@ -187,8 +193,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         filterIcon: AtSign,
         members: joinedProjectData.members,
         getOptionIcon: (member: IUserLite) => <Avatar src={member.avatar_url} name={member.display_name} size="sm" />,
+        ...operatorConfigs,
       }),
-    [joinedProjectData.members]
+    [joinedProjectData.members, operatorConfigs]
   );
 
   const createdByFilterConfig = useMemo(
@@ -198,8 +205,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         filterIcon: CircleUserRound,
         members: joinedProjectData.members,
         getOptionIcon: (member: IUserLite) => <Avatar src={member.avatar_url} name={member.display_name} size="sm" />,
+        ...operatorConfigs,
       }),
-    [joinedProjectData.members]
+    [joinedProjectData.members, operatorConfigs]
   );
 
   const priorityFilterConfig = useMemo(
@@ -208,8 +216,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         isEnabled: true,
         filterIcon: SignalHigh,
         getOptionIcon: (priority: TIssuePriorities) => <PriorityIcon priority={priority} />,
+        ...operatorConfigs,
       }),
-    []
+    [operatorConfigs]
   );
 
   const labelFilterConfig = useMemo(
@@ -221,8 +230,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         getOptionIcon: (color: string) => (
           <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
         ),
+        ...operatorConfigs,
       }),
-    [joinedProjectData.labels]
+    [joinedProjectData.labels, operatorConfigs]
   );
 
   const workItemTypeFilterConfig = useMemo(
@@ -234,8 +244,9 @@ const WidgetConfigSidebarFiltersRoot: React.FC<Props> = observer((props) => {
         getOptionIcon: (workItemType: TIssueType) => (
           <IssueTypeLogo icon_props={workItemType.logo_props?.icon} size="xs" isDefault={workItemType.is_default} />
         ),
+        ...operatorConfigs,
       }),
-    [joinedProjectData.workItemTypes]
+    [joinedProjectData.workItemTypes, operatorConfigs]
   );
 
   if (filters) {

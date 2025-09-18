@@ -7,6 +7,7 @@ import {
   IFilterIconConfig,
   TCreateFilterConfig,
   getMultiSelectConfig,
+  createOperatorConfigEntry,
 } from "../../../rich-filters";
 
 /**
@@ -58,6 +59,8 @@ export const getWorkItemTypeFilterConfig =
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
-        [COLLECTION_OPERATOR.IN, getWorkItemTypeMultiSelectConfig(params, EQUALITY_OPERATOR.EXACT)],
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getWorkItemTypeMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
       ]),
     });

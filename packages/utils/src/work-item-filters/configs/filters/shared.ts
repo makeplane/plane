@@ -8,6 +8,7 @@ import {
 } from "@plane/types";
 // local imports
 import {
+  createOperatorConfigEntry,
   getDatePickerConfig,
   getDateRangePickerConfig,
   getMultiSelectConfig,
@@ -20,12 +21,22 @@ import {
 
 export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
   new Map([
-    [EQUALITY_OPERATOR.EXACT, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.LESS_THAN, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.GREATER_THAN, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.GREATER_THAN_OR_EQUAL_TO, getDatePickerConfig(params)],
-    [COMPARISON_OPERATOR.RANGE, getDateRangePickerConfig(params)],
+    createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.LESS_THAN, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.GREATER_THAN, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.GREATER_THAN_OR_EQUAL_TO, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
+      getDateRangePickerConfig(updatedParams)
+    ),
   ]);
 
 // ------------ Project filter ------------

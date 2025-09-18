@@ -26,16 +26,15 @@ export const EXTENDED_COMPARISON_OPERATOR = {
   GREATER_THAN_OR_EQUAL_TO: "gte",
 } as const;
 
-// -------- TYPE EXPORTS --------
-
-type TExtendedEqualityOperator = (typeof EXTENDED_EQUALITY_OPERATOR)[keyof typeof EXTENDED_EQUALITY_OPERATOR];
-type TExtendedCollectionOperator = (typeof EXTENDED_COLLECTION_OPERATOR)[keyof typeof EXTENDED_COLLECTION_OPERATOR];
-type TExtendedComparisonOperator = (typeof EXTENDED_COMPARISON_OPERATOR)[keyof typeof EXTENDED_COMPARISON_OPERATOR];
-
+/**
+ * All extended operators
+ */
+export const EXTENDED_OPERATORS = {
+  ...EXTENDED_EQUALITY_OPERATOR,
+  ...EXTENDED_COLLECTION_OPERATOR,
+  ...EXTENDED_COMPARISON_OPERATOR,
+} as const;
 /**
  * All extended operators that can be used in filter conditions
  */
-export type TExtendedSupportedOperators =
-  | TExtendedEqualityOperator
-  | TExtendedCollectionOperator
-  | TExtendedComparisonOperator;
+export type TExtendedSupportedOperators = (typeof EXTENDED_OPERATORS)[keyof typeof EXTENDED_OPERATORS];

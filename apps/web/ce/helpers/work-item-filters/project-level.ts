@@ -9,4 +9,8 @@ export type TGetAdditionalPropsForProjectLevelFiltersHOC = (
   params: TGetAdditionalPropsForProjectLevelFiltersHOCParams
 ) => TWorkItemFiltersEntityProps;
 
-export const getAdditionalProjectLevelFiltersHOCProps: TGetAdditionalPropsForProjectLevelFiltersHOC = () => ({});
+export const getAdditionalProjectLevelFiltersHOCProps: TGetAdditionalPropsForProjectLevelFiltersHOC = ({
+  workspaceSlug,
+}) => ({
+  workspaceSlug,
+});

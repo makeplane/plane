@@ -15,6 +15,7 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -37,6 +38,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IProjectView> | null>(null);
   // hooks
+  const { getProjectById } = useProject();
   const { getViewById, updateView } = useProjectView();
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
@@ -54,12 +56,22 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
     workspaceSlug,
     projectId
   );
+  const projectDetails = getProjectById(projectId);
   const viewDetails = entityId ? getViewById(entityId) : null;
   const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
   const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
   const canCreateView = useMemo(
-    () => enableSaveView && !props.saveViewOptions?.isDisabled && hasProjectMemberLevelPermissions,
-    [enableSaveView, props.saveViewOptions?.isDisabled, hasProjectMemberLevelPermissions]
+    () =>
+      projectDetails?.issue_views_view === true &&
+      enableSaveView &&
+      !props.saveViewOptions?.isDisabled &&
+      hasProjectMemberLevelPermissions,
+    [
+      projectDetails?.issue_views_view,
+      enableSaveView,
+      props.saveViewOptions?.isDisabled,
+      hasProjectMemberLevelPermissions,
+    ]
   );
   const canUpdateView = useMemo(
     () =>

@@ -1,5 +1,12 @@
 // plane imports
-import { EQUALITY_OPERATOR, ICycle, TCycleGroups, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
+import {
+  EQUALITY_OPERATOR,
+  ICycle,
+  TCycleGroups,
+  TFilterProperty,
+  COLLECTION_OPERATOR,
+  TSupportedOperators,
+} from "@plane/types";
 // local imports
 import {
   createFilterConfig,
@@ -7,6 +14,7 @@ import {
   IFilterIconConfig,
   TCreateFilterConfig,
   getMultiSelectConfig,
+  createOperatorConfigEntry,
 } from "../../../rich-filters";
 
 /**
@@ -22,7 +30,7 @@ export type TCreateCycleFilterParams = TCreateFilterConfigParams &
  * @param params - The filter params
  * @returns The cycle multi select config
  */
-export const getCycleMultiSelectConfig = (params: TCreateCycleFilterParams) =>
+export const getCycleMultiSelectConfig = (params: TCreateCycleFilterParams, singleValueOperator: TSupportedOperators) =>
   getMultiSelectConfig<ICycle, string, TCycleGroups>(
     {
       items: params.cycles,
@@ -32,7 +40,7 @@ export const getCycleMultiSelectConfig = (params: TCreateCycleFilterParams) =>
       getIconData: (cycle) => cycle.status || "draft",
     },
     {
-      singleValueOperator: EQUALITY_OPERATOR.EXACT,
+      singleValueOperator,
       ...params,
     },
     {
@@ -54,5 +62,9 @@ export const getCycleFilterConfig =
       label: "Cycle",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getCycleMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getCycleMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
+      ]),
     });

@@ -6,7 +6,7 @@ import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes, EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";

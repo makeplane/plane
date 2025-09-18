@@ -4,15 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  STATE_GROUPS,
-  TIssuePriorities,
   ISSUE_PRIORITY_FILTERS,
+  STATE_GROUPS,
   TIssueFilterPriorityObject,
+  TIssuePriorities,
 } from "@plane/constants";
 import {
+  EIssueLayoutTypes,
+  IGanttBlock,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IGanttBlock,
   TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
@@ -21,7 +22,6 @@ import {
   TStateGroups,
   TSubGroupedIssues,
   TUnGroupedIssues,
-  EIssueLayoutTypes,
 } from "@plane/types";
 // local imports
 import { orderArrayBy } from "../array";

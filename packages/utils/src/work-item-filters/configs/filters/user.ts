@@ -7,6 +7,7 @@ import {
   IFilterIconConfig,
   TCreateFilterConfig,
   getMultiSelectConfig,
+  createOperatorConfigEntry,
 } from "../../../rich-filters";
 
 // ------------ Base User Filter Types ------------
@@ -63,7 +64,11 @@ export const getAssigneeFilterConfig =
       label: "Assignees",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getMemberMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams)
+        ),
+      ]),
     });
 
 // ------------ Mention filter ------------
@@ -87,7 +92,11 @@ export const getMentionFilterConfig =
       label: "Mentions",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getMemberMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams)
+        ),
+      ]),
     });
 
 // ------------ Created by filter ------------
@@ -111,7 +120,11 @@ export const getCreatedByFilterConfig =
       label: "Created by",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getMemberMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams)
+        ),
+      ]),
     });
 
 // ------------ Subscriber filter ------------
@@ -135,5 +148,9 @@ export const getSubscriberFilterConfig =
       label: "Subscriber",
       icon: params.filterIcon,
       isEnabled: params.isEnabled,
-      supportedOperatorConfigsMap: new Map([[COLLECTION_OPERATOR.IN, getMemberMultiSelectConfig(params)]]),
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams)
+        ),
+      ]),
     });

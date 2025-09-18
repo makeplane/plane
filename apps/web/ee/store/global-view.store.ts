@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { action, makeObservable, runInAction } from "mobx";
+import { action, runInAction } from "mobx";
 import { EViewAccess, IWorkspaceView } from "@plane/types";
 import {
   IGlobalViewStore as ICoreGlobalViewStore,
@@ -39,10 +39,11 @@ export class GlobalViewStore extends CoreGlobalViewStore implements IGlobalViewS
     async (
       workspaceSlug: string,
       viewId: string,
-      data: Partial<IWorkspaceView>
+      data: Partial<IWorkspaceView>,
+      shouldSyncFilters: boolean = true
     ): Promise<IWorkspaceView | undefined> => {
       try {
-        const response = await super.updateGlobalView(workspaceSlug, viewId, data);
+        const response = await super.updateGlobalView(workspaceSlug, viewId, data, shouldSyncFilters);
         if (data.access === EViewAccess.PRIVATE) {
           await this.updateViewAccess(workspaceSlug, viewId, EViewAccess.PRIVATE);
         }

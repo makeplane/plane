@@ -6,6 +6,7 @@ import { IIssueType, IProject, TWorkItemFilterProperty } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { getTeamspaceProjectFilterConfig, getWorkItemTypeFilterConfig } from "@plane/utils";
 // ce imports
+import { useFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 import {
   TWorkItemFiltersEntityProps as TCoreWorkItemFiltersEntityProps,
   TUseWorkItemFiltersConfigProps as TCoreUseWorkItemFiltersConfigProps,
@@ -25,12 +26,13 @@ export type TWorkItemFiltersEntityProps = TCoreWorkItemFiltersEntityProps & {
 export type TUseWorkItemFiltersConfigProps = TCoreUseWorkItemFiltersConfigProps & TWorkItemFiltersEntityProps;
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { workItemTypeIds, teamspaceProjectIds } = props;
+  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug } = props;
   // store hooks
   const { getIssueTypeById } = useIssueTypes();
   const { getProjectById } = useProject();
   // derived values
   const { configs, configMap, isFilterEnabled } = useCoreWorkItemFiltersConfig(props);
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const workItemTypes: IIssueType[] | undefined = workItemTypeIds
     ? (workItemTypeIds
         .map((workItemTypeId) => getIssueTypeById(workItemTypeId))
@@ -54,8 +56,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
           <IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} size="xs" />
         ),
         workItemTypes: workItemTypes ?? [],
+        ...operatorConfigs,
       }),
-    [isFilterEnabled, workItemTypes]
+    [isFilterEnabled, workItemTypes, operatorConfigs]
   );
 
   // teamspace project filter config
@@ -66,8 +69,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         filterIcon: Briefcase,
         projects: teamspaceProjects,
         getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        ...operatorConfigs,
       }),
-    [isFilterEnabled, teamspaceProjects]
+    [isFilterEnabled, teamspaceProjects, operatorConfigs]
   );
 
   return {

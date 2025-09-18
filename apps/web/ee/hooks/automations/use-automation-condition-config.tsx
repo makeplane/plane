@@ -14,6 +14,7 @@ import {
   getWorkItemTypeFilterConfig,
 } from "@plane/utils";
 // hooks
+import { useFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -38,6 +39,7 @@ export const useAutomationConfig = (args: TArgs) => {
   } = useMember();
   const { isWorkItemTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   // derived values
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const members = getProjectMemberIds(projectId, false)
     ?.map((memberId) => getUserDetails(memberId))
     .filter((member) => member) as IUserLite[];
@@ -54,8 +56,9 @@ export const useAutomationConfig = (args: TArgs) => {
         filterIcon: DoubleCircleIcon,
         getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
         states: projectWorkItemStates ?? [],
+        ...operatorConfigs,
       }),
-    [projectWorkItemStates]
+    [projectWorkItemStates, operatorConfigs]
   );
 
   const workItemTypeFilterConfig = useMemo(
@@ -67,8 +70,9 @@ export const useAutomationConfig = (args: TArgs) => {
           <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} isDefault={workItemType?.is_default} size="xs" />
         ),
         workItemTypes,
+        ...operatorConfigs,
       }),
-    [isWorkItemTypeEnabled, workItemTypes]
+    [isWorkItemTypeEnabled, workItemTypes, operatorConfigs]
   );
 
   const labelFilterConfig = useMemo(
@@ -80,8 +84,9 @@ export const useAutomationConfig = (args: TArgs) => {
         getOptionIcon: (color) => (
           <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
         ),
+        ...operatorConfigs,
       }),
-    [projectLabels]
+    [projectLabels, operatorConfigs]
   );
 
   const assigneeFilterConfig = useMemo(
@@ -98,8 +103,9 @@ export const useAutomationConfig = (args: TArgs) => {
             size="sm"
           />
         ),
+        ...operatorConfigs,
       }),
-    [members]
+    [members, operatorConfigs]
   );
 
   const createdByFilterConfig = useMemo(
@@ -116,8 +122,9 @@ export const useAutomationConfig = (args: TArgs) => {
             size="sm"
           />
         ),
+        ...operatorConfigs,
       }),
-    [members]
+    [members, operatorConfigs]
   );
 
   const priorityFilterConfig = useMemo(
@@ -126,8 +133,9 @@ export const useAutomationConfig = (args: TArgs) => {
         isEnabled: true,
         filterIcon: SignalHigh,
         getOptionIcon: (priority) => <PriorityIcon priority={priority} />,
+        ...operatorConfigs,
       }),
-    []
+    [operatorConfigs]
   );
 
   const automationConfigs: TFilterConfig<TAutomationConditionFilterProperty>[] = useMemo(

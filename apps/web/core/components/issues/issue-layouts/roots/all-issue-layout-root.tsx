@@ -45,12 +45,14 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
   const workItemFilters = globalViewId ? filters?.[globalViewId] : undefined;
   const activeLayout: EIssueLayoutTypes | undefined = workItemFilters?.displayFilters?.layout;
-  const initialWorkItemFilters = {
-    displayFilters: workItemFilters?.displayFilters,
-    displayProperties: workItemFilters?.displayProperties,
-    kanbanFilters: workItemFilters?.kanbanFilters,
-    richFilters: viewDetails?.rich_filters ?? {},
-  };
+  const initialWorkItemFilters = viewDetails
+    ? {
+        displayFilters: workItemFilters?.displayFilters,
+        displayProperties: workItemFilters?.displayProperties,
+        kanbanFilters: workItemFilters?.kanbanFilters,
+        richFilters: viewDetails?.rich_filters ?? {},
+      }
+    : undefined;
 
   // Custom hooks
   useWorkspaceIssueProperties(workspaceSlug);

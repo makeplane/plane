@@ -6,11 +6,4 @@ import { FiltersRow, TFiltersRowProps } from "@/components/rich-filters/filters-
 
 type TWorkItemFiltersRowProps = TFiltersRowProps<TWorkItemFilterProperty, TWorkItemFilterExpression>;
 
-export const WorkItemFiltersRow = observer((props: TWorkItemFiltersRowProps) => (
-  <FiltersRow
-    buttonConfig={{
-      variant: "neutral-primary",
-    }}
-    {...props}
-  />
-));
+export const WorkItemFiltersRow = observer((props: TWorkItemFiltersRowProps) => <FiltersRow {...props} />);
