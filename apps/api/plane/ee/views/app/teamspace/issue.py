@@ -116,15 +116,6 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
-        # Issue queryset
-        issue_queryset, order_by_param = order_issue_queryset(
-            issue_queryset=issue_queryset, order_by_param=order_by_param
-        )
-
-        # Group by
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-
         # issue queryset
         issue_queryset = issue_queryset_grouper(
             queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
@@ -154,12 +145,14 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
                             slug=slug,
                             filters=filters,
                             team_id=team_space_id,
+                            queryset=filtered_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             filters=filters,
                             team_id=team_space_id,
+                            queryset=filtered_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -188,6 +181,7 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
                         slug=slug,
                         filters=filters,
                         team_id=team_space_id,
+                        queryset=filtered_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
