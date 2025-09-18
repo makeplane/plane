@@ -2649,5 +2649,202 @@
         "suffix": "? Wszystkie dane powiązane z cyklicznym elementem pracy zostaną trwale usunięte. Tej operacji nie można cofnąć."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Niestandardowe automatyzacje",
+      "create_automation": "Utwórz automatyzację"
+    },
+    "scope": {
+      "label": "Zakres",
+      "run_on": "Uruchom na"
+    },
+    "trigger": {
+      "label": "Wyzwalacz",
+      "add_trigger": "Dodaj wyzwalacz",
+      "sidebar_header": "Konfiguracja wyzwalacza",
+      "input_label": "Jaki jest wyzwalacz dla tej automatyzacji?",
+      "input_placeholder": "Wybierz opcję",
+      "button": {
+        "previous": "Wstecz",
+        "next": "Dodaj akcję"
+      }
+    },
+    "condition": {
+      "label": "Warunek",
+      "add_condition": "Dodaj warunek",
+      "adding_condition": "Dodawanie warunku"
+    },
+    "action": {
+      "label": "Akcja",
+      "add_action": "Dodaj akcję",
+      "sidebar_header": "Akcje",
+      "input_label": "Co robi automatyzacja?",
+      "input_placeholder": "Wybierz opcję",
+      "handler_name": {
+        "add_comment": "Dodaj komentarz",
+        "change_property": "Zmień właściwość"
+      },
+      "configuration": {
+        "label": "Konfiguracja",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Wybierz właściwość",
+            "change_type": "Wybierz",
+            "property_value_select": "{count, plural, one{Wybierz wartość} other{Wybierz wartości}}",
+            "property_value_select_date": "Wybierz datę"
+          },
+          "validation": {
+            "property_name_required": "Nazwa właściwości jest wymagana",
+            "change_type_required": "Typ zmiany jest wymagany",
+            "property_value_required": "Wartość właściwości jest wymagana"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Dodaj komentarz"
+      },
+      "change_property_block": {
+        "title": "Zmień właściwość"
+      },
+      "validation": {
+        "delete_only_action": "Wyłącz automatyzację przed usunięciem jej jedynej akcji."
+      }
+    },
+    "conjunctions": {
+      "and": "I",
+      "or": "Lub",
+      "if": "Jeśli",
+      "then": "Wtedy"
+    },
+    "enable": {
+      "alert": "Naciśnij 'Włącz', gdy automatyzacja będzie gotowa. Po włączeniu automatyzacja będzie gotowa do uruchomienia.",
+      "validation": {
+        "required": "Automatyzacja musi mieć wyzwalacz i co najmniej jedną akcję, aby mogła zostać włączona."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatyzacja musi zostać wyłączona przed usunięciem."
+      }
+    },
+    "table": {
+      "title": "Tytuł automatyzacji",
+      "last_run_on": "Ostatnie uruchomienie",
+      "created_on": "Utworzono",
+      "last_updated_on": "Ostatnia aktualizacja",
+      "last_run_status": "Status ostatniego uruchomienia",
+      "average_duration": "Średni czas trwania",
+      "owner": "Właściciel",
+      "executions": "Wykonania"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Utwórz automatyzację",
+        "update": "Zaktualizuj automatyzację"
+      },
+      "title": {
+        "placeholder": "Nazwij swoją automatyzację.",
+        "required_error": "Tytuł jest wymagany"
+      },
+      "description": {
+        "placeholder": "Opisz swoją automatyzację."
+      },
+      "submit_button": {
+        "create": "Utwórz automatyzację",
+        "update": "Zaktualizuj automatyzację"
+      }
+    },
+    "delete_modal": {
+      "heading": "Usuń automatyzację"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Pokaż błędy",
+        "all": "Wszystkie",
+        "only_activity": "Tylko aktywność",
+        "only_run_history": "Tylko historia uruchomień"
+      },
+      "run_history": {
+        "initiator": "Inicjator"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Automatyzacja została pomyślnie utworzona."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Tworzenie automatyzacji nie powiodło się."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Automatyzacja została pomyślnie zaktualizowana."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Aktualizacja automatyzacji nie powiodła się."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Automatyzacja została pomyślnie włączona."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Włączenie automatyzacji nie powiodło się."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Automatyzacja została pomyślnie wyłączona."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Wyłączenie automatyzacji nie powiodło się."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatyzacja usunięta",
+          "message": "{name}, automatyzacja, została usunięta z Twojego projektu."
+        },
+        "error": {
+          "title": "Nie udało się usunąć tej automatyzacji tym razem.",
+          "message": "Spróbuj usunąć ją ponownie lub wróć do niej później. Jeśli nadal nie możesz jej usunąć, skontaktuj się z nami."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się utworzyć akcji. Spróbuj ponownie!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się zaktualizować akcji. Spróbuj ponownie!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Nie ma jeszcze automatyzacji do wyświetlenia.",
+        "description": "Automatyzacje pomagają wyeliminować powtarzalne zadania poprzez ustawianie wyzwalaczy, warunków i akcji. Utwórz jedną, aby zaoszczędzić czas i utrzymać płynny przepływ pracy."
+      },
+      "upgrade": {
+        "title": "Automatyzacje",
+        "description": "Automatyzacje to sposób na automatyzację zadań w Twoim projekcie.",
+        "sub_description": "Odzyskaj 80% czasu administracyjnego, gdy używasz Automatyzacji."
+      }
+    }
   }
 }

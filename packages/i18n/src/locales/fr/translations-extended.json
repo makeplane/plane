@@ -2648,5 +2648,202 @@
         "suffix": "? Toutes les données liées à l'élément de travail récurrent seront définitivement supprimées. Cette action ne peut pas être annulée."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Automatisations personnalisées",
+      "create_automation": "Créer une automatisation"
+    },
+    "scope": {
+      "label": "Portée",
+      "run_on": "Exécuter sur"
+    },
+    "trigger": {
+      "label": "Déclencheur",
+      "add_trigger": "Ajouter un déclencheur",
+      "sidebar_header": "Configuration du déclencheur",
+      "input_label": "Quel est le déclencheur pour cette automatisation ?",
+      "input_placeholder": "Sélectionnez une option",
+      "button": {
+        "previous": "Retour",
+        "next": "Ajouter une action"
+      }
+    },
+    "condition": {
+      "label": "À condition que",
+      "add_condition": "Ajouter une condition",
+      "adding_condition": "Ajout d'une condition"
+    },
+    "action": {
+      "label": "Action",
+      "add_action": "Ajouter une action",
+      "sidebar_header": "Actions",
+      "input_label": "Que fait l'automatisation ?",
+      "input_placeholder": "Sélectionnez une option",
+      "handler_name": {
+        "add_comment": "Ajouter un commentaire",
+        "change_property": "Modifier la propriété"
+      },
+      "configuration": {
+        "label": "Configuration",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Sélectionnez une propriété",
+            "change_type": "Sélectionner",
+            "property_value_select": "{count, plural, one{Sélectionner une valeur} other{Sélectionner des valeurs}}",
+            "property_value_select_date": "Sélectionner une date"
+          },
+          "validation": {
+            "property_name_required": "Le nom de la propriété est requis",
+            "change_type_required": "Le type de changement est requis",
+            "property_value_required": "La valeur de la propriété est requise"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Ajouter un commentaire"
+      },
+      "change_property_block": {
+        "title": "Modifier la propriété"
+      },
+      "validation": {
+        "delete_only_action": "Désactivez l'automatisation avant de supprimer sa seule action."
+      }
+    },
+    "conjunctions": {
+      "and": "Et",
+      "or": "Ou",
+      "if": "Si",
+      "then": "Alors"
+    },
+    "enable": {
+      "alert": "Cliquez sur 'Activer' lorsque votre automatisation est terminée. Une fois activée, l'automatisation sera prête à s'exécuter.",
+      "validation": {
+        "required": "L'automatisation doit avoir un déclencheur et au moins une action pour être activée."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "L'automatisation doit être désactivée avant de la supprimer."
+      }
+    },
+    "table": {
+      "title": "Titre de l'automatisation",
+      "last_run_on": "Dernière exécution le",
+      "created_on": "Créé le",
+      "last_updated_on": "Dernière mise à jour le",
+      "last_run_status": "Statut de la dernière exécution",
+      "average_duration": "Durée moyenne",
+      "owner": "Propriétaire",
+      "executions": "Exécutions"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Créer une automatisation",
+        "update": "Mettre à jour l'automatisation"
+      },
+      "title": {
+        "placeholder": "Nommez votre automatisation.",
+        "required_error": "Le titre est requis"
+      },
+      "description": {
+        "placeholder": "Décrivez votre automatisation."
+      },
+      "submit_button": {
+        "create": "Créer l'automatisation",
+        "update": "Mettre à jour l'automatisation"
+      }
+    },
+    "delete_modal": {
+      "heading": "Supprimer l'automatisation"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Afficher les échecs",
+        "all": "Tout",
+        "only_activity": "Activité uniquement",
+        "only_run_history": "Historique d'exécution uniquement"
+      },
+      "run_history": {
+        "initiator": "Initiateur"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Succès !",
+          "message": "Automatisation créée avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la création de l'automatisation."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succès !",
+          "message": "Automatisation mise à jour avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la mise à jour de l'automatisation."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Succès !",
+          "message": "Automatisation activée avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de l'activation de l'automatisation."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Succès !",
+          "message": "Automatisation désactivée avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la désactivation de l'automatisation."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatisation supprimée",
+          "message": "{name}, l'automatisation, a été supprimée de votre projet."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu supprimer cette automatisation cette fois.",
+          "message": "Essayez de la supprimer à nouveau ou revenez plus tard. Si vous ne pouvez toujours pas la supprimer, contactez-nous."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Erreur !",
+            "message": "Échec de la création de l'action. Veuillez réessayer !"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Erreur !",
+            "message": "Échec de la mise à jour de l'action. Veuillez réessayer !"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Il n'y a pas encore d'automatisations à afficher.",
+        "description": "Les automatisations vous aident à éliminer les tâches répétitives en définissant des déclencheurs, des conditions et des actions. Créez-en une pour gagner du temps et maintenir le travail en mouvement sans effort."
+      },
+      "upgrade": {
+        "title": "Automatisations",
+        "description": "Les automatisations sont un moyen d'automatiser les tâches dans votre projet.",
+        "sub_description": "Récupérez 80% de votre temps administratif lorsque vous utilisez les Automatisations."
+      }
+    }
   }
 }

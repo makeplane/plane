@@ -2649,5 +2649,202 @@
         "suffix": "을(를) 삭제하시겠습니까? 반복 작업 항목과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "커스텀 자동화",
+      "create_automation": "자동화 생성"
+    },
+    "scope": {
+      "label": "범위",
+      "run_on": "실행 대상"
+    },
+    "trigger": {
+      "label": "트리거",
+      "add_trigger": "트리거 추가",
+      "sidebar_header": "트리거 설정",
+      "input_label": "이 자동화의 트리거는 무엇입니까?",
+      "input_placeholder": "옵션 선택",
+      "button": {
+        "previous": "뒤로",
+        "next": "액션 추가"
+      }
+    },
+    "condition": {
+      "label": "조건",
+      "add_condition": "조건 추가",
+      "adding_condition": "조건 추가 중"
+    },
+    "action": {
+      "label": "액션",
+      "add_action": "액션 추가",
+      "sidebar_header": "액션",
+      "input_label": "자동화가 수행할 작업은 무엇입니까?",
+      "input_placeholder": "옵션 선택",
+      "handler_name": {
+        "add_comment": "댓글 추가",
+        "change_property": "속성 변경"
+      },
+      "configuration": {
+        "label": "설정",
+        "change_property": {
+          "placeholders": {
+            "property_name": "속성 선택",
+            "change_type": "선택",
+            "property_value_select": "{count, plural, one{값 선택} other{값 선택}}",
+            "property_value_select_date": "날짜 선택"
+          },
+          "validation": {
+            "property_name_required": "속성 이름이 필요합니다",
+            "change_type_required": "변경 유형이 필요합니다",
+            "property_value_required": "속성 값이 필요합니다"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "댓글 추가"
+      },
+      "change_property_block": {
+        "title": "속성 변경"
+      },
+      "validation": {
+        "delete_only_action": "유일한 액션을 삭제하기 전에 자동화를 비활성화하세요."
+      }
+    },
+    "conjunctions": {
+      "and": "그리고",
+      "or": "또는",
+      "if": "만약",
+      "then": "그러면"
+    },
+    "enable": {
+      "alert": "자동화가 완료되면 '활성화'를 누르세요. 활성화되면 자동화가 실행될 준비가 됩니다.",
+      "validation": {
+        "required": "자동화를 활성화하려면 트리거와 최소 하나의 액션이 있어야 합니다."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "자동화를 삭제하기 전에 비활성화해야 합니다."
+      }
+    },
+    "table": {
+      "title": "자동화 제목",
+      "last_run_on": "마지막 실행일",
+      "created_on": "생성일",
+      "last_updated_on": "마지막 업데이트일",
+      "last_run_status": "마지막 실행 상태",
+      "average_duration": "평균 소요 시간",
+      "owner": "소유자",
+      "executions": "실행 횟수"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "자동화 생성",
+        "update": "자동화 업데이트"
+      },
+      "title": {
+        "placeholder": "자동화 이름을 입력하세요.",
+        "required_error": "제목이 필요합니다"
+      },
+      "description": {
+        "placeholder": "자동화를 설명하세요."
+      },
+      "submit_button": {
+        "create": "자동화 생성",
+        "update": "자동화 업데이트"
+      }
+    },
+    "delete_modal": {
+      "heading": "자동화 삭제"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "실패 표시",
+        "all": "전체",
+        "only_activity": "활동만",
+        "only_run_history": "실행 기록만"
+      },
+      "run_history": {
+        "initiator": "시작자"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "성공!",
+          "message": "자동화가 성공적으로 생성되었습니다."
+        },
+        "error": {
+          "title": "오류!",
+          "message": "자동화 생성에 실패했습니다."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "성공!",
+          "message": "자동화가 성공적으로 업데이트되었습니다."
+        },
+        "error": {
+          "title": "오류!",
+          "message": "자동화 업데이트에 실패했습니다."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "성공!",
+          "message": "자동화가 성공적으로 활성화되었습니다."
+        },
+        "error": {
+          "title": "오류!",
+          "message": "자동화 활성화에 실패했습니다."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "성공!",
+          "message": "자동화가 성공적으로 비활성화되었습니다."
+        },
+        "error": {
+          "title": "오류!",
+          "message": "자동화 비활성화에 실패했습니다."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "자동화가 삭제되었습니다",
+          "message": "{name} 자동화가 프로젝트에서 삭제되었습니다."
+        },
+        "error": {
+          "title": "자동화를 삭제할 수 없습니다.",
+          "message": "다시 삭제를 시도하거나 나중에 다시 시도해 보세요. 계속 삭제할 수 없다면 문의해 주세요."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "오류!",
+            "message": "액션 생성에 실패했습니다. 다시 시도해 주세요!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "오류!",
+            "message": "액션 업데이트에 실패했습니다. 다시 시도해 주세요!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "아직 표시할 자동화가 없습니다.",
+        "description": "자동화는 트리거, 조건, 액션을 설정하여 반복적인 작업을 제거하는 데 도움이 됩니다. 시간을 절약하고 작업을 원활하게 진행하기 위해 자동화를 생성하세요."
+      },
+      "upgrade": {
+        "title": "자동화",
+        "description": "자동화는 프로젝트의 작업을 자동화하는 방법입니다.",
+        "sub_description": "자동화를 사용하면 관리 시간의 80%를 절약할 수 있습니다."
+      }
+    }
   }
 }

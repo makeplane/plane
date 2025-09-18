@@ -2649,5 +2649,202 @@
         "suffix": "? Všechna data související s touto opakující se pracovní položkou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Vlastní automatizace",
+      "create_automation": "Vytvořit automatizaci"
+    },
+    "scope": {
+      "label": "Rozsah",
+      "run_on": "Spustit na"
+    },
+    "trigger": {
+      "label": "Spouštěč",
+      "add_trigger": "Přidat spouštěč",
+      "sidebar_header": "Konfigurace spouštěče",
+      "input_label": "Co je spouštěčem této automatizace?",
+      "input_placeholder": "Vyberte možnost",
+      "button": {
+        "previous": "Zpět",
+        "next": "Přidat akci"
+      }
+    },
+    "condition": {
+      "label": "Za předpokladu",
+      "add_condition": "Přidat podmínku",
+      "adding_condition": "Přidávání podmínky"
+    },
+    "action": {
+      "label": "Akce",
+      "add_action": "Přidat akci",
+      "sidebar_header": "Akce",
+      "input_label": "Co automatizace dělá?",
+      "input_placeholder": "Vyberte možnost",
+      "handler_name": {
+        "add_comment": "Přidat komentář",
+        "change_property": "Změnit vlastnost"
+      },
+      "configuration": {
+        "label": "Konfigurace",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Vyberte vlastnost",
+            "change_type": "Vybrat",
+            "property_value_select": "{count, plural, one{Vybrat hodnotu} other{Vybrat hodnoty}}",
+            "property_value_select_date": "Vybrat datum"
+          },
+          "validation": {
+            "property_name_required": "Název vlastnosti je povinný",
+            "change_type_required": "Typ změny je povinný",
+            "property_value_required": "Hodnota vlastnosti je povinná"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Přidat komentář"
+      },
+      "change_property_block": {
+        "title": "Změnit vlastnost"
+      },
+      "validation": {
+        "delete_only_action": "Před smazáním jediné akce automatizaci zakažte."
+      }
+    },
+    "conjunctions": {
+      "and": "A",
+      "or": "Nebo",
+      "if": "Pokud",
+      "then": "Pak"
+    },
+    "enable": {
+      "alert": "Stiskněte 'Povolit', když je vaše automatizace dokončena. Po povolení bude automatizace připravena ke spuštění.",
+      "validation": {
+        "required": "Automatizace musí mít spouštěč a alespoň jednu akci, aby mohla být povolena."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatizace musí být před smazáním zakázána."
+      }
+    },
+    "table": {
+      "title": "Název automatizace",
+      "last_run_on": "Naposledy spuštěno",
+      "created_on": "Vytvořeno",
+      "last_updated_on": "Naposledy aktualizováno",
+      "last_run_status": "Stav posledního spuštění",
+      "average_duration": "Průměrná doba trvání",
+      "owner": "Vlastník",
+      "executions": "Spuštění"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Vytvořit automatizaci",
+        "update": "Aktualizovat automatizaci"
+      },
+      "title": {
+        "placeholder": "Pojmenujte svou automatizaci.",
+        "required_error": "Název je povinný"
+      },
+      "description": {
+        "placeholder": "Popište svou automatizaci."
+      },
+      "submit_button": {
+        "create": "Vytvořit automatizaci",
+        "update": "Aktualizovat automatizaci"
+      }
+    },
+    "delete_modal": {
+      "heading": "Smazat automatizaci"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Zobrazit chyby",
+        "all": "Vše",
+        "only_activity": "Pouze aktivita",
+        "only_run_history": "Pouze historie spuštění"
+      },
+      "run_history": {
+        "initiator": "Iniciátor"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Automatizace byla úspěšně vytvořena."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Vytvoření automatizace se nezdařilo."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Automatizace byla úspěšně aktualizována."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Aktualizace automatizace se nezdařila."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Automatizace byla úspěšně povolena."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Povolení automatizace se nezdařilo."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Automatizace byla úspěšně zakázána."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Zakázání automatizace se nezdařilo."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatizace smazána",
+          "message": "{name}, automatizace, byla nyní odstraněna z vašeho projektu."
+        },
+        "error": {
+          "title": "Tuto automatizaci se tentokrát nepodařilo smazat.",
+          "message": "Zkuste ji smazat znovu nebo se k ní vraťte později. Pokud ji stále nemůžete smazat, kontaktujte nás."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Chyba!",
+            "message": "Vytvoření akce se nezdařilo. Zkuste to znovu!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Chyba!",
+            "message": "Aktualizace akce se nezdařila. Zkuste to znovu!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Zatím nejsou k zobrazení žádné automatizace.",
+        "description": "Automatizace vám pomáhají eliminovat opakující se úkoly nastavením spouštěčů, podmínek a akcí. Vytvořte jednu, abyste ušetřili čas a udrželi práci v plynulém chodu."
+      },
+      "upgrade": {
+        "title": "Automatizace",
+        "description": "Automatizace jsou způsob, jak automatizovat úkoly ve vašem projektu.",
+        "sub_description": "Získejte zpět 80% svého administrativního času, když používáte automatizace."
+      }
+    }
   }
 }

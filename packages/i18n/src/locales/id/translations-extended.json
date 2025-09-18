@@ -2646,5 +2646,202 @@
         "suffix": "? Semua data terkait item kerja berulang akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Otomatisasi kustom",
+      "create_automation": "Buat otomatisasi"
+    },
+    "scope": {
+      "label": "Cakupan",
+      "run_on": "Jalankan pada"
+    },
+    "trigger": {
+      "label": "Pemicu",
+      "add_trigger": "Tambah pemicu",
+      "sidebar_header": "Konfigurasi pemicu",
+      "input_label": "Apa pemicu untuk otomatisasi ini?",
+      "input_placeholder": "Pilih opsi",
+      "button": {
+        "previous": "Kembali",
+        "next": "Tambah aksi"
+      }
+    },
+    "condition": {
+      "label": "Dengan syarat",
+      "add_condition": "Tambah kondisi",
+      "adding_condition": "Menambah kondisi"
+    },
+    "action": {
+      "label": "Aksi",
+      "add_action": "Tambah aksi",
+      "sidebar_header": "Aksi",
+      "input_label": "Apa yang dilakukan otomatisasi ini?",
+      "input_placeholder": "Pilih opsi",
+      "handler_name": {
+        "add_comment": "Tambah komentar",
+        "change_property": "Ubah properti"
+      },
+      "configuration": {
+        "label": "Konfigurasi",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Pilih properti",
+            "change_type": "Pilih",
+            "property_value_select": "{count, plural, one{Pilih nilai} other{Pilih nilai}}",
+            "property_value_select_date": "Pilih tanggal"
+          },
+          "validation": {
+            "property_name_required": "Nama properti diperlukan",
+            "change_type_required": "Jenis perubahan diperlukan",
+            "property_value_required": "Nilai properti diperlukan"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Tambah komentar"
+      },
+      "change_property_block": {
+        "title": "Ubah properti"
+      },
+      "validation": {
+        "delete_only_action": "Nonaktifkan otomatisasi sebelum menghapus satu-satunya aksi."
+      }
+    },
+    "conjunctions": {
+      "and": "Dan",
+      "or": "Atau",
+      "if": "Jika",
+      "then": "Maka"
+    },
+    "enable": {
+      "alert": "Tekan 'Aktifkan' ketika otomatisasi Anda selesai. Setelah diaktifkan, otomatisasi akan siap dijalankan.",
+      "validation": {
+        "required": "Otomatisasi harus memiliki pemicu dan setidaknya satu aksi untuk dapat diaktifkan."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Otomatisasi harus dinonaktifkan sebelum menghapusnya."
+      }
+    },
+    "table": {
+      "title": "Judul otomatisasi",
+      "last_run_on": "Terakhir dijalankan pada",
+      "created_on": "Dibuat pada",
+      "last_updated_on": "Terakhir diperbarui pada",
+      "last_run_status": "Status terakhir dijalankan",
+      "average_duration": "Durasi rata-rata",
+      "owner": "Pemilik",
+      "executions": "Eksekusi"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Buat otomatisasi",
+        "update": "Perbarui otomatisasi"
+      },
+      "title": {
+        "placeholder": "Beri nama otomatisasi Anda.",
+        "required_error": "Judul diperlukan"
+      },
+      "description": {
+        "placeholder": "Deskripsikan otomatisasi Anda."
+      },
+      "submit_button": {
+        "create": "Buat otomatisasi",
+        "update": "Perbarui otomatisasi"
+      }
+    },
+    "delete_modal": {
+      "heading": "Hapus otomatisasi"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Tampilkan kegagalan",
+        "all": "Semua",
+        "only_activity": "Hanya aktivitas",
+        "only_run_history": "Hanya riwayat eksekusi"
+      },
+      "run_history": {
+        "initiator": "Pemrakarsa"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Otomatisasi berhasil dibuat."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Pembuatan otomatisasi gagal."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Otomatisasi berhasil diperbarui."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Pembaruan otomatisasi gagal."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Otomatisasi berhasil diaktifkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Pengaktifan otomatisasi gagal."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Otomatisasi berhasil dinonaktifkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Penonaktifan otomatisasi gagal."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Otomatisasi dihapus",
+          "message": "{name}, otomatisasi, telah dihapus dari proyek Anda."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus otomatisasi tersebut kali ini.",
+          "message": "Coba hapus lagi atau kembali nanti. Jika Anda masih tidak bisa menghapusnya, hubungi kami."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Error!",
+            "message": "Gagal membuat aksi. Silakan coba lagi!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Error!",
+            "message": "Gagal memperbarui aksi. Silakan coba lagi!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Belum ada otomatisasi untuk ditampilkan.",
+        "description": "Otomatisasi membantu Anda menghilangkan tugas berulang dengan mengatur pemicu, kondisi, dan aksi. Buat satu untuk menghemat waktu dan menjaga pekerjaan berjalan dengan mudah."
+      },
+      "upgrade": {
+        "title": "Otomatisasi",
+        "description": "Otomatisasi adalah cara untuk mengotomatisasi tugas dalam proyek Anda.",
+        "sub_description": "Dapatkan kembali 80% waktu admin Anda ketika menggunakan Otomatisasi."
+      }
+    }
   }
 }

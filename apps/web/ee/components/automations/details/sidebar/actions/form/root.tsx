@@ -138,12 +138,8 @@ const AutomationDetailsSidebarActionsFormRootComponent = React.forwardRef<HTMLFo
   };
 
   const handleSubmit = async (data: TAutomationActionFormData): Promise<void> => {
-    try {
-      await onSubmit(data);
-      methods.reset(data);
-    } catch (error) {
-      throw error;
-    }
+    await onSubmit(data);
+    methods.reset(data);
   };
 
   const handleCancel = () => {

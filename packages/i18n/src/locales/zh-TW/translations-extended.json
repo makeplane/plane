@@ -2649,5 +2649,202 @@
         "suffix": "嗎？與該重複工作項目相關的所有資料將被永久移除。此操作無法撤銷。"
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "自訂自動化",
+      "create_automation": "建立自動化"
+    },
+    "scope": {
+      "label": "範圍",
+      "run_on": "執行於"
+    },
+    "trigger": {
+      "label": "觸發器",
+      "add_trigger": "新增觸發器",
+      "sidebar_header": "觸發器設定",
+      "input_label": "此自動化的觸發器是什麼？",
+      "input_placeholder": "選擇一個選項",
+      "button": {
+        "previous": "返回",
+        "next": "新增動作"
+      }
+    },
+    "condition": {
+      "label": "條件",
+      "add_condition": "新增條件",
+      "adding_condition": "正在新增條件"
+    },
+    "action": {
+      "label": "動作",
+      "add_action": "新增動作",
+      "sidebar_header": "動作",
+      "input_label": "自動化執行什麼動作？",
+      "input_placeholder": "選擇一個選項",
+      "handler_name": {
+        "add_comment": "新增評論",
+        "change_property": "變更屬性"
+      },
+      "configuration": {
+        "label": "設定",
+        "change_property": {
+          "placeholders": {
+            "property_name": "選擇屬性",
+            "change_type": "選擇",
+            "property_value_select": "{count, plural, one{選擇值} other{選擇值}}",
+            "property_value_select_date": "選擇日期"
+          },
+          "validation": {
+            "property_name_required": "屬性名稱為必填",
+            "change_type_required": "變更類型為必填",
+            "property_value_required": "屬性值為必填"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "新增評論"
+      },
+      "change_property_block": {
+        "title": "變更屬性"
+      },
+      "validation": {
+        "delete_only_action": "在刪除唯一動作之前，請先停用自動化。"
+      }
+    },
+    "conjunctions": {
+      "and": "且",
+      "or": "或",
+      "if": "如果",
+      "then": "則"
+    },
+    "enable": {
+      "alert": "當您的自動化完成時，點擊「啟用」。啟用後，自動化將準備執行。",
+      "validation": {
+        "required": "自動化必須有一個觸發器和至少一個動作才能啟用。"
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "刪除自動化之前必須先停用它。"
+      }
+    },
+    "table": {
+      "title": "自動化標題",
+      "last_run_on": "最後執行時間",
+      "created_on": "建立時間",
+      "last_updated_on": "最後更新時間",
+      "last_run_status": "最後執行狀態",
+      "average_duration": "平均持續時間",
+      "owner": "擁有者",
+      "executions": "執行次數"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "建立自動化",
+        "update": "更新自動化"
+      },
+      "title": {
+        "placeholder": "為您的自動化命名。",
+        "required_error": "標題為必填"
+      },
+      "description": {
+        "placeholder": "描述您的自動化。"
+      },
+      "submit_button": {
+        "create": "建立自動化",
+        "update": "更新自動化"
+      }
+    },
+    "delete_modal": {
+      "heading": "刪除自動化"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "顯示失敗",
+        "all": "全部",
+        "only_activity": "僅活動",
+        "only_run_history": "僅執行歷史"
+      },
+      "run_history": {
+        "initiator": "發起者"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化建立成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化建立失敗。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化更新成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化更新失敗。"
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化啟用成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化啟用失敗。"
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化停用成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化停用失敗。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "已刪除自動化",
+          "message": "{name}，該自動化，現已從您的專案中刪除。"
+        },
+        "error": {
+          "title": "本次無法刪除該自動化。",
+          "message": "請再試一次刪除，或稍後再試。如果仍無法刪除，請聯繫我們。"
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "錯誤！",
+            "message": "建立動作失敗。請再試一次！"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "錯誤！",
+            "message": "更新動作失敗。請再試一次！"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "尚無自動化可顯示。",
+        "description": "自動化透過設定觸發器、條件和動作來幫助您消除重複性任務。建立一個來節省時間並讓工作輕鬆進行。"
+      },
+      "upgrade": {
+        "title": "自動化",
+        "description": "自動化是在您的專案中自動執行任務的方式。",
+        "sub_description": "使用自動化可以節省80%的管理時間。"
+      }
+    }
   }
 }

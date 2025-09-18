@@ -2962,6 +2962,26 @@
       }
     },
     "toasts": {
+      "create": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation created successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation creation failed."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation updated successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation update failed."
+        }
+      },
       "enable": {
         "success": {
           "title": "Success!",
@@ -2990,6 +3010,20 @@
         "error": {
           "title": "We couldn't delete that automation this time.",
           "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Error!",
+            "message": "Failed to create action. Please try again!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Error!",
+            "message": "Failed to update action. Please try again!"
+          }
         }
       }
     },

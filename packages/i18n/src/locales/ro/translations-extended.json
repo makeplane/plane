@@ -2646,5 +2646,202 @@
         "suffix": "? Toate datele legate de acest element de lucru recurent vor fi eliminate permanent. Această acțiune nu poate fi anulată."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Automatizări personalizate",
+      "create_automation": "Creează automatizare"
+    },
+    "scope": {
+      "label": "Domeniu",
+      "run_on": "Rulează pe"
+    },
+    "trigger": {
+      "label": "Declanșator",
+      "add_trigger": "Adaugă declanșator",
+      "sidebar_header": "Configurarea declanșatorului",
+      "input_label": "Care este declanșatorul pentru această automatizare?",
+      "input_placeholder": "Selectează o opțiune",
+      "button": {
+        "previous": "Înapoi",
+        "next": "Adaugă acțiune"
+      }
+    },
+    "condition": {
+      "label": "Condiție",
+      "add_condition": "Adaugă condiție",
+      "adding_condition": "Se adaugă condiția"
+    },
+    "action": {
+      "label": "Acțiune",
+      "add_action": "Adaugă acțiune",
+      "sidebar_header": "Acțiuni",
+      "input_label": "Ce face automatizarea?",
+      "input_placeholder": "Selectează o opțiune",
+      "handler_name": {
+        "add_comment": "Adaugă comentariu",
+        "change_property": "Schimbă proprietatea"
+      },
+      "configuration": {
+        "label": "Configurare",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Selectează o proprietate",
+            "change_type": "Selectează",
+            "property_value_select": "{count, plural, one{Selectează valoarea} other{Selectează valorile}}",
+            "property_value_select_date": "Selectează data"
+          },
+          "validation": {
+            "property_name_required": "Numele proprietății este obligatoriu",
+            "change_type_required": "Tipul de schimbare este obligatoriu",
+            "property_value_required": "Valoarea proprietății este obligatorie"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Adaugă comentariu"
+      },
+      "change_property_block": {
+        "title": "Schimbă proprietatea"
+      },
+      "validation": {
+        "delete_only_action": "Dezactivează automatizarea înainte de a-i șterge singura acțiune."
+      }
+    },
+    "conjunctions": {
+      "and": "Și",
+      "or": "Sau",
+      "if": "Dacă",
+      "then": "Atunci"
+    },
+    "enable": {
+      "alert": "Apasă 'Activează' când automatizarea ta este completă. Odată activată, automatizarea va fi gata să ruleze.",
+      "validation": {
+        "required": "Automatizarea trebuie să aibă un declanșator și cel puțin o acțiune pentru a fi activată."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatizarea trebuie dezactivată înainte de a fi ștearsă."
+      }
+    },
+    "table": {
+      "title": "Titlul automatizării",
+      "last_run_on": "Ultima rulare pe",
+      "created_on": "Creată pe",
+      "last_updated_on": "Ultima actualizare pe",
+      "last_run_status": "Statusul ultimei rulări",
+      "average_duration": "Durata medie",
+      "owner": "Proprietar",
+      "executions": "Execuții"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Creează automatizare",
+        "update": "Actualizează automatizarea"
+      },
+      "title": {
+        "placeholder": "Denumește automatizarea ta.",
+        "required_error": "Titlul este obligatoriu"
+      },
+      "description": {
+        "placeholder": "Descrie automatizarea ta."
+      },
+      "submit_button": {
+        "create": "Creează automatizare",
+        "update": "Actualizează automatizarea"
+      }
+    },
+    "delete_modal": {
+      "heading": "Șterge automatizarea"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Arată eșecurile",
+        "all": "Toate",
+        "only_activity": "Doar activitatea",
+        "only_run_history": "Doar istoricul rulărilor"
+      },
+      "run_history": {
+        "initiator": "Inițiator"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatizarea a fost creată cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Crearea automatizării a eșuat."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatizarea a fost actualizată cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Actualizarea automatizării a eșuat."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatizarea a fost activată cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Activarea automatizării a eșuat."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Succes!",
+          "message": "Automatizarea a fost dezactivată cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Dezactivarea automatizării a eșuat."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatizare ștearsă",
+          "message": "{name}, automatizarea, a fost ștearsă din proiectul tău."
+        },
+        "error": {
+          "title": "Nu am putut șterge această automatizare de data aceasta.",
+          "message": "Încearcă să o ștergi din nou sau revino mai târziu. Dacă nu poți să o ștergi nici atunci, contactează-ne."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut crea acțiunea. Te rog încearcă din nou!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut actualiza acțiunea. Te rog încearcă din nou!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Încă nu există automatizări de afișat.",
+        "description": "Automatizările te ajută să elimini sarcinile repetitive prin stabilirea de declanșatori, condiții și acțiuni. Creează una pentru a economisi timp și a menține munca în mișcare fără efort."
+      },
+      "upgrade": {
+        "title": "Automatizări",
+        "description": "Automatizările sunt o modalitate de a automatiza sarcinile din proiectul tău.",
+        "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Automatizările."
+      }
+    }
   }
 }

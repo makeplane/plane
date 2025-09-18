@@ -2648,5 +2648,202 @@
         "suffix": "」を削除してもよろしいですか？この定期作業項目に関連するすべてのデータは完全に削除されます。この操作は元に戻せません。"
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "カスタム自動化",
+      "create_automation": "自動化を作成"
+    },
+    "scope": {
+      "label": "スコープ",
+      "run_on": "実行対象"
+    },
+    "trigger": {
+      "label": "トリガー",
+      "add_trigger": "トリガーを追加",
+      "sidebar_header": "トリガー設定",
+      "input_label": "この自動化のトリガーは何ですか？",
+      "input_placeholder": "オプションを選択",
+      "button": {
+        "previous": "戻る",
+        "next": "アクションを追加"
+      }
+    },
+    "condition": {
+      "label": "条件",
+      "add_condition": "条件を追加",
+      "adding_condition": "条件を追加中"
+    },
+    "action": {
+      "label": "アクション",
+      "add_action": "アクションを追加",
+      "sidebar_header": "アクション",
+      "input_label": "自動化は何を行いますか？",
+      "input_placeholder": "オプションを選択",
+      "handler_name": {
+        "add_comment": "コメントを追加",
+        "change_property": "プロパティを変更"
+      },
+      "configuration": {
+        "label": "設定",
+        "change_property": {
+          "placeholders": {
+            "property_name": "プロパティを選択",
+            "change_type": "選択",
+            "property_value_select": "{count, plural, one{値を選択} other{値を選択}}",
+            "property_value_select_date": "日付を選択"
+          },
+          "validation": {
+            "property_name_required": "プロパティ名は必須です",
+            "change_type_required": "変更タイプは必須です",
+            "property_value_required": "プロパティ値は必須です"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "コメントを追加"
+      },
+      "change_property_block": {
+        "title": "プロパティを変更"
+      },
+      "validation": {
+        "delete_only_action": "唯一のアクションを削除する前に自動化を無効にしてください。"
+      }
+    },
+    "conjunctions": {
+      "and": "かつ",
+      "or": "または",
+      "if": "もし",
+      "then": "ならば"
+    },
+    "enable": {
+      "alert": "自動化が完了したら「有効化」を押してください。有効化されると、自動化が実行可能になります。",
+      "validation": {
+        "required": "自動化を有効にするには、トリガーと少なくとも1つのアクションが必要です。"
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "自動化を削除する前に無効にする必要があります。"
+      }
+    },
+    "table": {
+      "title": "自動化タイトル",
+      "last_run_on": "最終実行日",
+      "created_on": "作成日",
+      "last_updated_on": "最終更新日",
+      "last_run_status": "最終実行ステータス",
+      "average_duration": "平均実行時間",
+      "owner": "所有者",
+      "executions": "実行回数"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "自動化を作成",
+        "update": "自動化を更新"
+      },
+      "title": {
+        "placeholder": "自動化に名前を付けてください。",
+        "required_error": "タイトルは必須です"
+      },
+      "description": {
+        "placeholder": "自動化について説明してください。"
+      },
+      "submit_button": {
+        "create": "自動化を作成",
+        "update": "自動化を更新"
+      }
+    },
+    "delete_modal": {
+      "heading": "自動化を削除"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "失敗を表示",
+        "all": "すべて",
+        "only_activity": "アクティビティのみ",
+        "only_run_history": "実行履歴のみ"
+      },
+      "run_history": {
+        "initiator": "実行者"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に作成されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の作成に失敗しました。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に更新されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の更新に失敗しました。"
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に有効化されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の有効化に失敗しました。"
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に無効化されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の無効化に失敗しました。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "自動化が削除されました",
+          "message": "{name}（自動化）がプロジェクトから削除されました。"
+        },
+        "error": {
+          "title": "自動化を削除できませんでした。",
+          "message": "もう一度削除するか、後で再度お試しください。それでも削除できない場合はご連絡ください。"
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "エラー！",
+            "message": "アクションの作成に失敗しました。もう一度お試しください！"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "エラー！",
+            "message": "アクションの更新に失敗しました。もう一度お試しください！"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "まだ表示する自動化がありません。",
+        "description": "自動化は、トリガー、条件、アクションを設定することで繰り返し作業を排除するのに役立ちます。時間を節約し、作業を効率的に進めるために作成してください。"
+      },
+      "upgrade": {
+        "title": "自動化",
+        "description": "自動化は、プロジェクト内のタスクを自動化する方法です。",
+        "sub_description": "自動化を使用すると、管理時間の80%を節約できます。"
+      }
+    }
   }
 }

@@ -2708,5 +2708,202 @@
         "suffix": "? Bu yinelenen iş öğesiyle ilgili tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Özel otomasyonlar",
+      "create_automation": "Otomasyon oluştur"
+    },
+    "scope": {
+      "label": "Kapsam",
+      "run_on": "Çalıştır"
+    },
+    "trigger": {
+      "label": "Tetikleyici",
+      "add_trigger": "Tetikleyici ekle",
+      "sidebar_header": "Tetikleyici yapılandırması",
+      "input_label": "Bu otomasyon için tetikleyici nedir?",
+      "input_placeholder": "Bir seçenek seçin",
+      "button": {
+        "previous": "Geri",
+        "next": "Eylem ekle"
+      }
+    },
+    "condition": {
+      "label": "Sağlanan",
+      "add_condition": "Koşul ekle",
+      "adding_condition": "Koşul ekleniyor"
+    },
+    "action": {
+      "label": "Eylem",
+      "add_action": "Eylem ekle",
+      "sidebar_header": "Eylemler",
+      "input_label": "Otomasyon ne yapar?",
+      "input_placeholder": "Bir seçenek seçin",
+      "handler_name": {
+        "add_comment": "Yorum ekle",
+        "change_property": "Özelliği değiştir"
+      },
+      "configuration": {
+        "label": "Yapılandırma",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Bir özellik seçin",
+            "change_type": "Seç",
+            "property_value_select": "{count, plural, one{Değer seç} other{Değerler seç}}",
+            "property_value_select_date": "Tarih seç"
+          },
+          "validation": {
+            "property_name_required": "Özellik adı gerekli",
+            "change_type_required": "Değişiklik türü gerekli",
+            "property_value_required": "Özellik değeri gerekli"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Yorum ekle"
+      },
+      "change_property_block": {
+        "title": "Özelliği değiştir"
+      },
+      "validation": {
+        "delete_only_action": "Tek eylemini silmeden önce otomasyonu devre dışı bırakın."
+      }
+    },
+    "conjunctions": {
+      "and": "Ve",
+      "or": "Veya",
+      "if": "Eğer",
+      "then": "O zaman"
+    },
+    "enable": {
+      "alert": "Otomasyonunuz tamamlandığında 'Etkinleştir'e basın. Etkinleştirildikten sonra, otomasyon çalışmaya hazır olacak.",
+      "validation": {
+        "required": "Otomasyonun etkinleştirilebilmesi için bir tetikleyicisi ve en az bir eylemi olmalıdır."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Otomasyon silinmeden önce devre dışı bırakılmalıdır."
+      }
+    },
+    "table": {
+      "title": "Otomasyon başlığı",
+      "last_run_on": "Son çalıştırma",
+      "created_on": "Oluşturulma tarihi",
+      "last_updated_on": "Son güncelleme",
+      "last_run_status": "Son çalıştırma durumu",
+      "average_duration": "Ortalama süre",
+      "owner": "Sahip",
+      "executions": "Yürütmeler"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Otomasyon oluştur",
+        "update": "Otomasyonu güncelle"
+      },
+      "title": {
+        "placeholder": "Otomasyonunuzu adlandırın.",
+        "required_error": "Başlık gerekli"
+      },
+      "description": {
+        "placeholder": "Otomasyonunuzu açıklayın."
+      },
+      "submit_button": {
+        "create": "Otomasyon oluştur",
+        "update": "Otomasyonu güncelle"
+      }
+    },
+    "delete_modal": {
+      "heading": "Otomasyonu sil"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Hataları göster",
+        "all": "Tümü",
+        "only_activity": "Sadece etkinlik",
+        "only_run_history": "Sadece çalıştırma geçmişi"
+      },
+      "run_history": {
+        "initiator": "Başlatıcı"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Otomasyon başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Otomasyon oluşturma başarısız."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Otomasyon başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Otomasyon güncelleme başarısız."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Otomasyon başarıyla etkinleştirildi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Otomasyon etkinleştirme başarısız."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Otomasyon başarıyla devre dışı bırakıldı."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Otomasyon devre dışı bırakma başarısız."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Otomasyon silindi",
+          "message": "{name} adlı otomasyon artık projenizden silindi."
+        },
+        "error": {
+          "title": "Bu sefer o otomasyonu silemedik.",
+          "message": "Tekrar silmeyi deneyin veya daha sonra tekrar deneyin. O zaman da silemezseniz, bizimle iletişime geçin."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Hata!",
+            "message": "Eylem oluşturulamadı. Lütfen tekrar deneyin!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Hata!",
+            "message": "Eylem güncellenemedi. Lütfen tekrar deneyin!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Henüz gösterilecek otomasyon yok.",
+        "description": "Otomasyonlar, tetikleyiciler, koşullar ve eylemler ayarlayarak tekrarlayan görevleri ortadan kaldırmanıza yardımcı olur. Zaman kazanmak ve işlerin zahmetsizce devam etmesini sağlamak için bir tane oluşturun."
+      },
+      "upgrade": {
+        "title": "Otomasyonlar",
+        "description": "Otomasyonlar, projenizdeki görevleri otomatikleştirmenin bir yoludur.",
+        "sub_description": "Otomasyonları kullandığınızda yönetim zamanınızın %80'ini geri kazanın."
+      }
+    }
   }
 }

@@ -4,7 +4,7 @@ import { ListFilter } from "lucide-react";
 import { AUTOMATION_ACTIVITY_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TAutomationActivityType } from "@plane/types";
-import { Button, CustomSelect, ToggleSwitch } from "@plane/ui";
+import { CustomSelect, ToggleSwitch } from "@plane/ui";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 

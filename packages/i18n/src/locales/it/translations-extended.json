@@ -2647,5 +2647,202 @@
         "suffix": "? Tutti i dati relativi all'elemento di lavoro ricorrente saranno rimossi definitivamente. Questa azione non può essere annullata."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Automazioni personalizzate",
+      "create_automation": "Crea automazione"
+    },
+    "scope": {
+      "label": "Ambito",
+      "run_on": "Esegui su"
+    },
+    "trigger": {
+      "label": "Trigger",
+      "add_trigger": "Aggiungi trigger",
+      "sidebar_header": "Configurazione trigger",
+      "input_label": "Qual è il trigger per questa automazione?",
+      "input_placeholder": "Seleziona un'opzione",
+      "button": {
+        "previous": "Indietro",
+        "next": "Aggiungi azione"
+      }
+    },
+    "condition": {
+      "label": "A condizione che",
+      "add_condition": "Aggiungi condizione",
+      "adding_condition": "Aggiungendo condizione"
+    },
+    "action": {
+      "label": "Azione",
+      "add_action": "Aggiungi azione",
+      "sidebar_header": "Azioni",
+      "input_label": "Cosa fa l'automazione?",
+      "input_placeholder": "Seleziona un'opzione",
+      "handler_name": {
+        "add_comment": "Aggiungi commento",
+        "change_property": "Cambia proprietà"
+      },
+      "configuration": {
+        "label": "Configurazione",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Seleziona una proprietà",
+            "change_type": "Seleziona",
+            "property_value_select": "{count, plural, one{Seleziona valore} other{Seleziona valori}}",
+            "property_value_select_date": "Seleziona data"
+          },
+          "validation": {
+            "property_name_required": "Il nome della proprietà è obbligatorio",
+            "change_type_required": "Il tipo di modifica è obbligatorio",
+            "property_value_required": "Il valore della proprietà è obbligatorio"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Aggiungi commento"
+      },
+      "change_property_block": {
+        "title": "Cambia proprietà"
+      },
+      "validation": {
+        "delete_only_action": "Disabilita l'automazione prima di eliminare la sua unica azione."
+      }
+    },
+    "conjunctions": {
+      "and": "E",
+      "or": "O",
+      "if": "Se",
+      "then": "Allora"
+    },
+    "enable": {
+      "alert": "Premi 'Abilita' quando la tua automazione è completa. Una volta abilitata, l'automazione sarà pronta per essere eseguita.",
+      "validation": {
+        "required": "L'automazione deve avere un trigger e almeno un'azione per essere abilitata."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "L'automazione deve essere disabilitata prima di eliminarla."
+      }
+    },
+    "table": {
+      "title": "Titolo automazione",
+      "last_run_on": "Ultima esecuzione il",
+      "created_on": "Creata il",
+      "last_updated_on": "Ultimo aggiornamento il",
+      "last_run_status": "Stato ultima esecuzione",
+      "average_duration": "Durata media",
+      "owner": "Proprietario",
+      "executions": "Esecuzioni"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Crea automazione",
+        "update": "Aggiorna automazione"
+      },
+      "title": {
+        "placeholder": "Dai un nome alla tua automazione.",
+        "required_error": "Il titolo è obbligatorio"
+      },
+      "description": {
+        "placeholder": "Descrivi la tua automazione."
+      },
+      "submit_button": {
+        "create": "Crea automazione",
+        "update": "Aggiorna automazione"
+      }
+    },
+    "delete_modal": {
+      "heading": "Elimina automazione"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Mostra errori",
+        "all": "Tutto",
+        "only_activity": "Solo attività",
+        "only_run_history": "Solo cronologia esecuzioni"
+      },
+      "run_history": {
+        "initiator": "Iniziatore"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Successo!",
+          "message": "Automazione creata con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Creazione automazione fallita."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Successo!",
+          "message": "Automazione aggiornata con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Aggiornamento automazione fallito."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Successo!",
+          "message": "Automazione abilitata con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Abilitazione automazione fallita."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Successo!",
+          "message": "Automazione disabilitata con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Disabilitazione automazione fallita."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automazione eliminata",
+          "message": "{name}, l'automazione, è stata eliminata dal tuo progetto."
+        },
+        "error": {
+          "title": "Non siamo riusciti a eliminare quell'automazione questa volta.",
+          "message": "Prova a eliminarla di nuovo o torna più tardi. Se non riesci a eliminarla, contattaci."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile creare l'azione. Riprova!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile aggiornare l'azione. Riprova!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Non ci sono ancora automazioni da mostrare.",
+        "description": "Le automazioni ti aiutano a eliminare le attività ripetitive impostando trigger, condizioni e azioni. Creane una per risparmiare tempo e mantenere il lavoro in movimento senza sforzo."
+      },
+      "upgrade": {
+        "title": "Automazioni",
+        "description": "Le automazioni sono un modo per automatizzare le attività nel tuo progetto.",
+        "sub_description": "Recupera l'80% del tuo tempo amministrativo quando usi le Automazioni."
+      }
+    }
   }
 }

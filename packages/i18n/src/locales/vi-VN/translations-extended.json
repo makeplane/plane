@@ -2632,5 +2632,202 @@
         "suffix": "? Tất cả dữ liệu liên quan đến mục công việc lặp lại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Tự động hóa tùy chỉnh",
+      "create_automation": "Tạo tự động hóa"
+    },
+    "scope": {
+      "label": "Phạm vi",
+      "run_on": "Chạy trên"
+    },
+    "trigger": {
+      "label": "Kích hoạt",
+      "add_trigger": "Thêm kích hoạt",
+      "sidebar_header": "Cấu hình kích hoạt",
+      "input_label": "Kích hoạt nào cho tự động hóa này?",
+      "input_placeholder": "Chọn một tùy chọn",
+      "button": {
+        "previous": "Quay lại",
+        "next": "Thêm hành động"
+      }
+    },
+    "condition": {
+      "label": "Điều kiện",
+      "add_condition": "Thêm điều kiện",
+      "adding_condition": "Đang thêm điều kiện"
+    },
+    "action": {
+      "label": "Hành động",
+      "add_action": "Thêm hành động",
+      "sidebar_header": "Hành động",
+      "input_label": "Tự động hóa làm gì?",
+      "input_placeholder": "Chọn một tùy chọn",
+      "handler_name": {
+        "add_comment": "Thêm bình luận",
+        "change_property": "Thay đổi thuộc tính"
+      },
+      "configuration": {
+        "label": "Cấu hình",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Chọn thuộc tính",
+            "change_type": "Chọn",
+            "property_value_select": "{count, plural, one{Chọn giá trị} other{Chọn giá trị}}",
+            "property_value_select_date": "Chọn ngày"
+          },
+          "validation": {
+            "property_name_required": "Tên thuộc tính là bắt buộc",
+            "change_type_required": "Loại thay đổi là bắt buộc",
+            "property_value_required": "Giá trị thuộc tính là bắt buộc"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Thêm bình luận"
+      },
+      "change_property_block": {
+        "title": "Thay đổi thuộc tính"
+      },
+      "validation": {
+        "delete_only_action": "Vô hiệu hóa tự động hóa trước khi xóa hành động duy nhất của nó."
+      }
+    },
+    "conjunctions": {
+      "and": "Và",
+      "or": "Hoặc",
+      "if": "Nếu",
+      "then": "Thì"
+    },
+    "enable": {
+      "alert": "Nhấn 'Kích hoạt' khi tự động hóa của bạn hoàn tất. Sau khi được kích hoạt, tự động hóa sẽ sẵn sàng chạy.",
+      "validation": {
+        "required": "Tự động hóa phải có kích hoạt và ít nhất một hành động để được kích hoạt."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Tự động hóa phải được vô hiệu hóa trước khi xóa."
+      }
+    },
+    "table": {
+      "title": "Tiêu đề tự động hóa",
+      "last_run_on": "Chạy lần cuối vào",
+      "created_on": "Được tạo vào",
+      "last_updated_on": "Cập nhật lần cuối vào",
+      "last_run_status": "Trạng thái chạy lần cuối",
+      "average_duration": "Thời gian trung bình",
+      "owner": "Chủ sở hữu",
+      "executions": "Lần thực thi"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Tạo tự động hóa",
+        "update": "Cập nhật tự động hóa"
+      },
+      "title": {
+        "placeholder": "Đặt tên cho tự động hóa của bạn.",
+        "required_error": "Tiêu đề là bắt buộc"
+      },
+      "description": {
+        "placeholder": "Mô tả tự động hóa của bạn."
+      },
+      "submit_button": {
+        "create": "Tạo tự động hóa",
+        "update": "Cập nhật tự động hóa"
+      }
+    },
+    "delete_modal": {
+      "heading": "Xóa tự động hóa"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Hiển thị lỗi",
+        "all": "Tất cả",
+        "only_activity": "Chỉ hoạt động",
+        "only_run_history": "Chỉ lịch sử chạy"
+      },
+      "run_history": {
+        "initiator": "Người khởi tạo"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Tự động hóa đã được tạo thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Tạo tự động hóa thất bại."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Tự động hóa đã được cập nhật thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Cập nhật tự động hóa thất bại."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Tự động hóa đã được kích hoạt thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Kích hoạt tự động hóa thất bại."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Tự động hóa đã được vô hiệu hóa thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Vô hiệu hóa tự động hóa thất bại."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Đã xóa tự động hóa",
+          "message": "{name}, tự động hóa, hiện đã bị xóa khỏi dự án của bạn."
+        },
+        "error": {
+          "title": "Chúng tôi không thể xóa tự động hóa đó lần này.",
+          "message": "Hãy thử xóa lại hoặc quay lại sau. Nếu vẫn không thể xóa, hãy liên hệ với chúng tôi."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tạo hành động. Vui lòng thử lại!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể cập nhật hành động. Vui lòng thử lại!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Chưa có tự động hóa nào để hiển thị.",
+        "description": "Tự động hóa giúp bạn loại bỏ các tác vụ lặp lại bằng cách thiết lập kích hoạt, điều kiện và hành động. Tạo một cái để tiết kiệm thời gian và giữ cho công việc diễn ra một cách dễ dàng."
+      },
+      "upgrade": {
+        "title": "Tự động hóa",
+        "description": "Tự động hóa là cách để tự động hóa các tác vụ trong dự án của bạn.",
+        "sub_description": "Lấy lại 80% thời gian quản trị của bạn khi sử dụng Tự động hóa."
+      }
+    }
   }
 }

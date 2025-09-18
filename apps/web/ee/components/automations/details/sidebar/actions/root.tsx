@@ -9,7 +9,7 @@ import {
   TChangePropertyActionConfig,
   TChangePropertyActionFormConfig,
 } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
@@ -96,7 +96,14 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
 
   const handleCreateAction = async (data: TAutomationActionFormData) => {
     const validConfig = validateAndTransformFormData(data);
-    if (!validConfig || !data.handler_name) return; // TODO: Add toast error
+    if (!validConfig || !data.handler_name) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.action.create.error.title"),
+        message: t("automations.toasts.action.create.error.message"),
+      });
+      return;
+    }
 
     setIsCreatingUpdatingAction(true);
     await automation?.createAction({
@@ -109,7 +116,14 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
 
   const handleUpdateAction = async (actionNode: IAutomationActionNodeInstance, data: TAutomationActionFormData) => {
     const validConfig = validateAndTransformFormData(data);
-    if (!validConfig || !data.handler_name) return; // TODO: Add toast error
+    if (!validConfig || !data.handler_name) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.action.update.error.title"),
+        message: t("automations.toasts.action.update.error.message"),
+      });
+      return;
+    }
 
     setIsCreatingUpdatingAction(true);
     await actionNode.update({

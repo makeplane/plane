@@ -55,33 +55,41 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
 
   const handleCreate = async (payload: Partial<TAutomation>) => {
     if (!canCurrentUserCreateAutomation) return;
-    const res = await createAutomation(workspaceSlug, projectId, payload);
-    if (res?.redirectionLink) {
-      router.push(res?.redirectionLink);
+    try {
+      const res = await createAutomation(workspaceSlug, projectId, payload);
+      if (res?.redirectionLink) {
+        router.push(res?.redirectionLink);
+      }
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.create.error.title"),
+        message: error?.error || t("automations.toasts.create.error.message"),
+      });
     }
   };
 
   const handleUpdate = async (payload: Partial<TAutomation>) => {
     if (!isEditing || !data?.id) return;
-    const automation = getAutomationById(data.id);
-    await automation?.update(payload);
-  };
-
-  const handleFormSubmit = async (payload: Partial<TAutomation>) => {
     try {
-      if (isEditing) {
-        await handleUpdate(payload);
-      } else {
-        await handleCreate(payload);
-      }
-      handleClose();
+      const automation = getAutomationById(data.id);
+      await automation?.update(payload);
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: isEditing ? "Failed to update automation" : "Failed to create automation",
-        message: error?.error || "Something went wrong. Please try again.",
+        title: t("automations.toasts.update.error.title"),
+        message: error?.error || t("automations.toasts.update.error.message"),
       });
     }
+  };
+
+  const handleFormSubmit = async (payload: Partial<TAutomation>) => {
+    if (isEditing) {
+      await handleUpdate(payload);
+    } else {
+      await handleCreate(payload);
+    }
+    handleClose();
   };
 
   // update form values from pre-defined data

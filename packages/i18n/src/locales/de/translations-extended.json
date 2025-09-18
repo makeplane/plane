@@ -2644,5 +2644,202 @@
         "suffix": "? Alle mit der wiederkehrenden Arbeitsaufgabe verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Benutzerdefinierte Automatisierungen",
+      "create_automation": "Automatisierung erstellen"
+    },
+    "scope": {
+      "label": "Bereich",
+      "run_on": "Ausführen auf"
+    },
+    "trigger": {
+      "label": "Auslöser",
+      "add_trigger": "Auslöser hinzufügen",
+      "sidebar_header": "Auslöser-Konfiguration",
+      "input_label": "Was ist der Auslöser für diese Automatisierung?",
+      "input_placeholder": "Option auswählen",
+      "button": {
+        "previous": "Zurück",
+        "next": "Aktion hinzufügen"
+      }
+    },
+    "condition": {
+      "label": "Vorausgesetzt",
+      "add_condition": "Bedingung hinzufügen",
+      "adding_condition": "Bedingung hinzufügen"
+    },
+    "action": {
+      "label": "Aktion",
+      "add_action": "Aktion hinzufügen",
+      "sidebar_header": "Aktionen",
+      "input_label": "Was macht die Automatisierung?",
+      "input_placeholder": "Option auswählen",
+      "handler_name": {
+        "add_comment": "Kommentar hinzufügen",
+        "change_property": "Eigenschaft ändern"
+      },
+      "configuration": {
+        "label": "Konfiguration",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Eigenschaft auswählen",
+            "change_type": "Auswählen",
+            "property_value_select": "{count, plural, one{Wert auswählen} other{Werte auswählen}}",
+            "property_value_select_date": "Datum auswählen"
+          },
+          "validation": {
+            "property_name_required": "Eigenschaftsname ist erforderlich",
+            "change_type_required": "Änderungstyp ist erforderlich",
+            "property_value_required": "Eigenschaftswert ist erforderlich"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Kommentar hinzufügen"
+      },
+      "change_property_block": {
+        "title": "Eigenschaft ändern"
+      },
+      "validation": {
+        "delete_only_action": "Deaktivieren Sie die Automatisierung, bevor Sie ihre einzige Aktion löschen."
+      }
+    },
+    "conjunctions": {
+      "and": "Und",
+      "or": "Oder",
+      "if": "Wenn",
+      "then": "Dann"
+    },
+    "enable": {
+      "alert": "Klicken Sie auf 'Aktivieren', wenn Ihre Automatisierung vollständig ist. Nach der Aktivierung ist die Automatisierung bereit zur Ausführung.",
+      "validation": {
+        "required": "Automatisierung muss einen Auslöser und mindestens eine Aktion haben, um aktiviert zu werden."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatisierung muss vor dem Löschen deaktiviert werden."
+      }
+    },
+    "table": {
+      "title": "Automatisierungstitel",
+      "last_run_on": "Zuletzt ausgeführt am",
+      "created_on": "Erstellt am",
+      "last_updated_on": "Zuletzt aktualisiert am",
+      "last_run_status": "Status der letzten Ausführung",
+      "average_duration": "Durchschnittliche Dauer",
+      "owner": "Besitzer",
+      "executions": "Ausführungen"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Automatisierung erstellen",
+        "update": "Automatisierung aktualisieren"
+      },
+      "title": {
+        "placeholder": "Benennen Sie Ihre Automatisierung.",
+        "required_error": "Titel ist erforderlich"
+      },
+      "description": {
+        "placeholder": "Beschreiben Sie Ihre Automatisierung."
+      },
+      "submit_button": {
+        "create": "Automatisierung erstellen",
+        "update": "Automatisierung aktualisieren"
+      }
+    },
+    "delete_modal": {
+      "heading": "Automatisierung löschen"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Fehler anzeigen",
+        "all": "Alle",
+        "only_activity": "Nur Aktivität",
+        "only_run_history": "Nur Ausführungsverlauf"
+      },
+      "run_history": {
+        "initiator": "Initiator"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Automatisierung erfolgreich erstellt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Erstellung der Automatisierung fehlgeschlagen."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Automatisierung erfolgreich aktualisiert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Aktualisierung der Automatisierung fehlgeschlagen."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Automatisierung erfolgreich aktiviert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Aktivierung der Automatisierung fehlgeschlagen."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Automatisierung erfolgreich deaktiviert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Deaktivierung der Automatisierung fehlgeschlagen."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatisierung gelöscht",
+          "message": "{name}, die Automatisierung, wurde aus Ihrem Projekt gelöscht."
+        },
+        "error": {
+          "title": "Wir konnten diese Automatisierung diesmal nicht löschen.",
+          "message": "Versuchen Sie es erneut oder kommen Sie später darauf zurück. Wenn Sie sie dann immer noch nicht löschen können, kontaktieren Sie uns."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Fehler!",
+            "message": "Erstellung der Aktion fehlgeschlagen. Bitte versuchen Sie es erneut!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Fehler!",
+            "message": "Aktualisierung der Aktion fehlgeschlagen. Bitte versuchen Sie es erneut!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Es gibt noch keine Automatisierungen anzuzeigen.",
+        "description": "Automatisierungen helfen Ihnen, sich wiederholende Aufgaben zu eliminieren, indem Sie Auslöser, Bedingungen und Aktionen festlegen. Erstellen Sie eine, um Zeit zu sparen und die Arbeit mühelos am Laufen zu halten."
+      },
+      "upgrade": {
+        "title": "Automatisierungen",
+        "description": "Automatisierungen sind eine Möglichkeit, Aufgaben in Ihrem Projekt zu automatisieren.",
+        "sub_description": "Gewinnen Sie 80% Ihrer Verwaltungszeit zurück, wenn Sie Automatisierungen verwenden."
+      }
+    }
   }
 }

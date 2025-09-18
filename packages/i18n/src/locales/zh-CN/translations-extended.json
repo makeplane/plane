@@ -2648,5 +2648,202 @@
         "suffix": "吗？与该重复工作项相关的所有数据将被永久删除。此操作无法撤销。"
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "自定义自动化",
+      "create_automation": "创建自动化"
+    },
+    "scope": {
+      "label": "范围",
+      "run_on": "运行于"
+    },
+    "trigger": {
+      "label": "触发器",
+      "add_trigger": "添加触发器",
+      "sidebar_header": "触发器配置",
+      "input_label": "此自动化的触发器是什么？",
+      "input_placeholder": "选择一个选项",
+      "button": {
+        "previous": "返回",
+        "next": "添加操作"
+      }
+    },
+    "condition": {
+      "label": "条件",
+      "add_condition": "添加条件",
+      "adding_condition": "正在添加条件"
+    },
+    "action": {
+      "label": "操作",
+      "add_action": "添加操作",
+      "sidebar_header": "操作",
+      "input_label": "自动化执行什么操作？",
+      "input_placeholder": "选择一个选项",
+      "handler_name": {
+        "add_comment": "添加评论",
+        "change_property": "更改属性"
+      },
+      "configuration": {
+        "label": "配置",
+        "change_property": {
+          "placeholders": {
+            "property_name": "选择属性",
+            "change_type": "选择",
+            "property_value_select": "{count, plural, other{选择值}}",
+            "property_value_select_date": "选择日期"
+          },
+          "validation": {
+            "property_name_required": "属性名称是必需的",
+            "change_type_required": "更改类型是必需的",
+            "property_value_required": "属性值是必需的"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "添加评论"
+      },
+      "change_property_block": {
+        "title": "更改属性"
+      },
+      "validation": {
+        "delete_only_action": "在删除唯一操作之前，请先禁用自动化。"
+      }
+    },
+    "conjunctions": {
+      "and": "并且",
+      "or": "或者",
+      "if": "如果",
+      "then": "那么"
+    },
+    "enable": {
+      "alert": "当您的自动化完成时，点击\"启用\"。启用后，自动化将准备运行。",
+      "validation": {
+        "required": "自动化必须有一个触发器和至少一个操作才能启用。"
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "删除自动化之前必须先禁用它。"
+      }
+    },
+    "table": {
+      "title": "自动化标题",
+      "last_run_on": "最后运行时间",
+      "created_on": "创建时间",
+      "last_updated_on": "最后更新时间",
+      "last_run_status": "最后运行状态",
+      "average_duration": "平均持续时间",
+      "owner": "所有者",
+      "executions": "执行次数"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "创建自动化",
+        "update": "更新自动化"
+      },
+      "title": {
+        "placeholder": "为您的自动化命名。",
+        "required_error": "标题是必需的"
+      },
+      "description": {
+        "placeholder": "描述您的自动化。"
+      },
+      "submit_button": {
+        "create": "创建自动化",
+        "update": "更新自动化"
+      }
+    },
+    "delete_modal": {
+      "heading": "删除自动化"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "显示失败",
+        "all": "全部",
+        "only_activity": "仅活动",
+        "only_run_history": "仅运行历史"
+      },
+      "run_history": {
+        "initiator": "发起者"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功！",
+          "message": "自动化创建成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "自动化创建失败。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "自动化更新成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "自动化更新失败。"
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "成功！",
+          "message": "自动化启用成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "自动化启用失败。"
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "成功！",
+          "message": "自动化禁用成功。"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "自动化禁用失败。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "自动化已删除",
+          "message": "{name}，该自动化，现已从您的项目中删除。"
+        },
+        "error": {
+          "title": "本次无法删除该自动化。",
+          "message": "请重试删除，或稍后再试。如果仍无法删除，请联系我们。"
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "错误！",
+            "message": "创建操作失败。请重试！"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "错误！",
+            "message": "更新操作失败。请重试！"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "还没有自动化可显示。",
+        "description": "自动化通过设置触发器、条件和操作来帮助您消除重复性任务。创建一个来节省时间并让工作轻松进行。"
+      },
+      "upgrade": {
+        "title": "自动化",
+        "description": "自动化是在您的项目中自动执行任务的方式。",
+        "sub_description": "使用自动化可以节省80%的管理时间。"
+      }
+    }
   }
 }

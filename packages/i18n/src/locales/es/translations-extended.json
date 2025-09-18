@@ -2647,5 +2647,202 @@
         "suffix": "? Todos los datos relacionados con la tarea recurrente se eliminarán permanentemente. Esta acción no se puede deshacer."
       }
     }
+  },
+  "automations": {
+    "settings": {
+      "title": "Automatizaciones personalizadas",
+      "create_automation": "Crear automatización"
+    },
+    "scope": {
+      "label": "Alcance",
+      "run_on": "Ejecutar en"
+    },
+    "trigger": {
+      "label": "Disparador",
+      "add_trigger": "Agregar disparador",
+      "sidebar_header": "Configuración del disparador",
+      "input_label": "¿Cuál es el disparador para esta automatización?",
+      "input_placeholder": "Selecciona una opción",
+      "button": {
+        "previous": "Atrás",
+        "next": "Agregar acción"
+      }
+    },
+    "condition": {
+      "label": "Siempre que",
+      "add_condition": "Agregar condición",
+      "adding_condition": "Agregando condición"
+    },
+    "action": {
+      "label": "Acción",
+      "add_action": "Agregar acción",
+      "sidebar_header": "Acciones",
+      "input_label": "¿Qué hace la automatización?",
+      "input_placeholder": "Selecciona una opción",
+      "handler_name": {
+        "add_comment": "Agregar comentario",
+        "change_property": "Cambiar propiedad"
+      },
+      "configuration": {
+        "label": "Configuración",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Selecciona una propiedad",
+            "change_type": "Seleccionar",
+            "property_value_select": "{count, plural, one{Seleccionar valor} other{Seleccionar valores}}",
+            "property_value_select_date": "Seleccionar fecha"
+          },
+          "validation": {
+            "property_name_required": "El nombre de la propiedad es requerido",
+            "change_type_required": "El tipo de cambio es requerido",
+            "property_value_required": "El valor de la propiedad es requerido"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Agregar comentario"
+      },
+      "change_property_block": {
+        "title": "Cambiar propiedad"
+      },
+      "validation": {
+        "delete_only_action": "Desactiva la automatización antes de eliminar su única acción."
+      }
+    },
+    "conjunctions": {
+      "and": "Y",
+      "or": "O",
+      "if": "Si",
+      "then": "Entonces"
+    },
+    "enable": {
+      "alert": "Presiona 'Activar' cuando tu automatización esté completa. Una vez activada, la automatización estará lista para ejecutarse.",
+      "validation": {
+        "required": "La automatización debe tener un disparador y al menos una acción para ser activada."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "La automatización debe estar desactivada antes de eliminarla."
+      }
+    },
+    "table": {
+      "title": "Título de la automatización",
+      "last_run_on": "Última ejecución",
+      "created_on": "Creado el",
+      "last_updated_on": "Última actualización",
+      "last_run_status": "Estado de la última ejecución",
+      "average_duration": "Duración promedio",
+      "owner": "Propietario",
+      "executions": "Ejecuciones"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Crear automatización",
+        "update": "Actualizar automatización"
+      },
+      "title": {
+        "placeholder": "Nombra tu automatización.",
+        "required_error": "El título es requerido"
+      },
+      "description": {
+        "placeholder": "Describe tu automatización."
+      },
+      "submit_button": {
+        "create": "Crear automatización",
+        "update": "Actualizar automatización"
+      }
+    },
+    "delete_modal": {
+      "heading": "Eliminar automatización"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Mostrar fallos",
+        "all": "Todos",
+        "only_activity": "Solo actividad",
+        "only_run_history": "Solo historial de ejecución"
+      },
+      "run_history": {
+        "initiator": "Iniciador"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Automatización creada exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Falló la creación de la automatización."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Automatización actualizada exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Falló la actualización de la automatización."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Automatización activada exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Falló la activación de la automatización."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Automatización desactivada exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Falló la desactivación de la automatización."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatización eliminada",
+          "message": "{name}, la automatización, ha sido eliminada de tu proyecto."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa automatización esta vez.",
+          "message": "Intenta eliminarla de nuevo o vuelve más tarde. Si no puedes eliminarla entonces, contáctanos."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "¡Error!",
+            "message": "Falló la creación de la acción. ¡Por favor intenta de nuevo!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "¡Error!",
+            "message": "Falló la actualización de la acción. ¡Por favor intenta de nuevo!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Aún no hay automatizaciones para mostrar.",
+        "description": "Las automatizaciones te ayudan a eliminar tareas repetitivas configurando disparadores, condiciones y acciones. Crea una para ahorrar tiempo y mantener el trabajo fluyendo sin esfuerzo."
+      },
+      "upgrade": {
+        "title": "Automatizaciones",
+        "description": "Las automatizaciones son una forma de automatizar tareas en tu proyecto.",
+        "sub_description": "Recupera el 80% de tu tiempo administrativo cuando uses Automatizaciones."
+      }
+    }
   }
 }
