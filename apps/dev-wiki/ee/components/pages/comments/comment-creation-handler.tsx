@@ -96,7 +96,7 @@ export const PageCommentCreationHandler = observer(
       handleNewCommentCancel({ pendingComment, onPendingCommentCancel });
     };
 
-    const handleSubmit = (data: {
+    const handleSubmit = async (data: {
       description: { description_html: string; description_json: JSONContent };
       uploadedAssetIds: string[];
     }) => {
@@ -104,9 +104,15 @@ export const PageCommentCreationHandler = observer(
 
       // Update bulk asset status
       if (data.uploadedAssetIds.length > 0 && page.id) {
-        fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, page.id, {
-          asset_ids: data.uploadedAssetIds,
-        });
+        if (page.project_ids?.length && page.project_ids?.length > 0) {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, page.project_ids[0], page.id, {
+            asset_ids: data.uploadedAssetIds,
+          });
+        } else {
+          await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, page.id, {
+            asset_ids: data.uploadedAssetIds,
+          });
+        }
       }
     };
 
@@ -115,7 +121,7 @@ export const PageCommentCreationHandler = observer(
     }
 
     return (
-      <div ref={newCommentBoxRef} className="overflow-hidden my-4 animate-expand-down space-y-3 group px-[4px]">
+      <div ref={newCommentBoxRef} className="overflow-hidden my-4 animate-expand-down space-y-3 group px-3.5">
         {/* Reference Text Quote with Overlay Cancel Button */}
         {referenceText && (
           <div className="relative flex gap-1 p-[4px] rounded bg-custom-background-90">

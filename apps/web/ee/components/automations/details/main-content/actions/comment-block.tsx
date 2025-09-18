@@ -35,7 +35,7 @@ export const AutomationDetailsMainContentAddCommentBlock: React.FC<TProps> = obs
           initialValue={config.comment_text ?? "<p></p>"}
           parentClassName="p-0"
           showSubmitButton={false}
-          showToolbar={false}
+          variant="none"
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
         />

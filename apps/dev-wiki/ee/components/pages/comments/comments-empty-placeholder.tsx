@@ -1,15 +1,21 @@
 import React from "react";
 import { MessageCircle } from "lucide-react";
+import { type TCommentFilters } from "@/plane-web/store/pages/comments/comment.store";
 
 export type CommentsEmptyStateProps = {
   hasComments: boolean;
+  commentFilter: TCommentFilters;
 };
 
-export function PageCommentsEmptyState({ hasComments }: CommentsEmptyStateProps) {
-  const title = hasComments ? "No comments match current filters" : "No comments yet";
-  const message = hasComments
-    ? "Try adjusting your filters to see more comments."
-    : "Select text in the editor and add a comment to get started.";
+export function PageCommentsEmptyState({ hasComments, commentFilter }: CommentsEmptyStateProps) {
+  const title = hasComments
+    ? commentFilter.showActive
+      ? "No active comments"
+      : commentFilter.showResolved
+        ? "No resolved comments match current filters"
+        : "No comments match current filters"
+    : "No comments yet";
+  const message = "Select text in the editor and add a comment to get started.";
 
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-3 animate-fade-in-up">

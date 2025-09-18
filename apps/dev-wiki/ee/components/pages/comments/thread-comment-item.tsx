@@ -8,6 +8,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // store types
 import { useCommentMarkInteraction } from "@/plane-web/hooks/pages/use-comment-mark-interaction";
 import { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
+import { FileService } from "@/services/file.service";
 import { TPageInstance } from "@/store/pages/base-page";
 // local components
 import { PageCommentDisplay } from "./comment-display";
@@ -22,11 +23,9 @@ export type ThreadItemProps = {
   referenceText?: string;
 };
 
+const fileService = new FileService();
 export const PageThreadCommentItem = observer(
-  React.forwardRef<HTMLDivElement, ThreadItemProps>(function ThreadItem(
-    { comment, page, isSelected, referenceText },
-    ref
-  ) {
+  React.forwardRef<HTMLDivElement, ThreadItemProps>(function ThreadItem({ comment, page, referenceText }, ref) {
     const { currentWorkspace } = useWorkspace();
     const { workspaceSlug } = useParams();
     const workspaceId = currentWorkspace?.id || "";
@@ -58,7 +57,10 @@ export const PageThreadCommentItem = observer(
     );
 
     const handleReply = useCallback(
-      async (data: { description: { description_html: string; description_json: JSONContent } }) => {
+      async (data: {
+        description: { description_html: string; description_json: JSONContent };
+        uploadedAssetIds: string[];
+      }) => {
         if (!page.canCurrentUserCommentOnPage) {
           console.warn("User does not have permission to comment");
           return;
@@ -73,6 +75,24 @@ export const PageThreadCommentItem = observer(
             parent_id: comment.id,
           });
 
+          // Update bulk asset status
+          if (data.uploadedAssetIds.length > 0 && page.id) {
+            if (page.project_ids?.length && page.project_ids?.length > 0) {
+              await fileService.updateBulkProjectAssetsUploadStatus(
+                workspaceSlug.toString(),
+                page.project_ids[0],
+                page.id,
+                {
+                  asset_ids: data.uploadedAssetIds,
+                }
+              );
+            } else {
+              await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug.toString(), page.id, {
+                asset_ids: data.uploadedAssetIds,
+              });
+            }
+          }
+
           // Close reply box and show replies
           setShowReplyBox(false);
           setShowReplies(true);
@@ -82,11 +102,15 @@ export const PageThreadCommentItem = observer(
           setIsSubmittingReply(false);
         }
       },
-      [comment.id, page.comments, page.canCurrentUserCommentOnPage]
+      [comment.id, page, workspaceSlug]
     );
+    const threadState = page.comments.getThreadDisplayState(comment.id, showReplies);
 
     // Use custom hook for comment mark interactions
-    const { handleMouseEnter, handleMouseLeave, handleThreadClick } = useCommentMarkInteraction(comment.id);
+    const { handleMouseEnter, handleMouseLeave, handleThreadClick } = useCommentMarkInteraction({
+      commentId: comment.id,
+      editorRef: page.editor.editorRef,
+    });
 
     return (
       <div
@@ -94,10 +118,7 @@ export const PageThreadCommentItem = observer(
         data-thread-id={comment.id}
         key={comment.id}
         className={cn(
-          `relative w-full p-3 px-[4px] flex-col flex gap-1 cursor-pointer transition-all duration-200 bg-custom-background-100 hover:bg-custom-background-90 group animate-comment-item`,
-          {
-            "bg-custom-background-90": isSelected,
-          }
+          `relative w-full py-3 px-3.5 flex-col flex gap-3 cursor-pointer transition-all duration-200 bg-custom-background-100 hover:bg-custom-background-90 group animate-comment-item`
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -111,9 +132,14 @@ export const PageThreadCommentItem = observer(
           </div>
         )}
 
-        {/* Main Thread Comment */}
-        <div className="overflow-hidden space-y-3">
-          <PageCommentDisplay comment={comment} page={page} isSelected={isSelected} isParent />
+        <div className="relative">
+          {/* We only show the connector if there are only 2 comments or if there's a single comment but replybox is open */}
+          {((!threadState?.shouldShowReplyController && comment.total_replies) ||
+            (comment.total_replies === 0 && showReplyBox)) && (
+            <div className="absolute left-3 top-0 -bottom-4 w-0.5 bg-custom-border-300" aria-hidden />
+          )}
+          {/* Main Thread Comment */}
+          <PageCommentDisplay comment={comment} page={page} isParent />
         </div>
 
         <div className="flex flex-col gap-0">
@@ -121,14 +147,20 @@ export const PageThreadCommentItem = observer(
             comment={comment}
             handleShowRepliesToggle={handleShowRepliesToggle}
             showReplies={showReplies}
+            page={page}
           />
 
           {/* Replies List */}
-          <PageCommentThreadReplyList page={page} threadId={comment.id} showReplies={showReplies} />
+          <PageCommentThreadReplyList
+            page={page}
+            threadId={comment.id}
+            showReplies={showReplies}
+            showReplyBox={showReplyBox}
+          />
 
           {/* Action Bar */}
           {page.canCurrentUserCommentOnPage && !showReplyBox && (
-            <div className="flex items-center h-8">
+            <div className="flex items-center justify-end h-8">
               <button
                 type="button"
                 onClick={handleReplyToggle}

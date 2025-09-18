@@ -40,7 +40,7 @@ export const AutomationActionAddCommentConfiguration: React.FC<TProps> = observe
           onChange={(_json, html) => onChange(html)}
           parentClassName="p-2" // TODO: add background if disabled
           editable={!isDisabled}
-          showToolbar={!isDisabled}
+          variant={isDisabled ? "none" : "full"}
         />
       )}
     />

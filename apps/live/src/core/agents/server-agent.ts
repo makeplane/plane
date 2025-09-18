@@ -213,7 +213,7 @@ export class ServerAgentManager {
           });
         }
 
-        // // Process the document using our extensible system
+        // Process the document using our extensible system
         DocumentProcessor.process(xmlFragment, subPagesFromBackend || [], options);
       },
       {

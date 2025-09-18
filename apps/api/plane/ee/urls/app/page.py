@@ -19,6 +19,7 @@ from plane.ee.views import (
     ProjectPageCommentReactionViewSet,
     ProjectPageUserViewSet,
     ProjectPageRestoreEndpoint,
+    WorkspacePageLiveServerEndpoint,
 )
 
 
@@ -164,6 +165,11 @@ urlpatterns = [
         "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
         WorkspacePageCommentReactionViewSet.as_view({"delete": "destroy"}),
         name="workspace-page-comment-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/page-comments/",
+        WorkspacePageLiveServerEndpoint.as_view({"get": "list"}),
+        name="workspace-page-live-server",
     ),
     ## End Comment Reactions
     ## EE project level

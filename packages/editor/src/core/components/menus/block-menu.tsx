@@ -8,6 +8,7 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
+import type { JSONContent } from "@tiptap/core";
 import { type Editor, useEditorState } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2, Link, Code, Bookmark } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -24,6 +25,29 @@ type Props = {
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
   disabledExtensions?: IEditorProps["disabledExtensions"];
+};
+
+const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONContent | null | undefined => {
+  if (!node) return node;
+
+  const sanitizedNode: JSONContent = { ...node };
+
+  if (sanitizedNode.marks) {
+    const filteredMarks = sanitizedNode.marks.filter((mark) => mark.type !== ADDITIONAL_EXTENSIONS.COMMENTS);
+    if (filteredMarks.length > 0) {
+      sanitizedNode.marks = filteredMarks.map((mark) => ({ ...mark }));
+    } else {
+      delete sanitizedNode.marks;
+    }
+  }
+
+  if (sanitizedNode.content) {
+    sanitizedNode.content = sanitizedNode.content
+      .map((child) => stripCommentMarksFromJSON(child))
+      .filter((child): child is JSONContent => Boolean(child));
+  }
+
+  return sanitizedNode;
 };
 
 export const BlockMenu = (props: Props) => {
@@ -297,14 +321,14 @@ export const BlockMenu = (props: Props) => {
           if (insertPos < 0 || insertPos > docSize) {
             throw new Error("The insertion position is invalid or outside the document.");
           }
-          const contentToInsert = firstChild.toJSON();
+          const contentToInsert = stripCommentMarksFromJSON(firstChild.toJSON() as JSONContent) as JSONContent;
           if (contentToInsert.type === ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED) {
             return editor
               .chain()
               .insertExternalEmbed({
                 [EExternalEmbedAttributeNames.IS_RICH_CARD]:
-                  contentToInsert.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD],
-                [EExternalEmbedAttributeNames.SOURCE]: contentToInsert.attrs.src,
+                  contentToInsert.attrs?.[EExternalEmbedAttributeNames.IS_RICH_CARD],
+                [EExternalEmbedAttributeNames.SOURCE]: contentToInsert.attrs?.src,
                 pos: insertPos,
               })
               .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
@@ -313,7 +337,7 @@ export const BlockMenu = (props: Props) => {
             return editor
               .chain()
               .setBlockMath({
-                latex: contentToInsert.attrs.latex,
+                latex: contentToInsert.attrs?.latex,
                 pos: insertPos,
               })
               .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })

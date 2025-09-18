@@ -17,10 +17,16 @@ export type TCommentMarkAttributes = {
   [ECommentAttributeNames.RESOLVED]?: boolean;
 };
 
+export type TCommentClickPayload = {
+  referenceParagraph: string;
+  primaryCommentId: string;
+  commentIds: string[];
+};
+
 // COMMENT MARK OPTIONS
 export type TCommentMarkOptions = {
   isFlagged: boolean;
-  onCommentClick?: (commentId: string) => void;
+  onCommentClick?: (payload: TCommentClickPayload) => void;
   onCommentDelete?: (commentId: string) => void;
   onCommentRestore?: (commentId: string) => void;
   onCommentResolve?: (commentId: string) => void;

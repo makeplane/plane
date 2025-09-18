@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 // hooks
-import { useRouterParams } from "@/hooks/store/use-router-params";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useScrollManager } from "@/plane-web/hooks/pages/use-scroll-manager";
 import { TPageInstance } from "@/store/pages/base-page";
@@ -20,6 +20,7 @@ type CommentHandlers = {
     handler: (selection?: { from: number; to: number; referenceText?: string }) => void
   ) => void;
   onCreateCommentMark?: (selection: { from: number; to: number }, commentId: string) => void;
+  onSelectedThreadConsumed?: () => void;
 };
 
 export type ThreadsSidebarProps = {
@@ -38,7 +39,7 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
   pendingComment,
   handlers = {},
 }: ThreadsSidebarProps) {
-  const { workspaceSlug } = useRouterParams();
+  const { workspaceSlug } = useParams();
 
   // Refs
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -74,20 +75,27 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
   useEffect(() => {
     page.comments.onScrollToPendingComment = (commentId: string) => {
       scrollToItem(commentId, { highlight: true });
-    };
-
-    return () => {
       page.comments.onScrollToPendingComment = null;
     };
   }, [page.comments, scrollToItem]);
+
+  const { onPendingCommentCancel, onRegisterStartNewComment, onCreateCommentMark, onSelectedThreadConsumed } = handlers;
 
   // Auto-scroll to selected thread - wait for data to load first
   useEffect(() => {
     if (selectedThreadId && !isLoading && !isEmpty) {
       // Data is loaded, scroll to the selected thread
       scrollToItem(selectedThreadId, { highlight: true });
+      onSelectedThreadConsumed?.();
     }
-  }, [selectedThreadId, scrollToItem, isLoading, isEmpty]);
+  }, [selectedThreadId, scrollToItem, isLoading, isEmpty, onSelectedThreadConsumed]);
+
+  const commentCreationHandlers = {
+    onPendingCommentCancel,
+    onRegisterStartNewComment,
+    onCreateCommentMark,
+    onScrollToElement: scrollToElement,
+  };
 
   if (isLoading && isEmpty && !page.comments.pendingScrollToComment) {
     return <PageCommentThreadLoader />;
@@ -96,10 +104,10 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
   return (
     <div
       ref={scrollContainerRef}
-      className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col"
+      className="size-full pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col"
     >
       {/* Header */}
-      <div className="flex-shrink-0 pb-3">
+      <div className="flex-shrink-0 py-1 px-3.5">
         <div className="flex justify-between items-start w-full">
           <h2 className="text-custom-text-100 text-base font-medium leading-6">Comments</h2>
           <PageCommentFilterControls filters={commentsFilters} onFilterChange={updateCommentFilters} />
@@ -116,15 +124,12 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
             workspaceId,
           }}
           pendingComment={pendingComment}
-          handlers={{
-            ...handlers,
-            onScrollToElement: scrollToElement,
-          }}
+          handlers={commentCreationHandlers}
         />
 
         {/* Comments List or Empty State */}
         {filteredBaseComments.length === 0 ? (
-          <PageCommentsEmptyState hasComments={baseComments.length > 0} />
+          <PageCommentsEmptyState hasComments={baseComments.length > 0} commentFilter={commentsFilters} />
         ) : (
           <PageCommentsThreadList
             comments={filteredBaseComments}

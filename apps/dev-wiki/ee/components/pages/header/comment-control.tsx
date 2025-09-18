@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MessageCircle } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/ui";
 // plane web hooks
@@ -36,7 +36,7 @@ export const PageCommentControl: React.FC<TPageCommentControlProps> = observer((
         )}
         aria-label={isActive ? "Close comments" : "Open comments"}
       >
-        <MessageCircle className="h-3.5 w-3.5" />
+        <MessageSquareText className="h-3.5 w-3.5" />
       </button>
     </Tooltip>
   );

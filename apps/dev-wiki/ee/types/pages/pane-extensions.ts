@@ -12,6 +12,7 @@ export type TCommentsNavigationExtensionData = TCommentConfig & {
     referenceText?: string;
   };
   onPendingCommentCancel?: () => void;
+  onSelectedThreadConsumed?: () => void;
 };
 
 // EE Union of all possible navigation pane extension data types

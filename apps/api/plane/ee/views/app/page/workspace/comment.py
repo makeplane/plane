@@ -6,9 +6,10 @@ from django.db.models import Prefetch, OuterRef, Func, F, Q
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 # Module imports
-from plane.db.models import Workspace
+from plane.db.models import Workspace, Page
 from plane.ee.models import PageComment, PageCommentReaction
 from plane.ee.permissions.page import WorkspacePagePermission
 from plane.ee.serializers.app.page import (
@@ -19,6 +20,7 @@ from plane.ee.views.base import BaseViewSet
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
+from plane.authentication.secret import SecretKeyAuthentication
 
 
 class WorkspacePageCommentViewSet(BaseViewSet):
@@ -229,3 +231,20 @@ class WorkspacePageCommentReactionViewSet(BaseViewSet):
         )
         comment_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspacePageLiveServerEndpoint(BaseViewSet):
+    authentication_classes = [SecretKeyAuthentication]
+    permission_classes = [AllowAny]
+
+    def list(self, request, slug, page_id):
+        page = Page.objects.filter(pk=page_id).first()
+
+        if page is None:
+            return Response({"error": "Page not found"}, status=404)
+
+        page_comments = PageComment.objects.filter(
+            workspace__slug=slug, page_id=page_id
+        ).filter(parent__isnull=True).values_list("id", flat=True)
+
+        return Response(page_comments, status=status.HTTP_200_OK)

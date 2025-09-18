@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/core";
+import { getCommentSelector } from "../extensions/comments";
 import { TExtendedEditorRefApi } from "../types";
 
 type TArgs = {
@@ -24,6 +25,23 @@ export const getExtenedEditorRefHelpers = (args: TArgs): TExtendedEditorRefApi =
     unresolveCommentMark: (commentId) => {
       if (!editor) return;
       editor.chain().focus().unresolveComment(commentId).run();
+    },
+    hoverCommentMarks: (commentIds) => {
+      if (!editor) return;
+      editor.commands.hoverComments(commentIds);
+    },
+    selectCommentMark: (commentId) => {
+      if (!editor) return;
+      editor.commands.selectComment(commentId);
+    },
+    scrollToCommentMark: (commentId) => {
+      if (!editor || !commentId) return;
+      const selector = getCommentSelector(commentId);
+      const element = editor.view.dom.querySelector(selector) as HTMLElement | null;
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     },
   };
 };

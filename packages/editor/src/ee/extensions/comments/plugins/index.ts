@@ -1,5 +1,6 @@
 export { createClickHandlerPlugin } from "./click-handler-plugin";
 export { createHoverHandlerPlugin } from "./hover-handler-plugin";
+export { createCommentHighlightPlugin, commentInteractionPluginKey } from "./highlight-handler-plugin";
 export { createCommentsOrderPlugin } from "./comments-order-plugin";
 export { TrackCommentDeletionPlugin } from "./delete";
 export { TrackCommentRestorationPlugin } from "./restore";

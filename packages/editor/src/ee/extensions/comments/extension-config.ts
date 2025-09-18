@@ -1,4 +1,6 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
@@ -7,6 +9,7 @@ import {
   createClickHandlerPlugin,
   createHoverHandlerPlugin,
   createCommentsOrderPlugin,
+  createCommentHighlightPlugin,
   TrackCommentDeletionPlugin,
   TrackCommentRestorationPlugin,
 } from "./plugins";
@@ -81,9 +84,14 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
 
     const plugins = [
       // Click handler plugin
-      createClickHandlerPlugin({ onCommentClick }),
+      createClickHandlerPlugin({
+        onCommentClick,
+        isTouchDevice: getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice,
+      }),
       // Hover handler plugin
       createHoverHandlerPlugin(),
+      // Highlight handler plugin for comment mark decorations
+      createCommentHighlightPlugin(),
       // Comments order tracking plugin
       createCommentsOrderPlugin({ storage: this.storage }),
     ];

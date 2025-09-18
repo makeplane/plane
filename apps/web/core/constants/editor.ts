@@ -15,7 +15,6 @@ import {
   Image,
   Italic,
   List,
-  ListCollapse,
   ListOrdered,
   ListTodo,
   LucideIcon,
@@ -159,9 +158,18 @@ const USER_ACTION_ITEMS: ToolbarMenuItem<"quote" | "code">[] = [
   { itemKey: "code", renderKey: "code", name: "Code", icon: Code2, editors: ["lite", "document"] },
 ];
 
+export const IMAGE_ITEM = {
+  itemKey: "image",
+  renderKey: "image",
+  name: "Image",
+  icon: Image,
+  editors: ["lite", "document"],
+  extraProps: {},
+} as ToolbarMenuItem<"image">;
+
 const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
   { itemKey: "table", renderKey: "table", name: "Table", icon: Table, editors: ["document"] },
-  { itemKey: "image", renderKey: "image", name: "Image", icon: Image, editors: ["lite", "document"], extraProps: {} },
+  IMAGE_ITEM,
 ];
 
 export const TOOLBAR_ITEMS: {

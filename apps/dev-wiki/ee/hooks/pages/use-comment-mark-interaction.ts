@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import type { EditorRefApi } from "@plane/editor";
 
 type CommentMarkInteractionHook = {
   handleMouseEnter: () => void;
@@ -6,26 +7,35 @@ type CommentMarkInteractionHook = {
   handleThreadClick: (e: React.MouseEvent) => void;
 };
 
-export function useCommentMarkInteraction(commentId: string): CommentMarkInteractionHook {
-  const getCommentMark = useCallback(() => document.querySelector(`[data-comment-id="${commentId}"]`), [commentId]);
+type UseCommentMarkInteractionParams = {
+  commentId: string;
+  editorRef?: EditorRefApi | null;
+};
+
+export function useCommentMarkInteraction({
+  commentId,
+  editorRef,
+}: UseCommentMarkInteractionParams): CommentMarkInteractionHook {
+  const deselectTimeoutRef = useRef<number | null>(null);
+
+  const clearHover = useCallback(() => {
+    editorRef?.hoverCommentMarks([]);
+  }, [editorRef]);
+
+  const clearSelection = useCallback(() => {
+    editorRef?.selectCommentMark(null);
+  }, [editorRef]);
 
   const handleMouseEnter = useCallback(() => {
-    const commentMark = getCommentMark();
-    if (commentMark) {
-      commentMark.classList.add("bg-[#FFBF66]/40", "transition-all", "duration-200");
-    }
-  }, [getCommentMark]);
+    editorRef?.hoverCommentMarks([commentId]);
+  }, [editorRef, commentId]);
 
   const handleMouseLeave = useCallback(() => {
-    const commentMark = getCommentMark();
-    if (commentMark) {
-      commentMark.classList.remove("bg-[#FFBF66]/40", "transition-all", "duration-200");
-    }
-  }, [getCommentMark]);
+    clearHover();
+  }, [clearHover]);
 
   const handleThreadClick = useCallback(
     (e: React.MouseEvent) => {
-      // Don't trigger selection if clicking on interactive elements
       const target = e.target as HTMLElement;
       if (
         target.tagName === "BUTTON" ||
@@ -38,25 +48,28 @@ export function useCommentMarkInteraction(commentId: string): CommentMarkInterac
         return;
       }
 
-      const commentMark = getCommentMark();
-      if (commentMark) {
-        // Add temporary highlight effect
-        commentMark.classList.add("scale-[1.02]", "transition-all", "duration-300");
+      editorRef?.selectCommentMark(commentId);
+      editorRef?.scrollToCommentMark(commentId);
 
-        // Scroll the comment mark into view in the editor
-        commentMark.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-
-        // Remove highlight effect after animation
-        setTimeout(() => {
-          commentMark.classList.remove("shadow-lg", "scale-[1.02]", "transition-all", "duration-300");
-        }, 2000);
+      if (deselectTimeoutRef.current) {
+        window.clearTimeout(deselectTimeoutRef.current);
       }
+
+      deselectTimeoutRef.current = window.setTimeout(() => {
+        editorRef?.selectCommentMark(null);
+        deselectTimeoutRef.current = null;
+      }, 2000);
     },
-    [getCommentMark]
+    [editorRef, commentId]
   );
+
+  useEffect(() => () => {
+      if (deselectTimeoutRef.current) {
+        window.clearTimeout(deselectTimeoutRef.current);
+      }
+      clearHover();
+      clearSelection();
+    }, [clearHover, clearSelection]);
 
   return {
     handleMouseEnter,

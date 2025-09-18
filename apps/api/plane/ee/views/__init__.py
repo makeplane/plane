@@ -46,6 +46,7 @@ from plane.ee.views.app.page import (
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
     ProjectPageRestoreEndpoint,
+    WorkspacePageLiveServerEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,

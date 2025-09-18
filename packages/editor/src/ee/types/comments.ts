@@ -1,5 +1,9 @@
+import type { TCommentClickPayload } from "../extensions/comments/types";
+
+export type { TCommentClickPayload };
+
 export type TCommentConfig = {
-  onClick?: (commentId: string) => void;
+  onClick?: (payload: TCommentClickPayload) => void;
   onDelete?: (commentId: string) => void;
   onRestore?: (commentId: string) => void;
   onResolve?: (commentId: string) => void;

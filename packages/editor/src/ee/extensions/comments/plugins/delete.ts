@@ -1,4 +1,5 @@
 import { Editor } from "@tiptap/core";
+import { isChangeOrigin } from "@tiptap/extension-collaboration";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
@@ -13,7 +14,10 @@ export const TrackCommentDeletionPlugin = (editor: Editor, deleteHandler: TComme
   new Plugin({
     key: COMMENT_DELETE_PLUGIN_KEY,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
-      if (!transactions.some((tr) => tr.docChanged)) return null;
+      const hasChanges = transactions.some((tr) => tr.docChanged);
+      const areTransactionsFromOtherClient = transactions.some((tr) => isChangeOrigin(tr));
+
+      if (!hasChanges || areTransactionsFromOtherClient) return null;
 
       const oldCommentIds = new Set<string>();
       const newCommentIds = new Set<string>();

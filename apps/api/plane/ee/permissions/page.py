@@ -44,7 +44,7 @@ def has_shared_page_access(request, slug, page_id, project_id=None):
             user_id=user_id,
             workspace__slug=slug,
             project_id=project_id,
-            access=EDIT,
+            access__in=[EDIT, COMMENT],
         ).exists()
 
     # View, comment, or edit access is allowed for safe methods and updates
@@ -54,7 +54,7 @@ def has_shared_page_access(request, slug, page_id, project_id=None):
             user_id=user_id,
             workspace__slug=slug,
             project_id=project_id,
-            access=EDIT,
+            access__in=[EDIT, COMMENT],
         ).exists()
 
     # Deny for any other unsupported method
@@ -102,7 +102,6 @@ class WorkspacePagePermission(BasePermission):
             return self._has_public_page_access(request, slug)
 
         return True
-
 
     def _has_public_page_access(self, request, slug):
         """
@@ -200,9 +199,7 @@ class ProjectPagePermission(BasePermission):
                     slug=slug,
                     user_id=user_id,
                 ):
-                    return has_shared_page_access(
-                        request, slug, page.id, project_id
-                    )
+                    return has_shared_page_access(request, slug, page.id, project_id)
                 # If shared pages feature is not enabled, only the owner can access
                 return False
 
@@ -216,7 +213,6 @@ class ProjectPagePermission(BasePermission):
             )
         else:
             return True
-
 
     def _has_public_page_access(self, request, slug, project_id):
         """

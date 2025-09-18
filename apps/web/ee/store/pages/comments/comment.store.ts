@@ -31,6 +31,16 @@ export interface ICommentStore {
   getCommentById: (commentId: string) => TCommentInstance | undefined;
   getCommentsByParentId: (parentId: string) => TCommentInstance[];
   getLatestReplyByParentId: (parentId: string) => TCommentInstance | undefined;
+  getThreadDisplayState: (
+    threadId: string,
+    showReplies: boolean
+  ) => {
+    shouldShowReplyController: boolean;
+    hiddenRepliesCount: number;
+    displayItems: Array<{ comment: TCommentInstance }>;
+    totalReplies: number;
+    loadedRepliesCount: number;
+  } | null;
   // computed properties
   baseComments: TCommentInstance[];
   filteredBaseComments: TCommentInstance[];
@@ -44,7 +54,11 @@ export interface ICommentStore {
 
   // API actions - now context-aware (no need to pass pageId/config)
   fetchPageComments: () => Promise<void>;
-  fetchThreadComments: (threadId: string) => Promise<void>;
+  fetchThreadComments: (threadId: string) => Promise<TPageComment[]>;
+  getOrFetchInstance: (
+    commentId: string,
+    options?: { restoreOn404?: boolean }
+  ) => Promise<TCommentInstance | undefined>;
   createComment: (data: Partial<TPageComment>) => Promise<TCommentInstance>;
   deleteComment: (commentId: string) => Promise<void>;
   restoreComment: (commentId: string) => Promise<void>;
@@ -52,15 +66,15 @@ export interface ICommentStore {
   unresolveComment: (commentId: string) => Promise<void>;
   addReaction: (commentId: string, reaction: string) => Promise<TPageCommentReaction>;
   removeReaction: (commentId: string, reaction: string) => Promise<void>;
-  updateComment: (commentId: string, data: Partial<TPageComment>) => Promise<TPageComment>;
+  updateComment: (commentId: string, data: Partial<TPageComment>) => Promise<void>;
 }
 
 export class CommentStore implements ICommentStore {
   // observables
   comments: Map<string, TCommentInstance> = new Map();
   commentsFilters: TCommentFilters = {
-    showAll: true,
-    showActive: false,
+    showAll: false,
+    showActive: true,
     showResolved: false,
   };
   commentsOrder: string[] = [];
@@ -108,6 +122,7 @@ export class CommentStore implements ICommentStore {
       setPendingScrollToComment: action,
       fetchPageComments: action,
       fetchThreadComments: action,
+      getOrFetchInstance: action,
       createComment: action,
       deleteComment: action,
       restoreComment: action,
@@ -131,6 +146,36 @@ export class CommentStore implements ICommentStore {
     return { pageId, config };
   }
 
+  private isNotFoundError(error: unknown): boolean {
+    if (!error) return false;
+
+    if (Array.isArray(error)) {
+      return error.some((entry) => typeof entry === "string" && entry.toLowerCase().includes("not found"));
+    }
+
+    if (typeof error !== "object") return false;
+
+    const errorObject = error as Record<string, unknown>;
+
+    const statusCandidates = [errorObject.status, errorObject.status_code, errorObject.statusCode, errorObject.code];
+    if (statusCandidates.some((value) => value === 404 || value === "404")) {
+      return true;
+    }
+
+    const detailCandidates = [errorObject.detail, errorObject.message, errorObject.error];
+
+    return detailCandidates.some((candidate) => {
+      if (typeof candidate === "string") {
+        const normalized = candidate.toLowerCase();
+        return normalized.includes("not found") || normalized.includes("deleted");
+      }
+      if (Array.isArray(candidate)) {
+        return candidate.some((entry) => typeof entry === "string" && entry.toLowerCase().includes("not found"));
+      }
+      return false;
+    });
+  }
+
   // Computed methods using computedFn for better performance
   getCommentById = computedFn((commentId: string): TCommentInstance | undefined => this.comments.get(commentId));
 
@@ -149,6 +194,42 @@ export class CommentStore implements ICommentStore {
 
     // Return the latest reply (last in the sorted array)
     return replies[replies.length - 1];
+  });
+
+  getThreadDisplayState = computedFn((threadId: string, showReplies: boolean) => {
+    const parentComment = this.getCommentById(threadId);
+    if (!parentComment) return null;
+
+    const replies = this.getCommentsByParentId(threadId);
+    const totalReplies = parentComment.total_replies || 0;
+
+    // Calculate how many replies are hidden (not loaded yet)
+    const hiddenRepliesCount = totalReplies - 1;
+
+    const shouldShowReplyController = hiddenRepliesCount > 0;
+
+    // Always show the latest reply if there are any replies
+    // showReplies controls whether to show the rest (older replies)
+    let displayItems: Array<{ comment: TCommentInstance }> = [];
+
+    if (replies.length > 0) {
+      if (showReplies) {
+        // Show all loaded replies when expanded
+        displayItems = replies.map((comment) => ({ comment }));
+      } else {
+        // Show only the latest reply when collapsed
+        const latestReply = replies[replies.length - 1];
+        displayItems = [{ comment: latestReply }];
+      }
+    }
+
+    return {
+      shouldShowReplyController,
+      hiddenRepliesCount,
+      displayItems,
+      totalReplies,
+      loadedRepliesCount: replies.length,
+    };
   });
 
   get baseComments(): TCommentInstance[] {
@@ -233,6 +314,18 @@ export class CommentStore implements ICommentStore {
       const previousOrder = [...this.commentsOrder];
       this.commentsOrder = commentsOrder;
 
+      // Detect new comment IDs that were added to the order
+      const newCommentIds = commentsOrder.filter((id) => !previousOrder.includes(id));
+
+      // Fetch any missing comments for new IDs
+      if (newCommentIds.length > 0) {
+        Promise.all(newCommentIds.map((commentId) => this.getOrFetchInstance(commentId, { restoreOn404: true }))).catch(
+          (error) => {
+            console.error("Failed to fetch some comments from order update:", error);
+          }
+        );
+      }
+
       // If we have a pending scroll comment and the order actually changed,
       // and the pending comment is now in the new order, trigger scroll
       if (
@@ -247,6 +340,44 @@ export class CommentStore implements ICommentStore {
         }
       }
     });
+  };
+
+  getOrFetchInstance = async (
+    commentId: string,
+    options?: { restoreOn404?: boolean }
+  ): Promise<TCommentInstance | undefined> => {
+    // Return existing comment if found
+    if (this.comments.has(commentId)) {
+      return this.comments.get(commentId);
+    }
+
+    try {
+      // Fetch missing comment from API
+      const { pageId, config } = this.getPageContext();
+      const comment = await this.commentService.retrieve({ pageId, config, commentId });
+
+      runInAction(() => {
+        this.comments.set(commentId, new CommentInstance(this, comment));
+      });
+
+      return this.comments.get(commentId);
+    } catch (error) {
+      const shouldAttemptRestore = options?.restoreOn404 && this.isNotFoundError(error);
+
+      if (shouldAttemptRestore) {
+        try {
+          console.warn(`Comment ${commentId} not found during order sync. Attempting restore.`);
+          await this.restoreComment(commentId);
+          return this.comments.get(commentId);
+        } catch (restoreError) {
+          console.error(`Failed to restore comment ${commentId} after not-found response:`, restoreError);
+        }
+      } else {
+        console.error(`Failed to fetch comment ${commentId}:`, error);
+      }
+
+      return undefined;
+    }
   };
 
   // API actions
@@ -276,8 +407,8 @@ export class CommentStore implements ICommentStore {
     }
   };
 
-  fetchThreadComments = async (threadId: string): Promise<void> => {
-    if (!threadId) return;
+  fetchThreadComments = async (threadId: string): Promise<TPageComment[]> => {
+    if (!threadId) return [];
 
     const { pageId, config } = this.getPageContext();
 
@@ -298,6 +429,7 @@ export class CommentStore implements ICommentStore {
           }
         });
       });
+      return threadComments;
     } catch (error) {
       console.error("Failed to fetch thread comments:", error);
       throw error;
@@ -312,7 +444,7 @@ export class CommentStore implements ICommentStore {
 
     if (data.parent_id) {
       const parentCommentInstance = this.getCommentById(data.parent_id);
-      if (parentCommentInstance && parentCommentInstance.total_replies) {
+      if (parentCommentInstance && parentCommentInstance.total_replies != null) {
         parentCommentInstance.total_replies++;
       }
     }
@@ -334,6 +466,17 @@ export class CommentStore implements ICommentStore {
     const { pageId, config } = this.getPageContext();
 
     await this.commentService.destroy({ pageId, config, commentId });
+    const commentInstance = this.getCommentById(commentId);
+    if (!commentInstance) {
+      throw new Error("Comment instance not found while deleting");
+    }
+
+    if (commentInstance.parent_id) {
+      const parentCommentInstance = this.getCommentById(commentInstance.parent_id);
+      if (parentCommentInstance && parentCommentInstance.total_replies != null) {
+        parentCommentInstance.total_replies--;
+      }
+    }
 
     runInAction(() => {
       this.comments.delete(commentId);
@@ -441,30 +584,42 @@ export class CommentStore implements ICommentStore {
     });
 
     runInAction(() => {
-      const comment = this.comments.get(commentId);
+      const comment = this.getCommentInstance(commentId);
       if (comment) {
         comment.page_comment_reactions = comment.page_comment_reactions.filter((r) => r.reaction !== reaction);
       }
     });
   };
 
-  updateComment = async (commentId: string, data: Partial<TPageComment>): Promise<TPageComment> => {
-    const { pageId, config } = this.getPageContext();
+  getCommentInstance = (commentId: string): TCommentInstance | undefined => this.comments.get(commentId);
 
-    const updatedComment = await this.commentService.update({
-      pageId,
-      commentId,
-      data,
-      config,
-    });
+  updateComment = async (commentId: string, data: Partial<TPageComment>): Promise<void> => {
+    const { pageId, config } = this.getPageContext();
+    const commentInstance = this.getCommentInstance(commentId);
+    const oldValues = commentInstance?.asJSON;
+
+    if (!commentInstance) {
+      throw new Error(`Comment with ID ${commentId} not found`);
+    }
 
     runInAction(() => {
-      const comment = this.comments.get(commentId);
-      if (comment) {
-        comment.updateProperties(updatedComment);
-      }
+      commentInstance.updateProperties(data);
     });
 
-    return updatedComment;
+    await this.commentService
+      .update({
+        pageId,
+        commentId,
+        data,
+        config,
+      })
+      .catch((error) => {
+        runInAction(() => {
+          if (oldValues) {
+            commentInstance.updateProperties(oldValues);
+          }
+        });
+        throw error;
+      });
   };
 }

@@ -45,4 +45,7 @@ export type TExtendedEditorRefApi = {
   setCommentMark: (params: { commentId: string; from: number; to: number }) => void;
   resolveCommentMark: (commentId: string) => void;
   unresolveCommentMark: (commentId: string) => void;
+  hoverCommentMarks: (commentIds: string[]) => void;
+  selectCommentMark: (commentId: string | null) => void;
+  scrollToCommentMark: (commentId: string) => void;
 };

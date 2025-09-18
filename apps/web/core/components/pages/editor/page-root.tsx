@@ -12,16 +12,12 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
-import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks";
+import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import {
-  PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
-  PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
-  PageNavigationPaneRoot,
-} from "../navigation-pane";
+import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
 import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
@@ -99,11 +95,16 @@ export const PageRoot = observer((props: TPageRootProps) => {
   }, [isContentEditable, setEditorRef]);
 
   // Get extensions and navigation logic from hook
-  const { editorExtensionHandlers, navigationPaneExtensions, handleOpenNavigationPane, isNavigationPaneOpen } =
-    usePagesPaneExtensions({
-      page,
-      editorRef,
-    });
+  const {
+    editorExtensionHandlers,
+    navigationPaneExtensions,
+    handleOpenNavigationPane,
+    handleCloseNavigationPane,
+    isNavigationPaneOpen,
+  } = usePagesPaneExtensions({
+    page,
+    editorRef,
+  });
 
   // Get extended editor extensions configuration
   const extendedEditorProps = useExtendedEditorProps({
@@ -144,13 +145,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     },
     [setEditorRef]
   );
-
-  const handleCloseNavigationPane = useCallback(() => {
-    const updatedRoute = updateQueryParams({
-      paramsToRemove: [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM, PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
-    });
-    router.push(updatedRoute);
-  }, [router, updateQueryParams]);
 
   return (
     <div className="relative size-full overflow-hidden flex transition-all duration-300 ease-in-out">

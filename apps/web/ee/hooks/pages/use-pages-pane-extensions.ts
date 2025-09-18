@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState, type RefObject } from "react";
 import { useSearchParams } from "next/navigation";
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi, TCommentClickPayload } from "@plane/editor";
 import {
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_TAB_KEYS,
+  PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
 } from "@/components/pages/navigation-pane";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -40,8 +41,8 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
 
   // Comment-specific callbacks - all contained within hook
   const onCommentClick = useCallback(
-    (commentId: string) => {
-      setSelectedCommentId(commentId);
+    (payload: TCommentClickPayload, _referenceTextParagraph?: string) => {
+      setSelectedCommentId(payload.primaryCommentId);
 
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "comments" },
@@ -53,6 +54,10 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
 
   const onPendingCommentCancel = useCallback(() => {
     setPendingComment(undefined);
+  }, []);
+
+  const onSelectedThreadConsumed = useCallback(() => {
+    setSelectedCommentId(undefined);
   }, []);
 
   const onCreateCommentMark = useCallback(
@@ -101,6 +106,15 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
     router.push(updatedRoute);
   }, [router, updateQueryParams]);
 
+  const handleCloseNavigationPane = useCallback(() => {
+    const updatedRoute = updateQueryParams({
+      paramsToRemove: [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM, PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
+    });
+    router.push(updatedRoute);
+    setSelectedCommentId(undefined);
+    setPendingComment(undefined);
+  }, [router, updateQueryParams]);
+
   // Editor extension handlers map - directly consumable by PageEditorBody
   const editorExtensionHandlers: Map<string, unknown> = useMemo(() => {
     const map: Map<string, unknown> = new Map();
@@ -138,6 +152,7 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
         selectedCommentId,
         pendingComment,
         onPendingCommentCancel,
+        onSelectedThreadConsumed,
         onClick: onCommentClick,
         onDelete: page.comments.deleteComment,
         onRestore: page.comments.restoreComment,
@@ -156,5 +171,6 @@ export const usePagesPaneExtensions = (params: TPageExtensionHookParams) => {
     navigationPaneExtensions,
     handleOpenNavigationPane,
     isNavigationPaneOpen,
+    handleCloseNavigationPane,
   };
 };

@@ -3,6 +3,8 @@ import { FileText, Paperclip } from "lucide-react";
 // ce imports
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
+// ce imports
+import { TDocumentEditorAdditionalExtensionsProps, TDocumentEditorAdditionalExtensionsRegistry } from "@/ce/extensions";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } from "@/extensions";
 // helpers
@@ -11,10 +13,6 @@ import { insertPageEmbed } from "@/helpers/editor-commands";
 import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
 // types
 import { TExtensions } from "@/types";
-import {
-  TDocumentEditorAdditionalExtensionsProps,
-  TDocumentEditorAdditionalExtensionsRegistry,
-} from "src/ce/extensions";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";

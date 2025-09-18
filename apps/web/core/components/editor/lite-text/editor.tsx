@@ -17,6 +17,7 @@ import { useUserProfile } from "@/hooks/store/use-user-profile";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import { LiteToolbar } from "./lite-toolbar";
 const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
@@ -32,7 +33,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
-  showToolbar?: boolean;
+  variant?: "full" | "lite" | "none";
   issue_id?: string;
   parentClassName?: string;
   editorClassName?: string;
@@ -61,7 +62,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     showToolbarInitially = true,
-    showToolbar = true,
+    variant = "full",
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
@@ -69,7 +70,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     ...rest
   } = props;
   // states
-  const [isFocused, setIsFocused] = useState(showToolbarInitially);
+  const isLiteVariant = variant === "lite";
+  const isFullVariant = variant === "full";
+  const [isFocused, setIsFocused] = useState(isFullVariant ? showToolbarInitially : true);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -101,46 +104,71 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       className={cn(
         "relative border border-custom-border-200 rounded",
         {
-          "p-3": editable,
+          "p-3": editable && !isLiteVariant,
         },
         parentClassName
       )}
-      onFocus={() => !showToolbarInitially && setIsFocused(true)}
-      onBlur={() => !showToolbarInitially && setIsFocused(false)}
+      onFocus={() => isFullVariant && !showToolbarInitially && setIsFocused(true)}
+      onBlur={() => isFullVariant && !showToolbarInitially && setIsFocused(false)}
     >
-      <LiteTextEditorWithRef
-        ref={ref}
-        disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
-        editable={editable}
-        flaggedExtensions={liteTextEditorExtensions.flagged}
-        fileHandler={getEditorFileHandlers({
-          projectId,
-          uploadFile: editable ? props.uploadFile : async () => "",
-          workspaceId,
-          workspaceSlug,
-        })}
-        mentionHandler={{
-          searchCallback: async (query) => {
-            const res = await fetchMentions(query);
-            if (!res) throw new Error("Failed in fetching mentions");
-            return res;
-          },
-          renderComponent: EditorMentionsRoot,
-          getMentionedEntityDetails: (id) => ({
-            display_name: getUserDetails(id)?.display_name ?? "",
-          }),
-        }}
-        placeholder={placeholder}
-        containerClassName={cn(containerClassName, "relative", {
-          "p-2": !editable,
-        })}
-        extendedEditorProps={{
-          isSmoothCursorEnabled: is_smooth_cursor_enabled,
-        }}
-        editorClassName={editorClassName}
-        {...rest}
-      />
-      {showToolbar && editable && (
+      {/* Wrapper for lite toolbar layout */}
+      <div className={cn(isLiteVariant && editable ? "flex items-end gap-1" : "")}>
+        {/* Main Editor - always rendered once */}
+        <div className={cn(isLiteVariant && editable ? "flex-1 min-w-0" : "")}>
+          <LiteTextEditorWithRef
+            ref={ref}
+            disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+            editable={editable}
+            flaggedExtensions={liteTextEditorExtensions.flagged}
+            fileHandler={getEditorFileHandlers({
+              projectId,
+              uploadFile: editable ? props.uploadFile : async () => "",
+              workspaceId,
+              workspaceSlug,
+            })}
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: EditorMentionsRoot,
+              getMentionedEntityDetails: (id) => ({
+                display_name: getUserDetails(id)?.display_name ?? "",
+              }),
+            }}
+            placeholder={placeholder}
+            containerClassName={cn(containerClassName, "relative", {
+              "p-2": !editable,
+            })}
+            extendedEditorProps={{
+              isSmoothCursorEnabled: is_smooth_cursor_enabled,
+            }}
+            editorClassName={editorClassName}
+            {...rest}
+          />
+        </div>
+
+        {/* Lite Toolbar - conditionally rendered */}
+        {isLiteVariant && editable && (
+          <LiteToolbar
+            executeCommand={(item) => {
+              // TODO: update this while toolbar homogenization
+              // @ts-expect-error type mismatch here
+              editorRef?.executeMenuItemCommand({
+                itemKey: item.itemKey,
+                ...item.extraProps,
+              });
+            }}
+            onSubmit={(e) => rest.onEnterKeyPress?.(e)}
+            isSubmitting={isSubmitting}
+            isEmpty={isEmpty}
+          />
+        )}
+      </div>
+
+      {/* Full Toolbar - conditionally rendered */}
+      {isFullVariant && editable && (
         <div
           className={cn(
             "transition-all duration-300 ease-out origin-top overflow-hidden",

@@ -13,8 +13,14 @@ export const PageCommentsNavigationExtension: INavigationPaneExtensionComponent 
   const { workspaceSlug } = useParams();
 
   // Extract comments-specific data from extensionData
-  const { selectedCommentId, pendingComment, onPendingCommentCancel, onStartNewComment, onCreateCommentMark } =
-    extensionData || {};
+  const {
+    selectedCommentId,
+    pendingComment,
+    onPendingCommentCancel,
+    onStartNewComment,
+    onCreateCommentMark,
+    onSelectedThreadConsumed,
+  } = extensionData || {};
 
   // Store the ThreadsSidebar's registered handler
   const [registeredHandler, setRegisteredHandler] = useState<
@@ -48,6 +54,7 @@ export const PageCommentsNavigationExtension: INavigationPaneExtensionComponent 
         onPendingCommentCancel: onPendingCommentCancel,
         onRegisterStartNewComment: handleRegisterStartNewComment,
         onCreateCommentMark: onCreateCommentMark,
+        onSelectedThreadConsumed,
       }}
     />
   );

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
+import { commentInteractionPluginKey } from "./plugins";
 import { ECommentAttributeNames, TCommentMarkAttributes } from "./types";
 
 declare module "@tiptap/core" {
@@ -13,6 +14,8 @@ declare module "@tiptap/core" {
       removeComment: (commentId: string) => ReturnType;
       resolveComment: (commentId: string) => ReturnType;
       unresolveComment: (commentId: string) => ReturnType;
+      hoverComments: (commentIds: string[]) => ReturnType;
+      selectComment: (commentId: string | null) => ReturnType;
     };
   }
 }
@@ -115,6 +118,30 @@ export const commentMarkCommands = (markType: MarkType): Partial<RawCommands> =>
         commands.setMark(markType.name, range.attrs);
       });
 
+      return true;
+    },
+
+  hoverComments:
+    (commentIds: string[]) =>
+    ({ tr, dispatch }) => {
+      if (!dispatch) {
+        return true;
+      }
+
+      const sanitizedIds = Array.from(new Set(commentIds.filter((id) => typeof id === "string" && id.length > 0)));
+
+      dispatch(tr.setMeta(commentInteractionPluginKey, { hovered: sanitizedIds }));
+      return true;
+    },
+
+  selectComment:
+    (commentId: string | null) =>
+    ({ tr, dispatch }) => {
+      if (!dispatch) {
+        return true;
+      }
+
+      dispatch(tr.setMeta(commentInteractionPluginKey, { selected: commentId }));
       return true;
     },
 });

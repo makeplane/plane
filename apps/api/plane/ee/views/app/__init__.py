@@ -61,4 +61,5 @@ from plane.ee.views.app.page import (
     WorkspacePageCommentReactionViewSet,
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
+    WorkspacePageLiveServerEndpoint,
 )

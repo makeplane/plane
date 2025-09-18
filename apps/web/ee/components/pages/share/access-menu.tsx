@@ -1,11 +1,12 @@
 "use client";
 
 import { memo } from "react";
-import { ChevronDown, Trash2, Eye, Pencil, Check } from "lucide-react";
+import { ChevronDown, Trash2, Eye, Pencil, Check, MessageSquareText } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 
 const ACCESS_OPTIONS = [
   { value: "0", label: "View", icon: Eye },
+  { value: "1", label: "Comment", icon: MessageSquareText },
   { value: "2", label: "Edit", icon: Pencil },
 ];
 

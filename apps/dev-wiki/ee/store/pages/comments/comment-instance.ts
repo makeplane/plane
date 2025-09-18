@@ -14,6 +14,7 @@ export type TCommentInstance = TPageComment & {
   // computed properties
   isRootComment: boolean;
   hasReplies: boolean;
+  asJSON: TPageComment;
   childComments: TCommentInstance[];
   threadComments: TCommentInstance[]; // all comments in this thread (parent + children)
 
@@ -118,6 +119,7 @@ export class CommentInstance implements TCommentInstance {
       reference_stripped: observable.ref,
 
       // computed
+      asJSON: computed,
       isRootComment: computed,
       hasReplies: computed,
       childComments: computed,
@@ -126,6 +128,37 @@ export class CommentInstance implements TCommentInstance {
       // actions
       updateProperties: action,
     });
+  }
+
+  get asJSON() {
+    return {
+      id: this.id,
+      workspace: this.workspace,
+      workspace_detail: this.workspace_detail,
+      page: this.page,
+      project: this.project,
+      actor: this.actor,
+      actor_detail: this.actor_detail,
+      comment_stripped: this.comment_stripped,
+      description: this.description,
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+      created_by: this.created_by,
+      updated_by: this.updated_by,
+      parent: this.parent,
+      parent_id: this.parent_id,
+      page_comment_reactions: this.page_comment_reactions,
+      is_resolved: this.is_resolved,
+      resolved_at: this.resolved_at,
+      resolved_by: this.resolved_by,
+      node_id: this.node_id,
+      external_id: this.external_id,
+      external_source: this.external_source,
+      replies: this.replies,
+      reactions: this.reactions,
+      total_replies: this.total_replies,
+      reference_stripped: this.reference_stripped,
+    };
   }
 
   // Computed properties

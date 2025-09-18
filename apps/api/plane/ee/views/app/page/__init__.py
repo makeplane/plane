@@ -14,6 +14,7 @@ from .workspace.share import WorkspacePageUserViewSet
 from .workspace.comment import (
     WorkspacePageCommentViewSet,
     WorkspacePageCommentReactionViewSet,
+    WorkspacePageLiveServerEndpoint,
 )
 
 # project level
