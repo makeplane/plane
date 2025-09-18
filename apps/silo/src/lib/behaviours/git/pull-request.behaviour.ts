@@ -26,6 +26,8 @@ import { Either, left, right } from "@/types/either";
 export class PullRequestBehaviour {
   // projectId and PR state map
   private readonly projectIdToPRStateMap: Record<string, Record<string, { id: string; name: string }>>;
+  private readonly commentPrefix: string;
+  private readonly oldCommentPrefix: string;
   constructor(
     // Identifiers
     private readonly providerName: string,
@@ -39,6 +41,8 @@ export class PullRequestBehaviour {
     private readonly entityConnections: ReturnType<typeof verifyEntityConnections>
   ) {
     this.projectIdToPRStateMap = this.getProjectIdToPRStateMap();
+    this.commentPrefix = `Linked to Plane Work Item(s)`;
+    this.oldCommentPrefix = `Pull Request Linked with Plane`;
   }
 
   /**
@@ -301,8 +305,8 @@ export class PullRequestBehaviour {
    * @param prefix - The prefix
    * @returns The existing comment
    */
-  protected findExistingComment(comments: IGitComment[], prefix: string): IGitComment | undefined {
-    return comments.find((comment) => comment.body.startsWith(prefix));
+  protected findExistingComment(comments: IGitComment[], prefix: string, oldPrefix: string): IGitComment | undefined {
+    return comments.find((comment) => comment.body.startsWith(prefix) || comment.body.startsWith(oldPrefix));
   }
 
   /**
@@ -311,8 +315,7 @@ export class PullRequestBehaviour {
    * @returns The existing comment
    */
   private findExistingPlaneComment(comments: IGitComment[]): IGitComment | undefined {
-    const commentPrefix = `Pull Request Linked with Plane`;
-    return this.findExistingComment(comments, commentPrefix);
+    return this.findExistingComment(comments, this.commentPrefix, this.oldCommentPrefix);
   }
 
   /**
@@ -355,8 +358,7 @@ export class PullRequestBehaviour {
   }
 
   private generateCommentBody(issues: IssueWithReference[], nonClosingReferences: IssueReference[]): string {
-    const commentPrefix = `Linked to Plane Work Item(s)`;
-    let body = `${commentPrefix}\n\n`;
+    let body = `${this.commentPrefix}\n\n`;
 
     const { closingIssues, nonClosingIssues } = this.categorizeIssues(issues, nonClosingReferences);
 
