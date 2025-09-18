@@ -62,9 +62,6 @@ const DataCard = (props: TDataCardProps) => {
               <span className="flex items-baseline text-custom-text-200 justify-center">
                 <span className="font-semibold">{progress}%</span>
               </span>
-              <div className="text-custom-text-350 font-semibold text-sm">
-                {completed}/{total}
-              </div>
             </div>
           </div>
           <div className="flex-1 flex flex-col gap-3">
