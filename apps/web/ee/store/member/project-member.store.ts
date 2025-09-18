@@ -7,7 +7,7 @@ import { getHighestRole } from "@plane/utils";
 import { RootStore } from "@/plane-web/store/root.store";
 // store
 import { IMemberRootStore } from "@/store/member";
-import { BaseProjectMemberStore, IBaseProjectMemberStore } from "@/store/member/base-project-member.store";
+import { BaseProjectMemberStore, IBaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
 
 export type IProjectMemberStore = IBaseProjectMemberStore;
 
