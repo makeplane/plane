@@ -17,7 +17,7 @@ from plane.db.models import Page, UserFavorite
 from plane.ee.models import PageUser
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.types.page import PageType
+from plane.graphql.types.pages import PageType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 

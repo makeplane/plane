@@ -9,8 +9,8 @@ from strawberry.exceptions import GraphQLError
 from plane.db.models import Project, ProjectMember
 
 
-@sync_to_async
-def get_project(workspace_slug: str, project_id: str):
+# Get project
+def _get_project(workspace_slug: str, project_id: str):
     """
     Get the project for the given project id
     """
@@ -20,6 +20,14 @@ def get_project(workspace_slug: str, project_id: str):
         message = "Project not found"
         error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
         raise GraphQLError(message, extensions=error_extensions)
+
+
+@sync_to_async
+def get_project(workspace_slug: str, project_id: str):
+    """
+    Get the project for the given project id
+    """
+    return _get_project(workspace_slug=workspace_slug, project_id=project_id)
 
 
 @sync_to_async

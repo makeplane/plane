@@ -5,7 +5,7 @@ import strawberry
 from .cycle import CycleLiteType
 from .issues.base import IssueLiteType
 from .module import ModuleLiteType
-from .page import PageLiteType
+from .pages import PageLiteType
 from .project import ProjectLiteType
 
 

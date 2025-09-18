@@ -12,6 +12,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.graphql.helpers import (
+    get_intake_stats_async,
     get_intake_work_item_async,
     get_intake_work_items_async,
     get_project,
@@ -23,6 +24,7 @@ from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.intake.base import (
     IntakeCountType,
+    IntakeStatsType,
     IntakeWorkItemType,
     IntakeWorkItemStatusType,
 )
@@ -109,6 +111,21 @@ class IntakeCountQuery:
 
         total_intake_work_items = len(intake_work_items)
         return IntakeCountType(total_intake_work_items=total_intake_work_items)
+
+
+@strawberry.type
+class IntakeStatsQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
+    )
+    async def intake_stats(
+        self, info: Info, slug: str, project: str, intake_work_item: str
+    ) -> IntakeStatsType:
+        stats = await get_intake_stats_async(
+            workspace_slug=slug, project_id=project, intake_work_item=intake_work_item
+        )
+
+        return stats
 
 
 @strawberry.type

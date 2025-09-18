@@ -72,6 +72,7 @@ class FeatureFlagsTypesEnum(Enum):
     EDITOR_ATTACHMENTS = "EDITOR_ATTACHMENTS"
     EDITOR_MATHEMATICS = "EDITOR_MATHEMATICS"
     EDITOR_EXTERNAL_EMBEDS = "EDITOR_EXTERNAL_EMBEDS"
+    PAGE_COMMENTS = "PAGE_COMMENTS"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -177,6 +178,7 @@ class FeatureFlagType:
     editor_attachments: bool
     editor_mathematics: bool
     editor_external_embeds: bool
+    page_comments: bool
 
     # Silo importers and integrations
     silo: bool

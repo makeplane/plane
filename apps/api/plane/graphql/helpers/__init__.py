@@ -1,6 +1,8 @@
 from .epics import (
     epic_base_query,
     get_epic,
+    get_epic_stats_count,
+    get_epic_stats_count_async,
     get_project_epic_type,
     get_project_epics,
     is_epic_feature_flagged,
@@ -10,6 +12,8 @@ from .feature_flag import feature_flagged
 from .intake import (
     get_intake,
     get_intake_async,
+    get_intake_stats,
+    get_intake_stats_async,
     get_intake_work_item,
     get_intake_work_item_async,
     get_intake_work_items,
@@ -23,8 +27,9 @@ from .intake import (
     project_intakes_settings,
     project_intakes_settings_async,
 )
+from .issues import get_issue_stats_count_async
 from .page import is_shared_page_feature_flagged, is_shared_page_feature_flagged_async
-from .project import get_project, get_project_member
+from .project import _get_project, get_project, get_project_member
 from .state import get_project_default_state
 from .teamspace import (
     is_teamspace_enabled,
@@ -48,4 +53,4 @@ from .workflow import (
     is_workflow_feature_flagged,
     is_workflow_update_allowed,
 )
-from .workspace import get_workspace
+from .workspace import _get_workspace, get_workspace

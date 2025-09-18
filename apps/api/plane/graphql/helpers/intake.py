@@ -14,9 +14,22 @@ from strawberry.exceptions import GraphQLError
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import Intake, IntakeIssue, Project
+from plane.db.models import (
+    Intake,
+    IntakeIssue,
+    Issue,
+    IssueLink,
+    IssueRelation,
+    Project,
+    FileAsset,
+)
 from plane.ee.models import IntakeSetting
-from plane.graphql.types.intake.base import IntakeSettingsType, IntakeWorkItemStatusType
+from plane.graphql.types.intake.base import (
+    IntakeSettingsType,
+    IntakeStatsType,
+    IntakeWorkItemStatusType,
+)
+from plane.graphql.types.asset import FileAssetEntityType
 
 
 # ====== check if the intake is enabled for the project ======
@@ -143,6 +156,46 @@ def is_project_settings_enabled_by_settings_key_async(
         project_id=project_id,
         settings_key=settings_key,
         raise_exception=raise_exception,
+    )
+
+
+# ====== get the intake stats ======
+def get_intake_stats(workspace_slug: str, project_id: str, intake_work_item: str):
+    intake_work_item: IntakeIssue | None = IntakeIssue.objects.filter(
+        workspace__slug=workspace_slug,
+        project_id=project_id,
+        id=intake_work_item,
+    ).first()
+
+    if intake_work_item is None:
+        return IntakeStatsType()
+
+    workitem_id = intake_work_item.issue_id
+
+    attachments_count = FileAsset.objects.filter(
+        entity_type=FileAssetEntityType.ISSUE_ATTACHMENT.value,
+        issue_id=workitem_id,
+    ).count()
+    relations_count = IssueRelation.objects.filter(
+        Q(issue_id=workitem_id) | Q(related_issue_id=workitem_id)
+    ).count()
+    sub_work_items_count = Issue.objects.filter(parent_id=workitem_id).count()
+    links_count = IssueLink.objects.filter(issue_id=workitem_id).count()
+
+    return IntakeStatsType(
+        attachments=attachments_count,
+        relations=relations_count,
+        sub_work_items=sub_work_items_count,
+        links=links_count,
+    )
+
+
+@sync_to_async
+def get_intake_stats_async(workspace_slug: str, project_id: str, intake_work_item: str):
+    return get_intake_stats(
+        workspace_slug=workspace_slug,
+        project_id=project_id,
+        intake_work_item=intake_work_item,
     )
 
 

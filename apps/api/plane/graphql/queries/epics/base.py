@@ -13,15 +13,16 @@ from strawberry.types import Info
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers import (
     get_epic,
+    get_epic_stats_count_async,
     get_project_epics,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.epics.base import EpicCountType, EpicType
+from plane.graphql.types.epics.base import EpicCountType, EpicStatsType, EpicType
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.work_item_filters import work_item_filters
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.work_item_filters import work_item_filters
 
 
 @strawberry.type
@@ -46,6 +47,29 @@ class EpicCountQuery:
         total_epics = len(epics)
 
         return EpicCountType(total_epics=total_epics)
+
+
+@strawberry.type
+class EpicStatsQuery:
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    )
+    async def epic_stats(
+        self, info: Info, slug: str, project: str, epic: str
+    ) -> EpicStatsType:
+        user = info.context.user
+        user_id = str(user.id)
+
+        # Check if the epic feature flag is enabled for the workspace
+        await is_epic_feature_flagged(user_id=user_id, workspace_slug=slug)
+
+        # check if the epic is enabled for the project
+        await is_project_epics_enabled(workspace_slug=slug, project_id=project)
+
+        stats = await get_epic_stats_count_async(
+            workspace_slug=slug, project_id=project, epic=epic
+        )
+        return stats
 
 
 @strawberry.type

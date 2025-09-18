@@ -176,6 +176,9 @@ class FeatureFlagQuery:
             editor_external_embeds=feature_flags.get(
                 FeatureFlagsTypesEnum.EDITOR_EXTERNAL_EMBEDS.value, False
             ),
+            page_comments=feature_flags.get(
+                FeatureFlagsTypesEnum.PAGE_COMMENTS.value, False
+            ),
             # Silo importers and integrations
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(

@@ -21,7 +21,7 @@ from plane.graphql.permissions.workspace import (
     WorkspaceSharedPagePermission,
 )
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
-from plane.graphql.types.page import PageType
+from plane.graphql.types.pages import PageType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.paginator import paginate

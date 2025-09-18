@@ -14,7 +14,7 @@ from plane.db.models import Page
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.permissions.workspace import WorkspacePermission
-from plane.graphql.types.page import NestedParentPageLiteType
+from plane.graphql.types.pages import NestedParentPageLiteType
 from plane.graphql.utils.page_descendants import (
     get_all_parent_ids,
     get_descendant_page_ids,

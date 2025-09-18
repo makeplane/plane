@@ -23,6 +23,15 @@ from plane.graphql.utils.timezone import user_timezone_converter
 from plane.graphql.utils.work_item import get_all_related_work_items
 
 
+# Issue Stats Type
+@strawberry.type
+class IssueStatsType:
+    attachments: int = 0
+    relations: int = 0
+    sub_work_items: int = 0
+    links: int = 0
+
+
 @strawberry.input
 @dataclass
 class IssueCreateInputType:

@@ -6,8 +6,7 @@ from strawberry.exceptions import GraphQLError
 from plane.db.models import Workspace
 
 
-@sync_to_async
-def get_workspace(workspace_slug: str):
+def _get_workspace(workspace_slug: str):
     """
     Get the workspace for the given workspace slug
     """
@@ -17,3 +16,8 @@ def get_workspace(workspace_slug: str):
         message = "Workspace not found"
         error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
         raise GraphQLError(message, extensions=error_extensions)
+
+
+@sync_to_async
+def get_workspace(workspace_slug: str):
+    return _get_workspace(workspace_slug=workspace_slug)

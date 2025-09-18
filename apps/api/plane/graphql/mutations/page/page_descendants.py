@@ -19,7 +19,7 @@ from plane.graphql.permissions.project import ProjectPermission
 from plane.ee.utils.page_events import PageAction
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
-from plane.graphql.types.page import NestedParentPageLiteType
+from plane.graphql.types.pages import NestedParentPageLiteType
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 from plane.graphql.utils.page_descendants import get_descendant_page_ids
 

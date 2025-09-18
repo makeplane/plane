@@ -51,6 +51,14 @@ class IntakeCountType:
     total_intake_work_items: Optional[int] = field(default_factory=lambda: None)
 
 
+@strawberry.type
+class IntakeStatsType:
+    attachments: int = 0
+    relations: int = 0
+    sub_work_items: int = 0
+    links: int = 0
+
+
 # Intake Types
 @strawberry.input
 @dataclass

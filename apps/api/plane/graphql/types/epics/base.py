@@ -26,6 +26,15 @@ class EpicCountType:
     total_epics: Optional[int] = field(default_factory=lambda: None)
 
 
+# Epic Stats Type
+@strawberry.type
+class EpicStatsType:
+    attachments: int = 0
+    relations: int = 0
+    sub_work_items: int = 0
+    links: int = 0
+
+
 # Epic Types
 @strawberry.input
 @dataclass

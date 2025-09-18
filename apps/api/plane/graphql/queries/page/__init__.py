@@ -1,8 +1,9 @@
+from .comment import ProjectPageCommentsQuery, WorkspacePageCommentsQuery
 from .page_descendants import (
-    WorkspaceNestedParentPagesQuery,
+    NestedChildPagesQuery,
     NestedParentPagesQuery,
     WorkspaceNestedChildPagesQuery,
-    NestedChildPagesQuery,
+    WorkspaceNestedParentPagesQuery,
 )
 from .project import PageQuery
 from .user import UserPageQuery

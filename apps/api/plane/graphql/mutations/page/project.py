@@ -14,7 +14,7 @@ from strawberry.types import Info
 # Module imports
 from plane.db.models import Page, Project, ProjectPage, Workspace
 from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
-from plane.graphql.types.page import PageType
+from plane.graphql.types.pages import PageType
 from plane.graphql.utils.roles import Roles
 
 

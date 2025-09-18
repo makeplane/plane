@@ -38,7 +38,7 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.cycle import CycleLiteType
 from plane.graphql.types.issues.base import IssueLiteType
 from plane.graphql.types.module import ModuleLiteType
-from plane.graphql.types.page import PageLiteType
+from plane.graphql.types.pages import PageLiteType
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.search import GlobalSearchType
 

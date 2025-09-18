@@ -1,3 +1,9 @@
+from .comment import (
+    ProjectPageCommentReactionsMutation,
+    ProjectPageCommentsMutation,
+    WorkspacePageCommentReactionsMutation,
+    WorkspacePageCommentsMutation,
+)
 from .favorite import PageFavoriteMutation
 from .page_descendants import (
     NestedChildArchivePageMutation,

@@ -61,9 +61,13 @@ from .mutations.page import (
     NestedChildRestorePageMutation,
     PageFavoriteMutation,
     PageMutation,
+    ProjectPageCommentReactionsMutation,
+    ProjectPageCommentsMutation,
     WorkspaceNestedChildArchivePageMutation,
     WorkspaceNestedChildDeletePageMutation,
     WorkspaceNestedChildRestorePageMutation,
+    WorkspacePageCommentReactionsMutation,
+    WorkspacePageCommentsMutation,
     WorkspacePageMutation,
 )
 from .mutations.project import (
@@ -99,6 +103,7 @@ from .queries.epics import (
     EpicLinkQuery,
     EpicQuery,
     EpicRelationQuery,
+    EpicStatsQuery,
     EpicUserPropertyQuery,
     EpicWorkItemsQuery,
 )
@@ -109,6 +114,7 @@ from .queries.instance import InstanceQuery
 from .queries.intake import (
     IntakeCountQuery,
     IntakeSearchQuery,
+    IntakeStatsQuery,
     IntakeWorkItemActivityQuery,
     IntakeWorkItemAttachmentQuery,
     IntakeWorkItemCommentQuery,
@@ -130,6 +136,7 @@ from .queries.issues import (
     IssueRelationQuery,
     IssueShortenedMetaInfoQuery,
     IssuesSearchQuery,
+    IssueStatsQuery,
     SubIssuesQuery,
     WorkItemCommentReactionQuery,
 )
@@ -145,9 +152,11 @@ from .queries.page import (
     NestedChildPagesQuery,
     NestedParentPagesQuery,
     PageQuery,
+    ProjectPageCommentsQuery,
     UserPageQuery,
     WorkspaceNestedChildPagesQuery,
     WorkspaceNestedParentPagesQuery,
+    WorkspacePageCommentsQuery,
     WorkspacePageQuery,
 )
 from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
@@ -237,6 +246,7 @@ class Query(
     IssueRelationQuery,
     IssuesSearchQuery,
     WorkItemCommentReactionQuery,
+    IssueStatsQuery,
     # workitem type
     IssueTypesTypeQuery,
     # label
@@ -265,6 +275,8 @@ class Query(
     PageQuery,
     NestedParentPagesQuery,
     NestedChildPagesQuery,
+    ProjectPageCommentsQuery,
+    WorkspacePageCommentsQuery,
     # epics
     EpicUserPropertyQuery,
     EpicCountQuery,
@@ -276,6 +288,7 @@ class Query(
     EpicActivityQuery,
     EpicCommentQuery,
     EpicCommentReactionQuery,
+    EpicStatsQuery,
     # sticky
     WorkspaceStickiesQuery,
     # teamspace
@@ -288,6 +301,7 @@ class Query(
     IntakeWorkItemCommentReactionQuery,
     IntakeWorkItemAttachmentQuery,
     IntakeSearchQuery,
+    IntakeStatsQuery,
     # catch up
     CatchUpQuery,
 ):
@@ -356,6 +370,10 @@ class Mutation(
     NestedChildRestorePageMutation,
     WorkspaceNestedChildDeletePageMutation,
     NestedChildDeletePageMutation,
+    ProjectPageCommentsMutation,
+    ProjectPageCommentReactionsMutation,
+    WorkspacePageCommentsMutation,
+    WorkspacePageCommentReactionsMutation,
     # epics
     EpicUserPropertyMutation,
     EpicMutation,
