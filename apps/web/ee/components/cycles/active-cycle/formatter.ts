@@ -3,8 +3,17 @@ import { isEmpty, orderBy, uniqBy } from "lodash";
 import { EEstimateSystem, ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
 import { findTotalDaysInRange, generateDateArray } from "@plane/utils";
 
-const scope = (p: any, isTypeIssue: boolean, toHoursHandler: (value: number) => number) =>
-  isTypeIssue ? p.total_issues : toHoursHandler(p.total_estimate_points);
+const scope = (p: Record<string, number>, isTypeIssue: boolean, toHoursHandler: (value: number) => number) => {
+  if (isTypeIssue) {
+    // Exclude cancelled issues from total for consistent progress calculation
+    const total = (p.total_issues || 0) - (p.cancelled_issues || 0);
+    return Math.max(0, total);
+  } else {
+    // Exclude cancelled estimate points from total for consistent progress calculation
+    const total = toHoursHandler(p.total_estimate_points || 0) - toHoursHandler(p.cancelled_estimate_points || 0);
+    return Math.max(0, total);
+  }
+};
 const ideal = (date: string, scope: number, cycle: ICycle) => {
   const totalDays = findTotalDaysInRange(cycle.start_date, cycle.end_date) || 0;
   const currentDayIndex = totalDays - (findTotalDaysInRange(date, cycle.end_date) || 0);
@@ -25,7 +34,12 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
   let progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
     const pending = data.completion_chart[p] || 0;
-    const total = (isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0;
+    // Use adjusted total that excludes cancelled issues for consistent progress
+    const total = Math.max(
+      0,
+      ((isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0) -
+        ((isTypeIssue ? cycle.cancelled_issues : cycle.cancelled_estimate_points) || 0)
+    );
     const completed = total - pending;
     const idealDone = ideal(p, total, cycle) || 0;
 
@@ -111,7 +125,7 @@ const formatV2Data = (
       unstarted: isTypeIssue ? p.unstarted_issues : toHoursHandler(p.unstarted_estimate_points),
       cancelled: isTypeIssue ? p.cancelled_issues : toHoursHandler(p.cancelled_estimate_points),
       pending: Math.abs(pending),
-      ideal: dataDate! <= cycle.end_date! ? (isBurnDown ? computedScope - idealDone : idealDone) : null,
+      ideal: dataDate! <= cycle.end_date! ? (isBurnDown ? (computedScope || 0) - idealDone : idealDone) : null,
       actual: dataDate! <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
