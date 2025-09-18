@@ -1,10 +1,20 @@
 // plane imports
-import { TFilterAndGroupNode, TFilterExpression, TFilterGroupNode, TFilterProperty } from "@plane/types";
+import {
+  TFilterAndGroupNode,
+  TFilterExpression,
+  TFilterGroupNode,
+  TFilterNotGroupNode,
+  TFilterOrGroupNode,
+  TFilterProperty,
+} from "@plane/types";
 // local imports
 import { getAndGroupChildren, isAndGroupNode } from "./core";
+import { getNotGroupChild, getOrGroupChildren, isNotGroupNode, isOrGroupNode } from "./extended";
 
 type TProcessGroupNodeHandlers<P extends TFilterProperty, T> = {
+  onNotGroup: (group: TFilterNotGroupNode<P>) => T;
   onAndGroup: (group: TFilterAndGroupNode<P>) => T;
+  onOrGroup: (group: TFilterOrGroupNode<P>) => T;
 };
 
 /**
@@ -17,8 +27,14 @@ export const processGroupNode = <P extends TFilterProperty, T>(
   group: TFilterGroupNode<P>,
   handlers: TProcessGroupNodeHandlers<P, T>
 ): T => {
+  if (isNotGroupNode(group)) {
+    return handlers.onNotGroup(group);
+  }
   if (isAndGroupNode(group)) {
     return handlers.onAndGroup(group);
+  }
+  if (isOrGroupNode(group)) {
+    return handlers.onOrGroup(group);
   }
   throw new Error(`Invalid group node: unknown logical operator ${group}`);
 };
@@ -31,5 +47,7 @@ export const processGroupNode = <P extends TFilterProperty, T>(
  */
 export const getGroupChildren = <P extends TFilterProperty>(group: TFilterGroupNode<P>): TFilterExpression<P>[] =>
   processGroupNode(group, {
+    onNotGroup: (notGroup) => [getNotGroupChild(notGroup)],
     onAndGroup: (andGroup) => getAndGroupChildren(andGroup),
+    onOrGroup: (orGroup) => getOrGroupChildren(orGroup),
   });

@@ -1,23 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useMemo } from "react";
 // types
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EDraftIssuePaginationType } from "@plane/constants";
+import { EDraftIssuePaginationType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   IssuePaginationOptions,
   TIssue,
-  TIssueKanbanFilters,
   TIssuesResponse,
   TLoader,
   TProfileViews,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
 import {
   useTeamIssueActions,
-  useTeamViewIssueActions,
   useTeamProjectWorkItemsActions,
+  useTeamViewIssueActions,
 } from "@/plane-web/helpers/issue-action-helper";
 import { useIssues } from "./store/use-issues";
 
@@ -37,8 +37,8 @@ export interface IssueActions {
   restoreIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   updateFilters: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 
@@ -146,11 +146,7 @@ const useProjectIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
     },
@@ -232,11 +228,7 @@ const useProjectEpicsActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
     },
@@ -332,11 +324,7 @@ const useCycleIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!cycleId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, cycleId);
     },
@@ -443,11 +431,7 @@ const useModuleIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!moduleId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, moduleId);
     },
@@ -529,11 +513,7 @@ const useProfileIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!userId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, userId);
     },
@@ -615,11 +595,7 @@ const useProjectViewIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!viewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, viewId);
     },
@@ -680,11 +656,7 @@ const useArchivedIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
     },
@@ -749,11 +721,7 @@ const useGlobalIssueActions = () => {
   );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!globalViewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, globalViewId);
     },
@@ -781,7 +749,7 @@ const useWorkspaceDraftIssueActions = () => {
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
+    async (loadType: TLoader, _options: IssuePaginationOptions) => {
       if (!workspaceSlug) return;
       return issues.fetchIssues(workspaceSlug.toString(), loadType, EDraftIssuePaginationType.INIT);
     },
@@ -824,12 +792,8 @@ const useWorkspaceDraftIssueActions = () => {
   // );
 
   const updateFilters = useCallback(
-    async (
-      projectId: string,
-      filterType: EIssueFilterType,
-      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
-    ) => {
-      filters = filters as IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties;
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      filters = filters as IIssueDisplayFilterOptions | IIssueDisplayProperties;
       if (!globalViewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, filterType, filters);
     },

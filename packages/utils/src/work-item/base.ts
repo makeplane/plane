@@ -4,15 +4,16 @@ import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  STATE_GROUPS,
-  TIssuePriorities,
   ISSUE_PRIORITY_FILTERS,
+  STATE_GROUPS,
   TIssueFilterPriorityObject,
+  TIssuePriorities,
 } from "@plane/constants";
 import {
+  EIssueLayoutTypes,
+  IGanttBlock,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IGanttBlock,
   TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
@@ -21,7 +22,6 @@ import {
   TStateGroups,
   TSubGroupedIssues,
   TUnGroupedIssues,
-  EIssueLayoutTypes,
 } from "@plane/types";
 // local imports
 import { orderArrayBy } from "../array";
@@ -111,25 +111,20 @@ export const handleIssueQueryParamsByLayout = (
     | "team_issues"
     | "team_project_work_items"
 ): TIssueParams[] | null => {
-  const queryParams: TIssueParams[] = [];
+  const queryParams: TIssueParams[] = ["filters"];
 
   if (!layout) return null;
 
-  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType][layout];
-
-  // add filters query params
-  layoutOptions.filters.forEach((option) => {
-    queryParams.push(option);
-  });
+  const currentViewLayoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType].layoutOptions[layout];
 
   // add display filters query params
-  Object.keys(layoutOptions.display_filters).forEach((option) => {
+  Object.keys(currentViewLayoutOptions.display_filters).forEach((option) => {
     queryParams.push(option as TIssueParams);
   });
 
   // add extra options query params
-  if (layoutOptions.extra_options.access) {
-    layoutOptions.extra_options.values.forEach((option) => {
+  if (currentViewLayoutOptions.extra_options.access) {
+    currentViewLayoutOptions.extra_options.values.forEach((option) => {
       queryParams.push(option);
     });
   }
@@ -276,7 +271,6 @@ export const getComputedDisplayFilters = (
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
   const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
-
   return {
     calendar: {
       show_weekends: filters?.calendar?.show_weekends || false,
@@ -286,7 +280,6 @@ export const getComputedDisplayFilters = (
     order_by: filters?.order_by || "sort_order",
     group_by: filters?.group_by || null,
     sub_group_by: filters?.sub_group_by || null,
-    type: filters?.type || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
   };
@@ -316,6 +309,8 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  customer_count: displayProperties.customer_count ?? true,
+  customer_request_count: displayProperties.customer_request_count ?? true,
 });
 
 /**
@@ -325,9 +320,11 @@ export const getComputedDisplayProperties = (
  */
 export const getIssuesShouldFallbackToServer = (queries: any) => {
   // If there is expand query and is not grouped then fallback to server
-  if (!isEmpty(queries.expand as string) && !queries.group_by) return true;
+  if (!isEmpty(queries?.expand as string) && !queries?.group_by) return true;
   // If query has mentions then fallback to server
-  if (!isEmpty(queries.mentions)) return true;
+  if (!isEmpty(queries?.mentions)) return true;
+  // If query has sub_issue as false then fallback to server
+  if (queries?.sub_issue === false) return true;
 
   return false;
 };
@@ -350,8 +347,8 @@ export const generateWorkItemLink = ({
   isEpic?: boolean;
 }): string => {
   const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };

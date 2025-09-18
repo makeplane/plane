@@ -4,7 +4,7 @@ import { ListFilter } from "lucide-react";
 // plane imports
 import { IFilterInstance } from "@plane/shared-state";
 import { LOGICAL_OPERATOR, TExternalFilter, TFilterProperty } from "@plane/types";
-import { CustomSearchSelect, getButtonStyling, TButtonVariant } from "@plane/ui";
+import { CustomSearchSelect, getButtonStyling, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
 import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
@@ -15,7 +15,7 @@ export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternal
     defaultOpen?: boolean;
     iconConfig?: {
       shouldShowIcon: boolean;
-      iconComponent?: React.ReactNode;
+      iconComponent?: React.ElementType;
     };
     isDisabled?: boolean;
   };
@@ -34,6 +34,8 @@ export const AddFilterButton = observer(
       iconConfig = { shouldShowIcon: true },
       isDisabled = false,
     } = buttonConfig || {};
+    // derived values
+    const FilterIcon = iconConfig.iconComponent || ListFilter;
 
     // Transform available filter configs to CustomSearchSelect options format
     const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
@@ -64,7 +66,7 @@ export const AddFilterButton = observer(
 
     const handleFilterSelect = (property: P) => {
       const config = filter.configManager.getConfigByProperty(property);
-      if (config && config.firstOperator) {
+      if (config?.firstOperator) {
         const { operator, isNegation } = getOperatorForPayload(config.firstOperator);
         filter.addCondition(
           LOGICAL_OPERATOR.AND,
@@ -76,6 +78,12 @@ export const AddFilterButton = observer(
           isNegation
         );
         onFilterSelect?.(property);
+      } else {
+        setToast({
+          title: "Filter configuration error",
+          message: "This filter is not properly configured and cannot be applied",
+          type: TOAST_TYPE.ERROR,
+        });
       }
     };
 
@@ -91,11 +99,10 @@ export const AddFilterButton = observer(
           maxHeight="full"
           placement="bottom-start"
           disabled={isDisabled}
-          customButtonClassName={cn(getButtonStyling(variant, "sm"), className)}
+          customButtonClassName={cn(getButtonStyling(variant, "sm"), "py-[5px]", className)}
           customButton={
             <div className="flex items-center gap-1">
-              {iconConfig.shouldShowIcon &&
-                (iconConfig.iconComponent || <ListFilter className="size-4 text-custom-text-200" />)}
+              {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
               {label}
             </div>
           }

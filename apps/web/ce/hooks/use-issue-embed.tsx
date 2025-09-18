@@ -12,7 +12,7 @@ export type TIssueEmbedHookProps = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const useIssueEmbed = (props: TIssueEmbedHookProps) => {
+export const useEditorEmbeds = (props: TIssueEmbedHookProps) => {
   const widgetCallback = () => <IssueEmbedUpgradeCard />;
 
   const issueEmbedProps: TEmbedConfig["issue"] = {

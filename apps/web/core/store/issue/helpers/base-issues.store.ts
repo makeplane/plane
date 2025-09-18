@@ -4,7 +4,6 @@ import get from "lodash/get";
 import indexOf from "lodash/indexOf";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
 import orderBy from "lodash/orderBy";
 import pull from "lodash/pull";
 import set from "lodash/set";
@@ -95,6 +94,8 @@ export interface IBaseIssuesStore {
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
+  addIssueToList: (issueId: string) => void;
+  removeIssueFromList: (issueId: string) => void;
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
@@ -178,6 +179,10 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-attachment_count": "attachment_count",
   sub_issues_count: "sub_issues_count",
   "-sub_issues_count": "sub_issues_count",
+  customer_count: "customer_ids",
+  "-customer_count": "customer_ids",
+  customer_request_count: "customer_request_ids",
+  "-customer_request_count": "customer_request_ids",
 };
 
 export abstract class BaseIssuesStore implements IBaseIssuesStore {

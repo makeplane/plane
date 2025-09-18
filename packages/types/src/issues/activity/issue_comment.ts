@@ -1,4 +1,4 @@
-import { JSONContent } from "../../editor";
+import type { JSONContent } from "../../editor";
 import { EIssueCommentAccessSpecifier } from "../../enums";
 import { TFileSignedURLResponse } from "../../file";
 import { IUserLite } from "../../users";

@@ -237,7 +237,7 @@ export function extractURLComponents(url: URL | string): IURLComponents | undefi
     }
 
     return undefined;
-  } catch (error) {
+  } catch (_error) {
     return undefined;
   }
 }

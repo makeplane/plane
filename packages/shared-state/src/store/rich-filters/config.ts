@@ -5,19 +5,21 @@ import { computedFn } from "mobx-utils";
 import { EMPTY_OPERATOR_LABEL } from "@plane/constants";
 import {
   FILTER_FIELD_TYPE,
-  TSupportedOperators,
+  TAllAvailableOperatorsForDisplay,
   TFilterConfig,
   TFilterProperty,
   TFilterValue,
   TOperatorSpecificConfigs,
-  TAllAvailableOperatorsForDisplay,
+  TSupportedOperators,
 } from "@plane/types";
 import {
-  getOperatorLabel,
-  isDateFilterType,
   getDateOperatorLabel,
-  isDateFilterOperator,
   getOperatorForPayload,
+  getOperatorLabel,
+  isDateFilterOperator,
+  isDateFilterType,
+  isNegativeOperator,
+  toNegativeOperator,
 } from "@plane/utils";
 
 type TOperatorOptionForDisplay = {
@@ -28,8 +30,7 @@ type TOperatorOptionForDisplay = {
 export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue>
   extends TFilterConfig<P, V> {
   // computed
-  allSupportedOperators: TSupportedOperators[];
-  allSupportedOperatorConfigs: TOperatorSpecificConfigs<V>[keyof TOperatorSpecificConfigs<V>][];
+  allEnabledSupportedOperators: TSupportedOperators[];
   firstOperator: TSupportedOperators | undefined;
   // computed functions
   getOperatorConfig: (
@@ -76,8 +77,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
       supportedOperatorConfigsMap: observable,
       allowMultipleFilters: observable,
       // computed
-      allSupportedOperators: computed,
-      allSupportedOperatorConfigs: computed,
+      allEnabledSupportedOperators: computed,
       firstOperator: computed,
       // actions
       mutate: action,
@@ -90,16 +90,10 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * Returns all supported operators.
    * @returns All supported operators.
    */
-  get allSupportedOperators(): IFilterConfig<P, V>["allSupportedOperators"] {
-    return Array.from(this.supportedOperatorConfigsMap.keys());
-  }
-
-  /**
-   * Returns all supported operator configs.
-   * @returns All supported operator configs.
-   */
-  get allSupportedOperatorConfigs(): IFilterConfig<P, V>["allSupportedOperatorConfigs"] {
-    return Array.from(this.supportedOperatorConfigsMap.values());
+  get allEnabledSupportedOperators(): IFilterConfig<P, V>["allEnabledSupportedOperators"] {
+    return Array.from(this.supportedOperatorConfigsMap.entries())
+      .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
+      .map(([operator]) => operator);
   }
 
   /**
@@ -107,7 +101,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * @returns The first operator.
    */
   get firstOperator(): IFilterConfig<P, V>["firstOperator"] {
-    return this.allSupportedOperators[0];
+    return this.allEnabledSupportedOperators[0];
   }
 
   // ------------ computed functions ------------
@@ -131,7 +125,11 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
 
     const operatorConfig = this.getOperatorConfig(operator);
 
-    if (operatorConfig?.operatorLabel) {
+    if (operatorConfig?.allowNegative && isNegativeOperator(operator) && operatorConfig.negOperatorLabel) {
+      return operatorConfig.negOperatorLabel;
+    }
+
+    if (!isNegativeOperator(operator) && operatorConfig?.operatorLabel) {
       return operatorConfig.operatorLabel;
     }
 
@@ -150,6 +148,10 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
   getDisplayOperatorByValue: IFilterConfig<P, V>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
     const operatorConfig = this.getOperatorConfig(operator);
     if (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT && (Array.isArray(value) ? value.length : 0) <= 1) {
+      if (isNegativeOperator(operator)) {
+        return toNegativeOperator(operatorConfig.singleValueOperator) as typeof operator;
+      }
+
       return operatorConfig.singleValueOperator as typeof operator;
     }
     return operator;
@@ -168,7 +170,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
       const operatorOptions: TOperatorOptionForDisplay[] = [];
 
       // Process each supported operator to build display options
-      for (const operator of this.allSupportedOperators) {
+      for (const operator of this.allEnabledSupportedOperators) {
         const displayOperator = this.getDisplayOperatorByValue(operator, value);
         const displayOperatorLabel = this.getLabelForOperator(displayOperator);
         operatorOptions.push({
@@ -206,7 +208,20 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
   // ------------ private helpers ------------
 
   private _getAdditionalOperatorOptions = (
-    _operator: TSupportedOperators,
-    _value: V
-  ): TOperatorOptionForDisplay | undefined => undefined;
+    operator: TSupportedOperators,
+    value: V
+  ): TOperatorOptionForDisplay | undefined => {
+    const operatorConfig = this.getOperatorConfig(operator);
+    if (operatorConfig?.allowNegative) {
+      const negOperator = toNegativeOperator(operator);
+      const negOperatorDisplayOperator = this.getDisplayOperatorByValue(negOperator, value);
+      const negOperatorLabel = this.getLabelForOperator(negOperatorDisplayOperator);
+      return {
+        value: negOperator,
+        label: negOperatorLabel,
+      };
+    }
+
+    return undefined;
+  };
 }

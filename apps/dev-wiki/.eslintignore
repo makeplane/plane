@@ -1,0 +1,13 @@
+.next/*
+out/*
+public/*
+core/local-db/worker/wa-sqlite/src/*
+dist/*
+node_modules/*
+.turbo/*
+.env*
+.env
+.env.local
+.env.development
+.env.production
+.env.test

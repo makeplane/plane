@@ -1,3 +1,5 @@
+import copy
+
 # Django imports
 from django.db.models import (
     Exists,
@@ -33,12 +35,21 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     ModuleIssue,
+    DeployBoard,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+from plane.ee.models import CustomerRequestIssue
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class WorkspaceViewViewSet(BaseViewSet):
@@ -56,7 +67,7 @@ class WorkspaceViewViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=1))
-            .select_related("workspace")
+            .exclude(team_spaces__isnull=False)
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
@@ -145,6 +156,9 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
     def _get_project_permission_filters(self):
         """
         Get common project permission filters for guest users and role-based access control.
@@ -167,35 +181,58 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             project__project_projectmember__is_active=True,
         )
 
-    def get_queryset(self):
+    def _validate_order_by_field(self, order_by_param):
+        """
+        Validate if the order_by parameter is a valid sortable field.
+        Returns a tuple of (is_valid, sanitized_field)
+        """
+        # Remove the minus sign for validation
+        field_name = order_by_param.lstrip("-")
+
+        # Define valid sortable fields
+        valid_fields = {
+            # Direct fields
+            "name",
+            "priority",
+            "sequence_id",
+            "sort_order",
+            "start_date",
+            "target_date",
+            "completed_at",
+            "archived_at",
+            "is_draft",
+            "created_at",
+            "updated_at",
+            "point",
+            # Related fields
+            "state__name",
+            "state__group",
+            "type__name",
+            "parent__name",
+            "created_by__first_name",
+            "updated_by__first_name",
+            "estimate_point__name",
+            # Many-to-many fields (handled specially in order_issue_queryset)
+            "labels__name",
+            "assignees__first_name",
+            "issue_module__module__name",
+            # Computed fields (annotated in get_queryset)
+            "sub_issues_count",
+            "attachment_count",
+            "link_count",
+            # Special fields handled by order_issue_queryset
+            "priority",
+            "state__group",
+        }
+
+        if field_name in valid_fields:
+            return order_by_param
+        else:
+            return "-created_at"
+
+    def apply_annotations(self, issues):
         return (
-            Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("state")
-            .prefetch_related(
-                Prefetch(
-                    "issue_assignee",
-                    queryset=IssueAssignee.objects.all(),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "label_issue",
-                    queryset=IssueLabel.objects.all(),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.all(),
-                )
-            )
-            .annotate(
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -223,31 +260,78 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "label_issue",
+                    queryset=IssueLabel.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_module",
+                    queryset=ModuleIssue.objects.all(),
+                )
+            )
         )
+
+    def get_queryset(self):
+        return Issue.issue_objects.filter(
+            workspace__slug=self.kwargs.get("slug")
+        ).accessible_to(self.request.user.id, self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
-        filters = issue_filters(request.query_params, "GET")
+        issue_queryset = self.get_queryset()
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        # Validate the order_by_param
+        order_by_param = self._validate_order_by_field(order_by_param)
+
+        # Apply legacy filters
+        filters = issue_filters(request.query_params, "GET")
+        issue_queryset = issue_queryset.filter(**filters)
+
+        if request.query_params.get("sub_issue", None) == "false":
+            issue_queryset = issue_queryset.filter(
+                Q(parent__isnull=True) | (Q(parent__type__is_epic=True))
+            )
 
         # Get common project permission filters
         permission_filters = self._get_project_permission_filters()
-
-        # Base query for the counts
-        total_issue_count = (
-            Issue.issue_objects.filter(**filters)
-            .filter(workspace__slug=slug)
-            .filter(permission_filters)
-            .only("id")
-        )
-
         # Apply project permission filters to the issue queryset
         issue_queryset = issue_queryset.filter(permission_filters)
+
+        # Base query for the counts
+        total_issue_count_queryset = copy.deepcopy(issue_queryset)
+        total_issue_count_queryset = total_issue_count_queryset.only("id")
+
+        # Apply annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issue_queryset = issue_queryset.prefetch_related(
+                Prefetch(
+                    "customer_request_issues",
+                    queryset=CustomerRequestIssue.objects.all(),
+                )
+            )
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -259,8 +343,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             order_by=order_by_param,
             request=request,
             queryset=issue_queryset,
-            on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
-            total_count_queryset=total_issue_count,
+            on_results=lambda issues: ViewIssueListSerializer(
+                issues, many=True, context={"slug": slug, "user_id": request.user.id}
+            ).data,
+            total_count_queryset=total_issue_count_queryset,
         )
 
 
@@ -281,23 +367,32 @@ class IssueViewViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
-        return self.filter_queryset(
+        queryset = self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="view",
+                    entity_identifier=OuterRef("pk"),
+                    project_id=self.kwargs.get("project_id"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .order_by("-is_favorite", "name")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -312,6 +407,9 @@ class IssueViewViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
@@ -339,6 +437,9 @@ class IssueViewViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue_view.owned_by == request.user
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -413,6 +514,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_name="view",
             ).delete(soft=False)
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},

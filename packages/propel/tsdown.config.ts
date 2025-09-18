@@ -30,6 +30,7 @@ export default defineConfig({
     "src/toolbar/index.ts",
     "src/tooltip/index.ts",
     "src/utils/index.ts",
+    "src/icons/index.ts",
   ],
   outDir: "dist",
   format: ["esm", "cjs"],

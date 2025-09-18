@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
+import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, IEditorPropsExtended, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -13,12 +13,14 @@ type Props = {
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
+  titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
+  extendedEditorProps?: IEditorPropsExtended;
   flaggedExtensions: IEditorProps["flaggedExtensions"];
   disabledExtensions: IEditorProps["disabledExtensions"];
 };
@@ -35,6 +37,8 @@ export const PageRenderer = (props: Props) => {
     isLoading,
     isTouchDevice,
     tabIndex,
+    titleEditor,
+    extendedEditorProps,
     flaggedExtensions,
     disabledExtensions,
   } = props;
@@ -48,26 +52,52 @@ export const PageRenderer = (props: Props) => {
       {isLoading ? (
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
-        <EditorContainer
-          displayConfig={displayConfig}
-          editor={editor}
-          editorContainerClassName={editorContainerClassName}
-          id={id}
-          isTouchDevice={isTouchDevice}
-        >
-          <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && !isTouchDevice && (
-            <div>
-              {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu
-                editor={editor}
-                flaggedExtensions={flaggedExtensions}
-                disabledExtensions={disabledExtensions}
-              />
-              <AIFeaturesMenu menu={aiHandler?.menu} />
+        <>
+          {titleEditor && (
+            <div className="relative w-full py-3">
+              <EditorContainer
+                editor={titleEditor}
+                id={id + "-title"}
+                isTouchDevice={isTouchDevice}
+                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
+                displayConfig={displayConfig}
+              >
+                <EditorContentWrapper
+                  editor={titleEditor}
+                  id={id + "-title"}
+                  tabIndex={tabIndex}
+                  className="no-scrollbar placeholder-custom-text-400 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
+                />
+              </EditorContainer>
             </div>
           )}
-        </EditorContainer>
+          <EditorContainer
+            displayConfig={displayConfig}
+            editor={editor}
+            editorContainerClassName={editorContainerClassName}
+            id={id}
+            isTouchDevice={isTouchDevice}
+          >
+            <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
+            {editor.isEditable && !isTouchDevice && (
+              <div>
+                {bubbleMenuEnabled && (
+                  <EditorBubbleMenu
+                    flaggedExtensions={flaggedExtensions}
+                    editor={editor}
+                    extendedEditorProps={extendedEditorProps}
+                  />
+                )}
+                <BlockMenu
+                  editor={editor}
+                  flaggedExtensions={flaggedExtensions}
+                  disabledExtensions={disabledExtensions}
+                />
+                <AIFeaturesMenu menu={aiHandler?.menu} />
+              </div>
+            )}
+          </EditorContainer>
+        </>
       )}
     </div>
   );
