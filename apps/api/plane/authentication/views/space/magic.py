@@ -96,7 +96,7 @@ class MagicSignInSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             next_path = validate_next_path(next_path=next_path)
-            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
+            url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
                 return HttpResponseRedirect(url)
             else:
@@ -158,7 +158,7 @@ class MagicSignUpSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # redirect to referer path
             next_path = validate_next_path(next_path=next_path)
-            url = f"{base_host(request=request, is_space=True).rstrip("/")}{next_path}"
+            url = f"{base_host(request=request, is_space=True).rstrip('/')}{next_path}"
             if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
                 return HttpResponseRedirect(url)
             else:
