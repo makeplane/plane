@@ -26,7 +26,7 @@ export const OnboardingStepRoot: FC<Props> = (props) => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
         top: 0,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
   }, [currentStep]);
