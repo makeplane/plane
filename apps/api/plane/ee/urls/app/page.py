@@ -19,6 +19,11 @@ from plane.ee.views import (
     ProjectPageCommentReactionViewSet,
     ProjectPageUserViewSet,
     ProjectPageRestoreEndpoint,
+    PageExtendedViewSet,
+    PageFavoriteExtendedViewSet,
+    PagesDescriptionExtendedViewSet,
+    PageDuplicateExtendedEndpoint,
+    PageVersionExtendedEndpoint,
     WorkspacePageLiveServerEndpoint,
 )
 
@@ -172,7 +177,75 @@ urlpatterns = [
         name="workspace-page-live-server",
     ),
     ## End Comment Reactions
+    # community urls which are overwritten in EE
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
+        PageExtendedViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
+        PageExtendedViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="project-pages",
+    ),
+    # archived pages
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/archive/",
+        PageExtendedViewSet.as_view({"post": "archive", "delete": "unarchive"}),
+        name="project-page-archive-unarchive",
+    ),
+    # lock and unlock
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
+        PageExtendedViewSet.as_view({"post": "lock", "delete": "unlock"}),
+        name="project-pages-lock-unlock",
+    ),
+    # private and public page
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/access/",
+        PageExtendedViewSet.as_view({"post": "access"}),
+        name="project-pages-access",
+    ),
+    # favorite pages
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:page_id>/",
+        PageFavoriteExtendedViewSet.as_view({"post": "create", "delete": "destroy"}),
+        name="user-favorite-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/description/",
+        PagesDescriptionExtendedViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        name="page-description",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/",
+        PageVersionExtendedEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/",
+        PageVersionExtendedEndpoint.as_view(),
+        name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/duplicate/",
+        PageDuplicateExtendedEndpoint.as_view(),
+        name="page-duplicate",
+    ),
+    # Community urls which are overwritten in EE
     ## EE project level
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
+        PageExtendedViewSet.as_view({"get": "sub_pages"}),
+        name="project-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/parent-pages/",
+        PageExtendedViewSet.as_view({"get": "parent_pages"}),
+        name="project-parent-pages",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/restore/",
         ProjectPageRestoreEndpoint.as_view(),

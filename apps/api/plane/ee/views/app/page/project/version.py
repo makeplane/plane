@@ -4,14 +4,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import PageVersion
-from ..base import BaseAPIView
+from plane.ee.views.base import BaseAPIView
 from plane.app.serializers import PageVersionSerializer, PageVersionDetailSerializer
-from plane.app.permissions import allow_permission, ROLE
-from plane.app.permissions import ProjectPagePermission
+from plane.ee.permissions.page import ProjectPagePermission
 
 
-class PageVersionEndpoint(BaseAPIView):
-
+class PageVersionExtendedEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def get(self, request, slug, project_id, page_id, pk=None):

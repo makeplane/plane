@@ -176,15 +176,6 @@ class PageLiteSerializer(BaseSerializer):
             "moved_to_project",
             "is_shared",
         ]
-
-
-class PageLogSerializer(BaseSerializer):
-    class Meta:
-        model = PageLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "page"]
-
-
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion

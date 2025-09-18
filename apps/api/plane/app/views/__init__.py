@@ -166,8 +166,8 @@ from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 from .page.base import (
     PageViewSet,
     PageFavoriteViewSet,
-    PageDuplicateEndpoint,
     PagesDescriptionViewSet,
+    PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
 

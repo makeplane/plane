@@ -9,7 +9,6 @@ from plane.app.views import (
     PageDuplicateEndpoint,
 )
 
-
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
@@ -23,27 +22,11 @@ urlpatterns = [
         ),
         name="project-pages",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
-        PageViewSet.as_view({"get": "sub_pages"}),
-        name="project-sub-pages",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/parent-pages/",
-        PageViewSet.as_view({"get": "parent_pages"}),
-        name="project-parent-pages",
-    ),
     # favorite pages
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/favorite-pages/<uuid:page_id>/",
         PageFavoriteViewSet.as_view({"post": "create", "delete": "destroy"}),
         name="user-favorite-pages",
-    ),
-    # Lock
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/lock/",
-        PageViewSet.as_view({"post": "lock", "delete": "unlock"}),
-        name="project-page-lock-unlock",
     ),
     # archived pages
     path(

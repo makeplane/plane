@@ -35,7 +35,6 @@ urlpatterns = [
     *issue_urls,
     *module_urls,
     *notification_urls,
-    *page_urls,
     *project_urls,
     *search_urls,
     *state_urls,
@@ -49,4 +48,5 @@ urlpatterns = [
     *integration_urls,
     *importer_urls,
     *ee_urls,
+    *page_urls,
 ]
