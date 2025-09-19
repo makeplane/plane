@@ -1,0 +1,56 @@
+services:
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.7-alpine
+    restart: always
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - ./docker_data/pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: plane
+      POSTGRES_DB: plane
+      POSTGRES_PASSWORD: plane
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  plane-redis:
+    container_name: plane-redis
+    image: valkey/valkey:7.2.5-alpine
+    restart: always
+    volumes:
+      - ./docker_data/redisdata:/data
+    ports:
+      - "6379:6379"
+
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: plane
+      RABBITMQ_DEFAULT_PASS: plane
+      RABBITMQ_DEFAULT_VHOST: plane
+    volumes:
+      - ./docker_data/rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio
+    restart: always
+    command: server /export --console-address ":9090"
+    volumes:
+      - ./docker_data/uploads:/export
+    environment:
+      MINIO_ROOT_USER: plane
+      MINIO_ROOT_PASSWORD: plane123456789
+    ports:
+      - "9000:9000"
+      - "9090:9090"
