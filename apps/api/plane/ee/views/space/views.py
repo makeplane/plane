@@ -160,14 +160,16 @@ class IssueViewsPublicEndpoint(BaseAPIView):
             filters = issue_filters(request.query_params, "GET")
             order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = (
-                Issue.issue_objects.filter(
-                    workspace__slug=slug, project_id=project_id
-                ).filter(**view.query)
-            ).distinct()
+            issue_queryset = Issue.issue_objects.filter(
+                workspace__slug=slug, project_id=project_id
+            )
 
-            # Apply filtering from filterset
-            issue_queryset = self.filter_queryset(issue_queryset)
+            if view.rich_filters:
+                issue_queryset = ComplexFilterBackend().filter_queryset(
+                    request, issue_queryset, self, view.rich_filters
+                )
+
+            issue_queryset = issue_queryset.distinct()
 
             # Apply legacy filters
             issue_queryset = issue_queryset.filter(**filters)
