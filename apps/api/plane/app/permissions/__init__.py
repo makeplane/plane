@@ -13,3 +13,4 @@ from .project import (
     ProjectLitePermission,
 )
 from .base import allow_permission, ROLE
+from .page import ProjectPagePermission
