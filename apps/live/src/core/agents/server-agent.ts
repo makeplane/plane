@@ -212,7 +212,7 @@ export class ServerAgentManager {
             pageId,
           });
         }
-        
+
         // Process the document using our extensible system
         DocumentProcessor.process({
           xmlFragment,
