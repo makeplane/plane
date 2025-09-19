@@ -1,4 +1,6 @@
 import { TIssue } from "./issues/issue";
+import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
+import { CompleteOrEmpty } from "./utils";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -47,7 +49,7 @@ export type TIssueOrderByOptions =
   | "sub_issues_count"
   | "-sub_issues_count";
 
-export type TIssueGroupingFilters = "active" | "backlog" | null;
+export type TIssueGroupingFilters = "active" | "backlog";
 
 export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
 
@@ -76,9 +78,46 @@ export type TIssueParams =
   | "per_page"
   | "issue_type"
   | "layout"
-  | "expand";
+  | "expand"
+  | "filters";
 
 export type TCalendarLayouts = "month" | "week";
+
+/**
+ * Keys for the work item filter properties
+ */
+export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
+  "state_group",
+  "priority",
+  "start_date",
+  "target_date",
+  "assignee_id",
+  "mention_id",
+  "created_by_id",
+  "subscriber_id",
+  "label_id",
+  "state_id",
+  "cycle_id",
+  "module_id",
+  "project_id",
+] as const;
+export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
+
+export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
+
+export type TWorkItemFilterConditionData = Partial<{
+  [K in TWorkItemFilterConditionKey]: string;
+}>;
+
+export type TWorkItemFilterAndGroup = {
+  [LOGICAL_OPERATOR.AND]: TWorkItemFilterConditionData[];
+};
+
+export type TWorkItemFilterGroup = TWorkItemFilterAndGroup;
+
+export type TWorkItemFilterExpressionData = TWorkItemFilterConditionData | TWorkItemFilterGroup;
+
+export type TWorkItemFilterExpression = CompleteOrEmpty<TWorkItemFilterExpressionData>;
 
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
@@ -109,7 +148,6 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
-  type?: TIssueGroupingFilters;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;
@@ -136,14 +174,20 @@ export type TIssueKanbanFilters = {
 };
 
 export interface IIssueFilters {
-  filters: IIssueFilterOptions | undefined;
+  richFilters: TWorkItemFilterExpression;
   displayFilters: IIssueDisplayFilterOptions | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   kanbanFilters: TIssueKanbanFilters | undefined;
 }
 
-export interface IIssueFiltersResponse {
+export type TSupportedFilterForUpdate = IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters;
+
+export interface ISubWorkItemFilters extends Omit<IIssueFilters, "richFilters"> {
   filters: IIssueFilterOptions;
+}
+
+export interface IIssueFiltersResponse {
+  rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
 }
@@ -172,17 +216,16 @@ export interface IWorkspaceViewIssuesParams {
   target_date?: string | undefined;
   project?: string | undefined;
   order_by?: string | undefined;
-  type?: "active" | "backlog" | undefined;
   sub_issue?: boolean;
 }
 
 export interface IProjectViewProps {
+  rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions | undefined;
-  filters: IIssueFilterOptions;
 }
 
 export interface IWorkspaceViewProps {
-  filters: IIssueFilterOptions;
+  rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions | undefined;
   display_properties: IIssueDisplayProperties;
 }

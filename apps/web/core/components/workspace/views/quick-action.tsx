@@ -12,8 +12,8 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// local imports
 import { useViewMenuItems } from "@/plane-web/components/views/helper";
+// local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 

@@ -10,7 +10,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  IIssueFilters,
+  ISubWorkItemFilters,
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -357,8 +357,8 @@ export const getGroupedWorkItemIds = (
  * @param filters - The filters to update.
  * @param workItemId - The ID of the work item to update.
  */
-export const updateFilters = (
-  filtersMap: Record<string, Partial<IIssueFilters>>,
+export const updateSubWorkItemFilters = (
+  filtersMap: Record<string, Partial<ISubWorkItemFilters>>,
   filterType: EIssueFilterType,
   filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
   workItemId: string

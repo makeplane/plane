@@ -16,24 +16,20 @@ import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   ICustomSearchSelectOption,
   EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-import { isIssueFilterActive } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues/issue-layouts/filters";
+import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { DefaultWorkspaceViewQuickActions } from "@/components/workspace/views/default-view-quick-action";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-action";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
@@ -48,43 +44,12 @@ export const GlobalIssuesHeader = observer(() => {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
   const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
   const activeLayout = issueFilters?.displayFilters?.layout;
   const viewDetails = getViewDetailsById(globalViewId.toString());
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !globalViewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        globalViewId.toString()
-      );
-    },
-    [workspaceSlug, issueFilters, updateFilters, globalViewId]
-  );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -155,7 +120,7 @@ export const GlobalIssuesHeader = observer(() => {
   ) as ICustomSearchSelectOption[];
   const currentLayoutFilters = useMemo(() => {
     const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
-    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues[layout];
+    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions[layout];
   }, [activeLayout]);
 
   return (
@@ -199,21 +164,6 @@ export const GlobalIssuesHeader = observer(() => {
                 selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
                 workspaceSlug={workspaceSlug.toString()}
               />
-              <FiltersDropdown
-                title={t("common.filters")}
-                placement="bottom-end"
-                isFiltersApplied={isIssueFilterActive(issueFilters)}
-              >
-                <FilterSelection
-                  layoutDisplayFiltersOptions={currentLayoutFilters}
-                  filters={issueFilters?.filters ?? {}}
-                  handleFiltersUpdate={handleFiltersUpdate}
-                  displayFilters={issueFilters?.displayFilters ?? {}}
-                  handleDisplayFiltersUpdate={handleDisplayFilters}
-                  labels={workspaceLabels ?? undefined}
-                  memberIds={workspaceMemberIds ?? undefined}
-                />
-              </FiltersDropdown>
               <FiltersDropdown title={t("common.display")} placement="bottom-end">
                 <DisplayFiltersSelection
                   layoutDisplayFiltersOptions={currentLayoutFilters}
