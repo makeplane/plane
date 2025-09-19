@@ -8,8 +8,9 @@ import { Sparkle } from "lucide-react";
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType, TIssue } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";

@@ -4,7 +4,8 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
-import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectEstimates } from "@/hooks/store/estimates";

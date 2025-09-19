@@ -6,8 +6,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspaceMember } from "@plane/types";
-import { TOAST_TYPE, Table, setToast } from "@plane/ui";
+import { Table } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";

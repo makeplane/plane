@@ -9,7 +9,8 @@ import {
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomSearchSelect, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button, CustomSearchSelect, CustomSelect } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

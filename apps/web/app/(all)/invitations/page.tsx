@@ -11,9 +11,10 @@ import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS, GROUP_WORKSPACE_T
 import { useTranslation } from "@plane/i18n";
 // types
 import { PlaneLogo } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // components
 import { EmptyState } from "@/components/common/empty-state";

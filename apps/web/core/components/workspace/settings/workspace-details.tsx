@@ -13,8 +13,9 @@ import {
   WORKSPACE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspace } from "@plane/types";
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";

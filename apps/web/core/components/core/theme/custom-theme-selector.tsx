@@ -6,9 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { IUserTheme } from "@plane/types";
 // ui
-import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
+import { Button, InputColorPicker } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store/user";

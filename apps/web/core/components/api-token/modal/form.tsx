@@ -6,9 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
 // types
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IApiToken } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

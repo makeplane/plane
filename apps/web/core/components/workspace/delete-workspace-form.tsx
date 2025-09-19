@@ -7,9 +7,10 @@ import { AlertTriangle } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // constants
 // hooks
 import { cn } from "@plane/utils";

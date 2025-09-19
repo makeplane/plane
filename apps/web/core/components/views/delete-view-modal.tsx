@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // types
 import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IProjectView } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

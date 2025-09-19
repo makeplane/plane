@@ -5,9 +5,10 @@ import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, PopoverMenu } from "@plane/ui";
 // constants
 // helpers
 import { getFileURL } from "@plane/utils";

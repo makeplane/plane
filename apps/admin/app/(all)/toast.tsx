@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Toast } from "@plane/ui";
+import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 
 export const ToastWithTheme = () => {

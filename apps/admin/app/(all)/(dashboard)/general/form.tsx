@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IInstance, IInstanceAdmin } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 import { useInstance } from "@/hooks/store";

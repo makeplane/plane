@@ -6,8 +6,9 @@ import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { ISearchIssueResponse } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks

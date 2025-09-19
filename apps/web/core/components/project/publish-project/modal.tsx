@@ -7,9 +7,10 @@ import { Controller, useForm } from "react-hook-form";
 import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
-import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { Button, Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks

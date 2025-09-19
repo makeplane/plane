@@ -6,11 +6,8 @@ import { useParams } from "next/navigation";
 import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ContrastIcon, TransferIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
-// hooks
-// ui
-//icons
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 //icons

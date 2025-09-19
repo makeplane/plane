@@ -9,7 +9,8 @@ import { CircleCheck } from "lucide-react";
 // plane imports
 import { AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button, Input, getButtonStyling } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

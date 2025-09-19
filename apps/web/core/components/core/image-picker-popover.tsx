@@ -11,8 +11,9 @@ import { Tab, Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Loader } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

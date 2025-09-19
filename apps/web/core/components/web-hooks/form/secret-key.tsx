@@ -7,10 +7,11 @@ import { useParams } from "next/navigation";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IWebhook } from "@plane/types";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks

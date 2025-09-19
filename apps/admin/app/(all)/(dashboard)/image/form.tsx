@@ -1,8 +1,9 @@
 "use client";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
