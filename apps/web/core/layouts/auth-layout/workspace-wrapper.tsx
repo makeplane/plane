@@ -12,8 +12,9 @@ import useSWRImmutable from "swr/immutable";
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PlaneLogo } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Button, getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";

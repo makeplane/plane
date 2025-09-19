@@ -4,8 +4,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspaceView } from "@plane/types";
-import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
