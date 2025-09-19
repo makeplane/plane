@@ -1,12 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
+// plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
 import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EHeaderVariant, Header } from "@plane/ui";
 // components
 import { ArchiveTabsList } from "@/components/archives";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -43,12 +42,11 @@ export const ArchivedIssuesHeader: FC = observer(() => {
   };
 
   return (
-    <div className="group relative flex border-b border-custom-border-200">
-      <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
+    <Header variant={EHeaderVariant.SECONDARY}>
+      <Header.LeftItem>
         <ArchiveTabsList />
-      </div>
-      {/* filter options */}
-      <div className="flex items-center gap-2 px-8">
+      </Header.LeftItem>
+      <Header.RightItem className="items-center">
         <FiltersDropdown title={t("common.display")} placement="bottom-end">
           <DisplayFiltersSelection
             displayFilters={issueFilters?.displayFilters || {}}
@@ -62,7 +60,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
             moduleViewDisabled={!currentProjectDetails?.module_view}
           />
         </FiltersDropdown>
-      </div>
-    </div>
+      </Header.RightItem>
+    </Header>
   );
 });
