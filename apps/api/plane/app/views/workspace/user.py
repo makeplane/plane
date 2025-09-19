@@ -135,9 +135,12 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
-            Q(assignees__in=[user_id])
-            | Q(created_by_id=user_id)
-            | Q(issue_subscribers__subscriber_id=user_id),
+            id__in=Issue.issue_objects.filter(
+                Q(assignees__in=[user_id])
+                | Q(created_by_id=user_id)
+                | Q(issue_subscribers__subscriber_id=user_id),
+                workspace__slug=slug,
+            ).values_list("id", flat=True),
             workspace__slug=slug,
             project__project_projectmember__member=request.user,
             project__project_projectmember__is_active=True,
