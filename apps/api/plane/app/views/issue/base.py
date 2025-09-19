@@ -1286,7 +1286,7 @@ class IssuePaginatedViewSet(BaseViewSet):
 
 
 class IssueDetailEndpoint(BaseAPIView):
-    filter_backends = (ComplexFilterBackend,)q
+    filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
