@@ -4,14 +4,14 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 // plane imports
 import { PI_BASE_URL } from "@plane/constants";
-import { PiIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // plane-web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TDialogue } from "@/plane-web/types";
 // local imports
-import ActionStatusBlock from "./action-status-block";
+import ActionStatusBlock from "../build/action-status-block";
+import { PiChatArtifactsListRoot } from "../build/artifacts/list/root";
 import { Feedback } from "./feedback";
 import { ReasoningBlock } from "./reasoning";
 
@@ -30,21 +30,17 @@ export const AiMessage = observer((props: TProps) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const { query_id, answer, reasoning, isPiThinking, feedback, execution_status } = dialogue || {};
+  const { query_id, answer, reasoning, isPiThinking, feedback } = dialogue || {};
 
   return (
-    <div className="flex gap-4 mr-[50px]" id={id}>
-      {/* Avatar */}
-      <div className="rounded-full flex flex-shrink-0">
-        <PiIcon className="size-5 text-custom-text-primary fill-current align-center" />
-      </div>
+    <div className="flex gap-4" id={id}>
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
         <div className="flex flex-col gap-4">
-          {!isLoading && <ReasoningBlock reasoning={reasoning} showLoading={isPiThinking} />}
+          {!isLoading && <ReasoningBlock reasoning={reasoning} isThinking={isPiThinking} />}
           <Markdown
             remarkPlugins={[remarkGfm]}
-            className="pi-chat-root [&>*:first-child]:mt-0"
+            className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in"
             components={{
               a: ({ children, href }) =>
                 href?.startsWith(`${PI_BASE_URL}/api/v1/oauth/authorize/`) && !isLatest ? ( // NOTE: Prev auth links shouldn't be accessible
@@ -71,17 +67,22 @@ export const AiMessage = observer((props: TProps) => {
             <Loader.Item width="50px" height="42px" />
           </Loader>
         )}
-
-        {/* Action bar */}
-        <ActionStatusBlock
-          execution_status={execution_status}
-          isLatest={isLatest}
-          isPiTyping={isPiTyping}
-          isPiThinking={isPiThinking}
-          workspaceId={workspaceId}
-          query_id={query_id}
-          activeChatId={activeChatId}
-        />
+        {dialogue && (
+          <div className="flex flex-col gap-4">
+            {/* Artifacts list */}
+            {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} />}
+            {/* Action bar */}
+            <ActionStatusBlock
+              dialogue={dialogue}
+              isLatest={isLatest}
+              isPiTyping={isPiTyping}
+              isPiThinking={isPiThinking}
+              workspaceId={workspaceId}
+              query_id={query_id}
+              activeChatId={activeChatId}
+            />
+          </div>
+        )}
 
         {/* Feedback bar */}
         {answer && (

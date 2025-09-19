@@ -1,3 +1,5 @@
+import { TLogoProps } from "@plane/types";
+
 export enum EFeedback {
   POSITIVE = "positive",
   NEGATIVE = "negative",
@@ -33,6 +35,8 @@ export type TQuery = {
   };
   is_project_chat?: boolean;
   workspace_slug?: string;
+  pi_sidebar_open?: boolean;
+  sidebar_open_url?: string;
 };
 export type TInitPayload = Pick<
   TQuery,
@@ -61,14 +65,52 @@ export type TTemplate = {
   id: string[];
   type;
 };
-export type TExecutionStatus = "pending" | "completed" | "failed" | "partial";
+export enum EExecutionStatus {
+  PENDING = "pending",
+  EXECUTING = "executing",
+  COMPLETED = "completed",
+}
 export type TActions = {
   actions_count: number;
   message?: string;
-  status?: TExecutionStatus;
+  status?: EExecutionStatus;
   actions?: {
     entity: TEntity;
   }[];
+};
+
+export type TArtifact = {
+  artifact_id: string;
+  is_executed: boolean;
+  success: boolean;
+  artifact_type: string;
+  entity_id?: string;
+  entity_url?: string;
+  issue_identifier?: string;
+  project_identifier?: string;
+  tool_name: string;
+  parameters: {
+    name: string;
+    color?: {
+      name: string;
+    };
+    logo_props?: TLogoProps;
+    description?: string;
+    properties: {
+      [key: string]: {
+        name: string;
+        [key: string]: any;
+      };
+    };
+    project?: {
+      id: string;
+      name: string;
+      identifier?: string;
+    };
+  };
+  message_id: string;
+  action: string;
+  success?: boolean;
 };
 
 export type TDialogue = {
@@ -80,7 +122,14 @@ export type TDialogue = {
   feedback?: EFeedback;
   reasoning?: string;
   isPiThinking: boolean;
-  execution_status?: TActions;
+  execution_status?: EExecutionStatus;
+  actions?: TArtifact[];
+  action_summary?: {
+    completed: number;
+    duration_seconds: number;
+    failed: number;
+    total_planned: number;
+  };
 };
 
 export type TChatHistory = {
@@ -103,15 +152,15 @@ export type TAction = {
 };
 
 export type TExecuteActionResponse = {
-  status: TExecutionStatus;
+  status: string;
   message: string;
-  actions: {
-    result: string;
-    message?: string;
-    entity?: TEntity;
-    success: boolean;
-    error?: string;
-  }[];
+  actions: Array<TArtifact & { entity?: { entity_id: string; entity_url: string; issue_identifier: string } }>;
+  action_summary?: {
+    completed: number;
+    duration_seconds: number;
+    failed: number;
+    total_planned: number;
+  };
 };
 
 export type TUserThreads = {
@@ -149,3 +198,5 @@ interface IItem {
 export interface IFormattedValue {
   [key: string]: Partial<IItem>[] | undefined;
 }
+
+export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";

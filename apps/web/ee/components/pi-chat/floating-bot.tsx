@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@plane/utils";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -10,14 +11,31 @@ import { PiChatLayout } from "./layout";
 
 export const PiChatFloatingBot = observer(() => {
   // states
-  const { isPiChatDrawerOpen: isOpen } = usePiChat();
+  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // query params
   const pathName = usePathname();
   const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
+  // derived states
+  const isSidePanelOpen = searchParams.get("pi_sidebar_open");
+  const chatId = searchParams.get("chat_id");
+  const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+
+  useEffect(() => {
+    if (!isPiEnabled) return;
+    // initialize chat
+    if (chatId) initPiChat(chatId.toString());
+    else initPiChat();
+    // open side panel
+    if (isSidePanelOpen) {
+      togglePiChatDrawer(true);
+    }
+  }, [isPiEnabled]);
 
   if (pathName.includes("pi-chat")) return null;
-  if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
+  if (!isPiEnabled) return <></>;
+
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
       <div

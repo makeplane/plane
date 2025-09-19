@@ -13,6 +13,7 @@ import {
   TAction,
   TExecuteActionResponse,
   TDialogue,
+  TArtifact,
 } from "../types";
 
 type TTemplateResponse = {
@@ -266,6 +267,15 @@ export class PiChatService extends APIService {
   async executeAction(data: TAction): Promise<TExecuteActionResponse> {
     return this.post(`/api/v1/chat/execute-action/`, data)
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get artifact
+  async listArtifacts(chatId: string): Promise<TArtifact[]> {
+    return this.get(`/api/v1/artifacts/chat/${chatId}`)
+      .then((response) => response.data.artifacts)
       .catch((error) => {
         throw error?.response?.data;
       });

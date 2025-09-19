@@ -27,7 +27,13 @@ export const PiChatLayout = observer((props: TProps) => {
   // states
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   // store hooks
-  const { activeChatId, fetchUserThreads, fetchChatById, initPiChat } = usePiChat();
+  const {
+    activeChatId,
+    fetchUserThreads,
+    fetchChatById,
+    initPiChat,
+    artifactsStore: { fetchArtifactsByChatId },
+  } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // query params
   const { workspaceSlug, chatId } = useParams();
@@ -39,6 +45,15 @@ export const PiChatLayout = observer((props: TProps) => {
   useSWR(
     workspaceSlug ? `PI_USER_THREADS_${workspaceSlug}_${isProjectLevel}` : null,
     workspaceSlug ? () => fetchUserThreads(workspaceId, isProjectLevel) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
+  useSWR(
+    activeChatId ? `PI_CHAT_ARTIFACTS_${activeChatId}` : null,
+    activeChatId ? () => fetchArtifactsByChatId(activeChatId) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -65,8 +80,8 @@ export const PiChatLayout = observer((props: TProps) => {
 
   if (!isOpen) return <></>;
   return (
-    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-100", {})}>
-      <div className="flex flex-col flex-1 h-full">
+    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-90/60", {})}>
+      <div className="flex flex-col flex-1 h-full w-full">
         {/* Header */}
         <Header
           isSidePanelOpen={isSidePanelOpen}

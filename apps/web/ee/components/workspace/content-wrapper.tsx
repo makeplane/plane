@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 import { observer } from "mobx-react";
 // plane imports
 import { useParams, usePathname } from "next/navigation";
@@ -11,15 +12,16 @@ import { useAppRail } from "@/hooks/use-app-rail";
 // plane web imports
 import { AppRailRoot } from "@/plane-web/components/app-rail";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 // local imports
+import { PiChatArtifactsRoot } from "../pi-chat/build/artifacts/detail/root";
 import { PiChatFloatingBot } from "../pi-chat/floating-bot";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {
   const { shouldRenderAppRail } = useAppRail();
   const pathname = usePathname();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, chatId } = useParams();
   const shouldRenderPiChat = isPiAllowed(pathname.replace(`/${workspaceSlug}`, ""));
+  const isInPiApp = pathname === `/${workspaceSlug}/pi-chat/${chatId}/`;
 
   return (
     <div className="flex relative size-full overflow-hidden bg-custom-background-90 rounded-lg transition-all ease-in-out duration-300">
@@ -37,6 +39,11 @@ export const WorkspaceContentWrapper = observer(({ children }: { children: React
       {shouldRenderPiChat && (
         <div className="py-2">
           <PiChatFloatingBot />
+        </div>
+      )}
+      {isInPiApp && (
+        <div className="py-2">
+          <PiChatArtifactsRoot />
         </div>
       )}
     </div>

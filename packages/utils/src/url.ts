@@ -299,7 +299,7 @@ export function isValidNextPath(url: string): boolean {
     ];
 
     return !maliciousPatterns.some((pattern) => pattern.test(pathname));
-  } catch (error) {
+  } catch (_error) {
     // If URL constructor fails, it's an invalid path
     return false;
   }

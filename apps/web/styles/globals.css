@@ -1292,6 +1292,25 @@ input[type="color"].custom-color-picker {
   }
 }
 
+@keyframes grow-shrink-vertically {
+  0%, 100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+
+.animate-vertical-scale {
+  transform-origin: center; /* ensures it grows from both ends */
+  animation: grow-shrink-vertically 0.8s ease-in-out infinite;
+}
+
+.animate-scale-up-down {
+  animation: scale-up-down 2s ease-in-out infinite;
+}
+
 .animate-fade-in {
   animation: fadeIn 200ms var(--ease-out-quad) forwards;
 }
@@ -1314,6 +1333,10 @@ input[type="color"].custom-color-picker {
 
 .animate-fade-transition {
   animation: fadeTransition 200ms var(--ease-out-cubic) forwards;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
 }
 
 :root {
@@ -1348,4 +1371,43 @@ input[type="color"].custom-color-picker {
     background-color: transparent;
     border-radius: 4px;
   }
+}
+
+
+
+
+.shimmer {
+  display: inline-block;
+  background-color: rgb(var(--color-text-100));
+  background-image: linear-gradient(
+    to left,
+    transparent 0%,
+    rgb(var(--color-text-400)) 50%,
+    transparent 100%
+  );
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  background-clip: text;             /* non-prefixed fallback */
+  -webkit-background-clip: text;     /* required for Safari/WebKit */
+  -webkit-text-fill-color: transparent;
+
+  -webkit-animation: shimmer-ltr 2.2s linear infinite;
+  animation: shimmer-ltr 2.2s linear infinite;
+
+  -webkit-background-size: 60% 100%;
+  background-size: 60% 100%;        /* unprefixed too */
+}
+
+@keyframes shimmer-ltr {
+    0% {
+        background-position: -4rem top; /*50px*/
+    }
+
+    70% {
+        background-position: 200% top; /*200px*/
+    }
+
+    100% {
+        background-position: 200% top; /*200px*/
+    }
 }

@@ -16,7 +16,11 @@ export const MyMessage = observer((props: TProps) => {
   return (
     <div className="w-full flex gap-4 justify-end" id={id}>
       {!isLoading && (
-        <div className={cn("px-4 py-3 pr-10 text-base rounded-lg bg-custom-background-90 w-fit max-w-[75%]")}>
+        <div
+          className={cn(
+            "px-3 py-2 pr-10 text-base rounded-xl bg-custom-background-100 w-fit max-w-[75%] border-[0.5px] border-custom-border-200 rounded-tr-none"
+          )}
+        >
           {/* Message */}
           <PiChatEditorWithRef editable={false} content={message} editorClass="!break-words" />
         </div>
@@ -27,8 +31,6 @@ export const MyMessage = observer((props: TProps) => {
           <Loader.Item width="50px" height="42px" />
         </Loader>
       )}
-      {/* Avatar */}
-      <Avatar name={currentUser?.display_name} src={currentUser?.avatar} size={28} className="text-sm" />
     </div>
   );
 });

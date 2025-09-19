@@ -1,43 +1,30 @@
-import React, { useRef, useState } from "react";
+import React, { SetStateAction, Dispatch, useRef, useState } from "react";
 import { Check, LoaderCircle, MicIcon, X } from "lucide-react";
 import { EditorRefApi } from "@plane/editor";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import { TFocus } from "@/plane-web/types";
+import { TFocus, TPiLoaders } from "@/plane-web/types";
 import { Waveform } from "./voice-chart";
 
+export const SPEECH_LOADERS = ["recording", "transcribing"];
+
 type TProps = {
-  recording: boolean;
   workspaceId: string;
   chatId: string;
   editorRef: React.RefObject<EditorRefApi>;
-  focusRef: React.RefObject<TFocus>;
   isProjectLevel: boolean;
-  transcribing: boolean;
   isFullScreen: boolean;
+  focus: TFocus;
+  loader: TPiLoaders;
+  setLoader: Dispatch<SetStateAction<TPiLoaders>>;
   createNewChat: (focus: TFocus, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
-  setRecording: (recording: boolean) => void;
-  setTranscribing: (transcribing: boolean) => void;
-  setChatId: (chatId: string) => void;
 };
 const piChatService = new PiChatService();
 
 const AudioRecorder = (props: TProps) => {
-  const {
-    recording,
-    workspaceId,
-    chatId,
-    setRecording,
-    editorRef,
-    setTranscribing,
-    createNewChat,
-    focusRef,
-    isProjectLevel,
-    setChatId,
-    transcribing,
-    isFullScreen,
-  } = props;
+  const { workspaceId, chatId, editorRef, createNewChat, isProjectLevel, isFullScreen, focus, loader, setLoader } =
+    props;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [waveformData, setWaveformData] = useState<{ index: number; amplitude: number }[]>([]);
@@ -67,7 +54,7 @@ const AudioRecorder = (props: TProps) => {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/webm",
         });
-        setRecording(false);
+        setLoader("");
         if (shouldSubmitRef.current) await sendToAPI(audioBlob);
 
         // cleanup
@@ -77,7 +64,7 @@ const AudioRecorder = (props: TProps) => {
       };
 
       mediaRecorder.start();
-      setRecording(true);
+      setLoader("recording");
 
       // analyser for waveform
       const audioCtx = new (window.AudioContext || (window as any)?.webkitAudioContext)();
@@ -120,56 +107,44 @@ const AudioRecorder = (props: TProps) => {
     formData.append("file", audioBlob, "recording.webm");
 
     try {
-      setTranscribing(true);
+      setLoader("transcribing");
       let chatIdToUse = chatId;
-      if (!chatId) {
-        chatIdToUse = await createNewChat(
-          focusRef.current || {
-            isInWorkspaceContext: true,
-            entityType: "workspace_id",
-            entityIdentifier: workspaceId,
-          },
-          isProjectLevel,
-          workspaceId
-        );
-        setChatId(chatIdToUse);
-      }
-
+      if (!chatId) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
       const response = await piChatService.transcribeAudio(workspaceId, formData, chatIdToUse);
       editorRef.current?.appendText(" " + response);
     } catch (err) {
       console.error("API error", err);
     } finally {
       setIsSubmitting(false);
-      setTranscribing(false);
+      setLoader("");
     }
   };
 
   return (
     <div
       className={cn("flex items-center gap-2 ", {
-        "w-full": recording || transcribing,
+        "w-full": SPEECH_LOADERS.includes(loader),
       })}
     >
       {/* record/stop button */}
       <button
-        onClick={() => (recording ? stopRecording(false) : startRecording())}
+        onClick={() => (loader === "recording" ? stopRecording(false) : startRecording())}
         type="button"
         disabled={isSubmitting}
         className={cn(
           "flex items-center justify-center w-8 h-8 rounded-full hover:bg-custom-background-80 flex-shrink-0",
-          { "bg-custom-background-80": recording || transcribing }
+          { "bg-custom-background-80": SPEECH_LOADERS.includes(loader) }
         )}
       >
-        {recording || transcribing ? <X className="w-4 h-4" /> : <MicIcon className="w-4 h-4" />}
+        {SPEECH_LOADERS.includes(loader) ? <X className="w-4 h-4" /> : <MicIcon className="w-4 h-4" />}
       </button>
 
       {/* waveform / transcribing */}
       <div className="flex-1 w-full">
-        {recording ? (
+        {loader === "recording" ? (
           <Waveform data={waveformData} barCount={isFullScreen ? 100 : 50} />
         ) : (
-          transcribing && (
+          loader === "transcribing" && (
             <div className="flex gap-2 items-center justify-center">
               <span className="text-base text-custom-text-200 animate-pulse">Transcribing audio...</span>
             </div>
@@ -178,7 +153,7 @@ const AudioRecorder = (props: TProps) => {
       </div>
 
       {/* submit button */}
-      {(recording || transcribing) && (
+      {SPEECH_LOADERS.includes(loader) && (
         <button
           className={cn(
             "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-custom-background-80"

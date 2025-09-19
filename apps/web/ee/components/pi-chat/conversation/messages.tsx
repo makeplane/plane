@@ -36,6 +36,7 @@ export const Messages = observer((props: TProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("message_token");
+  const routerChatId = searchParams.get("chat_id");
   const { chatId } = useParams();
   // handlers
   const checkIfHasMore = () => {
@@ -48,9 +49,10 @@ export const Messages = observer((props: TProps) => {
 
     setHasMoreMessages(isOverflowing && isNotAtBottom);
   };
-  const handleRegenerate = async () => {
-    if (token) {
-      await regenerateAnswer(chatId.toString(), token, activeChat?.workspace_id);
+  const handleRegenerateIfTokenExists = async () => {
+    const chatIdToUse = chatId || routerChatId;
+    if (token && chatIdToUse) {
+      await regenerateAnswer(chatIdToUse.toString(), token, activeChat?.workspace_id);
       // remove token from url
       router.push(pathname);
     }
@@ -71,7 +73,7 @@ export const Messages = observer((props: TProps) => {
   }, []);
 
   useEffect(() => {
-    handleRegenerate();
+    handleRegenerateIfTokenExists();
   }, []);
 
   useEffect(() => {

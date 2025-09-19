@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
@@ -22,6 +22,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
 
@@ -53,7 +54,15 @@ const SystemPrompts = (props: TSystemPrompt) => {
     setIsInitializing("");
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
-    getAnswer(newChatId, prompt.text, focus, isProjectLevel, workspaceSlug?.toString(), workspaceId?.toString());
+    getAnswer(
+      newChatId,
+      prompt.text,
+      focus,
+      isProjectLevel,
+      workspaceSlug?.toString(),
+      workspaceId?.toString(),
+      pathname
+    );
   };
   const promptIcon = getIcon(prompt.type);
 
