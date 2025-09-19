@@ -695,6 +695,18 @@ def create_epic_activity(
     issue_activity.created_at = epic.created_at
     issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    if requested_data.get("assignee_ids") is not None:
+        track_assignees(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
 
 
 def update_issue_activity(
@@ -1915,12 +1927,16 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue" if intake else "issue"
+                        else "intake_issue"
+                        if intake
+                        else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake if intake else activity.issue_id
+                        else intake
+                        if intake
+                        else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(
