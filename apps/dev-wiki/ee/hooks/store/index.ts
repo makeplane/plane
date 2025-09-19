@@ -5,3 +5,4 @@ export * from "./use-flag";
 export * from "./use-workspace-features";
 export * from "./use-self-hosted-subscription";
 export * from "./use-publish-page";
+export * from "./use-workspace-subscription";

@@ -87,6 +87,10 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
                 },
               },
               isSmoothCursorEnabled: false,
+              commentConfig: {
+                canComment: false,
+                shouldHideComment: true,
+              },
             }}
           />
         </div>

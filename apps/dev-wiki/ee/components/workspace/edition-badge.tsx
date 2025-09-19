@@ -4,7 +4,7 @@ import { Loader } from "@plane/ui";
 // plane web imports
 // import { CloudEditionBadge, SelfHostedEditionBadge } from "@/plane-web/components/license";
 // plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/use-workspace-subscription";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 export const WorkspaceEditionBadge = observer(() => {
   // hooks

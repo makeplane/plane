@@ -1,3 +1,6 @@
+// types
+import type { TCommentConfig } from "@/types";
+
 export enum ECommentAttributeNames {
   ID = "id",
   COMMENT_ID = "data-comment-id",
@@ -26,11 +29,12 @@ export type TCommentClickPayload = {
 // COMMENT MARK OPTIONS
 export type TCommentMarkOptions = {
   isFlagged: boolean;
-  onCommentClick?: (payload: TCommentClickPayload) => void;
-  onCommentDelete?: (commentId: string) => void;
-  onCommentRestore?: (commentId: string) => void;
-  onCommentResolve?: (commentId: string) => void;
-  onCommentUnresolve?: (commentId: string) => void;
+  onCommentClick?: TCommentConfig["onClick"];
+  onCommentDelete?: TCommentConfig["onDelete"];
+  onCommentRestore?: TCommentConfig["onRestore"];
+  onCommentResolve?: TCommentConfig["onResolve"];
+  onCommentUnresolve?: TCommentConfig["onUnresolve"];
+  shouldHideComment?: TCommentConfig["shouldHideComment"];
 };
 
 // COMMENT MARK STORAGE

@@ -10,8 +10,8 @@ import { TPage } from "@plane/types";
 // ui
 import { CustomMenu, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { PageBreadcrumbItem } from "@/components/pages";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // plane web components
@@ -89,7 +89,7 @@ export const PageDetailsHeader = observer(() => {
                     <PageBreadcrumbItem
                       pageId={rootParentDetails.id}
                       storeType={EPageStoreType.WORKSPACE}
-                      href={`/${workspaceSlug}/pages/${rootParentDetails.id}`}
+                      href={`/${workspaceSlug}/wiki/${rootParentDetails.id}`}
                     />
                   </div>
                 )}
@@ -109,7 +109,7 @@ export const PageDetailsHeader = observer(() => {
                             >
                               <CustomMenu.MenuItem
                                 className="flex items-center gap-1 transition-colors duration-200 ease-in-out"
-                                onClick={() => router.push(`/${workspaceSlug}/pages/${parent.id}`)}
+                                onClick={() => router.push(`/${workspaceSlug}/wiki/${parent.id}`)}
                               >
                                 <PageBreadcrumbItem pageId={parent.id} storeType={EPageStoreType.WORKSPACE} showLogo />
                               </CustomMenu.MenuItem>

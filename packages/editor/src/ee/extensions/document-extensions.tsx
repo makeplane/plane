@@ -1,8 +1,8 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
 import { FileText, Paperclip } from "lucide-react";
-// ce imports
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
+import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // ce imports
 import { TDocumentEditorAdditionalExtensionsProps, TDocumentEditorAdditionalExtensionsRegistry } from "@/ce/extensions";
 // extensions
@@ -18,7 +18,6 @@ import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCursor } from "./collaboration-cursor";
 import { CommentsExtension } from "./comments";
-import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 
 /**
  * Registry for slash commands
@@ -199,8 +198,8 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     // Comment mark extension (for styling)
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("comments"),
     getExtension: ({ extendedEditorProps, flaggedExtensions }) => {
-      if (!extendedEditorProps || !extendedEditorProps.commentConfig) return undefined;
-      const { onClick, onDelete, onRestore, onResolve, onUnresolve } = extendedEditorProps.commentConfig;
+      const { onClick, onDelete, onRestore, onResolve, onUnresolve, shouldHideComment } =
+        extendedEditorProps.commentConfig ?? {};
       return CommentsExtension({
         isFlagged: flaggedExtensions.includes("comments"),
         onCommentClick: onClick,
@@ -208,6 +207,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         onCommentRestore: onRestore,
         onCommentResolve: onResolve,
         onCommentUnresolve: onUnresolve,
+        shouldHideComment: !!shouldHideComment,
       });
     },
   },

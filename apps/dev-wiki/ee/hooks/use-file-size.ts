@@ -6,7 +6,7 @@ import { MAX_FILE_SIZE, MAX_PRO_FILE_SIZE } from "@plane/constants";
 import { useInstance } from "@/hooks/store";
 // local hooks
 import { useFlag } from "./store";
-import { useWorkspaceSubscription } from "./use-workspace-subscription";
+import { useWorkspaceSubscription } from "./store/use-workspace-subscription";
 
 type TReturnProps = {
   maxFileSize: number;

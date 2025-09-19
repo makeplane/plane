@@ -6,9 +6,7 @@ import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
-import { useQueryParams } from "@/hooks/use-query-params";
 import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
@@ -61,8 +59,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useAppRouter();
   // derived values
   const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
@@ -76,7 +72,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     hasConnectionFailed,
     updatePageDescription: handlers.updateDescription,
   });
-  const { updateQueryParams } = useQueryParams();
 
   const handleEditorReady = useCallback(
     (status: boolean) => {

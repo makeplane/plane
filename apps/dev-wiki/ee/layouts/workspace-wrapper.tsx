@@ -11,7 +11,7 @@ import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth
 // plane web hooks
 import { WorkspaceDisabledPage } from "../components/workspace-disabled";
 import { useFeatureFlags, useWorkspaceFeatures } from "../hooks/store";
-import { useWorkspaceSubscription } from "../hooks/use-workspace-subscription";
+import { useWorkspaceSubscription } from "../hooks/store/use-workspace-subscription";
 // plane web types
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props

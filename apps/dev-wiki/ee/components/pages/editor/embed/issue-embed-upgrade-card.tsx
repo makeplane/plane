@@ -1,7 +1,7 @@
 import { Crown } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
-import { useWorkspaceSubscription } from "@/plane-web/hooks/use-workspace-subscription";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {
   const { togglePaidPlanModal } = useWorkspaceSubscription();

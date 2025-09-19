@@ -73,6 +73,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const {
     embedHandler,
     isSmoothCursorEnabled: _isSmoothCursorEnabled,
+    commentConfig,
     ...restExtendedEditorProps
   } = extendedEditorProps ?? {};
 
@@ -105,6 +106,11 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
             widgetCallback: EmbedHandler,
           },
           ...embedHandler,
+        },
+        commentConfig: {
+          canComment: false,
+          shouldHideComment: true,
+          ...commentConfig,
         },
         ...restExtendedEditorProps,
       }}

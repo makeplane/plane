@@ -37,6 +37,7 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
   addOptions() {
     return {
       isFlagged: false,
+      shouldHideComment: false,
     };
   },
 
@@ -71,9 +72,11 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
     return [
       "span",
       mergeAttributes(HTMLAttributes, {
-        class: isResolved
-          ? `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.RESOLVED}`
-          : `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.ACTIVE} relative cursor-pointer transition-all duration-200 ease-out ${ECommentMarkCSSClasses.BACKGROUND} hover:bg-[#FFBF66]/40`,
+        class: this.options.shouldHideComment
+          ? ""
+          : isResolved
+            ? `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.RESOLVED}`
+            : `${ECommentMarkCSSClasses.BASE} ${ECommentMarkCSSClasses.ACTIVE} relative cursor-pointer transition-all duration-200 ease-out ${ECommentMarkCSSClasses.BACKGROUND} hover:bg-[#FFBF66]/40`,
       }),
       0,
     ];
