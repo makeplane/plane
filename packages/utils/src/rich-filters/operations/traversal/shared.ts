@@ -5,6 +5,10 @@ import {
   TFilterProperty,
   TSupportedOperators,
 } from "@plane/types";
+// local imports
+import { toNegativeOperator } from "../../operators/extended";
+import { isNotGroupNode } from "../../types/extended";
+import { findImmediateParent } from "./core";
 
 /**
  * Helper function to get the display operator for a condition.
@@ -16,8 +20,16 @@ import {
  */
 export const getDisplayOperator = <P extends TFilterProperty>(
   operator: TSupportedOperators,
-  _expression: TFilterExpression<P>,
-  _conditionId: string
-): TAllAvailableOperatorsForDisplay =>
+  expression: TFilterExpression<P>,
+  conditionId: string
+): TAllAvailableOperatorsForDisplay => {
+  const immediateParent = findImmediateParent(expression, conditionId);
+
+  // If immediate parent is a NOT group, transform the operator
+  if (immediateParent && isNotGroupNode(immediateParent)) {
+    return toNegativeOperator(operator);
+  }
+
   // Otherwise, return the operator as-is
-  operator;
+  return operator;
+};

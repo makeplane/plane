@@ -1,0 +1,2858 @@
+{
+  "sidebar": {
+    "pi_chat": "Pí Čet",
+    "initiatives": "Iniciatívy",
+    "teamspaces": "Tímspejsy",
+    "epics": "Epiky",
+    "upgrade_plan": "Apgrejd plán",
+    "plane_pro": "Plejn Pro",
+    "business": "Biznis",
+    "customers": "Kastomers",
+    "recurring_work_items": "Opakujúce sa pracovné položky"
+  },
+  "workspace_dashboards": "Dešbordy",
+  "pi_chat": "Pi Čet",
+  "in_app": "V aplikácii",
+  "forms": "Formuláre",
+  "choose_workspace_for_integration": "Vyberte pracovný priestor pre pripojenie tejto aplikácie",
+  "integrations_description": "Aplikácie, ktoré fungujú s Plane, musia byť pripojené k pracovnom priestoru, kde ste správca.",
+  "create_a_new_workspace": "Vytvoriť nový pracovný priestor",
+  "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
+  "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
+  "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
+  "common": {
+    "worklogs": "Pracovné záznamy",
+    "live": "Naživo",
+    "epics": "Epiky",
+    "project_updates": "Aktualizácie projektov",
+    "overview": "Prehľad",
+    "workflows": "Vorkflou",
+    "templates": "Šablóny",
+    "members_and_teamspaces": "Členovia a tímspejse"
+  },
+  "updates": {
+    "add_update": "Pridať aktualizáciu",
+    "add_update_placeholder": "Vložte vašu aktualizáciu tu",
+    "empty": {
+      "title": "Ešte nie sú žiadne aktualizácie",
+      "description": "Tu môžete zobraziť aktualizácie."
+    },
+    "delete": {
+      "title": "Odstrániť aktualizáciu",
+      "confirmation": "Naozaj chcete odstrániť túto aktualizáciu? Táto akcia je neobnoviteľná.",
+      "success": {
+        "title": "Aktualizácia odstránená",
+        "message": "Aktualizácia bola úspešne odstránená."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo odstrániť",
+        "message": "Aktualizáciu sa nepodarilo odstrániť."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizácia aktualizovaná",
+        "message": "Aktualizácia bola úspešne aktualizovaná."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo aktualizovať",
+        "message": "Aktualizáciu sa nepodarilo aktualizovať."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reakcia vytvorená",
+          "message": "Reakcia bola úspešne vytvorená."
+        },
+        "error": {
+          "title": "Reakcia sa nepodarila vytvoriť",
+          "message": "Reakcia sa nepodarila vytvoriť."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reakcia odstránená",
+          "message": "Reakcia bola úspešne odstránená."
+        },
+        "error": {
+          "title": "Reakcia sa nepodarila odstrániť",
+          "message": "Reakcia sa nepodarila odstrániť."
+        }
+      }
+    },
+    "progress": {
+      "title": "Postup",
+      "since_last_update": "Od poslednej aktualizácie",
+      "comments": "{count, plural, one{# komentár} few{# komentáre} other{# komentárov}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizácia vytvorená",
+        "message": "Aktualizácia bola úspešne vytvorená."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo vytvoriť",
+        "message": "Aktualizáciu sa nepodarilo vytvoriť."
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Začína pred",
+      "start_after": "Začína po",
+      "finish_before": "Končí pred",
+      "finish_after": "Končí po"
+    }
+  },
+  "pages": {
+    "link_pages": "Pripojenie stránok",
+    "show_wiki_pages": "Zobraziť Wiki stránky",
+    "link_pages_to": "Pripojenie stránok k",
+    "linked_pages": "Pripojené stránky",
+    "no_description": "Táto stránka je prázdna. Napíšte niečo sem a pozrite si, ako sa zobrazí tu ako tento placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Stránky aktualizované",
+          "message": "Stránky boli úspešne aktualizované"
+        },
+        "error": {
+          "title": "Stránky neaktualizované",
+          "message": "Stránky sa nepodarilo aktualizovať"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Stránka odstránená",
+          "message": "Stránka bola úspešne odstránená"
+        },
+        "error": {
+          "title": "Stránka neodstránená",
+          "message": "Stránku sa nepodarilo odstrániť"
+        }
+      }
+    }
+  },
+  "profile": {
+    "actions": {
+      "connections": "Pripojenia"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "Iniciatívy",
+      "sub_heading": "Odomknite najvyššiu úroveň organizácie pre všetku vašu prácu v Plene.",
+      "title": "Povoliť Iniciatívy",
+      "description": "Nastavte väčšie ciele na monitorovanie pokroku",
+      "toast": {
+        "updating": "Aktualizácia funkcie iniciatív",
+        "enable_success": "Funkcia iniciatív bola úspešne povolená.",
+        "disable_success": "Funkcia iniciatív bola úspešne zakázaná.",
+        "error": "Nepodarilo sa aktualizovať funkciu iniciatív!"
+      }
+    },
+    "customers": {
+      "heading": "Zákazníci",
+      "settings_heading": "Spravujte prácu podľa toho, čo je dôležité pre vašich zákazníkov.",
+      "settings_sub_heading": "Preneste požiadavky zákazníkov do pracovných položiek, priraďte prioritu podľa požiadaviek a zlúčte stavy pracovných položiek do záznamov zákazníkov. Čoskoro sa budete môcť integrovať s vašim CRM alebo podporným nástrojom pre ešte lepšiu správu práce podľa atribútov zákazníka."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "Žiadne nakonfigurované integrácie",
+        "description": "Nakonfigurujte GitHub a ďalšie integrácie na synchronizáciu vašich projektových pracovných položiek."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Upraviť systém odhadov",
+        "add_or_update": {
+          "title": "Pridať, aktualizovať alebo odstrániť odhady",
+          "description": "Spravujte aktuálny systém pridávaním, aktualizáciou alebo odstraňovaním bodov alebo kategórií."
+        },
+        "switch": {
+          "title": "Zmeniť typ odhadu",
+          "description": "Konvertujte váš bodový systém na systém kategórií a naopak."
+        }
+      },
+      "switch": "Prepnúť systém odhadov",
+      "current": "Aktuálny systém odhadov",
+      "select": "Vyberte systém odhadov",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Odhady boli preusporiadané",
+            "message": "Odhady boli preusporiadané vo vašom projekte."
+          },
+          "error": {
+            "title": "Preusporiadanie odhadov zlyhalo",
+            "message": "Nepodarilo sa preusporiadať odhady, skúste to prosím znova"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Prosím vyplňte toto pole odhadu",
+        "repeat": "Hodnota odhadu sa nemôže opakovať"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Vlastnosti",
+        "description": "Pridajte vlastné vlastnosti k vášmu epiku."
+      },
+      "disabled": "Zakázané"
+    }
+  },
+  "teamspaces": {
+    "label": "Tímspejsy",
+    "empty_state": {
+      "general": {
+        "title": "Tímspejsy odomykajú lepšiu organizáciu a sledovanie v Plene.",
+        "description": "Vytvorte vyhradený priestor pre každý reálny tím, oddelený od všetkých ostatných pracovných priestorov v Plene, a prispôsobte ich tak, aby vyhovovali spôsobu práce vášho tímu.",
+        "primary_button": {
+          "text": "Vytvoriť nový tímspejs"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatiaľ ste neprepojili žiadne tímspejsy.",
+          "description": "Vlastníci tímspejsu a projektu môžu spravovať prístup k projektom."
+        }
+      },
+      "primary_button": {
+        "text": "Prepojiť tímspejs"
+      },
+      "secondary_button": {
+        "text": "Dozvedieť sa viac"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Názov tímspejsu",
+          "members": "Členovia",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstrániť tímspejs"
+            },
+            "confirm": {
+              "title": "Odstrániť {teamspaceName} z {projectName}",
+              "description": "Keď odstránite tento tímspejs z prepojeného projektu, členovia tu stratia prístup k prepojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Neboli nájdené žiadne zodpovedajúce tímspejsy"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Prepojili ste tímspejs s týmto projektom.} other {Prepojili ste # tímspejsov s týmto projektom.}}",
+            "description": "{additionalCount, plural, =0 {Tímspejs {firstTeamspaceName} je teraz prepojený s týmto projektom.} other {Tímspejs {firstTeamspaceName} a {additionalCount} ďalších je teraz prepojených s týmto projektom.}}"
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstránili ste tento tímspejs z tohto projektu.",
+            "description": "Tímspejs {teamspaceName} bol odstránený z {projectName}."
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hľadať tímspejsy",
+        "info": {
+          "title": "Pridanie tímspejsu poskytuje všetkým členom tímspejsu prístup k tomuto projektu.",
+          "link": "Dozvedieť sa viac"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žiadne tímspejsy na prepojenie.",
+            "description": "Buď nie ste v tímspejse, ktorý môžete prepojiť, alebo ste už prepojili všetky dostupné tímspejsy."
+          },
+          "no_results": {
+            "title": "To nezodpovedá žiadnemu z vašich tímspejsov.",
+            "description": "Skúste iný výraz alebo sa uistite, že máte tímspejsy na prepojenie."
+          }
+        },
+        "primary_button": {
+          "text": "Prepojiť vybrané tímspejsy"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Vytvorte pracovné položky špecifické pre tím.",
+        "description": "Pracovné položky, ktoré sú priradené členom tohto tímu v akomkoľvek prepojenom projekte, sa tu automaticky zobrazia. Ak očakávate, že tu uvidíte nejaké pracovné položky, uistite sa, že vaše prepojené projekty majú pracovné položky priradené členom tohto tímu alebo vytvorte pracovné položky.",
+        "primary_button": {
+          "text": "Pridať pracovné položky do prepojeného projektu"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Pre použité filtre neexistujú žiadne pracovné položky špecifické pre tím",
+        "description": "Zmeňte niektoré z týchto filtrov alebo ich všetky vymažte, aby ste videli pracovné položky relevantné pre tento priestor.",
+        "secondary_button": {
+          "text": "Vymazať všetky filtre"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Žiadny z vašich prepojených projektov nemá aktívny cyklus.",
+        "description": "Aktívne cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte aktívny cyklus, uistite sa, že práve teraz beží v prepojenom projekte."
+      },
+      "completed": {
+        "title": "Žiadny z vašich prepojených projektov nemá dokončený cyklus.",
+        "description": "Dokončené cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte dokončený cyklus, uistite sa, že je taktiež dokončený v prepojenom projekte."
+      },
+      "upcoming": {
+        "title": "Žiadny z vašich prepojených projektov nemá nadchádzajúci cyklus.",
+        "description": "Nadchádzajúce cykly v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že uvidíte nadchádzajúci cyklus, uistite sa, že je aj v prepojenom projekte."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Pohľady vášho tímu na vašu prácu bez narušenia akýchkoľvek iných pohľadov vo vašom vorkspejse",
+        "description": "Pozrite si prácu svojho tímu v pohľadoch, ktoré sú uložené len pre váš tím a oddelene od pohľadov projektu.",
+        "primary_button": {
+          "text": "Vytvoriť pohľad"
+        }
+      },
+      "project_view": {
+        "title": "Žiadny z vašich prepojených projektov nemá verejné pohľady.",
+        "description": "Verejné pohľady v prepojených projektoch sa tu automaticky zobrazia. Aby ste tu videli verejné pohľady z prepojených projektov, uistite sa, že tieto projekty majú verejné pohľady prístupné všetkým členom projektu."
+      },
+      "filter": {
+        "title": "Žiadne zodpovedajúce pohľady",
+        "description": "Žiadne pohľady nezodpovedajú kritériám vyhľadávania. \n Namiesto toho vytvorte nový pohľad."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Umiestnite znalosti svojho tímu na Stránky tímu.",
+        "description": "Na rozdiel od stránok v projekte môžete tu uložiť znalosti špecifické pre tím v samostatnej sade stránok. Získajte všetky funkcie Stránok, vytvárajte dokumenty s osvedčenými postupmi a tímové wiki jednoducho.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú tímovú stránku"
+        }
+      },
+      "project_page": {
+        "title": "Žiadny z vašich prepojených projektov nemá verejné stránky.",
+        "description": "Verejné stránky v prepojených projektoch sa tu automaticky zobrazia. Ak očakávate, že tu uvidíte verejné stránky, uistite sa, že vaše prepojené projekty majú verejné stránky dostupné všetkým členom projektu."
+      },
+      "filter": {
+        "title": "Žiadne zodpovedajúce stránky",
+        "description": "Odstráňte filtre, aby ste videli všetky stránky"
+      },
+      "search": {
+        "title": "Žiadne zodpovedajúce stránky",
+        "description": "Odstráňte kritériá vyhľadávania, aby ste videli všetky stránky"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Žiadny z vašich prepojených projektov nemá zverejnené pracovné položky.",
+        "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli pokrok podľa dátumov, stavov a priorít."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Nemáte žiadne pracovné položky, ktoré by blokovali tímového kolegu.",
+          "description": "Dobrá práca! Vyčistili ste cestu pre svoj tím. Ste dobrý tímový hráč."
+        },
+        "blocked": {
+          "title": "Nemáte žiadne pracovné položky tímového kolegu, ktoré by vás blokovali.",
+          "description": "Dobré správy! Môžete pokročiť vo všetkých vašich priradených pracovných položkách."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Žiadny z vašich prepojených projektov nemá zverejnené pracovné položky.",
+          "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli rozdelenie práce podľa projektu a členov tímu."
+        },
+        "filter": {
+          "title": "Pre použité filtre neexistujú žiadne tímové štatistiky.",
+          "description": "Vytvorte niekoľko pracovných položiek v jednom alebo viacerých z týchto projektov, aby ste videli rozdelenie práce podľa projektu a členov tímu."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "overview": "Prehľad",
+    "label": "Iniciatívy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciatívy}}",
+    "add_initiative": "Pridať Iniciatívu",
+    "create_initiative": "Vytvoriť Iniciatívu",
+    "update_initiative": "Aktualizovať Iniciatívu",
+    "initiative_name": "Názov iniciatívy",
+    "all_initiatives": "Všetky Iniciatívy",
+    "delete_initiative": "Odstrániť Iniciatívu",
+    "fill_all_required_fields": "Prosím, vyplňte všetky povinné polia.",
+    "toast": {
+      "create_success": "Iniciatíva {name} bola úspešne vytvorená.",
+      "create_error": "Nepodarilo sa vytvoriť iniciatívu. Skúste to znova!",
+      "update_success": "Iniciatíva {name} bola úspešne aktualizovaná.",
+      "update_error": "Nepodarilo sa aktualizovať iniciatívu. Skúste to znova!",
+      "delete": {
+        "success": "Iniciatíva bola úspešne odstránená.",
+        "error": "Nepodarilo sa odstrániť Iniciatívu"
+      },
+      "link_copied": "Odkaz na iniciatívu bol skopírovaný do schránky.",
+      "project_update_success": "Projekty iniciatívy boli úspešne aktualizované.",
+      "project_update_error": "Nepodarilo sa aktualizovať projekty iniciatívy. Skúste to znova!",
+      "epic_update_success": "Epik{count, plural, one { bol úspešne pridaný do Iniciatívy.} other {y boli úspešne pridané do Iniciatívy.}}",
+      "epic_update_error": "Pridanie Epiku do Iniciatívy zlyhalo. Skúste to neskôr znova."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizujte prácu na najvyššej úrovni s Iniciatívami",
+        "description": "Keď potrebujete organizovať prácu zahŕňajúcu niekoľko projektov a tímov, Iniciatívy sú užitočné. Prepojte projekty a epiky s iniciatívami, pozrite si automaticky zosumarizované aktualizácie a uvidíte lesy skôr, než sa dostanete k stromom.",
+        "primary_button": {
+          "text": "Vytvoriť iniciatívu"
+        }
+      },
+      "search": {
+        "title": "Žiadne zodpovedajúce iniciatívy",
+        "description": "Neboli zistené žiadne iniciatívy so zodpovedajúcimi kritériami. \n Namiesto toho vytvorte novú iniciatívu."
+      },
+      "not_found": {
+        "title": "Iniciatíva neexistuje",
+        "description": "Iniciatíva, ktorú hľadáte, neexistuje alebo bola odstránená.",
+        "primary_button": {
+          "text": "Zobraziť iné Iniciatívy"
+        }
+      },
+      "epics": {
+        "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
+        "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobraziť rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Pridať rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatiaľ nebol pridaný žiadny rozsah do tejto iniciatívy",
+        "description": "Prepojte projekty a epiky s iniciatívou, aby ste mohli začať.",
+        "primary_button": {
+          "text": "Pridať rozsah"
+        }
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Napíšte poznámku, dokument alebo úplnú znalostnej bázu. Nechajte Galilea, Plenovho AI asistenta, aby vám pomohol začať",
+        "description": "Stránky sú priestor pre myšlienky v Plene. Zapíšte si poznámky zo stretnutí, jednoducho ich formátujte, vložte pracovné položky, rozložte ich pomocou knižnice komponentov a uchovajte ich všetky v kontexte vášho projektu. Aby ste skrátili prácu na akomkoľvek dokumente, vyvolajte Galilea, AI Plena, pomocou skratky alebo kliknutia na tlačidlo.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú stránku"
+        }
+      },
+      "private": {
+        "title": "Zatiaľ žiadne súkromné stránky",
+        "description": "Uchovajte si tu svoje súkromné myšlienky. Keď budete pripravení zdieľať, tím je len na kliknutie.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú stránku"
+        }
+      },
+      "public": {
+        "title": "Zatiaľ žiadne stránky pracovného priestoru",
+        "description": "Pozrite si stránky zdieľané so všetkými vo vašom pracovnom priestore práve tu.",
+        "primary_button": {
+          "text": "Vytvorte svoju prvú stránku"
+        }
+      },
+      "archived": {
+        "title": "Zatiaľ žiadne archivované stránky",
+        "description": "Archivujte stránky, ktoré nie sú vo vašom radare. Keď ich budete potrebovať, pristupujte k nim tu."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epiky",
+    "no_epics_selected": "Neboli vybrané žiadne epiky",
+    "add_selected_epics": "Pridať vybrané epiky",
+    "epic_link_copied_to_clipboard": "Odkaz na epik bol skopírovaný do schránky.",
+    "project_link_copied_to_clipboard": "Odkaz na projekt bol skopírovaný do schránky",
+    "empty_state": {
+      "general": {
+        "title": "Vytvorte epik a priraďte ho niekomu, aj sebe",
+        "description": "Pre väčšie celky práce, ktoré prechádzajú niekoľkými cyklami a môžu existovať naprieč modulmi, vytvorte epik. Prepojte pracovné položky a podpoložky v projekte s epikom a prejdite do pracovnej položky z prehľadu.",
+        "primary_button": {
+          "text": "Vytvoriť Epik"
+        }
+      },
+      "section": {
+        "title": "Zatiaľ žiadne epiky",
+        "description": "Začnite pridávať epiky na správu a sledovanie pokroku.",
+        "primary_button": {
+          "text": "Pridať epiky"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nenašli sa žiadne zodpovedajúce epiky"
+      },
+      "no_epics": {
+        "title": "Nenašli sa žiadne epiky"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Žiadne aktívne cykly",
+        "description": "Cykly vašich projektov, ktoré zahŕňajú akékoľvek obdobie, ktoré zahŕňa dnešný dátum v rámci svojho rozsahu. Nájdite tu pokrok a detaily všetkých vašich aktívnych cyklov."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Pridajte pracovné položky do cyklu, aby ste videli jeho \n pokrok"
+      },
+      "priority": {
+        "title": "Sledujte pracovné položky s vysokou prioritou riešené v \n cykle na prvý pohľad."
+      },
+      "assignee": {
+        "title": "Pridajte priradeným osobám pracovné položky, aby ste videli \n rozdelenie práce podľa priradených osôb."
+      },
+      "label": {
+        "title": "Pridajte štítky k pracovným položkám, aby ste videli \n rozdelenie práce podľa štítkov."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Integrácie",
+        "page_title": "Pracujte so svojimi údajmi Plane v dostupných aplikáciách alebo vo vlastných.",
+        "page_description": "Zobraziť všetky integrácie používané týmto pracovným priestorom alebo vami."
+      },
+      "imports": {
+        "title": "Importy"
+      },
+      "worklogs": {
+        "title": "Pracovné záznamy"
+      },
+      "project_states": {
+        "title": "Stavy projektu"
+      },
+      "teamspaces": {
+        "title": "Tímspejsy"
+      },
+      "initiatives": {
+        "title": "Iniciatívy"
+      },
+      "customers": {
+        "title": "Zákazníci"
+      },
+      "cancel_trial": {
+        "title": "Najprv zrušte vašu skúšobnú verziu.",
+        "description": "Máte aktívnu skúšobnú verziu jedného z našich platených plánov. Prosím, najskôr ju zrušte, aby ste mohli pokračovať.",
+        "dismiss": "Zavrieť",
+        "cancel": "Zrušiť skúšobnú verziu",
+        "cancel_success_title": "Skúšobná verzia zrušená.",
+        "cancel_success_message": "Teraz môžete odstrániť vorkspejs.",
+        "cancel_error_title": "To nefungovalo.",
+        "cancel_error_message": "Skúste to znova, prosím."
+      },
+      "applications": {
+        "title": "Aplikácie",
+        "applicationId_copied": "ID aplikácie skopírované do schránky",
+        "clientId_copied": "ID klienta skopírované do schránky",
+        "clientSecret_copied": "Tajomstvo klienta skopírované do schránky",
+        "third_party_apps": "Aplikácie tretích strán",
+        "your_apps": "Vaše aplikácie",
+        "connect": "Pripojiť",
+        "connected": "Pripojené",
+        "install": "Nainštalovať",
+        "installed": "Nainštalované",
+        "configure": "Konfigurovať",
+        "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Plane",
+        "app_available_description": "Pripojte pracovný priestor Plane pre začatie používania",
+        "client_id_and_secret": "ID a Tajomstvo Klienta",
+        "client_id_and_secret_description": "Skopírujte a uložte tento tajný kľúč. Po kliknutí na Zavrieť tento kľúč už neuvidíte.",
+        "client_id_and_secret_download": "Môžete si stiahnuť CSV s kľúčom odtiaľto.",
+        "application_id": "ID Aplikácie",
+        "client_id": "ID Klienta",
+        "client_secret": "Tajomstvo Klienta",
+        "export_as_csv": "Exportovať ako CSV",
+        "slug_already_exists": "Slug už existuje",
+        "failed_to_create_application": "Nepodarilo sa vytvoriť aplikáciu",
+        "upload_logo": "Nahrať Logo",
+        "app_name_title": "Ako pomenujete túto aplikáciu",
+        "app_name_error": "Názov aplikácie je povinný",
+        "app_short_description_title": "Dajte tejto aplikácii krátky popis",
+        "app_short_description_error": "Krátky popis aplikácie je povinný",
+        "app_description_title": {
+          "label": "Dlhý popis",
+          "placeholder": "Napíšte dlhý popis pre trhovisko. Stlačte ‘/’ pre príkazy."
+        },
+        "app_description_error": "Popis aplikácie je povinný",
+        "app_slug_title": "Slug aplikácie",
+        "app_slug_error": "Slug aplikácie je povinný",
+        "app_maker_title": "Tvorca aplikácie",
+        "app_maker_error": "Tvorca aplikácie je povinný",
+        "webhook_url_title": "URL Webhooku",
+        "webhook_url_error": "URL webhooku je povinné",
+        "invalid_webhook_url_error": "Neplatné URL webhooku",
+        "redirect_uris_title": "URI presmerovania",
+        "redirect_uris_error": "URI presmerovania sú povinné",
+        "invalid_redirect_uris_error": "Neplatné URI presmerovania",
+        "redirect_uris_description": "Zadajte URI oddelené medzerami, kam aplikácia presmeruje po používateľovi, napr. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Autorizované JavaScript pôvody",
+        "authorized_javascript_origins_error": "Autorizované JavaScript pôvody sú povinné",
+        "invalid_authorized_javascript_origins_error": "Neplatné autorizované JavaScript pôvody",
+        "authorized_javascript_origins_description": "Zadajte pôvody oddelené medzerami, odkiaľ bude môcť aplikácia robiť požiadavky, napr. app.com example.com",
+        "create_app": "Vytvoriť aplikáciu",
+        "update_app": "Aktualizovať aplikáciu",
+        "regenerate_client_secret_description": "Znovu vygenerovať tajomstvo klienta. Po regenerácii môžete kľúč skopírovať alebo stiahnuť do CSV súboru.",
+        "regenerate_client_secret": "Znovu vygenerovať tajomstvo klienta",
+        "regenerate_client_secret_confirm_title": "Ste si istí, že chcete znovu vygenerovať tajomstvo klienta?",
+        "regenerate_client_secret_confirm_description": "Aplikácia používajúca toto tajomstvo prestane fungovať. Budete musieť aktualizovať tajomstvo v aplikácii.",
+        "regenerate_client_secret_confirm_cancel": "Zrušiť",
+        "regenerate_client_secret_confirm_regenerate": "Znovu vygenerovať",
+        "read_only_access_to_workspace": "Prístup len na čítanie k vášmu pracovnému priestoru",
+        "write_access_to_workspace": "Prístup na zápis k vášmu pracovnému priestoru",
+        "read_only_access_to_user_profile": "Prístup len na čítanie k vášmu používateľskému profilu",
+        "write_access_to_user_profile": "Prístup na zápis k vášmu používateľskému profilu",
+        "connect_app_to_workspace": "Pripojiť {app} k vášmu pracovnému priestoru {workspace}",
+        "user_permissions": "Používateľské oprávnenia",
+        "user_permissions_description": "Používateľské oprávnenia sa používajú na udelenie prístupu k profilu používateľa.",
+        "workspace_permissions": "Oprávnenia pracovného priestoru",
+        "workspace_permissions_description": "Oprávnenia pracovného priestoru sa používajú na udelenie prístupu k pracovnému priestoru.",
+        "with_the_permissions": "s oprávneniami",
+        "app_consent_title": "{app} žiada o prístup k vášmu pracovnému priestoru a profilu Plane.",
+        "choose_workspace_to_connect_app_with": "Vyberte pracovný priestor, s ktorým chcete pripojiť aplikáciu",
+        "app_consent_workspace_permissions_title": "{app} by chcel",
+        "app_consent_user_permissions_title": "{app} môže tiež požiadať o povolenie používateľa pre nasledujúce zdroje. Tieto oprávnenia budú vyžiadané a autorizované iba používateľom.",
+        "app_consent_accept_title": "Prijatím",
+        "app_consent_accept_1": "Udeľujete aplikácii prístup k vašim údajom Plane kdekoľvek, kde môžete používať aplikáciu v rámci alebo mimo Plane",
+        "app_consent_accept_2": "Súhlasíte s Pravidlami ochrany súkromia a Podmienkami používania {app}",
+        "accepting": "Prijímanie...",
+        "accept": "Prijať",
+        "categories": "Kategórie",
+        "select_app_categories": "Vyberte kategórie aplikácie",
+        "categories_title": "Kategórie",
+        "categories_error": "Kategórie sú povinné",
+        "invalid_categories_error": "Neplatné kategórie",
+        "categories_description": "Vyberte kategórie, ktoré najlepšie opisujú aplikáciu",
+        "privacy_policy_url_title": "URL Pravidiel ochrany súkromia",
+        "privacy_policy_url_error": "URL Pravidiel ochrany súkromia je povinné",
+        "invalid_privacy_policy_url_error": "Neplatné URL Pravidiel ochrany súkromia",
+        "terms_of_service_url_title": "URL Podmienok služby",
+        "terms_of_service_url_error": "URL Podmienok služby je povinné",
+        "invalid_terms_of_service_url_error": "Neplatné URL Podmienok služby",
+        "support_url_title": "URL Podpory",
+        "support_url_error": "URL Podpory je povinné",
+        "invalid_support_url_error": "Neplatné URL Podpory",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video je povinné",
+        "invalid_video_url_error": "Neplatné URL Video",
+        "setup_url_title": "URL Nastavenia",
+        "setup_url_error": "URL Nastavenia je povinné",
+        "invalid_setup_url_error": "Neplatné URL Nastavenia",
+        "configuration_url_title": "URL Konfigurácie",
+        "configuration_url_error": "URL Konfigurácie je povinné",
+        "invalid_configuration_url_error": "Neplatné URL Konfigurácie",
+        "contact_email_title": "Email Kontaktu",
+        "contact_email_error": "Email Kontaktu je povinný",
+        "invalid_contact_email_error": "Neplatný email kontaktu",
+        "upload_attachments": "Nahrať prílohy",
+        "uploading_images": "Nahrávanie {count} obrázku{count, plural, one {s} other {s}}",
+        "drop_images_here": "Presuňte obrázky sem",
+        "click_to_upload_images": "Kliknite, aby ste nahrávali obrázky",
+        "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo presahuje limit veľkosti ({size} MB)",
+        "uploading": "Nahrávanie...",
+        "upload_and_save": "Nahrať a uložiť",
+        "app_credentials_regenrated": {
+          "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
+          "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
+        },
+        "app_created": {
+          "title": "Aplikácia bola úspešne vytvorená",
+          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
+        },
+        "installed_apps": "Nainštalované aplikácie",
+        "all_apps": "Všetky aplikácie",
+        "internal_apps": "Interné aplikácie",
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webovú stránku vašej aplikácie.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvorca aplikácií",
+          "description": "Osoba alebo organizácia, ktorá vytvára aplikáciu."
+        },
+        "setup_url": {
+          "label": "URL nastavenia",
+          "description": "Používatelia budú po nainštalovaní aplikácie presmerovaní na túto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "Presmerovacie URI (oddelené medzerou)",
+          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "Táto aplikácia môže byť nainštalovaná až po jej inštalácii administrátorom pracovného priestoru. Kontaktujte svojho administrátora pracovného priestoru, aby ste mohli pokračovať.",
+        "enable_app_mentions": "Povoliť zmienky o aplikácii",
+        "enable_app_mentions_tooltip": "Keď je toto povolené, používatelia môžu spomenúť alebo priradiť pracovné položky tejto aplikácii.",
+        "build_your_own_app": "Vytvorte si vlastnú aplikáciu",
+        "edit_app_details": "Upraviť detaily aplikácie",
+        "internal": "Interný"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni."
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Nemožno archivovať pracovné položky",
+        "message": "Archivovať je možné iba pracovné položky patriace do skupín stavov Dokončené alebo Zrušené."
+      },
+      "invalid_issue_start_date": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Vybraný dátum začiatku nasleduje po termíne dokončenia niektorých pracovných položiek. Zabezpečte, aby dátum začiatku predchádzal termínu dokončenia."
+      },
+      "invalid_issue_target_date": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Vybraný termín dokončenia predchádza dátumu začiatku niektorých pracovných položiek. Zabezpečte, aby termín dokončenia nasledoval po dátume začiatku."
+      },
+      "invalid_state_transition": {
+        "title": "Nemožno aktualizovať pracovné položky",
+        "message": "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "Typy pracovných položiek",
+    "label_lowercase": "typy pracovných položiek",
+    "settings": {
+      "title": "Typy pracovných položiek",
+      "properties": {
+        "title": "Vlastné vlastnosti",
+        "tooltip": "Každý typ pracovnej položky je dodávaný s predvolenou sadou vlastností ako Názov, Popis, Priradený používateľ, Stav, Priorita, Dátum začiatku, Termín dokončenia, Modul, Cyklus atď. Môžete si tiež prispôsobiť a pridať vlastné vlastnosti, aby vyhovovali potrebám vášho tímu.",
+        "add_button": "Pridať novú vlastnosť",
+        "dropdown": {
+          "label": "Typ vlastnosti",
+          "placeholder": "Vyberte typ"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Číslo"
+          },
+          "dropdown": {
+            "label": "Rozbaľovací zoznam"
+          },
+          "boolean": {
+            "label": "Booleovský"
+          },
+          "date": {
+            "label": "Dátum"
+          },
+          "member_picker": {
+            "label": "Výber člena"
+          }
+        },
+        "attributes": {
+          "label": "Atribúty",
+          "text": {
+            "single_line": {
+              "label": "Jeden riadok"
+            },
+            "multi_line": {
+              "label": "Odsek"
+            },
+            "readonly": {
+              "label": "Iba na čítanie",
+              "header": "Údaje iba na čítanie"
+            },
+            "invalid_text_format": {
+              "label": "Neplatný formát textu"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Pridať číslo"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Jediný výber"
+            },
+            "multi_select": {
+              "label": "Viacnásobný výber"
+            },
+            "no_default_value": {
+              "label": "Žiadna predvolená hodnota"
+            }
+          },
+          "boolean": {
+            "label": "Pravda | Nepravda",
+            "no_default": "Žiadna predvolená hodnota"
+          },
+          "option": {
+            "create_update": {
+              "label": "Možnosti",
+              "form": {
+                "placeholder": "Pridať možnosť",
+                "errors": {
+                  "name": {
+                    "required": "Názov možnosti je povinný.",
+                    "integrity": "Možnosť s rovnakým názvom už existuje."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Vyberte možnosť",
+                "multi": {
+                  "default": "Vyberte možnosti",
+                  "variable": "{count} vybraných možností"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Úspech!",
+              "message": "Vlastnosť {name} bola úspešne vytvorená."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodarilo sa vytvoriť vlastnosť. Skúste to znova!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Úspech!",
+              "message": "Vlastnosť {name} bola úspešne aktualizovaná."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodarilo sa aktualizovať vlastnosť. Skúste to znova!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Úspech!",
+              "message": "Vlastnosť {name} bola úspešne odstránená."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodarilo sa odstrániť vlastnosť. Skúste to znova!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} vlastnosti {name}",
+            "success": {
+              "title": "Úspech!",
+              "message": "Vlastnosť {name} bola úspešne {action}."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodarilo sa {action} vlastnosť. Skúste to znova!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Názov"
+            },
+            "description": {
+              "placeholder": "Popis"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Musíte pomenovať vašu vlastnosť.",
+              "max_length": "Názov vlastnosti by nemal presiahnuť 255 znakov."
+            },
+            "property_type": {
+              "required": "Musíte vybrať typ vlastnosti."
+            },
+            "options": {
+              "required": "Musíte pridať aspoň jednu možnosť."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Aktívne",
+          "tooltip": {
+            "disabled": "Kliknite pre deaktiváciu",
+            "enabled": "Kliknite pre aktiváciu"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Odstrániť túto vlastnosť",
+          "description": "Odstránenie vlastností môže viesť k strate existujúcich údajov.",
+          "secondary_description": "Chcete namiesto toho deaktivovať vlastnosť?",
+          "primary_button": "{action}, odstrániť ju",
+          "secondary_button": "Áno, deaktivovať ju"
+        },
+        "mandate_confirmation": {
+          "label": "Povinná vlastnosť",
+          "content": "Zdá sa, že pre túto vlastnosť existuje predvolená možnosť. Nastavenie vlastnosti ako povinnej odstráni predvolenú hodnotu a používatelia budú musieť pridať hodnotu podľa svojho výberu.",
+          "tooltip": {
+            "disabled": "Tento typ vlastnosti nemôže byť označený ako povinný",
+            "enabled": "Odškrtnite, aby ste pole označili ako voliteľné",
+            "checked": "Zaškrtnite, aby ste pole označili ako povinné"
+          }
+        },
+        "empty_state": {
+          "title": "Pridať vlastné vlastnosti",
+          "description": "Nové vlastnosti, ktoré pridáte pre tento typ pracovnej položky, sa zobrazia tu."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Odstrániť tento typ",
+        "description": "Odstránenie typov môže viesť k strate existujúcich údajov.",
+        "primary_button": "Áno, odstrániť",
+        "toast": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Typ pracovnej položky bol úspešne odstránený."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodarilo sa odstrániť typ pracovnej položky. Skúste to znova!"
+          }
+        },
+        "can_disable_warning": "Chcete namiesto toho zakázať tento typ?"
+      },
+      "cant_delete_default_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je nastavený ako predvolený pre tento projekt."
+    },
+    "create": {
+      "title": "Vytvoriť typ pracovnej položky",
+      "button": "Pridať typ pracovnej položky",
+      "toast": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Typ pracovnej položky bol úspešne vytvorený."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Aktualizovať typ pracovnej položky",
+      "button": "Aktualizovať typ pracovnej položky",
+      "toast": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Typ pracovnej položky {name} bol úspešne aktualizovaný."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dajte tomuto typu pracovnej položky jedinečný názov"
+        },
+        "description": {
+          "placeholder": "Popíšte, na čo je tento typ pracovnej položky určený a kedy sa má používať."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} typu pracovnej položky {name}",
+        "success": {
+          "title": "Úspech!",
+          "message": "Typ pracovnej položky {name} bol úspešne {action}."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodarilo sa {action} typ pracovnej položky. Skúste to znova!"
+        }
+      },
+      "tooltip": "Kliknite pre {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Povoliť Typy pracovných položiek",
+        "description": "Formujte pracovné položky podľa vašej práce pomocou Typov pracovných položiek. Prispôsobte ich ikonami, pozadiami a vlastnosťami a nakonfigurujte ich pre tento projekt.",
+        "primary_button": {
+          "text": "Povoliť"
+        },
+        "confirmation": {
+          "title": "Po povolení nemožno Typy pracovných položiek zakázať.",
+          "description": "Pracovná položka Plane sa stane predvoleným typom pracovnej položky pre tento projekt a zobrazí sa so svojou ikonou a pozadím v tomto projekte.",
+          "button": {
+            "default": "Povoliť",
+            "loading": "Nastavuje sa"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Získajte Pro pre povolenie Typov pracovných položiek.",
+        "description": "Formujte pracovné položky podľa vašej práce pomocou Typov pracovných položiek. Prispôsobte ich ikonami, pozadiami a vlastnosťami a nakonfigurujte ich pre tento projekt.",
+        "primary_button": {
+          "text": "Získať Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Inovácia pre povolenie Typov pracovných položiek.",
+        "description": "Formujte pracovné položky podľa vašej práce pomocou Typov pracovných položiek. Prispôsobte ich ikonami, pozadiami a vlastnosťami a nakonfigurujte ich pre tento projekt.",
+        "primary_button": {
+          "text": "Inovovať"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "Importy",
+    "logo": "Logo",
+    "import_message": "Importujte vaše {serviceName} dáta do projektov plane.",
+    "deactivate": "Deaktivovať",
+    "deactivating": "Deaktivuje sa",
+    "migrating": "Migruje sa",
+    "migrations": "Migrácie",
+    "refreshing": "Obnovuje sa",
+    "import": "Import",
+    "serial_number": "Por. č.",
+    "project": "Projekt",
+    "workspace": "Vorkspejs",
+    "status": "Stav",
+    "total_batches": "Celkový počet dávok",
+    "imported_batches": "Importované dávky",
+    "re_run": "Spustiť znova",
+    "cancel": "Zrušiť",
+    "start_time": "Čas začatia",
+    "no_jobs_found": "Nenašli sa žiadne úlohy",
+    "no_project_imports": "Ešte ste neimportovali žiadne {serviceName} projekty.",
+    "cancel_import_job": "Zrušiť importnú úlohu",
+    "cancel_import_job_confirmation": "Ste si istí, že chcete zrušiť túto importnú úlohu? Týmto sa zastaví proces importu pre tento projekt.",
+    "re_run_import_job": "Opätovne spustiť importnú úlohu",
+    "re_run_import_job_confirmation": "Ste si istí, že chcete opätovne spustiť túto importnú úlohu? Týmto sa reštartuje proces importu pre tento projekt.",
+    "upload_csv_file": "Nahrajte CSV súbor na import používateľských údajov.",
+    "connect_importer": "Pripojiť {serviceName}",
+    "migration_assistant": "Asistent migrácie",
+    "migration_assistant_description": "Bezproblémovo migrujte vaše {serviceName} projekty do Plane s naším výkonným asistentom.",
+    "token_helper": "Toto získate z vášho",
+    "personal_access_token": "Osobný prístupový token",
+    "source_token_expired": "Token vypršal",
+    "source_token_expired_description": "Poskytnutý token vypršal. Prosím, deaktivujte a znovu pripojte s novým súborom prihlasovacích údajov.",
+    "user_email": "Email používateľa",
+    "select_state": "Vyberte stav",
+    "select_service_project": "Vyberte {serviceName} projekt",
+    "loading_service_projects": "Načítavajú sa {serviceName} projekty",
+    "select_service_workspace": "Vyberte {serviceName} vorkspejs",
+    "loading_service_workspaces": "Načítavajú sa {serviceName} vorkspejsy",
+    "select_priority": "Vyberte prioritu",
+    "select_service_team": "Vyberte {serviceName} tím",
+    "add_seat_msg_free_trial": "Pokúšate sa importovať {additionalUserCount} neregistrovaných používateľov a máte len {currentWorkspaceSubscriptionAvailableSeats} dostupných miest v aktuálnom pláne. Pre pokračovanie v importovaní inovujte teraz.",
+    "add_seat_msg_paid": "Pokúšate sa importovať {additionalUserCount} neregistrovaných používateľov a máte len {currentWorkspaceSubscriptionAvailableSeats} dostupných miest v aktuálnom pláne. Pre pokračovanie v importovaní kúpte najmenej {extraSeatRequired} extra miest.",
+    "skip_user_import_title": "Preskočiť import používateľských údajov",
+    "skip_user_import_description": "Preskočenie importu používateľov bude mať za následok, že pracovné položky, komentáre a ďalšie údaje z {serviceName} budú vytvorené používateľom vykonávajúcim migráciu v Plane. Používateľov môžete stále manuálne pridať neskôr.",
+    "invalid_pat": "Neplatný osobný prístupový token"
+  },
+  "integrations": {
+    "integrations": "Integrácie",
+    "loading": "Načítava sa",
+    "unauthorized": "Nemáte oprávnenie na zobrazenie tejto stránky.",
+    "configure": "Konfigurovať",
+    "not_enabled": "{name} nie je povolené pre tento vorkspejs.",
+    "not_configured": "Nenakonfigurované",
+    "disconnect_personal_account": "Odpojiť osobný {providerName} účet",
+    "not_configured_message_admin": "Integrácia {name} nie je nakonfigurovaná. Kontaktujte správcu vašej inštancie pre konfiguráciu.",
+    "not_configured_message_support": "Integrácia {name} nie je nakonfigurovaná. Kontaktujte podporu pre konfiguráciu.",
+    "external_api_unreachable": "Nie je možné pristupovať k externej API. Skúste to prosím neskôr.",
+    "error_fetching_supported_integrations": "Nie je možné načítať podporované integrácie. Skúste to prosím neskôr.",
+    "back_to_integrations": "Späť na integrácie",
+    "select_state": "Vyberte stav",
+    "set_state": "Nastaviť stav",
+    "choose_project": "Vyberte projekt..."
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Pripojte a synchronizujte vaše pracovné položky z GitHub s Plane",
+    "connect_org": "Pripojte organizáciu",
+    "connect_org_description": "Pripojte vašu GitHub organizáciu s Plane",
+    "processing": "Spracováva sa",
+    "org_added_desc": "GitHub org pripojená a čas",
+    "connection_fetch_error": "Chyba pri načítavaní detailov pripojenia zo servera",
+    "personal_account_connected": "Osobný účet pripojený",
+    "personal_account_connected_description": "Vaša GitHub účet je teraz pripojená k Plane",
+    "connect_personal_account": "Pripojte osobný účet",
+    "connect_personal_account_description": "Pripojte vašu osobnú GitHub účet s Plane.",
+    "repo_mapping": "Mapovanie repozitárov",
+    "repo_mapping_description": "Mapujte vaše GitHub repozitáre s projektami Plane.",
+    "project_issue_sync": "Synchronizácia problémov projektu",
+    "project_issue_sync_description": "Synchronizujte problémy z GitHub do vašeho projektu Plane",
+    "configure_project_issue_sync_state": "Konfigurujte stav synchronizácie problémov",
+    "select_issue_sync_direction": "Vyberte smer synchronizácie problémov",
+    "allow_bidirectional_sync": "Bidirectional - Synchronizujte problémy v oboch smeroch medzi GitHub a Plane",
+    "allow_unidirectional_sync": "Unidirectional - Synchronizujte problémy z GitHub do Plane len",
+    "remove_project_issue_sync": "Odstrániť túto synchronizáciu problémov projektu",
+    "remove_project_issue_sync_confirmation": "Ste si istí, že chcete odstrániť túto synchronizáciu problémov projektu?",
+    "add_pr_state_mapping": "Pridajte mapovanie stavu žiadosti o zlúčenie pre projekt Plane",
+    "edit_pr_state_mapping": "Edit mapovanie stavu žiadosti o zlúčenie pre projekt Plane",
+    "pr_state_mapping": "Mapovanie stavu žiadosti o zlúčenie",
+    "pr_state_mapping_description": "Mapujte stavy žiadostí o zlúčenie z GitHub do vašeho projektu Plane",
+    "remove_pr_state_mapping": "Odstrániť toto mapovanie stavu žiadosti o zlúčenie",
+    "remove_pr_state_mapping_confirmation": "Ste si istí, že chcete odstrániť toto mapovanie stavu žiadosti o zlúčenie?",
+    "issue_sync_message": "Pracovné položky sú synchronizované do {project}",
+    "link": "Prepojiť GitHub repozitár s projektom Plane",
+    "pull_request_automation": "Automatizácia žiadosti o zlúčenie",
+    "pull_request_automation_description": "Nakonfigurujte mapovanie stavu žiadosti o zlúčenie z GitHub do vašeho projektu Plane",
+    "DRAFT_MR_OPENED": "Otvorený draft",
+    "MR_OPENED": "Otvorené",
+    "MR_READY_FOR_MERGE": "Pripravené na zlúčenie",
+    "MR_REVIEW_REQUESTED": "Kontrola vyžadovaná",
+    "MR_MERGED": "Zlúčené",
+    "MR_CLOSED": "Zatvorené",
+    "ISSUE_OPEN": "Issue Otvorené",
+    "ISSUE_CLOSED": "Issue Zatvorené",
+    "save": "Uložiť",
+    "start_sync": "Spustiť synchronizáciu",
+    "choose_repository": "Vyberte repozitár..."
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Pripojte a synchronizujte vaše Gitlab žiadosti o zlúčenie s Plane.",
+    "connection_fetch_error": "Chyba pri načítavaní detailov pripojenia zo servera",
+    "connect_org": "Pripojiť organizáciu",
+    "connect_org_description": "Pripojte vašu Gitlab organizáciu s Plane.",
+    "project_connections": "Pripojenia Gitlab projektov",
+    "project_connections_description": "Synchronizujte žiadosti o zlúčenie z Gitlab do projektov Plane.",
+    "plane_project_connection": "Pripojenie projektu Plane",
+    "plane_project_connection_description": "Nakonfigurujte mapovanie stavov žiadostí o zlúčenie z Gitlab do projektov Plane",
+    "remove_connection": "Odstrániť pripojenie",
+    "remove_connection_confirmation": "Ste si istí, že chcete odstrániť toto pripojenie?",
+    "link": "Prepojiť Gitlab repozitár s projektom Plane",
+    "pull_request_automation": "Automatizácia žiadostí o zlúčenie",
+    "pull_request_automation_description": "Nakonfigurujte mapovanie stavov žiadostí o zlúčenie z Gitlab do Plane",
+    "DRAFT_MR_OPENED": "Pri otvorení konceptu MR nastaviť stav na",
+    "MR_OPENED": "Pri otvorení MR nastaviť stav na",
+    "MR_REVIEW_REQUESTED": "Pri vyžiadaní kontroly MR nastaviť stav na",
+    "MR_READY_FOR_MERGE": "Pri MR pripravenom na zlúčenie nastaviť stav na",
+    "MR_MERGED": "Pri zlúčení MR nastaviť stav na",
+    "MR_CLOSED": "Pri uzavretí MR nastaviť stav na",
+    "integration_enabled_text": "S povolenou integráciou Gitlab môžete automatizovať pracovné postupy pracovných položiek",
+    "choose_entity": "Vyberte entitu",
+    "choose_project": "Vyberte projekt",
+    "link_plane_project": "Prepojiť projekt Plane"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Pripojte váš Slack vorkspejs s Plane.",
+    "connect_personal_account": "Pripojte váš osobný Slack účet s Plane.",
+    "personal_account_connected": "Váš osobný {providerName} účet je teraz pripojený k Plane.",
+    "link_personal_account": "Prepojte váš osobný {providerName} účet s Plane.",
+    "connected_slack_workspaces": "Pripojené Slack vorkspejsy",
+    "connected_on": "Pripojené {date}",
+    "disconnect_workspace": "Odpojiť {name} vorkspejs",
+    "alerts": {
+      "dm_alerts": {
+        "title": "Dostávajte upozornenia v súkromných správach Slack pre dôležité aktualizácie, pripomenutia a upozornenia len pre vás."
+      }
+    },
+    "project_updates": {
+      "title": "Aktualizácie Projektu",
+      "description": "Nakonfigurujte notifikácie o aktualizáciách projektov pre vaše projekty",
+      "add_new_project_update": "Pridať novú notifikáciu o aktualizáciách projektu",
+      "project_updates_empty_state": "Projekty pripojené s kanálmi Slack sa zobrazia tu.",
+      "project_updates_form": {
+        "title": "Konfigurovať Aktualizácie Projektu",
+        "description": "Dostávajte notifikácie o aktualizáciách projektu v Slack, keď sa vytvoria pracovné položky",
+        "failed_to_load_channels": "Nepodarilo sa načítať kanály zo Slack",
+        "project_dropdown": {
+          "placeholder": "Vyberte projekt",
+          "label": "Plane Projekt",
+          "no_projects": "Žiadne dostupné projekty"
+        },
+        "channel_dropdown": {
+          "label": "Slack Kanál",
+          "placeholder": "Vyberte kanál",
+          "no_channels": "Žiadne dostupné kanály"
+        },
+        "all_projects_connected": "Všetky projekty sú už pripojené ku kanálom Slack.",
+        "all_channels_connected": "Všetky kanály Slack sú už pripojené k projektom.",
+        "project_connection_success": "Pripojenie projektu úspešne vytvorené",
+        "project_connection_updated": "Pripojenie projektu úspešne aktualizované",
+        "project_connection_deleted": "Pripojenie projektu úspešne odstránené",
+        "failed_delete_project_connection": "Nepodarilo sa odstrániť pripojenie projektu",
+        "failed_create_project_connection": "Nepodarilo sa vytvoriť pripojenie projektu",
+        "failed_upserting_project_connection": "Nepodarilo sa aktualizovať pripojenie projektu",
+        "failed_loading_project_connections": "Nepodarilo sa načítať vaše pripojenia projektu. Môže to byť spôsobené problémom so sieťou alebo problémom s integráciou."
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Pripojte váš Sentry pracovný priestor s Plane.",
+    "connected_sentry_workspaces": "Pripojené Sentry pracovné priestory",
+    "connected_on": "Pripojené {date}",
+    "disconnect_workspace": "Odpojiť pracovný priestor {name}",
+    "state_mapping": {
+      "title": "Mapovanie stavov",
+      "description": "Mapujte stavy incidentov Sentry na stavy vášho projektu. Nakonfigurujte, ktoré stavy použiť, keď je incident Sentry vyriešený alebo nevyriešený.",
+      "add_new_state_mapping": "Pridať nové mapovanie stavu",
+      "empty_state": "Nie sú nakonfigurované žiadne mapovania stavov. Vytvorte svoje prvé mapovanie na synchronizáciu stavov incidentov Sentry so stavmi vášho projektu.",
+      "failed_loading_state_mappings": "Nepodarilo sa nám načítať vaše mapovania stavov. Môže to byť spôsobené problémom so sieťou alebo problémom s integráciou.",
+      "loading_project_states": "Načítavanie stavov projektu...",
+      "error_loading_states": "Chyba pri načítavaní stavov",
+      "no_states_available": "Nie sú dostupné žiadne stavy",
+      "no_permission_states": "Nemáte povolenie na prístup k stavom pre tento projekt",
+      "states_not_found": "Stavy projektu sa nenašli",
+      "server_error_states": "Chyba servera pri načítavaní stavov"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Pripojte a synchronizujte vašu GitHub Enterprise organizáciu s Plane.",
+    "app_form_title": "Konfigurácia GitHub Enterprise",
+    "app_form_description": "Konfigurujte GitHub Enterprise pre pripojenie s Plane.",
+    "app_id_title": "App ID",
+    "app_id_description": "ID aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "ID aplikácie je povinný",
+    "app_name_title": "App Slug",
+    "app_name_description": "Slug aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "app_name_error": "Slug aplikácie je povinný",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Základná URL",
+    "base_url_description": "Základná URL vašej GitHub Enterprise organizácie.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Základná URL je povinná",
+    "invalid_base_url_error": "Neplatná základná URL",
+    "client_id_title": "ID klienta",
+    "client_id_description": "ID klienta aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID klienta je povinný",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "Secret klienta aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Secret klienta je povinný",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "Secret webhooku aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Secret webhooku je povinný",
+    "private_key_title": "Privátny kľúč (Base64 encoded)",
+    "private_key_description": "Base64 encoded privátny kľúč aplikácie, ktorú ste vytvorili v vašej GitHub Enterprise organizácii.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Privátny kľúč je povinný",
+    "connect_app": "Pripojiť aplikáciu"
+  },
+  "file_upload": {
+    "upload_text": "Kliknite sem na nahratie súboru",
+    "drag_drop_text": "Drag and Drop",
+    "processing": "Spracováva sa",
+    "invalid": "Neplatný typ súboru",
+    "missing_fields": "Chýbajúce polia",
+    "success": "{fileName} nahraný!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Poskytnuté parametre dotazu sú neplatné alebo chýbajú povinné polia",
+    "invalid_installation_account": "Poskytnutý inštalačný účet nie je platný",
+    "generic_error": "Pri spracovaní vašej požiadavky sa vyskytla neočakávaná chyba",
+    "connection_not_found": "Požadované pripojenie nebolo nájdené",
+    "multiple_connections_found": "Bolo nájdených viacero pripojení, keď sa očakávalo iba jedno",
+    "installation_not_found": "Požadovaná inštalácia nebola nájdená",
+    "user_not_found": "Požadovaný používateľ nebol nájdený",
+    "error_fetching_token": "Zlyhalo načítanie autentifikačného tokenu",
+    "invalid_app_credentials": "Poskytnuté údaje aplikácie sú neplatné",
+    "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
+  },
+  "import_status": {
+    "queued": "V poradí",
+    "created": "Vytvorené",
+    "initiated": "Iniciované",
+    "pulling": "Sťahuje sa",
+    "pulled": "Stiahnuté",
+    "transforming": "Transformuje sa",
+    "transformed": "Transformované",
+    "pushing": "Nahrávajú sa",
+    "finished": "Dokončené",
+    "error": "Chyba",
+    "cancelled": "Zrušené"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importujte vaše Jira dáta do projektov Plane.",
+    "personal_access_token": "Osobný prístupový token",
+    "user_email": "Email používateľa",
+    "atlassian_security_settings": "Bezpečnostné nastavenia Atlassian",
+    "email_description": "Toto je email prepojený s vaším osobným prístupovým tokenom",
+    "jira_domain": "Jira doména",
+    "jira_domain_description": "Toto je doména vašej Jira inštancie",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Jira dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_jira": "Nakonfigurovať Jira",
+      "description_configure_jira": "Vyberte Jira vorkspejs, z ktorého chcete migrovať vaše dáta.",
+      "title_import_users": "Importovať používateľov",
+      "description_import_users": "Pridajte používateľov, ktorých chcete migrovať z Jira do Plane. Alternatívne môžete tento krok preskočiť a manuálne pridať používateľov neskôr.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Automaticky sme priradili Jira stavy k stavom Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Automaticky sme priradili priority podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce priority.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importujte vaše Asana dáta do projektov Plane.",
+    "select_asana_priority_field": "Vyberte pole priority Asana",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Asana dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_asana": "Nakonfigurovať Asana",
+      "description_configure_asana": "Vyberte Asana vorkspejs a projekt, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Vyberte Asana stavy, ktoré chcete mapovať na stavy projektu Plane.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Asana priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Asana do Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importujte vaše Linear dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Linear dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_linear": "Nakonfigurovať Linear",
+      "description_configure_linear": "Vyberte Linear tím, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Automaticky sme priradili Linear stavy k stavom Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Linear priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Linear do Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importujte vaše Jira Server dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše Jira dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_jira": "Nakonfigurovať Jira",
+      "description_configure_jira": "Vyberte Jira vorkspejs, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Vyberte Jira stavy, ktoré chcete mapovať na stavy projektu Plane.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte Jira priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importujte vaše CSV dáta do projektov Plane.",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše CSV dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_csv": "Nakonfigurovať CSV",
+      "description_configure_csv": "Nahrajte váš CSV súbor a nakonfigurujte polia, ktoré majú byť mapované na polia Plane."
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte vaše ClickUp dáta do projektov Plane.",
+    "select_service_space": "Vyberte {serviceName} priestor",
+    "select_service_folder": "Vyberte {serviceName} priečinok",
+    "selected": "Vybrané",
+    "users": "Používatelia",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše ClickUp dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_clickup": "Nakonfigurovať ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tím, priestor a priečinok, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Máme automaticky mapované ClickUp stavy na stavy Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte ClickUp priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane.",
+      "pull_additional_data_title": "Importovať komentáre a prílohy"
+    }
+  },
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Stĺpec",
+          "long_label": "Stĺpcový graf",
+          "chart_models": {
+            "basic": "Základný",
+            "stacked": "Vrstvený",
+            "grouped": "Zoskupený"
+          },
+          "orientation": {
+            "label": "Orientácia",
+            "horizontal": "Horizontálny",
+            "vertical": "Vertikálny",
+            "placeholder": "Pridať orientáciu"
+          },
+          "bar_color": "Farba stĺpca"
+        },
+        "line_chart": {
+          "short_label": "Čiara",
+          "long_label": "Čiarový graf",
+          "chart_models": {
+            "basic": "Základný",
+            "multi_line": "Viacčiarový"
+          },
+          "line_color": "Farba čiary",
+          "line_type": {
+            "label": "Typ čiary",
+            "solid": "Plná",
+            "dashed": "Prerušovaná",
+            "placeholder": "Pridať typ čiary"
+          }
+        },
+        "area_chart": {
+          "short_label": "Plocha",
+          "long_label": "Plošný graf",
+          "chart_models": {
+            "basic": "Základný",
+            "stacked": "Vrstvený",
+            "comparison": "Porovnávací"
+          },
+          "fill_color": "Farba výplne"
+        },
+        "donut_chart": {
+          "short_label": "Donut",
+          "long_label": "Donut graf",
+          "chart_models": {
+            "basic": "Základný",
+            "progress": "Pokrok"
+          },
+          "center_value": "Hodnota v strede",
+          "completed_color": "Farba dokončenia"
+        },
+        "pie_chart": {
+          "short_label": "Koláč",
+          "long_label": "Koláčový graf",
+          "chart_models": {
+            "basic": "Základný"
+          },
+          "group": {
+            "label": "Zoskupené časti",
+            "group_thin_pieces": "Zoskupiť tenké časti",
+            "minimum_threshold": {
+              "label": "Minimálna hranica",
+              "placeholder": "Pridať hranicu"
+            },
+            "name_group": {
+              "label": "Názov skupiny",
+              "placeholder": "\"Menej ako 5%\""
+            }
+          },
+          "show_values": "Zobraziť hodnoty",
+          "value_type": {
+            "percentage": "Percentá",
+            "count": "Počet"
+          }
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text",
+          "alignment": {
+            "label": "Zarovnanie textu",
+            "left": "Vľavo",
+            "center": "V strede",
+            "right": "Vpravo",
+            "placeholder": "Pridať zarovnanie textu"
+          },
+          "text_color": "Farba textu"
+        }
+      },
+      "color_palettes": {
+        "modern": "Moderná",
+        "horizon": "Horizont",
+        "earthen": "Zemitá"
+      },
+      "common": {
+        "add_widget": "Pridať vidžet",
+        "widget_title": {
+          "label": "Pomenujte tento vidžet",
+          "placeholder": "napr., \"Úlohy na včera\", \"Všetko dokončené\""
+        },
+        "chart_type": "Typ grafu",
+        "visualization_type": {
+          "label": "Typ vizualizácie",
+          "placeholder": "Pridať typ vizualizácie"
+        },
+        "date_group": {
+          "label": "Skupina dátumov",
+          "placeholder": "Pridať skupinu dátumov"
+        },
+        "group_by": "Zoskupiť podľa",
+        "stack_by": "Vrstviť podľa",
+        "daily": "Denne",
+        "weekly": "Týždenne",
+        "monthly": "Mesačne",
+        "yearly": "Ročne",
+        "work_item_count": "Počet pracovných položiek",
+        "estimate_point": "Odhadovaný bod",
+        "pending_work_item": "Čakajúce pracovné položky",
+        "completed_work_item": "Dokončené pracovné položky",
+        "in_progress_work_item": "Rozpracované pracovné položky",
+        "blocked_work_item": "Blokované pracovné položky",
+        "work_item_due_this_week": "Pracovné položky splatné tento týždeň",
+        "work_item_due_today": "Pracovné položky splatné dnes",
+        "color_scheme": {
+          "label": "Farebná schéma",
+          "placeholder": "Pridať farebnú schému"
+        },
+        "smoothing": "Vyhladzovanie",
+        "markers": "Značky",
+        "legends": "Legendy",
+        "tooltips": "Popisky",
+        "opacity": {
+          "label": "Priehľadnosť",
+          "placeholder": "Pridať priehľadnosť"
+        },
+        "border": "Ohraničenie",
+        "widget_configuration": "Konfigurácia vidžetu",
+        "configure_widget": "Konfigurovať vidžet",
+        "guides": "Návody",
+        "style": "Štýl",
+        "area_appearance": "Vzhľad plochy",
+        "comparison_line_appearance": "Vzhľad porovnávacej čiary",
+        "add_property": "Pridať vlastnosť",
+        "add_metric": "Pridať metriku"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "stacked": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Vrstveniu podľa chýba hodnota."
+          },
+          "grouped": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Zoskupovaniu podľa chýba hodnota."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "multi_line": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Zoskupovaniu podľa chýba hodnota."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "stacked": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota.",
+            "group_by": "Vrstveniu podľa chýba hodnota."
+          },
+          "comparison": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          },
+          "progress": {
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Osi x chýba hodnota.",
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrike chýba hodnota."
+          }
+        },
+        "ask_admin": "Požiadajte svojho administrátora o konfiguráciu tohto vidžetu."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Vytvoriť nový dešbord",
+        "update": "Aktualizovať dešbord"
+      },
+      "title": {
+        "label": "Pomenujte svoj dešbord.",
+        "placeholder": "\"Kapacita naprieč projektmi\", \"Pracovné zaťaženie podľa tímu\", \"Stav naprieč všetkými projektmi\"",
+        "required_error": "Názov je povinný"
+      },
+      "project": {
+        "label": "Vyberte projekty",
+        "placeholder": "Dáta z týchto projektov budú poháňať tento dešbord.",
+        "required_error": "Projekty sú povinné"
+      },
+      "create_dashboard": "Vytvoriť dešbord",
+      "update_dashboard": "Aktualizovať dešbord"
+    },
+    "delete_modal": {
+      "heading": "Odstrániť dešbord"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Prezentujte svoj pokrok v dešbordoch na vyžiadanie, navždy.",
+        "description": "Vytvorte akýkoľvek dešbord, ktorý potrebujete, a prispôsobte vzhľad vašich dát pre dokonalú prezentáciu vášho pokroku.",
+        "coming_soon_to_mobile": "Čoskoro aj v mobilnej aplikácii",
+        "card_1": {
+          "title": "Pre všetky vaše projekty",
+          "description": "Získajte celkový pohľad na váš vorkspejs so všetkými vašimi projektmi alebo rozdeľte svoje pracovné dáta pre dokonalý pohľad na váš pokrok."
+        },
+        "card_2": {
+          "title": "Pre akékoľvek dáta v Plane",
+          "description": "Prejdite za hranice predpripravených Analytík a hotových grafov Cyklov, aby ste sa pozreli na tímy, iniciatívy alebo čokoľvek iné tak, ako nikdy predtým."
+        },
+        "card_3": {
+          "title": "Pre všetky vaše potreby vizualizácie dát",
+          "description": "Vyberte si z niekoľkých prispôsobiteľných grafov s podrobnými ovládacími prvkami, aby ste videli a zobrazili vaše pracovné dáta presne tak, ako chcete."
+        },
+        "card_4": {
+          "title": "Na vyžiadanie a trvalo",
+          "description": "Vytvorte raz, uchovajte navždy s automatickým obnovovaním vašich dát, kontextovými vlajkami pre zmeny rozsahu a zdieľateľnými permalinkami."
+        },
+        "card_5": {
+          "title": "Exporty a plánovaná komunikácia",
+          "description": "Pre tie časy, keď odkazy nefungujú, dostanete vaše dešbordy do jednorazových PDF alebo ich naplánujte na automatické odosielanie zainteresovaným stranám."
+        },
+        "card_6": {
+          "title": "Automatické rozloženie pre všetky zariadenia",
+          "description": "Zmeňte veľkosť vašich vidžetov pre požadované rozloženie a vidíte ich presne rovnako na mobiloch, tabletoch a iných prehliadačoch."
+        }
+      },
+      "dashboards_list": {
+        "title": "Vizualizujte dáta vo vidžetoch, vytvárajte dešbordy s vidžetmi a vidíte najnovšie na vyžiadanie.",
+        "description": "Vytvorte svoje dešbordy s Vlastnými Vidžetmi, ktoré zobrazujú vaše dáta v rozsahu, ktorý špecifikujete. Získajte dešbordy pre všetku vašu prácu naprieč projektmi a tímami a zdieľajte permanentné odkazy so zainteresovanými stranami pre sledovanie na vyžiadanie."
+      },
+      "dashboards_search": {
+        "title": "To nezodpovedá názvu dešbordu.",
+        "description": "Uistite sa, že váš dotaz je správny alebo skúste iný dotaz."
+      },
+      "widgets_list": {
+        "title": "Vizualizujte svoje dáta tak, ako chcete.",
+        "description": "Použite čiary, stĺpce, koláče a iné formáty na zobrazenie vašich dát\ntakým spôsobom, akým chcete, zo zdrojov, ktoré špecifikujete."
+      },
+      "widget_data": {
+        "title": "Nie je tu nič na zobrazenie",
+        "description": "Obnovte alebo pridajte dáta, aby ste ich tu videli."
+      }
+    },
+    "common": {
+      "editing": "Upravuje sa"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Povoliť nové pracovné položky",
+      "work_item_creation_disable_tooltip": "Vytváranie pracovných položiek je pre tento stav zakázané",
+      "default_state": "Predvolený stav umožňuje všetkým členom vytvárať nové pracovné položky. Toto sa nedá zmeniť",
+      "state_change_count": "{count, plural, one {1 povolená zmena stavu} few {{count} povolené zmeny stavu} other {{count} povolených zmien stavu}}",
+      "movers_count": "{count, plural, one {1 uvedený recenzent} few {{count} uvedení recenzenti} other {{count} uvedených recenzentov}}",
+      "state_changes": {
+        "label": {
+          "default": "Pridať povolenú zmenu stavu",
+          "loading": "Pridáva sa povolená zmena stavu"
+        },
+        "move_to": "Zmeniť stav na",
+        "movers": {
+          "label": "Po kontrole používateľom",
+          "tooltip": "Recenzenti sú ľudia, ktorí majú povolenie presúvať pracovné položky z jedného stavu do druhého.",
+          "add": "Pridať recenzentov"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Túto pracovnú položku sem nemôžete presunúť."
+    },
+    "workflow_enabled": {
+      "label": "Zmena stavu"
+    },
+    "workflow_tree": {
+      "label": "Pre pracovné položky v",
+      "state_change_label": "môže ho presunúť do"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Ovládajte chaos zmien a recenzií s Vorkflou.",
+        "description": "Nastavte pravidlá pre to, kam sa vaša práca presúva, kým a kedy s Vorkflou v Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Zobraziť históriu zmien",
+      "reset_workflow": "Resetovať vorkflou"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Ste si istí, že chcete resetovať túto vorkflou?",
+        "description": "Ak resetujete túto vorkflou, všetky vaše pravidlá zmien stavu budú odstránené a budete ich musieť vytvoriť znova, aby fungovali v tomto projekte."
+      },
+      "delete_state_change": {
+        "title": "Ste si istí, že chcete odstrániť toto pravidlo zmeny stavu?",
+        "description": "Po odstránení nemôžete túto zmenu vrátiť späť a budete musieť nastaviť pravidlo znova, ak chcete, aby fungovalo pre tento projekt."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} vorkflou",
+        "success": {
+          "title": "Úspech",
+          "message": "Vorkflou bola úspešne {action}"
+        },
+        "error": {
+          "title": "Chyba",
+          "message": "Vorkflou nemohla byť {action}. Skúste to znova."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Úspech",
+          "message": "Vorkflou bola úspešne resetovaná"
+        },
+        "error": {
+          "title": "Chyba pri resetovaní vorkflou",
+          "message": "Vorkflou nemohla byť resetovaná. Skúste to znova."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Chyba pri pridávaní pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť pridané. Skúste to znova."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Chyba pri úprave pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť upravené. Skúste to znova."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Chyba pri odstránení pravidla zmeny stavu",
+          "message": "Pravidlo zmeny stavu nemohlo byť odstránené. Skúste to znova."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Chyba pri úprave recenzentov pravidla zmeny stavu",
+          "message": "Recenzenti pravidla zmeny stavu nemohli byť upravení. Skúste to znova."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Zákazník} few {Zákazníci} other {Zákazníkov}}",
+    "open": "Otvoriť zákazníka",
+    "dropdown": {
+      "placeholder": "Vyberte zákazníka",
+      "required": "Prosím vyberte zákazníka",
+      "no_selection": "Žiadni zákazníci"
+    },
+    "upgrade": {
+      "title": "Prioritizujte a spravujte prácu so Zákazníkmi.",
+      "description": "Mapujte svoju prácu k zákazníkom a prioritizujte podľa atribútov zákazníka."
+    },
+    "properties": {
+      "default": {
+        "title": "Predvolené vlastnosti",
+        "customer_name": {
+          "name": "Meno zákazníka",
+          "placeholder": "Toto môže byť meno osoby alebo podniku",
+          "validation": {
+            "required": "Meno zákazníka je povinné.",
+            "max_length": "Meno zákazníka nemôže mať viac ako 255 znakov."
+          }
+        },
+        "description": {
+          "name": "Popis",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Zadajte email",
+          "validation": {
+            "required": "Email je povinný.",
+            "pattern": "Neplatná emailová adresa."
+          }
+        },
+        "website_url": {
+          "name": "Webstránka",
+          "placeholder": "Akákoľvek URL s https:// bude fungovať.",
+          "placeholder_short": "Pridať webstránku",
+          "validation": {
+            "pattern": "Neplatná URL webstránky"
+          }
+        },
+        "employees": {
+          "name": "Zamestnanci",
+          "placeholder": "Počet zamestnancov, ak je váš zákazník podnik.",
+          "validation": {
+            "min_length": "Zamestnanci nemôžu byť menej ako 0.",
+            "max_length": "Zamestnanci nemôžu byť viac ako 2147483647."
+          }
+        },
+        "size": {
+          "name": "Veľkosť",
+          "placeholder": "Pridať veľkosť spoločnosti",
+          "validation": {
+            "min_length": "Neplatná veľkosť"
+          }
+        },
+        "domain": {
+          "name": "Odvetvie",
+          "placeholder": "Maloobchod, e-Commerce, Fintech, Bankovníctvo",
+          "placeholder_short": "Pridať odvetvie",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Fáza",
+          "placeholder": "Vyberte fázu",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Stav zmluvy",
+          "placeholder": "Vyberte stav zmluvy",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Príjem",
+          "placeholder": "Toto je príjem, ktorý váš zákazník generuje ročne.",
+          "placeholder_short": "Pridať príjem",
+          "validation": {
+            "min_length": "Príjem nemôže byť menej ako 0."
+          }
+        },
+        "invalid_value": "Neplatná hodnota vlastnosti."
+      },
+      "custom": {
+        "title": "Vlastné vlastnosti",
+        "info": "Pridajte jedinečné atribúty vašich zákazníkov do Plane, aby ste mohli lepšie spravovať pracovné položky alebo záznamy zákazníkov."
+      },
+      "empty_state": {
+        "title": "Zatiaľ nemáte žiadne vlastné vlastnosti.",
+        "description": "Vlastné vlastnosti, ktoré by ste chceli vidieť v pracovných položkách, inde v Plane, alebo mimo Plane v CRM alebo inom nástroji, sa tu zobrazia, keď ich pridáte."
+      },
+      "add": {
+        "primary_button": "Pridať novú vlastnosť"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Kvalifikovaný obchodný lead",
+      "contract_negotiation": "Vyjednávanie zmluvy",
+      "closed_won": "Uzavreté získané",
+      "closed_lost": "Uzavreté stratené"
+    },
+    "contract_status": {
+      "active": "Aktívna",
+      "pre_contract": "Pred-zmluvná",
+      "signed": "Podpísaná",
+      "inactive": "Neaktívna"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Nemohli sme nájsť tento záznam zákazníka.",
+        "description": "Odkaz na tento záznam môže byť nesprávny alebo tento záznam mohol byť odstránený.",
+        "primary_button": "Prejsť na zákazníkov",
+        "secondary_button": "Pridať zákazníka"
+      },
+      "search": {
+        "title": "Zdá sa, že nemáte záznamy zákazníkov, ktoré by zodpovedali tomuto výrazu.",
+        "description": "Skúste s iným vyhľadávacím výrazom alebo nás kontaktujte, ak ste si istí, že by ste mali vidieť výsledky pre tento výraz."
+      },
+      "list": {
+        "title": "Spravujte objem, kadenciu a tok vašej práce podľa toho, čo je dôležité pre vašich zákazníkov.",
+        "description": "So Zákazníkmi, funkciou exkluzívnou pre Plane, môžete teraz vytvárať nových zákazníkov od základov a prepojiť ich s vašou prácou. Čoskoro ich budete môcť preniesť z iných nástrojov spolu s ich vlastnými atribútmi, ktoré sú pre vás dôležité.",
+        "primary_button": "Pridajte svojho prvého zákazníka"
+      }
+    },
+    "settings": {
+      "unauthorized": "Nemáte oprávnenie na prístup k tejto stránke.",
+      "description": "Sledujte a spravujte vzťahy so zákazníkmi vo vašom pracovnom postupe.",
+      "enable": "Povoliť Zákazníkov",
+      "toasts": {
+        "enable": {
+          "loading": "Povoľuje sa funkcia zákazníkov...",
+          "success": {
+            "title": "Zapli ste Zákazníkov pre tento vorkspejs.",
+            "message": "Nemôžete to znova vypnúť."
+          },
+          "error": {
+            "title": "Nemohli sme tentokrát zapnúť Zákazníkov.",
+            "message": "Skúste znova alebo sa vráťte na túto obrazovku neskôr. Ak to stále nefunguje.",
+            "action": "Hovoriť s podporou"
+          }
+        },
+        "disable": {
+          "loading": "Zakazuje sa funkcia zákazníkov...",
+          "success": {
+            "title": "Zákazníci zakázaní",
+            "message": "Funkcia zákazníkov úspešne zakázaná!"
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Nepodarilo sa zakázať funkciu zákazníkov!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Nemohli sme získať váš zoznam zákazníkov.",
+          "message": "Skúste znova alebo obnovte túto stránku."
+        }
+      },
+      "copy_link": {
+        "title": "Skopírovali ste priamy odkaz na tohto zákazníka.",
+        "message": "Vložte ho kamkoľvek a povedie priamo späť sem."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} je teraz k dispozícii",
+          "message": "Môžete odkazovať na tohto zákazníka v pracovných položkách a sledovať aj požiadavky od neho.",
+          "actions": {
+            "view": "Zobraziť",
+            "copy_link": "Kopírovať odkaz",
+            "copied": "Skopírované!"
+          }
+        },
+        "error": {
+          "title": "Nemohli sme tento záznam tentokrát vytvoriť.",
+          "message": "Skúste ho uložiť znova alebo skopírujte svoj neuložený text do nového záznamu, najlepšie v inej karte."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Zákazník úspešne aktualizovaný!"
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nemožné aktualizovať zákazníka. Skúste znova!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Nemohli sme nahrať logo zákazníka.",
+          "message": "Skúste logo uložiť znova alebo začnite od začiatku."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Odstránili ste pracovnú položku zo záznamu tohto zákazníka.",
+            "message": "Automaticky sme odstránili tohto zákazníka aj z pracovnej položky."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nemohli sme tentokrát odstrániť túto pracovnú položku zo záznamu tohto zákazníka."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Nemohli sme tentokrát pridať túto pracovnú položku do záznamu tohto zákazníka.",
+            "message": "Skúste túto pracovnú položku pridať znova alebo sa k nej vráťte neskôr. Ak to stále nefunguje, kontaktujte nás."
+          },
+          "success": {
+            "title": "Pridali ste pracovnú položku do záznamu tohto zákazníka.",
+            "message": "Automaticky sme pridali tohto zákazníka aj do pracovnej položky."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Upraviť",
+      "copy_link": "Kopírovať odkaz na zákazníka",
+      "delete": "Odstrániť"
+    },
+    "create": {
+      "label": "Vytvoriť záznam zákazníka",
+      "loading": "Vytvára sa",
+      "cancel": "Zrušiť"
+    },
+    "update": {
+      "label": "Aktualizovať zákazníka",
+      "loading": "Aktualizuje sa"
+    },
+    "delete": {
+      "title": "Ste si istí, že chcete odstrániť záznam zákazníka {customer_name}?",
+      "description": "Všetky údaje spojené s týmto záznamom budú natrvalo odstránené. Tento záznam nemôžete neskôr obnoviť."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Zatiaľ nie sú žiadne požiadavky na zobrazenie.",
+          "description": "Vytvorte požiadavky od vašich zákazníkov, aby ste ich mohli prepojiť s pracovnými položkami.",
+          "button": "Pridať novú požiadavku"
+        },
+        "search": {
+          "title": "Zdá sa, že nemáte požiadavky zodpovedajúce tomuto výrazu.",
+          "description": "Skúste s iným vyhľadávacím výrazom alebo nás kontaktujte, ak ste si istí, že by ste mali vidieť výsledky pre tento výraz."
+        }
+      },
+      "label": "{count, plural, one {Požiadavka} few {Požiadavky} other {Požiadaviek}}",
+      "add": "Pridať požiadavku",
+      "create": "Vytvoriť požiadavku",
+      "update": "Aktualizovať požiadavku",
+      "form": {
+        "name": {
+          "placeholder": "Pomenujte túto požiadavku",
+          "validation": {
+            "required": "Názov je povinný.",
+            "max_length": "Názov požiadavky by nemal presiahnuť 255 znakov."
+          }
+        },
+        "description": {
+          "placeholder": "Popíšte povahu požiadavky alebo vložte komentár tohto zákazníka z iného nástroja."
+        },
+        "source": {
+          "add": "Pridať zdroj",
+          "update": "Aktualizovať zdroj",
+          "url": {
+            "label": "URL",
+            "required": "URL je povinná",
+            "invalid": "Neplatná URL webstránky"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Odkaz skopírovaný",
+          "message": "Odkaz na požiadavku zákazníka skopírovaný do schránky."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Nahráva sa príloha...",
+            "success": {
+              "title": "Príloha nahraná",
+              "message": "Príloha bola úspešne nahraná."
+            },
+            "error": {
+              "title": "Príloha nebola nahraná",
+              "message": "Prílohu nebolo možné nahrať."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Chyba!",
+              "message": "Naraz je možné nahrať iba jeden súbor."
+            }
+          },
+          "length": {
+            "message": "Súbor musí mať veľkosť {size}MB alebo menej"
+          },
+          "remove": {
+            "success": {
+              "title": "Príloha odstránená",
+              "message": "Príloha bola úspešne odstránená"
+            },
+            "error": {
+              "title": "Príloha nebola odstránená",
+              "message": "Prílohu nebolo možné odstrániť"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Úspech!",
+              "message": "Zdroj úspešne aktualizovaný!"
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nemožné aktualizovať zdroj."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Chyba!",
+              "message": "Nemožné pridať pracovné položky k požiadavke. Skúste znova."
+            },
+            "success": {
+              "title": "Úspech!",
+              "message": "Pracovné položky pridané k požiadavke."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Požiadavka úspešne aktualizovaná!",
+            "title": "Úspech!"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nemožné aktualizovať požiadavku. Skúste znova!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Požiadavka úspešne vytvorená!",
+            "title": "Úspech!"
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nemožné vytvoriť požiadavku. Skúste znova!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Prepojené pracovné položky",
+      "link": "Prepojiť pracovné položky",
+      "empty_state": {
+        "list": {
+          "title": "Zdá sa, že zatiaľ nemáte prepojené pracovné položky k tomuto zákazníkovi.",
+          "description": "Prepojte existujúce pracovné položky z akéhokoľvek projektu tu, aby ste ich mohli sledovať podľa tohto zákazníka.",
+          "button": "Prepojiť pracovnú položku"
+        }
+      },
+      "action": {
+        "remove_epic": "Odstrániť epik",
+        "remove": "Odstrániť pracovnú položku"
+      }
+    },
+    "sidebar": {
+      "properties": "Vlastnosti"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Šablóny",
+      "description": "Ušetríte 80% času stráveného vytváraním projektov, pracovných položiek a stránok, keď použijete šablóny.",
+      "options": {
+        "project": {
+          "label": "Šablóny projektov"
+        },
+        "work_item": {
+          "label": "Šablóny pracovných položiek"
+        },
+        "page": {
+          "label": "Šablóny stránok"
+        }
+      },
+      "create_template": {
+        "label": "Vytvoriť šablónu",
+        "no_permission": {
+          "project": "Kontaktujte administrátora projektu na vytvorenie šablón",
+          "workspace": "Kontaktujte administrátora workspace na vytvorenie šablón"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Použiť šablónu",
+          "loading": "Používa sa"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Odvodené od workspace"
+        },
+        "project": {
+          "info": "Odvodené od projektu"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Pomenujte svoju šablónu projektu.",
+              "validation": {
+                "required": "Názov šablóny je povinný",
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+              }
+            },
+            "description": {
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
+            }
+          },
+          "name": {
+            "placeholder": "Pomenujte svoj projekt.",
+            "validation": {
+              "required": "Názov projektu je povinný",
+              "maxLength": "Názov projektu by nemal presiahnuť 255 znakov"
+            }
+          },
+          "description": {
+            "placeholder": "Popíšte účel a ciele tohto projektu."
+          },
+          "button": {
+            "create": "Vytvoriť šablónu projektu",
+            "update": "Aktualizovať šablónu projektu"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Pomenujte svoju šablónu pracovnej položky.",
+              "validation": {
+                "required": "Názov šablóny je povinný",
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+              }
+            },
+            "description": {
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
+            }
+          },
+          "name": {
+            "placeholder": "Pomenujte túto pracovnú položku.",
+            "validation": {
+              "required": "Názov pracovnej položky je povinný",
+              "maxLength": "Názov pracovnej položky by nemal presiahnuť 255 znakov"
+            }
+          },
+          "description": {
+            "placeholder": "Popíšte, čo chcete dosiahnuť, keď dokončíte túto pracovnú položku."
+          },
+          "button": {
+            "create": "Vytvoriť šablónu pracovnej položky",
+            "update": "Aktualizovať šablónu pracovnej položky"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Pomenujte svoju šablónu stránky.",
+              "validation": {
+                "required": "Názov šablóny je povinný",
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+              }
+            },
+            "description": {
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
+            }
+          },
+          "name": {
+            "placeholder": "Neznáma stránka",
+            "validation": {
+              "maxLength": "Názov stránky by nemal presiahnuť 255 znakov"
+            }
+          },
+          "button": {
+            "create": "Vytvoriť šablónu stránky",
+            "update": "Aktualizovať šablónu stránky"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Nastavenia publikovania} other {Publikovať na Marketplace}}",
+          "unpublish_action": "Odstrániť z Marketplace",
+          "title": "Urobte vašu šablónu objaviteľnou a rozpoznateľnou.",
+          "name": {
+            "label": "Názov šablóny",
+            "placeholder": "Pomenujte vašu šablónu",
+            "validation": {
+              "required": "Názov šablóny je povinný",
+              "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+            }
+          },
+          "short_description": {
+            "label": "Krátky popis",
+            "placeholder": "Táto šablóna je skvelá pre projektových manažérov, ktorí riadia niekoľko projektov súčasne.",
+            "validation": {
+              "required": "Krátky popis je povinný"
+            }
+          },
+          "description": {
+            "label": "Popis",
+            "placeholder": "Zvyšte produktivitu a zefektívnite komunikáciu s našou integráciou Reč-do-Textu.\n• Prepis v reálnom čase: Okamžite preveďte hovorené slová do presného textu.\n• Vytváranie úloh a komentárov: Pridávajte úlohy, popisy a komentáre pomocou hlasových príkazov.",
+            "validation": {
+              "required": "Popis je povinný"
+            }
+          },
+          "category": {
+            "label": "Kategória",
+            "placeholder": "Vyberte, kde si myslíte, že to najlepšie zapadá. Môžete vybrať viacero.",
+            "validation": {
+              "required": "Je vyžadovaná aspoň jedna kategória"
+            }
+          },
+          "keywords": {
+            "label": "Kľúčové slová",
+            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny.",
+            "helperText": "Zadajte kľúčové slová oddelené čiarkami, ktoré pomôžu ľuďom nájsť túto šablónu z vyhľadávania.",
+            "validation": {
+              "required": "Aspoň jedno kľúčové slovo je povinné"
+            }
+          },
+          "company_name": {
+            "label": "Názov spoločnosti",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Názov spoločnosti je povinný",
+              "maxLength": "Názov spoločnosti by nemal presiahnuť 255 znakov"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Neplatná emailová adresa",
+              "required": "Email podpory je povinný",
+              "maxLength": "Email podpory by nemal presiahnuť 255 znakov"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Odkaz na vaše zásady ochrany súkromia",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by nemala presiahnuť 800 znakov"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Odkaz na vaše podmienky používania",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by nemala presiahnuť 800 znakov"
+            }
+          },
+          "cover_image": {
+            "label": "Pridajte obrázok na obálku, ktorý sa zobrazí na trhu",
+            "upload_title": "Nahrať obrázok na obálku",
+            "upload_placeholder": "Kliknite na nahranie alebo pretiahnite a pustite pre nahranie obrázka na obálku",
+            "drop_here": "Pustiť sem",
+            "click_to_upload": "Kliknite na nahranie",
+            "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo prekročený limit veľkosti. Prosím, skúste znova.",
+            "upload_and_save": "Nahrať a uložiť",
+            "uploading": "Nahrávanie",
+            "remove": "Odstrániť",
+            "removing": "Odstraňovanie",
+            "validation": {
+              "required": "Obrázok na obálku je povinný"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Zahrňte dokumenty a obrázky, ktoré si myslíte, že urobia prezeračov tejto šablóny.",
+            "validation": {
+              "required": "Je vyžadovaná aspoň jedna snímka obrazovky"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Šablóny",
+        "description": "S projektmi, pracovnými položkami a stránkami v Plane, nemusíte vytvárať projekty od začiatku alebo nastavovať vlastnosti pracovných položiek ručne.",
+        "sub_description": "Ušetríte 80% času, keď použijete šablóny."
+      },
+      "no_templates": {
+        "button": "Vytvoriť svoju prvú šablónu"
+      },
+      "no_labels": {
+        "description": "Žiadne štítky ešte neexistujú. Vytvorte štítky na pomoc organizácii a filtrovaniu pracovných položiek v projekte."
+      },
+      "no_work_items": {
+        "description": "Ešte nemáte pracovné položky. Pridajte jednu, aby ste lepšie struktúrovali svoju prácu."
+      },
+      "no_sub_work_items": {
+        "description": "Ešte nemáte pod-pracovné položky. Pridajte jednu, aby ste lepšie struktúrovali svoju prácu."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Neexistujú žiadne šablóny, ku ktorým máte prístup.",
+          "description": "Prosím, vytvorte šablónu"
+        },
+        "no_results": {
+          "title": "To sa nezhoduje so žiadnou šablónou.",
+          "description": "Skúste hľadať pomocou iných výrazov."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Šablóna vytvorená",
+          "message": "{templateName}, šablóna typu {templateType}, je teraz dostupná pre váš workspace."
+        },
+        "error": {
+          "title": "Nepodarilo sa vytvoriť túto šablónu.",
+          "message": "Skúste znova uložiť vaše údaje alebo ich prekopírovať do novej šablóny, preferujúc inú kartu."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Šablóna upravená",
+          "message": "{templateName}, šablóna typu {templateType}, bola upravená."
+        },
+        "error": {
+          "title": "Nepodarilo sa uložiť zmeny do tejto šablóny.",
+          "message": "Skúste znova uložiť vaše údaje alebo sa vráťte k tejto šablóne neskôr. Ak stále existujú problémy, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Šablóna odstránená",
+          "message": "{templateName}, šablóna typu {templateType}, bola odstránená z vašeho workspace."
+        },
+        "error": {
+          "title": "Nepodarilo sa odstrániť túto šablónu.",
+          "message": "Skúste odstrániť ju znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablóna stiahnuta",
+          "message": "{templateName}, šablóna typu {templateType}, bola stiahnutá z marketplace."
+        },
+        "error": {
+          "title": "Nepodarilo sa stiahnuť šablónu.",
+          "message": "Skúste ju stiahnuť znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Odstrániť šablónu",
+      "description": {
+        "prefix": "Ste si istí, že chcete odstrániť šablónu-",
+        "suffix": "? Všetky údaje spojené s touto šablónou budú natrvalo odstránené. Tento krok nie je možné vrátiť späť."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stiahnuť šablónu",
+      "description": {
+        "prefix": "Ste si istí, že chcete stiahnuť šablónu-",
+        "suffix": "? Šablóna bude stiahnutá z marketplace a nebude viac dostupná pre ostatných."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Pridať novú šablónu",
+        "project": "Pridať novú šablónu"
+      },
+      "label": {
+        "project": "Vybrať šablónu projektu",
+        "page": "Vybrať šablónu"
+      },
+      "tooltip": {
+        "work_item": "Vybrať šablónu pracovnej položky"
+      },
+      "no_results": {
+        "work_item": "Žiadne šablóny neboli nájdené.",
+        "project": "Žiadne šablóny neboli nájdené."
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty podľa stavu",
+    "active_users": "Aktívni používatelia",
+    "intake_trends": "Trendy prijímania",
+    "workitem_resolved_vs_pending": "Vyriešené vs. čakajúce pracovné položky",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu cyklu sa zobrazí tu. Pridajte pracovné položky do cyklov, aby ste mohli začať sledovať postup."
+      },
+      "module_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu modulu sa zobrazí tu. Pridajte pracovné položky do modulov, aby ste mohli začať sledovať postup."
+      },
+      "intake_trends": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza trendov príjmu sa zobrazí tu. Pridajte pracovné položky do príjmu, aby ste mohli sledovať trendy."
+      }
+    },
+    "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}"
+  },
+  "notion_importer": {
+    "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Notion dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Notion zip súbor sem",
+      "upload_title": "Nahrať Notion export",
+      "drag_drop_description": "Pretiahnite a pustite váš Notion export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Notion",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Notion dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte vaše Confluence dáta do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Confluence dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Confluence zip súbor sem",
+      "upload_title": "Nahrať Confluence export",
+      "drag_drop_description": "Pretiahnite a pustite váš Confluence export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Confluence",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Confluence dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Opakujúce sa pracovné položky",
+      "description": "Nastavte opakujúce sa pracovné položky raz a my sa postaráme o opakovanie. Všetko sa tu zobrazí, keď bude čas.",
+      "new_recurring_work_item": "Nová opakujúca sa úloha",
+      "update_recurring_work_item": "Upraviť opakujúcu sa úlohu",
+      "form": {
+        "interval": {
+          "title": "Plán",
+          "start_date": {
+            "validation": {
+              "required": "Dátum začiatku je povinný"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ intervalu je povinný"
+            }
+          }
+        },
+        "button": {
+          "create": "Vytvoriť opakujúcu sa úlohu",
+          "update": "Upraviť opakujúcu sa úlohu"
+        }
+      },
+      "create_button": {
+        "label": "Vytvoriť opakujúcu sa úlohu",
+        "no_permission": "Kontaktujte správcu projektu pre vytvorenie opakujúcich sa úloh"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vaša práca na autopilote",
+        "description": "Nastavte raz. Pripomenieme vám to, keď bude čas. Upgradujte na Business, aby bola opakovaná práca bez námahy."
+      },
+      "no_templates": {
+        "button": "Vytvorte svoju prvú opakujúcu sa úlohu"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Opakujúca sa úloha vytvorená",
+          "message": "{name}, opakujúca sa úloha, je teraz dostupná vo vašom pracovnom priestore."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa tentokrát nepodarilo vytvoriť.",
+          "message": "Skúste znova uložiť detaily alebo ich skopírujte do novej opakujúcej sa úlohy, ideálne v inom okne."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Opakujúca sa úloha upravená",
+          "message": "{name}, opakujúca sa úloha, bola upravená."
+        },
+        "error": {
+          "title": "Zmeny tejto opakujúcej sa úlohy sa nepodarilo uložiť.",
+          "message": "Skúste znova uložiť detaily alebo sa k tejto úlohe vráťte neskôr. Ak problém pretrváva, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Opakujúca sa úloha odstránená",
+          "message": "{name}, opakujúca sa úloha, bola odstránená z vášho pracovného priestoru."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa nepodarilo odstrániť.",
+          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak sa vám ju stále nedarí odstrániť, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Odstrániť opakujúcu sa úlohu",
+      "description": {
+        "prefix": "Naozaj chcete odstrániť opakujúcu sa úlohu-",
+        "suffix": "? Všetky údaje súvisiace s touto opakujúcou sa úlohou budú natrvalo odstránené. Táto akcia je nevratná."
+      }
+    }
+  },
+  "automations": {
+    "settings": {
+      "title": "Vlastné automatizácie",
+      "create_automation": "Vytvoriť automatizáciu"
+    },
+    "scope": {
+      "label": "Rozsah",
+      "run_on": "Spustiť na"
+    },
+    "trigger": {
+      "label": "Spúšťač",
+      "add_trigger": "Pridať spúšťač",
+      "sidebar_header": "Konfigurácia spúšťača",
+      "input_label": "Aký je spúšťač pre túto automatizáciu?",
+      "input_placeholder": "Vyberte možnosť",
+      "button": {
+        "previous": "Späť",
+        "next": "Pridať akciu"
+      }
+    },
+    "condition": {
+      "label": "Podmienka",
+      "add_condition": "Pridať podmienku",
+      "adding_condition": "Pridávanie podmienky"
+    },
+    "action": {
+      "label": "Akcia",
+      "add_action": "Pridať akciu",
+      "sidebar_header": "Akcie",
+      "input_label": "Čo robí automatizácia?",
+      "input_placeholder": "Vyberte možnosť",
+      "handler_name": {
+        "add_comment": "Pridať komentár",
+        "change_property": "Zmeniť vlastnosť"
+      },
+      "configuration": {
+        "label": "Konfigurácia",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Vyberte vlastnosť",
+            "change_type": "Vyberte",
+            "property_value_select": "{count, plural, one{Vyberte hodnotu} few{Vyberte hodnoty} other{Vyberte hodnoty}}",
+            "property_value_select_date": "Vyberte dátum"
+          },
+          "validation": {
+            "property_name_required": "Názov vlastnosti je povinný",
+            "change_type_required": "Typ zmeny je povinný",
+            "property_value_required": "Hodnota vlastnosti je povinná"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Pridať komentár"
+      },
+      "change_property_block": {
+        "title": "Zmeniť vlastnosť"
+      },
+      "validation": {
+        "delete_only_action": "Pred odstránením jedinej akcie vypnite automatizáciu."
+      }
+    },
+    "conjunctions": {
+      "and": "A",
+      "or": "Alebo",
+      "if": "Ak",
+      "then": "Potom"
+    },
+    "enable": {
+      "alert": "Stlačte 'Povoliť', keď je vaša automatizácia dokončená. Po povolení bude automatizácia pripravená na spustenie.",
+      "validation": {
+        "required": "Automatizácia musí mať spúšťač a aspoň jednu akciu, aby mohla byť povolená."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automatizácia musí byť pred odstránením vypnutá."
+      }
+    },
+    "table": {
+      "title": "Názov automatizácie",
+      "last_run_on": "Posledné spustenie",
+      "created_on": "Vytvorené",
+      "last_updated_on": "Posledná aktualizácia",
+      "last_run_status": "Stav posledného spustenia",
+      "average_duration": "Priemerné trvanie",
+      "owner": "Vlastník",
+      "executions": "Spustenia"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Vytvoriť automatizáciu",
+        "update": "Aktualizovať automatizáciu"
+      },
+      "title": {
+        "placeholder": "Pomenujte svoju automatizáciu.",
+        "required_error": "Názov je povinný"
+      },
+      "description": {
+        "placeholder": "Opíšte svoju automatizáciu."
+      },
+      "submit_button": {
+        "create": "Vytvoriť automatizáciu",
+        "update": "Aktualizovať automatizáciu"
+      }
+    },
+    "delete_modal": {
+      "heading": "Odstrániť automatizáciu"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Zobraziť chyby",
+        "all": "Všetko",
+        "only_activity": "Len aktivita",
+        "only_run_history": "Len história spustení"
+      },
+      "run_history": {
+        "initiator": "Iniciátor"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Automatizácia bola úspešne vytvorená."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Vytvorenie automatizácie zlyhalo."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Automatizácia bola úspešne aktualizovaná."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Aktualizácia automatizácie zlyhala."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Automatizácia bola úspešne povolená."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Povolenie automatizácie zlyhalo."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Úspech!",
+          "message": "Automatizácia bola úspešne vypnutá."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Vypnutie automatizácie zlyhalo."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatizácia odstránená",
+          "message": "{name}, automatizácia, bola odstránená z vášho projektu."
+        },
+        "error": {
+          "title": "Túto automatizáciu sa tentokrát nepodarilo odstrániť.",
+          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak sa vám ju stále nedarí odstrániť, kontaktujte nás."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Chyba!",
+            "message": "Vytvorenie akcie zlyhalo. Skúste to znova!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Chyba!",
+            "message": "Aktualizácia akcie zlyhala. Skúste to znova!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Zatiaľ nie sú žiadne automatizácie na zobrazenie.",
+        "description": "Automatizácie vám pomáhajú eliminovať opakujúce sa úlohy nastavením spúšťačov, podmienok a akcií. Vytvorte jednu, aby ste ušetrili čas a udržali prácu v plynulom chode."
+      },
+      "upgrade": {
+        "title": "Automatizácie",
+        "description": "Automatizácie sú spôsob automatizácie úloh vo vašom projekte.",
+        "sub_description": "Získajte späť 80% svojho administratívneho času, keď používate automatizácie."
+      }
+    }
+  }
+}

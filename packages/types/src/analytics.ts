@@ -1,3 +1,4 @@
+import { AnalyticsTableDataMapExtended, TAnalyticsGraphsExtended, TAnalyticsTabsExtended } from "./analytics-extended";
 import { TChartData } from "./charts";
 
 export enum ChartXAxisProperty {
@@ -31,8 +32,8 @@ export enum ChartYAxisMetric {
   EPIC_WORK_ITEM_COUNT = "EPIC_WORK_ITEM_COUNT",
 }
 
-export type TAnalyticsTabsBase = "overview" | "work-items";
-export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+export type TAnalyticsTabsBase = "overview" | "work-items" | TAnalyticsTabsExtended;
+export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items" | TAnalyticsGraphsExtended;
 export interface AnalyticsTab {
   key: TAnalyticsTabsBase;
   label: string;
@@ -81,7 +82,7 @@ export interface WorkItemInsightColumns {
 
 export type AnalyticsTableDataMap = {
   "work-items": WorkItemInsightColumns;
-};
+} & AnalyticsTableDataMapExtended;
 
 export interface IAnalyticsParams {
   x_axis: ChartXAxisProperty;

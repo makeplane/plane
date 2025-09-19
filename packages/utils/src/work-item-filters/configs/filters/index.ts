@@ -5,4 +5,6 @@ export * from "./module";
 export * from "./priority";
 export * from "./project";
 export * from "./state";
+export * from "./teamspace";
 export * from "./user";
+export * from "./work-item-type";

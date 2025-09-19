@@ -11,8 +11,9 @@
       "@/app/*": ["app/*"],
       "@/*": ["core/*"],
       "@/public/*": ["public/*"],
-      "@/plane-admin/*": ["ce/*"],
-      "@/styles/*": ["styles/*"]
+      "@/plane-admin/*": ["ee/*"],
+      "@/styles/*": ["styles/*"],
+      "@/ce/*": ["ce/*"]
     },
     "strictNullChecks": true
   },
