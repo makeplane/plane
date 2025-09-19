@@ -1,30 +1,7 @@
 // plane imports
-import {
-  FILTER_FIELD_TYPE,
-  TFilterValue,
-  TFilterProperty,
-  TFilterConfig,
-  TSupportedOperators,
-  TBaseFilterFieldConfig,
-} from "@plane/types";
+import { FILTER_FIELD_TYPE, TFilterValue, TSupportedOperators, TBaseFilterFieldConfig } from "@plane/types";
 // local imports
-import {
-  createFilterFieldConfig,
-  DEFAULT_DATE_FILTER_TYPE_CONFIG,
-  DEFAULT_DATE_RANGE_FILTER_TYPE_CONFIG,
-  DEFAULT_MULTI_SELECT_FILTER_TYPE_CONFIG,
-  DEFAULT_SINGLE_SELECT_FILTER_TYPE_CONFIG,
-  IFilterIconConfig,
-} from "./shared";
-
-/**
- * Helper to create a type-safe filter config
- * @param config - The filter config to create
- * @returns The created filter config
- */
-export const createFilterConfig = <P extends TFilterProperty, V extends TFilterValue>(
-  config: TFilterConfig<P, V>
-): TFilterConfig<P, V> => config;
+import { createFilterFieldConfig, IFilterIconConfig } from "./shared";
 
 // ------------ Selection filters ------------
 
@@ -59,12 +36,11 @@ export const getSingleSelectConfig = <
   TIconData extends string | number | boolean | object | undefined = undefined,
 >(
   transforms: TOptionTransforms<TItem, TValue, TIconData>,
-  config?: TSingleSelectConfig<TValue>,
+  config: TSingleSelectConfig<TValue>,
   iconConfig?: IFilterIconConfig<TIconData>
 ) =>
   createFilterFieldConfig<typeof FILTER_FIELD_TYPE.SINGLE_SELECT, TValue>({
     type: FILTER_FIELD_TYPE.SINGLE_SELECT,
-    ...DEFAULT_SINGLE_SELECT_FILTER_TYPE_CONFIG,
     ...config,
     getOptions: () =>
       transforms.items.map((item) => ({
@@ -101,7 +77,6 @@ export const getMultiSelectConfig = <
 ) =>
   createFilterFieldConfig<typeof FILTER_FIELD_TYPE.MULTI_SELECT, TValue>({
     type: FILTER_FIELD_TYPE.MULTI_SELECT,
-    ...DEFAULT_MULTI_SELECT_FILTER_TYPE_CONFIG,
     ...config,
     operatorLabel: config?.operatorLabel,
     getOptions: () =>
@@ -136,10 +111,9 @@ export type TDateRangeConfig = TBaseFilterFieldConfig & {
  * @param config - Date-specific configuration
  * @returns The date picker config
  */
-export const getDatePickerConfig = (config?: TDateConfig) =>
+export const getDatePickerConfig = (config: TDateConfig) =>
   createFilterFieldConfig<typeof FILTER_FIELD_TYPE.DATE, Date>({
     type: FILTER_FIELD_TYPE.DATE,
-    ...DEFAULT_DATE_FILTER_TYPE_CONFIG,
     ...config,
   });
 
@@ -148,9 +122,8 @@ export const getDatePickerConfig = (config?: TDateConfig) =>
  * @param config - Date range-specific configuration
  * @returns The date range picker config
  */
-export const getDateRangePickerConfig = (config?: TDateRangeConfig) =>
+export const getDateRangePickerConfig = (config: TDateRangeConfig) =>
   createFilterFieldConfig<typeof FILTER_FIELD_TYPE.DATE_RANGE, Date>({
     type: FILTER_FIELD_TYPE.DATE_RANGE,
-    ...DEFAULT_DATE_RANGE_FILTER_TYPE_CONFIG,
     ...config,
   });

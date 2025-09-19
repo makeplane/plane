@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Transition } from "@headlessui/react";
 // plane imports
@@ -15,7 +15,6 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
   filter: IFilterInstance<K, E>;
   variant?: "default" | "header";
   visible?: boolean;
-  maxVisibleConditions?: number;
   trackerElements?: {
     clearFilter?: string;
     saveView?: string;
@@ -31,25 +30,10 @@ export const FiltersRow = observer(
       filter,
       variant = "header",
       visible = true,
-      maxVisibleConditions = 3,
       trackerElements,
     } = props;
     // states
-    const [showAllConditions, setShowAllConditions] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
-    // derived values
-    const visibleConditions = useMemo(() => {
-      if (variant === "default" || !maxVisibleConditions || showAllConditions) {
-        return filter.allConditionsForDisplay;
-      }
-      return filter.allConditionsForDisplay.slice(0, maxVisibleConditions);
-    }, [filter.allConditionsForDisplay, maxVisibleConditions, showAllConditions, variant]);
-    const hiddenConditionsCount = useMemo(() => {
-      if (variant === "default" || !maxVisibleConditions || showAllConditions) {
-        return 0;
-      }
-      return Math.max(0, filter.allConditionsForDisplay.length - maxVisibleConditions);
-    }, [filter.allConditionsForDisplay.length, maxVisibleConditions, showAllConditions, variant]);
 
     const handleUpdate = useCallback(async () => {
       setIsUpdating(true);
@@ -61,44 +45,17 @@ export const FiltersRow = observer(
 
     const leftContent = (
       <>
+        {filter.allConditionsForDisplay.map((condition) => (
+          <FilterItem key={condition.id} filter={filter} condition={condition} isDisabled={disabledAllOperations} />
+        ))}
         <AddFilterButton
           filter={filter}
           buttonConfig={{
+            variant: "neutral-primary",
             ...buttonConfig,
             isDisabled: disabledAllOperations,
           }}
-          onFilterSelect={() => {
-            if (variant === "header") {
-              setShowAllConditions(true);
-            }
-          }}
         />
-        {visibleConditions.map((condition) => (
-          <FilterItem key={condition.id} filter={filter} condition={condition} isDisabled={disabledAllOperations} />
-        ))}
-        {variant === "header" && hiddenConditionsCount > 0 && (
-          <Button
-            variant="neutral-primary"
-            size="sm"
-            className={COMMON_VISIBILITY_BUTTON_CLASSNAME}
-            onClick={() => setShowAllConditions(true)}
-          >
-            +{hiddenConditionsCount} more
-          </Button>
-        )}
-        {variant === "header" &&
-          showAllConditions &&
-          maxVisibleConditions &&
-          filter.allConditionsForDisplay.length > maxVisibleConditions && (
-            <Button
-              variant="neutral-primary"
-              size="sm"
-              className={COMMON_VISIBILITY_BUTTON_CLASSNAME}
-              onClick={() => setShowAllConditions(false)}
-            >
-              Show less
-            </Button>
-          )}
       </>
     );
 
@@ -162,7 +119,6 @@ export const FiltersRow = observer(
   }
 );
 
-const COMMON_VISIBILITY_BUTTON_CLASSNAME = "py-0.5 px-2 text-custom-text-300 hover:text-custom-text-100 rounded-full";
 const COMMON_OPERATION_BUTTON_CLASSNAME = "py-1";
 
 type TElementTransitionProps = {

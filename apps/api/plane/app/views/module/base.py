@@ -904,6 +904,9 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         module_properties.filters = request.data.get(
             "filters", module_properties.filters
         )
+        module_properties.rich_filters = request.data.get(
+            "rich_filters", module_properties.rich_filters
+        )
         module_properties.display_filters = request.data.get(
             "display_filters", module_properties.display_filters
         )

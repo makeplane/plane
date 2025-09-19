@@ -13,6 +13,7 @@ export type TNegativeOperatorConfig = { allowNegative: true; negOperatorLabel?: 
  * - negativeOperatorConfig: Configuration for negative operators
  */
 export type TBaseFilterFieldConfig = {
+  isOperatorEnabled?: boolean;
   operatorLabel?: string;
 } & TNegativeOperatorConfig;
 

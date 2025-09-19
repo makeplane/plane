@@ -1,4 +1,5 @@
 # Python imports
+import copy
 import json
 
 from django.db.models import F, Func, OuterRef, Q, Subquery
@@ -31,8 +32,8 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
-
-# Module imports
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 from .. import BaseViewSet
 from plane.utils.host import base_host
 
@@ -42,20 +43,12 @@ class ModuleIssueViewSet(BaseViewSet):
     model = ModuleIssue
     webhook_event = "module_issue"
     bulk = True
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
-    filterset_fields = ["issue__labels__id", "issue__assignees__id"]
-
-    def get_queryset(self):
+    def apply_annotations(self, issues):
         return (
-            Issue.issue_objects.filter(
-                project_id=self.kwargs.get("project_id"),
-                workspace__slug=self.kwargs.get("slug"),
-                issue_module__module_id=self.kwargs.get("module_id"),
-                issue_module__deleted_at__isnull=True,
-            )
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -83,13 +76,37 @@ class ModuleIssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+
+    def get_queryset(self):
+        return (
+            Issue.issue_objects.filter(
+                project_id=self.kwargs.get("project_id"),
+                workspace__slug=self.kwargs.get("slug"),
+                issue_module__module_id=self.kwargs.get("module_id"),
+                issue_module__deleted_at__isnull=True,
+            )
         ).distinct()
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def list(self, request, slug, project_id, module_id):
         filters = issue_filters(request.query_params, "GET")
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset()
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Apply annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
+
         order_by_param = request.GET.get("order_by", "created_at")
 
         # Issue queryset
@@ -122,6 +139,7 @@ class ModuleIssueViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -131,12 +149,14 @@ class ModuleIssueViewSet(BaseViewSet):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -156,6 +176,7 @@ class ModuleIssueViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -165,6 +186,7 @@ class ModuleIssueViewSet(BaseViewSet):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        queryset=total_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -182,6 +204,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
+                total_count_queryset=total_issue_queryset,
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
@@ -282,9 +305,11 @@ class ModuleIssueViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=json.dumps(
                     {
-                        "module_name": module_issue.first().module.name
-                        if (module_issue.first() and module_issue.first().module)
-                        else None
+                        "module_name": (
+                            module_issue.first().module.name
+                            if (module_issue.first() and module_issue.first().module)
+                            else None
+                        )
                     }
                 ),
                 epoch=int(timezone.now().timestamp()),
