@@ -3,8 +3,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -26,10 +29,20 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
   // translation
   const { t } = useTranslation();
 
+  const handleCloseWithTracking = () => {
+    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.DELETE_MODAL_CANCEL_BUTTON });
+    handleClose();
+  };
+
   const handleSubmit = async () => {
+    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.DELETE_MODAL_CONFIRM_BUTTON });
     try {
       setLoader(true);
       await handleDelete();
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
+        payload: { id: automationId }
+      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("automations.toasts.delete.success.title"),
@@ -38,7 +51,12 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
         }),
       });
       handleClose();
-    } catch {
+    } catch (error: any) {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
+        error: error?.message || "Delete failed",
+        payload: { id: automationId }
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("automations.toasts.delete.error.title"),
@@ -51,7 +69,7 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
 
   return (
     <AlertModalCore
-      handleClose={handleClose}
+      handleClose={handleCloseWithTracking}
       handleSubmit={handleSubmit}
       isSubmitting={loader}
       isOpen={isOpen}

@@ -1,8 +1,11 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { InitiativeIcon } from "@plane/propel/icons";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -35,6 +38,7 @@ export const AutomationDetailsSidebarFooter: React.FC<TProps> = observer((props)
           <button
             type="button"
             onClick={() => {
+              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ALERT_CLOSE_BUTTON });
               sidebarHelper.setIsPublishAlertOpen(false);
             }}
             className="flex-shrink-0 size-4 grid place-items-center hover:text-custom-text-100 transition-colors"

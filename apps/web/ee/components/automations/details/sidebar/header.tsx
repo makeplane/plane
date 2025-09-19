@@ -1,9 +1,12 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EAutomationSidebarTab } from "@plane/types";
 import { getSidebarHeaderI18nTitle } from "@plane/utils";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -35,7 +38,10 @@ export const AutomationDetailsSidebarHeader: React.FC<Props> = observer((props) 
         <button
           type="button"
           className="shrink-0 size-5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
-          onClick={() => sidebarHelper?.setSelectedSidebarConfig({ tab: null, mode: null })}
+          onClick={() => {
+            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_CLOSE_BUTTON });
+            sidebarHelper?.setSelectedSidebarConfig({ tab: null, mode: null });
+          }}
         >
           <X className="size-4" />
         </button>

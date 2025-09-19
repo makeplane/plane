@@ -467,3 +467,51 @@ export const PAGE_TEMPLATE_TRACKER_ELEMENTS = {
 };
 
 // Page Template Tracker End
+
+// Automation Tracker Start
+
+export const AUTOMATION_TRACKER_EVENTS = {
+  CREATE: "automation_created",
+  UPDATE: "automation_updated",
+  DELETE: "automation_deleted",
+  ENABLE: "automation_enabled",
+  DISABLE: "automation_disabled",
+  TRIGGER_CREATED: "automation_trigger_created",
+  TRIGGER_UPDATED: "automation_trigger_updated",
+  TRIGGER_DELETED: "automation_trigger_deleted",
+  ACTION_CREATED: "automation_action_created",
+  ACTION_UPDATED: "automation_action_updated",
+  ACTION_DELETED: "automation_action_deleted",
+};
+
+export const AUTOMATION_TRACKER_ELEMENTS = {
+  // List/Overview elements
+  HEADER_CREATE_BUTTON: "automations_header_create_button",
+  LIST_ITEM_ROW: "automations_list_item_row",
+  // Details Page elements
+  HEADER_ACTIVITY_BUTTON: "automations_header_activity_button",
+  HEADER_ENABLE_DISABLE_BUTTON: "automations_header_enable_disable_button",
+  QUICK_ACTIONS_MENU: "automations_quick_actions_menu",
+  QUICK_ACTIONS_EDIT_BUTTON: "automations_quick_actions_edit_button",
+  QUICK_ACTIONS_DELETE_BUTTON: "automations_quick_actions_delete_button",
+  // Modal elements
+  CREATE_UPDATE_MODAL_CANCEL_BUTTON: "automations_create_update_modal_cancel_button",
+  CREATE_UPDATE_MODAL_SUBMIT_BUTTON: "automations_create_update_modal_submit_button",
+  DELETE_MODAL_CANCEL_BUTTON: "automations_delete_modal_cancel_button",
+  DELETE_MODAL_CONFIRM_BUTTON: "automations_delete_modal_confirm_button",
+  // Sidebar elements
+  SIDEBAR_CLOSE_BUTTON: "automations_sidebar_close_button",
+  SIDEBAR_ACTIVITY_FILTER: "automations_sidebar_activity_filter",
+  SIDEBAR_NEXT_BUTTON: "automations_sidebar_next_button",
+  SIDEBAR_PREVIOUS_BUTTON: "automations_sidebar_previous_button",
+  SIDEBAR_ALERT_CLOSE_BUTTON: "automations_sidebar_alert_close_button",
+  // Configuration elements
+  ADD_TRIGGER_BUTTON: "automations_add_trigger_button",
+  ADD_ACTION_BUTTON: "automations_add_action_button",
+  DELETE_TRIGGER_BUTTON: "automations_delete_trigger_button",
+  DELETE_ACTION_BUTTON: "automations_delete_action_button",
+  TRIGGER_CONDITION_DROPDOWN: "automations_trigger_condition_dropdown",
+  ACTION_HANDLER_DROPDOWN: "automations_action_handler_dropdown",
+};
+
+// Automation Tracker End

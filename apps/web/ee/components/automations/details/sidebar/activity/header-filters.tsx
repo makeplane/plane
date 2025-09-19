@@ -1,10 +1,12 @@
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { AUTOMATION_ACTIVITY_TYPE_OPTIONS } from "@plane/constants";
+import { AUTOMATION_ACTIVITY_TYPE_OPTIONS, AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TAutomationActivityType } from "@plane/types";
 import { CustomSelect, ToggleSwitch } from "@plane/ui";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -31,21 +33,23 @@ export const AutomationDetailsSidebarActivityHeaderFilters: React.FC<Props> = ob
         <span className="text-custom-text-200 text-xs font-medium">{t("automations.activity.filters.show_fails")}</span>
         <ToggleSwitch
           value={isShowFailsToggleEnabled}
-          onChange={() =>
+          onChange={() => {
+            captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_FILTER });
             updateFilters?.({
               show_fails: !isShowFailsToggleEnabled,
-            })
-          }
+            });
+          }}
           className="shrink-0"
         />
       </div>
       <CustomSelect
         value={activityTypeFilter}
-        onChange={(value: TAutomationActivityType) =>
+        onChange={(value: TAutomationActivityType) => {
+          captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_FILTER });
           updateFilters?.({
             type: value,
-          })
-        }
+          });
+        }}
         customButton={
           <button
             type="button"

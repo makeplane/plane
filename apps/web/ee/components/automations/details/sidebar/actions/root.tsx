@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+// helpers
 import {
   EActionNodeHandlerName,
   EAutomationNodeType,
@@ -10,6 +12,7 @@ import {
   TChangePropertyActionFormConfig,
 } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 import { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
@@ -106,12 +109,24 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
     }
 
     setIsCreatingUpdatingAction(true);
-    await automation?.createAction({
-      handler_name: data.handler_name,
-      config: validConfig,
-    });
-    setIsActionFormOpen(false);
-    setIsCreatingUpdatingAction(false);
+    try {
+      await automation?.createAction({
+        handler_name: data.handler_name,
+        config: validConfig,
+      });
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+      setIsActionFormOpen(false);
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } finally {
+      setIsCreatingUpdatingAction(false);
+    }
   };
 
   const handleUpdateAction = async (actionNode: IAutomationActionNodeInstance, data: TAutomationActionFormData) => {
@@ -126,17 +141,41 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
     }
 
     setIsCreatingUpdatingAction(true);
-    await actionNode.update({
-      handler_name: data.handler_name,
-      config: validConfig,
-    });
-    setIsCreatingUpdatingAction(false);
+    try {
+      await actionNode.update({
+        handler_name: data.handler_name,
+        config: validConfig,
+      });
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } finally {
+      setIsCreatingUpdatingAction(false);
+    }
   };
 
   const handleDeleteAction = async () => {
     if (!selectedActionToDelete) return;
-    await automation?.deleteAction(selectedActionToDelete);
-    setSelectedActionToDelete(null);
+    try {
+      await automation?.deleteAction(selectedActionToDelete);
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
+        payload: { id: automationId, action_id: selectedActionToDelete },
+      });
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
+        payload: { id: automationId, action_id: selectedActionToDelete },
+      });
+    } finally {
+      setSelectedActionToDelete(null);
+    }
   };
 
   if (!projectId || !workspaceId || !workspaceSlug) return null;
@@ -186,6 +225,7 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
               size="sm"
               variant="neutral-primary"
               onClick={() => {
+                captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.ADD_ACTION_BUTTON });
                 openActionForm(actionFormRef.current);
               }}
               loading={isCreatingUpdatingAction}
