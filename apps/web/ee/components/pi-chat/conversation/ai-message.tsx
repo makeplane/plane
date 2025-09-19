@@ -7,11 +7,11 @@ import { PI_BASE_URL } from "@plane/constants";
 import { Loader } from "@plane/ui";
 // plane-web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import ActionStatusBlock from "@/plane-web/components/pi-chat/actions/action-status-block";
+import { PiChatArtifactsListRoot } from "@/plane-web/components/pi-chat/actions/artifacts/list/root";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TDialogue } from "@/plane-web/types";
 // local imports
-import ActionStatusBlock from "../build/action-status-block";
-import { PiChatArtifactsListRoot } from "../build/artifacts/list/root";
 import { Feedback } from "./feedback";
 import { ReasoningBlock } from "./reasoning";
 

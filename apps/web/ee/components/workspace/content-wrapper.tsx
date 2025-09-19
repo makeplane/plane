@@ -11,10 +11,9 @@ import { StickyActionBar } from "@/components/stickies/action-bar";
 import { useAppRail } from "@/hooks/use-app-rail";
 // plane web imports
 import { AppRailRoot } from "@/plane-web/components/app-rail";
+import { PiChatArtifactsRoot } from "@/plane-web/components/pi-chat/actions/artifacts/detail/root";
+import { PiChatFloatingBot } from "@/plane-web/components/pi-chat/floating-bot";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-// local imports
-import { PiChatArtifactsRoot } from "../pi-chat/build/artifacts/detail/root";
-import { PiChatFloatingBot } from "../pi-chat/floating-bot";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {
   const { shouldRenderAppRail } = useAppRail();
