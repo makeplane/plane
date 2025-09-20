@@ -151,27 +151,6 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
-
-    /* toast theme */
-    --color-toast-success-text: 62, 155, 79;
-    --color-toast-error-text: 220, 62, 66;
-    --color-toast-warning-text: 255, 186, 24;
-    --color-toast-info-text: 51, 88, 212;
-    --color-toast-loading-text: 28, 32, 36;
-    --color-toast-secondary-text: 128, 131, 141;
-    --color-toast-tertiary-text: 96, 100, 108;
-
-    --color-toast-success-background: 253, 253, 254;
-    --color-toast-error-background: 255, 252, 252;
-    --color-toast-warning-background: 254, 253, 251;
-    --color-toast-info-background: 253, 253, 254;
-    --color-toast-loading-background: 253, 253, 254;
-
-    --color-toast-success-border: 218, 241, 219;
-    --color-toast-error-border: 255, 219, 220;
-    --color-toast-warning-border: 255, 247, 194;
-    --color-toast-info-border: 210, 222, 255;
-    --color-toast-loading-border: 224, 225, 230;
   }
 
   [data-theme="light"],
@@ -246,6 +225,27 @@
     --color-onboarding-border-300: 229, 229, 229, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 62, 155, 79;
+    --color-toast-error-text: 220, 62, 66;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 51, 88, 212;
+    --color-toast-loading-text: 28, 32, 36;
+    --color-toast-secondary-text: 128, 131, 141;
+    --color-toast-tertiary-text: 96, 100, 108;
+
+    --color-toast-success-background: 253, 253, 254;
+    --color-toast-error-background: 255, 252, 252;
+    --color-toast-warning-background: 254, 253, 251;
+    --color-toast-info-background: 253, 253, 254;
+    --color-toast-loading-background: 253, 253, 254;
+
+    --color-toast-success-border: 218, 241, 219;
+    --color-toast-error-border: 255, 219, 220;
+    --color-toast-warning-border: 255, 247, 194;
+    --color-toast-info-border: 210, 222, 255;
+    --color-toast-loading-border: 224, 225, 230;
   }
 
   [data-theme="light-contrast"] {
