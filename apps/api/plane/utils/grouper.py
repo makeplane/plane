@@ -148,6 +148,7 @@ def issue_group_values(
     slug: str,
     project_id: Optional[str] = None,
     filters: Dict[str, Any] = {},
+    queryset: Optional[QuerySet] = None,
 ) -> List[Union[str, Any]]:
     if field == "state_id":
         queryset = State.objects.filter(
@@ -207,36 +208,24 @@ def issue_group_values(
         return ["backlog", "unstarted", "started", "completed", "cancelled"]
 
     if field == "target_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("target_date", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("target_date", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     if field == "start_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("start_date", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("start_date", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     if field == "created_by":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("created_by", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("created_by", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     return []
