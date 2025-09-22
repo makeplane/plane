@@ -72,7 +72,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
       .then(() => {
         captureSuccess({
           eventName: AUTOMATION_TRACKER_EVENTS.ENABLE,
-          payload: { id: automationId }
+          payload: { id: automationId },
         });
         setToast({
           title: t("automations.toasts.enable.success.title"),
@@ -85,7 +85,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
         captureError({
           eventName: AUTOMATION_TRACKER_EVENTS.ENABLE,
           error: err?.message || "Enable failed",
-          payload: { id: automationId }
+          payload: { id: automationId },
         });
         setToast({
           title: t("automations.toasts.enable.error.title"),
@@ -101,7 +101,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
       .then(() => {
         captureSuccess({
           eventName: AUTOMATION_TRACKER_EVENTS.DISABLE,
-          payload: { id: automationId }
+          payload: { id: automationId },
         });
         setToast({
           title: t("automations.toasts.disable.success.title"),
@@ -114,7 +114,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
         captureError({
           eventName: AUTOMATION_TRACKER_EVENTS.DISABLE,
           error: err?.message || "Disable failed",
-          payload: { id: automationId }
+          payload: { id: automationId },
         });
         setToast({
           title: t("automations.toasts.disable.error.title"),
