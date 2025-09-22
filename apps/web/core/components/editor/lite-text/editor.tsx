@@ -15,7 +15,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-// plane web services
+// plane web service
 import { WorkspaceService } from "@/plane-web/services";
 import { LiteToolbar } from "./lite-toolbar";
 const workspaceService = new WorkspaceService();

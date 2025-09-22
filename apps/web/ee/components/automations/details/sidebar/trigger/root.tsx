@@ -3,7 +3,12 @@ import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { ChevronDown, Zap } from "lucide-react";
 // plane imports
-import { AUTOMATION_TRIGGER_SELECT_OPTIONS, DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION, AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
+import {
+  AUTOMATION_TRIGGER_SELECT_OPTIONS,
+  DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION,
+  AUTOMATION_TRACKER_ELEMENTS,
+  AUTOMATION_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import {
@@ -82,13 +87,13 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
         });
         captureSuccess({
           eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName }
+          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
         });
       } catch (error) {
         console.error("Failed to create trigger:", error);
         captureError({
           eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_CREATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName }
+          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
         });
       }
       return;
@@ -102,13 +107,13 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
         });
         captureSuccess({
           eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName }
+          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
         });
       } catch (error) {
         console.error("Failed to update trigger handler:", error);
         captureError({
           eventName: AUTOMATION_TRACKER_EVENTS.TRIGGER_UPDATED,
-          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName }
+          payload: { id: automationId, handler_name: selectedTriggerNodeHandlerName },
         });
       }
     }

@@ -41,7 +41,7 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
       await handleDelete();
       captureSuccess({
         eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
-        payload: { id: automationId }
+        payload: { id: automationId },
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -55,7 +55,7 @@ export const DeleteAutomationModal: React.FC<Props> = observer((props) => {
       captureError({
         eventName: AUTOMATION_TRACKER_EVENTS.DELETE,
         error: error?.message || "Delete failed",
-        payload: { id: automationId }
+        payload: { id: automationId },
       });
       setToast({
         type: TOAST_TYPE.ERROR,

@@ -63,7 +63,7 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
       const res = await createAutomation(workspaceSlug, projectId, payload);
       captureSuccess({
         eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
-        payload: { id: res?.id }
+        payload: { id: res?.id },
       });
       if (res?.redirectionLink) {
         router.push(res?.redirectionLink);
@@ -72,7 +72,7 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
       captureError({
         eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
         error: error?.error || error?.message,
-        payload: { workspace_slug: workspaceSlug, project_id: projectId }
+        payload: { workspace_slug: workspaceSlug, project_id: projectId },
       });
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -89,13 +89,13 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
       await automation?.update(payload);
       captureSuccess({
         eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
-        payload: { id: data.id }
+        payload: { id: data.id },
       });
     } catch (error: any) {
       captureError({
         eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
         error: error?.error || error?.message,
-        payload: { id: data.id }
+        payload: { id: data.id },
       });
       setToast({
         type: TOAST_TYPE.ERROR,
