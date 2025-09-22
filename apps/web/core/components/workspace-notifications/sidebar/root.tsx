@@ -13,8 +13,8 @@ import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-
-import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
+// plane web components
+import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/root";
 // local imports
 import { NotificationEmptyState } from "./empty-state";
 import { AppliedFilters } from "./filters/applied-filter";

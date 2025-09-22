@@ -14,6 +14,7 @@ from plane.db.models import (
     Label,
     State,
     DraftIssue,
+    IssueType,
     DraftIssueAssignee,
     DraftIssueLabel,
     DraftIssueCycle,
@@ -35,6 +36,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
@@ -159,9 +163,23 @@ class DraftIssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         project_id = self.context["project_id"]
 
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+                is_default=True,
+            ).first()
+            issue_type = issue_type
+
         # Create Issue
         issue = DraftIssue.objects.create(
-            **validated_data, workspace_id=workspace_id, project_id=project_id
+            **validated_data,
+            workspace_id=workspace_id,
+            project_id=project_id,
+            type=issue_type,
         )
 
         # Issue Audit Users

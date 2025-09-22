@@ -2,14 +2,20 @@ import { useState } from "react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IWorkspaceMember, TProjectMembership } from "@plane/types";
+import { renderFormattedDate } from "@plane/utils";
 // components
+import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { IMemberFilters } from "@/store/member/utils";
 
 export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;
 }
+
+// Remove the wrapper component - use ProjectMemberHeaderColumn directly
 
 type TUseProjectColumnsProps = {
   projectId: string;
@@ -20,9 +26,15 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
   const { projectId, workspaceSlug } = props;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
+
   // store hooks
   const { data: currentUser } = useUser();
   const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const {
+    project: {
+      filters: { getFilters, updateFilters },
+    },
+  } = useMember();
   // derived values
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
@@ -33,11 +45,11 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
   const currentProjectRole =
     getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug.toString(), projectId.toString()) ?? EUserPermissions.GUEST;
 
-  const getFormattedDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+  const displayFilters = getFilters(projectId);
 
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString("en-US", options);
+  // handlers
+  const handleDisplayFilterUpdate = (filters: Partial<IMemberFilters>) => {
+    updateFilters(projectId, filters);
   };
 
   const columns = [
@@ -45,6 +57,13 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
       key: "Full Name",
       content: "Full name",
       thClassName: "text-left",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="full_name"
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
@@ -58,12 +77,37 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
     {
       key: "Display Name",
       content: "Display name",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="display_name"
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
-
+    {
+      key: "Email",
+      content: "Email",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="email"
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
+      tdRender: (rowData: RowData) => <div className="w-48 text-custom-text-200">{rowData.member.email}</div>,
+    },
     {
       key: "Account Type",
       content: "Account type",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="role"
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => (
         <AccountTypeColumn
           rowData={rowData}
@@ -76,8 +120,21 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
     {
       key: "Joining Date",
       content: "Joining date",
-      tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
+      thRender: () => (
+        <MemberHeaderColumn
+          property="joining_date"
+          displayFilters={displayFilters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
+      tdRender: (rowData: RowData) => <div>{renderFormattedDate(rowData?.member?.joining_date)}</div>,
     },
   ];
-  return { columns, removeMemberModal, setRemoveMemberModal };
+  return {
+    columns,
+    removeMemberModal,
+    setRemoveMemberModal,
+    displayFilters,
+    handleDisplayFilterUpdate,
+  };
 };

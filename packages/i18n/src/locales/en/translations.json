@@ -61,8 +61,14 @@
   "language_setting": "Choose the language used in the user interface.",
   "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
   "go_to_preferences": "Go to preferences",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
-  "system_preference": "System preference",
+  "smooth_cursor": "Smooth Cursor",
+  "system_preference": "System Preference",
   "light": "Light",
   "dark": "Dark",
   "light_contrast": "Light high contrast",
@@ -509,6 +515,8 @@
     "work_item": "Work item",
     "work_items": "Work items",
     "sub_work_item": "Sub-work item",
+    "views": "Views",
+    "pages": "Pages",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
@@ -631,7 +639,13 @@
       "label": "Search",
       "placeholder": "Type to search",
       "no_matches_found": "No matches found",
-      "no_matching_results": "No matching results"
+      "no_matching_results": "No matching results",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "Edit",
@@ -670,6 +684,7 @@
     "or": "or",
     "next": "Next",
     "back": "Back",
+    "retry": "Retry",
     "cancelling": "Cancelling",
     "configuring": "Configuring",
     "clear": "Clear",
@@ -1978,7 +1993,7 @@
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
-        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
         "primary_button": {
           "text": "Create your first view",
           "comic": {
@@ -2019,6 +2034,10 @@
       "archived": {
         "title": "No archived pages yet",
         "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
       }
     }
   },
@@ -2252,7 +2271,7 @@
     },
     "admin": {
       "title": "Admin",
-      "description": "All permissions set to true within the workspace."
+      "description": "All permissions set to true within the workspace."
     }
   },
   "user_roles": {
@@ -2400,10 +2419,24 @@
           "title": "Missing images",
           "description": "Add images to see them here."
         }
+      },
+      "comments": {
+        "label": "Comments",
+        "empty_state": {
+          "title": "No comments",
+          "description": "Add comments to see them here."
+        }
       }
     },
     "open_button": "Open navigation pane",
     "close_button": "Close navigation pane",
     "outline_floating_button": "Open outline"
+  },
+  "project_members": {
+    "full_name": "Full name",
+    "display_name": "Display name",
+    "email": "Email",
+    "joining_date": "Joining date",
+    "role": "Role"
   }
 }

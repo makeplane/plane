@@ -10,7 +10,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/plane-live/*": ["./src/ee/*"]
     },
     "removeComments": true,
     "esModuleInterop": true,
