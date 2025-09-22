@@ -102,7 +102,9 @@
       "start_before": "Zaczyna przed",
       "start_after": "Zaczyna po",
       "finish_before": "Kończy przed",
-      "finish_after": "Kończy po"
+      "finish_after": "Kończy po",
+      "implements": "Implementuje",
+      "implemented_by": "Implementowane przez"
     }
   },
   "pages": {

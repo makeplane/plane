@@ -102,7 +102,9 @@
       "start_before": "Začíná před",
       "start_after": "Začíná po",
       "finish_before": "Končí před",
-      "finish_after": "Končí po"
+      "finish_after": "Končí po",
+      "implements": "Implementuje",
+      "implemented_by": "Implementováno"
     }
   },
   "pages": {

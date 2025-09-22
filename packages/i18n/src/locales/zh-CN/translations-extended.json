@@ -101,7 +101,9 @@
       "start_before": "开始于之前",
       "start_after": "开始于之后",
       "finish_before": "结束于之前",
-      "finish_after": "结束于之后"
+      "finish_after": "结束于之后",
+      "implements": "实现",
+      "implemented_by": "实现者"
     }
   },
   "pages": {

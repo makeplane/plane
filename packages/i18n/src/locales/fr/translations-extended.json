@@ -101,7 +101,9 @@
       "start_before": "Commence avant",
       "start_after": "Commence après",
       "finish_before": "Se termine avant",
-      "finish_after": "Se termine après"
+      "finish_after": "Se termine après",
+      "implements": "Implémente",
+      "implemented_by": "Implémenté par"
     }
   },
   "pages": {

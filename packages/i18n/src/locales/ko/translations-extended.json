@@ -102,7 +102,9 @@
       "start_before": "시작 이전",
       "start_after": "시작 이후",
       "finish_before": "완료 이전",
-      "finish_after": "완료 이후"
+      "finish_after": "완료 이후",
+      "implements": "구현",
+      "implemented_by": "구현 참조"
     }
   },
   "pages": {

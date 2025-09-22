@@ -116,6 +116,8 @@ const RELATION_IDENTIFIER_MAP: {
   },
   duplicate: undefined,
   relates_to: undefined,
+  implements: undefined,
+  implemented_by: undefined,
 };
 
 /**

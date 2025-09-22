@@ -97,6 +97,16 @@ class IssueRelationViewSet(BaseViewSet):
         finish_before_issues = issue_relations.filter(
             relation_type="finish_before", issue_id=issue_id
         ).values_list("related_issue_id", flat=True)
+        
+        # get all implements issues
+        implements_issues = issue_relations.filter(
+            relation_type="implements", issue_id=issue_id
+        ).values_list("related_issue_id", flat=True)
+        
+        # get all implemented by issues
+        implemented_by_issues = issue_relations.filter(
+            relation_type="implements", related_issue_id=issue_id
+        ).values_list("issue_id", flat=True)
 
         queryset = (
             (
@@ -213,6 +223,12 @@ class IssueRelationViewSet(BaseViewSet):
             "finish_before": queryset.filter(pk__in=finish_before_issues)
             .annotate(relation_type=Value("finish_before", output_field=CharField()))
             .values(*fields),
+            "implements": queryset.filter(pk__in=implements_issues)
+            .annotate(relation_type=Value("implements", output_field=CharField()))
+            .values(*fields),
+            "implemented_by": queryset.filter(pk__in=implemented_by_issues)
+            .annotate(relation_type=Value("implemented_by", output_field=CharField()))
+            .values(*fields),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -233,12 +249,12 @@ class IssueRelationViewSet(BaseViewSet):
                 IssueRelation(
                     issue_id=(
                         issue
-                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]
                         else issue_id
                     ),
                     related_issue_id=(
                         issue_id
-                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]
                         else issue
                     ),
                     relation_type=(get_actual_relation(relation_type)),
@@ -265,7 +281,7 @@ class IssueRelationViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
 
-        if relation_type in ["blocking", "start_after", "finish_after"]:
+        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]:
             return Response(
                 RelatedIssueSerializer(issue_relation, many=True).data,
                 status=status.HTTP_201_CREATED,
@@ -285,7 +301,9 @@ class IssueRelationViewSet(BaseViewSet):
             Q(issue_id=related_issue, related_issue_id=issue_id)
             | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
+        
         issue_relations = issue_relations.first()
+        
         current_instance = json.dumps(
             IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder
         )

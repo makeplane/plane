@@ -102,7 +102,9 @@
       "start_before": "Mulai Sebelum",
       "start_after": "Mulai Setelah",
       "finish_before": "Selesai Sebelum",
-      "finish_after": "Selesai Setelah"
+      "finish_after": "Selesai Setelah",
+      "implements": "Menerapkan",
+      "implemented_by": "Diterapkan oleh"
     }
   },
   "pages": {

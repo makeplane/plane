@@ -102,7 +102,9 @@
       "start_before": "Începe înainte",
       "start_after": "Începe după",
       "finish_before": "Termină înainte",
-      "finish_after": "Termină după"
+      "finish_after": "Termină după",
+      "implements": "Implementează",
+      "implemented_by": "Implementat de"
     }
   },
   "pages": {

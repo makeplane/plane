@@ -100,7 +100,9 @@
       "start_before": "Starts Bifor",
       "start_after": "Starts Aftır",
       "finish_before": "Finishes Bifor",
-      "finish_after": "Finishes Aftır"
+      "finish_after": "Finishes Aftır",
+      "implements": "Implemente",
+      "implemented_by": "Implemente edilen"
     },
     "display": {
       "properties": {

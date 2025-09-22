@@ -95,7 +95,9 @@
       "start_before": "Начинается до",
       "start_after": "Начинается после",
       "finish_before": "Заканчивается до",
-      "finish_after": "Заканчивается после"
+      "finish_after": "Заканчивается после",
+      "implements": "Реализует",
+      "implemented_by": "Реализовано"
     }
   },
   "pages": {

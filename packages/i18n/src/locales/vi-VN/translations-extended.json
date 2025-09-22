@@ -92,7 +92,9 @@
       "start_before": "Bắt đầu Trước",
       "start_after": "Bắt đầu Sau",
       "finish_before": "Kết thúc Trước",
-      "finish_after": "Kết thúc Sau"
+      "finish_after": "Kết thúc Sau",
+      "implements": "Thực hiện",
+      "implemented_by": "Được thực hiện bởi"
     }
   },
   "pages": {

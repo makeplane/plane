@@ -102,7 +102,9 @@
       "start_before": "Стартує Перед",
       "start_after": "Стартує Після",
       "finish_before": "Фінішує Перед",
-      "finish_after": "Фінішує Після"
+      "finish_after": "Фінішує Після",
+      "implements": "Реалізує",
+      "implemented_by": "Реалізовано"
     }
   },
   "pages": {

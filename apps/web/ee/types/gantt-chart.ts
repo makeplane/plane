@@ -8,7 +8,9 @@ export type TIssueRelationTypes =
   | "start_before"
   | "start_after"
   | "finish_before"
-  | "finish_after";
+  | "finish_after"
+  | "implements"
+  | "implemented_by";
 
 export type DependencyTree = {
   dependencyId: string;

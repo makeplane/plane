@@ -20,7 +20,9 @@
       "start_before": "Starts Before",
       "start_after": "Starts After",
       "finish_before": "Finishes Before",
-      "finish_after": "Finishes After"
+      "finish_after": "Finishes After",
+      "implements": "Implements",
+      "implemented_by": "Implemented By"
     },
     "display": {
       "properties": {
