@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -45,14 +45,22 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
   const workItemFilters = globalViewId ? filters?.[globalViewId] : undefined;
   const activeLayout: EIssueLayoutTypes | undefined = workItemFilters?.displayFilters?.layout;
-  const initialWorkItemFilters = viewDetails
-    ? {
-        displayFilters: workItemFilters?.displayFilters,
-        displayProperties: workItemFilters?.displayProperties,
-        kanbanFilters: workItemFilters?.kanbanFilters,
-        richFilters: viewDetails?.rich_filters ?? {},
-      }
-    : undefined;
+  // Determine initial work item filters based on view type and availability
+  const initialWorkItemFilters = useMemo(() => {
+    if (!globalViewId) return undefined;
+
+    const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
+    const hasViewDetails = Boolean(viewDetails);
+
+    if (!isStaticView && !hasViewDetails) return undefined;
+
+    return {
+      displayFilters: workItemFilters?.displayFilters,
+      displayProperties: workItemFilters?.displayProperties,
+      kanbanFilters: workItemFilters?.kanbanFilters,
+      richFilters: viewDetails?.rich_filters ?? {},
+    };
+  }, [globalViewId, viewDetails, workItemFilters]);
 
   // Custom hooks
   useWorkspaceIssueProperties(workspaceSlug);
