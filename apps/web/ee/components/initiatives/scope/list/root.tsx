@@ -49,48 +49,52 @@ export const InitiativeScopeListView = observer((props: Props) => {
   return (
     <div className="h-full w-full overflow-y-auto">
       {/**Epics List */}
-      <Collapsible
-        title={
-          <ListHeader
-            count={epicIds.length}
-            label={t("common.epics")}
-            handleAdd={handleAddEpic}
-            icon={<EpicIcon className="size-4" />}
-          />
-        }
-        buttonClassName="w-full"
-        defaultOpen
-      >
-        {epicIds?.map((epicId) => (
-          <EpicListItem
-            key={epicId}
+      {epicIds.length > 0 && (
+        <Collapsible
+          title={
+            <ListHeader
+              count={epicIds.length}
+              label={t("common.epics")}
+              handleAdd={handleAddEpic}
+              icon={<EpicIcon className="size-4" />}
+            />
+          }
+          buttonClassName="w-full"
+          defaultOpen
+        >
+          {epicIds?.map((epicId) => (
+            <EpicListItem
+              key={epicId}
+              workspaceSlug={workspaceSlug}
+              epicId={epicId}
+              initiativeId={initiativeId}
+              disabled={disabled}
+            />
+          ))}
+        </Collapsible>
+      )}
+      {/**Projects List */}
+      {projectIds.length > 0 && (
+        <Collapsible
+          title={
+            <ListHeader
+              count={projectIds.length}
+              label={t("common.projects")}
+              handleAdd={handleAddProject}
+              icon={<Briefcase className="size-4" />}
+            />
+          }
+          buttonClassName="w-full"
+          defaultOpen
+        >
+          <ProjectList
             workspaceSlug={workspaceSlug}
-            epicId={epicId}
             initiativeId={initiativeId}
+            projectIds={projectIds}
             disabled={disabled}
           />
-        ))}
-      </Collapsible>
-      {/**Projects List */}
-      <Collapsible
-        title={
-          <ListHeader
-            count={projectIds.length}
-            label={t("common.projects")}
-            handleAdd={handleAddProject}
-            icon={<Briefcase className="size-4" />}
-          />
-        }
-        buttonClassName="w-full"
-        defaultOpen
-      >
-        <ProjectList
-          workspaceSlug={workspaceSlug}
-          initiativeId={initiativeId}
-          projectIds={projectIds}
-          disabled={disabled}
-        />
-      </Collapsible>
+        </Collapsible>
+      )}
     </div>
   );
 });

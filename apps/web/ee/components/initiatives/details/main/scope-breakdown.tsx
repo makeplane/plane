@@ -117,6 +117,9 @@ export const ScopeBreakdown = observer((props: Props) => {
   const epicsCount = initiativeEpics?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
 
+  const shouldShowProjectsCard = projectsCount > 0;
+  const shouldShowEpicsCard = epicsCount > 0;
+
   return (
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
@@ -139,7 +142,7 @@ export const ScopeBreakdown = observer((props: Props) => {
         </div>
       </div>
       {/* content */}
-      {projectsCount === 0 && epicsCount === 0 ? (
+      {!shouldShowProjectsCard && !shouldShowEpicsCard ? (
         <SectionEmptyState
           heading={t("initiatives.scope.empty_state.title")}
           subHeading={t("initiatives.scope.empty_state.description")}
@@ -151,21 +154,25 @@ export const ScopeBreakdown = observer((props: Props) => {
       ) : (
         <div className="grid gap-4 w-full grid-cols-1 @sm:grid-cols-1 @md:grid-cols-2">
           {/* Projects */}
-          <DataCard
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            type="project"
-            onAdd={toggleProjectModal}
-            data={initiativeAnalytics?.project}
-          />
+          {shouldShowProjectsCard && (
+            <DataCard
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              type="project"
+              onAdd={toggleProjectModal}
+              data={initiativeAnalytics?.project}
+            />
+          )}
           {/* Epics */}
-          <DataCard
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            type="epic"
-            onAdd={toggleEpicModal}
-            data={initiativeAnalytics?.epic}
-          />
+          {shouldShowEpicsCard && (
+            <DataCard
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              type="epic"
+              onAdd={toggleEpicModal}
+              data={initiativeAnalytics?.epic}
+            />
+          )}
         </div>
       )}
     </SectionWrapper>
