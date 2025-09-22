@@ -1,0 +1,34 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "workspace_logo": "სამუშაო სივრცის ლოგო",
+      "open_workspace_switcher": "სამუშაო სივრცის გადამრთველის გახსნა",
+      "open_user_menu": "მომხმარებლის მენიუს გახსნა",
+      "open_command_palette": "ბრძანებების პანელის გახსნა",
+      "open_extended_sidebar": "გაფართოებული გვერდითი მენიუს გახსნა",
+      "close_extended_sidebar": "გაფართოებული გვერდითი მენიუს დახურვა",
+      "create_favorites_folder": "ფავორიტების საქაღალდის შექმნა",
+      "open_folder": "საქაღალდის გახსნა",
+      "close_folder": "საქაღალდის დახურვა",
+      "open_favorites_menu": "ფავორიტების მენიუს გახსნა",
+      "close_favorites_menu": "ფავორიტების მენიუს დახურვა",
+      "enter_folder_name": "შეიყვანეთ საქაღალდის სახელი",
+      "create_new_project": "ახალი პროექტის შექმნა",
+      "open_projects_menu": "პროექტების მენიუს გახსნა",
+      "close_projects_menu": "პროექტების მენიუს დახურვა",
+      "toggle_quick_actions_menu": "სწრაფი ქმედებების მენიუს ჩართვა/გამორთვა",
+      "open_project_menu": "პროექტის მენიუს გახსნა",
+      "close_project_menu": "პროექტის მენიუს დახურვა",
+      "collapse_sidebar": "გვერდითი მენიუს ჩაკეცვა",
+      "expand_sidebar": "გვერდითი მენიუს გაშლა",
+      "edition_badge": "გადახდილი გეგმის ფანჯრის გახსნა"
+    },
+    "auth_forms": {
+      "clear_email": "ელფოსტის გასუფთავება",
+      "show_password": "პაროლის ჩვენება",
+      "hide_password": "პაროლის დამალვა",
+      "close_alert": "გაფრთხილების დახურვა",
+      "close_popover": "პოპაპის დახურვა"
+    }
+  }
+}
