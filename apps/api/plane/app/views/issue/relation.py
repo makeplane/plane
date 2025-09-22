@@ -100,12 +100,12 @@ class IssueRelationViewSet(BaseViewSet):
         
         # get all implements issues
         implements_issues = issue_relations.filter(
-            relation_type="implements", issue_id=issue_id
+            relation_type="implemented_by", issue_id=issue_id
         ).values_list("related_issue_id", flat=True)
         
         # get all implemented by issues
         implemented_by_issues = issue_relations.filter(
-            relation_type="implements", related_issue_id=issue_id
+            relation_type="implemented_by", related_issue_id=issue_id
         ).values_list("issue_id", flat=True)
 
         queryset = (
