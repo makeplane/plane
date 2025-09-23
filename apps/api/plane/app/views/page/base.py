@@ -6,7 +6,17 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    UUIDField,
+    Count,
+    Case,
+    When,
+    IntegerField,
+)
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -398,33 +408,60 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def summary(self, request, slug, project_id):
-        queryset = self.get_queryset()
+        queryset = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+            )
+            .filter(parent__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0))
+            .annotate(
+                project=Exists(
+                    ProjectPage.objects.filter(
+                        page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
+                    )
+                )
+            )
+            .filter(project=True)
+            .distinct()
+        )
+
         project = Project.objects.get(pk=project_id)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 member=request.user,
-                role=5,
+                role=ROLE.GUEST.value,
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
         ):
             queryset = queryset.filter(owned_by=request.user)
 
-        return Response(
-            {
-                "public_pages": queryset.filter(
-                    access=Page.PUBLIC_ACCESS,
-                ).count(),
-                "private_pages": queryset.filter(
-                    access=Page.PRIVATE_ACCESS,
-                ).count(),
-                "archived_pages": queryset.filter(
-                    archived_at__isnull=False,
-                ).count(),
-            }
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            private_pages=Count(
+                Case(
+                    When(access=Page.PRIVATE_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
         )
+
+        return Response(stats, status=status.HTTP_200_OK)
 
 
 class PageFavoriteViewSet(BaseViewSet):
@@ -540,6 +577,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 class PageDuplicateEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
+
     def post(self, request, slug, project_id, page_id):
         page = Page.objects.filter(
             pk=page_id, workspace__slug=slug, projects__id=project_id
