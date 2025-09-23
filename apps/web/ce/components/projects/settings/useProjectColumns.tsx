@@ -15,8 +15,6 @@ export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;
 }
 
-// Remove the wrapper component - use ProjectMemberHeaderColumn directly
-
 type TUseProjectColumnsProps = {
   projectId: string;
   workspaceSlug: string;
