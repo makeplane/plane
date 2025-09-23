@@ -12,7 +12,7 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -25,8 +25,6 @@ import {
   isCellSelection,
   selectRow,
 } from "@/extensions/table/table/utilities/helpers";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
 import { moveSelectedRows } from "../actions";
 import {
@@ -63,7 +61,16 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
       }),
     ],
     open: isDropdownOpen,
-    onOpenChange: setIsDropdownOpen,
+    onOpenChange: (open) => {
+      setIsDropdownOpen(open);
+      if (open) {
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+      } else {
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+        }, 0);
+      }
+    },
     whileElementsMounted: autoUpdate,
   });
   const click = useClick(context);
@@ -159,21 +166,6 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
     },
     [editor, row]
   );
-
-  // toggle utility storage
-  useEffect(() => {
-    const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
-    const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.TABLE);
-    if (isDropdownOpen) {
-      if (index === -1) {
-        utilityStorage.activeDropbarExtensions.push(CORE_EXTENSIONS.TABLE);
-      }
-    } else {
-      if (index !== -1) {
-        utilityStorage.activeDropbarExtensions.splice(index, 1);
-      }
-    }
-  }, [editor, isDropdownOpen]);
 
   return (
     <>

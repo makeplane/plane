@@ -5,7 +5,6 @@ import tippy, { Instance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
@@ -62,9 +61,7 @@ const renderItems: SuggestionOptions["render"] = () => {
   return {
     onStart: (props) => {
       // Track active dropdown
-      getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(
-        CORE_EXTENSIONS.SLASH_COMMANDS
-      );
+      props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
 
       component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
         props,
@@ -103,13 +100,7 @@ const renderItems: SuggestionOptions["render"] = () => {
     },
     onExit: ({ editor }) => {
       // Remove from active dropdowns
-      if (editor) {
-        const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
-        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.SLASH_COMMANDS);
-        if (index > -1) {
-          utilityStorage.activeDropbarExtensions.splice(index, 1);
-        }
-      }
+      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
       popup?.[0].destroy();
       component?.destroy();
     },

@@ -31,6 +31,8 @@ declare module "@tiptap/core" {
               idToRemove: string;
             }
       ) => () => void;
+      addActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
+      removeActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
     };
   }
 }
@@ -106,6 +108,18 @@ export const UtilityExtension = (props: Props) => {
             }
           }
           this.storage.assetsList = Array.from(uniqueAssets);
+        },
+        addActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index === -1) {
+            this.storage.activeDropbarExtensions.push(extension);
+          }
+        },
+        removeActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index !== -1) {
+            this.storage.activeDropbarExtensions.splice(index, 1);
+          }
         },
       };
     },
