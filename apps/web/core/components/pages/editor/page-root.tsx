@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
+import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
-import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageNavigationPaneRoot } from "../navigation-pane";
+import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
 import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
@@ -22,7 +24,7 @@ import { PageEditorToolbarRoot } from "./toolbar";
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchDescriptionBinary: () => Promise<any>;
+  fetchDescriptionBinary: () => Promise<ArrayBuffer>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   restoreVersion: (pageId: string, versionId: string) => Promise<void>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
@@ -36,20 +38,29 @@ type TPageRootProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
+  const {
+    config,
+    handlers,
+    page,
+    projectId,
+    storeType,
+    webhookConnectionParams,
+    workspaceSlug,
+    customRealtimeEventHandlers,
+  } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useAppRouter();
   // derived values
+  const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
     isContentEditable,
     editor: { setEditorRef },
@@ -101,12 +112,25 @@ export const PageRoot = observer((props: TPageRootProps) => {
     projectId,
   });
 
+  const searchParams = useSearchParams();
+
+  const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
+
   const handleRestoreVersion = useCallback(
     async (descriptionHTML: string) => {
-      editorRef.current?.clearEditor();
-      editorRef.current?.setEditorValue(descriptionHTML);
+      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setRestorationStatus(true);
+        setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        if (page.id) {
+          await handlers.restoreVersion(page.id, version);
+        }
+      } else {
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(descriptionHTML);
+      }
     },
-    [editorRef]
+    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
   );
 
   // reset editor ref on unmount
@@ -135,6 +159,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         />
         <PageEditorBody
           config={config}
+          customRealtimeEventHandlers={customRealtimeEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
           handleConnectionStatus={setHasConnectionFailed}

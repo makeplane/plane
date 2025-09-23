@@ -31,7 +31,7 @@ import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-ac
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
+import { AdditionalHeaderItems, GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
@@ -177,6 +177,8 @@ export const GlobalIssuesHeader = observer(() => {
           ) : (
             <></>
           )}
+
+          <AdditionalHeaderItems isLocked={!!isLocked} />
 
           <Button
             variant="primary"

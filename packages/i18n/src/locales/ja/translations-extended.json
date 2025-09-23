@@ -1,0 +1,2851 @@
+{
+  "sidebar": {
+    "pi_chat": "PIチャット",
+    "initiatives": "イニシアチブ",
+    "teamspaces": "チームスペース",
+    "epics": "エピック",
+    "upgrade_plan": "プランをアップグレード",
+    "plane_pro": "Plane Pro",
+    "business": "ビジネス",
+    "customers": "顧客",
+    "recurring_work_items": "繰り返し作業項目"
+  },
+  "workspace_dashboards": "ダッシュボード",
+  "pi_chat": "PIチャット",
+  "in_app": "アプリ内",
+  "forms": "フォーム",
+  "choose_workspace_for_integration": "このアプリケーションに接続するワークスペースを選択してください",
+  "integrations_description": "Planeのアプリケーションは、管理者であるワークスペースに接続する必要があります。",
+  "create_a_new_workspace": "新しいワークスペースを作成",
+  "learn_more_about_workspaces": "ワークスペースについて詳しくはこちら",
+  "no_workspaces_to_connect": "接続するワークスペースがありません",
+  "no_workspaces_to_connect_description": "接続するワークスペースを作成する必要があります",
+  "common": {
+    "worklogs": "作業ログ",
+    "live": "ライブ",
+    "epics": "エピック",
+    "project_updates": "プロジェクトの更新",
+    "overview": "概要",
+    "workflows": "ワークフロー",
+    "members_and_teamspaces": "メンバーとチームスペース"
+  },
+  "updates": {
+    "add_update": "更新を追加",
+    "add_update_placeholder": "ここに更新を入力してください",
+    "empty": {
+      "title": "まだ更新がありません",
+      "description": "ここで更新を確認できます。"
+    },
+    "delete": {
+      "title": "更新を削除",
+      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "success": {
+        "title": "更新が削除されました",
+        "message": "更新が正常に削除されました。"
+      },
+      "error": {
+        "title": "更新が削除されませんでした",
+        "message": "更新を削除できませんでした。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反応が作成されました",
+          "message": "反応が正常に作成されました。"
+        },
+        "error": {
+          "title": "反応が作成されませんでした",
+          "message": "反応を作成できませんでした。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反応が削除されました",
+          "message": "反応が正常に削除されました。"
+        },
+        "error": {
+          "title": "反応が削除されませんでした",
+          "message": "反応を削除できませんでした。"
+        }
+      }
+    },
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "最後の更新以来",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新が作成されました",
+        "message": "更新が正常に作成されました。"
+      },
+      "error": {
+        "title": "更新が作成されませんでした",
+        "message": "更新を作成できませんでした。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新が更新されました",
+        "message": "更新が正常に更新されました。"
+      },
+      "error": {
+        "title": "更新が更新されませんでした",
+        "message": "更新を更新できませんでした。"
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "開始前",
+      "start_after": "開始後",
+      "finish_before": "終了前",
+      "finish_after": "終了後",
+      "implements": "実装",
+      "implemented_by": "実装元"
+    }
+  },
+  "pages": {
+    "link_pages": "ページを接続",
+    "show_wiki_pages": "Wikiページを表示",
+    "link_pages_to": "ページを接続",
+    "linked_pages": "リンクされたページ",
+    "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "ページが更新されました",
+          "message": "ページが正常に更新されました"
+        },
+        "error": {
+          "title": "ページが更新されませんでした",
+          "message": "ページを更新できませんでした"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "ページが削除されました",
+          "message": "ページが正常に削除されました"
+        },
+        "error": {
+          "title": "ページが削除されませんでした",
+          "message": "ページを削除できませんでした"
+        }
+      }
+    }
+  },
+  "profile": {
+    "actions": {
+      "connections": "接続"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "イニシアチブ",
+      "sub_heading": "Planeですべての作業に対して最高レベルの組織化を実現します。",
+      "title": "イニシアチブを有効にする",
+      "description": "進捗を監視するためのより大きな目標を設定",
+      "toast": {
+        "updating": "イニシアチブ機能を更新中",
+        "enable_success": "イニシアチブ機能が正常に有効化されました。",
+        "disable_success": "イニシアチブ機能が正常に無効化されました。",
+        "error": "イニシアチブ機能の更新に失敗しました！"
+      }
+    },
+    "customers": {
+      "heading": "顧客",
+      "settings_heading": "顧客にとって重要なことに基づいて業務を管理しましょう。",
+      "settings_sub_heading": "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。"
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "設定された統合がありません",
+        "description": "GitHubやその他の統合を設定して、プロジェクトの作業項目を同期します。"
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "見積もりシステムを編集",
+        "add_or_update": {
+          "title": "見積もりの追加、更新、削除",
+          "description": "ポイントまたはカテゴリーを追加、更新、削除して現在のシステムを管理します。"
+        },
+        "switch": {
+          "title": "見積もりタイプの変更",
+          "description": "ポイントシステムをカテゴリーシステムに変換、またはその逆を行います。"
+        }
+      },
+      "switch": "見積もりシステムの切り替え",
+      "current": "現在の見積もりシステム",
+      "select": "見積もりシステムを選択",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "見積もりを並べ替えました",
+            "message": "プロジェクトの見積もりが並べ替えられました。"
+          },
+          "error": {
+            "title": "見積もりの並べ替えに失敗",
+            "message": "見積もりを並べ替えできませんでした。もう一度お試しください。"
+          }
+        }
+      },
+      "validation": {
+        "fill": "この見積もりフィールドを入力してください",
+        "repeat": "見積もり値を重複させることはできません"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "プロパティ",
+        "description": "エピックにカスタムプロパティを追加します。"
+      },
+      "disabled": "無効"
+    }
+  },
+  "teamspaces": {
+    "label": "チームスペース",
+    "empty_state": {
+      "general": {
+        "title": "チームスペースでPlaneのより良い組織化とトラッキングが可能になります。",
+        "description": "実際のチームごとに専用のスペースを作成し、Planeの他の作業スペースから分離して、チームの作業方法に合わせてカスタマイズできます。",
+        "primary_button": {
+          "text": "新しいチームスペースを作成"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "まだチームスペースをリンクしていません。",
+          "description": "チームスペースとプロジェクトの所有者はプロジェクトへのアクセスを管理できます。"
+        }
+      },
+      "primary_button": {
+        "text": "チームスペースをリンク"
+      },
+      "secondary_button": {
+        "text": "詳細を見る"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "チームスペース名",
+          "members": "メンバー",
+          "accountType": "アカウントタイプ"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "チームスペースを削除"
+            },
+            "confirm": {
+              "title": "{projectName}から{teamspaceName}を削除",
+              "description": "リンクされたプロジェクトからこのチームスペースを削除すると、ここのメンバーはリンクされたプロジェクトへのアクセス権を失います。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {このプロジェクトにチームスペースをリンクしました。} other {このプロジェクトに#つのチームスペースをリンクしました。}}",
+            "description": "{additionalCount, plural, =0 {チームスペース{firstTeamspaceName}がこのプロジェクトにリンクされました。} other {チームスペース{firstTeamspaceName}と{additionalCount}つのチームスペースがこのプロジェクトにリンクされました。}}"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "このプロジェクトからチームスペースを削除しました。",
+            "description": "チームスペース{teamspaceName}が{projectName}から削除されました。"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "チームスペースを検索",
+        "info": {
+          "title": "チームスペースを追加すると、そのチームスペースの全メンバーがこのプロジェクトにアクセスできるようになります。",
+          "link": "詳細を見る"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "リンクできるチームスペースがありません。",
+            "description": "リンクできるチームスペースに所属していないか、利用可能なチームスペースをすべてリンク済みです。"
+          },
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません。",
+            "description": "別の検索語を試すか、リンクできるチームスペースがあることを確認してください。"
+          }
+        },
+        "primary_button": {
+          "text": "選択したチームスペースをリンク"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "チーム固有の作業項目を作成します。",
+        "description": "リンクされたプロジェクトでこのチームのメンバーに割り当てられた作業項目は、自動的にここに表示されます。作業項目が表示されるはずの場合は、リンクされたプロジェクトにこのチームのメンバーに割り当てられた作業項目があることを確認するか、作業項目を作成してください。",
+        "primary_button": {
+          "text": "リンクされたプロジェクトに作業項目を追加"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "適用されたフィルターに該当するチーム固有の作業項目はありません",
+        "description": "フィルターの一部を変更するか、すべてクリアしてこのスペースに関連する作業項目を表示します。",
+        "secondary_button": {
+          "text": "すべてのフィルターをクリア"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "リンクされたプロジェクトにアクティブなサイクルがありません。",
+        "description": "リンクされたプロジェクトのアクティブなサイクルは自動的にここに表示されます。アクティブなサイクルが表示されるはずの場合は、リンクされたプロジェクトで現在実行中であることを確認してください。"
+      },
+      "completed": {
+        "title": "リンクされたプロジェクトに完了したサイクルがありません。",
+        "description": "リンクされたプロジェクトの完了したサイクルは自動的にここに表示されます。完了したサイクルが表示されるはずの場合は、リンクされたプロジェクトでも完了していることを確認してください。"
+      },
+      "upcoming": {
+        "title": "リンクされたプロジェクトに今後のサイクルがありません。",
+        "description": "リンクされたプロジェクトの今後のサイクルは自動的にここに表示されます。今後のサイクルが表示されるはずの場合は、リンクされたプロジェクトにもあることを確認してください。"
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "ワークスペースの他のビューを妨げることなく、チームの作業を表示",
+        "description": "チームの作業を、プロジェクトのビューとは別に、チーム専用に保存されたビューで確認できます。",
+        "primary_button": {
+          "text": "ビューを作成"
+        }
+      },
+      "filter": {
+        "title": "一致するビューがありません",
+        "description": "検索条件に一致するビューがありません。\n 代わりに新しいビューを作成してください。"
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "チームの知識をチームページに保存します。",
+        "description": "プロジェクトのページとは異なり、チーム固有の知識をここで別のページセットに保存できます。ページのすべての機能を利用して、ベストプラクティスのドキュメントやチームのウィキを簡単に作成できます。",
+        "primary_button": {
+          "text": "最初のチームページを作成"
+        }
+      },
+      "filter": {
+        "title": "一致するページがありません",
+        "description": "すべてのページを表示するにはフィルターを削除してください"
+      },
+      "search": {
+        "title": "一致するページがありません",
+        "description": "すべてのページを表示するには検索条件を削除してください"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "リンクされたプロジェクトに公開された作業項目がありません。",
+        "description": "日付、状態、優先度による進捗を確認するには、それらのプロジェクトのいずれかで作業項目を作成してください。"
+      },
+      "relation": {
+        "blocking": {
+          "title": "チームメイトをブロックしている作業項目はありません。",
+          "description": "よくできました！チームの進路を開いています。あなたは良いチームプレイヤーです。"
+        },
+        "blocked": {
+          "title": "チームメイトの作業項目があなたをブロックしていません。",
+          "description": "良いニュースです！割り当てられたすべての作業項目で進捗を出すことができます。"
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "リンクされたプロジェクトに公開された作業項目がありません。",
+          "description": "プロジェクトとチームメンバーによる作業の分布を確認するには、それらのプロジェクトのいずれかで作業項目を作成してください。"
+        },
+        "filter": {
+          "title": "適用されたフィルターに該当するチーム統計はありません。",
+          "description": "プロジェクトとチームメンバーによる作業の分布を確認するには、それらのプロジェクトのいずれかで作業項目を作成してください。"
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "overview": "概要",
+    "label": "イニシアチブ",
+    "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
+    "add_initiative": "イニシアチブを追加",
+    "create_initiative": "イニシアチブを作成",
+    "update_initiative": "イニシアチブを更新",
+    "initiative_name": "イニシアチブ名",
+    "all_initiatives": "すべてのイニシアチブ",
+    "delete_initiative": "イニシアチブを削除",
+    "fill_all_required_fields": "すべての必須フィールドに入力してください。",
+    "toast": {
+      "create_success": "イニシアチブ {name} が正常に作成されました。",
+      "create_error": "イニシアチブの作成に失敗しました。もう一度お試しください！",
+      "update_success": "イニシアチブ {name} が正常に更新されました。",
+      "update_error": "イニシアチブの更新に失敗しました。もう一度お試しください！",
+      "delete": {
+        "success": "イニシアチブが正常に削除されました。",
+        "error": "イニシアチブの削除に失敗しました"
+      },
+      "link_copied": "イニシアチブのリンクがクリップボードにコピーされました。",
+      "project_update_success": "イニシアチブのプロジェクトが正常に更新されました。",
+      "project_update_error": "イニシアチブのプロジェクトの更新に失敗しました。もう一度お試しください！",
+      "epic_update_success": "エピック{count, plural, one {がイニシアチブに正常に追加されました。} other {がイニシアチブに正常に追加されました。}}",
+      "epic_update_error": "イニシアチブへのエピックの追加に失敗しました。後でもう一度お試しください。"
+    },
+    "empty_state": {
+      "general": {
+        "title": "イニシアチブで最高レベルの作業を整理",
+        "description": "複数のプロジェクトやチームにまたがる作業を整理する必要がある場合、イニシアチブが役立ちます。プロジェクトとエピックをイニシアチブに接続し、自動的に集計された更新を確認し、木々を見る前に森を見ることができます。",
+        "primary_button": {
+          "text": "イニシアチブを作成"
+        }
+      },
+      "search": {
+        "title": "一致するイニシアチブがありません",
+        "description": "一致する条件のイニシアチブは検出されませんでした。\n 代わりに新しいイニシアチブを作成してください。"
+      },
+      "not_found": {
+        "title": "イニシアチブが存在しません",
+        "description": "お探しのイニシアチブは存在しないか、削除されました。",
+        "primary_button": {
+          "text": "他のイニシアチブを表示"
+        }
+      },
+      "epics": {
+        "title": "イニシアチブが存在しません",
+        "subHeading": "すべてのイニシアチブを表示するには、すべての適用されたフィルターを削除してください。",
+        "action": "フィルターを削除"
+      }
+    },
+    "scope": {
+      "view_scope": "スコープを表示",
+      "breakdown": "スコープの分解",
+      "add_scope": "スコープを追加",
+      "label": "スコープ",
+      "empty_state": {
+        "title": "まだスコープが追加されていません",
+        "description": "このイニシアチブにプロジェクトとエピックをリンクし、その作業をこのスペースで追跡します。",
+        "primary_button": {
+          "text": "スコープを追加"
+        }
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "メモ、ドキュメント、または完全なナレッジベースを作成します。Planeのアシスタント、ガリレオが開始をサポートします",
+        "description": "ページはPlaneの思考整理スペースです。会議のメモを取り、簡単に整形し、作業項目を埋め込み、コンポーネントライブラリを使用してレイアウトし、すべてをプロジェクトのコンテキストに保存します。どんなドキュメントも短時間で作成するために、PlaneのAI、ガリレオをショートカットやボタンのクリックで呼び出すことができます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "private": {
+        "title": "まだプライベートページがありません",
+        "description": "プライベートな考えをここに保存します。共有する準備ができたら、チームは1クリックで共有できます。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "public": {
+        "title": "まだワークスペースページがありません",
+        "description": "ワークスペースの全員と共有されているページをここで確認します。",
+        "primary_button": {
+          "text": "最初のページを作成"
+        }
+      },
+      "archived": {
+        "title": "まだアーカイブされたページがありません",
+        "description": "注目していないページをアーカイブします。必要な時にここでアクセスできます。"
+      }
+    }
+  },
+  "epics": {
+    "label": "エピック",
+    "no_epics_selected": "エピックが選択されていません",
+    "add_selected_epics": "選択したエピックを追加",
+    "epic_link_copied_to_clipboard": "エピックのリンクがクリップボードにコピーされました。",
+    "project_link_copied_to_clipboard": "プロジェクトのリンクがクリップボードにコピーされました",
+    "empty_state": {
+      "general": {
+        "title": "エピックを作成し、誰か（自分自身でも）に割り当てます",
+        "description": "複数のサイクルにまたがり、モジュール間で存在する可能性のある大きな作業のために、エピックを作成します。プロジェクト内の作業項目とサブ作業項目をエピックにリンクし、概要から作業項目にジャンプできます。",
+        "primary_button": {
+          "text": "エピックを作成"
+        }
+      },
+      "section": {
+        "title": "まだエピックがありません",
+        "description": "進捗を管理・追跡するためにエピックの追加を開始します。",
+        "primary_button": {
+          "text": "エピックを追加"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "一致するエピックが見つかりません"
+      },
+      "no_epics": {
+        "title": "エピックが見つかりません"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "アクティブなサイクルがありません",
+        "description": "プロジェクトのサイクルには、その範囲内に今日の日付を含む期間が含まれます。ここですべてのアクティブなサイクルの進捗状況と詳細を確認できます。"
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "サイクルの進捗を表示するには作業項目を追加してください"
+      },
+      "priority": {
+        "title": "サイクル内で取り組まれた高優先度の作業項目を\n一目で確認できます。"
+      },
+      "assignee": {
+        "title": "作業項目に担当者を追加して、\n担当者別の作業内訳を確認できます。"
+      },
+      "label": {
+        "title": "作業項目にラベルを追加して、\nラベル別の作業内訳を確認できます。"
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "インテグレーション",
+        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
+        "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
+      },
+      "imports": {
+        "title": "インポート"
+      },
+      "worklogs": {
+        "title": "作業ログ"
+      },
+      "project_states": {
+        "title": "プロジェクトの状態"
+      },
+      "teamspaces": {
+        "title": "チームスペース"
+      },
+      "initiatives": {
+        "title": "イニシアチブ"
+      },
+      "customers": {
+        "title": "顧客"
+      },
+      "cancel_trial": {
+        "title": "まずトライアルをキャンセルしてください。",
+        "description": "有料プランのトライアルが有効です。続行するには、まずキャンセルしてください。",
+        "dismiss": "閉じる",
+        "cancel": "トライアルをキャンセル",
+        "cancel_success_title": "トライアルがキャンセルされました。",
+        "cancel_success_message": "ワークスペースを削除できるようになりました。",
+        "cancel_error_title": "エラーが発生しました。",
+        "cancel_error_message": "もう一度お試しください。"
+      },
+      "applications": {
+        "title": "アプリケーション",
+        "applicationId_copied": "アプリケーションIDをクリップボードにコピーしました",
+        "clientId_copied": "クライアントIDをクリップボードにコピーしました",
+        "clientSecret_copied": "クライアントシークレットをクリップボードにコピーしました",
+        "third_party_apps": "サードパーティアプリ",
+        "your_apps": "あなたのアプリ",
+        "connect": "接続",
+        "connected": "接続済み",
+        "install": "インストール",
+        "installed": "インストール済み",
+        "configure": "設定",
+        "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
+        "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
+        "client_id_and_secret": "クライアントIDとシークレット",
+        "client_id_and_secret_description": "このシークレットキーをコピーして保存してください。閉じた後はこのキーを見ることができません。",
+        "client_id_and_secret_download": "ここからキーをCSVでダウンロードできます。",
+        "application_id": "アプリケーションID",
+        "client_id": "クライアントID",
+        "client_secret": "クライアントシークレット",
+        "export_as_csv": "CSVとしてエクスポート",
+        "slug_already_exists": "スラッグは既に存在します",
+        "failed_to_create_application": "アプリケーションの作成に失敗しました",
+        "upload_logo": "ロゴをアップロード",
+        "app_name_title": "このアプリの名前を入力してください",
+        "app_name_error": "アプリ名は必須です",
+        "app_short_description_title": "このアプリの短い説明を入力してください",
+        "app_short_description_error": "アプリの短い説明は必須です",
+        "app_description_title": {
+          "label": "詳細な説明",
+          "placeholder": "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには ‘/’ を押してください。"
+        },
+        "app_description_error": "アプリの説明は必須です",
+        "app_slug_title": "アプリのスラッグ",
+        "app_slug_error": "アプリのスラッグは必須です",
+        "app_maker_title": "アプリ作成者",
+        "app_maker_error": "アプリ作成者は必須です",
+        "webhook_url_title": "WebhookのURL",
+        "webhook_url_error": "WebhookのURLは必須です",
+        "invalid_webhook_url_error": "無効なWebhookのURL",
+        "redirect_uris_title": "リダイレクトURI",
+        "redirect_uris_error": "リダイレクトURIは必須です",
+        "invalid_redirect_uris_error": "無効なリダイレクトURI",
+        "redirect_uris_description": "アプリがユーザーをリダイレクトする先のURIをスペース区切りで入力してください（例：https://example.com https://example.com/）",
+        "authorized_javascript_origins_title": "許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_error": "許可されたJavaScriptオリジンは必須です",
+        "invalid_authorized_javascript_origins_error": "無効な許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_description": "アプリがリクエストを行うことができるオリジンをスペース区切りで入力してください（例：app.com example.com）",
+        "create_app": "アプリを作成",
+        "update_app": "アプリを更新",
+        "build_your_own_app": "独自のアプリを構築",
+        "edit_app_details": "アプリの詳細を編集",
+        "regenerate_client_secret_description": "クライアントシークレットを再生成します。再生成後、キーをコピーするかCSVファイルとしてダウンロードできます。",
+        "regenerate_client_secret": "クライアントシークレットを再生成",
+        "regenerate_client_secret_confirm_title": "クライアントシークレットを再生成してもよろしいですか？",
+        "regenerate_client_secret_confirm_description": "このシークレットを使用しているアプリは動作しなくなります。アプリでシークレットを更新する必要があります。",
+        "regenerate_client_secret_confirm_cancel": "キャンセル",
+        "regenerate_client_secret_confirm_regenerate": "再生成",
+        "read_only_access_to_workspace": "ワークスペースへの読み取り専用アクセス",
+        "write_access_to_workspace": "ワークスペースへの書き込みアクセス",
+        "read_only_access_to_user_profile": "ユーザープロフィールへの読み取り専用アクセス",
+        "write_access_to_user_profile": "ユーザープロフィールへの書き込みアクセス",
+        "connect_app_to_workspace": "{app}を{workspace}ワークスペースに接続",
+        "user_permissions": "ユーザー権限",
+        "user_permissions_description": "ユーザー権限は、ユーザープロフィールへのアクセスを許可するために使用されます。",
+        "workspace_permissions": "ワークスペース権限",
+        "workspace_permissions_description": "ワークスペース権限は、ワークスペースへのアクセスを許可するために使用されます。",
+        "with_the_permissions": "権限付きで",
+        "app_consent_title": "{app}があなたのPlaneワークスペースとプロフィールへのアクセスを要求しています。",
+        "choose_workspace_to_connect_app_with": "アプリを接続するワークスペースを選択してください",
+        "app_consent_workspace_permissions_title": "{app}は以下を要求しています",
+        "app_consent_user_permissions_title": "{app}は以下のリソースに対するユーザーの許可も要求できます。これらの権限はユーザーによってのみ要求され、承認されます。",
+        "app_consent_accept_title": "承認することで",
+        "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
+        "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
+        "accepting": "承認中...",
+        "accept": "承認",
+        "categories": "カテゴリー",
+        "select_app_categories": "アプリのカテゴリーを選択",
+        "categories_title": "カテゴリー",
+        "categories_error": "カテゴリーは必須です",
+        "invalid_categories_error": "無効なカテゴリー",
+        "categories_description": "アプリを最もよく説明するカテゴリーを選択してください",
+        "privacy_policy_url_title": "プライバシーポリシーURL",
+        "privacy_policy_url_error": "プライバシーポリシーURLは必須です",
+        "invalid_privacy_policy_url_error": "無効なプライバシーポリシーURL",
+        "terms_of_service_url_title": "利用規約URL",
+        "terms_of_service_url_error": "利用規約URLは必須です",
+        "invalid_terms_of_service_url_error": "無効な利用規約URL",
+        "support_url_title": "サポートURL",
+        "support_url_error": "サポートURLは必須です",
+        "invalid_support_url_error": "無効なサポートURL",
+        "video_url_title": "ビデオURL",
+        "video_url_error": "ビデオURLは必須です",
+        "invalid_video_url_error": "無効なビデオURL",
+        "setup_url_title": "セットアップURL",
+        "setup_url_error": "セットアップURLは必須です",
+        "invalid_setup_url_error": "無効なセットアップURL",
+        "configuration_url_title": "設定URL",
+        "configuration_url_error": "設定URLは必須です",
+        "invalid_configuration_url_error": "無効な設定URL",
+        "contact_email_title": "連絡先メール",
+        "contact_email_error": "連絡先メールは必須です",
+        "invalid_contact_email_error": "無効な連絡先メール",
+        "upload_attachments": "添付ファイルをアップロード",
+        "uploading_images": "アップロード中 {count} 画像{count, plural, one {s} other {s}}",
+        "drop_images_here": "画像をここにドラッグ&ドロップ",
+        "click_to_upload_images": "画像をクリックしてアップロード",
+        "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
+        "uploading": "アップロード中...",
+        "upload_and_save": "アップロードして保存",
+        "app_credentials_regenrated": {
+          "title": "アプリの認証情報が正常に再生成されました",
+          "description": "クライアントシークレットを使用しているすべての場所で置き換えてください。以前のシークレットは無効になっています。"
+        },
+        "app_created": {
+          "title": "アプリが正常に作成されました",
+          "description": "認証情報を使用して、Plane ワークスペースにアプリをインストールしてください"
+        },
+        "installed_apps": "インストール済みアプリ",
+        "all_apps": "すべてのアプリ",
+        "internal_apps": "内部アプリ",
+        "website": {
+          "title": "ウェブサイト",
+          "description": "アプリのウェブサイトへのリンク。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "アプリ作成者",
+          "description": "アプリを作成している人物または組織。"
+        },
+        "setup_url": {
+          "label": "セットアップURL",
+          "description": "ユーザーはアプリをインストールすると、このURLにリダイレクトされます。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "これは、アプリがインストールされているワークスペースからのWebhookイベントや更新を送信する場所です。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "リダイレクトURI（スペース区切り）",
+          "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
+        "enable_app_mentions": "アプリのメンションを有効にする",
+        "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。",
+        "internal": "内部"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "作業項目をアーカイブできません",
+        "message": "完了または取り消し状態グループに属する作業項目のみアーカイブできます。"
+      },
+      "invalid_issue_start_date": {
+        "title": "作業項目を更新できません",
+        "message": "選択された開始日が一部の作業項目の期限日を超えています。開始日が期限日より前になるようにしてください。"
+      },
+      "invalid_issue_target_date": {
+        "title": "作業項目を更新できません",
+        "message": "選択された期限日が一部の作業項目の開始日より前になっています。期限日が開始日より後になるようにしてください。"
+      },
+      "invalid_state_transition": {
+        "title": "作業項目を更新できません",
+        "message": "一部の作業項目では状態の変更が許可されていません。状態の変更が許可されていることを確認してください。"
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "作業項目タイプ",
+    "label_lowercase": "作業項目タイプ",
+    "settings": {
+      "title": "作業項目タイプ",
+      "properties": {
+        "title": "カスタム作業項目プロパティ",
+        "tooltip": "各作業項目タイプには、タイトル、説明、担当者、状態、優先度、開始日、期限日、モジュール、サイクルなどのデフォルトのプロパティセットが付属しています。チームのニーズに合わせて独自のプロパティをカスタマイズして追加することもできます。",
+        "add_button": "新しいプロパティを追加",
+        "dropdown": {
+          "label": "プロパティタイプ",
+          "placeholder": "タイプを選択"
+        },
+        "property_type": {
+          "text": {
+            "label": "テキスト"
+          },
+          "number": {
+            "label": "数値"
+          },
+          "dropdown": {
+            "label": "ドロップダウン"
+          },
+          "boolean": {
+            "label": "ブール値"
+          },
+          "date": {
+            "label": "日付"
+          },
+          "member_picker": {
+            "label": "メンバー選択"
+          }
+        },
+        "attributes": {
+          "label": "属性",
+          "text": {
+            "single_line": {
+              "label": "一行"
+            },
+            "multi_line": {
+              "label": "段落"
+            },
+            "readonly": {
+              "label": "読み取り専用",
+              "header": "読み取り専用データ"
+            },
+            "invalid_text_format": {
+              "label": "無効なテキスト形式"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "数値を追加"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "単一選択"
+            },
+            "multi_select": {
+              "label": "複数選択"
+            },
+            "no_default_value": {
+              "label": "デフォルト値なし"
+            }
+          },
+          "boolean": {
+            "label": "真 | 偽",
+            "no_default": "デフォルト値なし"
+          },
+          "option": {
+            "create_update": {
+              "label": "オプション",
+              "form": {
+                "placeholder": "オプションを追加",
+                "errors": {
+                  "name": {
+                    "required": "オプション名は必須です。",
+                    "integrity": "同じ名前のオプションが既に存在します。"
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "オプションを選択",
+                "multi": {
+                  "default": "オプションを選択",
+                  "variable": "{count}個のオプションが選択されました"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に作成されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの作成に失敗しました。もう一度お試しください！"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に更新されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの更新に失敗しました。もう一度お試しください！"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に削除されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの削除に失敗しました。もう一度お試しください！"
+            }
+          },
+          "enable_disable": {
+            "loading": "プロパティ{name}を{action}中",
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に{action}されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの{action}に失敗しました。もう一度お試しください！"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "タイトル"
+            },
+            "description": {
+              "placeholder": "説明"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "プロパティに名前を付ける必要があります。",
+              "max_length": "プロパティ名は255文字を超えることはできません。"
+            },
+            "property_type": {
+              "required": "プロパティタイプを選択する必要があります。"
+            },
+            "options": {
+              "required": "少なくとも1つのオプションを追加する必要があります。"
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "アクティブ",
+          "tooltip": {
+            "disabled": "クリックして無効化",
+            "enabled": "クリックして有効化"
+          }
+        },
+        "delete_confirmation": {
+          "title": "このプロパティを削除",
+          "description": "プロパティの削除は既存のデータの損失につながる可能性があります。",
+          "secondary_description": "代わりにプロパティを無効化しますか？",
+          "primary_button": "{action}、削除します",
+          "secondary_button": "はい、無効化します"
+        },
+        "mandate_confirmation": {
+          "label": "必須プロパティ",
+          "content": "このプロパティにはデフォルトオプションが設定されているようです。プロパティを必須にすると、デフォルト値が削除され、ユーザーは自分で値を選択する必要があります。",
+          "tooltip": {
+            "disabled": "このプロパティタイプは必須にできません",
+            "enabled": "チェックを外して任意フィールドにする",
+            "checked": "チェックして必須フィールドにする"
+          }
+        },
+        "empty_state": {
+          "title": "カスタムプロパティを追加",
+          "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "このタイプを削除",
+        "description": "タイプの削除は既存データの損失につながる可能性があります。",
+        "primary_button": "はい、削除します",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "作業項目のタイプが正常に削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "作業項目のタイプを削除できませんでした。もう一度お試しください！"
+          }
+        },
+        "can_disable_warning": "代わりにタイプを無効にしますか？"
+      },
+      "cant_delete_default_message": "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。"
+    },
+    "create": {
+      "title": "作業項目タイプを作成",
+      "button": "作業項目タイプを追加",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプが正常に作成されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "作業項目タイプを更新",
+      "button": "作業項目タイプを更新",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプ{name}が正常に更新されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "この作業項目タイプに一意の名前を付けてください"
+        },
+        "description": {
+          "placeholder": "この作業項目タイプの目的と使用時期について説明してください。"
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "作業項目タイプ{name}を{action}中",
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプ{name}が正常に{action}されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "作業項目タイプの{action}に失敗しました。もう一度お試しください！"
+        }
+      },
+      "tooltip": "クリックして{action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "作業項目タイプを有効化",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "有効化"
+        },
+        "confirmation": {
+          "title": "一度有効化すると、作業項目タイプは無効化できません。",
+          "description": "PlaneのWork itemがこのプロジェクトのデフォルトの作業項目タイプとなり、そのアイコンと背景がこのプロジェクトに表示されます。",
+          "button": {
+            "default": "有効化",
+            "loading": "設定中"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "作業項目タイプを有効化するにはProにアップグレードしてください。",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "Proを取得"
+        }
+      },
+      "upgrade": {
+        "title": "作業項目タイプを有効化するにはアップグレードしてください。",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "アップグレード"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "インポート",
+    "logo": "ロゴ",
+    "import_message": "{serviceName}のデータをPlaneプロジェクトにインポートします。",
+    "deactivate": "無効化",
+    "deactivating": "無効化中",
+    "migrating": "移行中",
+    "migrations": "移行",
+    "refreshing": "更新中",
+    "import": "インポート",
+    "serial_number": "番号",
+    "project": "プロジェクト",
+    "workspace": "ワークスペース",
+    "status": "ステータス",
+    "total_batches": "合計バッチ数",
+    "imported_batches": "インポート済みバッチ",
+    "re_run": "再実行",
+    "cancel": "キャンセル",
+    "start_time": "開始時間",
+    "no_jobs_found": "ジョブが見つかりません",
+    "no_project_imports": "まだ{serviceName}プロジェクトをインポートしていません。",
+    "cancel_import_job": "インポートジョブをキャンセル",
+    "cancel_import_job_confirmation": "このインポートジョブをキャンセルしてもよろしいですか？このプロジェクトのインポートプロセスが停止します。",
+    "re_run_import_job": "インポートジョブを再実行",
+    "re_run_import_job_confirmation": "このインポートジョブを再実行してもよろしいですか？このプロジェクトのインポートプロセスが再開されます。",
+    "upload_csv_file": "ユーザーデータをインポートするためにCSVファイルをアップロードしてください。",
+    "connect_importer": "{serviceName}に接続",
+    "migration_assistant": "移行アシスタント",
+    "migration_assistant_description": "強力なアシスタントで{serviceName}プロジェクトをPlaneにシームレスに移行します。",
+    "token_helper": "これはあなたの以下から取得できます",
+    "personal_access_token": "個人アクセストークン",
+    "source_token_expired": "トークンの有効期限切れ",
+    "source_token_expired_description": "提供されたトークンの有効期限が切れています。無効化して新しい認証情報で再接続してください。",
+    "user_email": "ユーザーメール",
+    "select_state": "状態を選択",
+    "select_service_project": "{serviceName}プロジェクトを選択",
+    "loading_service_projects": "{serviceName}プロジェクトを読み込み中",
+    "select_service_workspace": "{serviceName}ワークスペースを選択",
+    "loading_service_workspaces": "{serviceName}ワークスペースを読み込み中",
+    "select_priority": "優先度を選択",
+    "select_service_team": "{serviceName}チームを選択",
+    "add_seat_msg_free_trial": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるにはアップグレードしてください。",
+    "add_seat_msg_paid": "未登録の{additionalUserCount}人のユーザーをインポートしようとしていますが、現在のプランでは{currentWorkspaceSubscriptionAvailableSeats}席しか利用できません。インポートを続けるには少なくとも{extraSeatRequired}席追加購入してください。",
+    "skip_user_import_title": "ユーザーデータのインポートをスキップ",
+    "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。",
+    "invalid_pat": "無効な個人アクセストークン"
+  },
+  "integrations": {
+    "integrations": "インテグレーション",
+    "loading": "読み込み中",
+    "unauthorized": "このページを表示する権限がありません。",
+    "configure": "設定",
+    "not_enabled": "{name}はこのワークスペースで有効になっていません。",
+    "not_configured": "未設定",
+    "disconnect_personal_account": "個人{providerName}アカウントを切断",
+    "not_configured_message_admin": "{name}インテグレーションが設定されていません。インスタンス管理者に設定を依頼してください。",
+    "not_configured_message_support": "{name}インテグレーションが設定されていません。サポートに設定を依頼してください。",
+    "external_api_unreachable": "外部APIにアクセスできません。後でもう一度お試しください。",
+    "error_fetching_supported_integrations": "サポートされているインテグレーションを取得できません。後でもう一度お試しください。",
+    "back_to_integrations": "インテグレーションに戻る",
+    "select_state": "状態を選択",
+    "set_state": "状態を設定",
+    "choose_project": "プロジェクトを選択..."
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "GitHubの作業項目をPlaneと連携・同期します。",
+    "connect_org": "Connect Organization",
+    "connect_org_description": "GitHub組織をPlaneと連携します。",
+    "processing": "処理中",
+    "org_added_desc": "GitHub orgが追加された時間",
+    "connection_fetch_error": "サーバーから接続詳細の取得に失敗しました",
+    "personal_account_connected": "個人アカウントが接続されました",
+    "personal_account_connected_description": "あなたのGitHubアカウントがPlaneに接続されました",
+    "connect_personal_account": "個人アカウントを接続",
+    "connect_personal_account_description": "個人GitHubアカウントをPlaneと連携します。",
+    "repo_mapping": "リポジトリマッピング",
+    "repo_mapping_description": "GitHubリポジトリをPlaneプロジェクトにマッピングします。",
+    "project_issue_sync": "プロジェクトIssue同期",
+    "project_issue_sync_description": "GitHubからPlaneプロジェクトへIssueを同期します。",
+    "configure_project_issue_sync_state": "Issue同期状態を設定",
+    "select_issue_sync_direction": "Issue同期方向を選択",
+    "allow_bidirectional_sync": "双方向 - GitHubとPlaneの両方からIssueを同期",
+    "allow_unidirectional_sync": "単方向 - GitHubからPlaneへのIssue同期のみ",
+    "remove_project_issue_sync": "プロジェクトIssue同期を削除",
+    "remove_project_issue_sync_confirmation": "このプロジェクトIssue同期を削除してもよろしいですか？",
+    "add_pr_state_mapping": "Planeプロジェクトのプルリクエスト状態マッピングを追加",
+    "edit_pr_state_mapping": "Planeプロジェクトのプルリクエスト状態マッピングを編集",
+    "pr_state_mapping": "プルリクエスト状態マッピング",
+    "pr_state_mapping_description": "GitHubからPlaneプロジェクトへのプルリクエスト状態マッピングを設定",
+    "remove_pr_state_mapping": "プルリクエスト状態マッピングを削除",
+    "remove_pr_state_mapping_confirmation": "このプルリクエスト状態マッピングを削除してもよろしいですか？",
+    "issue_sync_message": "作業項目が{project}に同期されました",
+    "link": "GitHubリポジトリをPlaneプロジェクトにリンク",
+    "pull_request_automation": "プルリクエスト自動化",
+    "pull_request_automation_description": "GitHubからPlaneプロジェクトへのプルリクエスト状態マッピングを設定",
+    "DRAFT_MR_OPENED": "下書きMRがオープンされたとき、状態を次に設定",
+    "MR_OPENED": "MRがオープンされたとき、状態を次に設定",
+    "MR_READY_FOR_MERGE": "マージ準備完了",
+    "MR_REVIEW_REQUESTED": "レビュー要求",
+    "MR_MERGED": "マージされた",
+    "MR_CLOSED": "クローズ",
+    "ISSUE_OPEN": "Issueオープン",
+    "ISSUE_CLOSED": "Issueクローズ",
+    "save": "保存",
+    "start_sync": "同期を開始",
+    "choose_repository": "リポジトリを選択..."
+  },
+  "gitlab_integration": {
+    "name": "GitLab",
+    "description": "GitLabのマージリクエストをPlaneと連携・同期します。",
+    "connection_fetch_error": "サーバーから接続詳細の取得に失敗しました",
+    "connect_org": "組織を接続",
+    "connect_org_description": "GitLab組織をPlaneと接続します。",
+    "project_connections": "GitLabプロジェクト接続",
+    "project_connections_description": "GitLabからPlaneプロジェクトへマージリクエストを同期します。",
+    "plane_project_connection": "Planeプロジェクト接続",
+    "plane_project_connection_description": "GitLabからPlaneプロジェクトへのプルリクエスト状態マッピングを設定",
+    "remove_connection": "接続を削除",
+    "remove_connection_confirmation": "この接続を削除してもよろしいですか？",
+    "link": "GitLabリポジトリをPlaneプロジェクトにリンク",
+    "pull_request_automation": "プルリクエスト自動化",
+    "pull_request_automation_description": "GitLabからPlaneへのプルリクエスト状態マッピングを設定",
+    "DRAFT_MR_OPENED": "下書きMRがオープンされたとき、状態を次に設定",
+    "MR_OPENED": "MRがオープンされたとき、状態を次に設定",
+    "MR_REVIEW_REQUESTED": "MRのレビューが要求されたとき、状態を次に設定",
+    "MR_READY_FOR_MERGE": "MRがマージ準備完了のとき、状態を次に設定",
+    "MR_MERGED": "MRがマージされたとき、状態を次に設定",
+    "MR_CLOSED": "MRがクローズされたとき、状態を次に設定",
+    "integration_enabled_text": "GitLabインテグレーションを有効にすると、作業項目のワークフローを自動化できます",
+    "choose_entity": "エンティティを選択",
+    "choose_project": "プロジェクトを選択",
+    "link_plane_project": "Planeプロジェクトをリンク"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "SlackワークスペースをPlaneと接続します。",
+    "connect_personal_account": "個人Slackアカウントを接続します。",
+    "personal_account_connected": "あなたの個人{providerName}アカウントがPlaneに接続されました。",
+    "link_personal_account": "あなたの個人{providerName}アカウントをPlaneにリンクします。",
+    "connected_slack_workspaces": "接続済みSlackワークスペース",
+    "connected_on": "{date}に接続",
+    "disconnect_workspace": "{name}ワークスペースを切断",
+    "alerts": {
+      "dm_alerts": {
+        "title": "重要な更新、リマインダー、あなた専用のアラートについて、SlackのDMで通知を受け取ります。"
+      }
+    },
+    "project_updates": {
+      "title": "プロジェクトアップデート",
+      "description": "プロジェクトのアップデート通知を設定します",
+      "add_new_project_update": "新しいプロジェクトアップデート通知を追加",
+      "project_updates_empty_state": "Slackチャンネルに接続されたプロジェクトがここに表示されます。",
+      "project_updates_form": {
+        "title": "プロジェクトアップデートを設定",
+        "description": "作業項目が作成されたときにSlackでプロジェクトアップデート通知を受け取る",
+        "failed_to_load_channels": "Slackからチャンネルを読み込めませんでした",
+        "project_dropdown": {
+          "placeholder": "プロジェクトを選択",
+          "label": "Planeプロジェクト",
+          "no_projects": "利用可能なプロジェクトがありません"
+        },
+        "channel_dropdown": {
+          "label": "Slackチャンネル",
+          "placeholder": "チャンネルを選択",
+          "no_channels": "利用可能なチャンネルがありません"
+        },
+        "all_projects_connected": "すべてのプロジェクトはすでにSlackチャンネルに接続されています。",
+        "all_channels_connected": "すべてのSlackチャンネルはすでにプロジェクトに接続されています。",
+        "project_connection_success": "プロジェクト接続が正常に作成されました",
+        "project_connection_updated": "プロジェクト接続が正常に更新されました",
+        "project_connection_deleted": "プロジェクト接続が正常に削除されました",
+        "failed_delete_project_connection": "プロジェクト接続の削除に失敗しました",
+        "failed_create_project_connection": "プロジェクト接続の作成に失敗しました",
+        "failed_upserting_project_connection": "プロジェクト接続の更新に失敗しました",
+        "failed_loading_project_connections": "プロジェクト接続を読み込めませんでした。ネットワークの問題または統合の問題が原因かもしれません。"
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "SentryワークスペースをPlaneに接続します。",
+    "connected_sentry_workspaces": "接続されたSentryワークスペース",
+    "connected_on": "{date}に接続",
+    "disconnect_workspace": "{name}ワークスペースを切断",
+    "state_mapping": {
+      "title": "状態マッピング",
+      "description": "Sentryインシデントの状態をプロジェクトの状態にマッピングします。Sentryインシデントが解決されたり未解決の場合に使用する状態を設定します。",
+      "add_new_state_mapping": "新しい状態マッピングを追加",
+      "empty_state": "状態マッピングが設定されていません。Sentryインシデントの状態をプロジェクトの状態と同期するための最初のマッピングを作成してください。",
+      "failed_loading_state_mappings": "状態マッピングを読み込めませんでした。ネットワークの問題または統合の問題が原因である可能性があります。",
+      "loading_project_states": "プロジェクトの状態を読み込み中...",
+      "error_loading_states": "状態の読み込みエラー",
+      "no_states_available": "利用可能な状態がありません",
+      "no_permission_states": "このプロジェクトの状態にアクセスする権限がありません",
+      "states_not_found": "プロジェクトの状態が見つかりません",
+      "server_error_states": "状態の読み込み中にサーバーエラーが発生しました"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "GitHub Enterpriseの組織をPlaneと連携・同期します。",
+    "app_form_title": "GitHub Enterpriseの設定",
+    "app_form_description": "GitHub EnterpriseをPlaneと連携するための設定を行います。",
+    "app_id_title": "App ID",
+    "app_id_description": "GitHub Enterpriseの組織に作成したAppのIDです。",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App IDは必須です",
+    "app_name_title": "App Slug",
+    "app_name_description": "GitHub Enterpriseの組織に作成したAppのSlugです。",
+    "app_name_error": "App slugは必須です",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "GitHub Enterpriseの組織のBase URLです。",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Base URLは必須です",
+    "invalid_base_url_error": "Base URLが無効です",
+    "client_id_title": "Client ID",
+    "client_id_description": "GitHub Enterpriseの組織に作成したAppのClient IDです。",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "Client IDは必須です",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "GitHub Enterpriseの組織に作成したAppのClient Secretです。",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Client Secretは必須です",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "GitHub Enterpriseの組織に作成したAppのWebhook Secretです。",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Webhook Secretは必須です",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "GitHub Enterpriseの組織に作成したAppのPrivate Keyです。",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private Keyは必須です",
+    "connect_app": "Appを接続"
+  },
+  "file_upload": {
+    "upload_text": "クリックしてファイルをアップロード",
+    "drag_drop_text": "ドラッグ＆ドロップ",
+    "processing": "処理中",
+    "invalid": "無効なファイル形式",
+    "missing_fields": "必須フィールドが不足しています",
+    "success": "{fileName}がアップロードされました！"
+  },
+  "silo_errors": {
+    "invalid_query_params": "提供されたクエリパラメータが無効か、必須フィールドが不足しています",
+    "invalid_installation_account": "提供されたインストールアカウントが無効です",
+    "generic_error": "リクエストの処理中に予期せぬエラーが発生しました",
+    "connection_not_found": "要求された接続が見つかりませんでした",
+    "multiple_connections_found": "1つの接続が期待される場合に複数の接続が見つかりました",
+    "installation_not_found": "要求されたインストールが見つかりませんでした",
+    "user_not_found": "要求されたユーザーが見つかりませんでした",
+    "error_fetching_token": "認証トークンの取得に失敗しました",
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。",
+    "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
+    "invalid_app_installation_id": "アプリのインストールに失敗しました"
+  },
+  "import_status": {
+    "queued": "キューに登録済み",
+    "created": "作成済み",
+    "initiated": "開始済み",
+    "pulling": "取得中",
+    "pulled": "取得済み",
+    "transforming": "変換中",
+    "transformed": "変換済み",
+    "pushing": "送信中",
+    "finished": "完了",
+    "error": "エラー",
+    "cancelled": "キャンセル済み"
+  },
+  "jira_importer": {
+    "jira_importer_description": "JiraのデータをPlaneプロジェクトにインポートします。",
+    "personal_access_token": "個人アクセストークン",
+    "user_email": "ユーザーメール",
+    "atlassian_security_settings": "Atlassianセキュリティ設定",
+    "email_description": "これは個人アクセストークンに紐付けられたメールアドレスです",
+    "jira_domain": "Jiraドメイン",
+    "jira_domain_description": "これはあなたのJiraインスタンスのドメインです",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずJiraデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_jira": "Jiraを設定",
+      "description_configure_jira": "データを移行したいJiraワークスペースを選択してください。",
+      "title_import_users": "ユーザーをインポート",
+      "description_import_users": "JiraからPlaneに移行したいユーザーを追加してください。または、このステップをスキップして後でユーザーを手動で追加することもできます。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "Jiraのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "優先度を可能な限り自動的にマッチングしました。残りの優先度をマッピングしてから進めてください。",
+      "title_summary": "サマリー",
+      "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "AsanaのデータをPlaneプロジェクトにインポートします。",
+    "select_asana_priority_field": "Asana優先度フィールドを選択",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずAsanaデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_asana": "Asanaを設定",
+      "description_configure_asana": "データを移行したいAsanaワークスペースとプロジェクトを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "PlaneプロジェクトのステータスにマッピングしたいAsanaの状態を選択してください。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいAsanaの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "AsanaからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "LinearのデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずLinearデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_linear": "Linearを設定",
+      "description_configure_linear": "データを移行したいLinearチームを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "Linearのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいLinearの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "LinearからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Jira ServerのデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずJiraデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_jira": "Jiraを設定",
+      "description_configure_jira": "データを移行したいJiraワークスペースを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "PlaneプロジェクトのステータスにマッピングしたいJiraの状態を選択してください。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "Planeプロジェクトの優先度にマッピングしたいJiraの優先度を選択してください。",
+      "title_summary": "サマリー",
+      "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_upload_zip": "Notion エクスポート ZIP をアップロード",
+      "description_upload_zip": "Notionデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Notion zip ファイルをここにドロップ",
+      "upload_title": "Notion エクスポートをアップロード",
+      "drag_drop_description": "Notion エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Notionからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Notionデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
+    "steps": {
+      "title_upload_zip": "Confluence エクスポート ZIP をアップロード",
+      "description_upload_zip": "Confluenceデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip ファイルをここにドロップ",
+      "upload_title": "Confluence エクスポートをアップロード",
+      "drag_drop_description": "Confluence エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Confluenceからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Confluenceデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずCSVデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_csv": "CSVを設定",
+      "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUpのデータをPlaneプロジェクトにインポートします。",
+    "select_service_space": "{serviceName}スペースを選択",
+    "select_service_folder": "{serviceName}フォルダーを選択",
+    "selected": "選択済み",
+    "users": "ユーザー",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずClickUpデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_clickup": "ClickUpを設定",
+      "description_configure_clickup": "ClickUpチーム、スペース、フォルダーを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "ClickUpのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
+      "title_summary": "サマリー",
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。",
+      "pull_additional_data_title": "コメントと添付ファイルをインポート"
+    }
+  },
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "バー",
+          "long_label": "バー チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "grouped": "グループド"
+          },
+          "orientation": {
+            "label": "オリエンテーション",
+            "horizontal": "ホリゾンタル",
+            "vertical": "バーティカル",
+            "placeholder": "オリエンテーション アッド"
+          },
+          "bar_color": "バー カラー"
+        },
+        "line_chart": {
+          "short_label": "ライン",
+          "long_label": "ライン チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "multi_line": "マルチライン"
+          },
+          "line_color": "ライン カラー",
+          "line_type": {
+            "label": "ライン タイプ",
+            "solid": "ソリッド",
+            "dashed": "ダッシュド",
+            "placeholder": "ライン タイプ アッド"
+          }
+        },
+        "area_chart": {
+          "short_label": "エリア",
+          "long_label": "エリア チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "comparison": "コンパリソン"
+          },
+          "fill_color": "フィル カラー"
+        },
+        "donut_chart": {
+          "short_label": "ドーナツ",
+          "long_label": "ドーナツ チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "progress": "プログレス"
+          },
+          "center_value": "センター バリュー",
+          "completed_color": "コンプリーテッド カラー"
+        },
+        "pie_chart": {
+          "short_label": "パイ",
+          "long_label": "パイ チャート",
+          "chart_models": {
+            "basic": "ベーシック"
+          },
+          "group": {
+            "label": "グループド ピーセズ",
+            "group_thin_pieces": "グループ シン ピーセズ",
+            "minimum_threshold": {
+              "label": "ミニマム スレショルド",
+              "placeholder": "スレショルド アッド"
+            },
+            "name_group": {
+              "label": "ネーム グループ",
+              "placeholder": "\"レス ザン 5%\""
+            }
+          },
+          "show_values": "ショー バリューズ",
+          "value_type": {
+            "percentage": "パーセンテージ",
+            "count": "カウント"
+          }
+        },
+        "text": {
+          "short_label": "テキスト",
+          "long_label": "テキスト",
+          "alignment": {
+            "label": "テキスト アラインメント",
+            "left": "レフト",
+            "center": "センター",
+            "right": "ライト",
+            "placeholder": "テキスト アラインメント アッド"
+          },
+          "text_color": "テキスト カラー"
+        }
+      },
+      "color_palettes": {
+        "modern": "モダン",
+        "horizon": "ホライゾン",
+        "earthen": "アーセン"
+      },
+      "common": {
+        "add_widget": "アッド ウィジェット",
+        "widget_title": {
+          "label": "ネーム ディス ウィジェット",
+          "placeholder": "例: \"トゥードゥー イェスタデイ\", \"オール コンプリート\""
+        },
+        "chart_type": "チャート タイプ",
+        "visualization_type": {
+          "label": "ビジュアライゼーション タイプ",
+          "placeholder": "ビジュアライゼーション タイプ アッド"
+        },
+        "date_group": {
+          "label": "デート グループ",
+          "placeholder": "デート グループ アッド"
+        },
+        "group_by": "グループ バイ",
+        "stack_by": "スタック バイ",
+        "daily": "デイリー",
+        "weekly": "ウィークリー",
+        "monthly": "マンスリー",
+        "yearly": "イヤーリー",
+        "work_item_count": "ワーク アイテム カウント",
+        "estimate_point": "エスティメート ポイント",
+        "pending_work_item": "ペンディング ワーク アイテムズ",
+        "completed_work_item": "コンプリーテッド ワーク アイテムズ",
+        "in_progress_work_item": "イン プログレス ワーク アイテムズ",
+        "blocked_work_item": "ブロックド ワーク アイテムズ",
+        "work_item_due_this_week": "ワーク アイテムズ デュー ディス ウィーク",
+        "work_item_due_today": "ワーク アイテムズ デュー トゥデイ",
+        "color_scheme": {
+          "label": "カラー スキーム",
+          "placeholder": "カラー スキーム アッド"
+        },
+        "smoothing": "スムージング",
+        "markers": "マーカーズ",
+        "legends": "レジェンズ",
+        "tooltips": "ツールチップス",
+        "opacity": {
+          "label": "オパシティ",
+          "placeholder": "オパシティ アッド"
+        },
+        "border": "ボーダー",
+        "widget_configuration": "ウィジェット コンフィギュレーション",
+        "configure_widget": "コンフィギュア ウィジェット",
+        "guides": "ガイズ",
+        "style": "スタイル",
+        "area_appearance": "エリア アピアランス",
+        "comparison_line_appearance": "コンペア ライン アピアランス",
+        "add_property": "アッド プロパティ",
+        "add_metric": "アッド メトリック"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "grouped": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "multi_line": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "comparison": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "progress": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "ask_admin": "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット"
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "クリエイト ニュー ダッシュボード",
+        "update": "アップデート ダッシュボード"
+      },
+      "title": {
+        "label": "ネーム ユア ダッシュボード",
+        "placeholder": "\"キャパシティ アクロス プロジェクツ\", \"ワークロード バイ チーム\", \"ステート アクロス オール プロジェクツ\"",
+        "required_error": "タイトル イズ リクワイアド"
+      },
+      "project": {
+        "label": "チューズ プロジェクツ",
+        "placeholder": "データ フロム ジーズ プロジェクツ ウィル パワー ディス ダッシュボード",
+        "required_error": "プロジェクツ アー リクワイアド"
+      },
+      "create_dashboard": "クリエイト ダッシュボード",
+      "update_dashboard": "アップデート ダッシュボード"
+    },
+    "delete_modal": {
+      "heading": "デリート ダッシュボード"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "プレゼント ユア プログレス イン オンデマンド、フォーエバー ダッシュボーズ",
+        "description": "ビルド エニー ダッシュボード ユー ニード トゥ アンド カスタマイズ ハウ ユア データ ルックス フォー ザ パーフェクト プレゼンテーション オブ ユア プログレス",
+        "coming_soon_to_mobile": "カミング スーン トゥ ザ モバイル アップ",
+        "card_1": {
+          "title": "フォー オール ユア プロジェクツ",
+          "description": "ゲット ア トータル ゴッドビュー オブ ユア ワークスペース ウィズ オール ユア プロジェクツ オア スライス ユア ワーク データ フォー ザット パーフェクト ビュー ユア プログレス"
+        },
+        "card_2": {
+          "title": "フォー エニー データ イン プレーン",
+          "description": "ゴー ビヨンド アウトオブザボックス アナリティクス アンド レディメイド サイクル チャーツ トゥ ルック アット チームズ、イニシアティブス、オア エニシング エルス ライク ユー ハブント ビフォー"
+        },
+        "card_3": {
+          "title": "フォー オール ユア データ ビズ ニーズ",
+          "description": "チューズ フロム セベラル カスタマイザブル チャーツ ウィズ ファイングレインド コントロールズ トゥ シー アンド ショー ユア ワーク データ イグザクトリー ハウ ユー ウォント トゥ"
+        },
+        "card_4": {
+          "title": "オンデマンド アンド パーマネント",
+          "description": "ビルド ワンス、キープ フォーエバー ウィズ オートマティック リフレッシュズ オブ ユア データ、コンテクスチュアル フラッグズ フォー スコープ チェンジズ、アンド シェアラブル パーマリンクス"
+        },
+        "card_5": {
+          "title": "エクスポーツ アンド スケジュールド コムズ",
+          "description": "フォー ゾーズ タイムズ ウェン リンクス ドント ワーク、ゲット ユア ダッシュボーズ アウト イントゥ ワンタイム ピーディーエフス オア スケジュール ゼム トゥ ビー セント トゥ ステークホルダーズ オートマティカリー"
+        },
+        "card_6": {
+          "title": "オートレイドアウト フォー オール デバイセズ",
+          "description": "リサイズ ユア ウィジェッツ フォー ザ レイアウト ユー ウォント アンド シー イット ザ イグザクト セイム アクロス モバイル、タブレット、アンド アザー ブラウザーズ"
+        }
+      },
+      "dashboards_list": {
+        "title": "ビジュアライズ データ イン ウィジェッツ、ビルド ユア ダッシュボーズ ウィズ ウィジェッツ、アンド シー ザ レイテスト オン デマンド",
+        "description": "ビルド ユア ダッシュボーズ ウィズ カスタム ウィジェッツ ザット ショー ユア データ イン ザ スコープ ユー スペシファイ。ゲット ダッシュボーズ フォー オール ユア ワーク アクロス プロジェクツ アンド チームズ アンド シェア パーマリンクス ウィズ ステークホルダーズ フォー オンデマンド トラッキング"
+      },
+      "dashboards_search": {
+        "title": "ザット ダズント マッチ ア ダッシュボーズ ネーム",
+        "description": "メイク シュア ユア クエリー イズ ライト オア トライ アナザー クエリー"
+      },
+      "widgets_list": {
+        "title": "ビジュアライズ ユア データ ハウ ユー ウォント トゥ",
+        "description": "ユーズ ラインズ、バーズ、パイズ、アンド アザー フォーマッツ トゥ シー ユア データ ザ ウェイ ユー ウォント トゥ フロム ザ ソーセズ ユー スペシファイ"
+      },
+      "widget_data": {
+        "title": "ナッシング トゥ シー ヒア",
+        "description": "リフレッシュ オア アッド データ トゥ シー イット ヒア"
+      }
+    },
+    "common": {
+      "editing": "エディティング"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "新しい作業項目を許可",
+      "work_item_creation_disable_tooltip": "作業項目の作成はこの状態では無効になっています",
+      "default_state": "デフォルトの状態は、すべてのメンバーが新しい作業項目を作成できるように設定されています。これは変更できません",
+      "state_change_count": "{count, plural, one {1つの許可された状態変更} other {{count}つの許可された状態変更}}",
+      "movers_count": "{count, plural, one {1人のリストされたレビューア} other {{count}人のリストされたレビューア}}",
+      "state_changes": {
+        "label": {
+          "default": "許可された状態変更を追加",
+          "loading": "許可された状態変更を追加中"
+        },
+        "move_to": "状態を変更",
+        "movers": {
+          "label": "誰によって移動された場合",
+          "tooltip": "レビューアは、作業項目を一つの状態から別の状態に移動することを許可されている人々です。",
+          "add": "レビューアを追加"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "この作業項目をここに移動できません。"
+    },
+    "workflow_enabled": {
+      "label": "状態変更"
+    },
+    "workflow_tree": {
+      "label": "作業項目が",
+      "state_change_label": "をここに移動できます"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "変更とレビューの混沌をワークフローで制御。",
+        "description": "Plane内のワークフローで、作業がどこに移動するか、誰によって、そしていつによって移動するかを規則を設定します。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "変更履歴を表示",
+      "reset_workflow": "ワークフローをリセット"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "このワークフローをリセットしてよろしいですか？",
+        "description": "このワークフローをリセットすると、すべての状態変更ルールが削除され、このプロジェクトで再度実行するために再作成が必要になります。"
+      },
+      "delete_state_change": {
+        "title": "この状態変更ルールを削除してよろしいですか？",
+        "description": "削除すると、変更ができなくなり、このプロジェクトで再度実行するために再設定が必要になります。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action}ワークフロー",
+        "success": {
+          "title": "成功",
+          "message": "ワークフローが{action}されました"
+        },
+        "error": {
+          "title": "エラー",
+          "message": "ワークフローが{action}できませんでした。もう一度お試しください。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "成功",
+          "message": "ワークフローがリセットされました"
+        },
+        "error": {
+          "title": "ワークフローのリセットエラー",
+          "message": "ワークフローがリセットできませんでした。もう一度お試しください。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの追加エラー",
+          "message": "状態変更ルールが追加できませんでした。もう一度お試しください。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの変更エラー",
+          "message": "状態変更ルールが変更できませんでした。もう一度お試しください。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの削除エラー",
+          "message": "状態変更ルールが削除できませんでした。もう一度お試しください。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "状態変更ルールのレビューアの変更エラー",
+          "message": "状態変更ルールのレビューアが変更できませんでした。もう一度お試しください。"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {顧客} other {顧客たち}}",
+    "dropdown": {
+      "placeholder": "顧客を選択",
+      "required": "顧客を選択してください",
+      "no_selection": "顧客なし"
+    },
+    "upgrade": {
+      "title": "顧客とともに優先順位をつけて業務を管理しましょう。",
+      "description": "業務を顧客に関連付け、顧客属性に基づいて優先順位を設定しましょう。"
+    },
+    "properties": {
+      "default": {
+        "title": "デフォルトのプロパティ",
+        "customer_name": {
+          "name": "顧客名",
+          "placeholder": "これは人または企業の名前かもしれません",
+          "validation": {
+            "required": "顧客名は必須です。",
+            "max_length": "顧客名は255文字を超えてはいけません。"
+          }
+        },
+        "description": {
+          "name": "説明",
+          "validation": {}
+        },
+        "email": {
+          "name": "Eメール",
+          "placeholder": "メールアドレスを入力してください",
+          "validation": {
+            "required": "Eメールは必須です。",
+            "pattern": "無効なEメールアドレスです。"
+          }
+        },
+        "website_url": {
+          "name": "ウェブサイト",
+          "placeholder": "https://で始まる任意のURLが機能します。",
+          "placeholder_short": "ウェブサイトを追加",
+          "validation": {
+            "pattern": "無効なウェブサイトのURL"
+          }
+        },
+        "employees": {
+          "name": "従業員数",
+          "placeholder": "顧客が企業であれば従業員数を入力してください。",
+          "validation": {
+            "min_length": "従業員数は0未満であってはなりません。",
+            "max_length": "従業員数は2147483647を超えてはなりません。"
+          }
+        },
+        "size": {
+          "name": "サイズ",
+          "placeholder": "企業の規模を追加",
+          "validation": {
+            "min_length": "無効なサイズ"
+          }
+        },
+        "domain": {
+          "domain": "業界",
+          "placeholder": "小売、eコマース、フィンテック、銀行",
+          "placeholder_short": "業界を追加",
+          "validation": {}
+        },
+        "stage": {
+          "name": "ステージ",
+          "placeholder": "ステージを選択",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "契約状況",
+          "placeholder": "契約状況を選択",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "収益",
+          "placeholder": "顧客が生成した年間収益です。",
+          "placeholder_short": "収益を追加",
+          "validation": {
+            "min_length": "収益は0未満であってはなりません。"
+          }
+        },
+        "invalid_value": "無効なプロパティ値です。"
+      },
+      "custom": {
+        "title": "カスタムプロパティ",
+        "info": "顧客の固有の属性をPlaneに追加し、作業項目や顧客記録をより適切に管理しましょう。"
+      },
+      "empty_state": {
+        "title": "カスタムプロパティを追加",
+        "description": "手動または自動でCRMにマッピングしたいカスタムプロパティがここに表示されます。"
+      },
+      "add": {
+        "primary_button": "新しいプロパティを追加"
+      }
+    },
+    "stage": {
+      "lead": "リード",
+      "sales_qualified_lead": "営業確認済リード",
+      "contract_negotiation": "契約交渉",
+      "closed_won": "クロージング完了",
+      "closed_lost": "クロージング失敗"
+    },
+    "contract_status": {
+      "active": "アクティブ",
+      "pre_contract": "契約前",
+      "signed": "署名済み",
+      "inactive": "非アクティブ"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "この顧客レコードは見つかりませんでした。",
+        "description": "このリンクが間違っているか、レコードが削除された可能性があります。",
+        "primary_button": "顧客へ移動",
+        "secondary_button": "顧客を追加"
+      },
+      "search": {
+        "title": "その用語に一致する顧客記録が見つかりませんでした。",
+        "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+      },
+      "list": {
+        "title": "顧客の重要な情報に基づいてワークフローの量、ペース、フローを管理します。",
+        "description": "Plane専用の顧客機能を使用すると、新しい顧客をゼロから作成してワークにリンクできます。まもなく、カスタム属性とともに他のツールからインポートできるようになります。",
+        "primary_button": "最初の顧客を追加"
+      }
+    },
+    "settings": {
+      "unauthorized": "このページにアクセスする権限がありません。",
+      "description": "ワークフロー内で顧客との関係を監視・管理します。",
+      "enable": "顧客機能を有効にする",
+      "toasts": {
+        "enable": {
+          "loading": "顧客機能を有効にしています...",
+          "success": {
+            "title": "このワークスペースに対して顧客機能を有効にしました。",
+            "message": "メンバーは今、顧客記録を追加し、それを作業項目にリンクするなど、さまざまな操作が可能になりました。"
+          },
+          "error": {
+            "title": "顧客機能を有効にできませんでした。",
+            "message": "もう一度お試しください。それでもうまくいかない場合は、サポートに連絡してください。",
+            "action": "サポートに連絡"
+          }
+        },
+        "disable": {
+          "loading": "顧客機能を無効にしています...",
+          "success": {
+            "title": "顧客が無効になりました",
+            "message": "顧客機能は正常に無効化されました！"
+          },
+          "error": {
+            "title": "エラー",
+            "message": "顧客機能を無効にできませんでした！"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "顧客リストを取得できませんでした。",
+          "message": "もう一度お試しください、またはページを更新してください。"
+        }
+      },
+      "copy_link": {
+        "title": "顧客のリンクをコピーしました。",
+        "message": "どこにでも貼り付けて、このページに直接戻れます。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} が利用可能になりました",
+          "message": "この顧客を作業項目に参照し、リクエストを追跡できます。",
+          "actions": {
+            "view": "表示",
+            "copy_link": "リンクをコピー",
+            "copied": "コピーしました！"
+          }
+        },
+        "error": {
+          "title": "このレコードを作成できませんでした。",
+          "message": "もう一度保存してみてください、または保存していないテキストを新しい項目にコピーしてください。別のタブで試してみると良いでしょう。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "顧客が正常に更新されました！"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "顧客の更新に失敗しました。もう一度お試しください！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "顧客のロゴを読み込めませんでした。",
+          "message": "ロゴを再保存するか、最初からやり直してください。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "この顧客の作業項目を削除しました。",
+            "message": "この顧客も自動的に作業項目から削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "この顧客のレコードからその作業項目を削除できませんでした。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "この顧客の作業項目を追加できませんでした。",
+            "message": "もう一度作業項目を追加してみてください。それでもうまくいかない場合は、サポートに連絡してください。"
+          },
+          "success": {
+            "title": "作業項目をこの顧客のレコードに追加しました。",
+            "message": "この顧客も自動的に作業項目に追加されました。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "編集",
+      "copy_link": "顧客リンクをコピー",
+      "delete": "削除"
+    },
+    "create": {
+      "label": "顧客記録を作成",
+      "loading": "作成中",
+      "cancel": "キャンセル"
+    },
+    "update": {
+      "label": "顧客を更新",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "顧客記録 {customer_name} を削除してもよろしいですか？",
+      "description": "この記録に関連するすべてのデータは完全に削除されます。後でこの記録を復元することはできません。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "まだリクエストはありません。",
+          "description": "顧客からリクエストを作成して、それらを作業項目にリンクできます。",
+          "button": "新しいリクエストを追加"
+        },
+        "search": {
+          "title": "その用語に一致するリクエストが見つかりませんでした。",
+          "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+        }
+      },
+      "label": "{count, plural, one {リクエスト} other {リクエストたち}}",
+      "add": "リクエストを追加",
+      "create": "リクエストを作成",
+      "update": "リクエストを更新",
+      "form": {
+        "name": {
+          "placeholder": "このリクエストに名前を付けてください",
+          "validation": {
+            "required": "名前は必須です。",
+            "max_length": "リクエストの名前は255文字以内である必要があります。"
+          }
+        },
+        "description": {
+          "placeholder": "リクエストの性質を記述するか、他のツールからこの顧客のコメントを貼り付けてください。"
+        },
+        "source": {
+          "add": "ソースを追加",
+          "update": "ソースを更新",
+          "url": {
+            "label": "URL",
+            "required": "URLは必須です",
+            "invalid": "無効なウェブサイトのURL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "リンクをコピーしました",
+          "message": "顧客のリクエストのリンクがクリップボードにコピーされました。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "添付ファイルのアップロード中...",
+            "success": {
+              "title": "添付ファイルのアップロード成功",
+              "message": "添付ファイルが正常にアップロードされました。"
+            },
+            "error": {
+              "title": "添付ファイルのアップロード失敗",
+              "message": "添付ファイルをアップロードできませんでした。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "エラー！",
+              "message": "一度に1つのファイルしかアップロードできません。"
+            }
+          },
+          "length": {
+            "message": "ファイルは{size}MB以内でなければなりません"
+          },
+          "remove": {
+            "success": {
+              "title": "添付ファイルを削除しました",
+              "message": "添付ファイルが正常に削除されました"
+            },
+            "error": {
+              "title": "添付ファイルを削除できません",
+              "message": "添付ファイルを削除できませんでした"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "ソースが正常に更新されました！"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "ソースを更新できませんでした。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "エラー！",
+              "message": "リクエストに作業項目を追加できませんでした。再試行してください。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "作業項目がリクエストに追加されました。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "リクエストが正常に更新されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの更新に失敗しました。再試行してください！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "リクエストが正常に作成されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの作成に失敗しました。再試行してください！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "リンクされた作業項目",
+      "link": "作業項目をリンク",
+      "empty_state": {
+        "list": {
+          "title": "まだこの顧客に作業項目をリンクしていません。",
+          "description": "既存の作業項目をここにリンクして、この顧客に関連付けて追跡できます。",
+          "button": "作業項目をリンク"
+        }
+      },
+      "action": {
+        "remove_epic": "エピックを削除",
+        "remove": "作業項目を削除"
+      }
+    },
+    "sidebar": {
+      "properties": "プロパティ"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "テンプレート",
+      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
+      "options": {
+        "project": {
+          "label": "プロジェクトテンプレート"
+        },
+        "work_item": {
+          "label": "作業項目テンプレート"
+        },
+        "page": {
+          "label": "ページテンプレート"
+        }
+      },
+      "create_template": {
+        "label": "テンプレートを作成",
+        "no_permission": {
+          "project": "テンプレートを作成するには、プロジェクト管理者に連絡してください",
+          "workspace": "テンプレートを作成するには、ワークスペース管理者に連絡してください"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "テンプレートを使用",
+          "loading": "使用中"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "ワークスペースから派生"
+        },
+        "project": {
+          "info": "プロジェクトから派生"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "プロジェクトテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "プロジェクトに名前を付けてください。",
+            "validation": {
+              "required": "プロジェクトのタイトルは必須です",
+              "maxLength": "プロジェクトのタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "このプロジェクトの目的と目標を説明してください。"
+          },
+          "button": {
+            "create": "プロジェクトテンプレートを作成",
+            "update": "プロジェクトテンプレートを更新"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "作業項目テンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "この作業項目にタイトルを付けてください。",
+            "validation": {
+              "required": "作業項目のタイトルは必須です",
+              "maxLength": "作業項目のタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "この作業項目を完了したときに何を達成するのかが明確になるように説明してください。"
+          },
+          "button": {
+            "create": "作業項目テンプレートを作成",
+            "update": "作業項目テンプレートを更新"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "ページテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名のページ",
+            "validation": {
+              "maxLength": "ページ名は255文字未満にしてください"
+            }
+          },
+          "button": {
+            "create": "ページテンプレートを作成",
+            "update": "ページテンプレートを更新"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {公開設定} other {マーケットプレイスに公開}}",
+          "unpublish_action": "マーケットプレイスから削除",
+          "title": "テンプレートを発見可能かつ認識可能にする",
+          "name": {
+            "label": "テンプレート名",
+            "placeholder": "テンプレートに名前を付けてください",
+            "validation": {
+              "required": "テンプレート名は必須です",
+              "maxLength": "テンプレート名は255文字未満にしてください"
+            }
+          },
+          "short_description": {
+            "label": "短い説明",
+            "placeholder": "このテンプレートは、同時に複数のプロジェクトを管理するプロジェクトマネージャーに最適です。",
+            "validation": {
+              "required": "短い説明は必須です"
+            }
+          },
+          "description": {
+            "label": "説明",
+            "placeholder": "音声認識機能を活用して生産性を向上させ、コミュニケーションを効率化しましょう。\n• リアルタイム文字起こし：話した言葉を瞬時に正確なテキストに変換します。\n• タスクとコメントの作成：音声コマンドでタスク、説明、コメントを追加できます。",
+            "validation": {
+              "required": "説明は必須です"
+            }
+          },
+          "category": {
+            "label": "カテゴリ",
+            "placeholder": "最も適切な場所を選択してください。複数のカテゴリを選択できます。",
+            "validation": {
+              "required": "少なくとも1つのカテゴリが必要です"
+            }
+          },
+          "keywords": {
+            "label": "キーワード",
+            "placeholder": "ユーザーがこのテンプレートを検索するときに使用する用語を使用してください。",
+            "helperText": "カンマで区切られたキーワードを入力して、人々がこれを検索から見つけるのに役立つようにしてください。",
+            "validation": {
+              "required": "少なくとも1つのキーワードが必要です"
+            }
+          },
+          "company_name": {
+            "label": "会社名",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "会社名は必須です",
+              "maxLength": "会社名は255文字未満にしてください"
+            }
+          },
+          "contact_email": {
+            "label": "サポートメールアドレス",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "無効なメールアドレス",
+              "required": "サポートメールアドレスは必須です",
+              "maxLength": "サポートメールアドレスは255文字未満にしてください"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "プライバシーポリシーのURL",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "利用規約のURL",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "cover_image": {
+            "label": "マーケットプレイスに表示されるカバー画像を追加",
+            "upload_title": "カバー画像をアップロード",
+            "upload_placeholder": "クリックしてアップロードするか、ドラッグ＆ドロップでカバー画像をアップロード",
+            "drop_here": "ここにドロップ",
+            "click_to_upload": "クリックしてアップロード",
+            "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズ制限を超えています。もう一度お試しください。",
+            "upload_and_save": "アップロードして保存",
+            "uploading": "アップロード中",
+            "remove": "削除",
+            "removing": "削除中",
+            "validation": {
+              "required": "カバー画像は必須です"
+            }
+          },
+          "attach_screenshots": {
+            "label": "ビューアーにこのテンプレートを理解させるためのドキュメントと画像を含めます。",
+            "validation": {
+              "required": "少なくとも1つのスクリーンショットが必要です"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "テンプレート",
+        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
+        "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
+      },
+      "no_templates": {
+        "button": "最初のテンプレートを作成"
+      },
+      "no_labels": {
+        "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      },
+      "no_work_items": {
+        "description": "まだ作業項目がありません。1つ追加して、より良い構造にしてください。"
+      },
+      "no_sub_work_items": {
+        "description": "まだサブ作業項目がありません。1つ追加して、より良い構造にしてください。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "アクセス可能なテンプレートがありません。",
+          "description": "テンプレートを作成してください"
+        },
+        "no_results": {
+          "title": "テンプレートと一致しませんでした。",
+          "description": "他の用語で検索してみてください。"
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "テンプレートが作成されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースで利用できるようになりました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを作成できませんでした。",
+          "message": "詳細を再度保存するか、できれば別のタブで新しいテンプレートにコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "テンプレートが変更されました",
+          "message": "{templateType}テンプレート「{templateName}」が変更されました。"
+        },
+        "error": {
+          "title": "このテンプレートの変更を保存できませんでした。",
+          "message": "詳細を再度保存するか、後でこのテンプレートに戻ってください。それでも問題が続く場合は、お問い合わせください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」が削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？テンプレートに関連するすべてのデータは完全に削除されます。このアクションは元に戻せません。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？このテンプレートはマーケットプレイスでユーザーが利用できなくなります。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "新しいテンプレートを追加",
+        "project": "新しいテンプレートを追加"
+      },
+      "label": {
+        "project": "プロジェクトテンプレートを選択",
+        "page": "テンプレートから選択"
+      },
+      "tooltip": {
+        "work_item": "作業項目テンプレートを選択"
+      },
+      "no_results": {
+        "work_item": "テンプレートが見つかりません。",
+        "project": "テンプレートが見つかりません。"
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "ステータス別のプロジェクト",
+    "active_users": "アクティブユーザー",
+    "intake_trends": "受け入れの傾向",
+    "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "データがまだありません",
+        "description": "サイクルの進捗分析がここに表示されます。作業項目をサイクルに追加して進捗の追跡を開始してください。"
+      },
+      "module_progress": {
+        "title": "データがまだありません",
+        "description": "モジュールの進捗分析がここに表示されます。作業項目をモジュールに追加して進捗の追跡を開始してください。"
+      },
+      "intake_trends": {
+        "title": "データがまだありません",
+        "description": "インテークの傾向分析がここに表示されます。作業項目をインテークに追加して傾向の追跡を開始してください。"
+      }
+    },
+    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "定期作業項目",
+      "description": "繰り返しの作業を1回設定するだけで、繰り返しを管理します。時間が来たらここにすべて表示されます。",
+      "new_recurring_work_item": "新しい定期作業項目",
+      "update_recurring_work_item": "定期作業項目を更新",
+      "form": {
+        "interval": {
+          "title": "スケジュール",
+          "start_date": {
+            "validation": {
+              "required": "開始日は必須です"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔タイプは必須です"
+            }
+          }
+        },
+        "button": {
+          "create": "定期作業項目を作成",
+          "update": "定期作業項目を更新"
+        }
+      },
+      "create_button": {
+        "label": "定期作業項目を作成",
+        "no_permission": "定期作業項目を作成するにはプロジェクト管理者に連絡してください"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "あなたの作業を自動化",
+        "description": "一度設定すれば、期限が来たときに自動で再作成します。定期作業をより簡単にするにはBusinessへアップグレードしてください。"
+      },
+      "no_templates": {
+        "button": "最初の定期作業項目を作成"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "定期作業項目が作成されました",
+          "message": "{name}（定期作業項目）がワークスペースで利用可能になりました。"
+        },
+        "error": {
+          "title": "定期作業項目を作成できませんでした。",
+          "message": "もう一度詳細を保存するか、別のタブで新しい定期作業項目にコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "定期作業項目が変更されました",
+          "message": "{name}（定期作業項目）が変更されました。"
+        },
+        "error": {
+          "title": "この定期作業項目の変更を保存できませんでした。",
+          "message": "もう一度詳細を保存するか、後でこの定期作業項目に戻ってください。問題が解決しない場合はご連絡ください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "定期作業項目が削除されました",
+          "message": "{name}（定期作業項目）がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "定期作業項目を削除できませんでした。",
+          "message": "もう一度削除するか、後で再度お試しください。それでも削除できない場合はご連絡ください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "定期作業項目を削除",
+      "description": {
+        "prefix": "定期作業項目「",
+        "suffix": "」を削除してもよろしいですか？この定期作業項目に関連するすべてのデータは完全に削除されます。この操作は元に戻せません。"
+      }
+    }
+  },
+  "automations": {
+    "settings": {
+      "title": "カスタム自動化",
+      "create_automation": "自動化を作成"
+    },
+    "scope": {
+      "label": "スコープ",
+      "run_on": "実行対象"
+    },
+    "trigger": {
+      "label": "トリガー",
+      "add_trigger": "トリガーを追加",
+      "sidebar_header": "トリガー設定",
+      "input_label": "この自動化のトリガーは何ですか？",
+      "input_placeholder": "オプションを選択",
+      "button": {
+        "previous": "戻る",
+        "next": "アクションを追加"
+      }
+    },
+    "condition": {
+      "label": "条件",
+      "add_condition": "条件を追加",
+      "adding_condition": "条件を追加中"
+    },
+    "action": {
+      "label": "アクション",
+      "add_action": "アクションを追加",
+      "sidebar_header": "アクション",
+      "input_label": "自動化は何を行いますか？",
+      "input_placeholder": "オプションを選択",
+      "handler_name": {
+        "add_comment": "コメントを追加",
+        "change_property": "プロパティを変更"
+      },
+      "configuration": {
+        "label": "設定",
+        "change_property": {
+          "placeholders": {
+            "property_name": "プロパティを選択",
+            "change_type": "選択",
+            "property_value_select": "{count, plural, one{値を選択} other{値を選択}}",
+            "property_value_select_date": "日付を選択"
+          },
+          "validation": {
+            "property_name_required": "プロパティ名は必須です",
+            "change_type_required": "変更タイプは必須です",
+            "property_value_required": "プロパティ値は必須です"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "コメントを追加"
+      },
+      "change_property_block": {
+        "title": "プロパティを変更"
+      },
+      "validation": {
+        "delete_only_action": "唯一のアクションを削除する前に自動化を無効にしてください。"
+      }
+    },
+    "conjunctions": {
+      "and": "かつ",
+      "or": "または",
+      "if": "もし",
+      "then": "ならば"
+    },
+    "enable": {
+      "alert": "自動化が完了したら「有効化」を押してください。有効化されると、自動化が実行可能になります。",
+      "validation": {
+        "required": "自動化を有効にするには、トリガーと少なくとも1つのアクションが必要です。"
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "自動化を削除する前に無効にする必要があります。"
+      }
+    },
+    "table": {
+      "title": "自動化タイトル",
+      "last_run_on": "最終実行日",
+      "created_on": "作成日",
+      "last_updated_on": "最終更新日",
+      "last_run_status": "最終実行ステータス",
+      "average_duration": "平均実行時間",
+      "owner": "所有者",
+      "executions": "実行回数"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "自動化を作成",
+        "update": "自動化を更新"
+      },
+      "title": {
+        "placeholder": "自動化に名前を付けてください。",
+        "required_error": "タイトルは必須です"
+      },
+      "description": {
+        "placeholder": "自動化について説明してください。"
+      },
+      "submit_button": {
+        "create": "自動化を作成",
+        "update": "自動化を更新"
+      }
+    },
+    "delete_modal": {
+      "heading": "自動化を削除"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "失敗を表示",
+        "all": "すべて",
+        "only_activity": "アクティビティのみ",
+        "only_run_history": "実行履歴のみ"
+      },
+      "run_history": {
+        "initiator": "実行者"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に作成されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の作成に失敗しました。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に更新されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の更新に失敗しました。"
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に有効化されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の有効化に失敗しました。"
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化が正常に無効化されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "自動化の無効化に失敗しました。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "自動化が削除されました",
+          "message": "{name}（自動化）がプロジェクトから削除されました。"
+        },
+        "error": {
+          "title": "自動化を削除できませんでした。",
+          "message": "もう一度削除するか、後で再度お試しください。それでも削除できない場合はご連絡ください。"
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "エラー！",
+            "message": "アクションの作成に失敗しました。もう一度お試しください！"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "エラー！",
+            "message": "アクションの更新に失敗しました。もう一度お試しください！"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "まだ表示する自動化がありません。",
+        "description": "自動化は、トリガー、条件、アクションを設定することで繰り返し作業を排除するのに役立ちます。時間を節約し、作業を効率的に進めるために作成してください。"
+      },
+      "upgrade": {
+        "title": "自動化",
+        "description": "自動化は、プロジェクト内のタスクを自動化する方法です。",
+        "sub_description": "自動化を使用すると、管理時間の80%を節約できます。"
+      }
+    }
+  }
+}
