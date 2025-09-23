@@ -5,12 +5,12 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
-import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components
+import { SidebarContentWrapper } from "@/plane-web/components/sidebar";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 
 type TSidebarWrapperProps = {
@@ -40,7 +40,7 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
   }, [windowSize]);
 
   return (
-    <div ref={ref} className="flex flex-col h-full w-full">
+    <div ref={ref} className="relative flex flex-col h-full w-full">
       <div className="flex flex-col gap-3 px-3">
         {/* Workspace switcher and settings */}
         {!shouldRenderAppRail && <SidebarDropdown />}
@@ -56,17 +56,9 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
         {/* Quick actions */}
         {quickActions}
       </div>
-      <div className="flex flex-col gap-3 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar px-3 pt-3 pb-0.5">
-        {children}
-      </div>
+      <SidebarContentWrapper>{children}</SidebarContentWrapper>
       {/* Help Section */}
-      <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
-        <WorkspaceEditionBadge />
-        <div className="flex items-center gap-2">
-          {!shouldRenderAppRail && <HelpMenu />}
-          {!isAppRailEnabled && <AppSidebarToggleButton />}
-        </div>
-      </div>
+      <WorkspaceEditionBadge />
     </div>
   );
 });
