@@ -59,7 +59,7 @@ export const filterProjectMembersByRole = (
   });
 };
 
-export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPermissions }>(
+export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPermissions; is_active?: boolean }>(
   members: T[],
   roleFilters: string[]
 ): T[] => {
@@ -67,6 +67,27 @@ export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPer
 
   return members.filter((member) => {
     const memberRole = String(member.role ?? "");
+    const isSuspended = member.is_active === false;
+
+    // Check if suspended is in the role filters
+    const hasSuspendedFilter = roleFilters.includes("suspended");
+
+    // If suspended is selected and user is suspended, include them
+    if (hasSuspendedFilter && isSuspended) {
+      return true;
+    }
+
+    // If suspended is selected but user is not suspended, exclude them
+    if (hasSuspendedFilter && !isSuspended) {
+      return false;
+    }
+
+    // If suspended is not selected but user is suspended, exclude them
+    if (!hasSuspendedFilter && isSuspended) {
+      return false;
+    }
+
+    // For active users, check their actual role
     return roleFilters.includes(memberRole);
   });
 };
@@ -139,13 +160,12 @@ export const sortProjectMembers = (
   );
 };
 
-export const sortWorkspaceMembers = <T extends { role: string | EUserPermissions }>(
+export const sortWorkspaceMembers = <T extends { role: string | EUserPermissions; is_active?: boolean }>(
   members: T[],
   memberDetailsMap: Record<string, IUserLite>,
   getMemberKey: (member: T) => string,
   filters?: IMemberFilters
 ): T[] => {
-  // Apply role filtering first
   const filteredMembers =
     filters?.roles && filters.roles.length > 0 ? filterWorkspaceMembersByRole(members, filters.roles) : members;
 

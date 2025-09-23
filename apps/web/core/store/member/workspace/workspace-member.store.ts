@@ -138,7 +138,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
-    members = members.filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
 
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(

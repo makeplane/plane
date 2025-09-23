@@ -29,6 +29,7 @@ const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
   { value: String(EUserWorkspaceRoles.ADMIN), label: "Admin" },
   { value: String(EUserWorkspaceRoles.MEMBER), label: "Member" },
   { value: String(EUserWorkspaceRoles.GUEST), label: "Guest" },
+  { value: "suspended", label: "Suspended" },
 ];
 
 // Role filter group component
