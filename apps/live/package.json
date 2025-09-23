@@ -17,8 +17,7 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Plane Software Inc.",
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
     "@hocuspocus/extension-logger": "^2.15.0",
