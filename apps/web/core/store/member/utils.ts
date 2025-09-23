@@ -38,9 +38,9 @@ export const getMemberSortKey = (memberDetails: IUserLite, field: string, member
     case "email":
       return memberDetails.email?.toLowerCase() || "";
     case "joining_date":
-      return new Date(memberDetails.joining_date || 0);
+      return memberDetails.joining_date ? new Date(memberDetails.joining_date) : new Date(NaN);
     case "role":
-      return String(memberRole || "");
+      return (memberRole ?? "").toString().toLowerCase();
     default:
       return "";
   }
@@ -54,8 +54,7 @@ export const filterProjectMembersByRole = (
   if (roleFilters.length === 0) return members;
 
   return members.filter((member) => {
-    const memberWithRole = member as TProjectMembership & { original_role?: string | null };
-    const memberRole = String(member.role || memberWithRole.original_role || "");
+    const memberRole = String(member.role ?? member.original_role ?? "");
     return roleFilters.includes(memberRole);
   });
 };
@@ -67,7 +66,7 @@ export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPer
   if (roleFilters.length === 0) return members;
 
   return members.filter((member) => {
-    const memberRole = String(member.role || "");
+    const memberRole = String(member.role ?? "");
     return roleFilters.includes(memberRole);
   });
 };
@@ -135,10 +134,7 @@ export const sortProjectMembers = (
     filteredMembers,
     memberDetailsMap,
     getMemberKey,
-    (member) => {
-      const memberWithRole = member as TProjectMembership & { original_role?: string | null };
-      return String(member.role || memberWithRole.original_role || "");
-    },
+    (member) => String(member.role ?? member.original_role ?? ""),
     filters.order_by
   );
 };
@@ -161,7 +157,7 @@ export const sortWorkspaceMembers = <T extends { role: string | EUserPermissions
     filteredMembers,
     memberDetailsMap,
     getMemberKey,
-    (member) => String(member.role || ""),
+    (member) => String(member.role ?? ""),
     filters.order_by
   );
 };

@@ -2,14 +2,9 @@ import { observer } from "mobx-react";
 
 // components
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { EIssueFilterType } from "@plane/constants";
+import { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TIssueKanbanFilters,
-} from "@plane/types";
+import { TSupportedFilterForUpdate } from "@plane/types";
 import { Row } from "@plane/ui";
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
@@ -29,8 +24,8 @@ interface ICalendarHeader {
     | IProjectEpicsFilter;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
   setSelectedDate: (date: Date) => void;
 }

@@ -141,15 +141,20 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
     const cycleId = id ?? this.cycleId;
 
-    projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    if (projectId && cycleId) {
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    }
     // fetch cycle progress
     const isSidebarCollapsed = storage.get("cycle_sidebar_collapsed");
-    projectId &&
+    if (
+      projectId &&
       cycleId &&
       this.rootIssueStore.rootStore.cycle.getCycleById(cycleId)?.version === 2 &&
       isSidebarCollapsed &&
-      JSON.parse(isSidebarCollapsed) === false &&
+      JSON.parse(isSidebarCollapsed) === false
+    ) {
       this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
+    }
   };
 
   updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
@@ -162,8 +167,9 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       );
 
       const cycleId = id ?? this.cycleId;
-
-      cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+      if (cycleId) {
+        this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+      }
     } catch (e) {
       console.warn("could not update cycle statistics");
     }

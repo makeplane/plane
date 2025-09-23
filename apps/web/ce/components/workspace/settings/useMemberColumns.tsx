@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { renderFormattedDate } from "@plane/utils";
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
 import { useMember } from "@/hooks/store/use-member";
@@ -22,13 +23,6 @@ export const useMemberColumns = () => {
     },
   } = useMember();
   const { t } = useTranslation();
-
-  const getFormattedDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString("en-US", options);
-  };
 
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -118,7 +112,7 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
+      tdRender: (rowData: RowData) => <div>{renderFormattedDate(rowData?.member?.joining_date)}</div>,
     },
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };

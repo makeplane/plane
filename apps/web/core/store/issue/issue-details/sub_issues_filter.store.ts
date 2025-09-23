@@ -6,11 +6,11 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  IIssueFilters,
+  ISubWorkItemFilters,
   TGroupedIssues,
   TIssue,
 } from "@plane/types";
-import { getFilteredWorkItems, getGroupedWorkItemIds, updateFilters } from "../helpers/base-issues-utils";
+import { getFilteredWorkItems, getGroupedWorkItemIds, updateSubWorkItemFilters } from "../helpers/base-issues-utils";
 import { IssueSubIssuesStore } from "./sub_issues.store";
 
 export const DEFAULT_DISPLAY_PROPERTIES = {
@@ -23,9 +23,8 @@ export const DEFAULT_DISPLAY_PROPERTIES = {
   priority: true,
   state: true,
 };
-
 export interface IWorkItemSubIssueFiltersStore {
-  subIssueFilters: Record<string, Partial<IIssueFilters>>;
+  subIssueFilters: Record<string, Partial<ISubWorkItemFilters>>;
   // helpers methods
   updateSubWorkItemFilters: (
     filterType: EIssueFilterType,
@@ -34,13 +33,13 @@ export interface IWorkItemSubIssueFiltersStore {
   ) => void;
   getGroupedSubWorkItems: (workItemId: string) => TGroupedIssues;
   getFilteredSubWorkItems: (workItemId: string, filters: IIssueFilterOptions) => TIssue[];
-  getSubIssueFilters: (workItemId: string) => Partial<IIssueFilters>;
+  getSubIssueFilters: (workItemId: string) => Partial<ISubWorkItemFilters>;
   resetFilters: (workItemId: string) => void;
 }
 
 export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersStore {
   // observables
-  subIssueFilters: Record<string, Partial<IIssueFilters>> = {};
+  subIssueFilters: Record<string, Partial<ISubWorkItemFilters>> = {};
 
   // root store
   subIssueStore: IssueSubIssuesStore;
@@ -89,7 +88,7 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
     workItemId: string
   ) => {
     runInAction(() => {
-      updateFilters(this.subIssueFilters, filterType, filters, workItemId);
+      updateSubWorkItemFilters(this.subIssueFilters, filterType, filters, workItemId);
     });
   };
 

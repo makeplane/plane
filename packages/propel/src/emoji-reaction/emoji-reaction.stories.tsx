@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmojiReaction } from "./emoji-reaction";
 
 const meta: Meta<typeof EmojiReaction> = {
-  title: "EmojiReaction",
+  title: "Components/Emoji/EmojiReaction",
   component: EmojiReaction,
   parameters: {
     layout: "centered",
