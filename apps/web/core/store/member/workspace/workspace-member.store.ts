@@ -159,9 +159,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getSearchedWorkspaceMemberIds = computedFn((searchQuery: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
-    const workspaceMemberIds = this.workspaceMemberIds;
-    if (!workspaceMemberIds) return null;
-    const searchedWorkspaceMemberIds = workspaceMemberIds?.filter((userId) => {
+    const filteredMemberIds = this.getFilteredWorkspaceMemberIds(workspaceSlug);
+    if (!filteredMemberIds) return null;
+    const searchedWorkspaceMemberIds = filteredMemberIds.filter((userId) => {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
       const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
