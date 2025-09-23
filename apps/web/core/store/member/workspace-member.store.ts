@@ -120,9 +120,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
-    const memberIds = members
-      .filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot)
-      .map((m) => m.member);
+    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
     return memberIds;
   });
 

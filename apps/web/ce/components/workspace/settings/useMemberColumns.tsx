@@ -25,6 +25,8 @@ export const useMemberColumns = () => {
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
+  const isSuspended = (rowData: RowData) => rowData.is_active === false;
+
   const columns = [
     {
       key: "Full name",
@@ -44,13 +46,21 @@ export const useMemberColumns = () => {
     {
       key: "Display name",
       content: t("workspace_settings.settings.members.details.display_name"),
-      tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
+      tdRender: (rowData: RowData) => (
+        <div className={`w-32 ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
+          {rowData.member.display_name}
+        </div>
+      ),
     },
 
     {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
-      tdRender: (rowData: RowData) => <div className="w-48 truncate">{rowData.member.email}</div>,
+      tdRender: (rowData: RowData) => (
+        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
+          {rowData.member.email}
+        </div>
+      ),
     },
 
     {
@@ -62,15 +72,17 @@ export const useMemberColumns = () => {
     {
       key: "Authentication",
       content: t("workspace_settings.settings.members.details.authentication"),
-      tdRender: (rowData: RowData) => (
-        <div className="capitalize">{rowData.member.last_login_medium?.replace("-", " ")}</div>
-      ),
+      tdRender: (rowData: RowData) =>
+        isSuspended(rowData) ? null : (
+          <div className="capitalize">{rowData.member.last_login_medium?.replace("-", " ")}</div>
+        ),
     },
 
     {
       key: "Joining date",
       content: t("workspace_settings.settings.members.details.joining_date"),
-      tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
+      tdRender: (rowData: RowData) =>
+        isSuspended(rowData) ? null : <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
