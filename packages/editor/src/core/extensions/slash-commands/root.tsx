@@ -5,6 +5,7 @@ import tippy, { Instance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
@@ -55,11 +56,16 @@ const Command = Extension.create<SlashCommandOptions>({
   },
 });
 
-const renderItems = () => {
+const renderItems: SuggestionOptions["render"] = () => {
   let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
   let popup: Instance | null = null;
   return {
-    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
+    onStart: (props) => {
+      // Track active dropdown
+      getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(
+        CORE_EXTENSIONS.SLASH_COMMANDS
+      );
+
       component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
         props,
         editor: props.editor,
@@ -78,14 +84,14 @@ const renderItems = () => {
         placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
+    onUpdate: (props) => {
       component?.updateProps(props);
 
       popup?.[0]?.setProps({
         getReferenceClientRect: props.clientRect,
       });
     },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
+    onKeyDown: (props) => {
       if (props.event.key === "Escape") {
         popup?.[0].hide();
         return true;
@@ -95,7 +101,15 @@ const renderItems = () => {
       }
       return false;
     },
-    onExit: () => {
+    onExit: ({ editor }) => {
+      // Remove from active dropdowns
+      if (editor) {
+        const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+        if (index > -1) {
+          utilityStorage.activeDropbarExtensions.splice(index, 1);
+        }
+      }
       popup?.[0].destroy();
       component?.destroy();
     },

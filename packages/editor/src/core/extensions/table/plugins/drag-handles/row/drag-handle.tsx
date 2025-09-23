@@ -12,9 +12,11 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import {
   findTable,
@@ -23,6 +25,8 @@ import {
   isCellSelection,
   selectRow,
 } from "@/extensions/table/table/utilities/helpers";
+// helpers
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
 import { moveSelectedRows } from "../actions";
 import {
@@ -156,6 +160,21 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
     [editor, row]
   );
 
+  // toggle utility storage
+  useEffect(() => {
+    const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+    const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.TABLE);
+    if (isDropdownOpen) {
+      if (index === -1) {
+        utilityStorage.activeDropbarExtensions.push(CORE_EXTENSIONS.TABLE);
+      }
+    } else {
+      if (index !== -1) {
+        utilityStorage.activeDropbarExtensions.splice(index, 1);
+      }
+    }
+  }, [editor, isDropdownOpen]);
+
   return (
     <>
       <div className="table-row-handle-container absolute z-20 top-0 left-0 flex justify-center items-center h-full -translate-x-1/2">
@@ -183,8 +202,8 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               zIndex: 99,
             }}
             lockScroll
+            data-prevent-outside-click
           />
-
           <div
             className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
             ref={refs.setFloating}
@@ -193,6 +212,7 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               ...floatingStyles,
               zIndex: 100,
             }}
+            data-prevent-outside-click
           >
             <RowOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
           </div>

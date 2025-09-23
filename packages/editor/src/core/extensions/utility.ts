@@ -9,13 +9,18 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
-
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
-type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
+
+type TActiveDropbarExtensions =
+  | CORE_EXTENSIONS.MENTION
+  | CORE_EXTENSIONS.EMOJI
+  | CORE_EXTENSIONS.SLASH_COMMANDS
+  | CORE_EXTENSIONS.TABLE
+  | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
   interface Commands {
-    utility: {
+    [CORE_EXTENSIONS.UTILITY]: {
       updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       updateAssetsList: (
         args:
