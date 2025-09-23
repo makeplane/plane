@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
-  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {

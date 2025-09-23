@@ -1,8 +1,6 @@
 {
   "extends": "@plane/typescript-config/node-library.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "lib": ["ES2020"],

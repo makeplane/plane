@@ -32,8 +32,9 @@ export default defineConfig({
     "src/utils/index.ts",
   ],
   outDir: "dist",
-  format: ["esm"],
+  format: ["esm", "cjs"],
   dts: true,
   clean: true,
+  sourcemap: false,
   copy: ["src/styles"],
 });

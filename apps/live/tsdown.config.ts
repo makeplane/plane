@@ -3,7 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: ["src/server.ts"],
   outDir: "dist",
-  format: ["esm"],
+  format: ["esm", "cjs"],
   dts: true,
   clean: true,
   sourcemap: true,

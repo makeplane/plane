@@ -4,12 +4,11 @@
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
-  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "scripts": {

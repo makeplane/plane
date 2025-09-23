@@ -4,17 +4,16 @@
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
-  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     },
     "./lib": {
-      "require": "./dist/lib.cjs",
-      "types": "./dist/lib.d.ts",
-      "import": "./dist/lib.js"
+      "types": "./dist/lib.d.mts",
+      "require": "./dist/lib.js",
+      "import": "./dist/lib.mjs"
     },
     "./styles": "./dist/styles/index.css"
   },

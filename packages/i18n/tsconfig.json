@@ -3,9 +3,7 @@
   "compilerOptions": {
     "jsx": "react",
     "lib": ["esnext", "dom"],
-    "resolveJsonModule": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler"
+    "resolveJsonModule": true
   },
   "include": ["./src"],
   "exclude": ["dist", "build", "node_modules"]

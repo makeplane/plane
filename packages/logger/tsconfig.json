@@ -1,9 +1,6 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ESNext",
     "esModuleInterop": true,
     "outDir": "./dist",
     "rootDir": "./src",

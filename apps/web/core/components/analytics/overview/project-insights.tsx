@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
-import {} from "@plane/propel/charts/radar-chart";
 import { useTranslation } from "@plane/i18n";
 import { TChartData } from "@plane/types";
 // hooks
