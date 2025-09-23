@@ -19,7 +19,7 @@ SPECTACULAR_SETTINGS = {
         "url": "https://plane.so",
         "email": "support@plane.so",
     },
-    "VERSION": "0.0.1",
+    "VERSION": "0.0.2",
     "LICENSE": {
         "name": "GNU AGPLv3",
         "url": "https://github.com/makeplane/plane/blob/preview/LICENSE.txt",
@@ -308,4 +308,5 @@ SPECTACULAR_SETTINGS = {
         "ModuleStatusEnum": "plane.db.models.module.ModuleStatus",
         "IntakeWorkItemStatusEnum": "plane.db.models.intake.IntakeIssueStatus",
     },
+    "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": False,
 }

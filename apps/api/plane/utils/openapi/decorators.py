@@ -397,11 +397,7 @@ def page_docs(**kwargs):
     defaults = {
         "tags": ["Pages"],
         "summary": "Endpoints for page create/update/delete and fetch page details",
-        "parameters": [
-            WORKSPACE_SLUG_PARAMETER,
-            PROJECT_ID_PARAMETER,
-            PAGE_ID_PARAMETER,
-        ],
+        "parameters": [],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,

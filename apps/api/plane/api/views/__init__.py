@@ -24,6 +24,8 @@ from .issue import (
     IssueActivityDetailAPIEndpoint,
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
+    IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
 )
 

@@ -34,7 +34,6 @@ from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiRequest,
 )
-from drf_spectacular.types import OpenApiTypes
 
 # Module imports
 from plane.api.serializers import (
@@ -44,6 +43,11 @@ from plane.api.serializers import (
     IssueDetailSerializer,
     IssueLinkSerializer,
     IssueSerializer,
+    IssueRelationSerializer,
+    IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
+    IssueRelationResponseSerializer,
+    RelatedIssueSerializer,
     LabelSerializer,
     IssueAttachmentUploadSerializer,
     IssueSearchSerializer,
@@ -64,6 +68,7 @@ from plane.db.models import (
     FileAsset,
     IssueComment,
     IssueLink,
+    IssueRelation,
     Label,
     Project,
     ProjectMember,
@@ -74,11 +79,13 @@ from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.issue_relation_mapper import get_actual_relation
 
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
+    issue_docs,
     label_docs,
     issue_link_docs,
     issue_comment_docs,
@@ -619,8 +626,14 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             .values("count")
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
 
+        # Ensure labels and assignees are always expanded for issue details
+        # this is required until we find a better way to create issue detail serializer
+        expand = self.expand or []
+        required_expansions = {"labels", "assignees"}
+        expand = list(set(expand) | required_expansions)
+
         return Response(
-            IssueDetailSerializer(issue, fields=self.fields, expand=self.expand).data,
+            IssueDetailSerializer(issue, fields=self.fields, expand=expand).data,
             status=status.HTTP_200_OK,
         )
 
@@ -2671,3 +2684,309 @@ class IssueSearchEndpoint(BaseAPIView):
         )[: int(limit)]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
+
+
+class IssueRelationListCreateAPIEndpoint(BaseAPIView):
+    """Issue Relation List and Create Endpoint"""
+
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @issue_docs(
+        operation_id="list_work_item_relations",
+        summary="List work item relations",
+        description="Retrieve all relationships for a work item including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after relations.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Work item relations grouped by relation type",
+                response=IssueRelationResponseSerializer,
+                examples=[
+                    OpenApiExample(
+                        name="Work Item Relations Response",
+                        value={
+                            "blocking": [
+                                "550e8400-e29b-41d4-a716-446655440000",
+                                "550e8400-e29b-41d4-a716-446655440001",
+                            ],
+                            "blocked_by": ["550e8400-e29b-41d4-a716-446655440002"],
+                            "duplicate": [],
+                            "relates_to": ["550e8400-e29b-41d4-a716-446655440003"],
+                            "start_after": [],
+                            "start_before": ["550e8400-e29b-41d4-a716-446655440004"],
+                            "finish_after": [],
+                            "finish_before": [],
+                        },
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item relations
+
+        Retrieve all relationships for a work item organized by relation type.
+        Returns a structured response with relations grouped by type.
+        """
+        # Fetch all issue relations in a single query
+        issue_relations = list(
+            IssueRelation.objects.filter(
+                Q(issue_id=issue_id) | Q(related_issue=issue_id)
+            )
+            .filter(workspace__slug=slug)
+            .select_related("project", "workspace", "issue", "related_issue")
+            .order_by("-created_at")
+            .distinct()
+        )
+
+        # Initialize lists for different relation types
+        blocking_issues = []
+        blocked_by_issues = []
+        duplicate_issues = []
+        relates_to_issues = []
+        start_after_issues = []
+        start_before_issues = []
+        finish_after_issues = []
+        finish_before_issues = []
+
+        # Process relations on application side to avoid N+1 queries
+        for relation in issue_relations:
+            if relation.relation_type == "blocked_by":
+                if relation.related_issue_id == issue_id:
+                    # This issue is blocked by the related issue
+                    blocking_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue blocks the related issue
+                    blocked_by_issues.append(relation.related_issue_id)
+
+            elif relation.relation_type == "duplicate":
+                if relation.issue_id == issue_id:
+                    duplicate_issues.append(relation.related_issue_id)
+                elif relation.related_issue_id == issue_id:
+                    duplicate_issues.append(relation.issue_id)
+
+            elif relation.relation_type == "relates_to":
+                if relation.issue_id == issue_id:
+                    relates_to_issues.append(relation.related_issue_id)
+                elif relation.related_issue_id == issue_id:
+                    relates_to_issues.append(relation.issue_id)
+
+            elif relation.relation_type == "start_before":
+                if relation.related_issue_id == issue_id:
+                    # The related issue starts after this issue
+                    start_after_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue starts before the related issue
+                    start_before_issues.append(relation.related_issue_id)
+
+            elif relation.relation_type == "finish_before":
+                if relation.related_issue_id == issue_id:
+                    # The related issue finishes after this issue
+                    finish_after_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue finishes before the related issue
+                    finish_before_issues.append(relation.related_issue_id)
+
+        response_data = {
+            "blocking": blocking_issues,
+            "blocked_by": blocked_by_issues,
+            "duplicate": duplicate_issues,
+            "relates_to": relates_to_issues,
+            "start_after": start_after_issues,
+            "start_before": start_before_issues,
+            "finish_after": finish_after_issues,
+            "finish_before": finish_before_issues,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @issue_docs(
+        operation_id="create_work_item_relation",
+        summary="Create work item relation",
+        description="Create relationships between work items. Supports various relation types including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Create blocking relation",
+                    value={
+                        "relation_type": "blocking",
+                        "issues": [
+                            "550e8400-e29b-41d4-a716-446655440000",
+                            "550e8400-e29b-41d4-a716-446655440001",
+                        ],
+                    },
+                )
+            ],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Work item relations created successfully",
+                response=IssueRelationSerializer(many=True),
+                examples=[
+                    OpenApiExample(
+                        name="Relations created",
+                        value=[
+                            {
+                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "Fix authentication bug",
+                                "sequence_id": 42,
+                                "project_id": "550e8400-e29b-41d4-a716-446655440001",
+                                "relation_type": "blocked_by",
+                                "state_id": "550e8400-e29b-41d4-a716-446655440002",
+                                "priority": "high",
+                                "type_id": "550e8400-e29b-41d4-a716-446655440003",
+                                "is_epic": False,
+                                "created_at": "2024-01-15T10:00:00Z",
+                                "updated_at": "2024-01-15T10:00:00Z",
+                                "created_by": "550e8400-e29b-41d4-a716-446655440004",
+                                "updated_by": "550e8400-e29b-41d4-a716-446655440004",
+                            }
+                        ],
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Create work item relation
+
+        Create relationships between work items with specified relation type.
+        Automatically tracks relation creation activity.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        relation_type = serializer.validated_data["relation_type"]
+        issues = serializer.validated_data["issues"]
+        project = Project.objects.get(pk=project_id)
+
+        issue_relation = IssueRelation.objects.bulk_create(
+            [
+                IssueRelation(
+                    issue_id=(
+                        issue
+                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id
+                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        else issue
+                    ),
+                    relation_type=(get_actual_relation(relation_type)),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for issue in issues
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        if relation_type in ["blocking", "start_after", "finish_after"]:
+            return Response(
+                RelatedIssueSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                IssueRelationSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+    model = IssueRelation
+
+    @issue_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove a relationship between work items by specifying the related work item ID.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Remove relation",
+                    value={"related_issue": "550e8400-e29b-41d4-a716-446655440000"},
+                )
+            ],
+        ),
+        responses={
+            204: OpenApiResponse(description="Work item relation removed successfully"),
+            404: OpenApiResponse(description="Work item relation not found"),
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove a work item relation
+
+        Remove a relationship between work items.
+        Records deletion activity for audit purposes.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationRemoveSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue = serializer.validated_data["related_issue"]
+
+        issue_relations = IssueRelation.objects.filter(
+            workspace__slug=slug,
+        ).filter(
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
+        )
+        issue_relations = issue_relations.first()
+        current_instance = json.dumps(
+            IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder
+        )
+        issue_relations.delete()
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

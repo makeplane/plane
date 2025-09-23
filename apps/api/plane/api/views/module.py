@@ -683,7 +683,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="Module issues added",
-                response=ModuleIssueSerializer,
+                response=ModuleIssueSerializer(many=True),
                 examples=[MODULE_ISSUE_EXAMPLE],
             ),
             400: REQUIRED_FIELDS_RESPONSE,

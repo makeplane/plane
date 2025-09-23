@@ -4,7 +4,7 @@ from rest_framework import serializers
 # Module imports
 from plane.ee.serializers import BaseSerializer
 from plane.db.models import Page, ProjectPage
-from plane.utils.content_validator import validate_html_content, validate_binary_data
+from plane.utils.content_validator import validate_html_content
 
 
 class PageDetailAPISerializer(BaseSerializer):
@@ -57,8 +57,21 @@ class PageCreateAPISerializer(BaseSerializer):
             "external_id",
             "external_source",
             "parent_id",
+            "description_html",
         ]
-        read_only_fields = ["workspace", "owned_by", "anchor"]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "owned_by",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+        extra_kwargs = {
+            "name": {"required": True, "allow_blank": False},
+            "description_html": {"required": True, "allow_blank": False},
+        }
 
     def validate_description_html(self, value):
         """Validate the HTML content for description_html using shared validator."""
@@ -73,22 +86,10 @@ class PageCreateAPISerializer(BaseSerializer):
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
 
-    def validate_description_binary(self, value):
-        """Validate the binary data for description_binary using shared validator."""
-        if not value:
-            return value
-
-        is_valid, error_message = validate_binary_data(value)
-        if not is_valid:
-            raise serializers.ValidationError(error_message)
-
-        return value
-
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
         project_id = self.context.get("project_id", None)
         owned_by_id = self.context["owned_by_id"]
-        description_html = self.context["description_html"]
         description_binary = self.context["description_binary"]
         description = self.context["description"]
 
@@ -97,7 +98,6 @@ class PageCreateAPISerializer(BaseSerializer):
             **validated_data,
             owned_by_id=owned_by_id,
             workspace_id=workspace_id,
-            description_html=description_html,
             description_binary=description_binary,
             description=description,
         )

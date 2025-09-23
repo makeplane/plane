@@ -22,7 +22,7 @@ from plane.utils.openapi.examples import SAMPLE_PAGE
 from plane.bgtasks.copy_s3_object import sync_with_external_service
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample
 
 # Third party imports
 from rest_framework.permissions import IsAuthenticated
@@ -49,7 +49,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Page",
                 response=PageDetailAPISerializer,
-                examples=[SAMPLE_PAGE],
+                examples=[OpenApiExample(name="Page", value=SAMPLE_PAGE)],
             ),
             401: UNAUTHORIZED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
@@ -104,7 +104,7 @@ class WorkspacePageDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Page",
                 response=PageDetailAPISerializer,
-                examples=[SAMPLE_PAGE],
+                examples=[OpenApiExample(name="Page", value=SAMPLE_PAGE)],
             ),
             401: UNAUTHORIZED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
@@ -135,7 +135,7 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Page",
                 response=PageDetailAPISerializer,
-                examples=[SAMPLE_PAGE],
+                examples=[OpenApiExample(name="Page", value=SAMPLE_PAGE)],
             ),
             401: UNAUTHORIZED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
@@ -158,7 +158,7 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
 
 class ProjectPageAPIEndpoint(BaseAPIView):
     model = Page
-    serializer_class = PageDetailAPISerializer
+    serializer_class = PageCreateAPISerializer
     permission_classes = [ProjectPagePermission]
 
     @page_docs(
@@ -167,7 +167,7 @@ class ProjectPageAPIEndpoint(BaseAPIView):
         description="Create a project page",
         parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={
-            201: OpenApiResponse(description="Page", response=PageDetailAPISerializer),
+            201: OpenApiResponse(description="Page", response=PageCreateAPISerializer),
             401: UNAUTHORIZED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
         },
@@ -185,7 +185,6 @@ class ProjectPageAPIEndpoint(BaseAPIView):
                 "workspace_id": workspace.id,
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description_html": description_html,
                 "description_binary": (
                     base64.b64decode(external_data.get("description_binary"))
                     if external_data
@@ -214,15 +213,13 @@ class ProjectPageAPIEndpoint(BaseAPIView):
             if page.parent_id and page.parent.access == Page.PRIVATE_ACCESS:
                 page.owned_by_id = page.parent.owned_by_id
                 page.save()
-                # Re-serialize to get updated data
-                serializer = self.serializer_class(page)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WorkspacePageAPIEndpoint(BaseAPIView):
-    serializer_class = PageDetailAPISerializer
+    serializer_class = PageCreateAPISerializer
     permission_classes = [WorkspacePagePermission]
 
     @page_docs(
@@ -231,7 +228,7 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
         description="Create a workspace page",
         parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
-            201: OpenApiResponse(description="Page", response=PageDetailAPISerializer),
+            201: OpenApiResponse(description="Page", response=PageCreateAPISerializer),
             401: UNAUTHORIZED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
         },
@@ -247,7 +244,6 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
             context={
                 "workspace_id": workspace.id,
                 "owned_by_id": request.user.id,
-                "description_html": description_html,
                 "description_binary": (
                     base64.b64decode(external_data.get("description_binary"))
                     if external_data
@@ -275,8 +271,6 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
             if page.parent_id and page.parent.access == Page.PRIVATE_ACCESS:
                 page.owned_by_id = page.parent.owned_by_id
                 page.save()
-                # Re-serialize to get updated data
-                serializer = self.serializer_class(page)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

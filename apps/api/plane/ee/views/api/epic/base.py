@@ -11,7 +11,7 @@ from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER, PROJECT_ID_
 from plane.utils.openapi.responses import INVALID_REQUEST_RESPONSE, UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE, create_paginated_response
 from plane.utils.openapi.examples import SAMPLE_EPIC
 
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample
 
 
 # Third party imports
@@ -91,7 +91,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Epic",
                 response=EpicSerializer,
-                examples=[SAMPLE_EPIC]
+                examples=[OpenApiExample(name="Epic", value=SAMPLE_EPIC)]
             ),
             400: INVALID_REQUEST_RESPONSE,
             401: UNAUTHORIZED_RESPONSE,

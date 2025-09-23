@@ -1010,7 +1010,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="Cycle work items added",
-                response=CycleIssueSerializer,
+                response=CycleIssueSerializer(many=True),
                 examples=[CYCLE_ISSUE_EXAMPLE],
             ),
             400: REQUIRED_FIELDS_RESPONSE,

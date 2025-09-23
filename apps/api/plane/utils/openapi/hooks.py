@@ -6,6 +6,13 @@ the generated OpenAPI schema to apply custom filtering, tagging, and other
 transformations.
 """
 
+VIEWS_TO_SKIP = set(
+    [
+        "WikiBulkOperationAPIView",
+        "PublishedPageDetailAPIEndpoint",
+    ]
+)
+
 
 def preprocess_filter_api_v1_paths(endpoints):
     """
@@ -21,13 +28,17 @@ def preprocess_filter_api_v1_paths(endpoints):
             continue
 
         # Don't include any server or page endpoints
-        if "server" in path.lower() or "page" in path.lower():
+        if "server" in path.lower():
             continue
 
         # Check if the callback's view_class inherits from BaseServiceAPIView
         view_class = getattr(callback, "view_class", None)
-        if view_class and issubclass(view_class, BaseServiceAPIView):
-            continue  # Skip views that inherit from BaseServiceAPIView
+        if view_class and (
+            issubclass(view_class, BaseServiceAPIView)
+            or view_class.__name__ in VIEWS_TO_SKIP
+        ):
+            # Skip views that inherit from BaseServiceAPIView or are in VIEWS_TO_SKIP
+            continue  
 
         filtered.append((path, path_regex, method, callback))
     return filtered
