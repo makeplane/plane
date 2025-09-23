@@ -37,8 +37,15 @@ export const getMemberSortKey = (memberDetails: IUserLite, field: string, member
     }
     case "email":
       return memberDetails.email?.toLowerCase() || "";
-    case "joining_date":
-      return memberDetails.joining_date ? new Date(memberDetails.joining_date) : new Date(NaN);
+    case "joining_date": {
+      if (!memberDetails.joining_date) {
+        // Return a very old date for missing dates to sort them last
+        return new Date(0);
+      }
+      const date = new Date(memberDetails.joining_date);
+      // Return a very old date for invalid dates to sort them last
+      return isNaN(date.getTime()) ? new Date(0) : date;
+    }
     case "role":
       return (memberRole ?? "").toString().toLowerCase();
     default:
@@ -71,24 +78,14 @@ export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPer
 
     // Check if suspended is in the role filters
     const hasSuspendedFilter = roleFilters.includes("suspended");
+    // Get non-suspended role filters
+    const activeRoleFilters = roleFilters.filter((role) => role !== "suspended");
 
-    // If suspended is selected and user is suspended, include them
-    if (hasSuspendedFilter && isSuspended) {
-      return true;
+    if (isSuspended) {
+      return hasSuspendedFilter;
     }
 
-    // If suspended is selected but user is not suspended, exclude them
-    if (hasSuspendedFilter && !isSuspended) {
-      return false;
-    }
-
-    // If suspended is not selected but user is suspended, exclude them
-    if (!hasSuspendedFilter && isSuspended) {
-      return false;
-    }
-
-    // For active users, check their actual role
-    return roleFilters.includes(memberRole);
+    return activeRoleFilters.length === 0 ? hasSuspendedFilter : activeRoleFilters.includes(memberRole);
   });
 };
 
@@ -121,10 +118,15 @@ export const sortMembers = <T>(
     let comparison = 0;
 
     if (field === "joining_date") {
-      // For dates, we need to handle Date objects
+      // For dates, we need to handle Date objects and ensure they're valid
       const aDate = aValue instanceof Date ? aValue : new Date(aValue);
       const bDate = bValue instanceof Date ? bValue : new Date(bValue);
-      comparison = aDate.getTime() - bDate.getTime();
+
+      // Handle invalid dates by treating them as very old dates
+      const aTime = isNaN(aDate.getTime()) ? 0 : aDate.getTime();
+      const bTime = isNaN(bDate.getTime()) ? 0 : bDate.getTime();
+
+      comparison = aTime - bTime;
     } else {
       // For strings, use localeCompare for proper alphabetical sorting
       const aStr = String(aValue);
