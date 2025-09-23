@@ -133,7 +133,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     <>
       {isSuspended ? (
         <div className="w-32 flex ">
-          <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="font-bold">
+          <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
             Suspended
           </Pill>
         </div>
