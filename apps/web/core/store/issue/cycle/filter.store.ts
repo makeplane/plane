@@ -3,16 +3,17 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
-  IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
   IIssueFilters,
   TIssueParams,
   IssuePaginationOptions,
+  TWorkItemFilterExpression,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { IssueFiltersService } from "@/services/issue_filter.service";
@@ -35,11 +36,17 @@ export interface ICycleIssuesFilter extends IBaseIssueFilterStore {
   getIssueFilters(cycleId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  updateFilterExpression: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    filters: TWorkItemFilterExpression
+  ) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate,
     cycleId: string
   ) => Promise<void>;
 }
@@ -103,8 +110,8 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     if (filteredParams.includes("cycle")) filteredParams.splice(filteredParams.indexOf("cycle"), 1);
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.filters as IIssueFilterOptions,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters?.richFilters,
+      userFilters?.displayFilters,
       filteredParams
     );
 
@@ -134,7 +141,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const richFilters: TWorkItemFilterExpression = _filters?.rich_filters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
     const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
@@ -156,52 +163,51 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     }
 
     runInAction(() => {
-      set(this.filters, [cycleId, "filters"], filters);
+      set(this.filters, [cycleId, "richFilters"], richFilters);
       set(this.filters, [cycleId, "displayFilters"], displayFilters);
       set(this.filters, [cycleId, "displayProperties"], displayProperties);
       set(this.filters, [cycleId, "kanbanFilters"], kanbanFilters);
     });
   };
 
-  updateFilters = async (
-    workspaceSlug: string,
-    projectId: string,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    cycleId: string
+  /**
+   * NOTE: This method is designed as a fallback function for the work item filter store.
+   * Only use this method directly when initializing filter instances.
+   * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
+   */
+  updateFilterExpression: ICycleIssuesFilter["updateFilterExpression"] = async (
+    workspaceSlug,
+    projectId,
+    cycleId,
+    filters
   ) => {
     try {
-      if (isEmpty(this.filters) || isEmpty(this.filters[cycleId]) || isEmpty(filters)) return;
+      runInAction(() => {
+        set(this.filters, [cycleId, "richFilters"], filters);
+      });
+
+      this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation", cycleId);
+      await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+        rich_filters: filters,
+      });
+    } catch (error) {
+      console.log("error while updating rich filters", error);
+      throw error;
+    }
+  };
+
+  updateFilters: ICycleIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters, cycleId) => {
+    try {
+      if (isEmpty(this.filters) || isEmpty(this.filters[cycleId])) return;
 
       const _filters = {
-        filters: this.filters[cycleId].filters as IIssueFilterOptions,
+        richFilters: this.filters[cycleId].richFilters as TWorkItemFilterExpression,
         displayFilters: this.filters[cycleId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[cycleId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[cycleId].kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS: {
-          const updatedFilters = filters as IIssueFilterOptions;
-          _filters.filters = { ..._filters.filters, ...updatedFilters };
-
-          runInAction(() => {
-            Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [cycleId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-            });
-          });
-
-          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            "mutation",
-            cycleId
-          );
-          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
-            filters: _filters.filters,
-          });
-          break;
-        }
         case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };

@@ -34,6 +34,14 @@ from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 
 
+def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
+    if not data:
+        return set()
+    if primary_key in data:
+        return {str(x) for x in data.get(primary_key, [])}
+    return {str(x) for x in data.get(fallback_key, [])}
+
+
 # Track Changes in name
 def track_name(
     requested_data,
@@ -116,17 +124,31 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("parent_id") != requested_data.get("parent_id"):
+    current_parent_id = current_instance.get("parent_id") or current_instance.get(
+        "parent"
+    )
+    requested_parent_id = requested_data.get("parent_id") or requested_data.get(
+        "parent"
+    )
+
+    # Validate UUIDs before database queries
+    if current_parent_id is not None and not is_valid_uuid(current_parent_id):
+        return
+    if requested_parent_id is not None and not is_valid_uuid(requested_parent_id):
+        return
+
+    if current_parent_id != requested_parent_id:
         old_parent = (
-            Issue.objects.filter(pk=current_instance.get("parent_id")).first()
-            if current_instance.get("parent_id") is not None
+            Issue.objects.filter(pk=current_parent_id).first()
+            if current_parent_id is not None
             else None
         )
         new_parent = (
-            Issue.objects.filter(pk=requested_data.get("parent_id")).first()
-            if requested_data.get("parent_id") is not None
+            Issue.objects.filter(pk=requested_parent_id).first()
+            if requested_parent_id is not None
             else None
         )
+
 
         issue_activities.append(
             IssueActivity(
@@ -193,23 +215,31 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("state_id") != requested_data.get("state_id"):
-        new_state = State.objects.get(pk=requested_data.get("state_id", None))
-        old_state = State.objects.get(pk=current_instance.get("state_id", None))
+    current_state_id = current_instance.get("state_id") or current_instance.get("state")
+    requested_state_id = requested_data.get("state_id") or requested_data.get("state")
+
+    if current_state_id is not None and not is_valid_uuid(current_state_id):
+        current_state_id = None
+    if requested_state_id is not None and not is_valid_uuid(requested_state_id):
+        requested_state_id = None
+
+    if current_state_id != requested_state_id:
+        new_state = State.objects.filter(pk=requested_state_id, project_id=project_id).first()
+        old_state = State.objects.filter(pk=current_state_id, project_id=project_id).first()
 
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_state.name,
-                new_value=new_state.name,
+                old_value=old_state.name if old_state else None,
+                new_value=new_state.name if new_state else None,
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the state to",
-                old_identifier=old_state.id,
-                new_identifier=new_state.id,
+                old_identifier=old_state.id if old_state else None,
+                new_identifier=new_state.id if new_state else None,
                 epoch=epoch,
             )
         )
@@ -298,8 +328,10 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
-    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
+
+    # Labels
+    requested_labels = extract_ids(requested_data, "label_ids", "labels")
+    current_labels = extract_ids(current_instance, "label_ids", "labels")
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -364,16 +396,9 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = (
-        set([str(asg) for asg in requested_data.get("assignee_ids", [])])
-        if requested_data is not None
-        else set()
-    )
-    current_assignees = (
-        set([str(asg) for asg in current_instance.get("assignee_ids", [])])
-        if current_instance is not None
-        else set()
-    )
+    # Assignees
+    requested_assignees = extract_ids(requested_data, "assignee_ids", "assignees")
+    current_assignees = extract_ids(current_instance, "assignee_ids", "assignees")
 
     added_assignees = requested_assignees - current_assignees
     dropped_assginees = current_assignees - requested_assignees
@@ -631,6 +656,11 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        # External endpoint keys
+        "parent": track_parent,
+        "state": track_state,
+        "assignees": track_assignees,
+        "labels": track_labels,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None

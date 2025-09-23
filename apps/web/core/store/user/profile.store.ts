@@ -168,7 +168,13 @@ export class ProfileStore implements IUserProfileStore {
       // update user onboarding status
       await this.userService.updateUserOnBoard();
 
-      // update the user profile store
+      // Wait for user settings to be refreshed with cache-busting before updating onboarding status
+      await Promise.all([
+        this.fetchUserProfile(),
+        this.store.user.userSettings.fetchCurrentUserSettings(true), // Cache-busting enabled
+      ]);
+
+      // Only after settings are refreshed, update the user profile store to mark as onboarded
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });

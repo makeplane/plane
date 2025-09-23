@@ -4,12 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { IProjectView } from "@plane/types";
+import { EIssuesStoreType, IProjectView } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 // local imports
@@ -30,6 +32,10 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const router = useAppRouter();
   // store hooks
   const { createView, updateView } = useProjectView();
+  const {
+    issuesFilter: { mutateFilters },
+  } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+  const { resetExpression } = useWorkItemFilters();
 
   const handleClose = () => {
     onClose();
@@ -66,7 +72,9 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
 
   const handleUpdateView = async (payload: IProjectView) => {
     await updateView(workspaceSlug, projectId, data?.id as string, payload)
-      .then(() => {
+      .then((viewDetails) => {
+        mutateFilters(workspaceSlug, viewDetails.id, viewDetails);
+        resetExpression(EIssuesStoreType.PROJECT_VIEW, viewDetails.id, viewDetails.rich_filters);
         handleClose();
         captureSuccess({
           eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
@@ -106,6 +114,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
         handleClose={handleClose}
         handleFormSubmit={handleFormSubmit}
         preLoadedData={preLoadedData}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
       />
     </ModalCore>
   );
