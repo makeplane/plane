@@ -4,7 +4,19 @@ import base64
 from datetime import datetime, timedelta
 
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Subquery, Count, F, Func, Max
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Subquery,
+    Count,
+    F,
+    Func,
+    Max,
+    Case,
+    When,
+    IntegerField,
+)
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -548,6 +560,42 @@ class WorkspacePageViewSet(BaseViewSet):
 
         serializer = WorkspacePageLiteSerializer(ordered_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def summary(self, request, slug):
+        user_pages = PageUser.objects.filter(
+            user_id=request.user.id,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
+
+        queryset = (
+            Page.objects.filter(workspace__slug=slug, is_global=True)
+            .filter(parent__isnull=True)
+            .filter(moved_to_page__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0) | Q(id__in=user_pages))
+            .distinct()
+        )
+
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            private_pages=Count(
+                Case(
+                    When(access=Page.PRIVATE_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
+        )
+
+        return Response(stats, status=status.HTTP_200_OK)
 
 
 class WorkspacePageDuplicateEndpoint(BaseAPIView):

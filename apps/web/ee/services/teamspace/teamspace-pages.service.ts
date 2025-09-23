@@ -2,6 +2,7 @@
 import { API_BASE_URL } from "@plane/constants";
 // plane types
 import { TPage, TDocumentPayload } from "@plane/types";
+import { type TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
 // helpers;
 import { APIService } from "@/services/api.service";
 
@@ -299,6 +300,17 @@ export class TeamspacePageService extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/move`, {
       teamspace_id: newTeamspaceId,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchPagesSummary(
+    workspaceSlug: string,
+    teamspaceId: string
+  ): Promise<Omit<TTeamspacePagesSummary, "private_pages">> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages-summary/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

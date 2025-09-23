@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // types
-import { TDocumentPayload, TIssuePage, TPage } from "@plane/types";
+import { TDocumentPayload, TIssuePage, TPage, TPagesSummary } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -12,6 +12,14 @@ export class WorkspacePageService extends APIService {
 
   async fetchAll(workspaceSlug: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchPagesSummary(workspaceSlug: string): Promise<TPagesSummary> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages-summary/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

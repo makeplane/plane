@@ -35,6 +35,11 @@ urlpatterns = [
         name="workspace-pages",
     ),
     path(
+        "workspaces/<str:slug>/pages-summary/",
+        WorkspacePageViewSet.as_view({"get": "summary"}),
+        name="api-pages-bulk-operation",
+    ),
+    path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/",
         WorkspacePageViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
@@ -184,6 +189,11 @@ urlpatterns = [
         name="project-pages",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages-summary/",
+        PageExtendedViewSet.as_view({"get": "summary"}),
+        name="api-pages-bulk-operation",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
         PageExtendedViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
@@ -216,7 +226,9 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/description/",
-        PagesDescriptionExtendedViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        PagesDescriptionExtendedViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update"}
+        ),
         name="page-description",
     ),
     path(

@@ -115,3 +115,9 @@ export type TIssuePage = Pick<TPage, "name" | "logo_props"> & {
   updated_at?: string;
   access: EPageAccess;
 };
+
+export type TPagesSummary = {
+  public_pages: number;
+  private_pages: number;
+  archived_pages: number;
+};

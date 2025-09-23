@@ -20,6 +20,7 @@ from .page import (
     TeamspacePageDuplicateEndpoint,
     TeamspaceSubPageEndpoint,
     TeamspaceParentPageEndpoint,
+    TeamspacePageSummaryEndpoint,
 )
 from .issue import TeamspaceIssueEndpoint, TeamspaceUserPropertiesEndpoint
 from .activity import TeamspaceActivityEndpoint

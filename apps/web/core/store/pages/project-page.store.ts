@@ -3,7 +3,7 @@ import { makeObservable, observable, runInAction, action, reaction, computed } f
 import { computedFn } from "mobx-utils";
 // types
 import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web store
@@ -32,6 +32,7 @@ export interface IProjectPageStore {
   data: Record<string, TProjectPage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  pagesSummary: TPagesSummary | undefined;
   // page type arrays
   publicPageIds: string[];
   privatePageIds: string[];
@@ -113,6 +114,7 @@ export class ProjectPageStore implements IProjectPageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  pagesSummary: TPagesSummary | undefined = undefined;
   // page type arrays
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
@@ -139,6 +141,7 @@ export class ProjectPageStore implements IProjectPageStore {
       data: observable,
       error: observable,
       filters: observable,
+      pagesSummary: observable,
       // page type arrays
       publicPageIds: observable,
       privatePageIds: observable,
@@ -253,7 +256,14 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   get isAnyPageAvailable() {
     if (this.loader) return true;
-    return Object.keys(this.data).length > 0;
+
+    if (this.pagesSummary) {
+      const totalCount =
+        this.pagesSummary.public_pages + this.pagesSummary.private_pages + this.pagesSummary.archived_pages;
+      return totalCount > 0;
+    }
+
+    return false;
   }
 
   /**
@@ -568,8 +578,12 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.service.fetchPagesSummary(workspaceSlug, projectId);
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
+
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const existingPage = this.getPageById(page.id);
@@ -609,8 +623,12 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.service.fetchPagesSummary(workspaceSlug, projectId);
       const pages = await this.service.fetchPagesByType(workspaceSlug, projectId, pageType, searchQuery);
+
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);

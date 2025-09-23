@@ -3,7 +3,7 @@ import { observable, action, makeObservable, runInAction, computed, reaction } f
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { TPageFilters, TPage, TPageNavigationTabs } from "@plane/types";
+import { TPageFilters, TPage, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
@@ -15,6 +15,7 @@ import { TTeamspacePage, TeamspacePage } from "./teamspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 type TError = { title: string; description: string };
+export type TTeamspacePagesSummary = Omit<TPagesSummary, "private_pages">;
 
 export interface ITeamspacePageStore {
   // observables
@@ -22,6 +23,7 @@ export interface ITeamspacePageStore {
   data: Record<string, TTeamspacePage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  pagesSummary: TTeamspacePagesSummary | undefined;
   // page type arrays
   publicPageIds: string[];
   archivedPageIds: string[];
@@ -93,6 +95,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  pagesSummary: TTeamspacePagesSummary | undefined = undefined;
   // page type arrays
   publicPageIds: string[] = [];
   archivedPageIds: string[] = [];
@@ -116,6 +119,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       data: observable,
       error: observable,
       filters: observable,
+      pagesSummary: observable,
       // page type arrays
       publicPageIds: observable,
       archivedPageIds: observable,
@@ -226,7 +230,13 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    */
   get isAnyPageAvailable() {
     if (this.loader) return true;
-    return Object.keys(this.data).length > 0;
+
+    if (this.pagesSummary) {
+      const totalCount = this.pagesSummary.public_pages + this.pagesSummary.archived_pages;
+      return totalCount > 0;
+    }
+
+    return false;
   }
 
   /**
@@ -528,8 +538,10 @@ export class TeamspacePageStore implements ITeamspacePageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.teamspacePageService.fetchPagesSummary(workspaceSlug, teamspaceId);
       const pages = await this.teamspacePageService.fetchAll(workspaceSlug, teamspaceId);
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
         for (const page of pages) {
           if (page?.id) {
             const existingPage = this.getPageById(page.id);
@@ -569,9 +581,12 @@ export class TeamspacePageStore implements ITeamspacePageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.teamspacePageService.fetchPagesSummary(workspaceSlug, teamspaceId);
       const pages = await this.teamspacePageService.fetchPagesByType(workspaceSlug, teamspaceId, pageType, searchQuery);
 
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);

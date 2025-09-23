@@ -5,7 +5,20 @@ import base64
 from datetime import datetime
 
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField, Subquery, Func, F, Count
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    UUIDField,
+    Subquery,
+    Func,
+    F,
+    Count,
+    Case,
+    When,
+    IntegerField,
+)
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -365,6 +378,49 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
+    permission_classes = [TeamspacePermission]
+
+    def get(self, request, slug, team_space_id):
+        user_pages = PageUser.objects.filter(
+            workspace__slug=slug,
+            user_id=request.user.id,
+        ).values_list("page_id", flat=True)
+
+        queryset = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(parent__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0) | Q(id__in=user_pages))
+            .annotate(
+                teamspace=Exists(
+                    TeamspacePage.objects.filter(
+                        page_id=OuterRef("id"),
+                        team_space_id=team_space_id,
+                        workspace__slug=slug,
+                    )
+                )
+            )
+            .filter(teamspace=True)
+            .distinct()
+        )
+
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
+        )
+
+        return Response(stats, status=status.HTTP_200_OK)
 
 
 class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):

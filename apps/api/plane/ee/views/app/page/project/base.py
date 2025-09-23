@@ -14,6 +14,9 @@ from django.db.models import (
     F,
     Count,
     Subquery,
+    Case,
+    When,
+    IntegerField,
 )
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -655,6 +658,68 @@ class PageExtendedViewSet(BaseViewSet):
 
         serializer = PageLiteSerializer(ordered_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def summary(self, request, slug, project_id):
+        user_pages = PageUser.objects.filter(
+            user_id=request.user.id,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
+
+        queryset = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+            )
+            .filter(moved_to_page__isnull=True)
+            .filter(parent__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0) | Q(id__in=user_pages))
+            .annotate(
+                project=Exists(
+                    ProjectPage.objects.filter(
+                        page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
+                    )
+                )
+            )
+            .filter(project=True)
+            .distinct()
+        )
+
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
+
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            private_pages=Count(
+                Case(
+                    When(access=Page.PRIVATE_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
+        )
+
+        return Response(stats, status=status.HTTP_200_OK)
 
 
 class PageFavoriteExtendedViewSet(BaseViewSet):

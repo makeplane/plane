@@ -28,6 +28,7 @@ from plane.ee.views.app.teamspace import (
     AddTeamspaceProjectEndpoint,
     TeamspaceSubPageEndpoint,
     TeamspaceParentPageEndpoint,
+    TeamspacePageSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -78,6 +79,11 @@ urlpatterns = [
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/",
         TeamspacePageEndpoint.as_view(),
         name="teamspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages-summary/",
+        TeamspacePageSummaryEndpoint.as_view(),
+        name="teamspace-pages-summary",
     ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/",
