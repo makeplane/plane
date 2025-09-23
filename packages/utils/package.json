@@ -35,9 +35,6 @@
     "tlds": "1.259.0",
     "uuid": "catalog:"
   },
-  "peerDependencies": {
-    "lodash": "catalog:"
-  },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",

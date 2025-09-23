@@ -3,6 +3,8 @@
   "compilerOptions": {
     "jsx": "react",
     "lib": ["esnext", "dom"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["./src/*"]
     }

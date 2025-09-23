@@ -4,6 +4,7 @@
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

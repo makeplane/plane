@@ -4,6 +4,7 @@
   "license": "AGPL-3.0",
   "description": "Shared state shared across multiple apps internally",
   "private": true,
+  "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
