@@ -42,6 +42,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
 
+
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
     sql = """
@@ -185,7 +186,9 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -266,7 +269,9 @@ class PageViewSet(BaseViewSet):
             and page.owned_by_id != request.user.id
         ):
             return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -391,6 +396,35 @@ class PageViewSet(BaseViewSet):
             entity_name="page",
         ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def summary(self, request, slug, project_id):
+        queryset = self.get_queryset()
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
+
+        return Response(
+            {
+                "public_pages": queryset.filter(
+                    access=Page.PUBLIC_ACCESS,
+                ).count(),
+                "private_pages": queryset.filter(
+                    access=Page.PRIVATE_ACCESS,
+                ).count(),
+                "archived_pages": queryset.filter(
+                    archived_at__isnull=False,
+                ).count(),
+            }
+        )
 
 
 class PageFavoriteViewSet(BaseViewSet):
