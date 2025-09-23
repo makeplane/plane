@@ -204,7 +204,7 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               zIndex: 100,
             }}
           >
-            <RowOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
+            <RowOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
           </div>
         </FloatingPortal>
       )}

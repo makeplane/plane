@@ -205,7 +205,7 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
               zIndex: 100,
             }}
           >
-            <ColumnOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
+            <ColumnOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
           </div>
         </FloatingPortal>
       )}
