@@ -102,9 +102,9 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     workspaceSlug,
   } = props;
   // states
-  const [localDescription, setLocalDescription] = useState({
+  const [localDescription, setLocalDescription] = useState<TFormData>({
     id: entityId,
-    description_html: initialValue,
+    description_html: initialValue?.trim() ?? "",
   });
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
@@ -119,14 +119,14 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   const { handleSubmit, reset, control } = useForm<TFormData>({
     defaultValues: {
       id: entityId,
-      description_html: initialValue || "",
+      description_html: initialValue?.trim() ?? "",
     },
   });
 
   // submit handler
   const handleDescriptionFormSubmit = useCallback(
     async (formData: TFormData) => {
-      await onSubmit(formData.description_html ?? "<p></p>");
+      await onSubmit(formData.description_html);
     },
     [onSubmit]
   );
@@ -136,11 +136,11 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     if (!entityId) return;
     reset({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : initialValue,
+      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
     });
     setLocalDescription({
       id: entityId,
-      description_html: initialValue?.trim() === "" ? "<p></p>" : initialValue,
+      description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
     });
     // Reset unsaved changes flag when form is reset
     hasUnsavedChanges.current = false;
@@ -151,10 +151,12 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => {
-        setIsSubmitting("submitted");
-        hasUnsavedChanges.current = false;
-      });
+      handleSubmit(handleDescriptionFormSubmit)()
+        .catch((error) => console.error(`Failed to save description for ${entityId}:`, error))
+        .finally(() => {
+          setIsSubmitting("submitted");
+          hasUnsavedChanges.current = false;
+        });
     }, 1500),
     [entityId, handleSubmit]
   );
