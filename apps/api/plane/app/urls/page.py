@@ -11,6 +11,11 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages-summary/",
+        PageViewSet.as_view({"get": "summary"}),
+        name="project-pages-summary",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
         PageViewSet.as_view({"get": "list", "post": "create"}),
         name="project-pages",
