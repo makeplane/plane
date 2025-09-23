@@ -13,11 +13,13 @@ import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store
+import { IProjectStore } from "@/store/project/project.store";
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
 // local imports
-import { IProjectStore } from "../project/project.store";
-import { IMemberRootStore } from ".";
+import { IMemberRootStore } from "../index";
+import { sortProjectMembers } from "../utils";
+import { ProjectMemberFiltersStore, IProjectMemberFiltersStore } from "./project-member-filters.store";
 
 export interface IProjectMemberDetails extends Omit<TProjectMembership, "member"> {
   member: IUserLite;
@@ -31,12 +33,15 @@ export interface IBaseProjectMemberStore {
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   };
+  // filters store
+  filters: IProjectMemberFiltersStore;
   // computed
   projectMemberIds: string[] | null;
   // computed actions
   getProjectMemberFetchStatus: (projectId: string) => boolean;
   getProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
   getProjectMemberIds: (projectId: string, includeGuestUsers: boolean) => string[] | null;
+  getFilteredProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
   // fetch actions
   fetchProjectMembers: (
     workspaceSlug: string,
@@ -67,6 +72,8 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   } = {};
+  // filters store
+  filters: IProjectMemberFiltersStore;
   // stores
   routerStore: IRouterStore;
   userStore: IUserStore;
@@ -88,31 +95,40 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
       updateMemberRole: action,
       removeMemberFromProject: action,
     });
-
     // root store
     this.rootStore = _rootStore;
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
     this.projectRoot = _rootStore.projectRoot.project;
+    this.filters = new ProjectMemberFiltersStore();
     // services
     this.projectMemberService = new ProjectMemberService();
   }
 
   /**
    * @description get the list of all the user ids of all the members of the current project
+   * Returns filtered and sorted member IDs based on current filters
    */
   get projectMemberIds() {
     const projectId = this.routerStore.projectId;
     if (!projectId) return null;
-    let members = Object.values(this.projectMemberMap?.[projectId] ?? {});
+
+    const members = Object.values(this.projectMemberMap?.[projectId] ?? {});
     if (members.length === 0) return null;
-    members = sortBy(members, [
-      (m) => m.member !== this.userStore.data?.id,
-      (m) => this.memberRoot.memberMap?.[m.member]?.display_name.toLowerCase(),
-    ]);
-    const memberIds = members.map((m) => m.member);
-    return memberIds;
+
+    // Access the filters directly to ensure MobX tracking
+    const currentFilters = this.filters.filtersMap[projectId];
+
+    // Apply filters and sorting directly here to ensure MobX tracking
+    const sortedMembers = sortProjectMembers(
+      members,
+      this.memberRoot?.memberMap || {},
+      (member) => member.member,
+      currentFilters
+    );
+
+    return sortedMembers.map((member) => member.member);
   }
 
   /**
@@ -200,6 +216,41 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     ]);
     const memberIds = members.map((m) => m.member);
     return memberIds;
+  });
+
+  /**
+   * @description get the filtered project member details for a specific user
+   * @param userId
+   * @param projectId
+   */
+  getFilteredProjectMemberDetails = computedFn((userId: string, projectId: string) => {
+    const projectMember = this.getProjectMembershipByUserId(userId, projectId);
+    const userDetails = this.memberRoot?.memberMap?.[projectMember?.member];
+    if (!projectMember || !userDetails) return null;
+
+    // Check if this member passes the current filters
+    const allMembers = this.getProjectMemberships(projectId);
+    const filteredMemberIds = this.filters.getFilteredMemberIds(
+      allMembers,
+      this.memberRoot?.memberMap || {},
+      (member) => member.member,
+      projectId
+    );
+
+    // Return null if this user doesn't pass the filters
+    if (!filteredMemberIds.includes(userId)) return null;
+
+    const memberDetails: IProjectMemberDetails = {
+      id: projectMember.id,
+      role: projectMember.role,
+      original_role: projectMember.original_role,
+      member: {
+        ...userDetails,
+        joining_date: projectMember.created_at ?? undefined,
+      },
+      created_at: projectMember.created_at,
+    };
+    return memberDetails;
   });
 
   /**

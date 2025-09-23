@@ -2,8 +2,12 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { renderFormattedDate } from "@plane/utils";
+import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { IMemberFilters } from "@/store/member/utils";
 
 export const useMemberColumns = () => {
   // states
@@ -13,25 +17,34 @@ export const useMemberColumns = () => {
 
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const {
+    workspace: {
+      filtersStore: { filters, updateFilters },
+    },
+  } = useMember();
   const { t } = useTranslation();
-
-  const getFormattedDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString("en-US", options);
-  };
 
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const isSuspended = (rowData: RowData) => rowData.is_active === false;
+  // handlers
+  const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
+    updateFilters(filterUpdates);
+  };
 
   const columns = [
     {
       key: "Full name",
       content: t("workspace_settings.settings.members.details.full_name"),
       thClassName: "text-left",
+      thRender: () => (
+        <MemberHeaderColumn
+          property="full_name"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
@@ -51,6 +64,13 @@ export const useMemberColumns = () => {
           {rowData.member.display_name}
         </div>
       ),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="display_name"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
     },
 
     {
@@ -61,11 +81,25 @@ export const useMemberColumns = () => {
           {rowData.member.email}
         </div>
       ),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="email"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
     },
 
     {
       key: "Account type",
       content: t("workspace_settings.settings.members.details.account_type"),
+      thRender: () => (
+        <MemberHeaderColumn
+          property="role"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
       tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
     },
 
@@ -82,7 +116,14 @@ export const useMemberColumns = () => {
       key: "Joining date",
       content: t("workspace_settings.settings.members.details.joining_date"),
       tdRender: (rowData: RowData) =>
-        isSuspended(rowData) ? null : <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
+        isSuspended(rowData) ? null : <div>{renderFormattedDate(rowData?.member?.joining_date)}</div>,
+      thRender: () => (
+        <MemberHeaderColumn
+          property="joining_date"
+          displayFilters={filters}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        />
+      ),
     },
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };

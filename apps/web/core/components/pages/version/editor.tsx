@@ -3,8 +3,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
 import type { JSONContent, TPageVersion } from "@plane/types";
-import { isJSONContentEmpty } from "@plane/utils";
 import { Loader } from "@plane/ui";
+import { isJSONContentEmpty } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
