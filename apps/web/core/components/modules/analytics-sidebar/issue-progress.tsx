@@ -1,14 +1,13 @@
 "use client";
 
-import { FC, Fragment, useCallback, useMemo, useState } from "react";
-import isEqual from "lodash/isEqual";
+import { FC, Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EIssueFilterType, EEstimateSystem } from "@plane/constants";
+import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, IIssueFilterOptions, TModulePlotType } from "@plane/types";
+import { EIssuesStoreType, TModulePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
 // constants
@@ -18,8 +17,8 @@ import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useModule } from "@/hooks/store/use-module";
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web constants
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;
@@ -38,31 +37,30 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   // router
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule") || undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
   const { getPlotTypeByModuleId, setPlotType, getModuleById, fetchModuleDetails, fetchArchivedModuleDetails } =
     useModule();
-  const {
-    issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.MODULE);
+  const { getFilter, updateFilterValueFromSidebar } = useWorkItemFilters();
   // state
   const [loader, setLoader] = useState(false);
-
-  const { t } = useTranslation();
-
   // derived values
+  const moduleFilter = getFilter(EIssuesStoreType.MODULE, moduleId);
+  const selectedAssignees = moduleFilter?.findFirstConditionByPropertyAndOperator("assignee_id", "in");
+  const selectedLabels = moduleFilter?.findFirstConditionByPropertyAndOperator("label_id", "in");
+  const selectedStateGroups = moduleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");
   const moduleDetails = getModuleById(moduleId);
   const plotType: TModulePlotType = getPlotTypeByModuleId(moduleId);
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
-
   const completedIssues = moduleDetails?.completed_issues || 0;
   const totalIssues = moduleDetails?.total_issues || 0;
   const completedEstimatePoints = moduleDetails?.completed_estimate_points || 0;
   const totalEstimatePoints = moduleDetails?.total_estimate_points || 0;
-
   const progressHeaderPercentage = moduleDetails
     ? plotType === "points"
       ? completedEstimatePoints != 0 && totalEstimatePoints != 0
@@ -72,11 +70,9 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
         ? Math.round((completedIssues / totalIssues) * 100)
         : 0
     : 0;
-
   const chartDistributionData =
     plotType === "points" ? moduleDetails?.estimate_distribution : moduleDetails?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
-
   const groupedIssues = useMemo(
     () => ({
       backlog: plotType === "points" ? moduleDetails?.backlog_estimate_points || 0 : moduleDetails?.backlog_issues || 0,
@@ -90,7 +86,6 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
     }),
     [plotType, moduleDetails]
   );
-
   const moduleStartDate = getDate(moduleDetails?.start_date);
   const moduleEndDate = getDate(moduleDetails?.target_date);
   const isModuleStartDateValid = moduleStartDate && moduleStartDate <= new Date();
@@ -115,37 +110,6 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
       setPlotType(moduleId, plotType);
     }
   };
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-
-      let newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        if (key === "state") {
-          if (isEqual(newValues, value)) newValues = [];
-          else newValues = value;
-        } else {
-          value.forEach((val) => {
-            if (!newValues.includes(val)) newValues.push(val);
-            else newValues.splice(newValues.indexOf(val), 1);
-          });
-        }
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        moduleId
-      );
-    },
-    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
-  );
 
   if (!moduleDetails) return <></>;
   return (
@@ -234,15 +198,23 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                 {chartDistributionData && (
                   <div className="w-full border-t border-custom-border-200 pt-5">
                     <ModuleProgressStats
-                      moduleId={moduleId}
-                      plotType={plotType}
                       distribution={chartDistributionData}
                       groupedIssues={groupedIssues}
-                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                      isEditable={Boolean(!peekModule)}
+                      handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+                        updateFilterValueFromSidebar,
+                        EIssuesStoreType.MODULE,
+                        moduleId
+                      )}
+                      isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
+                      moduleId={moduleId}
+                      plotType={plotType}
+                      selectedFilters={{
+                        assignees: selectedAssignees,
+                        labels: selectedLabels,
+                        stateGroups: selectedStateGroups,
+                      }}
                       size="xs"
-                      filters={issueFilters}
-                      handleFiltersUpdate={handleFiltersUpdate}
+                      totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                     />
                   </div>
                 )}

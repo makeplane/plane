@@ -1,5 +1,5 @@
 import { useTranslation } from "@plane/i18n";
-import { TabsList, TabsTrigger } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 // plane imports
 // plane web components
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
@@ -9,12 +9,12 @@ export const PageNavigationPaneTabsList = () => {
   const { t } = useTranslation();
 
   return (
-    <TabsList aria-label="Page navigation tabs">
+    <Tabs.List aria-label="Page navigation tabs">
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <TabsTrigger key={tab.key} value={tab.key} type="button">
+        <Tabs.Trigger key={tab.key} value={tab.key} type="button">
           {t(tab.i18n_label)}
-        </TabsTrigger>
+        </Tabs.Trigger>
       ))}
-    </TabsList>
+    </Tabs.List>
   );
 };

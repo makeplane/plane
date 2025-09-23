@@ -1,3 +1,7 @@
+# Django imports
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
+
 # Python imports
 from urllib.parse import urlparse
 
@@ -37,6 +41,25 @@ def _contains_suspicious_patterns(path: str) -> bool:
             return True
     
     return False
+
+
+def get_allowed_hosts() -> list[str]:
+    """Get the allowed hosts from the settings."""
+    base_origin = settings.WEB_URL or settings.APP_BASE_URL
+
+    allowed_hosts = []
+    if base_origin:
+        host = urlparse(base_origin).netloc
+        allowed_hosts.append(host)
+    if settings.ADMIN_BASE_URL:
+        # Get only the host
+        host = urlparse(settings.ADMIN_BASE_URL).netloc
+        allowed_hosts.append(host)
+    if settings.SPACE_BASE_URL:
+        # Get only the host
+        host = urlparse(settings.SPACE_BASE_URL).netloc
+        allowed_hosts.append(host)
+    return allowed_hosts
 
 
 def validate_next_path(next_path: str) -> str:
@@ -84,15 +107,37 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     Returns:
         str: The safe redirect URL
     """
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode, quote
 
     # Validate the next path
     validated_path = validate_next_path(next_path)
-    
+
+    # Add the next path to the parameters
+    base_url = base_url.rstrip('/')
+
+    # Prepare the query parameters
+    query_parts = []
+    encoded_params = ""
+
     # Add the next path to the parameters
     if validated_path:
-        params["next_path"] = validated_path
+        query_parts.append(f"next_path={validated_path}")
 
-    # Return the safe redirect URL
-    return f"{base_url.rstrip('/')}?{urlencode(params)}"
+    # Add additional parameters
+    if params:
+        encoded_params = urlencode(params)
+        query_parts.append(encoded_params)
+
+    # Construct the url query string
+    if query_parts:
+        query_string = "&".join(query_parts)
+        url = f"{base_url}/?{query_string}"
+    else:
+        url = base_url
+
+    # Check if the URL is allowed
+    if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
+        return url
     
+    # Return the base URL if the URL is not allowed
+    return base_url + (f"?{encoded_params}" if encoded_params else "")

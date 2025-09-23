@@ -1,13 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-
 // icons
 import { X } from "lucide-react";
+// plane imports
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
-// types
 
 type Props = {
   handleRemove: (val: string) => void;

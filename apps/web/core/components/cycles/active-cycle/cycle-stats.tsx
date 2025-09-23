@@ -7,9 +7,10 @@ import { CalendarCheck } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
+import { TWorkItemFilterCondition } from "@plane/shared-state";
+import { EIssuesStoreType, ICycle } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
@@ -34,7 +35,7 @@ export type ActiveCycleStatsProps = {
   projectId: string;
   cycle: ICycle | null;
   cycleId?: string | null;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
   cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
@@ -86,19 +87,19 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tabs value={tab || "Assignees"} onValueChange={handleTabChange} className="flex flex-col w-full h-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="Priority-Issues" size="sm">
+        <Tabs.List className="w-full">
+          <Tabs.Trigger value="Priority-Issues" size="sm">
             {t("project_cycles.active_cycle.priority_issue")}
-          </TabsTrigger>
-          <TabsTrigger value="Assignees" size="sm">
+          </Tabs.Trigger>
+          <Tabs.Trigger value="Assignees" size="sm">
             {t("project_cycles.active_cycle.assignees")}
-          </TabsTrigger>
-          <TabsTrigger value="Labels" size="sm">
+          </Tabs.Trigger>
+          <Tabs.Trigger value="Labels" size="sm">
             {t("project_cycles.active_cycle.labels")}
-          </TabsTrigger>
-        </TabsList>
+          </Tabs.Trigger>
+        </Tabs.List>
 
-        <TabsContent value="Priority-Issues" className="flex-1 mt-4">
+        <Tabs.Content value="Priority-Issues" className="flex-1 mt-4">
           <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             <div
               ref={issuesContainerRef}
@@ -124,7 +125,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                                 issueId: issue.id,
                                 isArchived: !!issue.archived_at,
                               });
-                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                              handleFiltersUpdate([
+                                { property: "priority", operator: "in", value: ["urgent", "high"] },
+                              ]);
                             }
                           }}
                         >
@@ -188,9 +191,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )}
             </div>
           </div>
-        </TabsContent>
+        </Tabs.Content>
 
-        <TabsContent value="Assignees" className="flex-1 mt-4">
+        <Tabs.Content value="Assignees" className="flex-1 mt-4">
           <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -213,7 +216,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         total={assignee.total_issues}
                         onClick={() => {
                           if (assignee.assignee_id) {
-                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
+                            handleFiltersUpdate([
+                              { property: "assignee_id", operator: "in", value: [assignee.assignee_id] },
+                            ]);
                           }
                         }}
                       />
@@ -247,9 +252,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               loaders
             )}
           </div>
-        </TabsContent>
+        </Tabs.Content>
 
-        <TabsContent value="Labels" className="flex-1 mt-4">
+        <Tabs.Content value="Labels" className="flex-1 mt-4">
           <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
@@ -269,11 +274,15 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     }
                     completed={label.completed_issues}
                     total={label.total_issues}
-                    onClick={() => {
-                      if (label.label_id) {
-                        handleFiltersUpdate("labels", [label.label_id], true);
-                      }
-                    }}
+                    onClick={
+                      label.label_id
+                        ? () => {
+                            if (label.label_id) {
+                              handleFiltersUpdate([{ property: "label_id", operator: "in", value: [label.label_id] }]);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                 ))
               ) : (
@@ -285,7 +294,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               loaders
             )}
           </div>
-        </TabsContent>
+        </Tabs.Content>
       </Tabs>
     </div>
   ) : (

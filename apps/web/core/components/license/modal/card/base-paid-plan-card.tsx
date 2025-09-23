@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 // plane imports
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 // helpers
 import { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { getSubscriptionBackgroundColor, getUpgradeCardVariantStyle } from "@plane/ui";
@@ -42,21 +42,21 @@ export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => 
     <div className={cn("flex flex-col py-6 px-3", upgradeCardVariantStyle)}>
       <div className="flex w-full justify-center">
         <Tabs value={selectedPlan} onValueChange={setSelectedPlan} className="w-full">
-          <TabsList className={cn("w-60 mx-auto mb-2", getSubscriptionBackgroundColor(planVariant, "50"))}>
+          <Tabs.List className={cn("w-60 mx-auto mb-2", getSubscriptionBackgroundColor(planVariant, "50"))}>
             {prices.map((price: TSubscriptionPrice) => (
-              <TabsTrigger key={price.recurring} value={price.recurring} className="text-sm">
+              <Tabs.Trigger key={price.recurring} value={price.recurring} className="text-sm">
                 {renderPriceContent(price)}
-              </TabsTrigger>
+              </Tabs.Trigger>
             ))}
-          </TabsList>
+          </Tabs.List>
 
           {prices.map((price: TSubscriptionPrice) => (
-            <TabsContent key={price.recurring} value={price.recurring} className="px-2 pb-2">
+            <Tabs.Content key={price.recurring} value={price.recurring} className="px-2 pb-2">
               <div className="text-center">
                 <div className="text-xl font-medium">Plane {planeName}</div>
                 {renderActionButton(price)}
               </div>
-            </TabsContent>
+            </Tabs.Content>
           ))}
         </Tabs>
       </div>

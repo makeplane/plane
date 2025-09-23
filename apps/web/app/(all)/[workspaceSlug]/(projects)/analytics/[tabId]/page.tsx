@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 import { TAnalyticsTabsBase } from "@plane/types";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
@@ -75,20 +75,20 @@ const AnalyticsPage = observer((props: Props) => {
             <div className="flex h-full overflow-hidden bg-custom-background-100 justify-between items-center">
               <Tabs value={defaultTab} onValueChange={handleTabChange} className="flex flex-col w-full h-full">
                 <div className="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between">
-                  <TabsList className="my-2 w-auto">
+                  <Tabs.List className="my-2 w-auto">
                     {ANALYTICS_TABS.map((tab) => (
-                      <TabsTrigger key={tab.key} value={tab.key} size="md" className="px-3" disabled={tab.isDisabled}>
+                      <Tabs.Trigger key={tab.key} value={tab.key} size="md" className="px-3" disabled={tab.isDisabled}>
                         {tab.label}
-                      </TabsTrigger>
+                      </Tabs.Trigger>
                     ))}
-                  </TabsList>
+                  </Tabs.List>
                   <AnalyticsFilterActions />
                 </div>
 
                 {ANALYTICS_TABS.map((tab) => (
-                  <TabsContent key={tab.key} value={tab.key} className="h-full overflow-hidden overflow-y-auto px-2">
+                  <Tabs.Content key={tab.key} value={tab.key} className="h-full overflow-hidden overflow-y-auto px-2">
                     <tab.content />
-                  </TabsContent>
+                  </Tabs.Content>
                 ))}
               </Tabs>
             </div>

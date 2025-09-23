@@ -11,7 +11,7 @@ import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 import { EFileAssetType } from "@plane/types";
 import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
@@ -182,20 +182,20 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
             className="flex h-96 w-80 flex-col rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem] overflow-hidden flex-1"
           >
             <Tabs defaultValue={tabOptions[0].key}>
-              <TabsList>
+              <Tabs.List>
                 {tabOptions.map((tab) => {
                   if (!unsplashImages && unsplashError && tab.key === "unsplash") return null;
                   if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images") return null;
 
                   return (
-                    <TabsTrigger key={tab.key} value={tab.key}>
+                    <Tabs.Trigger key={tab.key} value={tab.key}>
                       {tab.title}
-                    </TabsTrigger>
+                    </Tabs.Trigger>
                   );
                 })}
-              </TabsList>
+              </Tabs.List>
 
-              <TabsContent value="unsplash" className="pt-4 h-full overflow-hidden">
+              <Tabs.Content value="unsplash" className="pt-4 h-full overflow-hidden">
                 <div className="flex flex-col h-full">
                   <div className="flex gap-x-2">
                     <Controller
@@ -263,10 +263,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                     </Loader>
                   )}
                 </div>
-              </TabsContent>
+              </Tabs.Content>
 
               {(!projectCoverImages || projectCoverImages.length !== 0) && (
-                <TabsContent value="images" className="pt-4 flex-1 h-full overflow-auto">
+                <Tabs.Content value="images" className="pt-4 flex-1 h-full overflow-auto">
                   {projectCoverImages ? (
                     projectCoverImages.length > 0 ? (
                       <div className="grid grid-cols-4 gap-4">
@@ -302,10 +302,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       <Loader.Item height="80px" width="100%" />
                     </Loader>
                   )}
-                </TabsContent>
+                </Tabs.Content>
               )}
 
-              <TabsContent value="upload" className="pt-4 h-full">
+              <Tabs.Content value="upload" className="pt-4 h-full">
                 <div className="flex h-full w-full flex-col gap-y-2">
                   <div className="flex w-full flex-1 items-center gap-3">
                     <div
@@ -374,7 +374,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                     </Button>
                   </div>
                 </div>
-              </TabsContent>
+              </Tabs.Content>
             </Tabs>
           </div>
         </Popover.Panel>

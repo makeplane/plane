@@ -1,5 +1,5 @@
 import React from "react";
-import { TabsContent } from "@plane/propel/tabs";
+import { Tabs } from "@plane/propel/tabs";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
@@ -23,12 +23,12 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
   return (
     <>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <TabsContent key={tab.key} value={tab.key}>
+        <Tabs.Content key={tab.key} value={tab.key}>
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
           <PageNavigationPaneAdditionalTabPanelsRoot activeTab={tab.key} page={page} />
-        </TabsContent>
+        </Tabs.Content>
       ))}
     </>
   );
