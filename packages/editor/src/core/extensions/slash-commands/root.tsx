@@ -105,7 +105,7 @@ const renderItems: SuggestionOptions["render"] = () => {
       // Remove from active dropdowns
       if (editor) {
         const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
-        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.SLASH_COMMANDS);
         if (index > -1) {
           utilityStorage.activeDropbarExtensions.splice(index, 1);
         }
