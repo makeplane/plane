@@ -202,7 +202,6 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               zIndex: 99,
             }}
             lockScroll
-            data-prevent-outside-click
           />
           <div
             className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
@@ -212,7 +211,6 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               ...floatingStyles,
               zIndex: 100,
             }}
-            data-prevent-outside-click
           >
             <RowOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
           </div>
