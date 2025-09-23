@@ -107,6 +107,7 @@ export type TArtifact = {
       name: string;
       identifier?: string;
     };
+    artifact_sub_type?: string;
   };
   message_id: string;
   action: string;

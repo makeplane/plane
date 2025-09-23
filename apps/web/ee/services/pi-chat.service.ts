@@ -274,7 +274,7 @@ export class PiChatService extends APIService {
 
   // get artifact
   async listArtifacts(chatId: string): Promise<TArtifact[]> {
-    return this.get(`/api/v1/artifacts/chat/${chatId}`)
+    return this.get(`/api/v1/artifacts/chat/${chatId}/`)
       .then((response) => response.data.artifacts)
       .catch((error) => {
         throw error?.response?.data;

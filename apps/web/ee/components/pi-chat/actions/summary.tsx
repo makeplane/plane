@@ -44,11 +44,7 @@ export const SummaryBlock = observer((props: TProps) => {
   };
 
   return (
-    <div
-      className={cn(
-        "flex flex-col rounded-xl bg-custom-background-90  border-custom-border-200 transition-all duration-500 ease-in-out border-[0.5px]"
-      )}
-    >
+    <div className={cn("flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out")}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}

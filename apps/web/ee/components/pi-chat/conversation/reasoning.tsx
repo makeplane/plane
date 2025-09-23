@@ -40,7 +40,7 @@ export const ReasoningBlock = (props: TProps) => {
               "flex items-center gap-2 w-full px-3 transition-all duration-500 ease-in-out hover:border-transparent py-2"
             )}
           >
-            <div className="w-2 h-4 rounded-[1px] bg-black animate-vertical-scale" />
+            <div className="w-2 h-4 rounded-[1px] pi-cursor animate-vertical-scale" />
             <div className="flex gap-2 items-center shimmer">Thinking</div>
           </button>
         )}

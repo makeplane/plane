@@ -116,11 +116,11 @@ export const InputBox = observer((props: TProps) => {
   return (
     <form
       className={cn(
-        "bg-custom-background-90 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-lg w-full",
+        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-lg w-full",
         className
       )}
     >
-      <div className={cn("bg-custom-background-90/60 rounded-xl transition-[max-height] duration-100 max-h-[250px]")}>
+      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100 max-h-[250px]")}>
         {/* Audio Recorder Loader */}
         {SPEECH_LOADERS.includes(loader) && (
           <div className="flex gap-2 p-2 items-center">

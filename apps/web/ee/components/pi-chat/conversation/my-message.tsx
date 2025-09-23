@@ -18,7 +18,7 @@ export const MyMessage = observer((props: TProps) => {
       {!isLoading && (
         <div
           className={cn(
-            "px-3 py-2 pr-10 text-base rounded-xl bg-custom-background-100 w-fit max-w-[75%] border-[0.5px] border-custom-border-200 rounded-tr-none"
+            "px-3 py-2 pr-10 text-base rounded-xl bg-custom-background-90 w-fit max-w-[75%] rounded-tr-none"
           )}
         >
           {/* Message */}

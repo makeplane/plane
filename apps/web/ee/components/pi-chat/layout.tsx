@@ -80,7 +80,7 @@ export const PiChatLayout = observer((props: TProps) => {
 
   if (!isOpen) return <></>;
   return (
-    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-90/60", {})}>
+    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-100")}>
       <div className="flex flex-col flex-1 h-full w-full">
         {/* Header */}
         <Header
