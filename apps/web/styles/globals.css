@@ -1078,9 +1078,9 @@ html.todesktop .header button {
 }
 
 .pi-cursor {
-    background-color: rgb(var(--color-background-100));
-    -webkit-filter: invert(100%);
-    filter: invert(100%);
+  background-color: rgb(var(--color-background-100));
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
 }
 
 /* react-grid-layout */

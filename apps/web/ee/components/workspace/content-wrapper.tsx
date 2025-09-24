@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 import { observer } from "mobx-react";
 // plane imports
 import { useParams, usePathname } from "next/navigation";
@@ -14,6 +13,7 @@ import { AppRailRoot } from "@/plane-web/components/app-rail";
 import { PiChatArtifactsRoot } from "@/plane-web/components/pi-chat/actions/artifacts/detail/root";
 import { PiChatFloatingBot } from "@/plane-web/components/pi-chat/floating-bot";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
+import { FloatingActionsRoot } from "app/(all)/[workspaceSlug]/(projects)/floating-action-bar";
 
 export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {
   const { shouldRenderAppRail } = useAppRail();

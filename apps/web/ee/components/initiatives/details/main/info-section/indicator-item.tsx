@@ -23,17 +23,17 @@ export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
 
   // derived values
   const initiative = getInitiativeById(initiativeId);
-  const initiativeProjectAnalytics = getInitiativeAnalyticsById(initiativeId)?.project;
+  const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId)?.total_count;
 
   if (!initiative) return <></>;
 
   // derived values
-  const totalIssues = initiativeProjectAnalytics
-    ? Object.values(omit(initiativeProjectAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
+  const totalIssues = initiativeAnalytics
+    ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
   const completedStateCount =
-    (initiativeProjectAnalytics?.completed_issues || 0) + (initiativeProjectAnalytics?.cancelled_issues || 0);
+    (initiativeAnalytics?.completed_issues || 0) + (initiativeAnalytics?.cancelled_issues || 0);
   const completePercentage = getProgress(completedStateCount ?? 0, totalIssues);
 
   return (
