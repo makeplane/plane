@@ -73,6 +73,9 @@ const Command = Extension.create<SlashCommandOptions>({
 
           return {
             onStart: (props) => {
+              // Track active dropdown
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+
               const MenuComponent = SlashCommandsMenu as unknown as FC<
                 SlashCommandsMenuProps & { ref: React.Ref<CommandListInstance> }
               >;
@@ -116,7 +119,9 @@ const Command = Extension.create<SlashCommandOptions>({
               return component?.ref?.onKeyDown(props) ?? false;
             },
 
-            onExit: () => {
+            onExit: ({ editor }) => {
+              // Remove from active dropdowns
+              editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               component?.destroy();
               component = null;
             },

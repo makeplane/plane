@@ -162,7 +162,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
       {!isSelecting && (
         <div
           ref={menuRef}
-          className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg max-w-[500px] overflow-x-scroll horizontal-scrollbar scrollbar-xs"
+          className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
         >
           <div className="px-2">
             <BubbleMenuNodeSelector

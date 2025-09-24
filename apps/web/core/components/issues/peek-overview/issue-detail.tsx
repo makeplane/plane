@@ -29,7 +29,8 @@ import { IssueTitleInput } from "../title-input";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
-interface IPeekOverviewIssueDetails {
+type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -38,12 +39,11 @@ interface IPeekOverviewIssueDetails {
   isArchived: boolean;
   isSubmitting: TNameDescriptionLoader;
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
-}
+};
 
-export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
-  const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
+export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
+  const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
+    props;
   // store hooks
   const { data: currentUser } = useUser();
   const {

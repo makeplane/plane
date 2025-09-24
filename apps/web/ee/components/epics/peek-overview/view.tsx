@@ -1,10 +1,12 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
+// components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
@@ -51,8 +53,9 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const [deleteEpicModal, setDeleteEpicModal] = useState(false);
   const [editEpicModal, setEditEpicModal] = useState(false);
   const [duplicateEpicModal, setDuplicateEpicModal] = useState(false);
-  // ref
+  // refs
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const {
     setPeekIssue,
@@ -78,6 +81,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
+      const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
       if (!embedIssue) {
         if (
           !isAnyModalOpen &&
@@ -88,7 +92,8 @@ export const EpicView: FC<IEpicView> = observer((props) => {
           !isAnyCustomerModalOpen &&
           !isInitiativeModalOpen &&
           !duplicateEpicModal &&
-          !isPeekOpen
+          !isPeekOpen &&
+          !isAnyDropbarOpen
         ) {
           removeRoutePeekId();
         }
@@ -98,10 +103,10 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   );
 
   const handleKeyDown = () => {
-    const slashCommandDropdownElement = document.querySelector("#slash-command");
     const editorImageFullScreenModalElement = document.querySelector(".editor-image-full-screen-modal");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement && !editorImageFullScreenModalElement) {
+    const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
+    if (!isAnyModalOpen && !dropdownElement && !isAnyDropbarOpen && !editorImageFullScreenModalElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();
@@ -175,6 +180,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
               />
               {/* content */}
               <EpicDetailRoot
+                editorRef={editorRef}
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 epicId={issueId.toString()}

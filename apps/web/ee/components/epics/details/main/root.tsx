@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
@@ -15,6 +16,7 @@ import { EpicOverviewRoot } from "./overview-section-root";
 import { EpicProgressSection } from "./progress-section-root";
 
 type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   epicId: string;
@@ -22,13 +24,19 @@ type Props = {
 };
 
 export const EpicMainContentRoot: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();
 
   return (
     <MainWrapper isSidebarOpen={!epicDetailSidebarCollapsed}>
-      <EpicInfoSection workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
+      <EpicInfoSection
+        editorRef={editorRef}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        epicId={epicId}
+        disabled={disabled}
+      />
       <EpicProgressSection epicId={epicId} />
       <div className="py-2">
         <IssueDetailWidgets
