@@ -6,11 +6,11 @@ import "reflect-metadata";
 export type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "ws";
 
 type ControllerInstance = {
-  [key: string]: unknown;
+  [key: string]: any;
 };
 
 export type ControllerConstructor = {
-  new (...args: unknown[]): ControllerInstance;
+  new (...args: any[]): ControllerInstance;
   prototype: ControllerInstance;
 };
 
@@ -34,13 +34,17 @@ export function registerController(
     // Pass the existing instance with dependencies to avoid creating a new instance without them
     registerWebSocketController(router, Controller, instance);
   } else {
-    // Register as REST controller - doesn't accept an instance parameter
-    registerRestController(router, Controller);
+    // Register as REST controller with the existing instance
+    registerRestController(router, Controller, instance);
   }
 }
 
-function registerRestController(router: Router, Controller: ControllerConstructor): void {
-  const instance = new Controller();
+function registerRestController(
+  router: Router,
+  Controller: ControllerConstructor,
+  existingInstance?: ControllerInstance
+): void {
+  const instance = existingInstance || new Controller();
   const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
 
   Object.getOwnPropertyNames(Controller.prototype).forEach((methodName) => {

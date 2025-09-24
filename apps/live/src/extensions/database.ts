@@ -4,8 +4,10 @@ import { logger } from "@plane/logger";
 import { getPageService } from "@/services/page/handler";
 // utils
 import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/utils";
+// types
+import type { fetchPayload, storePayload } from "@hocuspocus/server";
 
-const fetchDocument = async ({ context, documentName, requestParameters }: any) => {
+const fetchDocument = async ({ context, documentName, requestParameters }: fetchPayload) => {
   try {
     const params = {
       ...context,
@@ -32,7 +34,7 @@ const fetchDocument = async ({ context, documentName, requestParameters }: any) 
   }
 };
 
-const storeDocument = async ({ context, state, documentName, requestParameters }: any) => {
+const storeDocument = async ({ context, state, documentName, requestParameters }: storePayload) => {
   try {
     const params = {
       ...context,

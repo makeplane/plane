@@ -6,6 +6,7 @@ import { logger } from "@plane/logger";
 import { UserService } from "@/services/user.service";
 // types
 import { HocusPocusServerContext } from "@/types";
+import type { onAuthenticatePayload, onStatelessPayload } from "@hocuspocus/server";
 
 /**
  * Authenticate the user
@@ -14,7 +15,7 @@ import { HocusPocusServerContext } from "@/types";
  * @param token - The token
  * @returns The authenticated user
  */
-export const onAuthenticate = async ({ requestHeaders, context, token }: any) => {
+export const onAuthenticate = async ({ requestHeaders, requestParameters, context, token }: onAuthenticatePayload) => {
   let cookie: string | undefined = undefined;
   let userId: string | undefined = undefined;
 
@@ -40,6 +41,10 @@ export const onAuthenticate = async ({ requestHeaders, context, token }: any) =>
 
   // set cookie in context, so it can be used throughout the ws connection
   (context as HocusPocusServerContext).cookie = cookie;
+  context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
+  context.userId = userId;
+  context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() ?? "";
+  context.projectId = requestParameters.get("projectId")?.toString() ?? "";
 
   try {
     const userService = new UserService();
@@ -63,10 +68,10 @@ export const onAuthenticate = async ({ requestHeaders, context, token }: any) =>
  * Broadcast the client event to all the clients so that they can update their state
  * @param param0
  */
-export const onStateless = async ({ payload, document }: any) => {
+export const onStateless = async ({ payload, document }: onStatelessPayload) => {
   // broadcast the client event (derived from the server event) to all the clients so that they can update their state
-  const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
-  if (response) {
-    document.broadcastStateless(response);
-  }
+  // const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
+  // if (response) {
+  //   document.broadcastStateless(response);
+  // }
 };

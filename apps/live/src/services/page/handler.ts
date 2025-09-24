@@ -2,7 +2,16 @@ import { TDocumentTypes } from "@/types";
 // services
 import { ProjectPageService } from "./project-page.service";
 
-export const getPageService = (params: any) => {
+interface PageServiceParams {
+  documentType?: TDocumentTypes;
+  workspaceSlug?: string;
+  projectId?: string;
+  cookie?: string;
+  pageId?: string;
+  [key: string]: unknown;
+}
+
+export const getPageService = (params: PageServiceParams) => {
   const documentType = params["documentType"]?.toString() as TDocumentTypes | undefined;
 
   if (documentType === "project_page") {

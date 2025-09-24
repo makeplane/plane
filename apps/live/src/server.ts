@@ -4,6 +4,7 @@ import cors from "cors";
 import express, { Express, Request, Response, Router } from "express";
 import expressWs from "express-ws";
 import helmet from "helmet";
+import { Server as HttpServer } from "http";
 // plane imports
 import { registerController } from "@plane/decorators";
 import { logger, loggerMiddleware } from "@plane/logger";
@@ -20,7 +21,7 @@ export class Server {
   private app: Express;
   private router: Router;
   private hocuspocusServer: Hocuspocus | null = null;
-  private httpServer: any;
+  private httpServer: HttpServer | null = null;
 
   constructor() {
     this.app = express();
@@ -29,8 +30,6 @@ export class Server {
     this.router = express.Router();
     this.app.set("port", env.PORT || 3000);
     this.app.use(env.LIVE_BASE_PATH, this.router);
-    this.setupRoutes();
-    this.setupNotFoundHandler();
   }
 
   public async initialize(): Promise<void> {
@@ -40,6 +39,10 @@ export class Server {
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("HocusPocus setup completed");
+
+      // Set up routes and handlers after hocuspocusServer is initialized
+      this.setupRoutes();
+      this.setupNotFoundHandler();
     } catch (error) {
       logger.error("Failed to initialize live server dependencies:", error);
       throw error;
@@ -84,8 +87,7 @@ export class Server {
   }
 
   private setupRoutes() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    CONTROLLERS.forEach((controller) => registerController(this.router, controller as any, [this.hocuspocusServer]));
+    CONTROLLERS.forEach((controller) => registerController(this.router, controller, [this.hocuspocusServer]));
   }
 
   public listen() {

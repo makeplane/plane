@@ -1,9 +1,16 @@
 import { PageService } from "./extended.service";
 
+interface ProjectPageServiceParams {
+  workspaceSlug?: string;
+  projectId?: string;
+  cookie?: string;
+  [key: string]: unknown;
+}
+
 export class ProjectPageService extends PageService {
   protected basePath: string;
 
-  constructor(params: any) {
+  constructor(params: ProjectPageServiceParams) {
     super();
     const { workspaceSlug, projectId } = params;
     if (!workspaceSlug || !projectId) throw new Error("Missing required fields.");

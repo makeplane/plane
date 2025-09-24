@@ -64,7 +64,7 @@ export class RedisManager {
         keepAlive: 30000,
         connectTimeout: 10000,
         commandTimeout: 5000,
-        enableOfflineQueue: false,
+        // enableOfflineQueue: false,
         maxRetriesPerRequest: 3,
       });
 
