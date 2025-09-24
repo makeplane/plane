@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -16,6 +16,7 @@ import { EpicInfoActionItems } from "./info-section/action-items";
 import { EpicInfoIndicatorItem } from "./info-section/indicator-item";
 
 type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   epicId: string;
@@ -23,9 +24,7 @@ type Props = {
 };
 
 export const EpicInfoSection: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
+  const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const {
     issue: { getIssueById },

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -20,13 +21,14 @@ import { EpicMainContentRoot } from "./main/root";
 import { EpicDetailsSidebar } from "./sidebar/root";
 
 export type TIssueDetailRoot = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   epicId: string;
 };
 
 export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, epicId } = props;
+  const { editorRef, workspaceSlug, projectId, epicId } = props;
   // hooks
   const { fetchEpicAnalytics } = useEpicAnalytics();
   const {
@@ -62,6 +64,7 @@ export const EpicDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         emptyStateComponent={<EpicEmptyState workspaceSlug={workspaceSlug} projectId={projectId} />}
       >
         <EpicMainContentRoot
+          editorRef={editorRef}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
