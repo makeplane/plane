@@ -3,12 +3,12 @@ import { observer } from "mobx-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TIssueComment } from "@plane/types";
+import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useMember } from "@/hooks/store/use-member";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TCommentBlock = {
   comment: TIssueComment;
@@ -37,7 +37,13 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
     }
   }, [higlightedActivityIds, comment.id]);
 
-  if (!comment || !userDetails) return <></>;
+  const displayName = comment?.actor_detail?.is_bot
+    ? comment?.actor_detail?.first_name + `Bot`
+    : (userDetails?.display_name ?? comment?.actor_detail?.display_name);
+
+  const avatarUrl = userDetails?.avatar_url ?? comment?.actor_detail?.avatar_url;
+
+  if (!comment) return null;
   return (
     <div
       id={comment.id}
@@ -54,20 +60,13 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
           higlightedActivityIds.includes(comment.id) ? "border-2 border-custom-primary-100" : ""
         )}
       >
-        <Avatar
-          size="base"
-          name={userDetails?.display_name}
-          src={getFileURL(userDetails?.avatar_url)}
-          className="flex-shrink-0"
-        />
+        <Avatar size="base" name={displayName} src={getFileURL(avatarUrl)} className="flex-shrink-0" />
       </div>
       <div className="flex flex-col gap-3 truncate flex-grow">
         <div className="flex w-full gap-2">
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="text-xs font-medium">
-              {comment?.actor_detail?.is_bot
-                ? comment?.actor_detail?.first_name + " Bot"
-                : comment?.actor_detail?.display_name || userDetails.display_name}
+              {`${displayName}${comment.access === EIssueCommentAccessSpecifier.EXTERNAL ? " (External User)" : ""}`}
             </div>
             <div className="text-xs text-custom-text-300">
               commented{" "}
