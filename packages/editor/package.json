@@ -8,11 +8,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./lib": {
       "types": "./dist/lib.d.ts",
-      "import": "./dist/lib.js"
+      "import": "./dist/lib.js",
+      "require": "./dist/lib.cjs"
     },
     "./styles": "./dist/styles/index.css"
   },

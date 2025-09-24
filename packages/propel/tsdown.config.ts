@@ -34,6 +34,8 @@ export default defineConfig({
   ],
   outDir: "dist",
   format: ["esm", "cjs"],
-  dts: true,
   copy: ["src/styles"],
+  dts: true,
+  clean: true,
+  sourcemap: false,
 });
