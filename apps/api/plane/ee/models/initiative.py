@@ -7,13 +7,15 @@ from plane.db.models import BaseModel
 from plane.utils.html_processor import strip_tags
 
 
-class Initiative(BaseModel):
-    class StatusContext(models.TextChoices):
-        PLANNED = "PLANNED", "Planned"
-        ON_HOLD = "ON_HOLD", "On Hold"
-        IN_PROGRESS = "IN_PROGRESS", "In Progress"
-        DONE = "DONE", "Done"
+class StateChoices(models.TextChoices):
+    DRAFT = "DRAFT", "Draft"
+    PLANNED = "PLANNED", "Planned"
+    ACTIVE = "ACTIVE", "Active"
+    COMPLETED = "COMPLETED", "Completed"
+    CLOSED = "CLOSED", "Closed"
 
+
+class Initiative(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="initiatives"
     )
@@ -31,10 +33,10 @@ class Initiative(BaseModel):
     )
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(
-        max_length=100, choices=StatusContext.choices, default=StatusContext.PLANNED
-    )
     logo_props = models.JSONField(default=dict)
+    state = models.CharField(
+        max_length=100, choices=StateChoices.choices, default=StateChoices.DRAFT
+    )
 
     class Meta:
         db_table = "initiatives"
