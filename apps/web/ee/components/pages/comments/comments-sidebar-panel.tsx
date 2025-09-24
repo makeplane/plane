@@ -97,7 +97,7 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
     onScrollToElement: scrollToElement,
   };
 
-  if (isLoading && isEmpty && !page.comments.pendingScrollToComment) {
+  if (isLoading && isEmpty && !page.comments.pendingScrollToComment && !pendingComment) {
     return <PageCommentThreadLoader />;
   }
 

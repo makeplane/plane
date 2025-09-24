@@ -114,7 +114,7 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
         blockId,
         data: {
           entity_identifier: comment?.id ?? "",
-          entity_type: EFileAssetType.COMMENT_DESCRIPTION,
+          entity_type: EFileAssetType.PAGE_COMMENT_DESCRIPTION,
         },
         file,
         workspaceSlug,

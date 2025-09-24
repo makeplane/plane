@@ -31,6 +31,7 @@ class FileAsset(BaseModel):
         ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION"
         COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION"
         PAGE_DESCRIPTION = "PAGE_DESCRIPTION"
+        PAGE_COMMENT_DESCRIPTION = "PAGE_COMMENT_DESCRIPTION"
         USER_COVER = "USER_COVER"
         USER_AVATAR = "USER_AVATAR"
         WORKSPACE_LOGO = "WORKSPACE_LOGO"
@@ -151,6 +152,7 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.CUSTOMER_DESCRIPTION,
             self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            self.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

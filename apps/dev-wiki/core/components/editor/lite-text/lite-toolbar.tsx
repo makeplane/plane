@@ -23,7 +23,7 @@ export const LiteToolbar = ({ onSubmit, isSubmitting, isEmpty, executeCommand }:
       type="button"
       onClick={(e) => onSubmit(e)}
       disabled={isEmpty || isSubmitting}
-      className="p-1 bg-custom-primary-100 hover:bg-custom-primary-200 disabled:bg-custom-text-400 disabled:text-custom-text-200 text-custom-text-100 rounded transition-colors"
+      className="p-1 bg-custom-primary-100 hover:bg-custom-primary-200 disabled:bg-custom-text-400 disabled:text-custom-text-200 text-white rounded transition-colors"
     >
       <ArrowUp className="size-3" />
     </button>

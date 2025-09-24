@@ -121,7 +121,7 @@ export const PageCommentCreationHandler = observer(
     }
 
     return (
-      <div ref={newCommentBoxRef} className="overflow-hidden my-4 animate-expand-down space-y-3 group px-3.5">
+      <div ref={newCommentBoxRef} className="my-4 animate-expand-down space-y-3 group px-3.5">
         {/* Reference Text Quote with Overlay Cancel Button */}
         {referenceText && (
           <div className="relative flex gap-1 p-[4px] rounded bg-custom-background-90">
