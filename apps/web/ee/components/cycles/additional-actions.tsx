@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { StartCycleModal } from "@/plane-web/components/cycles";
@@ -20,7 +21,7 @@ export const CycleAdditionalActions: FC<Props> = observer((props) => {
   const [startingCycle, setStartingCycle] = useState(false);
   // store hooks
   const { isNextCycle, updateCycleStatus } = useCycle();
-  const isEndCycleEnabled = useFlag(workspaceSlug?.toString(), "CYCLE_MANUAL_START_STOP");
+  const isEndCycleEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CYCLE_PROGRESS_CHARTS);
 
   const handleStartCycle = async () => {
     setStartingCycle(true);

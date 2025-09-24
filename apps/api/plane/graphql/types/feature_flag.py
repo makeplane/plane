@@ -40,7 +40,6 @@ class FeatureFlagsTypesEnum(Enum):
     BULK_OPS_ONE = "BULK_OPS_ONE"
     BULK_OPS_PRO = "BULK_OPS_PRO"
     # Cycle
-    CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
     CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     # work item
     ISSUE_TYPES = "ISSUE_TYPES"
@@ -146,7 +145,6 @@ class FeatureFlagType:
     bulk_ops_one: bool
     bulk_ops_pro: bool
     # Cycle
-    cycle_manual_start_stop: bool
     cycle_progress_charts: bool
     # Work item
     issue_types: bool

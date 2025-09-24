@@ -15,7 +15,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class CycleStartStopEndpoint(BaseAPIView):
-    @check_feature_flag(FeatureFlag.CYCLE_MANUAL_START_STOP)
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
         try:

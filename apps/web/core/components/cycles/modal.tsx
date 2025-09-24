@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 // types
-import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
+import { CYCLE_TRACKER_EVENTS, E_FEATURE_FLAGS } from "@plane/constants";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -41,7 +41,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = observer((props
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   const { isMobile } = usePlatformOS();
-  const isBackwardDateEditEnabled = useFlag(workspaceSlug?.toString(), "EDIT_CYCLE_DATE");
+  const isBackwardDateEditEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CYCLE_PROGRESS_CHARTS);
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 

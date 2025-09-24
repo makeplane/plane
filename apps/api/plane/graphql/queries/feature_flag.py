@@ -102,9 +102,6 @@ class FeatureFlagQuery:
                 FeatureFlagsTypesEnum.BULK_OPS_PRO.value, False
             ),
             # Cycle
-            cycle_manual_start_stop=feature_flags.get(
-                FeatureFlagsTypesEnum.CYCLE_MANUAL_START_STOP.value, False
-            ),
             cycle_progress_charts=feature_flags.get(
                 FeatureFlagsTypesEnum.CYCLE_PROGRESS_CHARTS.value, False
             ),

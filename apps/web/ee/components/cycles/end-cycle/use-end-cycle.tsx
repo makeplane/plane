@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { StopCircle } from "lucide-react";
 //sto
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useFlag } from "@/plane-web/hooks/store";
 
 export const useEndCycle = (isCurrentCycle: boolean) => {
@@ -9,7 +10,7 @@ export const useEndCycle = (isCurrentCycle: boolean) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const isEndCycleEnabled = useFlag(workspaceSlug?.toString(), "CYCLE_MANUAL_START_STOP");
+  const isEndCycleEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CYCLE_PROGRESS_CHARTS);
 
   const endCycleContextMenu = {
     key: "end-cycle",
