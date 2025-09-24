@@ -5,19 +5,21 @@ import { computedFn } from "mobx-utils";
 import { EMPTY_OPERATOR_LABEL } from "@plane/constants";
 import {
   FILTER_FIELD_TYPE,
-  TSupportedOperators,
+  TAllAvailableOperatorsForDisplay,
   TFilterConfig,
   TFilterProperty,
   TFilterValue,
   TOperatorSpecificConfigs,
-  TAllAvailableOperatorsForDisplay,
+  TSupportedOperators,
 } from "@plane/types";
 import {
-  getOperatorLabel,
-  isDateFilterType,
   getDateOperatorLabel,
-  isDateFilterOperator,
   getOperatorForPayload,
+  getOperatorLabel,
+  isDateFilterOperator,
+  isDateFilterType,
+  isNegativeOperator,
+  toNegativeOperator,
 } from "@plane/utils";
 
 type TOperatorOptionForDisplay = {
@@ -123,7 +125,11 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
 
     const operatorConfig = this.getOperatorConfig(operator);
 
-    if (operatorConfig?.operatorLabel) {
+    if (operatorConfig?.allowNegative && isNegativeOperator(operator) && operatorConfig.negOperatorLabel) {
+      return operatorConfig.negOperatorLabel;
+    }
+
+    if (!isNegativeOperator(operator) && operatorConfig?.operatorLabel) {
       return operatorConfig.operatorLabel;
     }
 
@@ -142,6 +148,10 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
   getDisplayOperatorByValue: IFilterConfig<P, V>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
     const operatorConfig = this.getOperatorConfig(operator);
     if (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT && (Array.isArray(value) ? value.length : 0) <= 1) {
+      if (isNegativeOperator(operator)) {
+        return toNegativeOperator(operatorConfig.singleValueOperator) as typeof operator;
+      }
+
       return operatorConfig.singleValueOperator as typeof operator;
     }
     return operator;
@@ -198,7 +208,20 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
   // ------------ private helpers ------------
 
   private _getAdditionalOperatorOptions = (
-    _operator: TSupportedOperators,
-    _value: V
-  ): TOperatorOptionForDisplay | undefined => undefined;
+    operator: TSupportedOperators,
+    value: V
+  ): TOperatorOptionForDisplay | undefined => {
+    const operatorConfig = this.getOperatorConfig(operator);
+    if (operatorConfig?.allowNegative) {
+      const negOperator = toNegativeOperator(operator);
+      const negOperatorDisplayOperator = this.getDisplayOperatorByValue(negOperator, value);
+      const negOperatorLabel = this.getLabelForOperator(negOperatorDisplayOperator);
+      return {
+        value: negOperator,
+        label: negOperatorLabel,
+      };
+    }
+
+    return undefined;
+  };
 }

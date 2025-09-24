@@ -1,0 +1,1 @@
+export const IssueProperties = () => null;

@@ -12,9 +12,13 @@ from plane.app.views import (
     AssetRestoreEndpoint,
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
+    # Unlimited Asset Endpoints
+    SiloAssetsEndpoint,
     AssetCheckEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
+    ProxyUploadEndpoint,
+    ProxyDownloadEndpoint,
 )
 
 
@@ -100,5 +104,25 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/download/<uuid:asset_id>/",
         ProjectAssetDownloadEndpoint.as_view(),
         name="project-asset-download",
+    ),
+    path(
+        "assets/silo/workspaces/<str:slug>/",
+        SiloAssetsEndpoint.as_view(),
+        name="silo-assets",
+    ),
+    path(
+        "assets/silo/workspaces/<str:slug>/<uuid:asset_id>/",
+        SiloAssetsEndpoint.as_view(),
+        name="silo-assets-detail",
+    ),
+    path(
+        "assets/proxy-upload/<str:encoded_s3_url>/",
+        ProxyUploadEndpoint.as_view(),
+        name="proxy-upload",
+    ),
+    path(
+        "assets/proxy-download/<str:encoded_params>/",
+        ProxyDownloadEndpoint.as_view(),
+        name="proxy-download",
     ),
 ]
