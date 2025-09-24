@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -30,6 +31,8 @@ import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage = observer(() => {
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
@@ -133,6 +136,7 @@ const IssueDetailsPage = observer(() => {
                 {issue?.is_epic ? (
                   <>
                     <EpicDetailRoot
+                      editorRef={editorRef}
                       workspaceSlug={workspaceSlug.toString()}
                       projectId={projectId.toString()}
                       epicId={issueId.toString()}
