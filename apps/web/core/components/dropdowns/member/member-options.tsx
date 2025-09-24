@@ -9,6 +9,7 @@ import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -17,7 +18,6 @@ import { cn, getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { SuspendedUserIcon } from "@plane/propel/icons";
 
 interface Props {
   className?: string;
@@ -50,7 +50,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   // store hooks
   const { data: currentUser } = useUser();
   const {
-    workspace: { getWorkspaceMemberDetails },
+    workspace: { isUserSuspended },
   } = useMember();
   const { isMobile } = usePlatformOS();
   // popper-js init
@@ -82,11 +82,6 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   };
 
-  const isSuspended = (userId: string) => {
-    const userDetails = getWorkspaceMemberDetails(userId);
-    return userDetails?.is_active === false;
-  };
-
   const options = memberIds
     ?.map((userId) => {
       const userDetails = getUserDetails(userId);
@@ -96,13 +91,13 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         content: (
           <div className="flex items-center gap-2">
             <div className="w-4">
-              {isSuspended(userId) ? (
+              {isUserSuspended(userId) ? (
                 <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
               ) : (
                 <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
               )}
             </div>
-            <span className={cn("flex-grow truncate", isSuspended(userId) ? "text-custom-text-400" : "")}>
+            <span className={cn("flex-grow truncate", isUserSuspended(userId) ? "text-custom-text-400" : "")}>
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
@@ -154,16 +149,16 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                           "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                           active && "bg-custom-background-80",
                           selected ? "text-custom-text-100" : "text-custom-text-200",
-                          isSuspended(option.value) ? "cursor-not-allowed" : "cursor-pointer"
+                          isUserSuspended(option.value) ? "cursor-not-allowed" : "cursor-pointer"
                         )
                       }
-                      disabled={isSuspended(option.value)}
+                      disabled={isUserSuspended(option.value)}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                          {isSuspended(option.value) && (
+                          {isUserSuspended(option.value) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended
                             </Pill>
