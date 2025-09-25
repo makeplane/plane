@@ -8,6 +8,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // services
 import { FileService } from "@/services/file.service";
+import { extendedEditorConfig } from "@/plane-web/hooks/editor/use-editor-config";
 const fileService = new FileService();
 
 type TArgs = {
@@ -86,6 +87,10 @@ export const useEditorConfig = () => {
         validation: {
           maxFileSize,
         },
+        ...extendedEditorConfig({
+          projectId,
+          workspaceSlug,
+        }),
       };
     },
     [assetsUploadPercentage, maxFileSize]
