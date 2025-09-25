@@ -1,6 +1,5 @@
 "use client";
 import { FC, MouseEvent, useRef } from "react";
-import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";

@@ -1,5 +1,5 @@
-import isNil from "lodash/isNil";
-import orderBy from "lodash/orderBy";
+import isNil from "lodash-es/isNil";
+import orderBy from "lodash-es/orderBy";
 // plane imports
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { IProjectView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";

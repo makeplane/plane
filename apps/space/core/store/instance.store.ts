@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import set from "lodash-es/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // plane imports
 import { InstanceService } from "@plane/services";

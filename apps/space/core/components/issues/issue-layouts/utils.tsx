@@ -1,6 +1,6 @@
 "use client";
 
-import isNil from "lodash/isNil";
+import isNil from "lodash-es/isNil";
 import { ContrastIcon } from "lucide-react";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";

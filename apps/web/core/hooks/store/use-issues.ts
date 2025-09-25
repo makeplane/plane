@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { EIssuesStoreType, TIssueMap } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types

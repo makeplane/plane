@@ -1,5 +1,5 @@
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
-import isNumber from "lodash/isNumber";
+import isNumber from "lodash-es/isNumber";
 
 // Format Date Helpers
 /**

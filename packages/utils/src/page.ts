@@ -1,4 +1,4 @@
-import sortBy from "lodash/sortBy";
+import sortBy from "lodash-es/sortBy";
 // plane imports
 import { TPage, TPageFilterProps, TPageFiltersSortBy, TPageFiltersSortKey, TPageNavigationTabs } from "@plane/types";
 // local imports

@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { TProjectPublishSettings } from "@plane/types";

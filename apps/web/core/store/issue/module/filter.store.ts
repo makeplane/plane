@@ -1,5 +1,4 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";

@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import set from "lodash-es/set";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { IPartialProject, ISearchIssueResponse, IState, TIssue } from "@plane/types";

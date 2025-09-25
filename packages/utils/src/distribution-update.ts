@@ -1,8 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
-import get from "lodash/get";
-import set from "lodash/set";
+import get from "lodash-es/get";
+import set from "lodash-es/set";
 // plane imports
 import { COMPLETED_STATE_GROUPS, STATE_DISTRIBUTION } from "@plane/constants";
 import { ICycle, IEstimatePoint, IModule, IState, TIssue } from "@plane/types";
