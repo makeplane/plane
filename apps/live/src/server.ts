@@ -1,10 +1,10 @@
+import { Server as HttpServer } from "http";
 import { Hocuspocus } from "@hocuspocus/server";
 import compression from "compression";
 import cors from "cors";
 import express, { Express, Request, Response, Router } from "express";
 import expressWs from "express-ws";
 import helmet from "helmet";
-import { Server as HttpServer } from "http";
 // plane imports
 import { registerController } from "@plane/decorators";
 import { logger, loggerMiddleware } from "@plane/logger";
@@ -41,7 +41,7 @@ export class Server {
       logger.info("HocusPocus setup completed");
 
       // Set up routes and handlers after hocuspocusServer is initialized
-      this.setupRoutes();
+      this.setupRoutes(this.hocuspocusServer);
       this.setupNotFoundHandler();
     } catch (error) {
       logger.error("Failed to initialize live server dependencies:", error);
@@ -86,8 +86,8 @@ export class Server {
     });
   }
 
-  private setupRoutes() {
-    CONTROLLERS.forEach((controller) => registerController(this.router, controller, [this.hocuspocusServer]));
+  private setupRoutes(hocuspocusServer: Hocuspocus) {
+    CONTROLLERS.forEach((controller) => registerController(this.router, controller, [hocuspocusServer]));
   }
 
   public listen() {
