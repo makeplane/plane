@@ -35,7 +35,7 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
     <ModalPortal
       isOpen={isOpen}
       onClose={handleClose}
-      width={fullScreen ? EPortalWidth.FULL : EPortalWidth.HALF}
+      width={fullScreen ? EPortalWidth.FULL : EPortalWidth.THREE_QUARTER}
       position={EPortalPosition.RIGHT}
       fullScreen={fullScreen}
     >
