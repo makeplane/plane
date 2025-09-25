@@ -1,7 +1,8 @@
+import type { ReactNode, MouseEvent as ReactMouseEvent } from "react";
 import { EPortalWidth, EPortalPosition } from "./constants";
 
 export interface BasePortalProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
@@ -28,4 +29,4 @@ export interface ModalPortalProps extends BasePortalProps {
 
 export type PortalEventHandler = () => void;
 export type PortalKeyboardHandler = (event: KeyboardEvent) => void;
-export type PortalMouseHandler = (event: React.MouseEvent) => void;
+export type PortalMouseHandler = (event: ReactMouseEvent) => void;

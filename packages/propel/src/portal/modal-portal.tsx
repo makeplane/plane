@@ -9,22 +9,7 @@ import {
   MODAL_Z_INDEX,
 } from "./constants";
 import { PortalWrapper } from "./portal-wrapper";
-
-type ModalPortalProps = {
-  children: React.ReactNode;
-  isOpen: boolean;
-  onClose?: () => void;
-  portalId?: string;
-  className?: string;
-  overlayClassName?: string;
-  contentClassName?: string;
-  width?: EPortalWidth;
-  position?: EPortalPosition;
-  fullScreen?: boolean;
-  showOverlay?: boolean;
-  closeOnOverlayClick?: boolean;
-  closeOnEscape?: boolean;
-};
+import { ModalPortalProps } from "./types";
 
 /**
  * @param children - The modal content to render
@@ -69,19 +54,23 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
   );
 
   // close on escape
-  const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (closeOnEscape && onClose && e.key === "Escape") {
-      onClose();
-    }
-  }, [closeOnEscape, onClose]);
+  const handleEscape = useCallback(
+    (e: KeyboardEvent) => {
+      if (closeOnEscape && onClose && e.key === "Escape") {
+        onClose();
+      }
+    },
+    [closeOnEscape, onClose]
+  );
 
   // add event listener for escape
   useEffect(() => {
+    if (!isOpen) return;
     document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [handleEscape]);
+  }, [isOpen, handleEscape]);
 
   // Memoized style classes
   const modalClasses = useMemo(() => {

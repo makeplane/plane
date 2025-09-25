@@ -106,7 +106,6 @@ const ModalContent = ({
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="font-medium text-gray-900 mb-2">Feature Highlights</h3>
           <ul className="text-sm text-gray-600 space-y-1">
-            <li>• Focus trap keeps navigation within modal</li>
             <li>• ESC key closes the modal</li>
             <li>• Click outside overlay to close</li>
           </ul>
