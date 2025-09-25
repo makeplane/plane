@@ -7,8 +7,16 @@ import { Rss, FileText, Layers, Loader as Spinner, Briefcase } from "lucide-reac
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
 import { TeamsIcon, LayersIcon, ContrastIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { Breadcrumbs, BreadcrumbNavigationDropdown, Logo, TContextMenuItem, Header, Loader } from "@plane/ui";
+import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
+import {
+  Breadcrumbs,
+  BreadcrumbNavigationDropdown,
+  BreadcrumbNavigationSearchDropdown,
+  Logo,
+  TContextMenuItem,
+  Header,
+  Loader,
+} from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -33,7 +41,7 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
   const router = useAppRouter();
   const { workspaceSlug, teamspaceId } = useParams();
   // hooks
-  const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById } = useTeamspaces();
+  const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById, allTeamSpaceIds } = useTeamspaces();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -48,6 +56,28 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
+  );
+
+  const TEAMSPACE_SEARCH_OPTIONS: ICustomSearchSelectOption[] = useMemo(
+    () =>
+      allTeamSpaceIds
+        .map((id) => getTeamspaceById(id))
+        .filter((teamspace): teamspace is NonNullable<typeof teamspace> => Boolean(teamspace))
+        .map((teamspaceItem) => ({
+          value: teamspaceItem.id,
+          query: teamspaceItem.name,
+          content: (
+            <div className="flex items-center gap-2">
+              {teamspaceItem.logo_props ? (
+                <Logo logo={teamspaceItem.logo_props} />
+              ) : (
+                <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+              )}
+              <span>{teamspaceItem.name}</span>
+            </div>
+          ),
+        })),
+    [allTeamSpaceIds, getTeamspaceById]
   );
 
   const TEAM_NAVIGATION_ITEMS: TContextMenuItem[] = useMemo(
@@ -167,14 +197,28 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
                   {loader === "init-loader" ? (
                     <Loader.Item height="20px" width="140px" />
                   ) : teamspace ? (
-                    <BreadcrumbLink
-                      href={`/${workspaceSlug}/teamspaces/${teamspaceId}`}
-                      label={teamspace.name}
-                      icon={teamspace.logo_props && <Logo logo={teamspace.logo_props} />}
+                    <BreadcrumbNavigationSearchDropdown
+                      title={teamspace.name}
+                      icon={
+                        teamspace.logo_props ? (
+                          <Logo logo={teamspace.logo_props} />
+                        ) : (
+                          <TeamsIcon className="h-4 w-4 text-custom-text-300" />
+                        )
+                      }
+                      selectedItem={teamspaceId?.toString() || ""}
+                      navigationItems={TEAMSPACE_SEARCH_OPTIONS}
+                      onChange={(value: string) => {
+                        router.push(`/${workspaceSlug}/teamspaces/${value}/`);
+                      }}
+                      handleOnClick={() => {
+                        router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/`);
+                      }}
                     />
                   ) : null}
                 </>
               }
+              showSeparator={false}
             />
             <Breadcrumbs.Item
               component={
