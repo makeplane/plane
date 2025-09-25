@@ -5,6 +5,7 @@ import { env } from "@/env";
 import { OAuthController } from "./controller";
 import { OAuthRoutes } from "./routes";
 import { GithubEnterpriseStrategy } from "./strategies/github.strategy";
+import { GitlabEnterpriseStrategy } from "./strategies/gitlab.strategy";
 import { PlaneOAuthStrategy } from "./strategies/plane-oauth.strategy";
 import { SentryOAuthStrategy } from "./strategies/sentry-oauth.strategy";
 import { OAuthStrategyManager } from "./strategy-manager";
@@ -27,6 +28,11 @@ export function registerOAuthStrategies() {
   strategyManager.registerStrategy(
     E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
     new GithubEnterpriseStrategy(E_INTEGRATION_KEYS.GITHUB_ENTERPRISE)
+  );
+
+  strategyManager.registerStrategy(
+    E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
+    new GitlabEnterpriseStrategy(E_INTEGRATION_KEYS.GITLAB_ENTERPRISE)
   );
 }
 

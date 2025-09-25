@@ -5,11 +5,11 @@ import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
 import { IGitlabEntity } from "@plane/etl/gitlab";
+import { TGitlabRepository } from "@plane/types";
 import { GitlabDataService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
-import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
 
 export interface IGitlabDataStore {
   // store instances
@@ -38,8 +38,11 @@ export class GitlabDataStore implements IGitlabDataStore {
 
   // service
   private service: GitlabDataService;
-
-  constructor(protected store: IGitlabStore) {
+  private isEnterprise: boolean;
+  constructor(
+    protected store: IGitlabStore,
+    isEnterprise: boolean = false
+  ) {
     makeObservable(this, {
       // observables
       gitlabRepositories: observable,
@@ -55,7 +58,8 @@ export class GitlabDataStore implements IGitlabDataStore {
       fetchGitlabEntities: action,
     });
 
-    this.service = new GitlabDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.isEnterprise = isEnterprise;
+    this.service = new GitlabDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), isEnterprise);
   }
 
   // computed

@@ -1,5 +1,5 @@
 export type GitLabAuthConfig = {
-  host?: string;
+  baseUrl?: string;
   clientId: string;
   clientSecret: string;
   redirectUri: string;
@@ -9,11 +9,12 @@ export type GitLabAuthorizeState = {
   user_id: string;
   workspace_slug: string;
   workspace_id: string;
-  plane_api_token: string;
-  gitlab_hostname: string;
+  plane_api_token?: string;
+  gitlab_hostname?: string;
   source_hostname?: string; // generic field for oauth controller migration
   target_host: string;
   plane_app_installation_id?: string;
+  config_key?: string;
 };
 
 export type GitLabAuthPayload = {

@@ -1,15 +1,15 @@
 import axios, { AxiosInstance } from "axios";
 // plane web types
 import { IGitlabEntity } from "@plane/etl/gitlab";
-import { TGitlabRepository } from "@/plane-web/types/integrations/gitlab";
+import { TGitlabRepository } from "@plane/types";
 
 export class GitlabDataService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
+  constructor(baseURL: string, isEnterprise: boolean = false) {
+    this.baseURL = `${baseURL}/api/${isEnterprise ? "gitlab-enterprise" : "gitlab"}`;
+    this.axiosInstance = axios.create({ baseURL: this.baseURL, withCredentials: true });
   }
 
   /**
@@ -19,7 +19,7 @@ export class GitlabDataService {
    */
   fetchGitlabRepositories = async (workspaceId: string): Promise<TGitlabRepository[] | undefined | undefined> =>
     await this.axiosInstance
-      .get(`/api/gitlab/${workspaceId}/repos`)
+      .get(`/${workspaceId}/repos`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -32,7 +32,7 @@ export class GitlabDataService {
    */
   fetchGitlabEntities = async (workspaceId: string): Promise<IGitlabEntity[]> =>
     await this.axiosInstance
-      .get(`/api/gitlab/entities/${workspaceId}`)
+      .get(`/entities/${workspaceId}`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

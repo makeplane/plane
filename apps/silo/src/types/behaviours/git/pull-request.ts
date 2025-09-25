@@ -57,5 +57,11 @@ export interface IPullRequestService {
     body: string
   ): Promise<IGitComment>;
 
-  updatePullRequestComment(owner: string, repo: string, commentId: string, body: string): Promise<IGitComment>;
+  updatePullRequestComment(
+    owner: string,
+    repo: string,
+    commentId: string,
+    body: string,
+    pullRequestIdentifier?: number
+  ): Promise<IGitComment>;
 }

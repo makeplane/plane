@@ -12,7 +12,11 @@ import { convertIntegrationKeyToProvider } from "./helpers";
 import { OAuthStrategyManager } from "./strategy-manager";
 import { OAuthState, OAuthConnectionStatus, E_INTEGRATION_DISCONNECT_SOURCE, IntegrationUserMap } from "./types";
 
-const PLANE_OAUTH_SUPPORTED_PROVIDERS = [E_INTEGRATION_KEYS.GITHUB_ENTERPRISE, E_INTEGRATION_KEYS.SENTRY];
+const PLANE_OAUTH_SUPPORTED_PROVIDERS = [
+  E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
+  E_INTEGRATION_KEYS.SENTRY,
+  E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
+];
 
 export class OAuthController {
   private strategyManager = OAuthStrategyManager.getInstance();

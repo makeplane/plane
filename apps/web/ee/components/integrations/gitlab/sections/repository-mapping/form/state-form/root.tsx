@@ -4,18 +4,18 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { EMPTY_PLANE_STATE } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { IState } from "@plane/types";
+import { IState, E_STATE_MAP_KEYS, TStateMap, TStateMapKeys } from "@plane/types";
 // plane web components
 import { StateFormSelection } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { E_STATE_MAP_KEYS, TStateMap, TStateMapKeys } from "@/plane-web/types/integrations/gitlab";
 
 type TStateForm = {
   projectId: string | undefined;
   value: TStateMap;
   handleChange: <T extends keyof TStateMap>(key: T, value: TStateMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 const GIT_PR_DATA: { key: TStateMapKeys; title: string }[] = [
@@ -47,10 +47,10 @@ const GIT_PR_DATA: { key: TStateMapKeys; title: string }[] = [
 
 export const StateForm: FC<TStateForm> = observer((props) => {
   // props
-  const { projectId, value, handleChange } = props;
+  const { projectId, value, handleChange, isEnterprise } = props;
 
   // hooks
-  const { stateIdsByProjectId, getStateById } = useGitlabIntegration();
+  const { stateIdsByProjectId, getStateById } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // derived values

@@ -1,9 +1,14 @@
+import { FC } from "react";
 import Image from "next/image";
 
 import { useTranslation } from "@plane/i18n";
 import GitlabLogo from "@/public/services/gitlab.svg";
 
-export const GitlabHeader = () => {
+interface IGitlabHeaderProps {
+  isEnterprise: boolean;
+}
+
+export const GitlabHeader: FC<IGitlabHeaderProps> = ({ isEnterprise }) => {
   // hooks
   const { t } = useTranslation();
 
@@ -13,8 +18,12 @@ export const GitlabHeader = () => {
         <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />
       </div>
       <div>
-        <div className="text-lg font-medium">{t("gitlab_integration.name")}</div>
-        <div className="text-sm text-custom-text-200">{t("gitlab_integration.description")}</div>
+        <div className="text-lg font-medium">
+          {isEnterprise ? t("gitlab_enterprise_integration.name") : t("gitlab_integration.name")}
+        </div>
+        <div className="text-sm text-custom-text-200">
+          {isEnterprise ? t("gitlab_enterprise_integration.description") : t("gitlab_integration.description")}
+        </div>
       </div>
     </div>
   );

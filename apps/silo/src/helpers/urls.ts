@@ -1,4 +1,6 @@
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { env } from "@/env";
+import { convertIntegrationKeyToProvider } from "@/services/oauth/helpers";
 
 export const getUserProfileUrl = (workspaceSlug: string, userId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/profile/${userId}`;
@@ -30,3 +32,8 @@ export const getProjectPageUrl = (workspaceSlug: string, projectId: string, page
 
 export const getWorkspacePageUrl = (workspaceSlug: string, pageId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/pages/${pageId}`;
+
+export const getIntegrationPageUrl = (workspaceSlug: string, integrationKey: E_INTEGRATION_KEYS) => {
+  const provider = convertIntegrationKeyToProvider(integrationKey);
+  return `${env.APP_BASE_URL}/${workspaceSlug}/settings/integrations/${provider}`;
+};

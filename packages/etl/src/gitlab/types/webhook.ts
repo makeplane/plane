@@ -12,6 +12,7 @@ export interface GitlabWebhookEvent {
     description: string;
     homepage: string;
   };
+  isEnterprise?: boolean;
 }
 
 // Push event

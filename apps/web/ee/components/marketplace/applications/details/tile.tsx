@@ -4,14 +4,15 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Crown, Info } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum, EUserWorkspaceRoles, TUserApplication } from "@plane/types";
 import { Button, cn, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
 
 // display app details like name, logo, description
@@ -39,6 +40,10 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   const isNotSupported = app.is_not_supported || false;
   const isSelfManaged = subscriptionDetail?.is_self_managed || false;
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
+  const isFeatureFlagEnabled = useFlag(
+    workspaceSlug?.toString() || "",
+    E_FEATURE_FLAGS[`${convertAppSlugToIntegrationKey(app.slug)}_INTEGRATION` as keyof typeof E_FEATURE_FLAGS]
+  );
 
   const handleConfigure = () => {
     if (isAppDefault) {
@@ -78,6 +83,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
       }
     }
   };
+
+  // for default apps, if the feature flag is not enabled, don't show the tile
+  if (isAppDefault && !isFeatureFlagEnabled) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col items-start justify-between border border-custom-border-100 p-4 rounded-md gap-2 h-full">

@@ -6,12 +6,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
+import { TGitlabEntityConnection } from "@plane/types";
 import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
-import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
 
 export interface IGitlabEntityConnectionStore {
   // store instances
@@ -37,8 +36,11 @@ export class GitlabEntityStore implements IGitlabEntityConnectionStore {
   entityConnectionMap: Record<string, Record<string, Record<string, TGitlabEntityConnection>>> = {}; // workspaceId -> workspaceConnectionId -> connectionId -> entity
   // service
   private service: GitlabEntityService;
-
-  constructor(protected store: IGitlabStore) {
+  private isEnterprise: boolean;
+  constructor(
+    protected store: IGitlabStore,
+    isEnterprise: boolean = false
+  ) {
     makeObservable(this, {
       // observables
       entityConnectionMap: observable,
@@ -53,7 +55,8 @@ export class GitlabEntityStore implements IGitlabEntityConnectionStore {
       deleteEntityConnection: action,
     });
 
-    this.service = new GitlabEntityService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.isEnterprise = isEnterprise;
+    this.service = new GitlabEntityService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), isEnterprise);
   }
 
   // computed

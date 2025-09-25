@@ -22,6 +22,7 @@ export interface IGitComment {
  * Common properties of a pull request
  */
 export interface IPullRequestDetails {
+  pull_request_id?: number;
   title: string;
   description: string;
   number: number;

@@ -7,46 +7,56 @@ import { computedFn } from "mobx-utils";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { GitLabAuthorizeState } from "@plane/etl/gitlab";
 // plane web services
+import { TGitlabWorkspaceConnection, TGitlabAppConfig } from "@plane/types";
 import { GitlabAuthService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { ApplicationService } from "@/plane-web/services/marketplace";
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
-import { TGitlabWorkspaceConnection } from "@/plane-web/types/integrations/gitlab";
 
 export interface IGitlabAuthStore {
   // observables
   workspaceConnectionMap: Record<string, Record<string, TGitlabWorkspaceConnection>>; // workspaceId -> organizationId -> TGitlabWorkspaceConnection
+  appConfigKey: string; // configKey
   // computed
   workspaceConnectionIds: string[];
   // computed functions
   workspaceConnectionById: (organizationId: string) => TGitlabWorkspaceConnection | undefined;
   // actions
   fetchWorkspaceConnection: () => Promise<TGitlabWorkspaceConnection[] | undefined>;
+  fetchAppConfigKey: (config: TGitlabAppConfig) => Promise<string | undefined>;
   connectWorkspaceConnection: () => Promise<string | undefined>;
   disconnectWorkspaceConnection: () => Promise<void>;
 }
 
 export class GitlabAuthStore implements IGitlabAuthStore {
   // observables
+  appConfigKey: string = ""; // configKey
   workspaceConnectionMap: Record<string, Record<string, TGitlabWorkspaceConnection>> = {}; // workspaceId -> organizationId -> TGitlabWorkspaceConnection
   // service
   private service: GitlabAuthService;
   private applicationService: ApplicationService;
+  private isEnterprise: boolean;
 
-  constructor(protected store: IGitlabStore) {
+  constructor(
+    protected store: IGitlabStore,
+    isEnterprise: boolean = false
+  ) {
     makeObservable(this, {
       // observables
       workspaceConnectionMap: observable,
+      appConfigKey: observable,
       // computed
       workspaceConnectionIds: computed,
       // actions
       fetchWorkspaceConnection: action,
+      fetchAppConfigKey: action,
       connectWorkspaceConnection: action,
       disconnectWorkspaceConnection: action,
     });
 
-    this.service = new GitlabAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.isEnterprise = isEnterprise;
+    this.service = new GitlabAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), isEnterprise);
     this.applicationService = new ApplicationService();
   }
 
@@ -77,6 +87,26 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
   // actions
   /**
+   * @description fetch app config key - will call this before connecting to the organization
+   * @param { TGitlabAppConfig } config
+   * @returns { Promise<void> }
+   */
+  fetchAppConfigKey = async (config: TGitlabAppConfig): Promise<string | undefined> => {
+    try {
+      const workspaceId = this.store.workspace?.id;
+      if (!workspaceId) return;
+
+      const { configKey } = await this.service.fetchAppConfigKey(workspaceId, config);
+      runInAction(() => {
+        this.appConfigKey = configKey;
+      });
+      return configKey;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+  /**
    * @description fetch gitlab organization
    * @returns { Promise<TGitlabWorkspaceConnection[] | undefined> }
    */
@@ -88,7 +118,9 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
       const response = await this.service.fetchOrganizationConnection(workspaceId);
       if (response) {
-        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/gitlab/plane-webhook`);
+        await this.store.fetchWebhookConnection(
+          `${SILO_BASE_PATH}/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/plane-webhook`
+        );
         runInAction(() => {
           response.forEach((data) => {
             if (data.id) set(this.workspaceConnectionMap, [workspaceId, data.id], data);
@@ -116,6 +148,16 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
       if (!userId || !workspaceId || !workspaceSlug || !externalApiToken) return undefined;
 
+      let config_key: string | undefined;
+
+      if (this.isEnterprise) {
+        if (!this.appConfigKey) {
+          console.error("App config key is required");
+          return undefined;
+        }
+        config_key = this.appConfigKey;
+      }
+
       // get the plane app
       const appDetails = await this.service.getPlaneAppDetails();
       const appInstallation = await this.applicationService.installApplication(workspaceSlug, appDetails.appId);
@@ -129,9 +171,12 @@ export class GitlabAuthStore implements IGitlabAuthStore {
         source_hostname: "gitlab.com",
         target_host: targetHostname,
         plane_app_installation_id: appInstallation.id,
+        config_key: config_key,
       };
       const response = await this.service.connectOrganization(payload);
-      await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/gitlab/plane-webhook`);
+      await this.store.fetchWebhookConnection(
+        `${SILO_BASE_PATH}/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/plane-webhook`
+      );
       return response;
     } catch (error) {
       throw error;

@@ -10,10 +10,10 @@ export class GitlabIntegrationService implements IPullRequestService {
     access_token: string,
     refresh_token: string,
     refresh_callback: (access_token: string, refresh_token: string) => Promise<void>,
-    hostname: string = "gitlab.com",
+    baseUrl: string = "https://gitlab.com",
     projectId: string
   ) {
-    this.apiService = new GitLabAPIService(access_token, refresh_token, refresh_callback, hostname);
+    this.apiService = new GitLabAPIService(access_token, refresh_token, refresh_callback, baseUrl);
     this.projectId = projectId;
   }
 
@@ -73,14 +73,13 @@ export class GitlabIntegrationService implements IPullRequestService {
     owner: string,
     repo: string,
     commentId: number | string,
-    body: string
+    body: string,
+    pullRequestIid: number
   ): Promise<IGitComment> {
     try {
-      const mergeRequestIid = await this.getMergeRequestIidForComment(commentId);
-
       const comment = await this.apiService.updateMergeRequestComment(
         Number(this.projectId),
-        mergeRequestIid,
+        pullRequestIid,
         Number(commentId),
         body
       );
@@ -92,18 +91,9 @@ export class GitlabIntegrationService implements IPullRequestService {
     }
   }
 
-  private async getMergeRequestIidForComment(commentId: number | string): Promise<number> {
-    try {
-      const response = await this.apiService.client.get(`/projects/${this.projectId}/notes/${commentId}`);
-      return response.data.noteable_iid;
-    } catch (error) {
-      logger.error(`Error getting merge request IID for comment: ${error}`);
-      throw error;
-    }
-  }
-
   private transformMergeRequestToPR(mergeRequest: any, owner: string, repositoryName: string): IPullRequestDetails {
     return {
+      pull_request_id: mergeRequest.iid,
       title: mergeRequest.title,
       description: mergeRequest.description || "",
       number: mergeRequest.iid,

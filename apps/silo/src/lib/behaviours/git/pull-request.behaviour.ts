@@ -333,7 +333,8 @@ export class PullRequestBehaviour {
       prDetails.repository.owner,
       prDetails.repository.name,
       commentId.toString(),
-      body
+      body,
+      prDetails.pull_request_id
     );
     logger.info(
       `Updated comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`

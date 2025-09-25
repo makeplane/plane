@@ -165,12 +165,17 @@ export enum GitlabEntityType {
   GROUP = "GROUP",
 }
 
+export enum GitlabEnterpriseEntityType {
+  PROJECT = "GITLAB_ENTERPRISE_PROJECT",
+  GROUP = "GITLAB_ENTERPRISE_GROUP",
+}
+
 export interface IGitlabEntity {
   id: string;
   name: string;
   path: string;
   path_with_namespace: string;
-  type: GitlabEntityType;
+  type: GitlabEntityType | GitlabEnterpriseEntityType;
 }
 
 export enum EConnectionType {

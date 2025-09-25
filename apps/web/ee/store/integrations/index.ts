@@ -5,3 +5,4 @@ export * from "./github";
 export * from "./gitlab";
 export * from "./sentry";
 export * from "./github-enterprise";
+export * from "./gitlab-enterprise";

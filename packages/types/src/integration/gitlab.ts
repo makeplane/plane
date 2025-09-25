@@ -1,4 +1,5 @@
 import { TWorkspaceEntityConnection, TWorkspaceConnection } from "../workspace";
+import { TStateMap } from "./common";
 
 export type TGitlabMergeRequestEvent =
   | "DRAFT_MR_OPENED"
@@ -15,23 +16,30 @@ export type TGitlabExState = {
 };
 
 // gitlab entity connection config
-export type TGitlabEntityConnectionConfig = {
-  states?: {
-    mergeRequestEventMapping: Record<TGitlabMergeRequestEvent, TGitlabExState>;
-  };
-};
+export type TGitlabEntityConnectionConfig = object & { states: { mergeRequestEventMapping: TStateMap } };
 
 // gitlab workspace connection config
 export type TGitlabWorkspaceConnectionConfig = object;
+
+// gitlab app config
+export type TGitlabAppConfig = {
+  baseUrl: string;
+  clientId: string;
+  clientSecret: string;
+  webhookSecret: string;
+};
 
 // gitlab workspace connection data
 export type TGitlabWorkspaceConnectionData = {
   id: number;
   username: string;
+  organization: string;
+  login: string;
   name: string;
   state: "active" | "blocked";
   avatar_url: string;
   web_url: string;
+  appConfig?: TGitlabAppConfig | undefined;
 };
 
 // gitlab workspace connection
@@ -42,3 +50,10 @@ export type TGitlabWorkspaceConnection = TWorkspaceConnection<
 
 // gitlab entity connection
 export type TGitlabEntityConnection = TWorkspaceEntityConnection<TGitlabEntityConnectionConfig>;
+
+// data types
+export type TGitlabRepository = {
+  id: number;
+  name: string;
+  full_name: string;
+};

@@ -1,13 +1,15 @@
 import axios, { AxiosInstance } from "axios";
 // plane web types
-import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
+import { TGitlabEntityConnection } from "@plane/types";
 
 export class GitlabEntityService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
+  private isEnterprise: boolean;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, isEnterprise: boolean = false) {
     this.baseURL = baseURL;
+    this.isEnterprise = isEnterprise;
     this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
@@ -18,7 +20,7 @@ export class GitlabEntityService {
    */
   fetchEntityConnections = async (workspaceId: string): Promise<TGitlabEntityConnection[] | undefined> =>
     await this.axiosInstance
-      .get(`/api/gitlab/entity-connections/${workspaceId}`)
+      .get(`/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/entity-connections/${workspaceId}`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -50,7 +52,10 @@ export class GitlabEntityService {
     entityConnection: Partial<TGitlabEntityConnection>
   ): Promise<TGitlabEntityConnection | undefined> =>
     await this.axiosInstance
-      .post(`/api/gitlab/entity-connections/${workspaceId}/${workspaceConnectionId}`, entityConnection)
+      .post(
+        `/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/entity-connections/${workspaceId}/${workspaceConnectionId}`,
+        entityConnection
+      )
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -84,7 +89,7 @@ export class GitlabEntityService {
    */
   deleteEntityConnection = async (connectionId: string): Promise<void> =>
     await this.axiosInstance
-      .delete(`/api/gitlab/entity-connections/${connectionId}`)
+      .delete(`/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/entity-connections/${connectionId}`)
       .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;
@@ -103,7 +108,10 @@ export class GitlabEntityService {
     entityConnection: Partial<TGitlabEntityConnection>
   ): Promise<TGitlabEntityConnection | undefined> =>
     await this.axiosInstance
-      .post(`/api/gitlab/entity-project-connections/${workspaceId}/${workspaceConnectionId}`, entityConnection)
+      .post(
+        `/api/${this.isEnterprise ? "gitlab-enterprise" : "gitlab"}/entity-project-connections/${workspaceId}/${workspaceConnectionId}`,
+        entityConnection
+      )
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

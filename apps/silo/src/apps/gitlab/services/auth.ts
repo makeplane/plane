@@ -6,3 +6,11 @@ export const gitlabAuthService = createGitLabAuth({
   clientSecret: env.GITLAB_CLIENT_SECRET,
   redirectUri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/auth/callback`,
 });
+
+export const getGitlabEnterpriseAuthService = (baseUrl: string, clientId: string, clientSecret: string) =>
+  createGitLabAuth({
+    baseUrl,
+    clientId,
+    clientSecret,
+    redirectUri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab-enterprise/auth/callback`,
+  });

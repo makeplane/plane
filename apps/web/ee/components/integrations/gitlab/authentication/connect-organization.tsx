@@ -5,12 +5,17 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
+import { Button, EModalWidth, Loader, ModalCore } from "@plane/ui";
 // plane web hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";
+import { GitlabEnterpriseServerAppForm } from "./server-app-form";
 
-export const ConnectOrganization: FC = observer(() => {
+interface IConnectOrganizationProps {
+  isEnterprise: boolean;
+}
+
+export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
@@ -21,18 +26,25 @@ export const ConnectOrganization: FC = observer(() => {
       connectWorkspaceConnection,
       disconnectWorkspaceConnection,
     },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
   const [isConnectionSetup, setIsConnectionSetup] = useState<boolean>(false);
-
+  const [isServerAppFormOpen, setIsServerAppFormOpen] = useState<boolean>(false);
   // derived values
   const workspaceId = workspace?.id || undefined;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const workspaceConnection = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
 
   // handlers
+
+  // after server app form is submitted, connect the organization
+  const handleServerAppFormSubmitSuccess = async () => {
+    await handleConnectOrganization();
+    setIsServerAppFormOpen(false);
+  };
+
   const handleConnectOrganization = async () => {
     try {
       setIsConnectionSetup(true);
@@ -41,7 +53,7 @@ export const ConnectOrganization: FC = observer(() => {
       captureSuccess({
         eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
         payload: {
-          type: "GITLAB_ORGANIZATION",
+          type: `GITLAB_ORGANIZATION${isEnterprise ? "_ENTERPRISE" : ""}`,
           workspaceConnectionId,
         },
       });
@@ -71,13 +83,15 @@ export const ConnectOrganization: FC = observer(() => {
   };
 
   const handleGitlabAuth = () => {
-    if (!workspaceConnectionId) handleConnectOrganization();
-    else handleDisconnectOrganization();
+    if (!workspaceConnectionId) {
+      if (isEnterprise) setIsServerAppFormOpen(true);
+      else handleConnectOrganization();
+    } else handleDisconnectOrganization();
   };
 
   // fetching gitlab workspace connection connection
   const { isLoading, error } = useSWR(
-    workspaceId ? `GITLAB_INTEGRATION_${workspaceId}` : null,
+    workspaceId ? `GITLAB_INTEGRATION_${workspaceId}${isEnterprise ? "_ENTERPRISE" : ""}` : null,
     workspaceId ? async () => await fetchWorkspaceConnection() : null,
     { errorRetryCount: 0 }
   );
@@ -91,6 +105,12 @@ export const ConnectOrganization: FC = observer(() => {
 
   return (
     <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
+      <ModalCore isOpen={isServerAppFormOpen} handleClose={() => setIsServerAppFormOpen(false)} width={EModalWidth.XXL}>
+        <GitlabEnterpriseServerAppForm
+          handleFormSubmitSuccess={handleServerAppFormSubmitSuccess}
+          handleClose={() => setIsServerAppFormOpen(false)}
+        />
+      </ModalCore>
       {workspaceConnection ? (
         <div className="w-full relative flex items-center gap-4">
           <div className="flex-shrink-0 w-11 h-11 rounded overflow-hidden relative">

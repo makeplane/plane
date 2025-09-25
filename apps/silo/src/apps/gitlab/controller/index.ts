@@ -81,7 +81,7 @@ export default class GitlabController {
         const connection = connections[0];
         const workspaceId = connection.workspace_id;
         // remove the webhooks from gitlab
-        const gitlabClientService = await getGitlabClientService(workspaceId);
+        const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
         const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
           workspace_connection_id: connection.id,
         });
@@ -432,7 +432,7 @@ export default class GitlabController {
 
       // Add webhook to gitlab
       const { url, token } = await this.getWorkspaceWebhookData(workspaceId);
-      const gitlabClientService = await getGitlabClientService(workspaceId);
+      const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
       // based on enum either add to project or group
       let webhookId;
@@ -518,7 +518,11 @@ export default class GitlabController {
         return res.status(400).json({ error: "Entity connection not found" });
       }
 
-      const gitlabClientService = await getGitlabClientService(entityConnection.workspace_id);
+      const gitlabClientService = await getGitlabClientService(
+        entityConnection.workspace_id,
+        E_INTEGRATION_KEYS.GITLAB,
+        undefined
+      );
       const entityData = entityConnection.entity_data as GitlabEntityData;
 
       if (entityConnection.type === EConnectionType.ENTITY) {
@@ -604,7 +608,7 @@ export default class GitlabController {
       const workspaceId = req.params.workspaceId;
 
       const entities = [];
-      const gitlabClientService = await getGitlabClientService(workspaceId);
+      const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
       const projects = await gitlabClientService.getProjects();
       if (projects.length) {

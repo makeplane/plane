@@ -78,7 +78,7 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
     return (
       <div className="relative space-y-6">
         {/* header */}
-        <GitlabHeader />
+        <GitlabHeader isEnterprise={false} />
         <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
           {/* Icon and Title Section */}
           <div className="flex items-center justify-between">
@@ -125,13 +125,13 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   return (
     <div className="relative space-y-6">
       {/* header */}
-      <GitlabHeader />
+      <GitlabHeader isEnterprise={false} />
 
       {/* integration auth root */}
-      <UserAuthentication />
+      <UserAuthentication isEnterprise={false} />
 
       {/* integration root */}
-      {organization && <IntegrationRoot />}
+      {organization && <IntegrationRoot isEnterprise={false} />}
     </div>
   );
 });

@@ -20,16 +20,17 @@ import GitlabLogo from "@/public/services/gitlab.svg";
 type TEntityForm = {
   value: TProjectMap;
   handleChange: <T extends keyof TProjectMap>(key: T, value: TProjectMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 export const EntityForm: FC<TEntityForm> = observer((props) => {
   // props
-  const { value, handleChange } = props;
+  const { value, handleChange, isEnterprise } = props;
   // hooks
   const {
     data: { gitlabEntityIds, gitlabEntityById },
     entityConnection: { entityConnectionIds, entityConnectionById },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // existing connections

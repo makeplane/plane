@@ -7,10 +7,12 @@ const DEFAULT_SCOPES = ["api", "read_api", "read_user", "read_repository", "prof
 export class GitLabAuthService {
   config: GitLabAuthConfig;
   scopes: string[];
+  baseUrl: string;
 
   constructor(config: GitLabAuthConfig, scopes: string[] = DEFAULT_SCOPES) {
     this.config = config;
     this.scopes = scopes;
+    this.baseUrl = config.baseUrl || "https://gitlab.com";
   }
 
   private getScopesString(): string {
@@ -25,8 +27,7 @@ export class GitLabAuthService {
   getAuthUrl(state: GitLabAuthorizeState): string {
     const stateString = JSON.stringify(state);
     const encodedState = Buffer.from(stateString).toString("base64");
-    const hostname = this.config.host || "gitlab.com";
-    return `https://${hostname}/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.redirectUri}&response_type=code&state=${encodedState}&scope=${this.getScopesString()}`;
+    return `${this.baseUrl}/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.redirectUri}&response_type=code&state=${encodedState}&scope=${this.getScopesString()}`;
   }
 
   /**
@@ -40,7 +41,7 @@ export class GitLabAuthService {
   }> {
     const { code, state } = payload;
 
-    const { data: response } = await axios.post<GitLabTokenResponse>("https://gitlab.com/oauth/token", {
+    const { data: response } = await axios.post<GitLabTokenResponse>(`${this.baseUrl}/oauth/token`, {
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
       code,

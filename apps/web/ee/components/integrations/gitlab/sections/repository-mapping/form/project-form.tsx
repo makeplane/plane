@@ -19,11 +19,12 @@ import { TProjectMap } from "@/plane-web/types/integrations";
 type TProjectForm = {
   value: TProjectMap;
   handleChange: <T extends keyof TProjectMap>(key: T, value: TProjectMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 export const ProjectForm: FC<TProjectForm> = observer((props) => {
   // props
-  const { value, handleChange } = props;
+  const { value, handleChange, isEnterprise } = props;
 
   // hooks
   const {
@@ -31,7 +32,7 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
     projectIdsByWorkspaceSlug,
     getProjectById,
     entityConnection: { entityConnectionIds, entityConnectionById },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // derived values

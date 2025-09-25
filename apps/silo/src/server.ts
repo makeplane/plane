@@ -26,6 +26,7 @@ import ClickupController from "./apps/clickup-importer/controllers";
 import CSVController from "./apps/flatfile/controllers";
 import GithubEnterpriseController from "./apps/github-enterprise/controllers";
 import GitlabController from "./apps/gitlab/controller";
+import GitlabEnterpriseController from "./apps/gitlab-enterprise/controllers";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 import { NotionController } from "./apps/notion-importer/controller";
 import SentryControllers from "./apps/sentry/controllers";
@@ -58,6 +59,7 @@ export default class Server {
       JiraController,
       LinearController,
       GitlabController,
+      GitlabEnterpriseController,
       AsanaController,
       NotionController,
       SlackController,

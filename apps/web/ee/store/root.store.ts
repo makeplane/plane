@@ -79,6 +79,8 @@ import {
   SentryStore,
   GithubEnterpriseStore,
   IGithubEnterpriseStore,
+  IGitlabEnterpriseStore,
+  GitlabEnterpriseStore,
 } from "./integrations";
 
 import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
@@ -137,6 +139,7 @@ export class RootStore extends CoreRootStore {
   githubIntegration: IGithubStore;
   githubEnterpriseIntegration: IGithubEnterpriseStore;
   gitlabIntegration: IGitlabStore;
+  gitlabEnterpriseIntegration: IGitlabEnterpriseStore;
   sentryIntegration: ISentryStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
@@ -195,6 +198,7 @@ export class RootStore extends CoreRootStore {
     this.githubIntegration = new GithubStore(this);
     this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
+    this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this);
     this.sentryIntegration = new SentryStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
@@ -251,6 +255,7 @@ export class RootStore extends CoreRootStore {
     this.githubIntegration = new GithubStore(this);
     this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
+    this.gitlabEnterpriseIntegration = new GitlabEnterpriseStore(this);
     this.sentryIntegration = new SentryStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);

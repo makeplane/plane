@@ -70,6 +70,14 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     logoUrl: GitHubLogo.src,
     beta: true,
   },
+  {
+    flag: E_FEATURE_FLAGS.GITLAB_ENTERPRISE_INTEGRATION,
+    urlSlug: "gitlab-enterprise",
+    key: "gitlab_enterprise",
+    title: "GitLab Enterprise",
+    logoUrl: GitlabLogo.src,
+    beta: true,
+  },
 ];
 
 export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TUserApplication[] => {

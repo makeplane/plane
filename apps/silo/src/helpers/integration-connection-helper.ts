@@ -109,19 +109,31 @@ class IntegrationConnectionHelper {
     entity_id,
     entity_type,
     entity_data,
+    entity_slug,
+    type,
+    config,
+    project_id,
   }: {
     workspace_id: string;
     workspace_connection_id: string;
-    entity_id: string;
-    entity_type: string;
-    entity_data: object;
+    entity_id?: string;
+    entity_type?: string;
+    entity_data?: object;
+    entity_slug?: string;
+    type?: string;
+    config?: object;
+    project_id?: string;
   }): Promise<TWorkspaceEntityConnection> {
     return this.apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
       workspace_id,
       workspace_connection_id,
+      project_id,
       entity_id,
       entity_type,
       entity_data,
+      entity_slug,
+      type,
+      config,
     });
   }
 
@@ -232,7 +244,7 @@ class IntegrationConnectionHelper {
     target_identifier?: string;
     target_authorization_type?: string;
     is_pat?: boolean;
-    source_hostname: string;
+    source_hostname?: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.createWorkspaceCredential({
       workspace_id,

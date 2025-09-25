@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
+import { E_STATE_MAP_KEYS, TStateMap } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
 import {
@@ -16,7 +17,7 @@ import {
 //  plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations/gitlab";
+import { TProjectMap } from "@/plane-web/types/integrations/gitlab";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,
@@ -32,7 +33,11 @@ export const stateMapInit: TStateMap = {
   [E_STATE_MAP_KEYS.MR_CLOSED]: undefined,
 };
 
-export const RepositoryMappingRoot: FC = observer(() => {
+interface IRepositoryMappingRootProps {
+  isEnterprise: boolean;
+}
+
+export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
@@ -40,7 +45,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
     auth: { workspaceConnectionIds },
     data: { fetchGitlabEntities },
     entityConnection: { entityConnectionIds, entityConnectionById, fetchEntityConnections },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
@@ -69,7 +74,9 @@ export const RepositoryMappingRoot: FC = observer(() => {
 
   // fetching external api token
   const { isLoading: isGitlabEntitiesLoading } = useSWR(
-    workspaceConnectionId && workspaceId ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}` : null,
+    workspaceConnectionId && workspaceId
+      ? `INTEGRATION_GITLAB_ENTITIES_${workspaceId}_${workspaceConnectionId}${isEnterprise ? "_ENTERPRISE" : ""}`
+      : null,
     workspaceConnectionId && workspaceId ? async () => fetchGitlabEntities() : null,
     { errorRetryCount: 0 }
   );
@@ -83,7 +90,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
 
   // fetching entity connections
   const { isLoading: isEntitiesLoading } = useSWR(
-    workspaceId ? `INTEGRATION_GITLAB_ENTITY_CONNECTIONS_${workspaceId}` : null,
+    workspaceId ? `INTEGRATION_GITLAB_ENTITY_CONNECTIONS_${workspaceId}${isEnterprise ? "_ENTERPRISE" : ""}` : null,
     workspaceId ? async () => fetchEntityConnections() : null,
     { errorRetryCount: 0 }
   );
@@ -127,13 +134,13 @@ export const RepositoryMappingRoot: FC = observer(() => {
               if (!entityConnection) return null;
               return (
                 <div className="space-y-2" key={index}>
-                  <EntityConnectionItem key={index} entityConnection={entityConnection} />
+                  <EntityConnectionItem key={index} entityConnection={entityConnection} isEnterprise={isEnterprise} />
                 </div>
               );
             })}
           </div>
         )}
-        <EntityFormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} />
+        <EntityFormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} isEnterprise={isEnterprise} />
       </div>
 
       {/* Add project state mapping blocks */}
@@ -163,7 +170,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
               if (!entityConnection) return null;
               return (
                 <div className="space-y-2" key={index}>
-                  <EntityConnectionItem key={index} entityConnection={entityConnection} />
+                  <EntityConnectionItem key={index} entityConnection={entityConnection} isEnterprise={isEnterprise} />
                 </div>
               );
             })}
@@ -171,7 +178,11 @@ export const RepositoryMappingRoot: FC = observer(() => {
         )}
 
         {/* project entity form */}
-        <ProjectEntityFormCreate modal={modalProjectCreateOpen} handleModal={setModalProjectCreateOpen} />
+        <ProjectEntityFormCreate
+          modal={modalProjectCreateOpen}
+          handleModal={setModalProjectCreateOpen}
+          isEnterprise={isEnterprise}
+        />
       </div>
     </div>
   );
