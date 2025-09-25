@@ -1,0 +1,34 @@
+import { EPortalWidth, EPortalPosition } from "./constants";
+
+export interface BasePortalProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export interface PortalWrapperProps extends BasePortalProps {
+  portalId?: string;
+  fallbackToDocument?: boolean;
+  onMount?: () => void;
+  onUnmount?: () => void;
+}
+
+export interface ModalPortalProps extends BasePortalProps {
+  isOpen: boolean;
+  onClose?: () => void;
+  portalId?: string;
+  overlayClassName?: string;
+  contentClassName?: string;
+  width?: EPortalWidth;
+  position?: EPortalPosition;
+  fullScreen?: boolean;
+  showOverlay?: boolean;
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
+  preventScroll?: boolean;
+  focusTrap?: boolean;
+  "data-testid"?: string;
+}
+
+export type PortalEventHandler = () => void;
+export type PortalKeyboardHandler = (event: KeyboardEvent) => void;
+export type PortalMouseHandler = (event: React.MouseEvent) => void;
