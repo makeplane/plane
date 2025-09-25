@@ -17,6 +17,14 @@ APPLICATIONS = {
         "description_html": "<p>Github Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/github/plane-oauth/callback",
     },
+    "gitlab_enterprise": {
+        "key": "gitlab_enterprise",
+        "name": "Gitlab Enterprise Server",
+        "slug": "gitlab-enterprise",
+        "short_description": "Gitlab Enterprise Server Integration",
+        "description_html": "<p>Gitlab Enterprise Server Integration</p>",
+        "redirect_uris": f"{settings.SILO_URL}/api/oauth/gitlab-enterprise/auth/callback",
+    },
     "gitlab": {
         "key": "gitlab",
         "name": "Gitlab",
