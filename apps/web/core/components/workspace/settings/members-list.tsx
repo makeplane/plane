@@ -28,6 +28,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
       fetchWorkspaceMembers,
       fetchWorkspaceMemberInvitations,
       workspaceMemberIds,
+      getFilteredWorkspaceMemberIds,
       getSearchedWorkspaceMemberIds,
       workspaceMemberInvitationIds,
       getSearchedWorkspaceInvitationIds,
@@ -49,7 +50,8 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
   if (!workspaceMemberIds && !workspaceMemberInvitationIds) return <MembersSettingsLoader />;
 
   // derived values
-  const searchedMemberIds = getSearchedWorkspaceMemberIds(searchQuery);
+  const filteredMemberIds = workspaceSlug ? getFilteredWorkspaceMemberIds(workspaceSlug.toString()) : [];
+  const searchedMemberIds = searchQuery ? getSearchedWorkspaceMemberIds(searchQuery) : filteredMemberIds;
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
   const memberDetails = searchedMemberIds?.map((memberId) => getWorkspaceMemberDetails(memberId));
 

@@ -5,7 +5,7 @@ import { stringToEmoji } from "../emoji-icon-picker";
 import { EmojiReactionPicker } from "./emoji-reaction-picker";
 
 const meta: Meta<typeof EmojiReactionPicker> = {
-  title: "EmojiReactionPicker",
+  title: "Components/Emoji/EmojiReactionPicker",
   component: EmojiReactionPicker,
   parameters: {
     layout: "centered",

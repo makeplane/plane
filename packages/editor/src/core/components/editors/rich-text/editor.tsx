@@ -42,7 +42,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     <EditorWrapper {...props} extensions={getExtensions()}>
       {(editor) => (
         <>
-          {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}{" "}
+          {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
           <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} disabledExtensions={disabledExtensions} />
         </>
       )}

@@ -29,7 +29,7 @@ import {
 // root store
 import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
+import { IWorkspaceMembership } from "@/store/member/workspace/workspace-member.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";

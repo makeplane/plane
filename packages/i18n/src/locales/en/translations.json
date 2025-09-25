@@ -2405,5 +2405,12 @@
     "open_button": "Open navigation pane",
     "close_button": "Close navigation pane",
     "outline_floating_button": "Open outline"
+  },
+  "project_members": {
+    "full_name": "Full name",
+    "display_name": "Display name",
+    "email": "Email",
+    "joining_date": "Joining date",
+    "role": "Role"
   }
 }
