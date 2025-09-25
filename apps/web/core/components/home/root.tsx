@@ -24,7 +24,8 @@ export const WorkspaceHomeView = observer(() => {
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { fetchWidgets } = useHome();
-
+  
+  
   useSWR(
     workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWidgets(workspaceSlug?.toString()) : null,
@@ -55,14 +56,17 @@ export const WorkspaceHomeView = observer(() => {
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
         <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
-          <TourRoot onComplete={handleTourCompleted} />
+          {/* 新手教程 */}
+          <TourRoot onComplete={handleTourCompleted} /> 
         </div>
       )}
       <>
         <HomePeekOverviewsRoot />
         <ContentWrapper className={cn("gap-6 bg-custom-background-100 mx-auto scrollbar-hide px-page-x lg:px-0")}>
           <div className="max-w-[800px] mx-auto w-full">
+            {/* 展示用户名和时间 */}
             {currentUser && <UserGreetingsView user={currentUser} />}
+            {/* 小部件和首页小部件展示 */}
             <DashboardWidgets />
           </div>
         </ContentWrapper>

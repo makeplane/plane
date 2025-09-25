@@ -4,7 +4,7 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "dev": "next dev -p 3002",
+    "dev": "next dev -p 3002 -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",

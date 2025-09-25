@@ -14,14 +14,17 @@ import { WorkspaceDashboardHeader } from "./header";
 
 const WorkspaceDashboardPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
+  
   const { t } = useTranslation();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - ${t("home.title")}` : undefined;
 
   return (
     <>
+    {/* 这个是首页顶部的面包屑和右侧的按钮 */}
       <AppHeader header={<WorkspaceDashboardHeader />} />
       <ContentWrapper>
+        {/* 这里是tab页上展示的名称 */}
         <PageHead title={pageTitle} />
         <WorkspaceHomeView />
       </ContentWrapper>

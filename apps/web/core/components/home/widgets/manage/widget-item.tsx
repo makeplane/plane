@@ -47,6 +47,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
   const { widgetsMap } = useHome();
   const { t } = useTranslation();
   // derived values
+  
   const widget = widgetsMap[widgetId] as TWidgetEntityData;
   const widgetTitle = HOME_WIDGETS_LIST[widget.key]?.title;
 
@@ -80,8 +81,8 @@ export const WidgetItem: FC<Props> = observer((props) => {
         },
       }),
       dropTargetForElements({
-        element,
-        canDrop: ({ source }) => getCanDrop(source, widget),
+        element, // 当前行的元素ref
+        canDrop: ({ source }) => getCanDrop(source, widget),  //控制能否在此投放
         onDragStart: () => {
           setIsDragging(true);
         },

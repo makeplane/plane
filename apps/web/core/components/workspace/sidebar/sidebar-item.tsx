@@ -29,22 +29,26 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
-  const { getNavigationPreferences } = useWorkspace();
-  const { data } = useUser();
+  const { getNavigationPreferences } = useWorkspace(); // 获取当前工作空间的导航偏好设置
+  const { data } = useUser(); // 获取当前用户的信息
 
+  //toggleSidebar: 切换侧边栏的展开状态
+  //isExtendedSidebarOpened: 检查当前是否有扩展侧边栏打开
+  //toggleExtendedSidebar: 切换扩展侧边栏的展开状态
   const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
 
   const handleLinkClick = () => {
-    if (window.innerWidth < 768) toggleSidebar();
-    if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
+    if (window.innerWidth < 768) toggleSidebar(); // 当窗口宽度小于768px时，切换侧边栏的展开状态
+    if (isExtendedSidebarOpened) toggleExtendedSidebar(false); // 当有扩展侧边栏打开时，关闭它
   };
 
-  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", ...(additionalStaticItems || [])];
-  const slug = workspaceSlug?.toString() || "";
+  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", ...(additionalStaticItems || [])]; // 静态导航项的列表，包括"home", "inbox", "pi_chat", "projects", "your_work"等
+  const slug = workspaceSlug?.toString() || ""; // 当前工作空间的slug，用于构建导航链接
 
-  if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;
+  if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null; // 检查当前用户是否有访问该导航项的权限
 
   const sidebarPreference = getNavigationPreferences(slug);
+  
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
@@ -52,9 +56,11 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
     item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
 
+
   return (
     <Link href={itemHref} onClick={handleLinkClick}>
-      <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>
+      {/* item.highlight显示高亮 */}
+      <SidebarNavItem isActive={item.highlight(pathname, itemHref)}> 
         <div className="flex items-center gap-1.5 py-[1px]">
           {icon}
           <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>

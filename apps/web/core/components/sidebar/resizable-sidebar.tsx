@@ -25,33 +25,38 @@ interface ResizableSidebarProps {
   isAnySidebarDropdownOpen?: boolean;
   disablePeekTrigger?: boolean;
 }
+// width , setWidth : 受控 的宽度状态。父组件必须提供当前宽度值和更新宽度的函数。
+// isCollapsed , toggleCollapsed : 受控 的折叠状态。父组件控制侧边栏是否折叠，并提供切换方法。
+// showPeek , togglePeek : 受控 的“窥视”状态。父组件控制“窥视”视图是否显示，并提供切换方法。
+
+// minWidth , maxWidth : 限制侧边栏可拖动的最小和最大宽度。
 
 export function ResizableSidebar({
-  showPeek = false,
-  togglePeek,
-  peekDuration = 500,
-  isCollapsed = false,
-  toggleCollapsed: toggleCollapsedProp,
-  onCollapsedChange,
-  width,
-  setWidth,
-  onWidthChange,
-  minWidth = 236,
-  maxWidth = 350,
-  className = "",
-  children,
-  extendedSidebar,
-  isAnyExtendedSidebarExpanded = false,
-  isAnySidebarDropdownOpen = false,
-  disablePeekTrigger = false,
+  showPeek = false, // 受控 的“窥视”状态。父组件控制“窥视”视图是否显示，并提供切换方法。
+  togglePeek, // 用于切换“窥视”状态的函数。父组件必须提供此函数，以便在点击“窥视”按钮时切换“窥视”状态。
+  peekDuration = 500, // 控制“窥视”视图显示的持续时间。
+  isCollapsed = false, // 受控 的折叠状态。父组件控制侧边栏是否折叠，并提供切换方法。
+  toggleCollapsed: toggleCollapsedProp, // 用于切换折叠状态的函数。父组件必须提供此函数，以便在点击折叠按钮时切换折叠状态。
+  onCollapsedChange, //
+  width,  // 受控 的宽度状态。父组件必须提供当前宽度值和更新宽度的函数。
+  setWidth, // 用于更新宽度的函数。父组件必须提供此函数，以便在拖动侧边栏时更新宽度。
+  onWidthChange, // 用于在宽度变化时触发的回调函数。父组件可以提供此函数，以便在宽度变化时执行自定义逻辑。
+  minWidth = 236,  // 限制侧边栏可拖动的最小宽度
+  maxWidth = 350,  // 限制侧边栏可拖动的最大宽度
+  className = "", // 自定义的 CSS 类名，用于添加自定义样式。
+  children, // 侧边栏的子元素。父组件可以在侧边栏中添加自定义内容。
+  extendedSidebar, // 侧边栏的扩展内容。父组件可以在侧边栏中添加自定义的扩展内容。
+  isAnyExtendedSidebarExpanded = false, // 任何扩展侧边栏是否展开。如果设置为 true ，则侧边栏将显示扩展内容。
+  isAnySidebarDropdownOpen = false,   // 任何侧边栏下拉菜单是否打开。如果设置为 true ，则侧边栏将显示下拉菜单。
+  disablePeekTrigger = false, // 禁用 “窥视” 触发。如果设置为 true ，则点击 “窥视” 按钮将不会触发 “窥视” 状态的切换。
 }: ResizableSidebarProps) {
   // states
-  const [isResizing, setIsResizing] = useState(false);
-  const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
+  const [isResizing, setIsResizing] = useState(false); //是否正在拖拽调整宽度
+  const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);  //鼠标是否在 Peek 触发区悬停
   // refs
-  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
-  const initialWidthRef = useRef<number>(0);
-  const initialMouseXRef = useRef<number>(0);
+  const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>(); //保存控制 Peek 自动收起的定时器句柄
+  const initialWidthRef = useRef<number>(0); // 保存初始宽度，用于计算拖动 deltaX
+  const initialMouseXRef = useRef<number>(0); // 保存初始鼠标 X 坐标，用于计算拖动 deltaX
 
   // handlers
   const setShowPeek = useCallback(
@@ -60,7 +65,7 @@ export function ResizableSidebar({
     },
     [togglePeek]
   );
-
+  // 根据当前鼠标位置与初始位置的差值 deltaX，计算新的宽度
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
@@ -86,6 +91,7 @@ export function ResizableSidebar({
   }, []);
 
   const toggleCollapsed = useCallback(() => {
+    // 不给参数就直接取反
     toggleCollapsedProp();
     setShowPeek(false);
     setIsHoveringTrigger(false);
@@ -94,8 +100,10 @@ export function ResizableSidebar({
     }
   }, [toggleCollapsedProp, setShowPeek]);
 
+  // 悬浮左侧栏
   const handleTriggerEnter = useCallback(() => {
     if (isCollapsed) {
+      
       setIsHoveringTrigger(true);
       setShowPeek(true);
       if (peekTimeoutRef.current) {
@@ -114,6 +122,7 @@ export function ResizableSidebar({
   }, [isCollapsed, peekDuration, setShowPeek, isAnyExtendedSidebarExpanded]);
 
   const handlePeekEnter = useCallback(() => {
+    
     if (isCollapsed && showPeek) {
       if (peekTimeoutRef.current) {
         clearTimeout(peekTimeoutRef.current);
@@ -122,6 +131,7 @@ export function ResizableSidebar({
   }, [isCollapsed, showPeek]);
 
   const handlePeekLeave = useCallback(() => {
+    
     if (isCollapsed && !isAnyExtendedSidebarExpanded && !isAnySidebarDropdownOpen) {
       peekTimeoutRef.current = setTimeout(() => {
         setShowPeek(false);
