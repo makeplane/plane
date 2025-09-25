@@ -60,7 +60,7 @@ export const FocusFilter = observer((props: TProps) => {
           disabled={focus.isInWorkspaceContext}
         >
           <div className="flex rounded-full font-medium gap-2 w-full overflow-hidden">
-            {!isEmpty(focus) && focus.isInWorkspaceContext ? (
+            {!isEmpty(focus) && !isEmpty(selectedFocus) && focus.isInWorkspaceContext ? (
               <div className=" flex items-center gap-2 text-sm my-auto capitalize truncate">
                 {focus.entityType === "workspace_id" ? (
                   <WorkspaceLogo
