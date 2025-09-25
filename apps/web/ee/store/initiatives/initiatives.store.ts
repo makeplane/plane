@@ -5,17 +5,17 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TEpicStats, TLoader } from "@plane/types";
-import { convertToISODateString, getDate, satisfiesDateFilter } from "@plane/utils";
-// plane-web importss
+import { TEpicStats, TLoader, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
+import { convertToISODateString } from "@plane/utils";
+// plane-web imports
 import { InitiativeService } from "@/plane-web/services/initiative.service";
-import { TInitiativeFilters, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@/plane-web/types/initiative";
 import {
+  TExternalInitiativeFilterExpression,
   TInitiative,
   TInitiativeAnalytics,
   TInitiativeReaction,
   TInitiativeStats,
-} from "@/plane-web/types/initiative/initiative";
+} from "@/plane-web/types/initiative";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // local imports
 import { RootStore } from "../root.store";
@@ -59,7 +59,10 @@ export interface IInitiativeStore {
   getInitiativeStatsById: (initiativeId: string) => TInitiativeStats | undefined;
   getInitiativeAnalyticsById: (initiativeId: string) => TInitiativeAnalytics | undefined;
 
-  fetchInitiatives: (workspaceSlug: string) => Promise<TInitiative[] | undefined>;
+  fetchInitiatives: (
+    workspaceSlug: string,
+    filters?: TExternalInitiativeFilterExpression
+  ) => Promise<TInitiative[] | undefined>;
   fetchInitiativesStats: (workspaceSlug: string) => Promise<TInitiativeStats[] | undefined>;
   fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => Promise<TInitiativeAnalytics | undefined>;
   createInitiative: (workspaceSlug: string, payload: Partial<TInitiative>) => Promise<TInitiative | undefined>;
@@ -177,12 +180,7 @@ export class InitiativeStore implements IInitiativeStore {
     const filters = this.initiativeFilterStore.getInitiativeFilters(workspaceSlug);
 
     if (!displayFilters || !filters || !this.initiativesMap) return;
-
-    const filteredInitiatives = Object.values(this.initiativesMap).filter(
-      (initiative) => initiative.workspace === workspace.id && shouldFilterInitiative(initiative, filters ?? {})
-    );
-
-    const sortedInitiatives = sortInitiativesWithOrderBy(filteredInitiatives, displayFilters?.order_by);
+    const sortedInitiatives = sortInitiativesWithOrderBy(Object.values(this.initiativesMap), displayFilters?.order_by);
 
     return getGroupedInitiativeIds(sortedInitiatives, displayFilters.group_by);
   });
@@ -210,14 +208,17 @@ export class InitiativeStore implements IInitiativeStore {
     }
   };
 
-  fetchInitiatives = async (workspaceSlug: string): Promise<TInitiative[] | undefined> => {
+  fetchInitiatives = async (
+    workspaceSlug: string,
+    filters?: TExternalInitiativeFilterExpression
+  ): Promise<TInitiative[] | undefined> => {
     try {
       runInAction(() => {
         this.initiativesLoader = true;
         this.initiativesMap = undefined;
       });
 
-      const response = await this.initiativeService.getInitiatives(workspaceSlug);
+      const response = await this.initiativeService.getInitiatives(workspaceSlug, filters);
 
       runInAction(() => {
         this.initiativesMap = {};
@@ -461,29 +462,6 @@ export class InitiativeStore implements IInitiativeStore {
 
   toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
 }
-
-export const shouldFilterInitiative = (initiative: TInitiative, filters: TInitiativeFilters): boolean => {
-  let fallsInFilters = true;
-  Object.keys(filters).forEach((key) => {
-    const filterKey = key as keyof TInitiativeFilters;
-    if (filterKey === "lead" && filters.lead && filters.lead.length > 0)
-      fallsInFilters = fallsInFilters && filters.lead.includes(`${initiative.lead}`);
-    if (filterKey === "start_date" && filters.start_date && filters.start_date.length > 0) {
-      const startDate = getDate(initiative.start_date);
-      filters.start_date.forEach((dateFilter) => {
-        fallsInFilters = fallsInFilters && !!startDate && satisfiesDateFilter(startDate, dateFilter);
-      });
-    }
-    if (filterKey === "target_date" && filters.target_date && filters.target_date.length > 0) {
-      const endDate = getDate(initiative.end_date);
-      filters.target_date.forEach((dateFilter) => {
-        fallsInFilters = fallsInFilters && !!endDate && satisfiesDateFilter(endDate, dateFilter);
-      });
-    }
-  });
-
-  return fallsInFilters;
-};
 
 const sortInitiativesWithOrderBy = (
   initiatives: TInitiative[],

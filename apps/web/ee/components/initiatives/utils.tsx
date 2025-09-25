@@ -1,12 +1,12 @@
 import { ReactElement } from "react";
 // plane
-import { ISearchIssueResponse, IUserLite } from "@plane/types";
+import { ISearchIssueResponse, IUserLite, TInitiativeGroupByOptions } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
+
 // PLane-web
 import { rootStore } from "@/lib/store-context";
-import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";
 
 export type TInitiativeGroup = {
   id: string;

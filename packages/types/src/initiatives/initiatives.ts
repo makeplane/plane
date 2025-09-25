@@ -41,3 +41,11 @@ export type TInitiativeAttachmentIdMap = {
 export interface IInitiativeScopeDisplayFiltersOptions {
   activeLayout: EIssueLayoutTypes;
 }
+
+export type TInitiativeDisplayFilters = {
+  group_by?: TInitiativeGroupByOptions;
+  order_by?: TInitiativeOrderByOptions;
+};
+
+export type TInitiativeGroupByOptions = "lead" | "created_by" | undefined;
+export type TInitiativeOrderByOptions = "-updated_at" | "-created_at" | "sort_order";

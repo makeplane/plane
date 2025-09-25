@@ -1,6 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TEpicStats, TIssue, TIssueParams } from "@plane/types";
-import { APIService } from "@/services/api.service";
+import { TEpicStats, TIssue, TIssueParams, TInitiativeDisplayFilters } from "@plane/types";
 import {
   TInitiativeComment,
   TInitiativeLink,
@@ -10,15 +9,26 @@ import {
   TInitiativeProject,
   TInitiativeAnalytics,
   TInitiativeStats,
-} from "../types/initiative/initiative";
+  TExternalInitiativeFilterExpression,
+  TInitiativeUserProperties,
+} from "@/plane-web/types/initiative";
+import { APIService } from "@/services/api.service";
 
 export class InitiativeService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getInitiatives(workspaceSlug: string): Promise<TInitiative[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/`)
+  async getInitiatives(workspaceSlug: string, filters?: TExternalInitiativeFilterExpression): Promise<TInitiative[]> {
+    const queryParams: Record<string, string> = {};
+
+    if (filters) {
+      queryParams.filters = JSON.stringify(filters);
+    }
+
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/`, {
+      params: queryParams,
+    })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -348,6 +358,33 @@ export class InitiativeService extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/${epicId}/`)
       .then((res) => res?.data)
       .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async fetchInitiativeUserProperties(workspaceSlug: string): Promise<TInitiativeUserProperties> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/user-properties/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async updateInitiativeUserProperties(
+    workspaceSlug: string,
+    data: {
+      rich_filters?: TExternalInitiativeFilterExpression;
+      display_filters?: TInitiativeDisplayFilters;
+    }
+  ): Promise<unknown> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/user-properties/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        // If endpoint doesn't exist (404), log warning but don't throw
+        if (err?.response?.status === 404) {
+          console.warn("Initiative user properties endpoint not available, skipping save");
+          return null;
+        }
         throw err?.response?.data;
       });
   }

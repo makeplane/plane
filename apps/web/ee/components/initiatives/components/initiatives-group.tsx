@@ -2,11 +2,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
+import { TInitiativeGroupByOptions } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
-// Plane-web
-import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";
-//
+
+
+// local imports
 import { TInitiativeGroup } from "../utils";
 import { GroupHeader } from "./group-header";
 import { InitiativeBlock } from "./initiative-block";

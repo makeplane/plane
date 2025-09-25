@@ -1,5 +1,4 @@
-import { TCreateUpdateInitiativeModal } from "@plane/types";
-import { TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "../types/initiative";
+import { TCreateUpdateInitiativeModal, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
 
 export const DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA: TCreateUpdateInitiativeModal = {
   isOpen: false,

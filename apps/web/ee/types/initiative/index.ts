@@ -1,2 +1,2 @@
 export * from "./initiative";
-export * from "./initiative_filters";
+export * from "./initiative-filters";

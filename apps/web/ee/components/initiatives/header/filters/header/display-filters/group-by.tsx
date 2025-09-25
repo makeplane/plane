@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { TInitiativeDisplayFilters, TInitiativeGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // Plane-web
 import { INITIATIVE_GROUP_BY_OPTIONS } from "@/plane-web/constants/initiative";
-import { TInitiativeDisplayFilters, TInitiativeGroupByOptions } from "@/plane-web/types/initiative";
 
 type Props = {
   displayFilters: TInitiativeDisplayFilters | undefined;

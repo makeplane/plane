@@ -20,6 +20,7 @@ from plane.ee.views.app.initiative import (
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,
     InitiativeEpicIssueViewSet,
+    InitiativeUserPropertiesEndpoint,
 )
 
 urlpatterns = [
@@ -179,4 +180,11 @@ urlpatterns = [
         name="initiative-epic-issues-detail",
     ),
     # End InitIative Update Reactions
+    # Initiative User Properties
+    path(
+        "workspaces/<str:slug>/initiatives/user-properties/",
+        InitiativeUserPropertiesEndpoint.as_view(),
+        name="initiative-user-properties",
+    ),
+    # End Initiative User Properties
 ]

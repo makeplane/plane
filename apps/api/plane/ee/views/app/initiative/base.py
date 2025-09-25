@@ -33,14 +33,24 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.db.models import State
+from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
 
 
 class InitiativeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
     model = Initiative
     serializer_class = InitiativeSerializer
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = InitiativeFilterSet
 
     def get_queryset(self):
+        return (
+            Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    def apply_annotations(self, queryset):
         project_ids = (
             Project.objects.filter(
                 workspace__slug=self.kwargs.get("slug"),
@@ -51,41 +61,32 @@ class InitiativeEndpoint(BaseAPIView):
             .values_list("id", flat=True)
         )
 
-        return (
-            Initiative.objects.filter(
-                workspace__slug=self.kwargs.get("slug"),
-                projects__project__archived_at__isnull=True,
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        InitiativeProject.objects.filter(
-                            initiative_id=OuterRef("pk"),
-                            workspace__slug=self.kwargs.get("slug"),
-                            project__archived_at__isnull=True,
-                        )
-                        .values("initiative_id")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
+        return queryset.annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    InitiativeProject.objects.filter(
+                        initiative_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .values("initiative_id")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")
                 ),
-                epic_ids=Coalesce(
-                    Subquery(
-                        InitiativeEpic.objects.filter(
-                            initiative_id=OuterRef("pk"),
-                            workspace__slug=self.kwargs.get("slug"),
-                        )
-                        .filter(epic__project_id__in=project_ids)
-                        .values("initiative_id")
-                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
-                        .values("epic_ids")
-                    ),
-                    [],
+                [],
+            ),
+            epic_ids=Coalesce(
+                Subquery(
+                    InitiativeEpic.objects.filter(
+                        initiative_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .filter(epic__project_id__in=project_ids)
+                    .values("initiative_id")
+                    .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                    .values("epic_ids")
                 ),
-            )
-            .order_by(self.kwargs.get("order_by", "-created_at"))
-            .distinct()
+                [],
+            ),
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
@@ -112,6 +113,12 @@ class InitiativeEndpoint(BaseAPIView):
 
         # Get all initiatives in workspace
         initiatives = self.get_queryset()
+
+        # Apply filters
+        initiatives = self.filter_queryset(initiatives)
+
+        # Apply annotations
+        initiatives = self.apply_annotations(initiatives)
 
         serializer = InitiativeSerializer(initiatives, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

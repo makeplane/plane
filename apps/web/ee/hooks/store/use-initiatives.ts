@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
@@ -9,13 +9,8 @@ export const useInitiatives = (): { initiative: IInitiativeStore; initiativeFilt
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useInitiatives must be used within StoreProvider");
 
-  const initiative = useMemo(
-    () => ({
-      initiative: context.initiativeStore,
-      initiativeFilters: context.initiativeFilterStore,
-    }),
-    [context.initiativeStore, context.initiativeFilterStore]
-  );
-
-  return initiative;
+  return {
+    initiative: context.initiativeStore,
+    initiativeFilters: context.initiativeFilterStore,
+  };
 };

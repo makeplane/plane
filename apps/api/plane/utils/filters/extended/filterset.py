@@ -1,6 +1,8 @@
 from django_filters import filters
 
-from ..filterset import IssueFilterSet, UUIDInFilter
+from plane.ee.models import Initiative
+
+from ..filterset import BaseFilterSet, IssueFilterSet, UUIDInFilter
 
 
 class ExtendedIssueFilterSet(IssueFilterSet):
@@ -19,3 +21,16 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                 "created_at": ["exact", "gte", "gt", "lte", "lt", "range"],
             }
         )
+
+
+class InitiativeFilterSet(BaseFilterSet):
+    lead = filters.UUIDFilter(field_name="lead")
+    lead__in = UUIDInFilter(field_name="lead", lookup_expr="in")
+
+    class Meta:
+        model = Initiative
+        fields = {
+            "start_date": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "end_date": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "state": ["exact", "in"],
+        }

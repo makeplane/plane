@@ -1,9 +1,6 @@
 import {
   IUserLite,
-  EIssueCommentAccessSpecifier,
-  InitiativeReaction,
   TIssueActivityIssueDetail,
-  InitiativeComment,
   TIssueActivityUserDetail,
   TIssueComment,
   TLogoProps,
@@ -11,7 +8,7 @@ import {
 
 export type TInitiative = {
   id: string;
-  reactions?: InitiativeReaction[];
+  reactions?: TInitiativeReaction[];
   created_at: string;
   updated_at: string | null;
   deleted_at: string | null;
@@ -154,7 +151,7 @@ export type TInitiativeActivityComment =
       id: string;
       activity_type: "COMMENT";
       created_at?: string;
-      detail: InitiativeComment;
+      detail: TInitiativeComment;
     }
   | {
       id: string;

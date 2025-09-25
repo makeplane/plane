@@ -19,3 +19,5 @@ from .update import (
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,
 )
+
+from .user_properties import InitiativeUserPropertiesEndpoint

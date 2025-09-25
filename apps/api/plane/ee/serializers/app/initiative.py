@@ -15,6 +15,7 @@ from plane.ee.models import (
     InitiativeReaction,
     InitiativeCommentReaction,
     InitiativeEpic,
+    InitiativeUserProperty,
 )
 
 # Third party imports
@@ -306,3 +307,10 @@ class InitiativeEpicSerializer(BaseSerializer):
             "deleted_at",
             "initiative",
         ]
+
+
+class InitiativeUserPropertySerializer(BaseSerializer):
+    class Meta:
+        model = InitiativeUserProperty
+        fields = "__all__"
+        read_only_fields = ["workspace", "user"]
