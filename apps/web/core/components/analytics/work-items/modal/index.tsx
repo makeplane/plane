@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { createPortal } from "react-dom";
+import { ModalPortal, EPortalWidth, EPortalPosition } from "@plane/propel/portal";
 import { ICycle, IModule, IProject } from "@plane/types";
-import { cn } from "@plane/utils";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // plane web components
 import { WorkItemsModalMainContent } from "./content";
@@ -32,41 +31,35 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
     updateIsEpic(isPeekView ? (isEpic ?? false) : false);
   }, [isEpic, updateIsEpic, isPeekView]);
 
-  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
-
-  if (!isOpen) return null;
-
-  const content = (
-    <div className={cn("z-[25] h-full w-full overflow-y-auto absolute")}>
+  return (
+    <ModalPortal
+      isOpen={isOpen}
+      onClose={handleClose}
+      width={fullScreen ? EPortalWidth.FULL : EPortalWidth.THREE_QUARTER}
+      position={EPortalPosition.RIGHT}
+      fullScreen={fullScreen}
+    >
       <div
-        className={`top-0 right-0 z-[25] h-full bg-custom-background-100 shadow-custom-shadow-md absolute ${
-          fullScreen ? "w-full p-2" : "w-1/2"
+        className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
+          fullScreen ? "rounded-lg border m-2" : "border-l"
         }`}
       >
-        <div
-          className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
-            fullScreen ? "rounded-lg border" : "border-l"
-          }`}
-        >
-          <WorkItemsModalHeader
-            fullScreen={fullScreen}
-            handleClose={handleClose}
-            setFullScreen={setFullScreen}
-            title={projectDetails?.name ?? ""}
-            cycle={cycleDetails}
-            module={moduleDetails}
-          />
-          <WorkItemsModalMainContent
-            fullScreen={fullScreen}
-            projectDetails={projectDetails}
-            cycleDetails={cycleDetails}
-            moduleDetails={moduleDetails}
-            isEpic={isEpic}
-          />
-        </div>
+        <WorkItemsModalHeader
+          fullScreen={fullScreen}
+          handleClose={handleClose}
+          setFullScreen={setFullScreen}
+          title={projectDetails?.name ?? ""}
+          cycle={cycleDetails}
+          module={moduleDetails}
+        />
+        <WorkItemsModalMainContent
+          fullScreen={fullScreen}
+          projectDetails={projectDetails}
+          cycleDetails={cycleDetails}
+          moduleDetails={moduleDetails}
+          isEpic={isEpic}
+        />
       </div>
-    </div>
+    </ModalPortal>
   );
-
-  return portalContainer ? createPortal(content, portalContainer) : content;
 });
