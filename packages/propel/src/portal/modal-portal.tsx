@@ -65,11 +65,12 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
 
   // add event listener for escape
   useEffect(() => {
+    if (!isOpen) return;
     document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [handleEscape]);
+  }, [isOpen, handleEscape]);
 
   // Memoized style classes
   const modalClasses = useMemo(() => {
