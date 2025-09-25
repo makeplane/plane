@@ -24,9 +24,6 @@ export interface ModalPortalProps extends BasePortalProps {
   showOverlay?: boolean;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
-  preventScroll?: boolean;
-  focusTrap?: boolean;
-  "data-testid"?: string;
 }
 
 export type PortalEventHandler = () => void;

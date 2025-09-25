@@ -103,19 +103,6 @@ const ModalContent = ({
       <p className="text-gray-600 mb-6">{description}</p>
 
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sample Input</label>
-          <input
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Test focus management..."
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <Button variant={EButtonVariant.SECONDARY}>Secondary Action</Button>
-          <Button variant={EButtonVariant.PRIMARY}>Primary Action</Button>
-        </div>
-
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="font-medium text-gray-900 mb-2">Feature Highlights</h3>
           <ul className="text-sm text-gray-600 space-y-1">
