@@ -1,15 +1,7 @@
 import React, { useLayoutEffect, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { DEFAULT_PORTAL_ID } from "./constants";
-
-type PortalWrapperProps = {
-  children: React.ReactNode;
-  portalId?: string;
-  fallbackToDocument?: boolean;
-  className?: string;
-  onMount?: () => void;
-  onUnmount?: () => void;
-};
+import { PortalWrapperProps } from "./types";
 
 /**
  * PortalWrapper - A reusable portal component that renders children into a specific DOM element
@@ -77,7 +69,7 @@ export const PortalWrapper: React.FC<PortalWrapperProps> = ({
 
   // Fallback behavior for client-side rendering
   if (fallbackToDocument) {
-    return content as React.ReactElement;
+    return content ? (content as React.ReactElement) : null;
   }
 
   return null;
