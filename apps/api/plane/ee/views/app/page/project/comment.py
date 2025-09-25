@@ -28,11 +28,14 @@ class ProjectPageCommentViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def list(self, request, slug, project_id, page_id, pk=None):
-        if pk:
+    def list(self, request, slug, project_id, page_id, comment_id=None):
+        if comment_id:
             page_comments = (
                 PageComment.objects.filter(
-                    workspace__slug=slug, project_id=project_id, page_id=page_id, pk=pk
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    page_id=page_id,
+                    pk=comment_id,
                 )
                 .select_related("created_by", "updated_by", "workspace", "page")
                 .prefetch_related(
@@ -107,9 +110,9 @@ class ProjectPageCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def partial_update(self, request, slug, project_id, page_id, pk):
+    def partial_update(self, request, slug, project_id, page_id, comment_id):
         page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=pk
+            workspace__slug=slug, page_id=page_id, pk=comment_id
         )
         serializer = PageCommentSerializer(
             page_comment, data=request.data, partial=True
@@ -127,21 +130,21 @@ class ProjectPageCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def destroy(self, request, slug, project_id, page_id, pk):
+    def destroy(self, request, slug, project_id, page_id, comment_id):
         page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=pk
+            workspace__slug=slug, page_id=page_id, pk=comment_id
         )
         page_comment.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def resolve(self, request, slug, project_id, page_id, pk):
+    def resolve(self, request, slug, project_id, page_id, comment_id):
         page_comment = PageComment.objects.get(
             workspace__slug=slug,
             project_id=project_id,
             page_id=page_id,
-            pk=pk,
+            pk=comment_id,
             parent__isnull=True,
         )
         page_comment.is_resolved = True
@@ -151,14 +154,14 @@ class ProjectPageCommentViewSet(BaseViewSet):
             action=PageAction.RESOLVED_COMMENT,
             slug=slug,
             user_id=request.user.id,
-            extra={"comment_id": str(pk)},
+            extra={"comment_id": str(comment_id)},
         )
         return Response(status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def un_resolve(self, request, slug, project_id, page_id, pk):
+    def un_resolve(self, request, slug, project_id, page_id, comment_id):
         page_comment = PageComment.objects.get(
-            project_id=project_id, page_id=page_id, pk=pk, parent__isnull=True
+            project_id=project_id, page_id=page_id, pk=comment_id, parent__isnull=True
         )
         page_comment.is_resolved = False
         page_comment.save()
@@ -167,14 +170,14 @@ class ProjectPageCommentViewSet(BaseViewSet):
             action=PageAction.UNRESOLVED_COMMENT,
             slug=slug,
             user_id=request.user.id,
-            extra={"comment_id": str(pk)},
+            extra={"comment_id": str(comment_id)},
         )
         return Response(status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def restore(self, request, slug, project_id, page_id, pk):
+    def restore(self, request, slug, project_id, page_id, comment_id):
         page_comment = PageComment.all_objects.filter(
-            Q(pk=pk) | Q(parent_id=pk),
+            Q(pk=comment_id) | Q(parent_id=comment_id),
             workspace__slug=slug,
             page_id=page_id,
             project_id=project_id,
@@ -183,9 +186,12 @@ class ProjectPageCommentViewSet(BaseViewSet):
         return Response(status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
-    def replies(self, request, slug, project_id, page_id, pk):
+    def replies(self, request, slug, project_id, page_id, comment_id):
         page_replies = PageComment.objects.filter(
-            workspace__slug=slug, project_id=project_id, page_id=page_id, parent_id=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            page_id=page_id,
+            parent_id=comment_id,
         )
         serializer = PageCommentSerializer(page_replies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

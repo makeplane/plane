@@ -388,7 +388,10 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * Returns true if comments in pages feature is enabled
    * @returns boolean
    */
-  isCommentsEnabled = computedFn(() => false);
+  isCommentsEnabled = computedFn((workspaceSlug: string) => {
+    const { getFeatureFlag } = this.rootStore.featureFlags;
+    return getFeatureFlag(workspaceSlug, "PAGE_COMMENTS", false);
+  });
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {

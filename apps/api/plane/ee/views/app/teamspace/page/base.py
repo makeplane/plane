@@ -42,7 +42,7 @@ from plane.db.models import (
     ProjectMember,
 )
 
-from plane.ee.models import TeamspacePage, TeamspaceMember, PageUser
+from plane.ee.models import TeamspacePage, PageUser
 from plane.ee.serializers import (
     TeamspacePageDetailSerializer,
     TeamspacePageSerializer,

@@ -9,7 +9,7 @@ from .analytic import (
 )
 from .views import TeamspaceViewEndpoint
 from .cycle import TeamspaceCycleEndpoint
-from .page import (
+from .page.base import (
     TeamspacePageEndpoint,
     TeamspacePageVersionEndpoint,
     TeamspacePagesDescriptionEndpoint,
@@ -22,6 +22,17 @@ from .page import (
     TeamspaceParentPageEndpoint,
     TeamspacePageSummaryEndpoint,
 )
+from .page.publish import TeamspacePagePublishEndpoint
+from .page.share import TeamspacePageUserEndpoint
+from .page.comment import (
+    TeamspacePageCommentEndpoint,
+    TeamspacePageCommentReactionEndpoint,
+    TeamspacePageResolveCommentEndpoint,
+    TeamspacePageUnresolveCommentEndpoint,
+    TeamspacePageRestoreCommentEndpoint,
+    TeamspacePageCommentRepliesEndpoint,
+)
+
 from .issue import TeamspaceIssueEndpoint, TeamspaceUserPropertiesEndpoint
 from .activity import TeamspaceActivityEndpoint
 from .comment import TeamspaceCommentEndpoint, TeamspaceCommentReactionEndpoint

@@ -14,6 +14,7 @@ def get_anchor():
 
 class DeployBoard(WorkspaceBaseModel):
     class DeployBoardType(models.TextChoices):
+        TEAMSPACE_PAGE = "teamspace_page", "Teamspace Page"
         PROJECT = "project", "Project"
         ISSUE = "issue", "Issue"
         MODULE = "module", "Module"

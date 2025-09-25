@@ -139,29 +139,29 @@ urlpatterns = [
         name="workspace-page-comments",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/resolve/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/resolve/",
         WorkspacePageCommentViewSet.as_view({"post": "resolve"}),
         name="workspace-page-comments-resolve",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/un-resolve/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/un-resolve/",
         WorkspacePageCommentViewSet.as_view({"post": "un_resolve"}),
         name="workspace-page-comments-un-resolve",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/",
         WorkspacePageCommentViewSet.as_view(
             {"patch": "partial_update", "delete": "destroy", "get": "list"}
         ),
         name="workspace-page-comments",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/restore/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/restore/",
         WorkspacePageCommentViewSet.as_view({"post": "restore"}),
         name="workspace-page-comments-restore",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:pk>/replies/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/replies/",
         WorkspacePageCommentViewSet.as_view({"get": "replies"}),
         name="workspace-page-comments-replies",
     ),
@@ -278,29 +278,29 @@ urlpatterns = [
         name="project-page-comments",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/",
         ProjectPageCommentViewSet.as_view(
             {"get": "list", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-page-comments",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/resolve/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/resolve/",
         ProjectPageCommentViewSet.as_view({"post": "resolve"}),
         name="project-page-comments-resolve",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/un-resolve/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/un-resolve/",
         ProjectPageCommentViewSet.as_view({"post": "un_resolve"}),
         name="project-page-comments-un-resolve",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/restore/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/restore/",
         ProjectPageCommentViewSet.as_view({"post": "restore"}),
         name="project-page-comments-restore",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:pk>/replies/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/replies/",
         ProjectPageCommentViewSet.as_view({"get": "replies"}),
         name="project-page-comments-replies",
     ),

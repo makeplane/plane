@@ -297,6 +297,20 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
           return `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
         }
       );
+    } else if (this.team) {
+      // Set config for team page
+      this.setConfig(
+        {
+          workspaceSlug,
+          teamspaceId: this.team,
+        },
+        // Custom getBasePath function for team pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug, teamspaceId } = config;
+          return `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
+        }
+      );
     } else {
       // Set config for workspace page
       this.setConfig(
