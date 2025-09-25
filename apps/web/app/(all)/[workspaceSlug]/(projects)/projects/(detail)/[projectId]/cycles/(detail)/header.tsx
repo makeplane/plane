@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ChartNoAxesColumn, ListFilter, PanelRight, SlidersHorizontal } from "lucide-react";
+import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -23,11 +23,10 @@ import {
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, BreadcrumbNavigationSearchDropdown, Header } from "@plane/ui";
-import { cn, isIssueFilterActive } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { SwitcherLabel } from "@/components/common/switcher-label";
@@ -35,7 +34,6 @@ import { CycleQuickActions } from "@/components/cycles/quick-actions";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
-  FilterSelection,
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
@@ -43,10 +41,7 @@ import {
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
-import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -75,11 +70,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { currentProjectDetails, loader } = useProject();
-  const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
-  const {
-    project: { projectMemberIds },
-  } = useMember();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
 
@@ -98,27 +88,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
-  );
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues }, cycleId);
-    },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -240,34 +209,13 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </div>
             <FiltersDropdown
-              title={t("common.filters")}
-              placement="bottom-end"
-              isFiltersApplied={isIssueFilterActive(issueFilters)}
-              miniIcon={<ListFilter className="size-3.5" />}
-            >
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                labels={projectLabels}
-                memberIds={projectMemberIds ?? undefined}
-                states={projectStates}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
-              />
-            </FiltersDropdown>
-            <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"
               miniIcon={<SlidersHorizontal className="size-3.5" />}
             >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
+                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}

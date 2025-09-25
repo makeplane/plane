@@ -258,7 +258,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
+        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100 min-w-60 max-w-[30vw]"
       >
         <ControlLink
           href={workItemLink}
@@ -268,7 +268,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-custom-primary-70 hover:border-custom-primary-70":

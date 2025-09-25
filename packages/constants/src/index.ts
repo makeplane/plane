@@ -15,6 +15,7 @@ export * from "./icon";
 export * from "./instance";
 export * from "./intake";
 export * from "./issue";
+export * from "./members";
 export * from "./label";
 export * from "./metadata";
 export * from "./module";
