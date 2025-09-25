@@ -64,6 +64,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const { initiativeId } = useParams();
   const {
     issue: { getIssueById },
+    subIssues: { subIssuesByIssueId, loader: subIssuesLoader },
     peekIssue: epicPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(EIssueServiceType.EPICS);
@@ -132,7 +133,9 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(epicId);
   const shouldRenderUpdateIssueModal = issueCrudState?.update?.toggle && issueCrudState?.update?.issue;
-  const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
+  const subIssueIds = subIssuesByIssueId(epicId) ?? [];
+  const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0 || subIssueIds.length > 0;
+  const showEmptyState = !hasSubIssues && subIssuesLoader !== "init-loader";
   const fetchInitiativeAnalyticsIfNeeded = async () => {
     if (initiativeId && epicPeekIssue?.issueId) {
       await fetchInitiativeAnalytics(workspaceSlug, initiativeId?.toString());
@@ -158,7 +161,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     },
   };
 
-  if (!hasSubIssues) {
+  if (showEmptyState) {
     return (
       <SectionEmptyState
         heading="No work items yet"
@@ -188,7 +191,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
         parentIssueId={epicId}
         rootIssueId={epicId}
         spacingLeft={6}
-        disabled={!disabled}
+        disabled={disabled}
         handleIssueCrudState={handleIssueCrudState}
         subIssueOperations={epicSubIssuesOperation}
         issueServiceType={EIssueServiceType.EPICS}
