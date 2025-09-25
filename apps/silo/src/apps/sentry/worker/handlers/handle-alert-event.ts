@@ -220,7 +220,7 @@ export class SentryAlertHandler implements ISentryTaskHandler {
   ): Promise<void> {
     // Create link in Plane issue pointing to Sentry issue
     try {
-      const sentryIssueUrl = sentryEventAlert.data.event.issue_url;
+      const sentryIssueUrl = sentryEventAlert.data.event.web_url;
       const title = `[SENTRY] ${sentryEventAlert.data.event.title}`;
       await services.planeClient.issue.createLink(
         connection.workspace_slug,
