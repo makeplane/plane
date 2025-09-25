@@ -27,7 +27,7 @@ def create_gitlab_enterprise_app(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('silo', '0005_create_sentry_app'),
+        ('silo', '0006_split_github_entityconnections'),
     ]
 
     operations = [
