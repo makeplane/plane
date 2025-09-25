@@ -13,7 +13,7 @@ interface TSubIssuesListGroupProps {
   workspaceSlug: string;
   group: IGroupByColumn;
   serviceType: TIssueServiceType;
-  disabled: boolean;
+  canEdit: boolean;
   parentIssueId: string;
   rootIssueId: string;
   handleIssueCrudState: (
@@ -30,7 +30,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
   const {
     group,
     serviceType,
-    disabled,
+    canEdit,
     parentIssueId,
     rootIssueId,
     projectId,
@@ -81,7 +81,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             issueId={workItemId}
-            disabled={disabled}
+            canEdit={canEdit}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
             issueServiceType={serviceType}

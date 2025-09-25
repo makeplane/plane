@@ -28,7 +28,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -48,7 +48,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
     rootIssueId,
     issueId,
     spacingLeft = 10,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -174,7 +174,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
                 issueId={issueId}
-                disabled={disabled}
+                canEdit={canEdit}
                 updateSubIssue={subIssueOperations.updateSubIssue}
                 displayProperties={displayProperties}
                 issue={issue}
@@ -183,7 +183,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
             <div className="flex-shrink-0 text-sm">
               <CustomMenu placement="bottom-end" ellipsis>
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={(e) => {
                       e.preventDefault();
@@ -212,7 +212,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={(e) => {
                       e.stopPropagation();
@@ -230,7 +230,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </CustomMenu.MenuItem>
                 )}
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
                     onClick={(e) => {
                       e.stopPropagation();
@@ -263,7 +263,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
             parentIssueId={issue.id}
             rootIssueId={rootIssueId}
             spacingLeft={spacingLeft + 22}
-            disabled={disabled}
+            canEdit={canEdit}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
           />
