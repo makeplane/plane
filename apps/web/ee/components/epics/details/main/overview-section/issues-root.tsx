@@ -191,7 +191,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
         parentIssueId={epicId}
         rootIssueId={epicId}
         spacingLeft={6}
-        disabled={disabled}
+        canEdit={!disabled}
         handleIssueCrudState={handleIssueCrudState}
         subIssueOperations={epicSubIssuesOperation}
         issueServiceType={EIssueServiceType.EPICS}
