@@ -4,8 +4,8 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PriorityIcon } from "@plane/propel/icons";
 import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon } from "@plane/ui";
 // plane constants
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";

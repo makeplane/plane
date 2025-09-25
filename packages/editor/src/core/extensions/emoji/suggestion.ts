@@ -8,7 +8,7 @@ import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
-const emojiSuggestion: EmojiOptions["suggestion"] = {
+export const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
     const { emojis, isSupported } = editor.storage.emoji;
     const filteredEmojis = emojis.filter((emoji) => {
@@ -113,5 +113,3 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
     };
   },
 };
-
-export default emojiSuggestion;

@@ -1,17 +1,16 @@
-import type { Extensions } from "@tiptap/core";
-import React, { useMemo } from "react";
+import React from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-// extensions
-import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+// constants
+import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
@@ -21,13 +20,13 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     bubbleMenuEnabled = true,
     containerClassName,
     documentLoaderClassName,
-    extensions: externalExtensions = [],
+    extensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
     editorProps,
-    embedHandler,
+    extendedEditorProps,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
@@ -45,21 +44,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    extendedDocumentEditorProps,
   } = props;
-
-  const extensions: Extensions = useMemo(() => {
-    const allExtensions = [...externalExtensions];
-
-    if (embedHandler?.issue) {
-      allExtensions.push(
-        WorkItemEmbedExtension({
-          widgetCallback: embedHandler.issue.widgetCallback,
-        })
-      );
-    }
-
-    return allExtensions;
-  }, [externalExtensions, embedHandler.issue]);
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
@@ -67,7 +53,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     editable,
     editorClassName,
     editorProps,
-    embedHandler,
+    extendedEditorProps,
     extensions,
     fileHandler,
     flaggedExtensions,
@@ -86,6 +72,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    extendedDocumentEditorProps,
   });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -97,18 +84,24 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   if (!editor) return null;
 
   return (
-    <PageRenderer
-      aiHandler={aiHandler}
-      bubbleMenuEnabled={bubbleMenuEnabled}
-      displayConfig={displayConfig}
-      documentLoaderClassName={documentLoaderClassName}
-      editor={editor}
-      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-      id={id}
-      isTouchDevice={!!isTouchDevice}
-      isLoading={!hasServerSynced && !hasServerConnectionFailed}
-      tabIndex={tabIndex}
-    />
+    <>
+      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
+      <PageRenderer
+        aiHandler={aiHandler}
+        bubbleMenuEnabled={bubbleMenuEnabled}
+        displayConfig={displayConfig}
+        documentLoaderClassName={documentLoaderClassName}
+        editor={editor}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        id={id}
+        isTouchDevice={!!isTouchDevice}
+        isLoading={!hasServerSynced && !hasServerConnectionFailed}
+        tabIndex={tabIndex}
+        flaggedExtensions={flaggedExtensions}
+        disabledExtensions={disabledExtensions}
+        extendedDocumentEditorProps={extendedDocumentEditorProps}
+      />
+    </>
   );
 };
 

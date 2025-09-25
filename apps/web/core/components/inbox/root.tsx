@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Intake } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
-import { Intake } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";

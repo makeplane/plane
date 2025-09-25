@@ -130,6 +130,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
             <IssueActivityCommentRoot
               projectId={projectId}
               workspaceSlug={workspaceSlug}
+              isIntakeIssue={isIntakeIssue}
               issueId={issueId}
               selectedFilters={selectedFilters || defaultActivityFilters}
               activityOperations={activityOperations}

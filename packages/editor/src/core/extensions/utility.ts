@@ -9,9 +9,14 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
-
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
-type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
+
+type TActiveDropbarExtensions =
+  | CORE_EXTENSIONS.MENTION
+  | CORE_EXTENSIONS.EMOJI
+  | CORE_EXTENSIONS.SLASH_COMMANDS
+  | CORE_EXTENSIONS.TABLE
+  | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
   interface Commands {
@@ -26,6 +31,8 @@ declare module "@tiptap/core" {
               idToRemove: string;
             }
       ) => () => void;
+      addActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
+      removeActiveDropbarExtension: (extension: TActiveDropbarExtensions) => () => void;
     };
   }
   interface Storage {
@@ -104,6 +111,18 @@ export const UtilityExtension = (props: Props) => {
             }
           }
           this.storage.assetsList = Array.from(uniqueAssets);
+        },
+        addActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index === -1) {
+            this.storage.activeDropbarExtensions.push(extension);
+          }
+        },
+        removeActiveDropbarExtension: (extension) => () => {
+          const index = this.storage.activeDropbarExtensions.indexOf(extension);
+          if (index !== -1) {
+            this.storage.activeDropbarExtensions.splice(index, 1);
+          }
         },
       };
     },

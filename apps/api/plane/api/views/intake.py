@@ -66,7 +66,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
         )
 
-        if intake is None and not project.intake_view:
+        if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
         return (
@@ -230,7 +230,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
         )
 
-        if intake is None and not project.intake_view:
+        if intake is None or not project.intake_view:
             return IntakeIssue.objects.none()
 
         return (

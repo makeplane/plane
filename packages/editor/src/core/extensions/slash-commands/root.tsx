@@ -1,7 +1,6 @@
 import { type Editor, type Range, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
-import { FC } from "react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -54,10 +53,7 @@ const Command = Extension.create<SlashCommandOptions>({
 
           return {
             onStart: (props) => {
-              const MenuComponent = SlashCommandsMenu as unknown as FC<
-                SlashCommandsMenuProps & { ref: React.Ref<CommandListInstance> }
-              >;
-              component = new ReactRenderer(MenuComponent, {
+              component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
                 props,
                 editor: props.editor,
               });

@@ -725,7 +725,8 @@
     "apply": "Apply",
     "applying": "Applying",
     "overview": "Overview",
-    "no_of": "No. of {entity}"
+    "no_of": "No. of {entity}",
+    "resolved": "Resolved"
   },
   "chart": {
     "x_axis": "X-axis",
@@ -759,6 +760,10 @@
     "add": {
       "success": "{entity} added successfully",
       "failed": "Error adding {entity}"
+    },
+    "remove": {
+      "success": "{entity} removed successfully",
+      "failed": "Error removing {entity}"
     }
   },
   "epic": {
@@ -2362,7 +2367,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {
@@ -2401,5 +2405,12 @@
     "open_button": "Open navigation pane",
     "close_button": "Close navigation pane",
     "outline_floating_button": "Open outline"
+  },
+  "project_members": {
+    "full_name": "Full name",
+    "display_name": "Display name",
+    "email": "Email",
+    "joining_date": "Joining date",
+    "role": "Role"
   }
 }

@@ -5,20 +5,17 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import { TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
 import {
   EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
   TGroupedIssues,
   TIssue,
-  TIssueKanbanFilters,
   TIssueMap,
   TPaginationData,
   ICalendarWeek,
   EIssueLayoutTypes,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
@@ -71,8 +68,8 @@ type Props = {
   readOnly?: boolean;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;

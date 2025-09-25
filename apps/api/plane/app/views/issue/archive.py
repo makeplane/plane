@@ -1,4 +1,5 @@
 # Python imports
+import copy
 import json
 
 # Django imports
@@ -41,27 +42,20 @@ from plane.utils.host import base_host
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class IssueArchiveViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
 
-    def get_queryset(self):
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
+
+    def apply_annotations(self, issues):
         return (
-            Issue.objects.annotate(
-                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .filter(deleted_at__isnull=True)
-            .filter(archived_at__isnull=False)
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+            issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -95,6 +89,15 @@ class IssueArchiveViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+            .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(Q(type__isnull=True) | Q(type__is_epic=False))
+            .filter(archived_at__isnull=False)
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
         )
 
     @method_decorator(gzip_page)
@@ -105,26 +108,25 @@ class IssueArchiveViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
-
-        total_issue_queryset = Issue.objects.filter(
-            deleted_at__isnull=True,
-            archived_at__isnull=False,
-            project_id=project_id,
-            workspace__slug=slug,
-        ).filter(**filters)
-
-        total_issue_queryset = (
-            total_issue_queryset
-            if show_sub_issues == "true"
-            else total_issue_queryset.filter(parent__isnull=True)
-        )
+        issue_queryset = self.get_queryset()
 
         issue_queryset = (
             issue_queryset
             if show_sub_issues == "true"
             else issue_queryset.filter(parent__isnull=True)
         )
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
+
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param

@@ -15,7 +15,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -234,7 +236,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 tooltipContent={
                   project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
                 }
-                position="top-right"
+                position="top-end"
                 disabled={isDragging}
               >
                 <button

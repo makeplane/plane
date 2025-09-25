@@ -4,7 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { BreadcrumbNavigationDropdown, Breadcrumbs, ISvgIcons } from "@plane/ui";
+import { ISvgIcons } from "@plane/propel/icons";
+import { BreadcrumbNavigationDropdown, Breadcrumbs } from "@plane/ui";
 // components
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
@@ -12,7 +13,7 @@ import type { TNavigationItem } from "@/components/workspace/sidebar/project-nav
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { getProjectFeatureNavigation } from "../projects/navigation";
+import { getProjectFeatureNavigation } from "../projects/navigation/helper";
 
 type TProjectFeatureBreadcrumbProps = {
   workspaceSlug: string;

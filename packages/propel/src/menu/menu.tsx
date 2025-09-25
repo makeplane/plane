@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
 import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
-// plane imports
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 import { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
 // Context for main menu to communicate with submenus

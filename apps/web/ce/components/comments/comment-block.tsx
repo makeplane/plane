@@ -2,7 +2,7 @@ import { FC, ReactNode, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssueComment } from "@plane/types";
+import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
@@ -26,7 +26,13 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
   // translation
   const { t } = useTranslation();
 
-  if (!comment || !userDetails) return null;
+  const displayName = comment?.actor_detail?.is_bot
+    ? comment?.actor_detail?.first_name + ` ${t("bot")}`
+    : (userDetails?.display_name ?? comment?.actor_detail?.display_name);
+
+  const avatarUrl = userDetails?.avatar_url ?? comment?.actor_detail?.avatar_url;
+
+  if (!comment) return null;
 
   return (
     <div
@@ -42,20 +48,15 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
           "flex-shrink-0 relative w-7 h-6 rounded-full transition-border duration-1000 flex justify-center items-center z-[3] uppercase font-medium"
         )}
       >
-        <Avatar
-          size="base"
-          name={userDetails?.display_name}
-          src={getFileURL(userDetails?.avatar_url)}
-          className="flex-shrink-0"
-        />
+        <Avatar size="base" name={displayName} src={getFileURL(avatarUrl)} className="flex-shrink-0" />
       </div>
       <div className="flex flex-col gap-3 truncate flex-grow">
         <div className="flex w-full gap-2">
           <div className="flex-1 flex flex-wrap items-center gap-1">
-            <div className="text-xs font-medium">
-              {comment?.actor_detail?.is_bot
-                ? comment?.actor_detail?.first_name + ` ${t("bot")}`
-                : comment?.actor_detail?.display_name || userDetails.display_name}
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-medium">
+                {`${displayName}${comment.access === EIssueCommentAccessSpecifier.EXTERNAL ? " (External User)" : ""}`}
+              </span>
             </div>
             <div className="text-xs text-custom-text-300">
               commented{" "}

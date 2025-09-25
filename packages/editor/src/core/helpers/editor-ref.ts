@@ -80,6 +80,11 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       const markdownOutput = editor?.storage?.markdown?.getMarkdown?.() ?? "";
       return markdownOutput;
     },
+    isAnyDropbarOpen: () => {
+      if (!editor) return false;
+      const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+      return utilityStorage.activeDropbarExtensions.length > 0;
+    },
     scrollSummary: (marking) => {
       if (!editor) return;
       scrollSummary(editor, marking);

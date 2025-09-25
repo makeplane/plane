@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -14,10 +14,13 @@ type Props = {
   documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
+  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
+  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
@@ -32,6 +35,8 @@ export const PageRenderer = (props: Props) => {
     isLoading,
     isTouchDevice,
     tabIndex,
+    flaggedExtensions,
+    disabledExtensions,
   } = props;
 
   return (
@@ -54,7 +59,11 @@ export const PageRenderer = (props: Props) => {
           {editor.isEditable && !isTouchDevice && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu editor={editor} />
+              <BlockMenu
+                editor={editor}
+                flaggedExtensions={flaggedExtensions}
+                disabledExtensions={disabledExtensions}
+              />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}

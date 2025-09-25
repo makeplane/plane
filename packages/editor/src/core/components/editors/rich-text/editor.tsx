@@ -1,7 +1,7 @@
 import { forwardRef, useCallback } from "react";
 // components
 import { EditorWrapper } from "@/components/editors";
-import { EditorBubbleMenu } from "@/components/menus";
+import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
 import { SideMenuExtension } from "@/extensions";
 // plane editor imports
@@ -17,6 +17,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     extensions: externalExtensions = [],
     fileHandler,
     flaggedExtensions,
+    extendedEditorProps,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -30,15 +31,21 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
         disabledExtensions,
         fileHandler,
         flaggedExtensions,
+        extendedEditorProps,
       }),
     ];
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions, extendedEditorProps]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
-      {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
+      {(editor) => (
+        <>
+          {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+          <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} disabledExtensions={disabledExtensions} />
+        </>
+      )}
     </EditorWrapper>
   );
 };

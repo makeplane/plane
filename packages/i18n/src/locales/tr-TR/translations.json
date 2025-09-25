@@ -886,7 +886,8 @@
     "in_progress": "Devam ediyor",
     "planned": "Planlandı",
     "paused": "Durduruldu",
-    "no_of": "{entity} sayısı"
+    "no_of": "{entity} sayısı",
+    "resolved": "Çözüldü"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -920,6 +921,10 @@
     "add": {
       "success": "{entity} başarıyla eklendi",
       "failed": "{entity} eklenirken hata oluştu"
+    },
+    "remove": {
+      "success": "{entity} başarıyla kaldırıldı",
+      "failed": "{entity} kaldırılırken hata oluştu"
     }
   },
   "epic": {
@@ -2467,7 +2472,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -58,10 +58,8 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
-  const pathname = usePathname();
   const storeType = useIssueStoreType();
   // derived values
-  const isDraftIssue = pathname.includes("draft-issue");
   const renderExistingIssueModal = moduleId || cycleId;
   const existingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(groupID) === "empty";
@@ -118,7 +116,9 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
-          <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          <div className="px-2.5">
+            <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          </div>
         </div>
 
         {!disableIssueCreation &&
@@ -167,7 +167,6 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             onClose={() => setIsOpen(false)}
             data={issuePayload}
             storeType={storeType}
-            isDraft={isDraftIssue}
           />
         )}
 

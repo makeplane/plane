@@ -8,6 +8,7 @@ type TCoreHookProps = Pick<
   | "disabledExtensions"
   | "editorClassName"
   | "editorProps"
+  | "extendedEditorProps"
   | "extensions"
   | "flaggedExtensions"
   | "handleEditorReady"
@@ -52,5 +53,5 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
   > &
   Pick<
     ICollaborativeDocumentEditorProps,
-    "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user"
+    "dragDropEnabled" | "extendedDocumentEditorProps" | "realtimeConfig" | "serverHandler" | "user"
   >;

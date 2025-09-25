@@ -39,6 +39,14 @@ class Notification(BaseModel):
         verbose_name_plural = "Notifications"
         db_table = "notifications"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(
+                fields=["entity_identifier"], name="notif_entity_identifier_idx"
+            ),
+            models.Index(fields=["entity_name"], name="notif_entity_name_idx"),
+            models.Index(fields=["read_at"], name="notif_read_at_idx"),
+            models.Index(fields=["receiver", "read_at"], name="notif_entity_idx"),
+        ]
 
     def __str__(self):
         """Return name of the notifications"""

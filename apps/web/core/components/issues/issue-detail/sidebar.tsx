@@ -6,7 +6,7 @@ import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, U
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

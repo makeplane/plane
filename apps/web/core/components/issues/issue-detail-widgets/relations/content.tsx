@@ -10,7 +10,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // helper
@@ -135,7 +135,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
             <Collapsible
               buttonClassName="w-full"
               title={
-                <div className={`flex items-center gap-1 px-3 py-1 h-9  w-full pl-9 ${relation.className}`}>
+                <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
                   <span className="text-sm font-medium leading-5">{relation.label}</span>
                 </div>

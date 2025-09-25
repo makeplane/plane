@@ -1,11 +1,3 @@
-// styles
-// import "./styles/tailwind.css";
-import "./styles/variables.css";
-import "./styles/editor.css";
-import "./styles/table.css";
-import "./styles/github-dark.css";
-import "./styles/drag-drop.css";
-
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
@@ -26,3 +18,6 @@ export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 // types
 export * from "@/types";
+
+// additional exports
+export { TrailingNode } from "./core/extensions/trailing-node";

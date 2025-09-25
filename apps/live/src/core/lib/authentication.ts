@@ -1,7 +1,7 @@
-// services
-import { UserService } from "@/core/services/user.service.js";
 // core helpers
 import { manualLogger } from "@/core/helpers/logger.js";
+// services
+import { UserService } from "@/core/services/user.service.js";
 
 const userService = new UserService();
 
