@@ -1,5 +1,7 @@
 import { HTMLElement } from "node-html-parser";
 import { IParserExtension } from "@plane/etl/parser";
+import { TCalloutConfig } from "@/apps/notion-importer/types";
+import { CalloutParserExtension } from "../../../common/content-parser/extensions/process-callouts";
 
 enum EConfluenceNoteType {
   NOTE = "note",
@@ -16,13 +18,7 @@ enum EConfluenceCalloutType {
   UNKNOWN = "unknown",
 }
 
-interface CalloutConfig {
-  icon: string;
-  color: string;
-  background?: string;
-}
-
-export class ConfluenceCalloutParserExtension implements IParserExtension {
+export class ConfluenceCalloutParserExtension extends CalloutParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
     return !!(
       // Collapsible containers
@@ -81,37 +77,31 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
     const content = node.querySelector(".expand-content");
     if (!content) return node;
 
-    const config: CalloutConfig = {
+    return this.createPlaneCallout(content.innerHTML, {
       icon: "ChevronDown",
       color: "#6d7b8a",
-    };
-
-    return this.createPlaneCallout(content, config);
+    });
   }
 
   private handleDecisionList(node: HTMLElement): HTMLElement {
     const decisionList = node.querySelector("li");
     if (!decisionList) return node;
 
-    const config: CalloutConfig = {
+    return this.createPlaneCallout(decisionList.innerHTML, {
       icon: "CornerUpRight",
       color: "#6d7b8a",
-    };
-
-    return this.createPlaneCallout(decisionList, config);
+    });
   }
 
   private handlePanel(node: HTMLElement): HTMLElement {
     const panel = node.querySelector(".panelContent");
     if (!panel) return node;
 
-    const config: CalloutConfig = {
+    return this.createPlaneCallout(panel.innerHTML, {
       icon: "Info",
       color: "#6d7b8a",
       background: "purple",
-    };
-
-    return this.createPlaneCallout(panel, config);
+    });
   }
 
   private handleNoteMacro(node: HTMLElement): HTMLElement {
@@ -127,25 +117,10 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
     if (!note) return node;
 
     const config = this.getIconAndColorForNote(type as EConfluenceNoteType);
-    return this.createPlaneCallout(note, config);
+    return this.createPlaneCallout(note.innerHTML, config);
   }
 
-  private createPlaneCallout(node: HTMLElement, config: CalloutConfig): HTMLElement {
-    const callout = new HTMLElement("div", {}, "");
-    callout.setAttribute("data-icon-color", config.color);
-    callout.setAttribute("data-icon-name", config.icon);
-    callout.setAttribute("data-logo-in-use", "icon");
-    callout.setAttribute("data-block-type", "callout-component");
-
-    if (config.background) {
-      callout.setAttribute("data-background", config.background);
-    }
-
-    callout.innerHTML = node.innerHTML;
-    return callout;
-  }
-
-  private getIconAndColorForNote(type: EConfluenceNoteType): CalloutConfig {
+  private getIconAndColorForNote(type: EConfluenceNoteType): TCalloutConfig {
     switch (type) {
       case EConfluenceNoteType.NOTE:
         return { icon: "Book", color: "#6d7b8a", background: "gray" };

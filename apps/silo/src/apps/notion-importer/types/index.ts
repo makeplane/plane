@@ -50,6 +50,12 @@ export type TAssetInfo = {
   size: number;
 };
 
+export type TCalloutConfig = {
+  icon: string;
+  color: string;
+  background?: string;
+};
+
 export enum EDocImporterDestinationType {
   WIKI = "wiki",
   PROJECT = "project",

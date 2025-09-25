@@ -1,5 +1,17 @@
 import { parse } from "node-html-parser";
 
+export const NOTION_COLOR_MAP = new Map([
+  ["brown", "peach"],
+  ["gray", "gray"],
+  ["red", "peach"],
+  ["orange", "orange"],
+  ["yellow", "green"],
+  ["blue", "light-blue"],
+  ["purple", "purple"],
+  ["pink", "pink"],
+  ["teal", "dark-blue"],
+]);
+
 export const getEmojiFromHtmlHeader = (htmlContent: string) => {
   const root = parse(htmlContent);
   const iconElement = root.querySelector(".page-header-icon .icon");

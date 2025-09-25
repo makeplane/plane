@@ -1,20 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 import { IParserExtension } from "@plane/etl/parser";
-
-/*
- * We can keep here, as we are not using the color map in other places
- */
-const NOTION_COLOR_MAP = new Map([
-  ["brown", "peach"],
-  ["gray", "gray"],
-  ["red", "peach"],
-  ["orange", "orange"],
-  ["yellow", "green"],
-  ["blue", "light-blue"],
-  ["purple", "purple"],
-  ["pink", "pink"],
-  ["teal", "dark-blue"],
-]);
+import { NOTION_COLOR_MAP } from "@/apps/notion-importer/utils/html-helpers";
 
 export class NotionBlockColorParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {

@@ -3,6 +3,7 @@ import { EZipNodeType, TZipFileNode } from "@/lib/zip-manager/types";
 import { ZipManager } from "@/lib/zip-manager/zip-manager";
 import { TDocContentParserConfig } from "../../types";
 import { ExtractBodyExtension } from "../common/content-parser/extensions/extract-body";
+import { CalloutParserExtension } from "../common/content-parser/extensions/process-callouts";
 import {
   NotionBlockColorParserExtension,
   NotionHighlightParserExtension,
@@ -18,7 +19,10 @@ export class NotionImportDriver implements IZipImportDriver {
 
   getContentParser(config: TDocContentParserConfig): ContentParser {
     const context = new Map<string, string>();
-    const preprocessExtensions: IParserExtension[] = [new ExtractBodyExtension({ selector: "div.page-body", context })];
+    const preprocessExtensions: IParserExtension[] = [
+      new CalloutParserExtension(),
+      new ExtractBodyExtension({ selector: "div.page-body", context }),
+    ];
 
     /*----------- Core Extensions -----------*/
     const coreExtensions: IParserExtension[] = [
