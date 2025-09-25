@@ -1,5 +1,6 @@
 "use client";
 
+import { TriangleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { RadioInput } from "@/components/estimates/radio-select";
 
@@ -12,12 +13,12 @@ export const SelectIssueSyncDirection = ({ value, onChange }: TBidirectionalIssu
   const { t } = useTranslation();
   const options = [
     {
-      label: t("github_integration.allow_unidirectional_sync"),
-      value: "allow_unidirectional_sync",
-    },
-    {
       label: t("github_integration.allow_bidirectional_sync"),
       value: "allow_bidirectional_sync",
+    },
+    {
+      label: t("github_integration.allow_unidirectional_sync"),
+      value: "allow_unidirectional_sync",
     },
   ];
 
@@ -41,6 +42,14 @@ export const SelectIssueSyncDirection = ({ value, onChange }: TBidirectionalIssu
         wrapperClassName="gap-1.5"
         vertical
       />
+      {!value && (
+        <div className="flex gap-1">
+          <TriangleAlert className="size-4 text-custom-text-200 text-yellow-500" />
+          <div className="text-sm text-custom-text-300 text-yellow-500">
+            {t("github_integration.allow_unidirectional_sync_warning")}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

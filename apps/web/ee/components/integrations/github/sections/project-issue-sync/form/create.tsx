@@ -40,7 +40,7 @@ export const CreateProjectIssueSyncForm: FC<TCreateProjectIssueSyncForm> = obser
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TIssueStateMap>(stateMapInit);
-  const [allowBidirectionalSync, setAllowBidirectionalSync] = useState<boolean>(false);
+  const [allowBidirectionalSync, setAllowBidirectionalSync] = useState<boolean>(true);
 
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
@@ -104,7 +104,7 @@ export const CreateProjectIssueSyncForm: FC<TCreateProjectIssueSyncForm> = obser
 
       setProjectMap(projectMapInit);
       setStateMap(stateMapInit);
-      setAllowBidirectionalSync(false);
+      setAllowBidirectionalSync(true);
       handleModal(false);
     } catch (error) {
       captureError({
@@ -117,6 +117,9 @@ export const CreateProjectIssueSyncForm: FC<TCreateProjectIssueSyncForm> = obser
       setIsSubmitting(false);
     }
   };
+
+  // disable submit if form fields are not filled
+  const disableSubmit = isSubmitting || !projectMap.projectId || !projectMap.entityId;
 
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
@@ -161,7 +164,7 @@ export const CreateProjectIssueSyncForm: FC<TCreateProjectIssueSyncForm> = obser
             <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={disableSubmit}>
               {isSubmitting ? t("common.processing") : t("github_integration.start_sync")}
             </Button>
           </div>

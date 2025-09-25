@@ -46,7 +46,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     );
 
     if (!workspaceConnection.target_hostname || !credentials.target_access_token || !credentials.source_access_token) {
-      logger.error("Target hostname or target access token or source access token not found", {
+      logger.error(`${ghIntegrationKey} Target hostname or target access token or source access token not found`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -57,7 +57,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
 
     // Check if bidirectional sync is enabled
     if (!entityConnection.config.allowBidirectionalSync) {
-      logger.info("Bidirectional sync is disabled, skipping issue sync via Plane", {
+      logger.info(`${ghIntegrationKey} Bidirectional sync is disabled, skipping issue sync via Plane`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -125,7 +125,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     await store.set(`silo:issue:${githubIssue?.data.number}`, "true");
   } catch (error) {
     logger.error("[Plane][Github] Error handling issue create/update event", {
-      error: error,
+      error,
       workspace: payload.workspace,
       project: payload.project,
     });

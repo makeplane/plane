@@ -134,7 +134,11 @@ export class IntegrationBaseStore implements IIntegrationBaseStore {
     if (!workspaceSlug) return undefined;
 
     try {
-      const projects = await this.store.projectRoot.project.fetchProjects(workspaceSlug);
+      const joinedProjectIds = this.store.projectRoot.project.joinedProjectIds;
+      const getProjectById = this.store.projectRoot.project.getProjectById;
+      const projects = joinedProjectIds
+        .map((projectId) => getProjectById(projectId))
+        .filter((project) => project !== undefined);
       if (projects) {
         runInAction(() => {
           projects.forEach((project) => {

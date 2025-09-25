@@ -5,6 +5,7 @@ import { E_MENTION_COMPONENT_ATTRIBUTES } from "./constants";
 export interface IssueReference {
   sequence: number;
   identifier: string;
+  isClosing: boolean;
 }
 
 export interface LinkedIssues {
@@ -47,7 +48,7 @@ export const getReferredIssues = (text: string): LinkedIssues => {
     if (visitedIssues.has(issue)) {
       continue;
     }
-    closingReferences.push(createPlaneIssueReference(issue));
+    closingReferences.push(createPlaneIssueReference(issue, true));
     visitedIssues.add(issue);
   }
 
@@ -55,7 +56,7 @@ export const getReferredIssues = (text: string): LinkedIssues => {
     if (visitedIssues.has(issue)) {
       continue;
     }
-    nonClosingReferences.push(createPlaneIssueReference(issue));
+    nonClosingReferences.push(createPlaneIssueReference(issue, false));
     visitedIssues.add(issue);
   }
 
@@ -77,11 +78,12 @@ const extractIssues = (text: string, pattern: RegExp): string[] =>
     .map((issue) => issue.replace(/[\[\]]/g, ""))
     .filter((issue): issue is string => issue != null);
 
-const createPlaneIssueReference = (issue: string): IssueReference => {
+const createPlaneIssueReference = (issue: string, isClosing: boolean): IssueReference => {
   const [identifier, sequence] = issue.split("-");
   return {
     identifier,
     sequence: parseInt(sequence),
+    isClosing,
   };
 };
 

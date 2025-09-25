@@ -91,12 +91,7 @@ export class PullRequestBehaviour {
       }
 
       // Determine which references to process
-      const isClosingEvent = [E_STATE_MAP_KEYS.MR_CLOSED, E_STATE_MAP_KEYS.MR_MERGED].includes(
-        event as E_STATE_MAP_KEYS
-      );
-      const referredIssues = isClosingEvent
-        ? references.closingReferences
-        : [...references.closingReferences, ...references.nonClosingReferences];
+      const referredIssues = [...references.closingReferences, ...references.nonClosingReferences];
 
       const updateResults = await this.updateReferencedIssues(referredIssues, pullRequestDetails, event);
 
@@ -214,7 +209,7 @@ export class PullRequestBehaviour {
       // get the PR state for the event from projectId and PR state map
       // for gitlab we get the state from config directly
       const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
-      if (targetState) {
+      if (targetState && reference.isClosing) {
         await this.planeClient.issue.update(this.workspaceSlug, issue.project, issue.id, { state: targetState.id });
         logger.info(
           `[${this.providerName.toUpperCase()}] Issue ${reference.identifier}-${reference.sequence} updated to state ${targetState.name}`

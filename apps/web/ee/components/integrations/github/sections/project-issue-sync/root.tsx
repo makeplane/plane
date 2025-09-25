@@ -97,7 +97,7 @@ export const ProjectIssueSyncRoot: FC<IProjectIssueSyncRootProps> = observer(({ 
     return <MappingLoader />;
   }
   return (
-    <div className="relative border border-custom-border-200 rounded space-y-4">
+    <div className="relative border border-custom-border-200 rounded">
       {/* Header */}
       <div className="flex flex-row items-center justify-between py-5 px-5 bg-custom-background-90 border-b border-custom-border-200">
         <div className="space-y-1">
@@ -116,8 +116,8 @@ export const ProjectIssueSyncRoot: FC<IProjectIssueSyncRootProps> = observer(({ 
       </div>
 
       {/* mapped blocks */}
-      {entityIds && entityIds.length > 0 && (
-        <div className="p-4 relative">
+      {Object.keys(entityConnection).length > 0 ? (
+        <div className="p-4 relative space-y-4">
           {Object.keys(entityConnection).map((projectId, index) => {
             const project = projectId ? getProjectById(projectId) : undefined;
             if (!project) return null;
@@ -137,6 +137,10 @@ export const ProjectIssueSyncRoot: FC<IProjectIssueSyncRootProps> = observer(({ 
               </div>
             );
           })}
+        </div>
+      ) : (
+        <div className="p-10 relative text-center">
+          <div className="text-sm text-custom-text-200">{t("github_integration.project_issue_sync_empty_state")}</div>
         </div>
       )}
 

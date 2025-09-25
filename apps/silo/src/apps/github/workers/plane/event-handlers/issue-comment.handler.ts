@@ -22,12 +22,10 @@ export const handleIssueCommentWebhook = async (
   // Store a key associated with the data in the store
   // If the key is present, then we need to requeue all that task and process them again
   if (payload && payload.id) {
-    // @ts-expect-error
     const exist = await store.get(`silo:comment:${payload.id}`);
     if (exist) {
       logger.info("[PLANE][COMMENT] Event Processed Successfully, confirmed by target");
       // Remove the webhook from the store
-      // @ts-expect-error
       await store.del(`silo:comment:${payload.id}`);
       return true;
     }
@@ -46,7 +44,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     );
 
     if (!workspaceConnection.target_hostname || !credentials.target_access_token) {
-      logger.error("Target hostname or target access token not found", {
+      logger.error(`${ghIntegrationKey} Target hostname or target access token not found`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -57,7 +55,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
 
     // Check if bidirectional sync is enabled
     if (!entityConnection.config.allowBidirectionalSync) {
-      logger.info("Bidirectional sync is disabled, skipping issue comment sync via Plane", {
+      logger.info(`${ghIntegrationKey} Bidirectional sync is disabled, skipping issue comment sync via Plane`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -77,7 +75,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     );
 
     if (!issue || !issue.external_id || !issue.external_source) {
-      return logger.info(`Issue ${payload.issue} not synced with GitHub, aborting comment sync`, {
+      return logger.info(`${ghIntegrationKey} Issue ${payload.issue} not synced with GitHub, aborting comment sync`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -86,7 +84,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
     }
 
     if (!credentials.source_access_token) {
-      logger.error("Source access token not found", {
+      logger.error(`${ghIntegrationKey} Source access token not found`, {
         workspace: payload.workspace,
         project: payload.project,
         entityConnectionId: entityConnection.id,
@@ -136,7 +134,8 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       );
     }
   } catch (error) {
-    logger.error("[Plane][Github] Error handling issue comment create/update event", error, {
+    logger.error("[Plane][Github] Error handling issue comment create/update event", {
+      error,
       workspace: payload.workspace,
       project: payload.project,
     });

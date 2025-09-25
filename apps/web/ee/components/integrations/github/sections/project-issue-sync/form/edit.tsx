@@ -41,7 +41,7 @@ export const EditProjectIssueSyncForm: FC<TEditProjectIssueSyncForm> = observer(
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [projectMap, setProjectMap] = useState<TProjectMap>(projectMapInit);
   const [stateMap, setStateMap] = useState<TIssueStateMap>(stateMapInit);
-  const [allowBidirectionalSync, setAllowBidirectionalSync] = useState<boolean>(false);
+  const [allowBidirectionalSync, setAllowBidirectionalSync] = useState<boolean>(true);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const entityConnections = entityIds
@@ -119,7 +119,7 @@ export const EditProjectIssueSyncForm: FC<TEditProjectIssueSyncForm> = observer(
         entityId: data.entity_id!,
         projectId: projectId,
       });
-      setAllowBidirectionalSync(data.config?.allowBidirectionalSync || false);
+      setAllowBidirectionalSync(data.config?.allowBidirectionalSync ?? true);
 
       setStateMap({
         [E_ISSUE_STATE_MAP_KEYS.ISSUE_OPEN]:
@@ -132,6 +132,8 @@ export const EditProjectIssueSyncForm: FC<TEditProjectIssueSyncForm> = observer(
       updateEntityConnection(workspaceSlug, data.project_id);
     }
   }, [workspaceSlug, data, fetchStates]);
+
+  const disableSubmit = isSubmitting || !projectMap.projectId || !projectMap.entityId;
 
   return (
     <ModalCore isOpen={modal} handleClose={() => handleModal(false)}>
@@ -176,7 +178,7 @@ export const EditProjectIssueSyncForm: FC<TEditProjectIssueSyncForm> = observer(
             <Button variant="neutral-primary" size="sm" onClick={() => handleModal(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+            <Button variant="primary" size="sm" onClick={handleSubmit} loading={isSubmitting} disabled={disableSubmit}>
               {isSubmitting ? t("common.processing") : t("github_integration.save")}
             </Button>
           </div>
