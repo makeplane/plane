@@ -6,6 +6,16 @@ const nextConfig = {
   basePath: process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "",
   reactStrictMode: false,
   swcMinify: true,
+  // Enable file watching for Docker environments
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+    }
+    return config;
+  },
   async headers() {
     return [
       {

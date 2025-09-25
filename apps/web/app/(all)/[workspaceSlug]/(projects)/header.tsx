@@ -43,7 +43,7 @@ export const WorkspaceDashboardHeader = observer(() => {
             <Shapes size={16} />
             <div className="hidden text-xs font-medium sm:hidden md:block">{t("home.manage_widgets")}</div>
           </Button>
-          <StarUsOnGitHubLink />
+          {/* <StarUsOnGitHubLink /> */}
         </Header.RightItem>
       </Header>
     </>

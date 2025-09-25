@@ -5,6 +5,7 @@ import os
 from .common import *  # noqa
 
 DEBUG = True
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-do-not-use-in-prod")
 
 # Debug Toolbar settings
 INSTALLED_APPS += ("debug_toolbar",)  # noqa

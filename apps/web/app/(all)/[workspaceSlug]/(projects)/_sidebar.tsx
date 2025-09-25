@@ -12,7 +12,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
-
+// 这是工作区的视图、 分析、 归档、草稿
 export const ProjectAppSidebar: FC = observer(() => {
   // store hooks
   const {
@@ -55,7 +55,7 @@ export const ProjectAppSidebar: FC = observer(() => {
         }
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
-        disablePeekTrigger={shouldRenderAppRail}
+        disablePeekTrigger={shouldRenderAppRail && !sidebarCollapsed} // 修改：折叠时仍允许“窥视”
       >
         <AppSidebar />
       </ResizableSidebar>
