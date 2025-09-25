@@ -210,7 +210,26 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
 };
 
 // ------------ URL ------------
-export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () => null;
+export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+  const { newValue, action, propertyDetail } = props;
+  const propertyName = propertyDetail?.display_name;
+
+  return (
+    <>
+      {newValue ? (
+        <>
+          {action === "created" ? "set " : "changed "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{newValue}.</span>
+        </>
+      ) : (
+        <>
+          removed the previous URL in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+        </>
+      )}
+    </>
+  );
+};
 
 // ------------ RELATION ISSUE ------------
 export const getWorkItemRelationIssuePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () =>
