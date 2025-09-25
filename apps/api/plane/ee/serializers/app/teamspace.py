@@ -123,6 +123,8 @@ class TeamspacePageSerializer(BaseSerializer):
             "sort_order",
             "sub_pages_count",
             "parent_id",
+            "external_id",
+            "external_source",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 

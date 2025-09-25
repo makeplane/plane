@@ -42,6 +42,7 @@ export class NotionImportDriver implements IZipImportDriver {
       name: "root",
       type: EZipNodeType.DIRECTORY,
       path: "",
+      depth: 0,
     };
 
     // Cache to store nodes by path for faster lookup
@@ -75,6 +76,7 @@ export class NotionImportDriver implements IZipImportDriver {
             name: part,
             type: isFile ? EZipNodeType.FILE : EZipNodeType.DIRECTORY,
             path: currentPath,
+            depth: i,
           };
 
           // Add to parent's children
@@ -130,6 +132,7 @@ export class NotionImportDriver implements IZipImportDriver {
           name: `${directory.name}.html`,
           type: EZipNodeType.FILE,
           path: `${directory.path}.html`,
+          depth: directory.depth,
         };
 
         // Add the dummy page as a sibling (to the same parent)

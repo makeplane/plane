@@ -39,10 +39,10 @@ export class NotionController {
   @Post("/:provider/start-import")
   async startImport(req: Request, res: Response) {
     try {
-      const { workspaceId, userId, fileKey, fileName } = req.body;
+      const { workspaceId, userId, config } = req.body;
       const { provider } = req.params;
 
-      if (!workspaceId || !userId || !fileKey) {
+      if (!workspaceId || !userId || !config) {
         return res.status(400).json({ error: "Missing required parameters: workspaceId, userId or fileKey" });
       }
 
@@ -65,10 +65,7 @@ export class NotionController {
         initiator_id: userId,
         workspace_id: workspaceId,
         source: provider.toUpperCase() as EZipDriverType,
-        config: {
-          fileId: fileKey,
-          fileName: fileName,
-        },
+        config: config,
       });
 
       await apiClient.importReport.updateImportReport(job.report_id, {

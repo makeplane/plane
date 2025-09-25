@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { TServiceAuthConfiguration } from "@plane/etl/core";
-import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
+import { EZipDriverType, TDocImporterJobConfig } from "@/plane-web/types/importers/zip-importer";
 
 export interface IUploadUrlResponse {
   success: boolean;
@@ -25,13 +25,12 @@ export class ZipImporterService {
     this.axiosInstance = axios.create({ baseURL, withCredentials: true });
   }
 
-  async startImport(workspaceId: string, userId: string, fileKey: string, fileName?: string): Promise<void> {
+  async startImport(workspaceId: string, userId: string, config: TDocImporterJobConfig): Promise<void> {
     return this.axiosInstance
       .post(`/api/zip-importer/${this.provider}/start-import`, {
         workspaceId,
         userId,
-        fileKey,
-        fileName,
+        config,
       })
       .then((res) => res.data)
       .catch((error) => {
@@ -78,5 +77,5 @@ export class ZipImporterService {
    * @description Register webhook
    * @returns { Promise<void> }
    */
-  async registerWebhook(): Promise<void> {}
+  async registerWebhook(): Promise<void> { }
 }

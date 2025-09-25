@@ -2,9 +2,11 @@ import mimetics from "mimetics";
 import { ExPage } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
 import {
+  EDocImporterDestinationType,
   ENotionImporterKeyType,
   ENotionMigrationType,
   TAssetInfo,
+  TDocImporterJobConfig,
   TNotionMigratorData,
 } from "@/apps/notion-importer/types";
 import { protect } from "@/lib/errors";
@@ -70,9 +72,27 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     const contentMap = await zipManager.getDirectoryContent(currentNode, ["html"]);
 
     // Process all children nodes and perform desired actions
-    const pageCreationResults = await this.processPageNodes(fileId, job as TImportJob, parentPageId, pageNodes);
-    await this.processAttachmentNodes(fileId, currentNode, job as TImportJob, attachmentNodes, contentMap);
-    await this.processDirectoryNodes(job as TImportJob, fileId, headers, pageCreationResults, directoryNodes, type);
+    const pageCreationResults = await this.processPageNodes(
+      fileId,
+      job as TImportJob<TDocImporterJobConfig>,
+      parentPageId,
+      pageNodes
+    );
+    await this.processAttachmentNodes(
+      fileId,
+      currentNode,
+      job as TImportJob<TDocImporterJobConfig>,
+      attachmentNodes,
+      contentMap
+    );
+    await this.processDirectoryNodes(
+      job as TImportJob<TDocImporterJobConfig>,
+      fileId,
+      headers,
+      pageCreationResults,
+      directoryNodes,
+      type
+    );
   }
 
   /*=================== Node Processors ===================*/
@@ -88,7 +108,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    */
   async processPageNodes(
     fileId: string,
-    job: TImportJob,
+    job: TImportJob<TDocImporterJobConfig>,
     parentPageId: string | undefined,
     pageNodes: TZipFileNode[]
   ): Promise<Map<string, string>> {
@@ -98,13 +118,13 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
 
     try {
       // Transform all pages to ExPage format
-      const pages = pageNodes
-        .map((pageNode) => this.createPageFromNode(job, pageNode, parentPageId, job.initiator_id))
+      const pagePayload = pageNodes
+        .map((pageNode) => this.constructPagePayloadFromNode(job, pageNode, parentPageId, job.initiator_id))
         .filter(Boolean) as Partial<TPage>[];
 
       // Use bulk create API if we have valid pages
-      if (pages.length > 0) {
-        const createdPages = (await apiClient.page.bulkCreatePages(job.workspace_slug, pages)) as ExPage[];
+      if (pagePayload.length > 0) {
+        const createdPages = await this.createPages(job, pagePayload);
         /*
          * Path represents maximum information that we have about a page,
          * from that we can get the page, name and all the information necessary
@@ -149,7 +169,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
   async processAttachmentNodes(
     fileId: string,
     root: TZipFileNode,
-    job: TImportJob,
+    job: TImportJob<TDocImporterJobConfig>,
     attachmentNodes: TZipFileNode[],
     contentMap: Map<string, Buffer>
   ): Promise<void> {
@@ -219,7 +239,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    * @param directoryNodes - Array of directory nodes to process
    */
   async processDirectoryNodes(
-    job: TImportJob,
+    job: TImportJob<TDocImporterJobConfig>,
     fileId: string,
     headers: TaskHeaders,
     pageCreationResults: Map<string, string>,
@@ -292,14 +312,35 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
   }
 
   /**
+   * Creates pages in Plane
+   * @param job - Import job containing workspace information
+   * @param pagePayload - Array of page payloads to create
+   * @returns Array of created pages
+   */
+  createPages(job: TImportJob<TDocImporterJobConfig>, pagePayload: Partial<TPage>[]): Promise<ExPage[]> {
+    const { destination } = job.config;
+
+    switch (destination.type) {
+      case EDocImporterDestinationType.TEAMSPACE:
+        return apiClient.page.bulkCreateTeamspacePages(job.workspace_slug, destination.teamspace_id, pagePayload);
+      case EDocImporterDestinationType.PROJECT:
+        return apiClient.page.bulkCreateProjectPages(job.workspace_slug, destination.project_id, pagePayload);
+      case EDocImporterDestinationType.WIKI:
+        return apiClient.page.bulkCreatePages(job.workspace_slug, pagePayload);
+      default:
+        throw new Error("Invalid destination type", { cause: { job, destination } });
+    }
+  }
+
+  /**
    * Transforms a Notion HTML file node into a Plane page object
    * @param node - The HTML file node to transform
    * @param parentPageId - Optional ID of parent page for hierarchy
    * @param contentMap - Map of file paths to content buffers
    * @returns Plane page object or undefined if content not found
    */
-  createPageFromNode(
-    job: TImportJob,
+  constructPagePayloadFromNode(
+    job: TImportJob<TDocImporterJobConfig>,
     node: TZipFileNode,
     parentPageId: string | undefined,
     userId: string

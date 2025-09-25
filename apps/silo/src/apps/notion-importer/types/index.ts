@@ -49,3 +49,33 @@ export type TAssetInfo = {
   type: string;
   size: number;
 };
+
+export enum EDocImporterDestinationType {
+  WIKI = "wiki",
+  PROJECT = "project",
+  TEAMSPACE = "teamspace",
+}
+
+type TDocImporterDestination =
+  | {
+      type: EDocImporterDestinationType.WIKI;
+    }
+  | {
+      type: EDocImporterDestinationType.PROJECT;
+      project_id: string;
+      project_name: string;
+    }
+  | {
+      type: EDocImporterDestinationType.TEAMSPACE;
+      teamspace_id: string;
+      teamspace_name: string;
+    };
+
+export type TDocImporterJobConfig = {
+  fileId: string;
+  fileName: string;
+  destination: TDocImporterDestination;
+  metadata?: {
+    rootNodeUrl?: string;
+  };
+};

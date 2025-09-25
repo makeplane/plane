@@ -12,7 +12,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { EZipDriverType, ZipDriverFactory } from "../../drivers";
 import { IZipImportDriver } from "../../drivers/types";
-import { ENotionImporterKeyType, TNotionImportConfig, TNotionMigratorData } from "../../types";
+import { ENotionImporterKeyType, TDocImporterJobConfig, TNotionMigratorData } from "../../types";
 import { getKey } from "../../utils";
 
 const apiClient = getAPIClientInternal();
@@ -117,7 +117,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
         throw new Error(`Job ${jobId} not found`);
       }
 
-      const config = job.config as TNotionImportConfig;
+      const config = job.config as TDocImporterJobConfig;
       if (!config.fileId) {
         throw new Error(`Job ${jobId} has no fileId`);
       }

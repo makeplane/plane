@@ -5,6 +5,7 @@ export type TZipFileNode = {
   name: string;
   type: EZipNodeType;
   path: string;
+  depth: number;
   children?: TZipFileNode[];
 };
 

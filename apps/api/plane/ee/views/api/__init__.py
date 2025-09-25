@@ -20,6 +20,8 @@ from plane.ee.views.api.worklog.issue_worklog import (
 
 from plane.ee.views.api.page import (
     WikiBulkOperationAPIView,
+    ProjectPageBulkOperationAPIView,
+    TeamspacePageBulkOperationAPIView,
     ProjectPageAPIEndpoint,
     WorkspacePageAPIEndpoint,
 )

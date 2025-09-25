@@ -27,6 +27,9 @@ export const getPlaneLogoUrl = () => "https://media.docs.plane.so/logo/favicon-5
 
 export const getPublishedPageUrl = (pageId: string) => `${env.SPACE_BASE_URL}/pages/${pageId}`;
 
+export const getTeamspacePageUrl = (workspaceSlug: string, teamspaceId: string, pageId: string) =>
+  `${env.APP_BASE_URL}/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
+
 export const getProjectPageUrl = (workspaceSlug: string, projectId: string, pageId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
 

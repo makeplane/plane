@@ -134,6 +134,7 @@ export class ConfluenceImportDriver implements IZipImportDriver {
       name: "root",
       type: EZipNodeType.DIRECTORY,
       path: "",
+      depth: 0,
       children: [],
     };
 
@@ -175,6 +176,7 @@ export class ConfluenceImportDriver implements IZipImportDriver {
         name: name,
         type: EZipNodeType.FILE,
         path: zipFilePath,
+        depth: parentNode.depth + 1,
         children: [],
       };
       const directoryNode = this.getDirectoryNode(node);
@@ -236,6 +238,7 @@ export class ConfluenceImportDriver implements IZipImportDriver {
       name: node.name.split(".html")[0],
       type: EZipNodeType.DIRECTORY,
       path: node.path.split(".html")[0],
+      depth: node.depth,
       children: [],
     };
 
@@ -264,6 +267,7 @@ export class ConfluenceImportDriver implements IZipImportDriver {
         name: attachment.split("/").pop() || attachment,
         type: EZipNodeType.FILE,
         path: attachment,
+        depth: node.depth,
         children: [],
       };
 

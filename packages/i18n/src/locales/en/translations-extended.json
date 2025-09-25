@@ -1176,6 +1176,8 @@
     "import": "Import",
     "serial_number": "Sr No.",
     "project": "Project",
+    "teamspace": "Teamspace",
+    "destination": "Destination",
     "workspace": "Workspace",
     "status": "Status",
     "total_batches": "Total Batches",
@@ -1503,6 +1505,8 @@
   "notion_importer": {
     "notion_importer_description": "Import your Notion data into Plane wiki.",
     "steps": {
+      "title_select_destination": "Select Destination",
+      "description_select_destination": "Please select the destination for your Notion data.",
       "title_upload_zip": "Upload Notion Exported ZIP",
       "description_upload_zip": "Please upload the ZIP file containing your Notion data."
     },
@@ -1526,11 +1530,23 @@
       "upload_complete_message": "Upload complete!",
       "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
       "upload_progress_message": "Please don't close this window."
+    },
+    "select_destination": {
+      "destination_type": "Destination Type",
+      "select_destination_type": "Select Destination Type",
+      "select_project": "Select Project",
+      "no_projects_found": "No projects found",
+      "select_teamspace": "Select Teamspace",
+      "no_teamspaces_found": "No teamspaces found",
+      "unknown_project": "Unknown Project",
+      "unknown_teamspace": "Unknown Teamspace"
     }
   },
   "confluence_importer": {
     "confluence_importer_description": "Import your Confluence data into Plane wiki.",
     "steps": {
+      "title_select_destination": "Select Destination",
+      "description_select_destination": "Please select the destination for your Confluence data.",
       "title_upload_zip": "Upload Confluence Exported ZIP",
       "description_upload_zip": "Please upload the ZIP file containing your Confluence data."
     },
@@ -1554,6 +1570,16 @@
       "upload_complete_message": "Upload complete!",
       "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
       "upload_progress_message": "Please don't close this window."
+    },
+    "select_destination": {
+      "destination_type": "Destination Type",
+      "select_destination_type": "Select Destination Type",
+      "select_project": "Select Project",
+      "no_projects_found": "No projects found",
+      "select_teamspace": "Select Teamspace",
+      "no_teamspaces_found": "No teamspaces found",
+      "unknown_project": "Unknown Project",
+      "unknown_teamspace": "Unknown Teamspace"
     }
   },
   "linear_importer": {

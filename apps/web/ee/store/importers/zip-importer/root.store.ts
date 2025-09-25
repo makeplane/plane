@@ -2,7 +2,6 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
-import { FlatfileConfig } from "@plane/etl/flatfile";
 // plane web store types
 import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
 import { ZipImporterService } from "@/plane-web/services/importers/zip-importer/data.service";
@@ -21,10 +20,17 @@ import {
   TImporterStep,
   TImporterDataPayload,
   EZipDriverType,
+  EDocImporterDestinationType,
+  TDocImporterJobConfig,
 } from "@/plane-web/types/importers/zip-importer";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {
+  [E_IMPORTER_STEPS.SELECT_DESTINATION]: {
+    destination: {
+      type: EDocImporterDestinationType.WIKI,
+    },
+  },
   [E_IMPORTER_STEPS.UPLOAD_ZIP]: {
     zipFile: undefined,
   },
@@ -58,7 +64,7 @@ export interface IZipImporterStore extends IImporterBaseStore {
     fileName?: string;
   };
   // store instances
-  job: IImporterJobStore<any>;
+  job: IImporterJobStore<TDocImporterJobConfig>;
   auth: {
     currentAuth?: {
       isAuthenticated: boolean;
@@ -85,15 +91,21 @@ export interface IZipImporterStore extends IImporterBaseStore {
   confirmAndStartImport: (options?: { fileName?: string }) => Promise<void>;
   resetUploadState: () => void;
   // helpers
-  handleSyncJobConfig: <T extends keyof FlatfileConfig>(key: T, config: FlatfileConfig[T]) => void;
+  handleSyncJobConfig: <T extends keyof TDocImporterJobConfig>(key: T, config: TDocImporterJobConfig[T]) => void;
 }
 
 export class ZipImporterStore extends ImporterBaseStore implements IZipImporterStore {
   dashboardView: boolean = true;
-  stepper: TImporterStepKeys = E_IMPORTER_STEPS.UPLOAD_ZIP;
+  stepper: TImporterStepKeys = E_IMPORTER_STEPS.SELECT_DESTINATION;
   importerData: TImporterDataPayload = defaultImporterData;
-  job: IImporterJobStore<any>;
-  configData: Partial<FlatfileConfig> = {};
+  job: IImporterJobStore<TDocImporterJobConfig>;
+  configData: TDocImporterJobConfig = {
+    fileName: "",
+    fileId: "",
+    destination: {
+      type: EDocImporterDestinationType.WIKI,
+    },
+  };
   steps: TImporterStep[] = [];
 
   // upload state
@@ -113,7 +125,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   // Noop object for auth, required to use the base dashboard component
   auth = {
     currentAuth: { isAuthenticated: true, sourceTokenInvalid: false },
-    deactivateAuth: async () => {},
+    deactivateAuth: async () => { },
     apiTokenVerification: async () => ({
       message: "Token is valid",
     }),
@@ -216,7 +228,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   /**
    * @description Handles the importer data
    * @param { T } key
-   * @param { FlatfileConfig[T] } value
+   * @param { TDocImporterJobConfig[T] } value
    */
   handleImporterData = <T extends keyof TImporterDataPayload>(key: T, value: TImporterDataPayload[T]): void => {
     set(this.importerData, key, value);
@@ -226,9 +238,16 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
    * @description Resets the importer data
    */
   resetImporterData = (): void => {
-    this.dashboardView = true;
-    this.stepper = E_IMPORTER_STEPS.UPLOAD_ZIP;
+    this.dashboardView = !this.dashboardView;
+    this.stepper = E_IMPORTER_STEPS.SELECT_DESTINATION;
     this.importerData = defaultImporterData;
+    this.configData = {
+      fileName: "",
+      fileId: "",
+      destination: {
+        type: EDocImporterDestinationType.WIKI,
+      },
+    };
     this.resetUploadState();
   };
 
@@ -350,7 +369,13 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
         uploadId // This is the asset_id from upload response
       );
 
-      await this.zipImporterService.startImport(workspace.id, user.id, fileKey, options?.fileName);
+      this.configData = {
+        ...this.configData,
+        fileName: options?.fileName || "",
+        fileId: fileKey,
+      }
+
+      await this.zipImporterService.startImport(workspace.id, user.id, this.configData);
 
       // Set state to complete
       runInAction(() => {
@@ -372,7 +397,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
    * @param { T } key
    * @param { AsanaConfig[T] } config
    */
-  handleSyncJobConfig = <T extends keyof FlatfileConfig>(key: T, config: FlatfileConfig[T]): void => {
+  handleSyncJobConfig = <T extends keyof TDocImporterJobConfig>(key: T, config: TDocImporterJobConfig[T]): void => {
     set(this.configData, key, config);
   };
 
