@@ -81,7 +81,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   }),
   description_updated: () => ({
     icon: <AlignLeft className={commonIconClassName} />,
-    message: <>updated the epic description.</>,
+    message: <>updated the description.</>,
   }),
   state_updated: (activity: TIssueActivity) => ({
     icon: <DoubleCircleIcon className={commonIconClassName} />,
