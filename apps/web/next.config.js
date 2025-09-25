@@ -7,6 +7,8 @@ const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
   swcMinify: true,
+  concurrentFeatures: true,
+  fastRefresh: true,
   output: "standalone",
   eslint: {
     ignoreDuringBuilds: true,
