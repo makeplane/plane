@@ -53,6 +53,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                 workspace=workspace, initiative_id=initiative_id
             )
             .filter(epic__project__deleted_at__isnull=True)
+            .filter(epic__project__archived_at__isnull=True)
             .aggregate(largest=models.Max("sort_order"))["largest"]
         )
 
@@ -113,6 +114,8 @@ class InitiativeEpicViewSet(BaseViewSet):
         epics = (
             Issue.objects.filter(workspace__slug=slug, id__in=epic_ids)
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(Q(project__deleted_at__isnull=True))
+            .filter(Q(project__archived_at__isnull=True))
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -171,6 +174,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                 id__in=initiative_epics,
             )
             .filter(Q(project__deleted_at__isnull=True))
+            .filter(Q(project__archived_at__isnull=True))
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(project__project_projectfeature__is_epic_enabled=True)
             .annotate(
@@ -264,6 +268,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                 workspace__slug=slug, initiative_id=initiative_id
             )
             .filter(epic__project__deleted_at__isnull=True)
+            .filter(epic__project__archived_at__isnull=True)
             .values_list("epic_id", flat=True)
         )
 
@@ -314,6 +319,7 @@ class InitiativeEpicIssueViewSet(BaseViewSet):
                 id__in=initiative_epics,
             )
             .filter(Q(project__deleted_at__isnull=True))
+            .filter(Q(project__archived_at__isnull=True))
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(project__project_projectfeature__is_epic_enabled=True)
             .annotate(

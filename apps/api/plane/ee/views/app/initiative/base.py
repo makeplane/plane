@@ -45,19 +45,24 @@ class InitiativeEndpoint(BaseAPIView):
             Project.objects.filter(
                 workspace__slug=self.kwargs.get("slug"),
                 project_projectfeature__is_epic_enabled=True,
+                archived_at__isnull=True,
             )
             .accessible_to(self.request.user.id, self.kwargs.get("slug"))
             .values_list("id", flat=True)
         )
 
         return (
-            Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            Initiative.objects.filter(
+                workspace__slug=self.kwargs.get("slug"),
+                projects__project__archived_at__isnull=True,
+            )
             .annotate(
                 project_ids=Coalesce(
                     Subquery(
                         InitiativeProject.objects.filter(
                             initiative_id=OuterRef("pk"),
                             workspace__slug=self.kwargs.get("slug"),
+                            project__archived_at__isnull=True,
                         )
                         .values("initiative_id")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
@@ -152,7 +157,9 @@ class InitiativeEndpoint(BaseAPIView):
                 project_ids=Coalesce(
                     Subquery(
                         InitiativeProject.objects.filter(
-                            initiative_id=OuterRef("pk"), workspace__slug=slug
+                            initiative_id=OuterRef("pk"),
+                            workspace__slug=slug,
+                            project__archived_at__isnull=True,
                         )
                         .values("initiative_id")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
@@ -166,6 +173,7 @@ class InitiativeEndpoint(BaseAPIView):
                             initiative_id=OuterRef("pk"), workspace__slug=slug
                         )
                         .filter(epic__project__deleted_at__isnull=True)
+                        .filter(epic__project__archived_at__isnull=True)
                         .filter(
                             epic__project__project_projectfeature__is_epic_enabled=True
                         )
@@ -234,12 +242,14 @@ class InitiativeProjectEndpoint(BaseAPIView):
     def get(self, request, slug, initiative_id, project_id=None):
         # Get all projects in initiative
         initiative_projects = InitiativeProject.objects.filter(
-            initiative_id=initiative_id, workspace__slug=slug
+            initiative_id=initiative_id,
+            workspace__slug=slug,
+            project__archived_at__isnull=True,
         ).values_list("project_id", flat=True)
 
         # Get all projects in initiative
         projects = (
-            Project.objects.filter(id__in=initiative_projects)
+            Project.objects.filter(id__in=initiative_projects, archived_at__isnull=True)
             .annotate(
                 total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
                 .order_by()
@@ -475,7 +485,20 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
     def get(self, request, slug, initiative_id):
         initiative = (
             Initiative.objects.filter(id=initiative_id, workspace__slug=slug)
-            .prefetch_related("projects", "initiative_epics")
+            .prefetch_related(
+                Prefetch(
+                    "projects",
+                    queryset=InitiativeProject.objects.filter(
+                        workspace__slug=slug, project__archived_at__isnull=True
+                    ),
+                ),
+                Prefetch(
+                    "initiative_epics",
+                    queryset=InitiativeEpic.objects.filter(
+                        workspace__slug=slug, epic__project__archived_at__isnull=True
+                    ),
+                ),
+            )
             .first()
         )
 
@@ -552,11 +575,15 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id=None):
-        initiatives = Initiative.objects.filter(workspace__slug=slug).annotate(
+        initiatives = Initiative.objects.filter(
+            workspace__slug=slug, projects__project__archived_at__isnull=True
+        ).distinct().annotate(
             project_ids=Coalesce(
                 Subquery(
                     InitiativeProject.objects.filter(
-                        workspace__slug=slug, initiative_id=OuterRef("pk")
+                        workspace__slug=slug,
+                        initiative_id=OuterRef("pk"),
+                        project__archived_at__isnull=True,
                     )
                     .values("initiative_id")
                     .annotate(project_ids=ArrayAgg("project_id", distinct=True))
@@ -570,6 +597,7 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
                         workspace__slug=slug, initiative_id=OuterRef("pk")
                     )
                     .filter(epic__project__project_projectfeature__is_epic_enabled=True)
+                    .filter(epic__project__archived_at__isnull=True)
                     .values("initiative_id")
                     .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                     .values("epic_ids")[:1]

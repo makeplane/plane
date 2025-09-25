@@ -21,10 +21,11 @@ type TDataCardProps = {
   type: "project" | "epic";
   data: TInitiativeAnalyticData | undefined;
   onAdd: (value?: boolean) => void;
+  count: number;
 };
 
 const DataCard = (props: TDataCardProps) => {
-  const { type, data, workspaceSlug, initiativeId } = props;
+  const { type, data, workspaceSlug, initiativeId, count } = props;
   const router = useRouter();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
   const total =
@@ -46,7 +47,10 @@ const DataCard = (props: TDataCardProps) => {
       onClick={handleControlLinkClick}
     >
       <div className="flex w-full justify-between text-custom-text-300 ">
-        <div className="font-semibold text-base capitalize">{type}s</div>
+        <div className="flex gap-2 items-center">
+          <div className="font-semibold text-base capitalize">{type}s</div>
+          <span className="text-custom-text-400 font-medium text-xs">{count}</span>
+        </div>
       </div>
       {data ? (
         <div className="border border-custom-border-100 bg-custom-background-100 rounded-md p-2 flex md:flex-row flex-col gap-2 justify-between w-full">
@@ -120,6 +124,8 @@ export const ScopeBreakdown = observer((props: Props) => {
   const shouldShowProjectsCard = projectsCount > 0;
   const shouldShowEpicsCard = epicsCount > 0;
 
+  if (!initiative) return null;
+
   return (
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
@@ -161,6 +167,7 @@ export const ScopeBreakdown = observer((props: Props) => {
               type="project"
               onAdd={toggleProjectModal}
               data={initiativeAnalytics?.project}
+              count={projectsCount}
             />
           )}
           {/* Epics */}
@@ -171,6 +178,7 @@ export const ScopeBreakdown = observer((props: Props) => {
               type="epic"
               onAdd={toggleEpicModal}
               data={initiativeAnalytics?.epic}
+              count={epicsCount}
             />
           )}
         </div>
