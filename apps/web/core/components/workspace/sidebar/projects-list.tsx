@@ -166,6 +166,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 <span className="text-sm font-semibold">{t("projects")}</span>
               </Disclosure.Button>
               <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                {/* 创建项目的 +  */}
                 {isAuthorizedUser && (
                   <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                     <button
@@ -192,6 +193,7 @@ export const SidebarProjectsList: FC = observer(() => {
                       : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
                 >
+                  {/* 项目列表的展开收起图标 */}
                   <ChevronRight
                     className={cn("flex-shrink-0 size-3 transition-all", {
                       "rotate-90": isAllProjectsListOpen,

@@ -4,7 +4,7 @@ import React, { FC, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { FileText, Layers } from "lucide-react";
+import { FileText, Kanban, Layers } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/propel/icons";
@@ -65,6 +65,16 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
 
   const baseNavigation = useCallback(
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
+      {
+        i18n_key: "sidebar.work_items",
+        key: "work_items",
+        name: "Work items",
+        href: `/${workspaceSlug}/projects/${projectId}/overview`,
+        icon: Kanban,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        shouldRender: true,
+        sortOrder: 0,
+      },
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
@@ -148,6 +158,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
 
     return sortedNavigationItems;
   }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
+  console.log("🚀 ~ navigationItemsMemo:", navigationItemsMemo);
 
   const isActive = useCallback(
     (item: TNavigationItem) => {
