@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@tiptap/core':
+      specifier: 3.5.3
+      version: 3.5.3
+    '@tiptap/html':
+      specifier: 3.5.3
+      version: 3.5.3
     '@types/lodash':
       specifier: 4.17.20
       version: 4.17.20
@@ -204,14 +210,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/types
       '@tiptap/core':
-        specifier: ^3.0.7
-        version: 3.4.3(@tiptap/pm@3.5.3)
+        specifier: 'catalog:'
+        version: 3.5.3(@tiptap/pm@3.5.3)
       '@tiptap/html':
-        specifier: ^3.0.7
-        version: 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)(happy-dom@18.0.1)
+        specifier: 'catalog:'
+        version: 3.5.3(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)(happy-dom@18.0.1)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.0
       compression:
         specifier: 1.8.1
         version: 1.8.1
@@ -721,7 +727,7 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@tiptap/core':
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3(@tiptap/pm@3.5.3)
       '@tiptap/extension-blockquote':
         specifier: ^3.5.3
@@ -757,7 +763,7 @@ importers:
         specifier: ^3.5.3
         version: 3.5.3(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)
       '@tiptap/html':
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)(happy-dom@18.0.1)
       '@tiptap/pm':
         specifier: ^3.5.3
@@ -3172,11 +3178,6 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tiptap/core@3.4.3':
-    resolution: {integrity: sha512-iWhEs6pGcxBqTjB/o3CJ06RPgFkpbDTckeT340eU3jgj043UjzG3sVB4LkVQLKXlvcg3rBzQpUZNGEd1UkTcAA==}
-    peerDependencies:
-      '@tiptap/pm': ^3.4.3
-
   '@tiptap/core@3.5.3':
     resolution: {integrity: sha512-T09yWx2k4VB3mIXY/dw5YAZemkL2lXSCAIGaNFvvvyLObzMjE7gJN9VfO4VRQmNTcKSrt2IZgYHGuBvq2CUyvw==}
     peerDependencies:
@@ -3356,13 +3357,6 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.5.3
       '@tiptap/pm': ^3.5.3
-
-  '@tiptap/html@3.4.3':
-    resolution: {integrity: sha512-HPKu/qVg+AM/T6OfduoJU1H74z39SxXYY4EM3iLkhF8KAFwVETTFPZ/8YYBjsV9kAIQ0F5To3zqkHyFt+CJ0xw==}
-    peerDependencies:
-      '@tiptap/core': ^3.4.3
-      '@tiptap/pm': ^3.4.3
-      happy-dom: ^18.0.1
 
   '@tiptap/html@3.5.3':
     resolution: {integrity: sha512-S6Uox1Gt3YQiiXYBZ6OT1XN2jyT/CZY+xwhuJYEP6s/lQkc3AXGxtvNZpuLbwNEDT0x/rSl66OZdtmv1nKia6g==}
@@ -4126,9 +4120,6 @@ packages:
   axe-core@4.10.3:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
-
-  axios@1.11.0:
-    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
 
   axios@1.12.0:
     resolution: {integrity: sha512-oXTDccv8PcfjZmPGlWsPSwtOJCZ/b6W5jAMCNcfwJbCzDckwG0jrYJFaWH1yvivfCXjVzV/SPDEhMB3Q+DSurg==}
@@ -10093,10 +10084,6 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@tiptap/core@3.4.3(@tiptap/pm@3.5.3)':
-    dependencies:
-      '@tiptap/pm': 3.5.3
-
   '@tiptap/core@3.5.3(@tiptap/pm@3.5.3)':
     dependencies:
       '@tiptap/pm': 3.5.3
@@ -10252,12 +10239,6 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.5.3(@tiptap/pm@3.5.3)
       '@tiptap/pm': 3.5.3
-
-  '@tiptap/html@3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)(happy-dom@18.0.1)':
-    dependencies:
-      '@tiptap/core': 3.4.3(@tiptap/pm@3.5.3)
-      '@tiptap/pm': 3.5.3
-      happy-dom: 18.0.1
 
   '@tiptap/html@3.5.3(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)(happy-dom@18.0.1)':
     dependencies:
@@ -11138,14 +11119,6 @@ snapshots:
       possible-typed-array-names: 1.1.0
 
   axe-core@4.10.3: {}
-
-  axios@1.11.0:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.4
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
 
   axios@1.12.0:
     dependencies:

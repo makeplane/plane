@@ -82,7 +82,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;
-      const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+      const utilityStorage = editor.storage.utility;
       return utilityStorage.activeDropbarExtensions.length > 0;
     },
     scrollSummary: (marking) => {

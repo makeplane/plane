@@ -8,7 +8,6 @@ import {
   BackgroundColorItem,
   BoldItem,
   BubbleMenuColorSelector,
-  BubbleMenuLinkSelector,
   BubbleMenuNodeSelector,
   CodeItem,
   EditorMenuItem,
@@ -24,9 +23,10 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import { TEditorCommands } from "@/types";
+import type { TEditorCommands } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
+import { BubbleMenuLinkSelector } from "./link-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
@@ -39,7 +39,14 @@ export type EditorStateType = {
   left: boolean;
   right: boolean;
   center: boolean;
-  color: { key: string; label: string; textColor: string; backgroundColor: string } | undefined;
+  color:
+    | {
+        key: string;
+        label: string;
+        textColor: string;
+        backgroundColor: string;
+      }
+    | undefined;
   backgroundColor:
     | {
         key: string;
@@ -57,9 +64,6 @@ type Props = {
 export const EditorBubbleMenu: FC<Props> = (props) => {
   const { editor } = props;
   // states
-  const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
-  const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
-  const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
   // refs
   const menuRef = useRef<HTMLDivElement>(null);
@@ -115,12 +119,20 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       return true;
     },
     options: {
-      onShow: () => (editor.storage.link.isBubbleMenuOpen = true),
+      onShow: () => {
+        editor.storage.link.isBubbleMenuOpen = true;
+        editor.commands.addActiveDropbarExtension("bubble-menu");
+      },
       onHide: () => {
         editor.storage.link.isBubbleMenuOpen = false;
-        setIsNodeSelectorOpen(false);
-        setIsLinkSelectorOpen(false);
-        setIsColorSelectorOpen(false);
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension("bubble-menu");
+        }, 0);
+      },
+      onDestroy: () => {
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension("bubble-menu");
+        }, 0);
       },
     },
     // TODO: Migrate these to floating UI options
@@ -167,41 +179,16 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
           className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
         >
           <div className="px-2">
-            <BubbleMenuNodeSelector
-              editor={editor!}
-              isOpen={isNodeSelectorOpen}
-              setIsOpen={() => {
-                setIsNodeSelectorOpen((prev) => !prev);
-                setIsLinkSelectorOpen(false);
-                setIsColorSelectorOpen(false);
-              }}
-            />
+            <BubbleMenuNodeSelector editor={editor} />
           </div>
           {!editorState.code && (
             <div className="px-2">
-              <BubbleMenuLinkSelector
-                editor={editor}
-                isOpen={isLinkSelectorOpen}
-                setIsOpen={() => {
-                  setIsLinkSelectorOpen((prev) => !prev);
-                  setIsNodeSelectorOpen(false);
-                  setIsColorSelectorOpen(false);
-                }}
-              />
+              <BubbleMenuLinkSelector editor={editor} />
             </div>
           )}
           {!editorState.code && (
             <div className="px-2">
-              <BubbleMenuColorSelector
-                editor={editor}
-                isOpen={isColorSelectorOpen}
-                editorState={editorState}
-                setIsOpen={() => {
-                  setIsColorSelectorOpen((prev) => !prev);
-                  setIsNodeSelectorOpen(false);
-                  setIsLinkSelectorOpen(false);
-                }}
-              />
+              <BubbleMenuColorSelector editor={editor} editorState={editorState} />
             </div>
           )}
           <div className="flex gap-0.5 px-2">
