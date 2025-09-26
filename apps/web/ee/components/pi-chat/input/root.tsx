@@ -189,7 +189,7 @@ export const InputBox = observer((props: TProps) => {
       </div>
 
       <div className="text-xs text-custom-text-350 pt-2 text-center">
-        Pi can make mistakes, please double-check responses.
+        Plane AI can make mistakes, please double-check responses.
       </div>
     </form>
   );
