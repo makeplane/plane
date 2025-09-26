@@ -10,10 +10,11 @@ import { CheckCircle2 } from "lucide-react";
 import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS, GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // components
 import { EmptyState } from "@/components/common/empty-state";

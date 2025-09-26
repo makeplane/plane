@@ -2,9 +2,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // plane ui
-import { Button, CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 

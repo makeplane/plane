@@ -7,9 +7,10 @@ import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IUser, IImporterService } from "@plane/types";
 // ui
-import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";

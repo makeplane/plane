@@ -5,6 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   EViewAccess,
   IIssueDisplayFilterOptions,
@@ -14,7 +15,7 @@ import {
   EIssuesStoreType,
   IIssueFilters,
 } from "@plane/types";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";

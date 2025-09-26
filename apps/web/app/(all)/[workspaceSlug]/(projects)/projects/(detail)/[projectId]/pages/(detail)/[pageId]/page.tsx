@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
+import { getButtonStyling } from "@plane/propel/button";
 import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
-import { getButtonStyling } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
