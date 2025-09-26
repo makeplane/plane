@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "pi_chat": "Pi Chat",
+    "pi_chat": "Plane AI",
     "initiatives": "Inițiative",
     "teamspaces": "Spații de echipă",
     "epics": "Epice",
@@ -11,7 +11,7 @@
     "recurring_work_items": "Elemente de lucru repetitive"
   },
   "workspace_dashboards": "Dashboarduri",
-  "pi_chat": "Pi Chat",
+  "pi_chat": "Plane AI",
   "in_app": "În-app",
   "forms": "Formulare",
   "choose_workspace_for_integration": "Alegeți un spațiu de lucru pentru a conecta această aplicație",

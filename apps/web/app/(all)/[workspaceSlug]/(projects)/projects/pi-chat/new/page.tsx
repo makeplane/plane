@@ -17,7 +17,7 @@ const NewChatPage = observer(() => {
 
   return (
     <>
-      <PageHead title="Pi Chat" />
+      <PageHead title="Plane AI" />
       <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
         <div className={cn("flex-1 my-auto flex flex-co h-full mx-6 relative")}>
           <NewConversation currentUser={currentUser} isFullScreen isProjectLevel />

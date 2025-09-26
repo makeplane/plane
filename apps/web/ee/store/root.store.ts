@@ -87,7 +87,7 @@ import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
 import { EpicBaseStore, IEpicBaseStore } from "./issue/epic/base.store";
 // marketplace
 import { IApplicationStore, ApplicationStore } from "./marketplace/application.store";
-// pi chat
+// Plane AI
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";

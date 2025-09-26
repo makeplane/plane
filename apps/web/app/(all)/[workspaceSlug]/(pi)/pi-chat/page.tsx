@@ -18,7 +18,7 @@ const NewChatPage = observer(() => {
   }, []);
   return (
     <>
-      <PageHead title="Pi Chat" />
+      <PageHead title="Plane AI" />
       <PiChatDetail isFullScreen />
     </>
   );

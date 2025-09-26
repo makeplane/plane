@@ -38,7 +38,7 @@ export const PiSidebar = observer(() => {
 
   return (
     <SidebarWrapper
-      title="Pi Chat"
+      title="Plane AI"
       quickActions={<Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />}
     >
       {/* Favorites */}

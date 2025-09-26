@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "pi_chat": "Pi Chat",
+    "pi_chat": "Plane AI",
     "initiatives": "Sáng kiến",
     "teamspaces": "Không gian nhóm",
     "epics": "Epics",
@@ -11,7 +11,7 @@
     "recurring_work_items": "Công việc lặp lại"
   },
   "workspace_dashboards": "Bảng điều khiển",
-  "pi_chat": "Pi Chat",
+  "pi_chat": "Plane AI",
   "in_app": "Trong ứng dụng",
   "forms": "Biểu mẫu",
   "choose_workspace_for_integration": "Chọn không gian làm việc để kết nối ứng dụng này",

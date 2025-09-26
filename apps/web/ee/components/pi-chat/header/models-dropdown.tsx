@@ -37,7 +37,7 @@ export const ModelsDropdown: FC<TModelsDropdown> = observer((props) => {
       placement="bottom-start"
       customButton={
         <button className="flex hover:bg-custom-background-80 p-2 rounded gap-1">
-          <span className="font-medium text-sm my-auto"> Pi Chat {activeModel && `(${activeModel?.name})`}</span>
+          <span className="font-medium text-sm my-auto"> Plane AI {activeModel && `(${activeModel?.name})`}</span>
           <ChevronDown className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")} />
         </button>
       }

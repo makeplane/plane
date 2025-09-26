@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "pi_chat": "Pi Chat",
+    "pi_chat": "Plane AI",
     "initiatives": "Iniciativy",
     "teamspaces": "Týmové prostory",
     "epics": "Epiky",
@@ -11,7 +11,7 @@
     "recurring_work_items": "Opakující se pracovní položky"
   },
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Pi Chat",
+  "pi_chat": "Plane AI",
   "in_app": "V aplikaci",
   "forms": "Formuláře",
   "choose_workspace_for_integration": "Vyberte pracovní prostor pro připojení této aplikace",
