@@ -28,7 +28,7 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { toggleCreateProjectModal } = useCommandPalette();
+  const { toggleCreateProjectModal } = useCommandPalette(); // 控制是否打开添加项目的dialog
   const {
     loader,
     fetchStatus,
@@ -92,6 +92,8 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
             src={searchQuery.trim() === "" ? resolvedFiltersImage : resolvedNameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching projects"
+            width={192}
+            height={192}
           />
           <h5 className="mb-1 mt-7 text-xl font-medium">{t("workspace_projects.empty_state.filter.title")}</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
