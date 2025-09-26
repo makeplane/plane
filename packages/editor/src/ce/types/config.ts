@@ -1,1 +1,1 @@
-export type TExtendedFileHandler = null;
+export type TExtendedFileHandler = object;

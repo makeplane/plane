@@ -5,10 +5,10 @@ import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web hooks
+import { useExtendedEditorConfig } from "@/plane-web/hooks/editor/use-extended-editor-config";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // services
 import { FileService } from "@/services/file.service";
-import { extendedEditorConfig } from "@/plane-web/hooks/editor/use-editor-config";
 const fileService = new FileService();
 
 type TArgs = {
@@ -23,6 +23,7 @@ export const useEditorConfig = () => {
   const { assetsUploadPercentage } = useEditorAsset();
   // file size
   const { maxFileSize } = useFileSize();
+  const { getExtendedEditorFileHandlers } = useExtendedEditorConfig();
 
   const getEditorFileHandlers = useCallback(
     (args: TArgs): TFileHandler => {
@@ -87,13 +88,10 @@ export const useEditorConfig = () => {
         validation: {
           maxFileSize,
         },
-        ...extendedEditorConfig({
-          projectId,
-          workspaceSlug,
-        }),
+        ...getExtendedEditorFileHandlers({ projectId, workspaceSlug }),
       };
     },
-    [assetsUploadPercentage, maxFileSize]
+    [assetsUploadPercentage, getExtendedEditorFileHandlers, maxFileSize]
   );
 
   return {
