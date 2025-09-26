@@ -22,14 +22,14 @@
     "intl-messageformat": "^10.7.11",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/lodash": "catalog:",
+    "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

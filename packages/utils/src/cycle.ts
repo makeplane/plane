@@ -1,8 +1,5 @@
 import { startOfToday, format } from "date-fns";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
+import { isEmpty, orderBy, sortBy, uniqBy } from "lodash-es";
 // plane imports
 import { ICycle, TCycleFilters, TProgressSnapshot } from "@plane/types";
 // local imports

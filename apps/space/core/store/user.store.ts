@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { UserService } from "@plane/services";
