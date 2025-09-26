@@ -37,6 +37,13 @@ class Initiative(BaseModel):
     state = models.CharField(
         max_length=100, choices=StateChoices.choices, default=StateChoices.DRAFT
     )
+    labels = models.ManyToManyField(
+        "ee.InitiativeLabel",
+        through="InitiativeLabelAssociation",
+        through_fields=("initiative", "label"),
+        related_name="initiatives",
+        blank=True,
+    )
 
     class Meta:
         db_table = "initiatives"
@@ -78,12 +85,6 @@ class InitiativeProject(BaseModel):
 
 
 class InitiativeLabel(BaseModel):
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="labels"
-    )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="initiatives"
-    )
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -91,20 +92,60 @@ class InitiativeLabel(BaseModel):
         null=True,
         blank=True,
     )
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    color = models.CharField(max_length=255, blank=True)
     sort_order = models.FloatField(default=65535)
 
     class Meta:
-        unique_together = ["initiative", "label", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_inlabel_ws_name_null",
+            )
+        ]
+
+        db_table = "initiative_labels"
+        verbose_name = "Initiative Label"
+        verbose_name_plural = "Initiative Labels"
+
+    def __str__(self):
+        return self.name
+
+
+class InitiativeLabelAssociation(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+        null=True,
+        blank=True,
+    )
+    initiative = models.ForeignKey(
+        "ee.Initiative",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+    )
+    label = models.ForeignKey(
+        "ee.InitiativeLabel",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+    )
+
+    class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["initiative", "label"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="initiative_label_unique_when_deleted_at_null",
+                name="uniq_ilassoc_init_lbl_null",
             )
         ]
-        db_table = "initiative_labels"
-        verbose_name = "Initiative Label"
-        verbose_name_plural = "Initiative Labels"
+        db_table = "initiative_label_associations"
+        verbose_name = "Initiative Label Association"
+        verbose_name_plural = "Initiative Label Associations"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.initiative.name} {self.label.name}"
