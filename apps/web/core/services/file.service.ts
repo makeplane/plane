@@ -273,61 +273,6 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
-  async reuploadWorkspaceAsset(
-    workspaceSlug: string,
-    assetId: string,
-    file: File,
-    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
-  ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/reupload/${assetId}/`, {
-      type: fileMetaData.type,
-      size: fileMetaData.size,
-    })
-      .then(async (response) => {
-        const signedURLResponse: TFileSignedURLResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(
-          signedURLResponse.upload_data.url,
-          fileUploadPayload,
-          uploadProgressHandler
-        );
-        await this.updateWorkspaceAssetUploadStatus(workspaceSlug, signedURLResponse.asset_id);
-        return signedURLResponse;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async reuploadProjectAsset(
-    workspaceSlug: string,
-    projectId: string,
-    assetId: string,
-    file: File,
-    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
-  ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
-
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/reupload/${assetId}/`, {
-      type: fileMetaData.type,
-      size: fileMetaData.size,
-    })
-      .then(async (response) => {
-        const signedURLResponse: TFileSignedURLResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(
-          signedURLResponse.upload_data.url,
-          fileUploadPayload,
-          uploadProgressHandler
-        );
-        await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
-        return signedURLResponse;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
   async getProjectCoverImages(): Promise<string[]> {
     return this.get(`/api/project-covers/`)
       .then((res) => res?.data)
