@@ -1,0 +1,6 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,*.svg,i18n,*-lock.yaml,*.css,.codespellrc,migrations,*.js,*.map,*.mjs
+check-hidden = true
+ignore-regex = \bMapPin\b
+ignore-words-list = tread
