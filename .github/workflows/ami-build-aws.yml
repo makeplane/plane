@@ -1,4 +1,4 @@
-name: Appliance Build Docker EE
+name: AMI Build - AWS
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ env:
 
 jobs:
 
-  build_aws_appliance_ee:
+  build_ami:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
