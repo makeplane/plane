@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import isNil from "lodash-es/isNil";
+import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 // types
 import {

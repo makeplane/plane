@@ -1,4 +1,4 @@
-import set from "lodash-es/set";
+import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";

@@ -1,5 +1,5 @@
 import { format, isValid } from "date-fns";
-import isNumber from "lodash-es/isNumber";
+import { isNumber } from "lodash-es";
 
 export const timeAgo = (time: any) => {
   switch (typeof time) {

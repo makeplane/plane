@@ -1,4 +1,4 @@
-import sortBy from "lodash-es/sortBy";
+import { sortBy } from "lodash-es";
 // plane imports
 import { TProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // local imports

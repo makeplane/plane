@@ -1,4 +1,4 @@
-import clone from "lodash-es/clone";
+import { clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesStateService } from "@plane/services";

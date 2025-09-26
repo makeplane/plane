@@ -1,6 +1,5 @@
 import IntlMessageFormat from "intl-messageformat";
-import get from "lodash-es/get";
-import merge from "lodash-es/merge";
+import { get, merge } from "lodash-es";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";

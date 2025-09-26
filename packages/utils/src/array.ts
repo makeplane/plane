@@ -1,4 +1,4 @@
-import isEmpty from "lodash-es/isEmpty";
+import { isEmpty } from "lodash-es";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 
 /**

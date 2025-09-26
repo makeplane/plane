@@ -1,5 +1,5 @@
 // plane imports
-import isEmpty from "lodash-es/isEmpty";
+import { isEmpty } from "lodash-es";
 import {
   LOGICAL_OPERATOR,
   SingleOrArray,
