@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, SyntheticEvent } from "react";
-import xor from "lodash/xor";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons

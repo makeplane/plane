@@ -34,7 +34,7 @@ const nextConfig = {
       "react-day-picker",
       "react-dropzone",
       "react-hook-form",
-      "lodash",
+      "lodash-es",
       "clsx",
       "tailwind-merge",
       "@plane/constants",

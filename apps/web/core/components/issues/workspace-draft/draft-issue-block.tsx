@@ -1,6 +1,6 @@
 "use client";
 import React, { FC, useRef, useState } from "react";
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // plane utils

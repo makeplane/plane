@@ -1,7 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
-import update from "lodash/update";
+import { sortBy, cloneDeep, update, set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

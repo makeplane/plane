@@ -1,4 +1,4 @@
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 // plane constants
 import {
   EIssueGroupByToServerOptions,
