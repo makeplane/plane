@@ -14,18 +14,20 @@ import type {
 // types
 import type {
   IMarking,
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
   TDocumentEventsServer,
   TEditorAsset,
-  TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
+  TExtendedCommandExtraProps,
+  TExtendedEditorRefApi,
 } from "@/types";
 
 export type TEditorCommands =
@@ -43,6 +45,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -54,6 +57,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment"
   | "emoji"
   | "external-embed"
@@ -79,14 +83,14 @@ export type TCommandExtraProps = {
   "text-align": {
     alignment: TTextAlign;
   };
-};
+} & TExtendedCommandExtraProps;
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
 export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? TCommandExtraProps[T] // If the command has extra props, include them
   : object; // Otherwise, just return the command type with no extra props
 
-type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+export type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
@@ -95,8 +99,7 @@ export type TDocumentInfo = {
   paragraphs: number;
   words: number;
 };
-
-export type EditorRefApi = {
+export type CoreEditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   createSelectionAtCursorPosition: () => void;
@@ -108,6 +111,17 @@ export type EditorRefApi = {
     attribute: string | NodeType | MarkType
   ) => Record<string, any> | undefined;
   getCoordsFromPos: (pos?: number) => ReturnType<EditorView["coordsAtPos"]> | undefined;
+  editorHasSynced: () => boolean;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
   getCurrentCursorPosition: () => number | undefined;
   getDocument: () => {
     binary: Uint8Array | null;
@@ -135,7 +149,12 @@ export type EditorRefApi = {
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
+  appendText: (textContent: string) => boolean | undefined;
 };
+
+export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
+
+export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
 export type IEditorProps = {
@@ -153,7 +172,7 @@ export type IEditorProps = {
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id: string;
-  initialValue: string;
+  initialValue: Content;
   isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
@@ -163,7 +182,7 @@ export type IEditorProps = {
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null;
+  value?: Content | null;
   extendedEditorProps: IEditorPropsExtended;
 };
 
@@ -181,6 +200,14 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
 };
 

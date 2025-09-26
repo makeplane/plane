@@ -23,12 +23,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             user=request.user, workspace__slug=slug, parent__isnull=True
         ).filter(
             Q(project__isnull=True) & ~Q(entity_type="page")
-            | (
-                Q(project__isnull=False)
-                & Q(project__project_projectmember__member=request.user)
-                & Q(project__project_projectmember__is_active=True)
-            )
+            | (Q(project__isnull=False))
         )
+
         serializer = UserFavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

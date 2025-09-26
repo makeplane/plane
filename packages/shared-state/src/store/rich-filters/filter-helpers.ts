@@ -6,6 +6,7 @@ import {
   IFilterAdapter,
   LOGICAL_OPERATOR,
   TSupportedOperators,
+  TFilterConditionNode,
   TFilterExpression,
   TFilterValue,
   TFilterProperty,
@@ -13,7 +14,17 @@ import {
   TLogicalOperator,
   TFilterConditionPayload,
 } from "@plane/types";
-import { addAndCondition, createConditionNode, updateNodeInExpression } from "@plane/utils";
+import {
+  addAndCondition,
+  addOrCondition,
+  createConditionNode,
+  findNodeById,
+  isDirectlyWrappedInNotGroup,
+  replaceNodeInExpression,
+  unwrapFromNotGroup,
+  updateNodeInExpression,
+  wrapInNotGroup,
+} from "@plane/utils";
 
 /**
  * Interface for filter instance helper utilities.
@@ -119,7 +130,7 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
     expression,
     conditionId,
     newOperator,
-    _isNegation,
+    isNegation,
     shouldResetValue
   ) => {
     if (!expression) return null;
@@ -128,6 +139,18 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
 
     // Update the condition with the new operator
     updateNodeInExpression(expression, conditionId, payload);
+
+    const isWrappedInNotGroup = isDirectlyWrappedInNotGroup(expression, conditionId);
+
+    if (isNegation && !isWrappedInNotGroup) {
+      const conditionNode = findNodeById(expression, conditionId) as TFilterConditionNode<P, TFilterValue>;
+      const notGroup = wrapInNotGroup(conditionNode);
+      return replaceNodeInExpression(expression, conditionId, notGroup);
+    }
+
+    if (!isNegation && isWrappedInNotGroup) {
+      return unwrapFromNotGroup(expression, conditionId);
+    }
 
     return expression;
   };
@@ -142,9 +165,14 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
    */
   private _getConditionPayloadToAdd = (
     condition: TFilterConditionPayload<P, TFilterValue>,
-    _isNegation: boolean
+    isNegation: boolean
   ): TFilterExpression<P> => {
     const conditionNode = createConditionNode(condition);
+
+    // Wrap the condition in a NOT group if it is negation
+    if (isNegation) {
+      return wrapInNotGroup(conditionNode);
+    }
 
     return conditionNode;
   };
@@ -164,6 +192,8 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
     switch (groupOperator) {
       case LOGICAL_OPERATOR.AND:
         return addAndCondition(expression, conditionToAdd);
+      case LOGICAL_OPERATOR.OR:
+        return addOrCondition(expression, conditionToAdd);
       default:
         console.warn(`Unsupported logical operator: ${groupOperator}`);
         return expression;

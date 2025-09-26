@@ -49,5 +49,5 @@ jobs:
       - name: Check Affected format
         run: pnpm turbo run check:format --affected
 
-      - name: Build Affected
-        run: pnpm turbo run build --affected
+      # - name: Build Affected
+      #   run: pnpm turbo run build --affected

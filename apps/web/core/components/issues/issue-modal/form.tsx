@@ -40,8 +40,9 @@ import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties"
 // plane web imports
 import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
 import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
-import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
+import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal/issue-type-select";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
+import { WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal/template-select";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
@@ -66,6 +67,7 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   storeType: EIssuesStoreType;
+  convertToWorkItem?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -92,6 +94,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
     storeType,
+    convertToWorkItem = false,
   } = props;
 
   // states
@@ -488,6 +491,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
+                  convertToWorkItem={convertToWorkItem}
                 />
               </div>
               <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>

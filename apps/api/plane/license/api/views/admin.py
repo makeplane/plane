@@ -35,6 +35,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.utils.ip_address import get_client_ip
 from plane.utils.path_validator import get_safe_redirect_url
+from plane.silo.bgtasks.integration_apps_task import create_integration_applications
 
 
 class InstanceAdminEndpoint(BaseAPIView):
@@ -65,6 +66,8 @@ class InstanceAdminEndpoint(BaseAPIView):
             instance=instance, user=user, role=role
         )
         serializer = InstanceAdminSerializer(instance_admin)
+        # Create the applications for the instance
+        create_integration_applications.delay(user.id)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @cache_response(60 * 60 * 2, user=False)
@@ -394,13 +397,11 @@ class InstanceAdminSignOutEndpoint(View):
             # Log the user out
             logout(request)
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_admin=True),
-                next_path=""
+                base_url=base_host(request=request, is_admin=True), next_path=""
             )
             return HttpResponseRedirect(url)
         except Exception:
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_admin=True),
-                next_path=""
+                base_url=base_host(request=request, is_admin=True), next_path=""
             )
             return HttpResponseRedirect(url)

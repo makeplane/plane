@@ -1,0 +1,2879 @@
+{
+  "sidebar": {
+    "pi_chat": "派聊天",
+    "initiatives": "計劃",
+    "teamspaces": "團隊空間",
+    "epics": "史詩",
+    "upgrade_plan": "升級方案",
+    "plane_pro": "平面專業版",
+    "business": "商業",
+    "customers": "客戶",
+    "recurring_work_items": "重複工作項目"
+  },
+  "workspace_dashboards": "儀表板",
+  "pi_chat": "Pi 聊天",
+  "in_app": "應用內",
+  "forms": "表單",
+  "choose_workspace_for_integration": "選擇工作區以連接此應用程式",
+  "integrations_description": "與 Plane 一起工作的應用程式必須連接到您是管理員的工作區",
+  "create_a_new_workspace": "建立新的工作區",
+  "learn_more_about_workspaces": "了解更多關於工作區的資訊",
+  "no_workspaces_to_connect": "沒有工作區可連接",
+  "no_workspaces_to_connect_description": "您需要建立工作區才能連接整合和模板",
+  "common": {
+    "worklogs": "工作日誌",
+    "live": "即時",
+    "epics": "史詩",
+    "project_updates": "專案更新",
+    "overview": "概覽",
+    "workflows": "工作流程",
+    "templates": "模板",
+    "members_and_teamspaces": "成員和團隊空間"
+  },
+  "updates": {
+    "add_update": "新增更新",
+    "add_update_placeholder": "在此輸入您的更新",
+    "empty": {
+      "title": "尚無更新",
+      "description": "您可以在此查看更新。"
+    },
+    "delete": {
+      "title": "刪除更新",
+      "confirmation": "您確定要刪除此更新嗎？此操作是不可逆的。",
+      "success": {
+        "title": "更新已刪除",
+        "message": "更新已成功刪除。"
+      },
+      "error": {
+        "title": "更新未刪除",
+        "message": "更新未刪除。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新已更新",
+        "message": "更新已成功更新。"
+      },
+      "error": {
+        "title": "更新未更新",
+        "message": "更新未更新。"
+      }
+    },
+    "progress": {
+      "title": "進度",
+      "since_last_update": "自最後更新以來",
+      "comments": "{count, plural, one{# 評論} other{# 評論}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新已創建",
+        "message": "更新已成功創建。"
+      },
+      "error": {
+        "title": "更新未創建",
+        "message": "更新未創建。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反應已創建",
+          "message": "反應已成功創建。"
+        },
+        "error": {
+          "title": "反應未創建",
+          "message": "反應未創建。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反應已移除",
+          "message": "反應已成功移除。"
+        },
+        "error": {
+          "title": "反應未移除",
+          "message": "反應未移除。"
+        }
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "在之前開始",
+      "start_after": "在之後開始",
+      "finish_before": "在之前完成",
+      "finish_after": "在之後完成",
+      "implements": "實現",
+      "implemented_by": "實現者"
+    }
+  },
+  "pages": {
+    "link_pages": "連接頁面",
+    "show_wiki_pages": "顯示 Wiki 頁面",
+    "link_pages_to": "連接頁面到",
+    "linked_pages": "連接的頁面",
+    "no_description": "此頁面為空。在此輸入一些內容，並在此處查看此佔位符",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "頁面已更新",
+          "message": "頁面已成功更新"
+        },
+        "error": {
+          "title": "頁面未更新",
+          "message": "頁面無法更新"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "頁面已刪除",
+          "message": "頁面已成功刪除"
+        },
+        "error": {
+          "title": "頁面未刪除",
+          "message": "頁面無法刪除"
+        }
+      }
+    }
+  },
+  "profile": {
+    "actions": {
+      "connections": "連接"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "倡議",
+      "sub_heading": "為您在 Plane 中的所有工作解鎖最高級別的組織。",
+      "title": "啟用倡議",
+      "description": "設定更大的目標以監控進度",
+      "toast": {
+        "updating": "更新倡議功能",
+        "enable_success": "倡議功能已成功啟用。",
+        "disable_success": "倡議功能已成功停用。",
+        "error": "更新倡議功能失敗！"
+      }
+    },
+    "customers": {
+      "heading": "客戶",
+      "settings_heading": "根據對客戶重要的事項管理工作。",
+      "settings_sub_heading": "將客戶請求帶入工作項目，根據請求分配優先級，並將工作項目狀態匯總到客戶記錄中。很快，您將與您的 CRM 或支援工具整合，以實現更好的客戶屬性工作管理。"
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "未配置整合",
+        "description": "配置 GitHub 和其他整合以同步您的專案工作項目。"
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "編輯估算系統",
+        "add_or_update": {
+          "title": "新增、更新或移除估算",
+          "description": "透過新增、更新或移除點數或類別來管理目前系統。"
+        },
+        "switch": {
+          "title": "變更估算類型",
+          "description": "將點數系統轉換為類別系統，反之亦然。"
+        }
+      },
+      "switch": "切換估算系統",
+      "current": "目前估算系統",
+      "select": "選擇估算系統",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "估算已重新排序",
+            "message": "估算已在您的專案中重新排序。"
+          },
+          "error": {
+            "title": "估算重新排序失敗",
+            "message": "我們無法重新排序估算，請再試一次"
+          }
+        }
+      },
+      "validation": {
+        "fill": "請填寫此估算欄位",
+        "repeat": "估算值不能重複"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "屬性",
+        "description": "為您的史詩添加自定義屬性。"
+      },
+      "disabled": "已停用"
+    }
+  },
+  "teamspaces": {
+    "label": "團隊空間",
+    "empty_state": {
+      "general": {
+        "title": "團隊空間在 Plane 中解鎖更好的組織和追蹤。",
+        "description": "為每個現實世界的團隊創建一個專用表面，與 Plane 中的所有其他工作表面分開，並根據您的團隊工作方式進行自定義。",
+        "primary_button": {
+          "text": "創建新的團隊空間"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "您尚未連結任何團隊空間。",
+          "description": "團隊空間和專案所有者可以管理專案的訪問權限。"
+        }
+      },
+      "primary_button": {
+        "text": "連結團隊空間"
+      },
+      "secondary_button": {
+        "text": "了解更多"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "團隊空間名稱",
+          "members": "成員",
+          "accountType": "帳戶類型"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "移除團隊空間"
+            },
+            "confirm": {
+              "title": "從 {projectName} 移除 {teamspaceName}",
+              "description": "當您從連結的專案中移除此團隊空間時，此處的成員將失去對連結專案的訪問權限。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "未找到匹配的團隊空間"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {您已將一個團隊空間連結到此專案。} other {您已將 # 個團隊空間連結到此專案。}}",
+            "description": "{additionalCount, plural, =0 {團隊空間 {firstTeamspaceName} 現在已連結到此專案。} other {團隊空間 {firstTeamspaceName} 和其他 {additionalCount} 個團隊空間現在已連結到此專案。}}"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "您已從此專案中移除該團隊空間。",
+            "description": "團隊空間 {teamspaceName} 已從 {projectName} 中移除。"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "搜尋團隊空間",
+        "info": {
+          "title": "新增團隊空間將授予所有團隊空間成員對此專案的訪問權限。",
+          "link": "了解更多"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "您沒有任何可連結的團隊空間。",
+            "description": "您可能不在可以連結的團隊空間中，或者您已經連結了所有可用的團隊空間。"
+          },
+          "no_results": {
+            "title": "沒有匹配您的團隊空間。",
+            "description": "請嘗試其他搜尋詞或確保您有可連結的團隊空間。"
+          }
+        },
+        "primary_button": {
+          "text": "連結選定的團隊空間"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "創建團隊特定的工作項目。",
+        "description": "在任何連結專案中分配給此團隊成員的工作項目將自動顯示在此處。如果您希望在此處看到一些工作項目，請確保您的連結專案有分配給此團隊成員的工作項目或創建工作項目。",
+        "primary_button": {
+          "text": "將工作項目添加到連結專案"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "應用的過濾器沒有團隊特定的工作項目",
+        "description": "更改其中一些過濾器或清除所有過濾器以查看與此空間相關的工作項目。",
+        "secondary_button": {
+          "text": "清除所有過濾器"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "您的連結專案沒有活動週期。",
+        "description": "連結專案中的活動週期將自動顯示在此處。如果您希望看到活動週期，請確保它現在正在連結專案中運行。"
+      },
+      "completed": {
+        "title": "您的連結專案沒有完成的週期。",
+        "description": "連結專案中完成的週期將自動顯示在此處。如果您希望看到完成的週期，請確保它也在連結專案中完成。"
+      },
+      "upcoming": {
+        "title": "您的連結專案沒有即將到來的週期。",
+        "description": "連結專案中即將到來的週期將自動顯示在此處。如果您希望看到即將到來的週期，請確保它也在連結專案中。"
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "您團隊對工作的視圖，不會干擾工作空間中的任何其他視圖",
+        "description": "在為您的團隊單獨保存的視圖中查看您團隊的工作，與專案的視圖分開。",
+        "primary_button": {
+          "text": "創建視圖"
+        }
+      },
+      "filter": {
+        "title": "沒有匹配的視圖",
+        "description": "沒有視圖符合搜索條件。\n 創建一個新視圖代替。"
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "在團隊頁面中存放您團隊的知識。",
+        "description": "與專案中的頁面不同，您可以在此處的一組單獨頁面中保存特定於團隊的知識。獲得頁面的所有功能，輕鬆創建最佳實踐文檔和團隊維基。",
+        "primary_button": {
+          "text": "創建您的第一個團隊頁面"
+        }
+      },
+      "filter": {
+        "title": "沒有匹配的頁面",
+        "description": "移除過濾器以查看所有頁面"
+      },
+      "search": {
+        "title": "沒有匹配的頁面",
+        "description": "移除搜索條件以查看所有頁面"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "您的連結專案沒有發布的工作項目。",
+        "description": "在一個或多個這些專案中創建一些工作項目，以查看按日期、狀態和優先級的進度。"
+      },
+      "relation": {
+        "blocking": {
+          "title": "您沒有任何阻礙團隊成員的工作項目。",
+          "description": "做得好！您已為您的團隊清除了道路。您是一個優秀的團隊成員。"
+        },
+        "blocked": {
+          "title": "您沒有任何團隊成員的工作項目阻礙您。",
+          "description": "好消息！您可以在所有分配給您的工作項目上取得進展。"
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "您的連結專案沒有發布的工作項目。",
+          "description": "在一個或多個這些專案中創建一些工作項目，以查看按專案和團隊成員的工作分配。"
+        },
+        "filter": {
+          "title": "應用的過濾器沒有團隊統計數據。",
+          "description": "在一個或多個這些專案中創建一些工作項目，以查看按專案和團隊成員的工作分配。"
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "overview": "概覽",
+    "label": "倡議",
+    "placeholder": "{count, plural, one{# 倡議} other{# 倡議}}",
+    "add_initiative": "添加倡議",
+    "create_initiative": "創建倡議",
+    "update_initiative": "更新倡議",
+    "initiative_name": "倡議名稱",
+    "all_initiatives": "所有倡議",
+    "delete_initiative": "刪除倡議",
+    "fill_all_required_fields": "請填寫所有必填欄位。",
+    "toast": {
+      "create_success": "倡議 {name} 已成功創建。",
+      "create_error": "創建倡議失敗。請再試一次！",
+      "update_success": "倡議 {name} 已成功更新。",
+      "update_error": "更新倡議失敗。請再試一次！",
+      "delete": {
+        "success": "倡議已成功刪除。",
+        "error": "刪除倡議失敗"
+      },
+      "link_copied": "倡議連結已複製到剪貼板。",
+      "project_update_success": "倡議專案已成功更新。",
+      "project_update_error": "更新倡議專案失敗。請再試一次！",
+      "epic_update_success": "史詩{count, plural, one {已成功添加到倡議。} other {已成功添加到倡議。}}",
+      "epic_update_error": "史詩添加到倡議失敗。請稍後再試。"
+    },
+    "empty_state": {
+      "general": {
+        "title": "使用倡議在最高級別組織工作",
+        "description": "當您需要組織跨越多個專案和團隊的工作時，倡議就派上用場了。將專案和史詩連接到倡議，自動查看匯總的更新，並在深入樹木之前看到森林。",
+        "primary_button": {
+          "text": "創建倡議"
+        }
+      },
+      "search": {
+        "title": "沒有匹配的倡議",
+        "description": "沒有檢測到與匹配條件相符的倡議。\n 創建一個新的倡議代替。"
+      },
+      "not_found": {
+        "title": "倡議不存在",
+        "description": "您正在尋找的倡議不存在或已被刪除。",
+        "primary_button": {
+          "text": "查看其他倡議"
+        }
+      },
+      "epics": {
+        "title": "沒有匹配的史詩",
+        "subHeading": "要查看所有史詩，請清除所有應用的篩選器。",
+        "action": "清除篩選器"
+      }
+    },
+    "scope": {
+      "view_scope": "查看範圍",
+      "breakdown": "範圍分解",
+      "add_scope": "添加範圍",
+      "label": "範圍",
+      "empty_state": {
+        "title": "尚未添加範圍",
+        "description": "將項目或史詩連接到此倡議以開始。",
+        "primary_button": {
+          "text": "添加範圍"
+        }
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
+        "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "private": {
+        "title": "還沒有私人頁面",
+        "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點擊一下即可。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "public": {
+        "title": "還沒有工作空間頁面",
+        "description": "在這裡查看與工作空間中的每個人共享的頁面。",
+        "primary_button": {
+          "text": "創建您的第一個頁面"
+        }
+      },
+      "archived": {
+        "title": "還沒有歸檔的頁面",
+        "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
+      }
+    }
+  },
+  "epics": {
+    "label": "史詩",
+    "no_epics_selected": "未選擇史詩",
+    "add_selected_epics": "添加選定的史詩",
+    "epic_link_copied_to_clipboard": "史詩連結已複製到剪貼板。",
+    "project_link_copied_to_clipboard": "專案連結已複製到剪貼板",
+    "empty_state": {
+      "general": {
+        "title": "創建一個史詩並分配給某人，甚至是您自己",
+        "description": "對於跨越多個週期並可以跨模塊存在的較大工作體，請創建一個史詩。將專案中的工作項目和子工作項目連接到史詩，並從概覽跳轉到工作項目。",
+        "primary_button": {
+          "text": "創建史詩"
+        }
+      },
+      "section": {
+        "title": "還沒有史詩",
+        "description": "開始添加史詩以管理和追蹤進度。",
+        "primary_button": {
+          "text": "添加史詩"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "未找到匹配的史詩"
+      },
+      "no_epics": {
+        "title": "未找到史詩"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "沒有活動週期",
+        "description": "您的專案的週期，包括其範圍內包含今天日期的任何期間。在這裡查找所有活動週期的進度和詳情。"
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "將工作項目添加到週期以查看其\n進度"
+      },
+      "priority": {
+        "title": "一目了然地觀察在週期中處理的高優先級\n工作項目。"
+      },
+      "assignee": {
+        "title": "為工作項目添加負責人，以查看按負責人\n劃分的工作明細。"
+      },
+      "label": {
+        "title": "為工作項目添加標籤，以查看按標籤\n劃分的工作明細。"
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "整合",
+        "page_title": "在可用的應用程式或您自己的應用程式中使用您的 Plane 資料。",
+        "page_description": "查看此工作區或您正在使用的所有整合。"
+      },
+      "imports": {
+        "title": "導入"
+      },
+      "worklogs": {
+        "title": "工作日誌"
+      },
+      "project_states": {
+        "title": "專案狀態"
+      },
+      "teamspaces": {
+        "title": "團隊空間"
+      },
+      "initiatives": {
+        "title": "倡議"
+      },
+      "customers": {
+        "title": "客戶"
+      },
+      "cancel_trial": {
+        "title": "請先取消您的試用期。",
+        "description": "您有一個我們付費方案的有效試用期。請先取消它才能繼續。",
+        "dismiss": "忽略",
+        "cancel": "取消試用期",
+        "cancel_success_title": "試用期已取消。",
+        "cancel_success_message": "您現在可以刪除工作空間。",
+        "cancel_error_title": "操作失敗。",
+        "cancel_error_message": "請再試一次。"
+      },
+      "applications": {
+        "title": "應用程式",
+        "applicationId_copied": "應用程式ID已複製到剪貼簿",
+        "clientId_copied": "客戶端ID已複製到剪貼簿",
+        "clientSecret_copied": "客戶端密鑰已複製到剪貼簿",
+        "third_party_apps": "第三方應用",
+        "your_apps": "您的應用",
+        "connect": "連接",
+        "connected": "已連接",
+        "install": "安裝",
+        "installed": "已安裝",
+        "configure": "配置",
+        "app_available": "您已使此應用可用於Plane工作空間",
+        "app_available_description": "連接Plane工作空間以開始使用",
+        "client_id_and_secret": "客戶端ID和密鑰",
+        "client_id_and_secret_description": "複製並保存此密鑰。關閉後您將無法再次查看此密鑰。",
+        "client_id_and_secret_download": "您可以從這裡下載包含密鑰的CSV檔案。",
+        "application_id": "應用程式ID",
+        "client_id": "客戶端ID",
+        "client_secret": "客戶端密鑰",
+        "export_as_csv": "匯出為CSV",
+        "slug_already_exists": "別名已存在",
+        "failed_to_create_application": "建立應用程式失敗",
+        "upload_logo": "上傳標誌",
+        "app_name_title": "您將如何命名此應用",
+        "app_name_error": "應用名稱為必填項",
+        "app_short_description_title": "為此應用提供簡短描述",
+        "app_short_description_error": "應用簡短描述為必填項",
+        "app_description_title": {
+          "label": "詳細描述",
+          "placeholder": "為市集撰寫詳細描述。按 ‘/’ 查看指令。"
+        },
+        "app_description_error": "應用描述為必填項",
+        "app_slug_title": "應用別名",
+        "app_slug_error": "應用別名為必填項",
+        "app_maker_title": "應用製作者",
+        "app_maker_error": "應用製作者為必填項",
+        "webhook_url_title": "Webhook URL",
+        "webhook_url_error": "Webhook URL為必填項",
+        "invalid_webhook_url_error": "無效的Webhook URL",
+        "redirect_uris_title": "重定向URI",
+        "redirect_uris_error": "重定向URI為必填項",
+        "invalid_redirect_uris_error": "無效的重定向URI",
+        "redirect_uris_description": "輸入應用將在用戶後重定向到的URI，用空格分隔，例如 https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "授權的JavaScript來源",
+        "authorized_javascript_origins_error": "授權的JavaScript來源為必填項",
+        "invalid_authorized_javascript_origins_error": "無效的授權JavaScript來源",
+        "authorized_javascript_origins_description": "輸入應用將被允許發出請求的來源，用空格分隔，例如 app.com example.com",
+        "create_app": "建立應用",
+        "update_app": "更新應用",
+        "regenerate_client_secret_description": "重新生成客戶端密鑰。重新生成後，您可以複製密鑰或將其下載到CSV檔案中。",
+        "regenerate_client_secret": "重新生成客戶端密鑰",
+        "regenerate_client_secret_confirm_title": "確定要重新生成客戶端密鑰嗎？",
+        "regenerate_client_secret_confirm_description": "使用此密鑰的應用將停止工作。您需要在應用中更新密鑰。",
+        "regenerate_client_secret_confirm_cancel": "取消",
+        "regenerate_client_secret_confirm_regenerate": "重新生成",
+        "read_only_access_to_workspace": "對您的工作空間的唯讀存取",
+        "write_access_to_workspace": "對您的工作空間的寫入存取",
+        "read_only_access_to_user_profile": "對您的用戶設定檔的唯讀存取",
+        "write_access_to_user_profile": "對您的用戶設定檔的寫入存取",
+        "connect_app_to_workspace": "將{app}連接到您的工作空間{workspace}",
+        "user_permissions": "用戶權限",
+        "user_permissions_description": "用戶權限用於授予對用戶設定檔的存取權限。",
+        "workspace_permissions": "工作空間權限",
+        "workspace_permissions_description": "工作空間權限用於授予對工作空間的存取權限。",
+        "with_the_permissions": "具有權限",
+        "app_consent_title": "{app}正在請求存取您的Plane工作空間和設定檔。",
+        "choose_workspace_to_connect_app_with": "選擇要連接應用的工作空間",
+        "app_consent_workspace_permissions_title": "{app}想要",
+        "app_consent_user_permissions_title": "{app}還可以請求用戶對以下資源的權限。這些權限將僅由用戶請求和授權。",
+        "app_consent_accept_title": "通過接受",
+        "app_consent_accept_1": "您授予應用在Plane內部或外部可以使用應用的任何地方存取您的Plane資料的權限",
+        "app_consent_accept_2": "您同意{app}的隱私政策和使用條款",
+        "accepting": "接受中...",
+        "accept": "接受",
+        "categories": "類別",
+        "select_app_categories": "選擇應用類別",
+        "categories_title": "類別",
+        "categories_error": "類別是必填項",
+        "invalid_categories_error": "無效的類別",
+        "categories_description": "選擇最能描述應用的類別",
+        "privacy_policy_url_title": "隱私政策URL",
+        "privacy_policy_url_error": "隱私政策URL是必填項",
+        "invalid_privacy_policy_url_error": "無效的隱私政策URL",
+        "terms_of_service_url_title": "使用條款URL",
+        "terms_of_service_url_error": "使用條款URL是必填項",
+        "invalid_terms_of_service_url_error": "無效的使用條款URL",
+        "support_url_title": "支持URL",
+        "support_url_error": "支持URL是必填項",
+        "invalid_support_url_error": "無效的支持URL",
+        "video_url_title": "視頻URL",
+        "video_url_error": "視頻URL是必填項",
+        "invalid_video_url_error": "無效的視頻URL",
+        "setup_url_title": "設置URL",
+        "setup_url_error": "設置URL是必填項",
+        "invalid_setup_url_error": "無效的設置URL",
+        "configuration_url_title": "配置URL",
+        "configuration_url_error": "配置URL是必填項",
+        "invalid_configuration_url_error": "無效的配置URL",
+        "contact_email_title": "聯絡電子郵件",
+        "contact_email_error": "聯絡電子郵件是必填項",
+        "invalid_contact_email_error": "無效的聯絡電子郵件",
+        "upload_attachments": "上傳附件",
+        "uploading_images": "上傳 {count, plural, one {張圖片} other {張圖片}}",
+        "drop_images_here": "將圖片拖到這裡",
+        "click_to_upload_images": "點擊上傳圖片",
+        "invalid_file_or_exceeds_size_limit": "無效的文件或超過大小限制 ({size} MB)",
+        "uploading": "上傳中...",
+        "upload_and_save": "上傳並保存",
+        "app_credentials_regenrated": {
+          "title": "應用程式憑證已成功重新生成",
+          "description": "請在所有使用的地方替換客戶端密鑰。之前的密鑰已不再有效。"
+        },
+        "app_created": {
+          "title": "應用程式已成功建立",
+          "description": "使用憑證將應用程式安裝到 Plane 工作區中"
+        },
+        "installed_apps": "已安裝的應用程式",
+        "all_apps": "所有應用程式",
+        "internal_apps": "內部應用程式",
+        "website": {
+          "title": "網站",
+          "description": "連結到您的應用程式網站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "應用程式建立者",
+          "description": "建立該應用程式的個人或組織。"
+        },
+        "setup_url": {
+          "label": "設定 URL",
+          "description": "使用者在安裝應用程式時將被重新導向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我們將在此接收來自已安裝您應用的工作區的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "使用者在透過 Plane 認證後將被重新導向到此路徑。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_consent_no_access_description": "此應用程式只能在工作區管理員安裝後才能安裝。請聯絡您的工作區管理員以繼續。",
+        "enable_app_mentions": "啟用應用程式提及",
+        "enable_app_mentions_tooltip": "啟用此功能後，使用者可以提及或指派工作項目給此應用程式。",
+        "build_your_own_app": "建立您自己的應用程式",
+        "edit_app_details": "編輯應用程式詳情",
+        "internal": "內部"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "使用與您的工作和知識庫原生連接的 AI，讓您的任務變得更智能、更快速。"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "無法歸檔工作項目",
+        "message": "只有屬於已完成或已取消狀態組的工作項目可以被歸檔。"
+      },
+      "invalid_issue_start_date": {
+        "title": "無法更新工作項目",
+        "message": "選擇的開始日期晚於某些工作項目的截止日期。請確保開始日期早於截止日期。"
+      },
+      "invalid_issue_target_date": {
+        "title": "無法更新工作項目",
+        "message": "選擇的截止日期早於某些工作項目的開始日期。請確保截止日期晚於開始日期。"
+      },
+      "invalid_state_transition": {
+        "title": "無法更新工作項目",
+        "message": "某些工作項目不允許狀態變更。請確保狀態變更是允許的。"
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "工作項目類型",
+    "label_lowercase": "工作項目類型",
+    "settings": {
+      "title": "工作項目類型",
+      "properties": {
+        "title": "自定義屬性",
+        "tooltip": "每種工作項目類型都有一組默認屬性，如標題、描述、負責人、狀態、優先級、開始日期、截止日期、模塊、週期等。您還可以自定義並添加自己的屬性，以適應您團隊的需求。",
+        "add_button": "添加新屬性",
+        "dropdown": {
+          "label": "屬性類型",
+          "placeholder": "選擇類型"
+        },
+        "property_type": {
+          "text": {
+            "label": "文字"
+          },
+          "number": {
+            "label": "數字"
+          },
+          "dropdown": {
+            "label": "下拉選單"
+          },
+          "boolean": {
+            "label": "布林值"
+          },
+          "date": {
+            "label": "日期"
+          },
+          "member_picker": {
+            "label": "成員選擇器"
+          }
+        },
+        "attributes": {
+          "label": "屬性",
+          "text": {
+            "single_line": {
+              "label": "單行"
+            },
+            "multi_line": {
+              "label": "段落"
+            },
+            "readonly": {
+              "label": "僅讀",
+              "header": "僅讀數據"
+            },
+            "invalid_text_format": {
+              "label": "無效的文字格式"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "添加數字"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "單選"
+            },
+            "multi_select": {
+              "label": "多選"
+            },
+            "no_default_value": {
+              "label": "無默認值"
+            }
+          },
+          "boolean": {
+            "label": "真 | 假",
+            "no_default": "無默認值"
+          },
+          "option": {
+            "create_update": {
+              "label": "選項",
+              "form": {
+                "placeholder": "添加選項",
+                "errors": {
+                  "name": {
+                    "required": "選項名稱是必填的。",
+                    "integrity": "已存在同名選項。"
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "選擇選項",
+                "multi": {
+                  "default": "選擇選項",
+                  "variable": "已選擇 {count} 個選項"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "成功！",
+              "message": "屬性 {name} 已成功創建。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "創建屬性失敗。請再試一次！"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "屬性 {name} 已成功更新。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "更新屬性失敗。請再試一次！"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "成功！",
+              "message": "屬性 {name} 已成功刪除。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "刪除屬性失敗。請再試一次！"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} {name} 屬性",
+            "success": {
+              "title": "成功！",
+              "message": "屬性 {name} 已成功{action}。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "{action}屬性失敗。請再試一次！"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "標題"
+            },
+            "description": {
+              "placeholder": "描述"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "您必須為您的屬性命名。",
+              "max_length": "屬性名稱不應超過255個字符。"
+            },
+            "property_type": {
+              "required": "您必須選擇一個屬性類型。"
+            },
+            "options": {
+              "required": "您必須添加至少一個選項。"
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "活躍",
+          "tooltip": {
+            "disabled": "點擊以禁用",
+            "enabled": "點擊以啟用"
+          }
+        },
+        "delete_confirmation": {
+          "title": "刪除此屬性",
+          "description": "刪除屬性可能導致現有數據丟失。",
+          "secondary_description": "您是否想要禁用屬性代替刪除？",
+          "primary_button": "{action}，刪除它",
+          "secondary_button": "是的，禁用它"
+        },
+        "mandate_confirmation": {
+          "label": "必填屬性",
+          "content": "此屬性似乎有一個默認選項。將屬性設為必填將移除默認值，用戶必須添加他們選擇的值。",
+          "tooltip": {
+            "disabled": "此屬性類型不能設為必填",
+            "enabled": "取消勾選以將字段標記為可選",
+            "checked": "勾選以將字段標記為必填"
+          }
+        },
+        "empty_state": {
+          "title": "添加自定義屬性",
+          "description": "您為此工作項目類型添加的新屬性將顯示在此處。"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "刪除此類型",
+        "description": "刪除類型可能會導致現有資料遺失。",
+        "primary_button": "是的，刪除它",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "工作項目類型已成功刪除。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "刪除工作項目類型失敗。請再試一次！"
+          }
+        },
+        "can_disable_warning": "您想改為停用此類型嗎？"
+      },
+      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。"
+    },
+    "create": {
+      "title": "創建工作項目類型",
+      "button": "添加工作項目類型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作項目類型已成功創建。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": {
+            "conflict": "{name} 類型已存在。請選擇其他名稱。"
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "更新工作項目類型",
+      "button": "更新工作項目類型",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "工作項目類型 {name} 已成功更新。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": {
+            "conflict": "{name} 類型已存在。請選擇其他名稱。"
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "為此工作項目類型提供一個獨特的名稱"
+        },
+        "description": {
+          "placeholder": "描述此工作項目類型的用途以及何時使用。"
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} {name} 工作項目類型",
+        "success": {
+          "title": "成功！",
+          "message": "工作項目類型 {name} 已成功{action}。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "{action}工作項目類型失敗。請再試一次！"
+        }
+      },
+      "tooltip": "點擊以{action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "啟用工作項目類型",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "primary_button": {
+          "text": "啟用"
+        },
+        "confirmation": {
+          "title": "一旦啟用，工作項目類型不能被禁用。",
+          "description": "Plane的工作項目將成為此專案的默認工作項目類型，並將在此專案中顯示其圖標和背景。",
+          "button": {
+            "default": "啟用",
+            "loading": "設置中"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "獲取專業版以啟用工作項目類型。",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "primary_button": {
+          "text": "獲取專業版"
+        }
+      },
+      "upgrade": {
+        "title": "升級以啟用工作項目類型。",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "primary_button": {
+          "text": "升級"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "導入",
+    "logo": "標誌",
+    "import_message": "將您的 {serviceName} 數據導入到 Plane 專案中。",
+    "deactivate": "停用",
+    "deactivating": "停用中",
+    "migrating": "遷移中",
+    "migrations": "遷移",
+    "refreshing": "刷新中",
+    "import": "導入",
+    "serial_number": "序號",
+    "project": "專案",
+    "workspace": "工作區",
+    "status": "狀態",
+    "total_batches": "總批次",
+    "imported_batches": "已導入批次",
+    "re_run": "重新運行",
+    "cancel": "取消",
+    "start_time": "開始時間",
+    "no_jobs_found": "未找到任務",
+    "no_project_imports": "您尚未導入任何 {serviceName} 專案。",
+    "cancel_import_job": "取消導入任務",
+    "cancel_import_job_confirmation": "您確定要取消此導入任務嗎？這將停止此專案的導入過程。",
+    "re_run_import_job": "重新運行導入任務",
+    "re_run_import_job_confirmation": "您確定要重新運行此導入任務嗎？這將重新啟動此專案的導入過程。",
+    "upload_csv_file": "上傳 CSV 文件以導入用戶數據。",
+    "connect_importer": "連接 {serviceName}",
+    "migration_assistant": "遷移助手",
+    "migration_assistant_description": "使用我們強大的助手，將您的 {serviceName} 專案無縫遷移到 Plane。",
+    "token_helper": "您將從您的以下位置獲取",
+    "personal_access_token": "個人訪問令牌",
+    "source_token_expired": "令牌已過期",
+    "source_token_expired_description": "提供的令牌已過期。請停用並使用新的憑證重新連接。",
+    "user_email": "用戶郵箱",
+    "select_state": "選擇狀態",
+    "select_service_project": "選擇 {serviceName} 專案",
+    "loading_service_projects": "加載 {serviceName} 專案中",
+    "select_service_workspace": "選擇 {serviceName} 工作區",
+    "loading_service_workspaces": "加載 {serviceName} 工作區中",
+    "select_priority": "選擇優先級",
+    "select_service_team": "選擇 {serviceName} 團隊",
+    "add_seat_msg_free_trial": "您正嘗試導入 {additionalUserCount} 個未註冊用戶，但您當前計劃只有 {currentWorkspaceSubscriptionAvailableSeats} 個座位可用。要繼續導入，請立即升級。",
+    "add_seat_msg_paid": "您正嘗試導入 {additionalUserCount} 個未註冊用戶，但您當前計劃只有 {currentWorkspaceSubscriptionAvailableSeats} 個座位可用。要繼續導入，請至少購買 {extraSeatRequired} 個額外座位。",
+    "skip_user_import_title": "跳過導入用戶數據",
+    "skip_user_import_description": "跳過用戶導入將導致來自 {serviceName} 的工作項目、評論和其他數據由在 Plane 中執行遷移的用戶創建。您仍然可以稍後手動添加用戶。",
+    "invalid_pat": "無效的個人訪問令牌"
+  },
+  "integrations": {
+    "integrations": "整合",
+    "loading": "加載中",
+    "unauthorized": "您無權查看此頁面。",
+    "configure": "配置",
+    "not_enabled": "{name} 未為此工作區啟用。",
+    "not_configured": "未配置",
+    "disconnect_personal_account": "斷開個人 {providerName} 帳戶",
+    "not_configured_message_admin": "{name} 整合未配置。請聯繫您的實例管理員進行配置。",
+    "not_configured_message_support": "{name} 整合未配置。請聯繫支持進行配置。",
+    "external_api_unreachable": "無法訪問外部 API。請稍後再試。",
+    "error_fetching_supported_integrations": "無法獲取支持的整合。請稍後再試。",
+    "back_to_integrations": "返回整合",
+    "select_state": "選擇狀態",
+    "set_state": "設置狀態",
+    "choose_project": "選擇專案..."
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "將您的 GitHub 工作項目與 Plane 連接並同步",
+    "connect_org": "連接組織",
+    "connect_org_description": "將您的 GitHub 組織與 Plane 連接",
+    "processing": "處理中",
+    "org_added_desc": "GitHub org 添加於和時間",
+    "connection_fetch_error": "從服務器獲取連接詳情時出錯",
+    "personal_account_connected": "個人帳戶已連接",
+    "personal_account_connected_description": "您的 GitHub 帳戶現已連接到 Plane",
+    "connect_personal_account": "連接個人帳戶",
+    "connect_personal_account_description": "將您的個人 GitHub 帳戶與 Plane 連接。",
+    "repo_mapping": "倉庫映射",
+    "repo_mapping_description": "將您的 GitHub 倉庫與 Plane 專案映射",
+    "project_issue_sync": "專案問題同步",
+    "project_issue_sync_description": "將 GitHub 的問題同步到您的 Plane 專案",
+    "project_issue_sync_empty_state": "映射的專案問題同步將在此處顯示",
+    "configure_project_issue_sync_state": "配置問題同步狀態",
+    "select_issue_sync_direction": "選擇問題同步方向",
+    "allow_bidirectional_sync": "雙向 - 在 GitHub 和 Plane 之間同步問題和評論",
+    "allow_unidirectional_sync": "單向 - 僅從 GitHub 同步問題和評論到 Plane",
+    "allow_unidirectional_sync_warning": "GitHub 問題的資料將替換關聯 Plane 工作項中的資料（僅 GitHub → Plane）",
+    "remove_project_issue_sync": "移除此專案問題同步",
+    "remove_project_issue_sync_confirmation": "您確定要移除此專案問題同步嗎？",
+    "add_pr_state_mapping": "添加拉取請求狀態映射到 Plane 專案",
+    "edit_pr_state_mapping": "編輯拉取請求狀態映射到 Plane 專案",
+    "pr_state_mapping": "拉取請求狀態映射",
+    "pr_state_mapping_description": "將 GitHub 的拉取請求狀態映射到您的 Plane 專案",
+    "pr_state_mapping_empty_state": "映射的 PR 狀態將在此處顯示",
+    "remove_pr_state_mapping": "移除此拉取請求狀態映射",
+    "remove_pr_state_mapping_confirmation": "您確定要移除此拉取請求狀態映射嗎？",
+    "issue_sync_message": "工作項目已同步到 {project}",
+    "link": "將 GitHub 倉庫連接到 Plane 專案",
+    "pull_request_automation": "拉取請求自動化",
+    "pull_request_automation_description": "配置從 GitHub 到 Plane 專案的拉取請求狀態映射",
+    "DRAFT_MR_OPENED": "草稿開啟",
+    "MR_OPENED": "開啟",
+    "MR_READY_FOR_MERGE": "準備合併",
+    "MR_REVIEW_REQUESTED": "請求審核",
+    "MR_MERGED": "已合併",
+    "MR_CLOSED": "關閉",
+    "ISSUE_OPEN": "問題開啟",
+    "ISSUE_CLOSED": "問題關閉",
+    "save": "保存",
+    "start_sync": "開始同步",
+    "choose_repository": "選擇倉庫..."
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "連接並同步您的 Gitlab 合併請求與 Plane。",
+    "connection_fetch_error": "從服務器獲取連接詳情時出錯",
+    "connect_org": "連接組織",
+    "connect_org_description": "將您的 Gitlab 組織與 Plane 連接。",
+    "project_connections": "Gitlab 專案連接",
+    "project_connections_description": "從 Gitlab 同步合併請求到 Plane 專案。",
+    "plane_project_connection": "Plane 專案連接",
+    "plane_project_connection_description": "配置從 Gitlab 到 Plane 專案的拉取請求狀態映射",
+    "remove_connection": "移除連接",
+    "remove_connection_confirmation": "您確定要移除此連接嗎？",
+    "link": "將 Gitlab 倉庫連接到 Plane 專案",
+    "pull_request_automation": "拉取請求自動化",
+    "pull_request_automation_description": "配置從 Gitlab 到 Plane 的拉取請求狀態映射",
+    "DRAFT_MR_OPENED": "當草稿 MR 開啟時，將狀態設置為",
+    "MR_OPENED": "當 MR 開啟時，將狀態設置為",
+    "MR_REVIEW_REQUESTED": "當 MR 請求審核時，將狀態設置為",
+    "MR_READY_FOR_MERGE": "當 MR 準備合併時，將狀態設置為",
+    "MR_MERGED": "當 MR 已合併時，將狀態設置為",
+    "MR_CLOSED": "當 MR 關閉時，將狀態設置為",
+    "integration_enabled_text": "啟用 Gitlab 整合後，您可以自動化工作項目工作流程",
+    "choose_entity": "選擇實體",
+    "choose_project": "選擇專案",
+    "link_plane_project": "連接 Plane 專案"
+  },
+  "gitlab_enterprise_integration": {
+    "name": "Gitlab Enterprise",
+    "description": "連接並同步您的 Gitlab Enterprise 實例與 Plane。",
+    "app_form_title": "Gitlab Enterprise 配置",
+    "app_form_description": "配置 Gitlab Enterprise 以連接到 Plane。",
+    "base_url_title": "基礎 URL",
+    "base_url_description": "您的 Gitlab Enterprise 實例的基礎 URL。",
+    "base_url_placeholder": "例如：\"https://glab.plane.town\"",
+    "base_url_error": "基礎 URL 是必需的",
+    "invalid_base_url_error": "無效的基礎 URL",
+    "client_id_title": "應用 ID",
+    "client_id_description": "您在 Gitlab Enterprise 實例中創建的應用的 ID。",
+    "client_id_placeholder": "例如：\"7cd732xxxxxxxxxxxxxx\"",
+    "client_id_error": "應用 ID 是必需的",
+    "client_secret_title": "客戶端密鑰",
+    "client_secret_description": "您在 Gitlab Enterprise 實例中創建的應用的客戶端密鑰。",
+    "client_secret_placeholder": "例如：\"gloas-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"",
+    "client_secret_error": "客戶端密鑰是必需的",
+    "webhook_secret_title": "Webhook 密鑰",
+    "webhook_secret_description": "一個隨機的 webhook 密鑰，用於驗證來自 Gitlab Enterprise 實例的 webhook。",
+    "webhook_secret_placeholder": "例如：\"webhook1234567890\"",
+    "webhook_secret_error": "Webhook 密鑰是必需的",
+    "connect_app": "連接應用"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "將您的 Slack 工作區與 Plane 連接。",
+    "connect_personal_account": "將您的個人 Slack 帳戶與 Plane 連接。",
+    "personal_account_connected": "您的個人 {providerName} 帳戶現已連接到 Plane。",
+    "link_personal_account": "將您的個人 {providerName} 帳戶連接到 Plane。",
+    "connected_slack_workspaces": "已連接的 Slack 工作區",
+    "connected_on": "連接於 {date}",
+    "disconnect_workspace": "斷開 {name} 工作區",
+    "alerts": {
+      "dm_alerts": {
+        "title": "在 Slack 私訊中接收重要更新、提醒和專屬警報的通知。"
+      }
+    },
+    "project_updates": {
+      "title": "專案更新",
+      "description": "為您的專案配置更新通知",
+      "add_new_project_update": "添加新的專案更新通知",
+      "project_updates_empty_state": "與 Slack 頻道連接的專案將在此處顯示。",
+      "project_updates_form": {
+        "title": "配置專案更新",
+        "description": "在創建工作項時在 Slack 中接收專案更新通知",
+        "failed_to_load_channels": "無法從 Slack 加載頻道",
+        "project_dropdown": {
+          "placeholder": "選擇專案",
+          "label": "Plane 專案",
+          "no_projects": "沒有可用專案"
+        },
+        "channel_dropdown": {
+          "label": "Slack 頻道",
+          "placeholder": "選擇頻道",
+          "no_channels": "沒有可用頻道"
+        },
+        "all_projects_connected": "所有專案已連接到 Slack 頻道。",
+        "all_channels_connected": "所有 Slack 頻道已連接到專案。",
+        "project_connection_success": "專案連接創建成功",
+        "project_connection_updated": "專案連接更新成功",
+        "project_connection_deleted": "專案連接刪除成功",
+        "failed_delete_project_connection": "刪除專案連接失敗",
+        "failed_create_project_connection": "創建專案連接失敗",
+        "failed_upserting_project_connection": "更新專案連接失敗",
+        "failed_loading_project_connections": "無法加載您的專案連接。這可能是由於網絡問題或集成問題。"
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "將您的Sentry工作空間連接到Plane。",
+    "connected_sentry_workspaces": "已連接的Sentry工作空間",
+    "connected_on": "連接於{date}",
+    "disconnect_workspace": "斷開{name}工作空間",
+    "state_mapping": {
+      "title": "狀態映射",
+      "description": "將Sentry事件狀態映射到您的專案狀態。配置當Sentry事件已解決或未解決時使用哪些狀態。",
+      "add_new_state_mapping": "添加新狀態映射",
+      "empty_state": "未配置狀態映射。建立您的第一個映射以同步Sentry事件狀態與您的專案狀態。",
+      "failed_loading_state_mappings": "我們無法載入您的狀態映射。這可能是由於網路問題或整合問題。",
+      "loading_project_states": "正在載入專案狀態...",
+      "error_loading_states": "載入狀態時出錯",
+      "no_states_available": "沒有可用狀態",
+      "no_permission_states": "您沒有權限存取此專案的狀態",
+      "states_not_found": "未找到專案狀態",
+      "server_error_states": "載入狀態時伺服器錯誤"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "連接並同步您的 GitHub Enterprise 組織與 Plane。",
+    "app_form_title": "GitHub Enterprise 配置",
+    "app_form_description": "配置 GitHub Enterprise 以連接 Plane。",
+    "app_id_title": "應用 ID",
+    "app_id_description": "您在 GitHub Enterprise 組織中創建的應用的 ID。",
+    "app_id_placeholder": "例如，\"1234567890\"",
+    "app_id_error": "App ID 是必需的",
+    "app_name_title": "應用 Slug",
+    "app_name_description": "您在 GitHub Enterprise 組織中創建的應用的 slug。",
+    "app_name_error": "App slug 是必需的",
+    "app_name_placeholder": "例如，\"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "您的 GitHub Enterprise 組織的基礎 URL。",
+    "base_url_placeholder": "例如，\"https://gh.plane.town\"",
+    "base_url_error": "Base URL 是必需的",
+    "invalid_base_url_error": "無效的基礎 URL",
+    "client_id_title": "Client ID",
+    "client_id_description": "您在 GitHub Enterprise 組織中創建的應用的 client ID。",
+    "client_id_placeholder": "例如，\"1234567890\"",
+    "client_id_error": "Client ID 是必需的",
+    "client_secret_title": "Client Secret客戶端密碼",
+    "client_secret_description": "您在 GitHub Enterprise 組織中創建的應用的 client secret。",
+    "client_secret_placeholder": "例如，\"1234567890\"",
+    "client_secret_error": "Client secret 是必需的",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "您在 GitHub Enterprise 組織中創建的應用的 webhook secret。",
+    "webhook_secret_placeholder": "例如，\"1234567890\"",
+    "webhook_secret_error": "Webhook secret 是必需的",
+    "private_key_title": "Private Key (Base64 編碼)",
+    "private_key_description": "您在 GitHub Enterprise 組織中創建的應用的 private key。",
+    "private_key_placeholder": "例如，\"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key 是必需的",
+    "connect_app": "連接應用"
+  },
+  "file_upload": {
+    "upload_text": "點擊此處上傳文件",
+    "drag_drop_text": "拖放",
+    "processing": "處理中",
+    "invalid": "無效的文件類型",
+    "missing_fields": "缺少字段",
+    "success": "{fileName} 已上傳！"
+  },
+  "silo_errors": {
+    "invalid_query_params": "提供的查詢參數無效或缺少必填字段",
+    "invalid_installation_account": "提供的安裝帳戶無效",
+    "generic_error": "處理您的請求時發生意外錯誤",
+    "connection_not_found": "找不到請求的連接",
+    "multiple_connections_found": "在只期望一個連接時找到了多個連接",
+    "installation_not_found": "找不到請求的安裝",
+    "user_not_found": "找不到請求的用戶",
+    "error_fetching_token": "獲取認證令牌失敗",
+    "invalid_app_credentials": "提供的應用憑證無效",
+    "invalid_app_installation_id": "安裝應用失敗"
+  },
+  "import_status": {
+    "queued": "排隊中",
+    "created": "已創建",
+    "initiated": "已啟動",
+    "pulling": "拉取中",
+    "pulled": "已拉取",
+    "transforming": "轉換中",
+    "transformed": "已轉換",
+    "pushing": "推送中",
+    "finished": "已完成",
+    "error": "錯誤",
+    "cancelled": "已取消"
+  },
+  "jira_importer": {
+    "jira_importer_description": "將您的 Jira 數據導入到 Plane 專案中。",
+    "personal_access_token": "個人訪問令牌",
+    "user_email": "用戶郵箱",
+    "atlassian_security_settings": "Atlassian 安全設置",
+    "email_description": "這是與您的個人訪問令牌關聯的郵箱",
+    "jira_domain": "Jira 域名",
+    "jira_domain_description": "這是您的 Jira 實例的域名",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "請選擇您想要遷移數據的 Jira 工作區。",
+      "title_import_users": "導入用戶",
+      "description_import_users": "請添加您希望從 Jira 遷移到 Plane 的用戶。或者，您可以跳過此步驟，稍後手動添加用戶。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 Jira 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "我們已盡力自動匹配優先級。繼續之前，請映射任何剩餘的優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "將您的 Asana 數據導入到 Plane 專案中。",
+    "select_asana_priority_field": "選擇 Asana 優先級字段",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Asana 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_asana": "配置 Asana",
+      "description_configure_asana": "請選擇您想要遷移數據的 Asana 工作區和專案。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "請選擇您想要映射到 Plane 專案狀態的 Asana 狀態。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Asana 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Asana 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "將您的 Linear 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Linear 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_linear": "配置 Linear",
+      "description_configure_linear": "請選擇您想要遷移數據的 Linear 團隊。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 Linear 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Linear 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Linear 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "將您的 Jira Server 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_jira": "配置 Jira",
+      "description_configure_jira": "請選擇您想要遷移數據的 Jira 工作區。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "請選擇您想要映射到 Plane 專案狀態的 Jira 狀態。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 Jira 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。"
+    }
+  },
+  "notion_importer": {
+    "notion_importer_description": "將您的 Notion 資料匯入到 Plane 專案中。",
+    "steps": {
+      "title_upload_zip": "上傳 Notion 匯出的 ZIP 檔案",
+      "description_upload_zip": "請上傳包含您的 Notion 資料的 ZIP 檔案。"
+    },
+    "upload": {
+      "drop_file_here": "將您的 Notion zip 檔案拖放到這裡",
+      "upload_title": "上傳 Notion 匯出檔案",
+      "drag_drop_description": "拖放您的 Notion 匯出 zip 檔案，或點擊瀏覽",
+      "file_type_restriction": "僅支援從 Notion 匯出的 .zip 檔案",
+      "select_file": "選擇檔案",
+      "uploading": "正在上傳...",
+      "preparing_upload": "正在準備上傳...",
+      "confirming_upload": "正在確認上傳...",
+      "confirming": "正在確認...",
+      "upload_complete": "上傳完成",
+      "upload_failed": "上傳失敗",
+      "start_import": "開始匯入",
+      "retry_upload": "重試上傳",
+      "upload": "上傳",
+      "ready": "就緒",
+      "error": "錯誤",
+      "upload_complete_message": "上傳完成！",
+      "upload_complete_description": "點擊「開始匯入」開始處理您的 Notion 資料。",
+      "upload_progress_message": "請不要關閉此視窗。"
+    }
+  },
+  "confluence_importer": {
+    "confluence_importer_description": "將您的 Confluence 資料匯入到 Plane 維基中。",
+    "steps": {
+      "title_upload_zip": "上傳 Confluence 匯出的 ZIP 檔案",
+      "description_upload_zip": "請上傳包含您的 Confluence 資料的 ZIP 檔案。"
+    },
+    "upload": {
+      "drop_file_here": "將您的 Confluence zip 檔案拖放到這裡",
+      "upload_title": "上傳 Confluence 匯出檔案",
+      "drag_drop_description": "拖放您的 Confluence 匯出 zip 檔案，或點擊瀏覽",
+      "file_type_restriction": "僅支援從 Confluence 匯出的 .zip 檔案",
+      "select_file": "選擇檔案",
+      "uploading": "正在上傳...",
+      "preparing_upload": "正在準備上傳...",
+      "confirming_upload": "正在確認上傳...",
+      "confirming": "正在確認...",
+      "upload_complete": "上傳完成",
+      "upload_failed": "上傳失敗",
+      "start_import": "開始匯入",
+      "retry_upload": "重試上傳",
+      "upload": "上傳",
+      "ready": "就緒",
+      "error": "錯誤",
+      "upload_complete_message": "上傳完成！",
+      "upload_complete_description": "點擊「開始匯入」開始處理您的 Confluence 資料。",
+      "upload_progress_message": "請不要關閉此視窗。"
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "將您的 CSV 數據導入到 Plane 專案中。",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 CSV 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_csv": "配置 CSV",
+      "description_configure_csv": "請上傳您的 CSV 文件並配置要映射到 Plane 字段的字段。"
+    }
+  },
+  "clickup_importer": {
+    "clickup_importer_description": "將您的 ClickUp 數據遷移到 Plane 專案中。",
+    "select_service_space": "選擇 {serviceName} 空間",
+    "select_service_folder": "選擇 {serviceName} 文件夾",
+    "selected": "已選擇",
+    "users": "用戶",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 ClickUp 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_clickup": "配置 ClickUp",
+      "description_configure_clickup": "請選擇您想要遷移數據的 ClickUp 團隊、空間和文件夾。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 ClickUp 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 ClickUp 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 ClickUp 遷移到 Plane 的數據摘要。",
+      "pull_additional_data_title": "導入評論和附件"
+    }
+  },
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "條形",
+          "long_label": "條形圖",
+          "chart_models": {
+            "basic": "基本",
+            "stacked": "堆疊",
+            "grouped": "分組"
+          },
+          "orientation": {
+            "label": "方向",
+            "horizontal": "水平",
+            "vertical": "垂直",
+            "placeholder": "添加方向"
+          },
+          "bar_color": "條形顏色"
+        },
+        "line_chart": {
+          "short_label": "線形",
+          "long_label": "線形圖",
+          "chart_models": {
+            "basic": "基本",
+            "multi_line": "多線"
+          },
+          "line_color": "線條顏色",
+          "line_type": {
+            "label": "線條類型",
+            "solid": "實線",
+            "dashed": "虛線",
+            "placeholder": "添加線條類型"
+          }
+        },
+        "area_chart": {
+          "short_label": "面積",
+          "long_label": "面積圖",
+          "chart_models": {
+            "basic": "基本",
+            "stacked": "堆疊",
+            "comparison": "比較"
+          },
+          "fill_color": "填充顏色"
+        },
+        "donut_chart": {
+          "short_label": "環形",
+          "long_label": "環形圖",
+          "chart_models": {
+            "basic": "基本",
+            "progress": "進度"
+          },
+          "center_value": "中心值",
+          "completed_color": "完成顏色"
+        },
+        "pie_chart": {
+          "short_label": "餅形",
+          "long_label": "餅形圖",
+          "chart_models": {
+            "basic": "基本"
+          },
+          "group": {
+            "label": "分組片段",
+            "group_thin_pieces": "分組細片段",
+            "minimum_threshold": {
+              "label": "最小閾值",
+              "placeholder": "添加閾值"
+            },
+            "name_group": {
+              "label": "命名組",
+              "placeholder": "\"小於5%\""
+            }
+          },
+          "show_values": "顯示數值",
+          "value_type": {
+            "percentage": "百分比",
+            "count": "計數"
+          }
+        },
+        "text": {
+          "short_label": "文字",
+          "long_label": "文字",
+          "alignment": {
+            "label": "文字對齊",
+            "left": "左對齊",
+            "center": "居中",
+            "right": "右對齊",
+            "placeholder": "添加文字對齊"
+          },
+          "text_color": "文字顏色"
+        }
+      },
+      "color_palettes": {
+        "modern": "現代",
+        "horizon": "地平線",
+        "earthen": "大地"
+      },
+      "common": {
+        "add_widget": "添加小工具",
+        "widget_title": {
+          "label": "為此小工具命名",
+          "placeholder": "例如，\"昨日待辦\", \"全部完成\""
+        },
+        "chart_type": "圖表類型",
+        "visualization_type": {
+          "label": "視覺化類型",
+          "placeholder": "添加視覺化類型"
+        },
+        "date_group": {
+          "label": "日期分組",
+          "placeholder": "添加日期分組"
+        },
+        "group_by": "分組依據",
+        "stack_by": "堆疊依據",
+        "daily": "每日",
+        "weekly": "每週",
+        "monthly": "每月",
+        "yearly": "每年",
+        "work_item_count": "工作項目數量",
+        "estimate_point": "估算點數",
+        "pending_work_item": "待處理工作項目",
+        "completed_work_item": "已完成工作項目",
+        "in_progress_work_item": "進行中工作項目",
+        "blocked_work_item": "被阻礙工作項目",
+        "work_item_due_this_week": "本週到期工作項目",
+        "work_item_due_today": "今日到期工作項目",
+        "color_scheme": {
+          "label": "配色方案",
+          "placeholder": "添加配色方案"
+        },
+        "smoothing": "平滑",
+        "markers": "標記",
+        "legends": "圖例",
+        "tooltips": "提示框",
+        "opacity": {
+          "label": "透明度",
+          "placeholder": "添加透明度"
+        },
+        "border": "邊框",
+        "widget_configuration": "小工具配置",
+        "configure_widget": "配置小工具",
+        "guides": "指南",
+        "style": "樣式",
+        "area_appearance": "區域外觀",
+        "comparison_line_appearance": "比較線外觀",
+        "add_property": "添加屬性",
+        "add_metric": "添加指標"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "堆疊依據缺少值。"
+          },
+          "grouped": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "分組依據缺少值。"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "multi_line": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "分組依據缺少值。"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。",
+            "group_by": "堆疊依據缺少值。"
+          },
+          "comparison": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          },
+          "progress": {
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X軸缺少值。",
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "指標缺少值。"
+          }
+        },
+        "ask_admin": "請管理員配置此小工具。"
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "創建新儀表板",
+        "update": "更新儀表板"
+      },
+      "title": {
+        "label": "為您的儀表板命名。",
+        "placeholder": "\"跨專案的容量\", \"團隊的工作負載\", \"跨所有專案的狀態\"",
+        "required_error": "標題為必填項"
+      },
+      "project": {
+        "label": "選擇專案",
+        "placeholder": "來自這些專案的數據將為此儀表板提供支持。",
+        "required_error": "專案為必填項"
+      },
+      "create_dashboard": "創建儀表板",
+      "update_dashboard": "更新儀表板"
+    },
+    "delete_modal": {
+      "heading": "刪除儀表板"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "在按需、永久的儀表板中展示您的進度。",
+        "description": "構建您需要的任何儀表板，並自定義數據的外觀，以完美地展示您的進度。",
+        "coming_soon_to_mobile": "即將登陸移動應用",
+        "card_1": {
+          "title": "適用於所有專案",
+          "description": "通過所有專案獲得工作區的完整全局視圖，或者切片您的工作數據，獲得完美的進度視圖。"
+        },
+        "card_2": {
+          "title": "適用於Plane中的任何數據",
+          "description": "超越現成的分析和預製的週期圖表，以前所未有的方式查看團隊、倡議或其他任何內容。"
+        },
+        "card_3": {
+          "title": "滿足所有數據可視化需求",
+          "description": "從多種可自定義的圖表中選擇，具有精細的控制，以準確地按照您想要的方式查看和展示您的工作數據。"
+        },
+        "card_4": {
+          "title": "按需和永久",
+          "description": "一次構建，永久保留，自動刷新您的數據，範圍變更的上下文標誌，以及可共享的永久鏈接。"
+        },
+        "card_5": {
+          "title": "導出和定時通訊",
+          "description": "對於鏈接不起作用的時候，將您的儀表板導出為一次性PDF，或者安排自動發送給利益相關者。"
+        },
+        "card_6": {
+          "title": "適用於所有設備的自動佈局",
+          "description": "調整小工具大小以獲得您想要的佈局，並在移動設備、平板電腦和其他瀏覽器上以完全相同的方式查看。"
+        }
+      },
+      "dashboards_list": {
+        "title": "在小工具中可視化數據，用小工具構建儀表板，並按需查看最新信息。",
+        "description": "使用自定義小工具構建儀表板，以您指定的範圍顯示數據。獲取跨專案和團隊的所有工作的儀表板，並與利益相關者共享永久鏈接，以便按需追踪。"
+      },
+      "dashboards_search": {
+        "title": "這與儀表板名稱不匹配。",
+        "description": "確保您的查詢正確或嘗試另一個查詢。"
+      },
+      "widgets_list": {
+        "title": "按照您想要的方式可視化數據。",
+        "description": "使用線條、條形、餅圖和其他格式，以您想要的方式\n從您指定的源查看數據。"
+      },
+      "widget_data": {
+        "title": "這裡沒有內容",
+        "description": "刷新或添加數據以在此處查看。"
+      }
+    },
+    "common": {
+      "editing": "編輯中"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "允許新工作項目",
+      "work_item_creation_disable_tooltip": "此狀態已禁用工作項目創建",
+      "default_state": "默認狀態允許所有成員創建新工作項目。這無法更改",
+      "state_change_count": "{count, plural, one {1個允許的狀態變更} other {{count}個允許的狀態變更}}",
+      "movers_count": "{count, plural, one {1個列出的審核者} other {{count}個列出的審核者}}",
+      "state_changes": {
+        "label": {
+          "default": "添加允許的狀態變更",
+          "loading": "添加允許的狀態變更中"
+        },
+        "move_to": "變更狀態為",
+        "movers": {
+          "label": "當審核者為",
+          "tooltip": "審核者是被允許將工作項目從一個狀態移動到另一個狀態的人。",
+          "add": "添加審核者"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "您不能將此工作項目移動到這裡。"
+    },
+    "workflow_enabled": {
+      "label": "狀態變更"
+    },
+    "workflow_tree": {
+      "label": "對於工作項目在",
+      "state_change_label": "可以將其移動到"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "使用工作流程控制變更和審核的混亂。",
+        "description": "在Plane中使用工作流程設置工作移動、由誰移動以及何時移動的規則。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "查看變更歷史",
+      "reset_workflow": "重置工作流程"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "您確定要重置此工作流程嗎？",
+        "description": "如果您重置此工作流程，所有狀態變更規則都將被刪除，您將需要重新創建它們才能在此專案中運行。"
+      },
+      "delete_state_change": {
+        "title": "您確定要刪除此狀態變更規則嗎？",
+        "description": "一旦刪除，您將無法撤消此更改，如果您希望此規則在此專案中運行，您將需要重新設置。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action}工作流程",
+        "success": {
+          "title": "成功",
+          "message": "工作流程已成功{action}"
+        },
+        "error": {
+          "title": "錯誤",
+          "message": "工作流程無法{action}。請再試一次。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "成功",
+          "message": "工作流程已成功重置"
+        },
+        "error": {
+          "title": "重置工作流程時出錯",
+          "message": "工作流程無法重置。請再試一次。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "添加狀態變更規則時出錯",
+          "message": "無法添加狀態變更規則。請再試一次。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "修改狀態變更規則時出錯",
+          "message": "無法修改狀態變更規則。請再試一次。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "移除狀態變更規則時出錯",
+          "message": "無法移除狀態變更規則。請再試一次。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "修改狀態變更規則審核者時出錯",
+          "message": "無法修改狀態變更規則審核者。請再試一次。"
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {客戶} other {客戶}}",
+    "open": "開啟客戶",
+    "dropdown": {
+      "placeholder": "選擇客戶",
+      "required": "請選擇客戶",
+      "no_selection": "沒有客戶"
+    },
+    "upgrade": {
+      "title": "使用客戶功能優先處理和管理工作。",
+      "description": "將您的工作映射到客戶並按客戶屬性進行優先排序。"
+    },
+    "properties": {
+      "default": {
+        "title": "默認屬性",
+        "customer_name": {
+          "name": "客戶名稱",
+          "placeholder": "這可以是個人或企業的名稱",
+          "validation": {
+            "required": "客戶名稱為必填項。",
+            "max_length": "客戶名稱不能超過255個字符。"
+          }
+        },
+        "description": {
+          "name": "描述",
+          "validation": {}
+        },
+        "email": {
+          "name": "電子郵件",
+          "placeholder": "輸入電子郵件",
+          "validation": {
+            "required": "電子郵件為必填項。",
+            "pattern": "無效的電子郵件地址。"
+          }
+        },
+        "website_url": {
+          "name": "網站",
+          "placeholder": "任何帶有https://的網址都可以使用。",
+          "placeholder_short": "添加網站",
+          "validation": {
+            "pattern": "無效的網站網址"
+          }
+        },
+        "employees": {
+          "name": "員工數",
+          "placeholder": "如果您的客戶是企業，則為員工數量。",
+          "validation": {
+            "min_length": "員工數不能少於0。",
+            "max_length": "員工數不能大於2147483647。"
+          }
+        },
+        "size": {
+          "name": "規模",
+          "placeholder": "添加公司規模",
+          "validation": {
+            "min_length": "無效的規模"
+          }
+        },
+        "domain": {
+          "name": "行業",
+          "placeholder": "零售、電子商務、金融科技、銀行",
+          "placeholder_short": "添加行業",
+          "validation": {}
+        },
+        "stage": {
+          "name": "階段",
+          "placeholder": "選擇階段",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "合約狀態",
+          "placeholder": "選擇合約狀態",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "收入",
+          "placeholder": "這是您的客戶每年產生的收入。",
+          "placeholder_short": "添加收入",
+          "validation": {
+            "min_length": "收入不能少於0。"
+          }
+        },
+        "invalid_value": "無效的收入值。"
+      },
+      "custom": {
+        "title": "自定義屬性",
+        "info": "將您客戶的獨特屬性添加到Plane，以便您可以更好地管理工作項目或客戶記錄。"
+      },
+      "empty_state": {
+        "title": "您還沒有任何自定義屬性。",
+        "description": "您希望在工作項目中、Plane其他地方或Plane外部的CRM或其他工具中看到的自定義屬性，當您添加它們時將顯示在這裡。"
+      },
+      "add": {
+        "primary_button": "添加新屬性"
+      }
+    },
+    "stage": {
+      "lead": "潛在客戶",
+      "sales_qualified_lead": "合格銷售線索",
+      "contract_negotiation": "合約談判",
+      "closed_won": "已成交",
+      "closed_lost": "未成交"
+    },
+    "contract_status": {
+      "active": "活躍",
+      "pre_contract": "合約前",
+      "signed": "已簽署",
+      "inactive": "非活躍"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "我們無法找到該客戶記錄。",
+        "description": "此記錄的鏈接可能錯誤或此記錄可能已被刪除。",
+        "primary_button": "前往客戶",
+        "secondary_button": "添加客戶"
+      },
+      "search": {
+        "title": "您似乎沒有與該條件匹配的客戶記錄。",
+        "description": "嘗試使用其他搜索條件，或者如果您確信應該看到該條件的結果，請聯繫我們。"
+      },
+      "list": {
+        "title": "根據對您客戶重要的事項管理您工作的量、節奏和流程。",
+        "description": "使用客戶功能（Plane獨有功能），您現在可以從頭開始創建新客戶並將其連接到您的工作。很快，您將能夠從其他工具中引入客戶，以及對您重要的自定義屬性。",
+        "primary_button": "添加您的第一個客戶"
+      }
+    },
+    "settings": {
+      "unauthorized": "您無權訪問此頁面。",
+      "description": "在您的工作流程中追踪和管理客戶關係。",
+      "enable": "啟用客戶功能",
+      "toasts": {
+        "enable": {
+          "loading": "正在啟用客戶功能...",
+          "success": {
+            "title": "您已為此工作區開啟客戶功能。",
+            "message": "您無法再次關閉它。"
+          },
+          "error": {
+            "title": "我們無法這次開啟客戶功能。",
+            "message": "請再試一次或稍後回到此畫面。如果仍然不起作用。",
+            "action": "聯繫支持"
+          }
+        },
+        "disable": {
+          "loading": "正在禁用客戶功能...",
+          "success": {
+            "title": "客戶功能已禁用",
+            "message": "客戶功能已成功禁用！"
+          },
+          "error": {
+            "title": "錯誤",
+            "message": "禁用客戶功能失敗！"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "我們無法獲取您的客戶列表。",
+          "message": "請再試一次或刷新此頁面。"
+        }
+      },
+      "copy_link": {
+        "title": "您已複製此客戶的直接鏈接。",
+        "message": "粘貼在任何地方，它都會直接帶回這裡。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name}現已可用",
+          "message": "您可以在工作項目中引用此客戶，並追踪來自他們的請求。",
+          "actions": {
+            "view": "查看",
+            "copy_link": "複製鏈接",
+            "copied": "已複製！"
+          }
+        },
+        "error": {
+          "title": "我們這次無法創建該記錄。",
+          "message": "嘗試再次保存它或將未保存的文本複製到新條目，最好在另一個標籤頁中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "客戶更新成功！"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "無法更新客戶。請再試一次！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "我們無法上傳客戶的標誌。",
+          "message": "嘗試再次保存標誌或從頭開始。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "您已從此客戶記錄中移除工作項目。",
+            "message": "我們也已自動從工作項目中移除此客戶。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "我們這次無法從此客戶記錄中移除該工作項目。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "我們這次無法將該工作項目添加到此客戶記錄。",
+            "message": "嘗試再次添加該工作項目或稍後再來。如果仍然不起作用，請聯繫我們。"
+          },
+          "success": {
+            "title": "您已將工作項目添加到此客戶記錄。",
+            "message": "我們也已自動將此客戶添加到工作項目中。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "編輯",
+      "copy_link": "複製客戶鏈接",
+      "delete": "刪除"
+    },
+    "create": {
+      "label": "創建客戶記錄",
+      "loading": "創建中",
+      "cancel": "取消"
+    },
+    "update": {
+      "label": "更新客戶",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "您確定要刪除客戶記錄{customer_name}嗎？",
+      "description": "與此記錄關聯的所有數據將被永久刪除。您以後無法恢復此記錄。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "目前還沒有要顯示的請求。",
+          "description": "創建來自您客戶的請求，以便您可以將它們鏈接到工作項目。",
+          "button": "添加新請求"
+        },
+        "search": {
+          "title": "您似乎沒有與該條件匹配的請求。",
+          "description": "嘗試使用其他搜索條件，或者如果您確信應該看到該條件的結果，請聯繫我們。"
+        }
+      },
+      "label": "{count, plural, one {請求} other {請求}}",
+      "add": "添加請求",
+      "create": "創建請求",
+      "update": "更新請求",
+      "form": {
+        "name": {
+          "placeholder": "為此請求命名",
+          "validation": {
+            "required": "名稱為必填項。",
+            "max_length": "請求名稱不應超過255個字符。"
+          }
+        },
+        "description": {
+          "placeholder": "描述請求的性質或從另一個工具粘貼此客戶的評論。"
+        },
+        "source": {
+          "add": "添加來源",
+          "update": "更新來源",
+          "url": {
+            "label": "網址",
+            "required": "網址為必填項",
+            "invalid": "無效的網站網址"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "鏈接已複製",
+          "message": "客戶請求鏈接已複製到剪貼板。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "正在上傳附件...",
+            "success": {
+              "title": "附件已上傳",
+              "message": "附件已成功上傳。"
+            },
+            "error": {
+              "title": "附件未上傳",
+              "message": "無法上傳附件。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "錯誤！",
+              "message": "一次只能上傳一個文件。"
+            }
+          },
+          "length": {
+            "message": "文件大小必須為{size}MB或更小"
+          },
+          "remove": {
+            "success": {
+              "title": "附件已移除",
+              "message": "附件已成功移除"
+            },
+            "error": {
+              "title": "附件未移除",
+              "message": "無法移除附件"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "來源更新成功！"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "無法更新來源。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "錯誤！",
+              "message": "無法將工作項目添加到請求中。請再試一次。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "已將工作項目添加到請求中。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "請求更新成功！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法更新請求。請再試一次！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "請求創建成功！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法創建請求。請再試一次！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "鏈接的工作項目",
+      "link": "鏈接工作項目",
+      "empty_state": {
+        "list": {
+          "title": "您似乎還沒有將工作項目鏈接到此客戶。",
+          "description": "在此處鏈接任何專案的現有工作項目，以便您可以按此客戶追踪它們。",
+          "button": "鏈接工作項目"
+        }
+      },
+      "action": {
+        "remove_epic": "移除史詩",
+        "remove": "移除工作項目"
+      }
+    },
+    "sidebar": {
+      "properties": "屬性"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "模板",
+      "description": "使用模板可節省80%的專案、工作項目和頁面創建時間。",
+      "options": {
+        "project": {
+          "label": "專案模板"
+        },
+        "work_item": {
+          "label": "工作項目模板"
+        },
+        "page": {
+          "label": "頁面模板"
+        }
+      },
+      "create_template": {
+        "label": "創建模板",
+        "no_permission": {
+          "project": "聯繫您的專案管理員創建模板",
+          "workspace": "聯繫您的workspace管理員創建模板"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "使用模板",
+          "loading": "使用中"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "源自workspace"
+        },
+        "project": {
+          "info": "源自專案"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "為您的專案模板命名。",
+              "validation": {
+                "required": "模板名稱為必填項",
+                "maxLength": "模板名稱應少於255個字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何時以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "為您的專案命名。",
+            "validation": {
+              "required": "專案標題為必填項",
+              "maxLength": "專案標題應少於255個字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此專案的目的和目標。"
+          },
+          "button": {
+            "create": "創建專案模板",
+            "update": "更新專案模板"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "為您的工作項目模板命名。",
+              "validation": {
+                "required": "模板名稱為必填項",
+                "maxLength": "模板名稱應少於255個字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何時以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "為此工作項目提供標題。",
+            "validation": {
+              "required": "工作項目標題為必填項",
+              "maxLength": "工作項目標題應少於255個字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此工作項目，以便清楚地了解完成時將實現什麼。"
+          },
+          "button": {
+            "create": "創建工作項目模板",
+            "update": "更新工作項目模板"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "為您的頁面模板命名。",
+              "validation": {
+                "required": "模板名稱為必填項",
+                "maxLength": "模板名稱應少於255個字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何時以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名頁面",
+            "validation": {
+              "maxLength": "頁面名稱應少於255個字符"
+            }
+          },
+          "button": {
+            "create": "創建頁面模板",
+            "update": "更新頁面模板"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {發布設定} other {發布到市場}}",
+          "unpublish_action": "從市場移除",
+          "title": "讓您的模板可被發現和識別。",
+          "name": {
+            "label": "模板名稱",
+            "placeholder": "為您的模板命名",
+            "validation": {
+              "required": "模板名稱為必填項",
+              "maxLength": "模板名稱應少於255個字符"
+            }
+          },
+          "short_description": {
+            "label": "簡短描述",
+            "placeholder": "此模板非常適合同時管理多個專案的專案經理。",
+            "validation": {
+              "required": "簡短描述為必填項"
+            }
+          },
+          "description": {
+            "label": "描述",
+            "placeholder": "通過我們的語音轉文字整合提高生產力並簡化溝通。\n• 即時轉錄：立即將口語轉換為準確的文字。\n• 任務和評論創建：通過語音命令添加任務、描述和評論。",
+            "validation": {
+              "required": "描述為必填項"
+            }
+          },
+          "category": {
+            "label": "類別",
+            "placeholder": "選擇您認為最適合的位置。您可以選擇多個。",
+            "validation": {
+              "required": "至少需要一個類別"
+            }
+          },
+          "keywords": {
+            "label": "關鍵字",
+            "placeholder": "使用您認為用戶在尋找此模板時會搜索的術語。",
+            "helperText": "輸入逗號分隔的關鍵詞，這些關鍵詞可能會幫助人們從搜索中找到此模板。",
+            "validation": {
+              "required": "至少需要一個關鍵詞"
+            }
+          },
+          "company_name": {
+            "label": "公司名稱",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "公司名稱為必填項",
+              "maxLength": "公司名稱應少於255個字符"
+            }
+          },
+          "contact_email": {
+            "label": "支持電子郵件",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "無效的電子郵件地址",
+              "required": "支持電子郵件為必填項",
+              "maxLength": "支持電子郵件應少於255個字符"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "隱私政策連結",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "無效的URL",
+              "maxLength": "URL應少於800個字符"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "使用條款連結",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "無效的URL",
+              "maxLength": "URL應少於800個字符"
+            }
+          },
+          "cover_image": {
+            "label": "添加將在市場中顯示的封面圖片",
+            "upload_title": "上傳封面圖片",
+            "upload_placeholder": "點擊上傳或拖放上傳封面圖片",
+            "drop_here": "拖放到這裡",
+            "click_to_upload": "點擊上傳",
+            "invalid_file_or_exceeds_size_limit": "無效的文件或超出大小限制。請重試。",
+            "upload_and_save": "上傳並保存",
+            "uploading": "上傳中",
+            "remove": "刪除",
+            "removing": "刪除中",
+            "validation": {
+              "required": "封面圖片為必填項"
+            }
+          },
+          "attach_screenshots": {
+            "label": "包含您認為會讓此模板的查看者感興趣的文檔和圖片。",
+            "validation": {
+              "required": "至少需要一張截圖"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "模板",
+        "description": "使用Plane中的專案、工作項目和頁面模板，您無需從頭創建專案或手動設置工作項目屬性。",
+        "sub_description": "使用模板可節省80%的管理時間。"
+      },
+      "no_templates": {
+        "button": "創建您的第一個模板"
+      },
+      "no_labels": {
+        "description": " 尚無標籤。創建標籤以幫助組織和篩選專案中的工作項目。"
+      },
+      "no_work_items": {
+        "description": "尚無工作項目。添加一個以更好地組織您的工作。"
+      },
+      "no_sub_work_items": {
+        "description": "尚無子工作項目。添加一個以更好地組織您的工作。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "您沒有訪問任何模板。",
+          "description": "請創建一個模板"
+        },
+        "no_results": {
+          "title": "沒有找到模板。",
+          "description": "嘗試使用其他術語搜索。"
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "模板已創建",
+          "message": "{templateName}，{templateType}模板，現已可用於您的workspace。"
+        },
+        "error": {
+          "title": "我們這次無法創建該模板。",
+          "message": "嘗試再次保存您的詳細信息或將它們複製到新模板中，最好在另一個標籤頁中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "模板已更改",
+          "message": "{templateName}，{templateType}模板，已更改。"
+        },
+        "error": {
+          "title": "我們無法保存對此模板的更改。",
+          "message": "嘗試再次保存您的詳細信息或稍後返回此模板。如果仍有問題，請聯繫我們。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "模板已刪除",
+          "message": "{templateName}，{templateType}模板，現已從您的workspace中刪除。"
+        },
+        "error": {
+          "title": "我們無法刪除該模板。",
+          "message": "嘗試再次刪除它或稍後再試。如果您仍然無法刪除它，請聯繫我們。"
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "模板已移除",
+          "message": "{templateName}，{templateType}模板，已被移除。"
+        },
+        "error": {
+          "title": "我們無法移除該模板。",
+          "message": "嘗試再次移除它或稍後再試。如果您仍然無法移除它，請聯繫我們。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "刪除模板",
+      "description": {
+        "prefix": "您確定要刪除模板-",
+        "suffix": "嗎？與模板相關的所有數據將被永久移除。此操作無法撤銷。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "移除模板",
+      "description": {
+        "prefix": "您確定要移除模板-",
+        "suffix": "嗎？此模板將不再在市場上供用戶使用。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "新增範本",
+        "project": "新增範本"
+      },
+      "label": {
+        "project": "選擇專案範本",
+        "page": "從範本中選擇"
+      },
+      "tooltip": {
+        "work_item": "選擇工作項目範本"
+      },
+      "no_results": {
+        "work_item": "找不到範本。",
+        "project": "找不到範本。"
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "按狀態分類的專案",
+    "active_users": "活躍使用者",
+    "intake_trends": "入學趨勢",
+    "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "尚無資料",
+        "description": "循環進度分析將顯示在此處。將工作項目加入循環以開始追蹤進度。"
+      },
+      "module_progress": {
+        "title": "尚無資料",
+        "description": "模組進度分析將顯示在此處。將工作項目加入模組以開始追蹤進度。"
+      },
+      "intake_trends": {
+        "title": "尚無資料",
+        "description": "引入趨勢分析將顯示在此處。將工作項目加入引入以開始追蹤趨勢。"
+      }
+    },
+    "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "重複工作項目",
+      "description": "設定一次重複工作，我們將處理重複。當需要時，您將在此處看到所有內容。",
+      "new_recurring_work_item": "新增重複工作項目",
+      "update_recurring_work_item": "更新重複工作項目",
+      "form": {
+        "interval": {
+          "title": "排程",
+          "start_date": {
+            "validation": {
+              "required": "開始日期為必填"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔類型為必填"
+            }
+          }
+        },
+        "button": {
+          "create": "建立重複工作項目",
+          "update": "更新重複工作項目"
+        }
+      },
+      "create_button": {
+        "label": "建立重複工作項目",
+        "no_permission": "請聯繫您的專案管理員以建立重複工作項目"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "自動化您的工作",
+        "description": "只需設定一次，到期時我們會自動為您建立。升級至商業版，讓重複工作變得輕鬆無憂。"
+      },
+      "no_templates": {
+        "button": "建立您的第一個重複工作項目"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "已建立重複工作項目",
+          "message": "{name}，該重複工作項目，現已在您的工作區中可用。"
+        },
+        "error": {
+          "title": "本次無法建立該重複工作項目。",
+          "message": "請再試一次儲存您的資訊，或將其複製到新的重複工作項目中，建議在其他分頁操作。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "重複工作項目已變更",
+          "message": "{name}，該重複工作項目，已被變更。"
+        },
+        "error": {
+          "title": "無法儲存該重複工作項目的變更。",
+          "message": "請再試一次儲存您的資訊，或稍後再回來變更該重複工作項目。如果仍有問題，請聯繫我們。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "已刪除重複工作項目",
+          "message": "{name}，該重複工作項目，已從您的工作區中刪除。"
+        },
+        "error": {
+          "title": "無法刪除該重複工作項目。",
+          "message": "請再試一次刪除，或稍後再試。如果仍無法刪除，請聯繫我們。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "刪除重複工作項目",
+      "description": {
+        "prefix": "您確定要刪除重複工作項目-",
+        "suffix": "嗎？與該重複工作項目相關的所有資料將被永久移除。此操作無法撤銷。"
+      }
+    }
+  },
+  "automations": {
+    "settings": {
+      "title": "自訂自動化",
+      "create_automation": "建立自動化"
+    },
+    "scope": {
+      "label": "範圍",
+      "run_on": "執行於"
+    },
+    "trigger": {
+      "label": "觸發器",
+      "add_trigger": "新增觸發器",
+      "sidebar_header": "觸發器設定",
+      "input_label": "此自動化的觸發器是什麼？",
+      "input_placeholder": "選擇一個選項",
+      "button": {
+        "previous": "返回",
+        "next": "新增動作"
+      }
+    },
+    "condition": {
+      "label": "條件",
+      "add_condition": "新增條件",
+      "adding_condition": "正在新增條件"
+    },
+    "action": {
+      "label": "動作",
+      "add_action": "新增動作",
+      "sidebar_header": "動作",
+      "input_label": "自動化執行什麼動作？",
+      "input_placeholder": "選擇一個選項",
+      "handler_name": {
+        "add_comment": "新增評論",
+        "change_property": "變更屬性"
+      },
+      "configuration": {
+        "label": "設定",
+        "change_property": {
+          "placeholders": {
+            "property_name": "選擇屬性",
+            "change_type": "選擇",
+            "property_value_select": "{count, plural, one{選擇值} other{選擇值}}",
+            "property_value_select_date": "選擇日期"
+          },
+          "validation": {
+            "property_name_required": "屬性名稱為必填",
+            "change_type_required": "變更類型為必填",
+            "property_value_required": "屬性值為必填"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "新增評論"
+      },
+      "change_property_block": {
+        "title": "變更屬性"
+      },
+      "validation": {
+        "delete_only_action": "在刪除唯一動作之前，請先停用自動化。"
+      }
+    },
+    "conjunctions": {
+      "and": "且",
+      "or": "或",
+      "if": "如果",
+      "then": "則"
+    },
+    "enable": {
+      "alert": "當您的自動化完成時，點擊「啟用」。啟用後，自動化將準備執行。",
+      "validation": {
+        "required": "自動化必須有一個觸發器和至少一個動作才能啟用。"
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "刪除自動化之前必須先停用它。"
+      }
+    },
+    "table": {
+      "title": "自動化標題",
+      "last_run_on": "最後執行時間",
+      "created_on": "建立時間",
+      "last_updated_on": "最後更新時間",
+      "last_run_status": "最後執行狀態",
+      "average_duration": "平均持續時間",
+      "owner": "擁有者",
+      "executions": "執行次數"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "建立自動化",
+        "update": "更新自動化"
+      },
+      "title": {
+        "placeholder": "為您的自動化命名。",
+        "required_error": "標題為必填"
+      },
+      "description": {
+        "placeholder": "描述您的自動化。"
+      },
+      "submit_button": {
+        "create": "建立自動化",
+        "update": "更新自動化"
+      }
+    },
+    "delete_modal": {
+      "heading": "刪除自動化"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "顯示失敗",
+        "all": "全部",
+        "only_activity": "僅活動",
+        "only_run_history": "僅執行歷史"
+      },
+      "run_history": {
+        "initiator": "發起者"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化建立成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化建立失敗。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化更新成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化更新失敗。"
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化啟用成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化啟用失敗。"
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "成功！",
+          "message": "自動化停用成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "自動化停用失敗。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "已刪除自動化",
+          "message": "{name}，該自動化，現已從您的專案中刪除。"
+        },
+        "error": {
+          "title": "本次無法刪除該自動化。",
+          "message": "請再試一次刪除，或稍後再試。如果仍無法刪除，請聯繫我們。"
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "錯誤！",
+            "message": "建立動作失敗。請再試一次！"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "錯誤！",
+            "message": "更新動作失敗。請再試一次！"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "尚無自動化可顯示。",
+        "description": "自動化透過設定觸發器、條件和動作來幫助您消除重複性任務。建立一個來節省時間並讓工作輕鬆進行。"
+      },
+      "upgrade": {
+        "title": "自動化",
+        "description": "自動化是在您的專案中自動執行任務的方式。",
+        "sub_description": "使用自動化可以節省80%的管理時間。"
+      }
+    }
+  }
+}
