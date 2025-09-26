@@ -45,13 +45,13 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
     // Wiki option - shown if workspace pages are enabled
     ...(isWorkspacePagesEnabled
       ? [
-        {
-          key: EDocImporterDestinationType.WIKI,
-          label: "Wiki",
-          value: EDocImporterDestinationType.WIKI,
-          data: { type: EDocImporterDestinationType.WIKI, icon: <FileText className="w-4 h-4" />, label: "Wiki" },
-        },
-      ]
+          {
+            key: EDocImporterDestinationType.WIKI,
+            label: "Wiki",
+            value: EDocImporterDestinationType.WIKI,
+            data: { type: EDocImporterDestinationType.WIKI, icon: <FileText className="w-4 h-4" />, label: "Wiki" },
+          },
+        ]
       : []),
     // Project option - always available
     {
@@ -63,17 +63,17 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
     // Teamspace option - shown if teamspaces are enabled
     ...(isTeamspacesEnabled
       ? [
-        {
-          key: EDocImporterDestinationType.TEAMSPACE,
-          label: "Teamspace",
-          value: EDocImporterDestinationType.TEAMSPACE,
-          data: {
-            type: EDocImporterDestinationType.TEAMSPACE,
-            icon: <Users className="w-4 h-4" />,
+          {
+            key: EDocImporterDestinationType.TEAMSPACE,
             label: "Teamspace",
+            value: EDocImporterDestinationType.TEAMSPACE,
+            data: {
+              type: EDocImporterDestinationType.TEAMSPACE,
+              icon: <Users className="w-4 h-4" />,
+              label: "Teamspace",
+            },
           },
-        },
-      ]
+        ]
       : []),
   ];
 
@@ -177,7 +177,9 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
         <div className="space-y-3">
           {/* Destination Type Dropdown */}
           <div className="space-y-2">
-            <div className="text-sm text-custom-text-200">{t(`${driverType}_importer.select_destination.destination_type`)}</div>
+            <div className="text-sm text-custom-text-200">
+              {t(`${driverType}_importer.select_destination.destination_type`)}
+            </div>
             <Dropdown
               dropdownOptions={destinationTypeOptions}
               value={destinationData.type}
@@ -190,10 +192,11 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
 
           {/* Conditional Project Selection */}
           <div
-            className={`overflow-hidden transition-all duration-500 ease-in-out ${destinationData.type === EDocImporterDestinationType.PROJECT
-              ? "max-h-32 opacity-100 transform translate-y-0"
-              : "max-h-0 opacity-0 transform -translate-y-2"
-              }`}
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              destinationData.type === EDocImporterDestinationType.PROJECT
+                ? "max-h-32 opacity-100 transform translate-y-0"
+                : "max-h-0 opacity-0 transform -translate-y-2"
+            }`}
           >
             <div className="space-y-2 pb-1">
               <div className="text-sm text-custom-text-200">
@@ -224,10 +227,11 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
 
           {/* Conditional Teamspace Selection */}
           <div
-            className={`overflow-hidden transition-all duration-500 ease-in-out ${destinationData.type === EDocImporterDestinationType.TEAMSPACE
-              ? "max-h-32 opacity-100 transform translate-y-0"
-              : "max-h-0 opacity-0 transform -translate-y-2"
-              }`}
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              destinationData.type === EDocImporterDestinationType.TEAMSPACE
+                ? "max-h-32 opacity-100 transform translate-y-0"
+                : "max-h-0 opacity-0 transform -translate-y-2"
+            }`}
           >
             <div className="space-y-2 pb-1">
               <div className="text-sm text-custom-text-200">

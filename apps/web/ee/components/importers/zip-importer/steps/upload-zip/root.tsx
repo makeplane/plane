@@ -30,7 +30,7 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
     uploadError,
     confirmAndStartImport,
     workspace,
-    resetImporterData
+    resetImporterData,
   } = useZipImporter(driverType);
 
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
@@ -209,9 +209,10 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
           {...getRootProps()}
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all
-            ${isDragActive
-              ? "border-custom-primary-100 bg-custom-primary-100/10"
-              : "border-custom-border-200 hover:border-custom-border-400 hover:bg-custom-background-90"
+            ${
+              isDragActive
+                ? "border-custom-primary-100 bg-custom-primary-100/10"
+                : "border-custom-border-200 hover:border-custom-border-400 hover:bg-custom-background-90"
             }
           `}
         >

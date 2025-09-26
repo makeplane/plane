@@ -7,8 +7,8 @@ import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { useMember } from "@/hooks/store/use-member";
 
 type TCommentBlock = {
   comment: TIssueComment;

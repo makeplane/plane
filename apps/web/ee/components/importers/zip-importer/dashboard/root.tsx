@@ -119,14 +119,18 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
                           <td className="p-3 whitespace-nowrap">
                             {job?.config?.fileName
                               ? job.config.fileName.replace(/\.zip$/i, "").substring(0, 40) +
-                              (job.config.fileName.length > 40 ? "..." : "")
+                                (job.config.fileName.length > 40 ? "..." : "")
                               : "---"}
                           </td>
                           <td className="p-3 whitespace-nowrap text-center">
                             <div className="flex items-center gap-2">
                               <SyncJobStatus status={job?.status as TJobStatus} />
                               {job?.config?.metadata?.rootNodeUrl && (
-                                <Link href={job?.config?.metadata?.rootNodeUrl} target="_blank" rel="noopener noreferrer">
+                                <Link
+                                  href={job?.config?.metadata?.rootNodeUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
                                   <ExternalLink className="h-3 w-3 flex-shrink-0 text-custom-primary-100" />
                                 </Link>
                               )}

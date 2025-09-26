@@ -37,23 +37,26 @@ export enum EDocImporterDestinationType {
   TEAMSPACE = "teamspace",
 }
 
-type TDocImporterDestination = {
-  type: EDocImporterDestinationType.WIKI;
-} | {
-  type: EDocImporterDestinationType.PROJECT;
-  project_id: string;
-  project_name: string;
-} | {
-  type: EDocImporterDestinationType.TEAMSPACE;
-  teamspace_id: string;
-  teamspace_name: string;
-}
+type TDocImporterDestination =
+  | {
+      type: EDocImporterDestinationType.WIKI;
+    }
+  | {
+      type: EDocImporterDestinationType.PROJECT;
+      project_id: string;
+      project_name: string;
+    }
+  | {
+      type: EDocImporterDestinationType.TEAMSPACE;
+      teamspace_id: string;
+      teamspace_name: string;
+    };
 
 export type TDocImporterJobConfig = {
   fileId: string;
   fileName: string;
   metadata?: {
     rootNodeUrl?: string;
-  }
+  };
   destination: TDocImporterDestination;
-}
+};

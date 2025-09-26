@@ -6,7 +6,6 @@ import { TInitiativeGroupByOptions } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 
-
 // local imports
 import { TInitiativeGroup } from "../utils";
 import { GroupHeader } from "./group-header";

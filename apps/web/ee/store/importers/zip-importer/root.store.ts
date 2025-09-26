@@ -125,7 +125,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   // Noop object for auth, required to use the base dashboard component
   auth = {
     currentAuth: { isAuthenticated: true, sourceTokenInvalid: false },
-    deactivateAuth: async () => { },
+    deactivateAuth: async () => {},
     apiTokenVerification: async () => ({
       message: "Token is valid",
     }),
@@ -373,7 +373,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
         ...this.configData,
         fileName: options?.fileName || "",
         fileId: fileKey,
-      }
+      };
 
       await this.zipImporterService.startImport(workspace.id, user.id, this.configData);
 
