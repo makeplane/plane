@@ -17,9 +17,10 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
 
   const { t } = useTranslation();
 
-  const isFeatureEnabled = useFlag(workspaceSlug, provider.flag, false);
+  const isFeatureEnabled = useFlag(workspaceSlug, provider.flag);
+  const importerUnderFlags = ["clickup", "notion", "confluence"];
 
-  if (!isFeatureEnabled) {
+  if (!isFeatureEnabled && importerUnderFlags.includes(provider.key)) {
     return null;
   }
 
