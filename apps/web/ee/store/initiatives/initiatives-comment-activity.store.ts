@@ -1,8 +1,4 @@
-import { find, pull, set } from "lodash";
-import concat from "lodash/concat";
-import sortBy from "lodash/sortBy";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, sortBy, uniq, update, find, pull, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // PLane-web
@@ -342,25 +338,21 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
     userId: string,
     reactionEmoji: string
   ): Promise<void> => {
-    try {
-      const userReactions = this.commentReactionsByUser(commentId, userId);
-      const currentReaction = find(userReactions, { actor: userId, reaction: reactionEmoji });
+    const userReactions = this.commentReactionsByUser(commentId, userId);
+    const currentReaction = find(userReactions, { actor: userId, reaction: reactionEmoji });
 
-      if (currentReaction && currentReaction.id) {
-        runInAction(() => {
-          pull(this.commentReactions[commentId][reactionEmoji], currentReaction.id);
-          delete this.commentReactionMap[reactionEmoji];
-        });
-      }
-
-      await this.initiativeStore.initiativeService.deleteInitiativeCommentReaction(
-        workspaceSlug,
-        initiativeId,
-        commentId,
-        reactionEmoji
-      );
-    } catch (error) {
-      throw error;
+    if (currentReaction && currentReaction.id) {
+      runInAction(() => {
+        pull(this.commentReactions[commentId][reactionEmoji], currentReaction.id);
+        delete this.commentReactionMap[reactionEmoji];
+      });
     }
+
+    await this.initiativeStore.initiativeService.deleteInitiativeCommentReaction(
+      workspaceSlug,
+      initiativeId,
+      commentId,
+      reactionEmoji
+    );
   };
 }

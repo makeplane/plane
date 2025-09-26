@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
-import uniq from "lodash/uniq";
+import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports

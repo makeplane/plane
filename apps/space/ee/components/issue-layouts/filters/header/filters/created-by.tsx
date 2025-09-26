@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // hooks
 import { Avatar, Loader } from "@plane/ui";

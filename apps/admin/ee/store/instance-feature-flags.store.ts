@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { InstanceFeatureFlagService } from "@plane/services";

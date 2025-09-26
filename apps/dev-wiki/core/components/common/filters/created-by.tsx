@@ -1,14 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
 import { Avatar, Loader } from "@plane/ui";
-// components
-// import { FilterHeader, FilterOption } from "@/components/issues";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 

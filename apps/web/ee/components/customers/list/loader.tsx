@@ -1,5 +1,5 @@
 import React from "react";
-import { range } from "lodash";
+import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
 export const CustomerLoader = () => (

@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane packages imports

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";

@@ -1,9 +1,5 @@
 import { useState } from "react";
-import cloneDeep from "lodash/cloneDeep";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import omitBy from "lodash/omitBy";
-import uniqBy from "lodash/uniqBy";
+import { isEmpty, cloneDeep, omitBy, uniqBy, isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";

@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable } from "mobx";
 // Store
 import { computedFn } from "mobx-utils";

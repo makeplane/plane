@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { EAutomationNodeType, TAutomationNode, TAutomationNodeConfig, TAutomationNodeHandlerName } from "@plane/types";

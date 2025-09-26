@@ -1,10 +1,5 @@
-/* eslint-disable no-useless-catch */
-
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import update from "lodash/update";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { isEmpty, orderBy, set, update } from "lodash-es";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
 import { convertToEpoch } from "@plane/utils";

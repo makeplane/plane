@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";

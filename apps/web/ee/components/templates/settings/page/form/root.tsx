@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports

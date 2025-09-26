@@ -1,5 +1,5 @@
 import { format, startOfToday } from "date-fns";
-import { isEmpty, orderBy, uniqBy } from "lodash";
+import { isEmpty, orderBy, uniqBy } from "lodash-es";
 import { EEstimateSystem, ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
 import { findTotalDaysInRange, generateDateArray } from "@plane/utils";
 

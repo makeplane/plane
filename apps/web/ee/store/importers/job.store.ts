@@ -1,7 +1,7 @@
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
+import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_JOB_STATUS, JobService, TImporterKeys, TJobConfigResponse } from "@plane/etl/core";
 import { TImportJob } from "@plane/types";

@@ -1,5 +1,5 @@
 // helpers
-import update from "lodash/update";
+import { update } from "lodash-es";
 import { action, makeObservable, observable, runInAction, set } from "mobx";
 import { computedFn } from "mobx-utils";
 // types

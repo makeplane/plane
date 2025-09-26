@@ -1,12 +1,11 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
+import { concat, set } from "lodash-es";
 import { makeObservable, observable, runInAction } from "mobx";
-// services
+// plane imports
 import { groupReactions } from "@plane/utils";
+// services
 import { ProjectReactionService } from "@/plane-web/services/project/project_reaction.service";
 // types
 import { TProjectReaction } from "@/plane-web/types";
-// helpers
 
 export interface IProjectReactionStore {
   projectReactions: Record<string, TProjectReaction[]>;

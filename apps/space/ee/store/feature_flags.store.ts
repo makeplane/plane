@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";

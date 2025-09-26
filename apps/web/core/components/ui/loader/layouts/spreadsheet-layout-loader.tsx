@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 import { Row } from "@plane/ui";
 import { getRandomLength } from "../utils";
 

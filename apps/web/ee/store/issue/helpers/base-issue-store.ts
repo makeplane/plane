@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { TIssue } from "@plane/types";
 import { getIssueIds } from "@/store/issue/helpers/base-issues-utils";
 

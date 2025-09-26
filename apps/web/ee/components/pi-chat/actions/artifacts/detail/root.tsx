@@ -1,4 +1,4 @@
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Briefcase, ExternalLink } from "lucide-react";

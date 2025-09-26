@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react";
-import capitalize from "lodash/capitalize";
+import { capitalize } from "lodash-es";
 import { Check, ChevronDown } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";

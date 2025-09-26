@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, runInAction } from "mobx";
 import { EViewAccess, IWorkspaceView } from "@plane/types";
 import {

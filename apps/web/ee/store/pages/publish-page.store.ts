@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services

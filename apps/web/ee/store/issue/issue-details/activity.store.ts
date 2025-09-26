@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports

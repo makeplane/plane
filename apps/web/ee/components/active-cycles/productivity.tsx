@@ -1,8 +1,9 @@
 import { FC, Fragment, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { ICycle, TCycleEstimateType, TCyclePlotType } from "@plane/types";
+// plane imports
+import { ICycle, TCycleEstimateType } from "@plane/types";
 import { CustomSelect, Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";

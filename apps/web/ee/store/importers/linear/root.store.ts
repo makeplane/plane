@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import update from "lodash/update";
+import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { LinearConfig } from "@plane/etl/linear";

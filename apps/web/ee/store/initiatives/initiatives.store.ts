@@ -1,6 +1,4 @@
-import clone from "lodash/clone";
-import orderBy from "lodash/orderBy";
-import update from "lodash/update";
+import { clone, orderBy, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

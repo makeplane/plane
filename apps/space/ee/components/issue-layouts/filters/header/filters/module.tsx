@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { DiceIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
+// components
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
+// hooks
 import { useModule } from "@/hooks/store/use-module";
-// ui
 
 type Props = {
   appliedFilters: string[] | null;

@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types

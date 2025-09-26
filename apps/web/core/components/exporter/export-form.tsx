@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { intersection } from "lodash";
+import { intersection } from "lodash-es";
 import { Controller, useForm } from "react-hook-form";
 import {
   EUserPermissions,

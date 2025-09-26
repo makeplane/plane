@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AtSign } from "lucide-react";

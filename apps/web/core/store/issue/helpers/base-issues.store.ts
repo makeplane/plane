@@ -1,14 +1,4 @@
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import get from "lodash/get";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import orderBy from "lodash/orderBy";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants

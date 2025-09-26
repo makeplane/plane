@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";

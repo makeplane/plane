@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import difference from "lodash/difference";
-import xor from "lodash/xor";
+import { difference, xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";

@@ -2,14 +2,14 @@
 
 import { FC, useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { StateConfig, AsanaSection } from "@plane/etl/asana";
 import { useTranslation } from "@plane/i18n";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 // asana types
 // plane web components
 import { MapStatesSelection } from "@/plane-web/components/importers/asana";

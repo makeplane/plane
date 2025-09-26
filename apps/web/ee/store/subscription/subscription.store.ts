@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";

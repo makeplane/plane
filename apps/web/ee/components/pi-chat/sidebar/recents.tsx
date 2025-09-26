@@ -1,6 +1,6 @@
 "use-client";
 
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useParams } from "next/navigation";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";

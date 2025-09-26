@@ -1,9 +1,4 @@
-/* eslint-disable no-useless-catch */
-
-import cloneDeep from "lodash/cloneDeep";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { cloneDeep, orderBy, set, unset } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web constants

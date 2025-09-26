@@ -1,9 +1,4 @@
-import concat from "lodash/concat";
-import get from "lodash/get";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { orderBy, get, set, update, uniq, concat } from "lodash-es";
 import { action, autorun, makeObservable, observable, reaction, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

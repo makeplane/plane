@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { INITIATIVE_DEFAULT_DISPLAY_FILTERS } from "@plane/constants";

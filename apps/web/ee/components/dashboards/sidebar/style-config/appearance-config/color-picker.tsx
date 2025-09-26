@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 // plane imports
 import { Input } from "@plane/ui";
 // local components

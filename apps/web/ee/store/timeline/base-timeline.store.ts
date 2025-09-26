@@ -1,22 +1,19 @@
-import flatten from "lodash/flatten";
-import get from "lodash/get";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
+import { flatten, get, set, uniq } from "lodash-es";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-//
+// plane imports
 import { EGanttBlockType, IBlockUpdateDependencyData, TGanttBlockGroup } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
+// components
 import {
   BaseTimeLineStore as ExtendableTimelineStore,
   IBaseTimelineStore as IExtendableTimelineStore,
 } from "@/ce/store/timeline/base-timeline.store";
-// components
 import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
-// helpers
 // Plane-web
 import { EDependencyPosition } from "@/plane-web/constants";
 import { DependencyDraggingDetails, Relation } from "@/plane-web/types";
+// local
 import { RootStore } from "../root.store";
 import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOfBlock, getRelationType } from "./utils";
 

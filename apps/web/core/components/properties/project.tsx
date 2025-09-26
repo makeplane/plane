@@ -1,4 +1,4 @@
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { BriefcaseBusiness } from "lucide-react";
 import { cn } from "@plane/propel/utils";

@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";

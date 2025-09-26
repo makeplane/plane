@@ -1,8 +1,4 @@
-import includes from "lodash/includes";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import reverse from "lodash/reverse";
-import sortBy from "lodash/sortBy";
+import { includes, isEmpty, orderBy, reverse, sortBy } from "lodash-es";
 // plane web constants
 import { storage } from "@/lib/local-storage";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";

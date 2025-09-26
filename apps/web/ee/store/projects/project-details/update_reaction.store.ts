@@ -1,10 +1,8 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
+import { concat, set } from "lodash-es";
 import { makeObservable, observable, runInAction } from "mobx";
-// services
-// types
-// helpers
+// plane imports
 import { groupReactions } from "@plane/utils";
+// helpers
 import { ProjectUpdateReactionService } from "@/plane-web/services/project/project_update_reaction.service";
 import { TProjectUpdateReaction } from "@/plane-web/types";
 

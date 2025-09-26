@@ -1,6 +1,6 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
+// plane imports
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { TServiceAuthConfiguration } from "@plane/etl/core";
 import { LinearAuthState, LinearPATAuthState } from "@plane/etl/linear";

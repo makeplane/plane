@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
-import isEqual from "lodash/isEqual";
-import pick from "lodash/pick";
+import { pick, isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { type Layout, Layouts, Responsive, WidthProvider } from "react-grid-layout";
 // plane imports

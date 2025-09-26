@@ -1,11 +1,12 @@
 "use client";
 
 import { FC } from "react";
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { TNotification, TNotificationIssueLite } from "@plane/types";
 import { convertToEpoch } from "@plane/utils";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { NotificationPreviewActivity } from "./preview-activity";
+
 export type TNotificationCardPreview = {
   notificationList: TNotification[];
   workspaceId: string;
@@ -13,6 +14,7 @@ export type TNotificationCardPreview = {
   projectId: string;
   issueData: TNotificationIssueLite;
 };
+
 export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => {
   const { notificationList, workspaceId, workspaceSlug, projectId, issueData } = props;
   const unreadCount = notificationList.filter((e) => !e.read_at).length;

@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web root store
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";

@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import capitalize from "lodash/capitalize";
+import { capitalize } from "lodash-es";
 import { observer } from "mobx-react";
 import { ChevronLeft, MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";

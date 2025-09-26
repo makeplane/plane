@@ -46,7 +46,6 @@
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",
-    "lodash": "catalog:",
     "morgan": "1.10.1",
     "pino-http": "^10.3.0",
     "pino-pretty": "^11.2.2",

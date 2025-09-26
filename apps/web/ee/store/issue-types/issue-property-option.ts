@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
 import { TLogoProps, TIssuePropertyOption, IIssuePropertyOption } from "@plane/types";

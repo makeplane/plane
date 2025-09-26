@@ -2,7 +2,7 @@
 
 import { FC, useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 

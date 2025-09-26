@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import groupBy from "lodash/groupBy";
-import orderBy from "lodash/orderBy";
+import { groupBy, orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports

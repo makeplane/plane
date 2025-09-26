@@ -1,4 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash-es";
 import { toJS } from "mobx";
 // plane imports
 import { DEFAULT_FILTER_EXPRESSION_OPTIONS, TExpressionOptions } from "@plane/constants";

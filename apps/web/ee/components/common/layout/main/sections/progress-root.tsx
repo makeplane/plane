@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 // constants
 import { STATE_ANALYTICS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

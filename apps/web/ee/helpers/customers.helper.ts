@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { TCustomerPayload, TCustomerRequest } from "@plane/types";
 
 export function getChangedCustomerFields(

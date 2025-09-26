@@ -1,4 +1,4 @@
-import { isEmpty, size } from "lodash";
+import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";

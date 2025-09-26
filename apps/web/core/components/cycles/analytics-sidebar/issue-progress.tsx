@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useMemo } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";

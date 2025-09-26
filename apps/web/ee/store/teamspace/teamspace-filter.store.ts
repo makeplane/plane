@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction, reaction } from "mobx";
 // constants
 import { ETeamspaceScope } from "@plane/constants";

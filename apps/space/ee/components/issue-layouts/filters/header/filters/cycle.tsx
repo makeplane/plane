@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
+// plane imports
 import { CycleGroupIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
-// components
 import { Loader } from "@plane/ui";
+// components
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useCycle } from "@/hooks/store/use-cycle";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";

@@ -1,12 +1,10 @@
-import concat from "lodash/concat";
-import remove from "lodash/remove";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { remove, concat, uniq, update, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import { CustomerRequestsService, CustomerService } from "@plane/services";
 import { TCustomerRequest, TCustomerRequestAttachment, TCustomerWorkItem, TIssue } from "@plane/types";
+// types
 import { RootStore } from "../root.store";
 import { ICustomersStore } from "./customers.store";
 

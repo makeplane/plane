@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 import { EViewAccess, IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
 import { ViewService } from "@/plane-web/services/project/view.service";

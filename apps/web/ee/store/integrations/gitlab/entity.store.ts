@@ -1,7 +1,6 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
@@ -10,7 +9,6 @@ import { TGitlabEntityConnection } from "@plane/types";
 import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { IGitlabStore } from "@/plane-web/store/integrations";
-// plane web types
 
 export interface IGitlabEntityConnectionStore {
   // store instances

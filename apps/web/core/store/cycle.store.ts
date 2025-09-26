@@ -1,7 +1,5 @@
 import { isPast, isToday } from "date-fns";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { sortBy, set, isEmpty } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types

@@ -1,5 +1,4 @@
-import isNil from "lodash/isNil";
-import set from "lodash/set";
+import { isNil, set } from "lodash-es";
 // plane imports
 import { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types";
 // components

@@ -1,7 +1,4 @@
-/* eslint-disable no-useless-catch */
-
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 // types
 import {
@@ -65,25 +62,21 @@ export class Estimate extends CeEstimate implements IEstimate {
     projectId: string,
     payload: TEstimatePointsObject[]
   ): Promise<IEstimateType | undefined> => {
-    try {
-      if (!this.id || !payload) return;
+    if (!this.id || !payload) return;
 
-      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
-        estimate_points: payload,
-      });
-      runInAction(() => {
-        if (estimate?.points) {
-          estimate?.points.map((estimatePoint) => {
-            if (estimatePoint.id)
-              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-          });
-        }
-      });
+    const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, {
+      estimate_points: payload,
+    });
+    runInAction(() => {
+      if (estimate?.points) {
+        estimate?.points.map((estimatePoint) => {
+          if (estimatePoint.id)
+            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+        });
+      }
+    });
 
-      return estimate;
-    } catch (error) {
-      throw error;
-    }
+    return estimate;
   };
 
   /**
@@ -98,30 +91,26 @@ export class Estimate extends CeEstimate implements IEstimate {
     projectId: string,
     payload: IEstimateFormData
   ): Promise<IEstimateType | undefined> => {
-    try {
-      if (!this.id || !payload) return;
+    if (!this.id || !payload) return;
 
-      const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, payload);
-      if (estimate) {
-        runInAction(() => {
-          this.name = estimate?.name;
-          this.type = estimate?.type;
-          if (estimate?.points) {
-            estimate?.points.map((estimatePoint) => {
-              if (estimatePoint.id)
-                this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
-                  key: estimatePoint.key,
-                  value: estimatePoint.value,
-                });
-            });
-          }
-        });
-      }
-
-      return estimate;
-    } catch (error) {
-      throw error;
+    const estimate = await estimateService.updateEstimate(workspaceSlug, projectId, this.id, payload);
+    if (estimate) {
+      runInAction(() => {
+        this.name = estimate?.name;
+        this.type = estimate?.type;
+        if (estimate?.points) {
+          estimate?.points.map((estimatePoint) => {
+            if (estimatePoint.id)
+              this.estimatePoints?.[estimatePoint.id]?.updateEstimatePointObject({
+                key: estimatePoint.key,
+                value: estimatePoint.value,
+              });
+          });
+        }
+      });
     }
+
+    return estimate;
   };
 
   /**
@@ -138,41 +127,37 @@ export class Estimate extends CeEstimate implements IEstimate {
     estimatePointId: string,
     newEstimatePointId: string | undefined
   ): Promise<IEstimatePointType[] | undefined> => {
-    try {
-      if (!this.id) return;
+    if (!this.id) return;
 
-      const deleteEstimatePoint = await estimateService.removeEstimatePoint(
-        workspaceSlug,
-        projectId,
-        this.id,
-        estimatePointId,
-        newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
-      );
+    const deleteEstimatePoint = await estimateService.removeEstimatePoint(
+      workspaceSlug,
+      projectId,
+      this.id,
+      estimatePointId,
+      newEstimatePointId ? { new_estimate_id: newEstimatePointId } : undefined
+    );
 
-      const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
-      if (currentIssues) {
-        currentIssues.map((issue) => {
-          if (issue.estimate_point === estimatePointId) {
-            this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
-          }
-        });
-      }
-
-      runInAction(() => {
-        unset(this.estimatePoints, [estimatePointId]);
+    const currentIssues = Object.values(this.store.issue.issues.issuesMap || {});
+    if (currentIssues) {
+      currentIssues.map((issue) => {
+        if (issue.estimate_point === estimatePointId) {
+          this.store.issue.issues.updateIssue(issue.id, { estimate_point: newEstimatePointId });
+        }
       });
-      if (deleteEstimatePoint) {
-        runInAction(() => {
-          deleteEstimatePoint.map((estimatePoint) => {
-            if (estimatePoint.id)
-              set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-          });
-        });
-      }
-
-      return deleteEstimatePoint;
-    } catch (error) {
-      throw error;
     }
+
+    runInAction(() => {
+      unset(this.estimatePoints, [estimatePointId]);
+    });
+    if (deleteEstimatePoint) {
+      runInAction(() => {
+        deleteEstimatePoint.map((estimatePoint) => {
+          if (estimatePoint.id)
+            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+        });
+      });
+    }
+
+    return deleteEstimatePoint;
   };
 }

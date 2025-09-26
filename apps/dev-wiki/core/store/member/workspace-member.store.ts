@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { sortBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -12,14 +11,13 @@ import { WorkspaceService } from "@/plane-web/services/workspace.service";
 import { IRouterStore } from "@/store/router.store";
 import { IUserStore } from "@/store/user";
 // store
-<<<<<<<< HEAD:apps/web/core/store/member/workspace/workspace-member.store.ts
+
 import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
 import { WorkspaceMemberFiltersStore, IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
-========
+
 import { CoreRootStore } from "../root.store";
 import { IMemberRootStore } from ".";
->>>>>>>> f812ee2f46c4330e4c066a000ab7cfadf65cfc53:apps/dev-wiki/core/store/member/workspace-member.store.ts
 
 export interface IWorkspaceMembership {
   id: string;

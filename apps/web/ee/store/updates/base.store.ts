@@ -1,5 +1,4 @@
-import { update } from "lodash";
-import set from "lodash/set";
+import { set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { TUpdate, TUpdateComment, TUpdateReaction } from "@plane/types";

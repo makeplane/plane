@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Earth, FileText, Lock, Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";

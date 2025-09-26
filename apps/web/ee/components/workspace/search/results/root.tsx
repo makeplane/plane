@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

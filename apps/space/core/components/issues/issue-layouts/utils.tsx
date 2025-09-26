@@ -1,8 +1,8 @@
 "use client";
 
-import isNil from "lodash/isNil";
+import { isNil } from "lodash-es";
 import { ContrastIcon } from "lucide-react";
-// types
+// plane imports
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
 import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import {
@@ -12,10 +12,7 @@ import {
   IIssueDisplayProperties,
   TGroupedIssues,
 } from "@plane/types";
-// ui
 import { Avatar } from "@plane/ui";
-// components
-// constants
 // stores
 import { ICycleStore } from "@/store/cycle.store";
 import { IIssueLabelStore } from "@/store/label.store";

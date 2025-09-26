@@ -1,5 +1,5 @@
 import { differenceInDays, format, isValid } from "date-fns";
-import isNumber from "lodash/isNumber";
+import { isNumber } from "lodash-es";
 
 /**
  * This method returns a date from string of type yyyy-mm-dd

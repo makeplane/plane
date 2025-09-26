@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { E_FEATURE_FLAGS, WIDGET_CHART_MODELS_LIST } from "@plane/constants";

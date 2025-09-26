@@ -1,4 +1,4 @@
-import uniq from "lodash/uniq";
+import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { CircleMinus, PencilIcon } from "lucide-react";
 // plane imports

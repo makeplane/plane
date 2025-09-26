@@ -1,5 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
+import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { EStartOfTheWeek, IUserTheme, TUserProfile } from "@plane/types";

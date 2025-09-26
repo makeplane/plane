@@ -1,7 +1,6 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";

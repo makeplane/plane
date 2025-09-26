@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useCallback, useEffect, useState, useRef } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports

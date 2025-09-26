@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
+import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";

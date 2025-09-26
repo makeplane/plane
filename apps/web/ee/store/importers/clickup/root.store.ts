@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import update from "lodash/update";
+import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
 import { TClickUpConfig } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";

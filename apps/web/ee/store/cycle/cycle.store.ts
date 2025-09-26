@@ -1,6 +1,5 @@
 import { format } from "date-fns";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { ICycle } from "@plane/types";

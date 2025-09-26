@@ -1,5 +1,4 @@
-import sortBy from "lodash/sortBy";
-import values from "lodash/values";
+import { sortBy, values } from "lodash-es";
 // plane imports
 import {
   IStateTransition,

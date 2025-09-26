@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";

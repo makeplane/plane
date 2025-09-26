@@ -1,5 +1,4 @@
-import { orderBy, result, uniqBy } from "lodash";
-import set from "lodash/set";
+import { set, orderBy, uniqBy } from "lodash-es";
 import { action, observable, makeObservable, runInAction, computed } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 import { IFavorite } from "@plane/types";

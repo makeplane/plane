@@ -1,4 +1,4 @@
-import update from "lodash/update";
+import { update } from "lodash-es";
 import { computedFn } from "mobx-utils";
 import { EUserProjectRoles } from "@plane/types";
 // plane imports

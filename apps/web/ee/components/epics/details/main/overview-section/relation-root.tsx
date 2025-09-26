@@ -1,6 +1,6 @@
 "use client";
 import React, { FC } from "react";
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { LayersIcon } from "lucide-react";
 import { EIssueServiceType } from "@plane/types";

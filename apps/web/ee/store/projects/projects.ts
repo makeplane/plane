@@ -1,7 +1,6 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
-import update from "lodash/update";
+import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { ProjectService } from "@/plane-web/services";

@@ -1,4 +1,4 @@
-import clone from "lodash/clone";
+import { clone } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 // types
 import {

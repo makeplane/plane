@@ -1,7 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
-import update from "lodash/update";
+import { isEqual, set, update, cloneDeep } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

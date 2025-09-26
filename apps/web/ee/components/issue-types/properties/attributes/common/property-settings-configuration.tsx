@@ -1,4 +1,4 @@
-import { get, set } from "lodash";
+import { get, set } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";

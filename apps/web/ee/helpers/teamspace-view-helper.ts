@@ -1,5 +1,4 @@
-import isNil from "lodash/isNil";
-import orderBy from "lodash/orderBy";
+import { orderBy, isNil } from "lodash-es";
 // plane constants
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 // plane types
