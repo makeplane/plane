@@ -5,12 +5,12 @@ import { ReactNode } from "react";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
-import { PagesListHeader } from "./header";
+import { OverviewListHeader } from "./header";
 
-export default function ProjectPagesListLayout({ children }: { children: ReactNode }) {
+export default function ProjectOverviewListLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <AppHeader header={<PagesListHeader />} />
+      <AppHeader header={<OverviewListHeader />} />
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );

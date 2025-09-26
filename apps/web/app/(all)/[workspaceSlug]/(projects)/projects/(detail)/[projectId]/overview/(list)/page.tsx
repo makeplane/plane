@@ -18,6 +18,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
+import { OverviewListView } from "./OverviewList";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -32,7 +33,7 @@ const ProjectPagesPage = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
-  const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Overview` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/pages" });
 
@@ -66,14 +67,9 @@ const ProjectPagesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <PagesListView
-        pageType={currentPageType()}
-        projectId={projectId.toString()}
-        storeType={EPageStoreType.PROJECT}
-        workspaceSlug={workspaceSlug.toString()}
-      >
-        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
-      </PagesListView>
+      <OverviewListView projectId={projectId.toString()} workspaceSlug={workspaceSlug.toString()}>
+        <h2>qqq</h2>
+      </OverviewListView>
     </>
   );
 });
