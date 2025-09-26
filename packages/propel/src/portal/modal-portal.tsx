@@ -89,7 +89,7 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
 
   const content = (
     <div
-      className={cn("fixed inset-0 h-full w-full overflow-y-auto", className)}
+      className={cn("absolute inset-0 h-full w-full overflow-y-auto", className)}
       style={{ zIndex: MODAL_Z_INDEX }}
       role="dialog"
     >
