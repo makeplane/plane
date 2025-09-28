@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 // components
 import { TranslationProvider } from "@plane/i18n";
