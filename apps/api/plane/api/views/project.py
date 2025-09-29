@@ -79,7 +79,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 )
                 | Q(network=2)
             )
-            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
+            .select_related("project_lead")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
