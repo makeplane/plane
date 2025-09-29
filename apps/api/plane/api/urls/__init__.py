@@ -7,6 +7,7 @@ from .intake import urlpatterns as intake_patterns
 from .member import urlpatterns as member_patterns
 from .user import urlpatterns as user_patterns
 from .asset import urlpatterns as asset_patterns
+from .customer import urlpatterns as customer_patterns
 from .issue_type import urlpatterns as issue_type_patterns
 
 # ee imports
@@ -19,6 +20,7 @@ urlpatterns = [
     *issue_patterns,
     *cycle_patterns,
     *module_patterns,
+    *customer_patterns,
     *user_patterns,
     *intake_patterns,
     *member_patterns,

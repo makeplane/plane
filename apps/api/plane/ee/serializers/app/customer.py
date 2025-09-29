@@ -22,6 +22,37 @@ class CustomerSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
 
+    def validate_name(self, value):
+        """
+        Validate that customer name is unique within the workspace.
+        """
+        if hasattr(self, "context") and "workspace_id" in self.context:
+            workspace_id = self.context["workspace_id"]
+
+            # Check if this is an update (instance exists) or create
+            if self.instance:
+                # Update case - exclude current instance from check
+                if (
+                    Customer.objects.filter(
+                        workspace_id=workspace_id, name=value, deleted_at__isnull=True
+                    )
+                    .exclude(id=self.instance.id)
+                    .exists()
+                ):
+                    raise serializers.ValidationError(
+                        "Customer with this name already exists in workspace"
+                    )
+            else:
+                # Create case - check if name exists
+                if Customer.objects.filter(
+                    workspace_id=workspace_id, name=value, deleted_at__isnull=True
+                ).exists():
+                    raise serializers.ValidationError(
+                        "Customer with this name already exists in workspace"
+                    )
+
+        return value
+
 
 class CustomerPropertySerializer(BaseSerializer):
     class Meta:
