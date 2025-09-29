@@ -16,7 +16,7 @@ from plane.utils.content_validator import (
 from .base import BaseSerializer
 
 
-class ProjectCreateSerializer(BaseSerializer):
+class  ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 
@@ -118,7 +118,7 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
 
         if (
             validated_data.get("estimate", None) is not None
-            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate")).exists()
+            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate").id).exists()
         ):
             # Check if the estimate is a estimate in the project
             raise serializers.ValidationError("Estimate should be a estimate in the project")
