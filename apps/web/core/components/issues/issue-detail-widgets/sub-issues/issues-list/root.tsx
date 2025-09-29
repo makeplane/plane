@@ -24,7 +24,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -41,7 +41,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
     projectId,
     parentIssueId,
     rootIssueId,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -116,7 +116,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             group={group}
             serviceType={issueServiceType}
-            disabled={disabled}
+            canEdit={canEdit}
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             handleIssueCrudState={handleIssueCrudState}
