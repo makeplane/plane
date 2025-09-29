@@ -418,12 +418,15 @@ LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "live/")
 LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY", "")
 
-SILO_BASE_URL = os.environ.get("SILO_BASE_URL", "")
-SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
-SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
-
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
+
+# Silo Base URL
+SILO_BASE_URL = os.environ.get("SILO_BASE_URL", None)
+if not SILO_BASE_URL:
+    SILO_BASE_URL = WEB_URL or APP_BASE_URL
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
+SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH)
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
