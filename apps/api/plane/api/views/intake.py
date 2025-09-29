@@ -308,8 +308,6 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         if intake is None and not project.intake_view:
             return Response(
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
-<<<<<<< HEAD
-=======
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -320,7 +318,6 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         if intake_settings is not None and not intake_settings.is_in_app_enabled:
             return Response(
                 {"error": "Creating intake issues is disabled"},
->>>>>>> ebeac413faf27b87803939d3aa3829b38a66e19c
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -375,12 +372,8 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
 
             # Check if state is updated then is the transition allowed
-            workflow_state_manager = WorkflowStateManager(
-                project_id=project_id, slug=slug
-            )
-            if request.data.get(
-                "state_id"
-            ) and not workflow_state_manager.validate_state_transition(
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+            if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
                 issue=issue,
                 new_state_id=request.data.get("state_id"),
                 user_id=request.user.id,
