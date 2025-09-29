@@ -63,7 +63,6 @@
     "@tiptap/react": "^3.5.3",
     "@tiptap/starter-kit": "^3.5.3",
     "@tiptap/suggestion": "^3.5.3",
-    "@tiptap/y-tiptap": "^3.0.0",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",

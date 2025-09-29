@@ -774,9 +774,6 @@ importers:
       '@tiptap/suggestion':
         specifier: ^3.5.3
         version: 3.5.3(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))(@tiptap/pm@3.5.3)
-      '@tiptap/y-tiptap':
-        specifier: ^3.0.0
-        version: 3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       emoji-regex:
         specifier: ^10.3.0
         version: 10.4.0
