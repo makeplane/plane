@@ -84,62 +84,62 @@ new_url_patterns = [
     path(
         "workspaces/<str:slug>/work-items/search/",
         IssueSearchEndpoint.as_view(http_method_names=["get"]),
-        name="issue-search",
+        name="work-item-search",
     ),
     path(
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
-        name="issue-by-identifier",
+        name="work-item-by-identifier",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/",
         IssueListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
-        name="issue",
+        name="work-item-list",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/",
         IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
-        name="issue",
+        name="work-item-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/",
         IssueLinkListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
-        name="link",
+        name="work-item-link-list",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/<uuid:pk>/",
         IssueLinkDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
-        name="link",
+        name="work-item-link-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/comments/",
         IssueCommentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
-        name="comment",
+        name="work-item-comment-list",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/comments/<uuid:pk>/",
         IssueCommentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
-        name="comment",
+        name="work-item-comment-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/activities/",
         IssueActivityListAPIEndpoint.as_view(http_method_names=["get"]),
-        name="activity",
+        name="work-item-activity-list",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/activities/<uuid:pk>/",
         IssueActivityDetailAPIEndpoint.as_view(http_method_names=["get"]),
-        name="activity",
+        name="work-item-activity-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/",
         IssueAttachmentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
-        name="attachment",
+        name="work-item-attachment-list",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
-        name="issue-attachment",
+        name="work-item-attachment-detail",
     ),
 ]
 
