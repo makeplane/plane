@@ -16,7 +16,14 @@ from oauth2_provider.models import (
 from plane.app.permissions.base import ROLE
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
 from plane.db.mixins import SoftDeleteModel, UserAuditModel
-from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember, Webhook
+from plane.db.models import (
+    BaseModel,
+    Project,
+    ProjectMember,
+    User,
+    WorkspaceMember,
+    Webhook,
+)
 from plane.db.models.user import BotTypeEnum
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
@@ -111,6 +118,20 @@ class Grant(AbstractGrant):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        related_name="oauth_grants",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    workspace_app_installation = models.ForeignKey(
+        "authentication.WorkspaceAppInstallation",
+        related_name="oauth_grants",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     class Meta(AbstractGrant.Meta):
         verbose_name = "Grant"
@@ -123,6 +144,20 @@ class AccessToken(AbstractAccessToken):
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     grant_type = models.CharField(max_length=32)
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        related_name="oauth_access_tokens",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    workspace_app_installation = models.ForeignKey(
+        "authentication.WorkspaceAppInstallation",
+        related_name="oauth_access_tokens",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     class Meta(AbstractAccessToken.Meta):
         verbose_name = "Access token"
@@ -133,6 +168,20 @@ class AccessToken(AbstractAccessToken):
 class RefreshToken(AbstractRefreshToken):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+    )
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        related_name="oauth_refresh_tokens",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    workspace_app_installation = models.ForeignKey(
+        "authentication.WorkspaceAppInstallation",
+        related_name="oauth_refresh_tokens",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     class Meta(AbstractRefreshToken.Meta):
@@ -179,7 +228,7 @@ class WorkspaceAppInstallation(BaseModel):
         FAILED = "failed"
         REAUTHORIZE = "reauthorize"
         UNINSTALLED = "uninstalled"
-    
+
     class InstallationState(models.TextChoices):
         ALLOWED = "allowed"
         NOT_ALLOWED = "not_allowed"
@@ -265,21 +314,21 @@ class WorkspaceAppInstallation(BaseModel):
             )
 
         if self.status == self.Status.INSTALLED:
-          # add this user as a project member to all the projects in the workspace using bulk_create
-          ProjectMember.objects.bulk_create(
-              [
-                  ProjectMember(
-                      workspace=self.workspace,
-                      member=self.app_bot,
-                      project=project,
-                      role=ROLE.MEMBER.value,
-                  )
-                  for project in Project.objects.filter(workspace=self.workspace)
-              ],
-              ignore_conflicts=True,
-          )
-          # create the webhook for the app installation
-          self._create_webhook()
+            # add this user as a project member to all the projects in the workspace using bulk_create
+            ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        workspace=self.workspace,
+                        member=self.app_bot,
+                        project=project,
+                        role=ROLE.MEMBER.value,
+                    )
+                    for project in Project.objects.filter(workspace=self.workspace)
+                ],
+                ignore_conflicts=True,
+            )
+            # create the webhook for the app installation
+            self._create_webhook()
         super(WorkspaceAppInstallation, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -335,28 +384,29 @@ class WorkspaceAppInstallation(BaseModel):
             super().delete(*args, **kwargs)
 
     def _create_webhook(self):
-          if self.application.webhook_url:
-              is_new_webhook = True
-              webhook = Webhook()
-              if self.webhook:
-                  webhook = self.webhook
-                  is_new_webhook = False
+        if self.application.webhook_url:
+            is_new_webhook = True
+            webhook = Webhook()
+            if self.webhook:
+                webhook = self.webhook
+                is_new_webhook = False
 
-              webhook.url = self.application.webhook_url
-              webhook.is_active = True
-              # In future, below config comes from the app installation screen
-              webhook.project = True
-              webhook.issue = True
-              webhook.module = True
-              webhook.cycle = True
-              webhook.issue_comment = True
-              webhook.workspace_id = self.workspace_id
-              webhook.created_by_id = self.installed_by_id
-              webhook.updated_by_id = self.installed_by_id
-              webhook.save(disable_auto_set_user=True)
+            webhook.url = self.application.webhook_url
+            webhook.is_active = True
+            # In future, below config comes from the app installation screen
+            webhook.project = True
+            webhook.issue = True
+            webhook.module = True
+            webhook.cycle = True
+            webhook.issue_comment = True
+            webhook.workspace_id = self.workspace_id
+            webhook.created_by_id = self.installed_by_id
+            webhook.updated_by_id = self.installed_by_id
+            webhook.save(disable_auto_set_user=True)
 
-              if is_new_webhook:
-                  self.webhook = webhook
+            if is_new_webhook:
+                self.webhook = webhook
+
 
 class ApplicationAttachment(BaseModel):
     application = models.ForeignKey(
