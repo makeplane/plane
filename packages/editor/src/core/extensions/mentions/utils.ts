@@ -18,44 +18,45 @@ export const renderMentionsDropdown =
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
 
     return {
-      onStart: (props) => {
+      onStart: ({ clientRect, editor }) => {
         if (!searchCallback) return;
-        if (!props.clientRect) return;
+        if (!clientRect) return;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
           props: {
             ...props,
             searchCallback,
           },
-          editor: props.editor,
+          editor: editor,
         });
-        props.editor.storage.utility.activeDropbarExtensions.push(CORE_EXTENSIONS.MENTION);
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
         document.body.appendChild(element);
-        updateFloatingUIFloaterPosition(props.editor, element);
+        updateFloatingUIFloaterPosition(editor, element);
       },
-      onUpdate: (props) => {
+      onUpdate: ({ clientRect, editor }) => {
         component?.updateProps(props);
-        if (!props.clientRect) return;
+        if (!clientRect) return;
         if (component?.element) {
-          updateFloatingUIFloaterPosition(props.editor, component?.element as HTMLElement);
+          updateFloatingUIFloaterPosition(editor, component?.element as HTMLElement);
         }
       },
-      onKeyDown: (props) => {
-        if (props.event.key === "Escape") {
+      onKeyDown: ({ event }) => {
+        if (event.key === "Escape") {
           component?.destroy();
           return true;
         }
 
         const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
 
-        if (navigationKeys.includes(props.event.key)) {
-          props.event?.stopPropagation();
-          return component?.ref?.onKeyDown(props);
+        if (navigationKeys.includes(event.key)) {
+          event?.stopPropagation();
+          return component?.ref?.onKeyDown({ event });
         }
-        return component?.ref?.onKeyDown(props);
+        return component?.ref?.onKeyDown({ event });
       },
-      onExit: () => {
+      onExit: ({ editor }) => {
+        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         component?.element.remove();
         component?.destroy();
       },
