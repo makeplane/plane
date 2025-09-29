@@ -1,6 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
@@ -21,7 +22,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
       if (!transactions.some((tr) => tr.docChanged)) return null;
 
       newState.doc.descendants((node) => {
-        const nodeType = node.type.name;
+        const nodeType = node.type.name as CORE_EXTENSIONS;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
           if (newFileSources[nodeType]) {
@@ -40,7 +41,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
 
         // iterate through all the nodes in the old state
         oldState.doc.descendants((node) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as CORE_EXTENSIONS;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
           if (!isAValidNode) return;
@@ -51,12 +52,13 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         });
 
         removedFiles.forEach(async (node) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as CORE_EXTENSIONS;
           const src = node.attrs.src;
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
           if (!nodeFileSetDetails || !src) return;
           try {
-            editor.storage[nodeType][nodeFileSetDetails.fileSetName]?.set(src, true);
+            // @ts-expect-error add proper types for storage
+            editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName]?.set(src, true);
             // update assets list storage value
             editor.commands.updateAssetsList?.({
               idToRemove: node.attrs.id,

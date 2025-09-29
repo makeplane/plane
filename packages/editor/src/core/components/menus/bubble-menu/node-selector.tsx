@@ -47,7 +47,7 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
     TodoListItem(editor),
     QuoteItem(editor),
     CodeItem(editor),
-  ];
+  ] as EditorMenuItem<TEditorCommands>[];
 
   const activeItem = items.filter((item) => item.isActive()).pop() ?? {
     name: "Multiple",

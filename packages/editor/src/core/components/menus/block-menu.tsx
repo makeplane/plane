@@ -14,9 +14,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// types
+import type { IEditorProps } from "@/types";
 
 type Props = {
+  disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
 };
 
 export const BlockMenu = (props: Props) => {

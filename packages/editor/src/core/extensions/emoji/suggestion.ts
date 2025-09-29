@@ -1,10 +1,10 @@
 import type { EmojiOptions } from "@tiptap/extension-emoji";
-import { ReactRenderer, Editor } from "@tiptap/react";
-import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
+import { ReactRenderer, type Editor } from "@tiptap/react";
+import type { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
-import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
+import { type EmojiItem, EmojiList, type EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
@@ -24,7 +24,7 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
 
     if (query.trim() === "") {
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        filteredEmojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+        filteredEmojis.find((emoji) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);

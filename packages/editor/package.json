@@ -23,7 +23,7 @@
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc && tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 30",
     "check:types": "tsc --noEmit",
@@ -87,6 +87,7 @@
     "@types/node": "18.15.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

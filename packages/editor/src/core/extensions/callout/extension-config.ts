@@ -4,11 +4,10 @@ import { Node as NodeType } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
-import { EAttributeNames, TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames, TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES } from "./utils";
 
-// Extend Tiptap's Commands interface
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     [CORE_EXTENSIONS.CALLOUT]: {
@@ -17,7 +16,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export const CustomCalloutExtensionConfig = Node.create({
+export const CustomCalloutExtensionConfig = Node.create<unknown, unknown>({
   name: CORE_EXTENSIONS.CALLOUT,
   group: "block",
   content: "block+",
@@ -25,13 +24,17 @@ export const CustomCalloutExtensionConfig = Node.create({
   addAttributes() {
     const attributes = {
       // Reduce instead of map to accumulate the attributes directly into an object
-      ...Object.values(EAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(ECalloutAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<ECalloutAttributeNames, { default: TCalloutBlockAttributes[ECalloutAttributeNames] }>
+      ),
     };
+
     return attributes;
   },
 
@@ -62,7 +65,7 @@ export const CustomCalloutExtensionConfig = Node.create({
   parseHTML() {
     return [
       {
-        tag: `div[${EAttributeNames.BLOCK_TYPE}="${DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[EAttributeNames.BLOCK_TYPE]}"]`,
+        tag: `div[${ECalloutAttributeNames.BLOCK_TYPE}="${DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[ECalloutAttributeNames.BLOCK_TYPE]}"]`,
       },
     ];
   },

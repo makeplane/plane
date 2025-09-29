@@ -1,4 +1,5 @@
-import { type Editor, isNodeSelection, useEditorState } from "@tiptap/react";
+import { type Editor, isNodeSelection } from "@tiptap/core";
+import { useEditorState } from "@tiptap/react";
 import { BubbleMenu, type BubbleMenuProps } from "@tiptap/react/menus";
 import { FC, useEffect, useState, useRef } from "react";
 // plane utils
@@ -120,16 +121,15 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
     },
     options: {
       onShow: () => {
-        editor.storage.link.isBubbleMenuOpen = true;
+        if (editor.storage.link) {
+          editor.storage.link.isBubbleMenuOpen = true;
+        }
         editor.commands.addActiveDropbarExtension("bubble-menu");
       },
       onHide: () => {
-        editor.storage.link.isBubbleMenuOpen = false;
-        setTimeout(() => {
-          editor.commands.removeActiveDropbarExtension("bubble-menu");
-        }, 0);
-      },
-      onDestroy: () => {
+        if (editor.storage.link) {
+          editor.storage.link.isBubbleMenuOpen = false;
+        }
         setTimeout(() => {
           editor.commands.removeActiveDropbarExtension("bubble-menu");
         }, 0);

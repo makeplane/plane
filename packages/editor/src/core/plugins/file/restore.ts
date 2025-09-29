@@ -1,5 +1,5 @@
-import { Editor } from "@tiptap/core";
-import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { Editor } from "@tiptap/core";
+import { type EditorState, Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -23,7 +23,7 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         [key: string]: Set<string> | undefined;
       } = {};
       oldState.doc.descendants((node) => {
-        const nodeType = node.type.name;
+        const nodeType = node.type.name as CORE_EXTENSIONS;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
           if (oldFileSources[nodeType]) {
@@ -38,7 +38,7 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         const addedFiles: TFileNode[] = [];
 
         newState.doc.descendants((node, pos) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as CORE_EXTENSIONS;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
           if (!isAValidNode) return;
@@ -58,9 +58,11 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         });
 
         addedFiles.forEach(async (node) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as CORE_EXTENSIONS;
           const src = node.attrs.src;
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+          if (!nodeFileSetDetails) return;
+          // @ts-expect-error add proper types for storage
           const extensionFileSetStorage = editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName];
           const wasDeleted = extensionFileSetStorage?.get(src);
           if (!nodeFileSetDetails || !src) return;
