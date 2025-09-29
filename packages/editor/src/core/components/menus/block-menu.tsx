@@ -128,10 +128,10 @@ export const BlockMenu = (props: Props) => {
       key: "delete",
       label: "Delete",
       onClick: (e) => {
-        editor.chain().deleteSelection().focus().run();
-        setIsOpen(false);
         e.preventDefault();
         e.stopPropagation();
+        editor.chain().deleteSelection().focus().run();
+        setIsOpen(false);
       },
     },
     {
