@@ -17,12 +17,12 @@ export class PlaneOAuthStrategy implements OAuthStrategy {
     return planeOAuthService.getPlaneOAuthRedirectUrl(this.clientId, this.clientSecret, JSON.stringify(state));
   }
 
-  getUserAuthUrl(state: OAuthState): string {
+  getUserAuthUrl(_state: OAuthState): string {
     throw new Error("Method not implemented.");
   }
 
   async handleCallback(
-    code: string,
+    _code: string,
     state: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     const appInstallationId = state;
@@ -66,38 +66,38 @@ export class PlaneOAuthStrategy implements OAuthStrategy {
   }
 
   handleUserCallback(
-    code: string,
-    state: string
+    _code: string,
+    _state: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
 
   disconnectOrganization(
-    wsConnection: TWorkspaceConnection,
-    wsCredential: TWorkspaceCredential,
-    entityConnections?: TWorkspaceEntityConnection[]
+    _wsConnection: TWorkspaceConnection,
+    _wsCredential: TWorkspaceCredential,
+    _entityConnections?: TWorkspaceEntityConnection[]
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 
-  disconnectUser(wsConnection: TWorkspaceConnection, wsCredential: TWorkspaceCredential): Promise<boolean> {
+  disconnectUser(_wsConnection: TWorkspaceConnection, _wsCredential: TWorkspaceCredential): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 
   async handleRedirectToPlaneOAuth(
-    code: string,
-    state: string
+    _code: string,
+    _state: string
   ): Promise<{ stateBuffer: string; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
 
   async handlePlaneOAuthCallback(
-    encodedIntegrationState: string
+    _encodedIntegrationState: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
 
-  async generateConfigKey(data: object, workspaceId: string): Promise<string> {
+  async generateConfigKey(_data: object, _workspaceId: string): Promise<string> {
     throw new Error("Method not implemented.");
   }
 }

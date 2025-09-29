@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Post } from "@plane/decorators";
 import { SentryWebhookHeaders, SentryWebhookPayload } from "@plane/etl/sentry";
 import { ExIssue, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Post } from "@/lib";
+import { EnsureEnabled } from "@/lib/decorators";
 import { integrationTaskManager } from "@/worker";
 
 @Controller("/api/sentry")

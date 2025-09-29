@@ -1,5 +1,5 @@
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { MQConsumer } from "./consumer";
 import { MQProducer } from "./producer";
 import { TMQEntityOptions } from "./types";

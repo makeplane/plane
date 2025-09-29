@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
+import { logger } from "@plane/logger";
 import { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getTokenCacheKey } from "@/helpers/cache-keys";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
-import { logger } from "@/logger";
 import {
   PlaneOAuthTokenOptions,
   PlaneOAuthTokenResponse,

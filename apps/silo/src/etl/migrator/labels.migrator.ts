@@ -1,7 +1,7 @@
+import { logger } from "@plane/logger";
 import { ExIssueLabel, Client as PlaneClient } from "@plane/sdk";
 import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
-import { logger } from "@/logger";
 
 /* ----------------------------- Label Creation Utilities ----------------------------- */
 export const createLabelsForIssues = async (

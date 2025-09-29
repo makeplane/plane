@@ -1,7 +1,7 @@
+import { logger } from "@plane/logger";
 import DB from "@/db/client";
 import { env } from "@/env";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
-import { logger } from "./logger";
 import Server from "./server";
 import { initializeS3Client, Store } from "./worker/base";
 

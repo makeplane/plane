@@ -1,6 +1,6 @@
 import pg from "pg";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { logger } from "@/logger";
 
 /**
  * Database class

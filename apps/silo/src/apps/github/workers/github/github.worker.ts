@@ -1,6 +1,7 @@
 import { GithubWebhookPayload } from "@plane/etl/github";
+import { logger } from "@plane/logger";
 import { CONSTANTS } from "@/helpers/constants";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleInstallationEvents } from "./event-handlers/installation.handler";

@@ -1,11 +1,11 @@
 import axios from "axios";
-import { parse, HTMLElement } from "node-html-parser";
+import { HTMLElement, parse } from "node-html-parser";
 import { validate as uuidValidate } from "uuid";
+
+import { logger } from "@plane/logger";
 import { Client as PlaneClient } from "@plane/sdk";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { getValidCredentials } from "./credential";
-
 export const removeSpanAroundImg = (htmlContent: string): string => {
   // Parse the HTML content
   const root = parse(htmlContent);

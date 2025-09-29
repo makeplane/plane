@@ -1,6 +1,7 @@
 import { AxiosError, RawAxiosResponseHeaders } from "axios";
+import { logger } from "@plane/logger";
 import { wait } from "@/helpers/delay";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 
 export type APIRatelimitResponse = {
   error_code: number;

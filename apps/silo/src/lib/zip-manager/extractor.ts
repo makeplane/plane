@@ -1,5 +1,5 @@
 import zlib from "zlib";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 import { TZipFileNode, EZipNodeType } from "./types";
 import { ZipStream } from "./zip-stream";
 

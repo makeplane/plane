@@ -1,11 +1,16 @@
-import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { GithubService, ContentParser } from "@plane/etl/github";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
+import { ContentParser, GithubService } from "@plane/etl/github";
+import { logger } from "@plane/logger";
 import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
-import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import {
+  E_INTEGRATION_KEYS,
+  TGithubEntityConnection,
+  TGithubWorkspaceConnection,
+  TWorkspaceCredential,
+} from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
@@ -19,9 +24,11 @@ export const handleIssueCommentWebhook = async (
   store: Store,
   payload: PlaneWebhookPayload
 ) => {
+  const payloadId = payload?.id ?? "";
+
   // Store a key associated with the data in the store
   // If the key is present, then we need to requeue all that task and process them again
-  if (payload && payload.id) {
+  if (payloadId) {
     const exist = await store.get(`silo:comment:${payload.id}`);
     if (exist) {
       logger.info("[PLANE][COMMENT] Event Processed Successfully, confirmed by target");

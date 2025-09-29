@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 // etl
+import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { JiraResource } from "@plane/etl/jira";
 import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
@@ -9,7 +10,7 @@ import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { createOrUpdateCredentials, getValidCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 
 @Controller("/api/jira-server")
 class JiraDataCenterController {

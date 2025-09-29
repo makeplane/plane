@@ -1,11 +1,11 @@
+import { logger } from "@plane/logger";
 import { Client as PlaneClient } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
-import { logger } from "@/logger";
 import { IGitComment, IPullRequestDetails } from "@/types/behaviours/git";
 import { PullRequestBehaviour } from "../pull-request.behaviour";
 
 // Mock dependencies
-jest.mock("@/logger");
+jest.mock("@plane/logger");
 jest.mock("@/env", () => ({
   env: {
     APP_BASE_URL: "https://app.plane.so",
@@ -213,7 +213,7 @@ describe("PullRequestBehaviour", () => {
 
       await behaviour["manageCommentOnPullRequest"](
         mockPR,
-        [{ reference: { identifier: "PL", sequence: 123 }, issue: { name: "Test Issue" } as any }],
+        [{ reference: { identifier: "PL", sequence: 123, isClosing: true }, issue: { name: "Test Issue" } as any }],
         []
       );
 
@@ -234,7 +234,7 @@ describe("PullRequestBehaviour", () => {
 
       await behaviour["manageCommentOnPullRequest"](
         mockPR,
-        [{ reference: { identifier: "PL", sequence: 123 }, issue: { name: "Test Issue" } as any }],
+        [{ reference: { identifier: "PL", sequence: 123, isClosing: true }, issue: { name: "Test Issue" } as any }],
         []
       );
 
@@ -266,7 +266,11 @@ describe("PullRequestBehaviour", () => {
       (mockError as any).detail = CONSTANTS.NO_PERMISSION_ERROR;
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
+      const result = await behaviour["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
 
       expect(result).toBeNull();
       expect(logger.info).toHaveBeenCalledWith(
@@ -279,7 +283,11 @@ describe("PullRequestBehaviour", () => {
       (mockError as any).status = 404;
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
+      const result = await behaviour["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
 
       expect(result).toBeNull();
       expect(logger.info).toHaveBeenCalledWith("[TEST-PROVIDER] Issue not found: PL-123");
@@ -289,7 +297,11 @@ describe("PullRequestBehaviour", () => {
       const mockError = new Error("Generic error");
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
+      const result = await behaviour["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
 
       expect(result).toBeNull();
       expect(logger.error).toHaveBeenCalledWith("[TEST-PROVIDER] Error updating issue PL-123", mockError);
@@ -306,10 +318,14 @@ describe("PullRequestBehaviour", () => {
       planeClient.issue.update.mockImplementation(() => Promise.resolve({} as any));
       planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
 
-      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
+      const result = await behaviour["updateSingleIssue"](
+        { identifier: "PL", sequence: 123, isClosing: true },
+        mockPR,
+        "MR_OPENED"
+      );
 
       expect(result).toEqual({
-        reference: { identifier: "PL", sequence: 123 },
+        reference: { identifier: "PL", sequence: 123, isClosing: true },
         issue: mockIssue,
       });
       expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith("test-workspace", "PL", 123);

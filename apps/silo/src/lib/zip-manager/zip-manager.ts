@@ -1,4 +1,4 @@
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 import { Store } from "@/worker/base";
 import {
   extractZipTableOfContents,

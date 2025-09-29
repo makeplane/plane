@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get, Post } from "@plane/decorators";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Post } from "@/lib";
+import { EnsureEnabled } from "@/lib/decorators";
 import { SentryAssetsController } from "./sentry-assets.controller";
 import { SentryAuthController } from "./sentry-auth.controller";
 import { SentryWebhookController } from "./sentry-webhook.controller";

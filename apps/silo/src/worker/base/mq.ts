@@ -1,6 +1,7 @@
 import amqp from "amqplib";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 import { TMQEntityOptions } from "./types";
 
 export class MQActorBase {

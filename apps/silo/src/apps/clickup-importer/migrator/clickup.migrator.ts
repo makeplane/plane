@@ -9,6 +9,7 @@ import {
   TClickUpTaskWithComments,
 } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS, PlaneEntities } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
@@ -16,7 +17,6 @@ import { wait } from "@/helpers/delay";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getJobCredentials, getJobData, resetJobIfStarted } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { logger } from "@/logger";
 import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
 import { MQ, Store } from "@/worker/base";

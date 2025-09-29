@@ -67,7 +67,7 @@ describe("FormUtils.getOptionsForEntity", () => {
       const result = await formUtils.getOptionsForEntity(params);
 
       expect(result).toEqual(cachedOptions);
-      expect(mockStore.get).toHaveBeenCalledWith("silo:test-session-labels");
+      expect(mockStore.get).toHaveBeenCalledWith("silo:form_options_test-workspace_test-project_labels");
       expect(mockPlaneAPIClient.labelsApi.listLabels).not.toHaveBeenCalled();
     });
 
@@ -96,7 +96,11 @@ describe("FormUtils.getOptionsForEntity", () => {
         { value: "1", label: "Bug" },
         { value: "2", label: "Feature" },
       ]);
-      expect(mockStore.set).toHaveBeenCalledWith("silo:test-session-labels", JSON.stringify(result));
+      expect(mockStore.set).toHaveBeenCalledWith(
+        "silo:form_options_test-workspace_test-project_labels",
+        JSON.stringify(result),
+        60 * 5
+      );
     });
   });
 

@@ -1,6 +1,6 @@
 import { TSlackCommandPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { CONSTANTS } from "@/helpers/constants";
-import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { convertToSlackOptions } from "../../helpers/slack-options";

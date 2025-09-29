@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
+import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { validateImporterCredentials } from "@/apps/jira-importer/helpers/controller-helpers";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

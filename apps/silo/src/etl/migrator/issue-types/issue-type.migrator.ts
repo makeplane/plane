@@ -1,8 +1,8 @@
 import { isAxiosError } from "axios";
+import { logger } from "@plane/logger";
 import { ExIssueType, Client as PlaneClient } from "@plane/sdk";
 import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
-import { logger } from "@/logger";
 
 type TCreateOrUpdateIssueTypes = {
   jobId: string;

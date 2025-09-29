@@ -1,7 +1,7 @@
 import { HTMLElement } from "node-html-parser";
 import { IParserExtension } from "@plane/etl/parser";
+import { logger } from "@plane/logger";
 import { TAssetInfo } from "@/apps/notion-importer/types";
-import { logger } from "@/logger";
 
 export interface NotionImageParserConfig {
   fileId: string; // The file ID needed for retrieving assets from cache

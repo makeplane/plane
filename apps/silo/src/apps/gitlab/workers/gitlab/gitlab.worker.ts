@@ -1,5 +1,6 @@
 import { GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";
-import { captureException, logger } from "@/logger";
+import { logger } from "@plane/logger";
+import { captureException } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleMergeRequest } from "./handlers/merge-request.handler";

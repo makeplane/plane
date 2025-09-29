@@ -6,11 +6,11 @@ import {
   pullDocuments,
   E_LinearDocsMigratorStep,
 } from "@plane/etl/linear";
+import { logger } from "@plane/logger";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { PagesMigrator } from "@/etl/migrator/pages.migrator";
 import { getJobCredentials, getJobData } from "@/helpers/job";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";

@@ -1,5 +1,5 @@
 import { ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { E_INTEGRATION_KEYS } from "@/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { replaceIssueNumber, replaceMentionedGlUsers } from "../helpers";
 import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabNote } from "../types";
 

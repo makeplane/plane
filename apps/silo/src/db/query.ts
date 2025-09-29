@@ -1,6 +1,6 @@
+import { logger } from "@plane/logger";
 import DB from "@/db/client";
 import { decryptAES } from "@/helpers/decrypt";
-import { logger } from "@/logger";
 import { TApplicationSecret } from "@/types/dbquery";
 
 // get the db instance

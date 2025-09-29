@@ -1,9 +1,9 @@
 import { FeatureFlagService, TAppKeys } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { Client as PlaneClient } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
-import { logger } from "@/logger";
 import { planeOAuthService } from "@/services/oauth/auth";
 
 /**

@@ -1,6 +1,6 @@
 import { S3Client, HeadBucketCommand, CreateBucketCommand } from "@aws-sdk/client-s3";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { logger } from "@/logger";
 
 // Where should I keep the initialisation of the S3Client?
 // Configure S3Client to use MinIO running on port 9000

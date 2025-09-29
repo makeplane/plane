@@ -1,8 +1,8 @@
 import { PageResource, PageSubType, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { ExPage } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
 import { getProjectPageUrl, getPublishedPageUrl, getWorkspacePageUrl } from "@/helpers/urls";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";

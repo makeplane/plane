@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { Controller, Get, Post, Middleware } from "@plane/decorators";
+import { E_ENTITY_CONNECTION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
   createGithubService,
@@ -12,15 +13,15 @@ import {
   GithubUserAuthState,
   GithubWebhookPayload,
 } from "@plane/etl/github";
+import { logger } from "@plane/logger";
 import { ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Middleware, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { useValidateUserAuthentication, EnsureEnabled } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";

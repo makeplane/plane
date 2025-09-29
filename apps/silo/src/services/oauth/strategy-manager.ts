@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { OAuthStrategy } from "./types";
 
 export class OAuthStrategyManager {

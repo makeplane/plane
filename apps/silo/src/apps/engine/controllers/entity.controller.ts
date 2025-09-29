@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
+import { Controller, Get, Post, Put, Delete } from "@plane/decorators";
+import { logger } from "@plane/logger";
 import { TWorkspaceEntityConnection } from "@plane/types";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

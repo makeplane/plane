@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
+import { Controller, Get, Post } from "@plane/decorators";
 import { createClickUpService } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 

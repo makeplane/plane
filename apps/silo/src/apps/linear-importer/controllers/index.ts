@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
+import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { createLinearService } from "@plane/etl/linear";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 
 @Controller("/api/linear")
 class LinearController {

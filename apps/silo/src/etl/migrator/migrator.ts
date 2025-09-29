@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { E_FEATURE_FLAGS, PlaneEntities, E_IMPORTER_KEYS } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import {
   EIssuePropertyType,
   ExCycle,
@@ -24,7 +25,6 @@ import { IMPORT_JOB_KEYS_TTL_IN_SECONDS } from "@/helpers/constants";
 import { updateJobWithReport } from "@/helpers/job";
 import { getPlaneAPIClient, getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { protect } from "@/lib";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { celeryProducer } from "@/worker";
 import { Store } from "@/worker/base";

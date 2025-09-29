@@ -1,6 +1,6 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { EGithubEntityConnectionType, GithubPullRequestDedupPayload } from "@plane/etl/github";
-import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 import { GithubIntegrationService } from "@/apps/github/services/github.service";
 import { PullRequestWebhookActions } from "@/apps/github/types";
@@ -8,7 +8,6 @@ import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { PullRequestBehaviour } from "@/lib/behaviours";
-import { logger } from "@/logger";
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
   await handlePullRequestOpened(data as unknown as GithubPullRequestDedupPayload);

@@ -1,19 +1,23 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import {
   EGithubEntityConnectionType,
   GithubWebhookPayload,
   transformGitHubComment,
   WebhookGitHubComment,
 } from "@plane/etl/github";
+import { logger } from "@plane/logger";
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
-import { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import {
+  E_INTEGRATION_KEYS,
+  TGithubEntityConnection,
+  TGithubWorkspaceConnection,
+  TWorkspaceCredential,
+} from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { logger } from "@/logger";
 import { Store } from "@/worker/base";
 import { shouldSync } from "./issue.handler";
 

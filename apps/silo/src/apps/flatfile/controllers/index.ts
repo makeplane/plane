@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
+import { Controller, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Post, useValidateUserAuthentication } from "@/lib";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 
 @Controller("/api/flatfile")
 class CSVController {

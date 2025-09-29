@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGitLabAuth,
   createGitLabService,
@@ -9,6 +9,7 @@ import {
   GitLabService,
 } from "@plane/etl/gitlab";
 import {
+  E_INTEGRATION_KEYS,
   TWorkspaceConnection,
   TWorkspaceCredential,
   TWorkspaceEntityConnection,

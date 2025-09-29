@@ -1,7 +1,7 @@
 import { E_JOB_STATUS } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { resetJobIfStarted } from "@/helpers/job";
 import { APIError } from "@/lib";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { importTaskManger } from "@/worker";
 

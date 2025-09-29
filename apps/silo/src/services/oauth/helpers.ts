@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 
 // Utility function to convert provider string to E_INTEGRATION_KEYS
 export const convertProviderToIntegrationKey = (provider: string): E_INTEGRATION_KEYS => {

@@ -1,12 +1,12 @@
 // Base Class
 import { S3Client } from "@aws-sdk/client-s3";
 import { E_JOB_STATUS } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { Client } from "@plane/sdk";
 import { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { createZipManager, EZipNodeType, TZipFileNode, ZipManager } from "@/lib/zip-manager";
-import { logger } from "@/logger";
 import { getAPIClientInternal } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";

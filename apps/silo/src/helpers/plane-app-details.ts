@@ -1,6 +1,6 @@
 import { TAppKeys } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { getAppSecretValue } from "@/db/query";
-import { logger } from "@/logger";
 import { Store } from "@/worker/base";
 import { getPlaneAppDetailsCacheKey } from "./cache-keys";
 

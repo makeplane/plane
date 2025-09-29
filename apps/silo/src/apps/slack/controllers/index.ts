@@ -1,5 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { Controller, Delete, Get, Middleware, Post, Put } from "@plane/decorators";
+import { E_ENTITY_CONNECTION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   E_SLACK_ENTITY_TYPE,
   isUserMessage,
@@ -11,6 +12,7 @@ import {
   TSlackPayload,
   TSlackUserAlertsConfig,
 } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import {
   E_PLANE_WEBHOOK_ACTION,
   E_PLANE_WEBHOOK_EVENT,
@@ -18,12 +20,12 @@ import {
   ExIssueComment,
   PlaneWebhookPayloadBase,
 } from "@plane/sdk";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Delete, EnsureEnabled, Get, Middleware, Post, Put, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { getFormUtilsService } from "@/services/form-fields/form-utils";
 import { planeOAuthService } from "@/services/oauth";
@@ -36,8 +38,8 @@ import { getConnectionDetails, updateUserMap } from "../helpers/connection-detai
 import { ACTIONS } from "../helpers/constants";
 import { convertToSlackOptions } from "../helpers/slack-options";
 import {
-  extractSlackDMAlertsFromWebhook,
   extractSlackDMAlertConfigForPlaneUser,
+  extractSlackDMAlertsFromWebhook,
   setSlackDMAlert,
   setSlackUserAlertsConfig,
 } from "../services/alerts";

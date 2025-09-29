@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get, Post } from "@plane/decorators";
 import { SentryCreateFields, SentryData, SentryLinkFields } from "@plane/etl/sentry";
 import { ExIssue } from "@plane/sdk";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Post } from "@/lib";
+import { EnsureEnabled } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../helpers/connection";

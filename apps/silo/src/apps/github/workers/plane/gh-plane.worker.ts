@@ -1,5 +1,6 @@
+import { logger } from "@plane/logger";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";

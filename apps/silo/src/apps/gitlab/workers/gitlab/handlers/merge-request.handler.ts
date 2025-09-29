@@ -1,12 +1,11 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
-import { TGitlabWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS, TGitlabWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGitlabConnectionDetails } from "@/apps/gitlab/helpers/connection-details";
 import { GitlabIntegrationService } from "@/apps/gitlab/services/gitlab.service";
 import { GitlabConnectionDetails } from "@/apps/gitlab/types";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { PullRequestBehaviour } from "@/lib/behaviours";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

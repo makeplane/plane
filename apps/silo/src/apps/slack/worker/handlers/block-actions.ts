@@ -1,9 +1,9 @@
 import axios from "axios";
 import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
-import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
 import { refreshLinkback } from "../../helpers/linkback";

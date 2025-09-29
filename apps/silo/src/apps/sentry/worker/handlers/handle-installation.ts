@@ -1,6 +1,6 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { SentryInstallationWebhook } from "@plane/etl/sentry";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { APIClient, getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 

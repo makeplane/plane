@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import { parse, HTMLElement } from "node-html-parser";
 import { ContentParser, IParserExtension } from "@plane/etl/parser";
+import { logger } from "@plane/logger";
 import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { EZipNodeType } from "@/lib/zip-manager/types";
-import { logger } from "@/logger";
 import { TDocContentParserConfig } from "../../types";
 import { NotionImageParserExtension } from "../common/content-parser";
 import {

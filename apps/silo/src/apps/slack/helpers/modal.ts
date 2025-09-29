@@ -1,7 +1,7 @@
+import { logger } from "@plane/logger";
 import { ExIssue, IssueWithExpanded } from "@plane/sdk";
 import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
-import { logger } from "@/logger";
 import { getCreateIntakeFormFields, getCreateWorkItemFormFields } from "@/services/form-fields";
 import { E_KNOWN_FIELD_KEY, FormField } from "@/types/form/base";
 import { SlackBlockValue } from "../types/fields";

@@ -5,6 +5,7 @@
  * It implements a message queue-based architecture with retry mechanisms and error handling.
  */
 
+import { logger } from "@plane/logger";
 import { AsanaDataMigrator } from "@/apps/asana-importer/migrator";
 import { ClickUpAdditionalDataMigrator } from "@/apps/clickup-importer/migrator/clickup-additional.migrator";
 import { ClickUpDataMigrator } from "@/apps/clickup-importer/migrator/clickup.migrator";
@@ -20,7 +21,7 @@ import { NotionDataMigrator } from "@/apps/notion-importer/worker";
 import { SentryPlaneWebhookHandler, SentryWebhookHandler } from "@/apps/sentry/worker/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";

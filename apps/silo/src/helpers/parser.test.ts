@@ -7,10 +7,10 @@ describe("getReferredIssues", () => {
     const result = getReferredIssues(title + "\n" + description);
 
     expect(result.closingReferences).toEqual([
-      { identifier: "ABC", sequence: 123 },
-      { identifier: "ABC", sequence: 456 },
+      { identifier: "ABC", sequence: 123, isClosing: true },
+      { identifier: "ABC", sequence: 456, isClosing: true },
     ]);
-    expect(result.nonClosingReferences).toEqual([{ identifier: "ABC", sequence: 789 }]);
+    expect(result.nonClosingReferences).toEqual([{ identifier: "ABC", sequence: 789, isClosing: false }]);
   });
 
   it("should handle no references", () => {
@@ -27,7 +27,7 @@ describe("getReferredIssues", () => {
     const description = "This PR closes ABC-123 and references ABC-123";
     const result = getReferredIssues(title + "\n" + description);
 
-    expect(result.closingReferences).toEqual([{ identifier: "ABC", sequence: 123 }]);
+    expect(result.closingReferences).toEqual([{ identifier: "ABC", sequence: 123, isClosing: true }]);
     expect(result.nonClosingReferences).toEqual([]);
   });
 
@@ -37,8 +37,8 @@ describe("getReferredIssues", () => {
     const result = getReferredIssues(title + "\n" + description);
 
     expect(result.closingReferences).toEqual([
-      { identifier: "ABC", sequence: 123 },
-      { identifier: "DEF", sequence: 456 },
+      { identifier: "ABC", sequence: 123, isClosing: true },
+      { identifier: "DEF", sequence: 456, isClosing: true },
     ]);
     expect(result.nonClosingReferences).toEqual([]);
   });
@@ -49,12 +49,12 @@ describe("getReferredIssues", () => {
     const result = getReferredIssues(title + "\n" + description);
 
     expect(result.closingReferences).toEqual([
-      { identifier: "WEB", sequence: 123 },
-      { identifier: "WEB", sequence: 456 },
+      { identifier: "WEB", sequence: 123, isClosing: true },
+      { identifier: "WEB", sequence: 456, isClosing: true },
     ]);
     expect(result.nonClosingReferences).toEqual([
-      { identifier: "WEB", sequence: 789 },
-      { identifier: "WEB", sequence: 1011 },
+      { identifier: "WEB", sequence: 789, isClosing: false },
+      { identifier: "WEB", sequence: 1011, isClosing: false },
     ]);
   });
 
@@ -66,7 +66,7 @@ describe("getReferredIssues", () => {
   `;
     const result = getReferredIssues(title + "\n" + description);
 
-    expect(result.closingReferences).toEqual([{ identifier: "WEB", sequence: 4075 }]);
-    expect(result.nonClosingReferences).toEqual([{ identifier: "WEB", sequence: 4066 }]);
+    expect(result.closingReferences).toEqual([{ identifier: "WEB", sequence: 4075, isClosing: true }]);
+    expect(result.nonClosingReferences).toEqual([{ identifier: "WEB", sequence: 4066, isClosing: false }]);
   });
 });

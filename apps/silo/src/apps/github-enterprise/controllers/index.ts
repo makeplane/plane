@@ -1,15 +1,15 @@
 import crypto from "crypto";
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get, Middleware, Post } from "@plane/decorators";
 import { createGithubService, GithubInstallation, GithubRepository, GithubWebhookPayload } from "@plane/etl/github";
+import { logger } from "@plane/logger";
 import { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayloadBase } from "@plane/sdk";
-import { TGithubAppConfig, TGithubWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TGithubAppConfig, TGithubWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { GITHUB_LABEL, PLANE_LABEL } from "@/helpers/constants";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Middleware, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { integrationTaskManager } from "@/worker";
 
 @EnsureEnabled(E_INTEGRATION_KEYS.GITHUB_ENTERPRISE)

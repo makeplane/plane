@@ -3,11 +3,11 @@
  * This behaviour addresses how a PR event is handled decoupled from any integration
  */
 
+import { logger } from "@plane/logger";
 import { Client, ExIssue } from "@plane/sdk";
 import { env } from "@/env";
 import { CONSTANTS, E_STATE_MAP_KEYS } from "@/helpers/constants";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
-import { logger } from "@/logger";
 import { verifyEntityConnections } from "@/types";
 import {
   IPullRequestService,

@@ -1,3 +1,4 @@
+import { logger } from "@plane/logger";
 import {
   TWorkspaceCredential,
   E_INTEGRATION_KEYS,
@@ -5,7 +6,6 @@ import {
   TWorkspaceEntityConnection,
 } from "@plane/types";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
-import { logger } from "@/logger";
 
 /**
  * Get the connection details for a workspace and entity connection

@@ -1,6 +1,6 @@
 import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";

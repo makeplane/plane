@@ -1,7 +1,8 @@
-import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import { GithubWebhookPayload } from "@plane/etl/github";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { E_GITHUB_DISCONNECT_SOURCE } from "@/apps/github/types";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth/auth";
 

@@ -1,6 +1,6 @@
 import { SentryWebhookPayload } from "@plane/etl/sentry";
+import { logger } from "@plane/logger";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { ESentryWebhookType, ISentryTaskHandler } from "../types";

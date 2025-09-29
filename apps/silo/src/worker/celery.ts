@@ -1,5 +1,5 @@
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { MQ } from "./base";
 import { TMQEntityOptions } from "./base/types";
 

@@ -1,5 +1,5 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createSentryService } from "@plane/etl/sentry";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { getConnectionDetails } from "@/helpers/connection-details";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";

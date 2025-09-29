@@ -1,12 +1,11 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { ContentParser } from "@plane/etl/parser";
 import { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { downloadFile } from "@/helpers/utils";
-import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";

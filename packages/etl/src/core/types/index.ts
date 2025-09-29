@@ -16,6 +16,7 @@ import {
   ExIssuePropertyOption,
   ExPage,
 } from "@plane/sdk";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 
 export type TServiceCredentials = {
   id: string;
@@ -53,16 +54,6 @@ export enum E_IMPORTER_KEYS {
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
 
-// integration types
-export enum E_INTEGRATION_KEYS {
-  GITHUB = "GITHUB",
-  GITLAB = "GITLAB",
-  SLACK = "SLACK",
-  PRD_AGENT = "PRD_AGENT",
-  SENTRY = "SENTRY",
-  GITHUB_ENTERPRISE = "GITHUB_ENTERPRISE",
-  GITLAB_ENTERPRISE = "GITLAB_ENTERPRISE",
-}
 export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
 
 export enum E_ENTITY_CONNECTION_KEYS {

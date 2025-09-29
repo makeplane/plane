@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Delete, Get, Post } from "@plane/decorators";
 import {
   GitlabWebhookEvent,
   GitlabWebhook,
@@ -8,14 +8,19 @@ import {
   GitlabEntityData,
   EConnectionType,
 } from "@plane/etl/gitlab";
+import { logger } from "@plane/logger";
 import { ExIssueLabel } from "@plane/sdk";
-import { TGitlabWorkspaceConnection, TGitlabAppConfig, TWorkspaceEntityConnection } from "@plane/types";
+import {
+  E_INTEGRATION_KEYS,
+  TGitlabWorkspaceConnection,
+  TGitlabAppConfig,
+  TWorkspaceEntityConnection,
+} from "@plane/types";
 import { getGitlabClientService, getGitlabEnterpriseAuthService } from "@/apps/gitlab/services";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Delete, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { getGitlabEntityWebhookURL } from "../helpers/urls";

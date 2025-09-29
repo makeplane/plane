@@ -29,6 +29,7 @@ import {
   transformProject,
 } from "@plane/etl/clickup";
 import { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import {
   Client as PlaneClient,
   ExIssueComment,
@@ -46,7 +47,6 @@ import { env } from "@/env";
 import { createProjects, enableIssueTypeForProject } from "@/etl/migrator/projects.migrator";
 import { createStates } from "@/etl/migrator/states.migrator";
 import { processBatchPromises } from "@/helpers/methods";
-import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 
 /* ------------------ Transformers ----------------------

@@ -1,6 +1,6 @@
+import { logger } from "@plane/logger";
 import { TWorkspaceEntityConnection } from "@plane/types";
 import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
-import { logger } from "@/logger";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";

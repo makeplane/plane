@@ -1,5 +1,4 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

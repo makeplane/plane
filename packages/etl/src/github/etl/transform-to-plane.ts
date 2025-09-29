@@ -1,6 +1,5 @@
 import { Client, ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { E_ISSUE_STATE_MAP_KEYS, TIssueStateMap } from "@plane/types";
-import { E_INTEGRATION_KEYS } from "@/core";
+import { E_ISSUE_STATE_MAP_KEYS, TIssueStateMap, E_INTEGRATION_KEYS } from "@plane/types";
 import { ContentParser, replaceIssueNumber, replaceMentionedGhUsers } from "../helpers";
 import { GithubService } from "../services";
 import { WebhookGitHubComment, WebhookGitHubIssue, WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";

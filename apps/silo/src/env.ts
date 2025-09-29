@@ -1,6 +1,6 @@
 import * as dotenvx from "@dotenvx/dotenvx";
 import { z } from "zod";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 dotenvx.config();
 
 const envSchema = z.object({

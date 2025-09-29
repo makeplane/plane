@@ -1,31 +1,32 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { Controller, Delete, Get, Post } from "@plane/decorators";
+import { E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGitLabAuth,
   createGitLabService,
-  GitlabWebhookEvent,
-  GitlabWebhook,
-  GitlabEntityType,
-  IGitlabEntity,
-  GitlabEntityData,
   EConnectionType,
   GitLabAuthorizeState,
+  GitlabEntityData,
+  GitlabEntityType,
   GitlabPlaneOAuthState,
+  GitlabWebhook,
+  GitlabWebhookEvent,
+  IGitlabEntity,
 } from "@plane/etl/gitlab";
+import { logger } from "@plane/logger";
 import { ExIssueLabel } from "@plane/sdk";
-import { TWorkspaceEntityConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Delete, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
-import { gitlabAuthService, getGitlabClientService } from "../services";
+import { getGitlabClientService, gitlabAuthService } from "../services";
 
 const apiClient = getAPIClient();
 

@@ -1,10 +1,10 @@
 import { AxiosError } from "axios";
+import { logger } from "@plane/logger";
 import { Client as PlaneClient, PlaneUser, UserResponsePayload } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
 import { processBatchPromises } from "@/helpers/methods";
 import { downloadFile, uploadFile } from "@/helpers/utils";
 import { protect } from "@/lib";
-import { logger } from "@/logger";
 import { generateFileUploadPayload } from "./issues.migrator";
 
 /* ----------------------------- User Creation Utilities ----------------------------- */

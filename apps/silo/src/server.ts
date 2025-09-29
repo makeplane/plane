@@ -5,6 +5,8 @@ import express, { Application, Request, Response, NextFunction } from "express";
 
 // lib
 import expressWinston from "express-winston";
+import { registerControllers } from "@plane/decorators";
+import { logger } from "@plane/logger";
 import AsanaController from "@/apps/asana-importer/controllers";
 // controllers
 
@@ -35,8 +37,6 @@ import SlackController from "./apps/slack/controllers";
 // Helpers and Utils
 import { env } from "./env";
 import { APIError } from "./lib";
-import { registerControllers } from "./lib/controller";
-import { logger } from "./logger";
 // types
 import { setRawBodyOnRequest } from "./middleware/raw-body.middlware";
 import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
@@ -132,9 +132,13 @@ export default class Server {
 
   private setupControllers(): void {
     const router = express.Router();
-    const allControllers = [...Server.CONTROLLERS.PING, ...Server.CONTROLLERS.ENGINE, ...Server.CONTROLLERS.APPS];
+    const allControllers: any[] = [
+      ...Server.CONTROLLERS.PING,
+      ...Server.CONTROLLERS.ENGINE,
+      ...Server.CONTROLLERS.APPS,
+    ];
 
-    allControllers.forEach((controller) => registerControllers(router, controller));
+    registerControllers(router, allControllers, []);
     this.app.use(env.SILO_BASE_PATH || "/", router);
   }
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get } from "@plane/decorators";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { healthCheck } from "@/db/query";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get } from "@/lib";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

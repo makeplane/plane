@@ -1,8 +1,8 @@
+import { logger } from "@plane/logger";
 import { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
 import { processBatchPromises } from "@/helpers/methods";
 import { AssertAPIErrorResponse, protect } from "@/lib";
-import { logger } from "@/logger";
 
 export const createModules = async (
   jobId: string,

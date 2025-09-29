@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Post } from "@plane/decorators";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Post, useValidateUserAuthentication } from "@/lib";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

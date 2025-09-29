@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
   createGithubService,
@@ -10,16 +10,17 @@ import {
   GithubUserAuthState,
 } from "@plane/etl/github";
 import {
+  E_INTEGRATION_KEYS,
+  TGithubAppConfig,
+  TGithubWorkspaceConnection,
+  TGithubWorkspaceConnectionData,
   TWorkspaceConnection,
   TWorkspaceCredential,
   TWorkspaceEntityConnection,
-  TGithubAppConfig,
-  TGithubWorkspaceConnectionData,
-  TGithubWorkspaceConnection,
 } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { env } from "@/env";
-import { OAuthStrategy, OAuthState, OAuthTokenResponse } from "@/services/oauth/types";
+import { OAuthState, OAuthStrategy, OAuthTokenResponse } from "@/services/oauth/types";
 import { ESourceAuthorizationType } from "@/types/oauth";
 import { Store } from "@/worker/base/store";
 import { GITHUB_ENTERPRISE_CONFIG_KEY } from "../../../apps/github-enterprise/helpers";
@@ -93,7 +94,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
   }
 
   async handleCallback(
-    code: string,
+    _code: string,
     state: string,
     additionalParams: Record<string, string>
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
@@ -198,7 +199,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
   async disconnectOrganization(
     wsConnection: TWorkspaceConnection,
     wsCredential: TWorkspaceCredential,
-    entityConnections?: TWorkspaceEntityConnection[]
+    _entityConnections?: TWorkspaceEntityConnection[]
   ): Promise<boolean> {
     if (!wsCredential.source_access_token) {
       throw new Error(E_SILO_ERROR_CODES.INVALID_CREDENTIALS.toString());
@@ -229,7 +230,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
     return isDeleted;
   }
 
-  disconnectUser(wsConnection: TWorkspaceConnection, wsCredential: TWorkspaceCredential): Promise<boolean> {
+  disconnectUser(_wsConnection: TWorkspaceConnection, _wsCredential: TWorkspaceCredential): Promise<boolean> {
     return Promise.resolve(true);
   }
 
@@ -238,8 +239,8 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
   }
 
   handleUserCallback(
-    code: string,
-    state: string
+    _code: string,
+    _state: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }

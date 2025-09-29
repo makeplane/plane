@@ -1,6 +1,7 @@
 /* ----------------------------- Issue Creation Utilities ----------------------------- */
 import { HTMLElement, parse } from "node-html-parser";
 import { E_IMPORTER_KEYS, TIssuePropertyValuesPayload, TPropertyValuesPayload } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import {
   AttachmentResponse,
   ExIssue,
@@ -22,7 +23,6 @@ import { env } from "@/env";
 import { wait } from "@/helpers/delay";
 import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
 import { AssertAPIErrorResponse, protect } from "@/lib";
-import { logger } from "@/logger";
 import { BulkIssuePayload } from "@/types";
 import { IssueCreatePayload, IssueWithParentPayload } from "./types";
 // A wrapper for better readability

@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { createClient, RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
-import { logger } from "@/logger";
 
 export class Store extends EventEmitter {
   private static instance: Store | null = null;

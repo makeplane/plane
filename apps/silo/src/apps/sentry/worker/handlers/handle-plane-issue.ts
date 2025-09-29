@@ -1,8 +1,8 @@
 import { SentryIssue } from "@plane/etl/sentry";
+import { logger } from "@plane/logger";
 import { ExIssue, ExState, PlaneWebhookPayload } from "@plane/sdk";
 import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";

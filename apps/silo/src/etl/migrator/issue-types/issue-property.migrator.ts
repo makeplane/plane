@@ -1,7 +1,7 @@
+import { logger } from "@plane/logger";
 import { ExIssueProperty, ExIssueType, ExIssuePropertyOption, Client as PlaneClient } from "@plane/sdk";
 import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
-import { logger } from "@/logger";
 
 type TCreateOrUpdateIssueProperties = {
   jobId: string;

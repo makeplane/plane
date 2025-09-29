@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get, Post } from "@plane/decorators";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 import { OAuthController } from "./controller";
 
 @Controller("/api/oauth")

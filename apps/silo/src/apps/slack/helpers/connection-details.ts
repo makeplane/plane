@@ -1,10 +1,9 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createSlackService } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { TWorkspaceCredential, TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { slackAuth } from "../auth/auth";
 import { TSlackConnectionDetails, TSlackWorkspaceConnectionConfig } from "../types/types";

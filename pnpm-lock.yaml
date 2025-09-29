@@ -608,6 +608,9 @@ importers:
       '@plane/decorators':
         specifier: workspace:*
         version: link:../../packages/decorators
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
       '@plane/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk

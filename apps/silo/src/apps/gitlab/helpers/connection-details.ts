@@ -4,7 +4,7 @@ import {
   GitlabMergeRequestEvent,
   gitlabWorkspaceConnectionSchema,
 } from "@plane/etl/gitlab";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
 import { GitlabConnectionDetails } from "../types";

@@ -1,5 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { ENotionMigrationType, TNotionMigratorData } from "../types";

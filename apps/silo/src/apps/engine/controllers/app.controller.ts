@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { E_IMPORTER_KEYS, E_INTEGRATION_KEYS, TAppKeys } from "@plane/etl/core";
+import { Controller, Get } from "@plane/decorators";
+import { E_IMPORTER_KEYS, TAppKeys } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getSupportedIntegrations } from "@/helpers/app";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Get } from "@/lib";
 
 @Controller("/api")
 export class AppController {

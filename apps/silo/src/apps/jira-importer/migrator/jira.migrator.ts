@@ -13,11 +13,11 @@ import {
   pullSprints,
   pullUsers,
 } from "@plane/etl/jira";
+import { logger } from "@plane/logger";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
-import { logger } from "@/logger";
 import { TBatch } from "@/worker/types";
 import { createJiraClient, filterComponentsForIssues, filterSprintsForIssues } from "../helpers/migration-helpers";
 import {

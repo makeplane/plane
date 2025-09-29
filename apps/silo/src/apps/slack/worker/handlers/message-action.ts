@@ -1,8 +1,8 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TMessageActionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";

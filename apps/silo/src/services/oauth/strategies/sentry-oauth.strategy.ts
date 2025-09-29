@@ -5,15 +5,15 @@ import { OAuthState, OAuthStrategy, OAuthTokenResponse } from "../types";
 
 export class SentryOAuthStrategy implements OAuthStrategy {
   constructor(private readonly sentryAuth: SentryAuthService) {}
-  generateConfigKey(data: object, workspaceId: string): Promise<string> {
+  generateConfigKey(_data: object, _workspaceId: string): Promise<string> {
     throw new Error("Method not implemented.");
   }
   handlePlaneOAuthCallback(
-    encodedIntegrationState: string
+    _encodedIntegrationState: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
-  handleRedirectToPlaneOAuth(code: string, state: string): Promise<{ stateBuffer: string; redirectUri?: string }> {
+  handleRedirectToPlaneOAuth(_code: string, _state: string): Promise<{ stateBuffer: string; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
 
@@ -74,23 +74,23 @@ export class SentryOAuthStrategy implements OAuthStrategy {
   isUserConnectionSupported(): boolean {
     return false;
   }
-  getUserAuthUrl(state: OAuthState): string {
+  getUserAuthUrl(_state: OAuthState): string {
     throw new Error("Method not implemented.");
   }
   handleUserCallback(
-    code: string,
-    state: string
+    _code: string,
+    _state: string
   ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
     throw new Error("Method not implemented.");
   }
   disconnectOrganization(
-    wsConnection: TWorkspaceConnection,
-    wsCredential: TWorkspaceCredential,
-    entityConnections?: TWorkspaceEntityConnection[]
+    _wsConnection: TWorkspaceConnection,
+    _wsCredential: TWorkspaceCredential,
+    _entityConnections?: TWorkspaceEntityConnection[]
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  disconnectUser(wsConnection: TWorkspaceConnection, wsCredential: TWorkspaceCredential): Promise<boolean> {
+  disconnectUser(_wsConnection: TWorkspaceConnection, _wsCredential: TWorkspaceCredential): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
   /*--------------- Unsupported methods ---------------*/

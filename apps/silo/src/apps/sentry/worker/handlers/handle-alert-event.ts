@@ -1,9 +1,8 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { SentryEventAlertWebhook } from "@plane/etl/sentry";
+import { logger } from "@plane/logger";
 import { ExIssue } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";

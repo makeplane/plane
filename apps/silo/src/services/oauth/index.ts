@@ -1,5 +1,5 @@
 export * from "./auth";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { sentryAuth } from "@/apps/sentry/auth/auth";
 import { env } from "@/env";
 import { OAuthController } from "./controller";

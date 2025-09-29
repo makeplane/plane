@@ -17,12 +17,12 @@ import {
   E_CLICKUP_IMPORT_PHASE,
 } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, PlaneEntities } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { migrateToPlane } from "@/etl/migrator/migrator";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
