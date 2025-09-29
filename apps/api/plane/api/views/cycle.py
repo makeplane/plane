@@ -315,7 +315,13 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleCreateSerializer(data=request.data)
+
+            # If owned_by is not provided, set it to the current user
+            data = request.data
+            if not data.get("owned_by"):
+                data["owned_by"] = request.user.id
+
+            serializer = CycleCreateSerializer(data=data)
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
