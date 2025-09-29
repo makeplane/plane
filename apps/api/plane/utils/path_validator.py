@@ -107,7 +107,7 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     Returns:
         str: The safe redirect URL
     """
-    from urllib.parse import urlencode, quote
+    from urllib.parse import urlencode
 
     # Validate the next path
     validated_path = validate_next_path(next_path)

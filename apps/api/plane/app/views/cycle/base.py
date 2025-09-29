@@ -46,7 +46,6 @@ from plane.db.models import (
     Label,
     User,
     Project,
-    ProjectMember,
     UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
@@ -97,9 +96,7 @@ class CycleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only(
-                        "avatar_asset", "first_name", "id"
-                    ).distinct(),
+                    queryset=User.objects.only("avatar_asset", "first_name", "id").distinct(),
                 )
             )
             .prefetch_related(
@@ -150,8 +147,7 @@ class CycleViewSet(BaseViewSet):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=current_time_in_utc)
-                        & Q(end_date__gte=current_time_in_utc),
+                        Q(start_date__lte=current_time_in_utc) & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
@@ -170,11 +166,7 @@ class CycleViewSet(BaseViewSet):
                         "issue_cycle__issue__assignees__id",
                         distinct=True,
                         filter=~Q(issue_cycle__issue__assignees__id__isnull=True)
-                        & (
-                            Q(
-                                issue_cycle__issue__issue_assignee__deleted_at__isnull=True
-                            )
-                        ),
+                        & (Q(issue_cycle__issue__issue_assignee__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
@@ -205,9 +197,7 @@ class CycleViewSet(BaseViewSet):
 
         # Current Cycle
         if cycle_view == "current":
-            queryset = queryset.filter(
-                start_date__lte=current_time_in_utc, end_date__gte=current_time_in_utc
-            )
+            queryset = queryset.filter(start_date__lte=current_time_in_utc, end_date__gte=current_time_in_utc)
 
             data = queryset.values(
                 # necessary fields
@@ -274,16 +264,10 @@ class CycleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
-        if (
-            request.data.get("start_date", None) is None
-            and request.data.get("end_date", None) is None
-        ) or (
-            request.data.get("start_date", None) is not None
-            and request.data.get("end_date", None) is not None
+        if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
+            request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleWriteSerializer(
-                data=request.data, context={"project_id": project_id}
-            )
+            serializer = CycleWriteSerializer(data=request.data, context={"project_id": project_id})
             if serializer.is_valid():
                 serializer.save(project_id=project_id, owned_by=request.user)
                 cycle = (
@@ -323,9 +307,7 @@ class CycleViewSet(BaseViewSet):
                 project_timezone = project.timezone
 
                 datetime_fields = ["start_date", "end_date"]
-                cycle = user_timezone_converter(
-                    cycle, datetime_fields, project_timezone
-                )
+                cycle = user_timezone_converter(cycle, datetime_fields, project_timezone)
 
                 # Send the model activity
                 model_activity.delay(
@@ -341,17 +323,13 @@ class CycleViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
-                {
-                    "error": "Both start date and end date are either required or are to be null"
-                },
+                {"error": "Both start date and end date are either required or are to be null"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
-        queryset = self.get_queryset().filter(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        queryset = self.get_queryset().filter(workspace__slug=slug, project_id=project_id, pk=pk)
         cycle = queryset.first()
         if cycle.archived_at:
             return Response(
@@ -359,29 +337,21 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        current_instance = json.dumps(
-            CycleSerializer(cycle).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(CycleSerializer(cycle).data, cls=DjangoJSONEncoder)
 
         request_data = request.data
 
         if cycle.end_date is not None and cycle.end_date < timezone.now():
             if "sort_order" in request_data:
                 # Can only change sort order for a completed cycle``
-                request_data = {
-                    "sort_order": request_data.get("sort_order", cycle.sort_order)
-                }
+                request_data = {"sort_order": request_data.get("sort_order", cycle.sort_order)}
             else:
                 return Response(
-                    {
-                        "error": "The Cycle has already been completed so it cannot be edited"
-                    },
+                    {"error": "The Cycle has already been completed so it cannot be edited"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleWriteSerializer(
-            cycle, data=request.data, partial=True, context={"project_id": project_id}
-        )
+        serializer = CycleWriteSerializer(cycle, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
             cycle = queryset.values(
@@ -481,9 +451,7 @@ class CycleViewSet(BaseViewSet):
         )
 
         if data is None:
-            return Response(
-                {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND)
 
         queryset = queryset.first()
         # Fetch the project timezone
@@ -505,11 +473,7 @@ class CycleViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
-        cycle_issues = list(
-            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
-                "issue", flat=True
-            )
-        )
+        cycle_issues = list(CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list("issue", flat=True))
 
         issue_activity.delay(
             type="cycle.activity.deleted",
@@ -560,9 +524,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        start_date = convert_to_utc(
-            date=str(start_date), project_id=project_id, is_start_date=True
-        )
+        start_date = convert_to_utc(date=str(start_date), project_id=project_id, is_start_date=True)
         end_date = convert_to_utc(
             date=str(end_date),
             project_id=project_id,
@@ -581,7 +543,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
         if cycles.exists():
             return Response(
                 {
-                    "error": "You have a cycle already on the given dates, if you want to create a draft cycle you can do that by removing dates",
+                    "error": "You have a cycle already on the given dates, if you want to create a draft cycle you can do that by removing dates",  # noqa: E501
                     "status": False,
                 }
             )
@@ -635,14 +597,10 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        new_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-        ).first()
+        new_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=new_cycle_id).first()
 
         old_cycle = (
-            Cycle.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=cycle_id
-            )
+            Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id)
             .annotate(
                 total_issues=Count(
                     "issue_cycle",
@@ -755,9 +713,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     )
                 )
                 .values("display_name", "assignee_id", "avatar_url")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -784,9 +740,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             assignee_estimate_distribution = [
                 {
                     "display_name": item["display_name"],
-                    "assignee_id": (
-                        str(item["assignee_id"]) if item["assignee_id"] else None
-                    ),
+                    "assignee_id": (str(item["assignee_id"]) if item["assignee_id"] else None),
                     "avatar": item.get("avatar"),
                     "avatar_url": item.get("avatar_url"),
                     "total_estimates": item["total_estimates"],
@@ -807,9 +761,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -875,19 +827,13 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
+                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
             )
             .values("display_name", "assignee_id", "avatar_url")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
+            .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
             .annotate(
                 completed_issues=Count(
                     "id",
@@ -914,9 +860,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         assignee_distribution_data = [
             {
                 "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
+                "assignee_id": (str(item["assignee_id"]) if item["assignee_id"] else None),
                 "avatar": item.get("avatar"),
                 "avatar_url": item.get("avatar_url"),
                 "total_issues": item["total_issues"],
@@ -938,11 +882,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             .annotate(color=F("labels__color"))
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
+            .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
             .annotate(
                 completed_issues=Count(
                     "id",
@@ -988,9 +928,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             cycle_id=cycle_id,
         )
 
-        current_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=cycle_id
-        ).first()
+        current_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id).first()
 
         current_cycle.progress_snapshot = {
             "total_issues": old_cycle.total_issues,
@@ -1018,9 +956,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
         if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
             return Response(
-                {
-                    "error": "The cycle where the issues are transferred is already completed"
-                },
+                {"error": "The cycle where the issues are transferred is already completed"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -1044,9 +980,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
+        cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1080,12 +1014,8 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         )
 
         cycle_properties.filters = request.data.get("filters", cycle_properties.filters)
-        cycle_properties.rich_filters = request.data.get(
-            "rich_filters", cycle_properties.rich_filters
-        )
-        cycle_properties.display_filters = request.data.get(
-            "display_filters", cycle_properties.display_filters
-        )
+        cycle_properties.rich_filters = request.data.get("rich_filters", cycle_properties.rich_filters)
+        cycle_properties.display_filters = request.data.get("display_filters", cycle_properties.display_filters)
         cycle_properties.display_properties = request.data.get(
             "display_properties", cycle_properties.display_properties
         )
@@ -1109,13 +1039,9 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 class CycleProgressEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
-        cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, id=cycle_id
-        ).first()
+        cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, id=cycle_id).first()
         if not cycle:
-            return Response(
-                {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND)
         aggregate_estimates = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -1161,9 +1087,7 @@ class CycleProgressEndpoint(BaseAPIView):
                         output_field=FloatField(),
                     )
                 ),
-                total_estimate_points=Sum(
-                    "value_as_float", default=Value(0), output_field=FloatField()
-                ),
+                total_estimate_points=Sum("value_as_float", default=Value(0), output_field=FloatField()),
             )
         )
         if cycle.progress_snapshot:
@@ -1223,22 +1147,11 @@ class CycleProgressEndpoint(BaseAPIView):
 
         return Response(
             {
-                "backlog_estimate_points": aggregate_estimates["backlog_estimate_point"]
-                or 0,
-                "unstarted_estimate_points": aggregate_estimates[
-                    "unstarted_estimate_point"
-                ]
-                or 0,
-                "started_estimate_points": aggregate_estimates["started_estimate_point"]
-                or 0,
-                "cancelled_estimate_points": aggregate_estimates[
-                    "cancelled_estimate_point"
-                ]
-                or 0,
-                "completed_estimate_points": aggregate_estimates[
-                    "completed_estimate_points"
-                ]
-                or 0,
+                "backlog_estimate_points": aggregate_estimates["backlog_estimate_point"] or 0,
+                "unstarted_estimate_points": aggregate_estimates["unstarted_estimate_point"] or 0,
+                "started_estimate_points": aggregate_estimates["started_estimate_point"] or 0,
+                "cancelled_estimate_points": aggregate_estimates["cancelled_estimate_point"] or 0,
+                "completed_estimate_points": aggregate_estimates["completed_estimate_points"] or 0,
                 "total_estimate_points": aggregate_estimates["total_estimate_points"],
                 "backlog_issues": backlog_issues,
                 "total_issues": total_issues,
@@ -1256,9 +1169,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, cycle_id):
         analytic_type = request.GET.get("type", "issues")
         cycle = (
-            Cycle.objects.filter(
-                workspace__slug=slug, project_id=project_id, id=cycle_id
-            )
+            Cycle.objects.filter(workspace__slug=slug, project_id=project_id, id=cycle_id)
             .annotate(
                 total_issues=Count(
                     "issue_cycle__issue__id",
@@ -1341,9 +1252,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     )
                 )
                 .values("display_name", "assignee_id", "avatar_url")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -1378,9 +1287,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -1482,11 +1389,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(
-                    total_issues=Count(
-                        "label_id", filter=Q(archived_at__isnull=True, is_draft=False)
-                    )
-                )
+                .annotate(total_issues=Count("label_id", filter=Q(archived_at__isnull=True, is_draft=False)))
                 .annotate(
                     completed_issues=Count(
                         "label_id",

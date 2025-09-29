@@ -4,7 +4,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery, Count
+from django.db.models import OuterRef, Q, Prefetch, Exists, Subquery, Count
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page

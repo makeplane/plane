@@ -394,9 +394,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 examples=[MODULE_UPDATE_EXAMPLE],
             ),
             404: OpenApiResponse(description="Module not found"),
-            409: OpenApiResponse(
-                description="Module with same external ID already exists"
-            ),
+            409: OpenApiResponse(description="Module with same external ID already exists"),
         },
     )
     def patch(self, request, slug, project_id, pk):
@@ -407,18 +405,14 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         """
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
 
-        current_instance = json.dumps(
-            ModuleSerializer(module).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(ModuleSerializer(module).data, cls=DjangoJSONEncoder)
 
         if module.archived_at:
             return Response(
                 {"error": "Archived module cannot be edited"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ModuleSerializer(
-            module, data=request.data, context={"project_id": project_id}, partial=True
-        )
+        serializer = ModuleSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -426,9 +420,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 and Module.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get(
-                        "external_source", module.external_source
-                    ),
+                    external_source=request.data.get("external_source", module.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):
@@ -514,9 +506,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
-        )
+        module_issues = list(ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True))
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
@@ -537,9 +527,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         # Delete the module issues
         ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()
         # Delete the user favorite module
-        UserFavorite.objects.filter(
-            entity_type="module", entity_identifier=pk, project_id=project_id
-        ).delete()
+        UserFavorite.objects.filter(entity_type="module", entity_identifier=pk, project_id=project_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -609,9 +597,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         """
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(
-                issue_module__module_id=module_id, issue_module__deleted_at__isnull=True
-            )
+            Issue.issue_objects.filter(issue_module__module_id=module_id, issue_module__deleted_at__isnull=True)
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
@@ -647,15 +633,13 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: IssueSerializer(
-                issues, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
         )
 
     @module_issue_docs(
         operation_id="add_module_work_items",
         summary="Add Work Items to Module",
-        description="Assign multiple work items to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",
+        description="Assign multiple work items to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",  # noqa: E501
         parameters=[
             MODULE_ID_PARAMETER,
         ],
@@ -681,16 +665,12 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         """
         issues = request.data.get("issues", [])
         if not len(issues):
-            return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        module = Module.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=module_id
-        )
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+        module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=module_id)
 
-        issues = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=issues
-        ).values_list("id", flat=True)
+        issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issues).values_list(
+            "id", flat=True
+        )
 
         module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
 
@@ -699,11 +679,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         record_to_create = []
 
         for issue in issues:
-            module_issue = [
-                module_issue
-                for module_issue in module_issues
-                if str(module_issue.issue_id) in issues
-            ]
+            module_issue = [module_issue for module_issue in module_issues if str(module_issue.issue_id) in issues]
 
             if len(module_issue):
                 if module_issue[0].module_id != module_id:
@@ -728,9 +704,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
                     )
                 )
 
-        ModuleIssue.objects.bulk_create(
-            record_to_create, batch_size=10, ignore_conflicts=True
-        )
+        ModuleIssue.objects.bulk_create(record_to_create, batch_size=10, ignore_conflicts=True)
 
         ModuleIssue.objects.bulk_update(records_to_update, ["module"], batch_size=10)
 
@@ -744,9 +718,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
             current_instance=json.dumps(
                 {
                     "updated_module_issues": update_module_issue_activity,
-                    "created_module_issues": serializers.serialize(
-                        "json", record_to_create
-                    ),
+                    "created_module_issues": serializers.serialize("json", record_to_create),
                 }
             ),
             epoch=int(timezone.now().timestamp()),
@@ -871,9 +843,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: IssueSerializer(
-                issues, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
         )
 
     @module_issue_docs(
@@ -904,9 +874,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
-            requested_data=json.dumps(
-                {"module_id": str(module_id), "issues": [str(module_issue.issue_id)]}
-            ),
+            requested_data=json.dumps({"module_id": str(module_id), "issues": [str(module_issue.issue_id)]}),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),

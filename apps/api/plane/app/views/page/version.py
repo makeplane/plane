@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from plane.db.models import PageVersion
 from ..base import BaseAPIView
 from plane.app.serializers import PageVersionSerializer, PageVersionDetailSerializer
-from plane.app.permissions import allow_permission, ROLE
 from plane.app.permissions import ProjectPagePermission
 
 class PageVersionEndpoint(BaseAPIView):

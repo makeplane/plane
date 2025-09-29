@@ -10,7 +10,6 @@ from plane.utils.content_validator import (
 )
 from plane.db.models import (
     Page,
-    PageLog,
     PageLabel,
     Label,
     ProjectPage,
