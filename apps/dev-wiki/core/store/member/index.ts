@@ -2,9 +2,11 @@ import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { IUserLite } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
+// plane web imports
+// import { IProjectMemberStore, ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace-member.store";
+import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace/workspace-member.store";
 
 export interface IMemberRootStore {
   // observables
@@ -14,7 +16,7 @@ export interface IMemberRootStore {
   getUserDetails: (userId: string) => IUserLite | undefined;
   // sub-stores
   workspace: IWorkspaceMemberStore;
-  project: { getProjectMemberDetails: (userId: string, projectId: string) => any };
+  // project: IProjectMemberStore;
 }
 
 export class MemberRootStore implements IMemberRootStore {
@@ -22,7 +24,7 @@ export class MemberRootStore implements IMemberRootStore {
   memberMap: Record<string, IUserLite> = {};
   // sub-stores
   workspace: IWorkspaceMemberStore;
-  project: { getProjectMemberDetails: (userId: string, projectId: string) => any };
+  // project: IProjectMemberStore;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -31,7 +33,7 @@ export class MemberRootStore implements IMemberRootStore {
     });
     // sub-stores
     this.workspace = new WorkspaceMemberStore(this, _rootStore);
-    this.project = { getProjectMemberDetails: (userId: string, projectId: string) => undefined };
+    // this.project = new ProjectMemberStore(this, _rootStore);
   }
 
   /**

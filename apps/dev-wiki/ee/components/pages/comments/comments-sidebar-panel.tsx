@@ -104,7 +104,7 @@ export const PageCommentsSidebarPanel = observer(function ThreadsSidebar({
   return (
     <div
       ref={scrollContainerRef}
-      className="size-full pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col"
+      className="size-full pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none flex flex-col pb-14"
     >
       {/* Header */}
       <div className="flex-shrink-0 py-1 px-3.5">
