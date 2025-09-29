@@ -2,9 +2,9 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
-import { Tab } from "@headlessui/react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -49,7 +49,6 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
     PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
   ) as TPageNavigationPaneTab | null;
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
-  const selectedIndex = PAGE_NAVIGATION_PANE_TAB_KEYS.indexOf(activeTab);
 
   // Check if any extension is currently active based on query parameters
   const ActiveExtension = extensions.find((extension) => {
@@ -69,8 +68,8 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   const handleTabChange = useCallback(
-    (index: number) => {
-      const updatedTab = PAGE_NAVIGATION_PANE_TAB_KEYS[index];
+    (value: TPageNavigationPaneTab) => {
+      const updatedTab = value;
       const isUpdatedTabInfo = updatedTab === "info";
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: updatedTab },
@@ -106,10 +105,14 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (
-          <Tab.Group as={React.Fragment} selectedIndex={selectedIndex} onChange={handleTabChange}>
+          <Tabs
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
+          >
             <PageNavigationPaneTabsList />
             <PageNavigationPaneTabPanelsRoot page={page} versionHistory={versionHistory} />
-          </Tab.Group>
+          </Tabs>
         ) : null}
       </div>
     </aside>

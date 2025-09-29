@@ -4,17 +4,16 @@ import { FC, Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
-// headless ui
-import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
+import { Tabs } from "@plane/propel/tabs";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TWorkItemFilterCondition } from "@plane/shared-state";
 import { EIssuesStoreType, ICycle } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
-import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+import { renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
@@ -40,10 +39,12 @@ export type ActiveCycleStatsProps = {
   cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
+export type TActiveCycleStatsTab = "Priority-Issues" | "Assignees" | "Labels";
+
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
-  const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
+  const { storedValue: tab, setValue: setTab } = useLocalStorage<TActiveCycleStatsTab>("activeCycleTab", "Assignees");
   // refs
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -55,18 +56,6 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
   const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
 
-  const currentValue = (tab: string | null) => {
-    switch (tab) {
-      case "Priority-Issues":
-        return 0;
-      case "Assignees":
-        return 1;
-      case "Labels":
-        return 2;
-      default:
-        return 0;
-    }
-  };
   const {
     issues: { fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
@@ -74,6 +63,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     issue: { getIssueById },
     setPeekIssue,
   } = useIssueDetail();
+
   const loadMoreIssues = useCallback(() => {
     if (!cycleId) return;
     fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
@@ -90,78 +80,27 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     </Loader>
   );
 
+  const handleTabChange = (value: TActiveCycleStatsTab) => {
+    setTab(value);
+  };
+
   return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
-      <Tab.Group
-        as={Fragment}
-        defaultIndex={currentValue(tab)}
-        onChange={(i) => {
-          switch (i) {
-            case 0:
-              return setTab("Priority-Issues");
-            case 1:
-              return setTab("Assignees");
-            case 2:
-              return setTab("Labels");
-
-            default:
-              return setTab("Priority-Issues");
-          }
-        }}
-      >
-        <Tab.List
-          as="div"
-          className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] grid"
-          style={{
-            gridTemplateColumns: `repeat(3, 1fr)`,
-          }}
-        >
-          <Tab
-            className={({ selected }) =>
-              cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
-                {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
-                }
-              )
-            }
-          >
+      <Tabs value={tab || "Assignees"} onValueChange={handleTabChange} className="flex flex-col w-full h-full">
+        <Tabs.List className="w-full">
+          <Tabs.Trigger value="Priority-Issues" size="sm">
             {t("project_cycles.active_cycle.priority_issue")}
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
-                {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
-                }
-              )
-            }
-          >
+          </Tabs.Trigger>
+          <Tabs.Trigger value="Assignees" size="sm">
             {t("project_cycles.active_cycle.assignees")}
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
-                {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
-                }
-              )
-            }
-          >
+          </Tabs.Trigger>
+          <Tabs.Trigger value="Labels" size="sm">
             {t("project_cycles.active_cycle.labels")}
-          </Tab>
-        </Tab.List>
+          </Tabs.Trigger>
+        </Tabs.List>
 
-        <Tab.Panels as={Fragment}>
-          <Tab.Panel
-            as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
-          >
+        <Tabs.Content value="Priority-Issues" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             <div
               ref={issuesContainerRef}
               className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
@@ -251,12 +190,11 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                 loaders
               )}
             </div>
-          </Tab.Panel>
+          </div>
+        </Tabs.Content>
 
-          <Tab.Panel
-            as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
-          >
+        <Tabs.Content value="Assignees" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
                 cycle.distribution?.assignees?.map((assignee, index) => {
@@ -313,12 +251,11 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             ) : (
               loaders
             )}
-          </Tab.Panel>
+          </div>
+        </Tabs.Content>
 
-          <Tab.Panel
-            as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
-          >
+        <Tabs.Content value="Labels" className="flex-1 mt-4">
+          <div className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm">
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
                 cycle.distribution.labels?.map((label, index) => (
@@ -356,9 +293,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             ) : (
               loaders
             )}
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+          </div>
+        </Tabs.Content>
+      </Tabs>
     </div>
   ) : (
     <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">

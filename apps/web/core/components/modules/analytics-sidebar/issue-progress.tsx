@@ -207,9 +207,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       )}
                       isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
                       moduleId={moduleId}
-                      noBackground={false}
                       plotType={plotType}
-                      roundedTab={false}
                       selectedFilters={{
                         assignees: selectedAssignees,
                         labels: selectedLabels,

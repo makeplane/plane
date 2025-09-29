@@ -145,9 +145,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                             cycleId
                           )}
                           isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
-                          noBackground={false}
                           plotType={plotType}
-                          roundedTab={false}
                           selectedFilters={{
                             assignees: selectedAssignees,
                             labels: selectedLabels,
