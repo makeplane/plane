@@ -50,9 +50,14 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
   const connectedProjects = entityConnections.map((entityConnection) => entityConnection?.project_id);
 
   const planeProjectIds = (workspaceSlug && projectIdsByWorkspaceSlug(workspaceSlug)) || [];
-  const planeProjects = planeProjectIds
+  const availableProjectIds = planeProjectIds.filter((id) => !connectedProjects.includes(id));
+  if (value?.projectId) {
+    availableProjectIds.push(value?.projectId);
+  }
+
+  const planeProjects = availableProjectIds
     .map((id) => (id && getProjectById(id)) || undefined)
-    .filter((project) => project !== undefined && project !== null && !connectedProjects.includes(project.id));
+    .filter((project) => project !== undefined && project !== null);
 
   return (
     <div className="relative space-y-4 text-sm">

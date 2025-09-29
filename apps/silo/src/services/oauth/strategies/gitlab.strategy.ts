@@ -137,7 +137,9 @@ export class GitlabEnterpriseStrategy implements OAuthStrategy {
     const gitlabClientService = await getGitlabClientService(
       wsConnection.workspace_id,
       this.integrationKey,
-      appConfig.baseUrl
+      appConfig.baseUrl,
+      appConfig.clientId,
+      appConfig.clientSecret
     );
     let isDeleted = false;
     try {

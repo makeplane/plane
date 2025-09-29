@@ -8,7 +8,9 @@ const apiClient = getAPIClient();
 export const getGitlabClientService = async (
   workspaceId: string,
   glIntegrationKey: E_INTEGRATION_KEYS,
-  baseUrl: string | undefined
+  baseUrl: string | undefined,
+  clientId?: string,
+  clientSecret?: string
 ) => {
   try {
     // Create or update credentials
@@ -40,7 +42,9 @@ export const getGitlabClientService = async (
           user_id: userId,
         });
       },
-      baseUrl
+      baseUrl,
+      clientId,
+      clientSecret
     );
     return gitlabService;
   } catch (error) {

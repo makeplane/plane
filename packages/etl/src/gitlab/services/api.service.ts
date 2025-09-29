@@ -4,13 +4,19 @@ import { GitlabUser } from "@/gitlab/types";
 export class GitLabService {
   client: AxiosInstance;
   baseUrl: string;
+  private clientId: string;
+  private clientSecret: string;
   constructor(
     access_token: string,
     refresh_token: string,
     refresh_callback: (access_token: string, refresh_token: string) => Promise<void>,
-    baseUrl: string = "https://gitlab.com"
+    baseUrl: string = "https://gitlab.com",
+    clientId?: string,
+    clientSecret?: string
   ) {
     this.baseUrl = baseUrl;
+    this.clientId = clientId || process.env.GITLAB_CLIENT_ID || "";
+    this.clientSecret = clientSecret || process.env.GITLAB_CLIENT_SECRET || "";
     this.client = axios.create({
       baseURL: baseUrl + "/api/v4",
       headers: {
@@ -23,8 +29,8 @@ export class GitLabService {
       async (error) => {
         if (error.response?.status === 401) {
           const response = await axios.post(`${this.baseUrl}/oauth/token`, {
-            client_id: process.env.GITLAB_CLIENT_ID,
-            client_secret: process.env.GITLAB_CLIENT_SECRET,
+            client_id: this.clientId,
+            client_secret: this.clientSecret,
             refresh_token: refresh_token,
             grant_type: "refresh_token",
           });

@@ -23,5 +23,7 @@ export const createGitLabService = (
   access_token: string,
   refresh_token: string,
   refresh_callback: (access_token: string, refresh_token: string) => Promise<void>,
-  baseUrl: string = "https://gitlab.com"
-): GitLabService => new GitLabService(access_token, refresh_token, refresh_callback, baseUrl);
+  baseUrl: string = "https://gitlab.com",
+  clientId?: string,
+  clientSecret?: string
+): GitLabService => new GitLabService(access_token, refresh_token, refresh_callback, baseUrl, clientId, clientSecret);

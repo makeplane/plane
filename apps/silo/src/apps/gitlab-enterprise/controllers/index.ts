@@ -117,7 +117,13 @@ export default class GitlabEnterpriseController {
 
       // Add webhook to gitlab
       const { url, token } = await this.getWorkspaceWebhookData(workspaceId, appConfig);
-      const gitlabClientService = await getGitlabClientService(workspaceId, this.integrationKey, appConfig.baseUrl);
+      const gitlabClientService = await getGitlabClientService(
+        workspaceId,
+        this.integrationKey,
+        appConfig.baseUrl,
+        appConfig.clientId,
+        appConfig.clientSecret
+      );
 
       // based on enum either add to project or group
       let webhookId;
@@ -226,7 +232,9 @@ export default class GitlabEnterpriseController {
       const gitlabClientService = await getGitlabClientService(
         entityConnection.workspace_id,
         this.integrationKey,
-        appConfig.baseUrl
+        appConfig.baseUrl,
+        appConfig.clientId,
+        appConfig.clientSecret
       );
       const entityData = entityConnection.entity_data as GitlabEntityData;
 
@@ -359,7 +367,13 @@ export default class GitlabEnterpriseController {
       }
 
       const appConfig = wsConnection.connection_data.appConfig as TGitlabAppConfig;
-      const gitlabClientService = await getGitlabClientService(workspaceId, this.integrationKey, appConfig.baseUrl);
+      const gitlabClientService = await getGitlabClientService(
+        workspaceId,
+        this.integrationKey,
+        appConfig.baseUrl,
+        appConfig.clientId,
+        appConfig.clientSecret
+      );
 
       const projects = await gitlabClientService.getProjects();
       if (projects.length) {

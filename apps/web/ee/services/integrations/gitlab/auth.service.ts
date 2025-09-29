@@ -42,11 +42,12 @@ export class GitlabAuthService {
    * @description disconnect organization
    * @param { string } workspaceId
    * @param { string } organizationId
+   * @param { string } userId
    * @returns { Promise<void> }
    */
-  disconnectOrganization = async (workspaceId: string, organizationId: string): Promise<void> =>
+  disconnectOrganization = async (workspaceId: string, organizationId: string, userId: string): Promise<void> =>
     await this.axiosInstance
-      .post(`/auth/organization-disconnect/${workspaceId}/${organizationId}`)
+      .post(`/auth/organization-disconnect/${workspaceId}/${organizationId}/${userId}`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

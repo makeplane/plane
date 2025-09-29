@@ -58,10 +58,10 @@ export default class GitlabController {
   }
 
   // Disconnect the organization connection
-  @Post("/auth/organization-disconnect/:workspaceId/:connectionId")
+  @Post("/auth/organization-disconnect/:workspaceId/:connectionId/:userId")
   @useValidateUserAuthentication()
   async disconnectOrganization(req: Request, res: Response) {
-    const { workspaceId, connectionId } = req.params;
+    const { workspaceId, connectionId, userId } = req.params;
 
     if (!workspaceId || !connectionId) {
       return res.status(400).send({
@@ -107,23 +107,9 @@ export default class GitlabController {
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
     try {
-      const {
-        workspace_id,
-        workspace_slug,
-        plane_api_token,
-        target_host,
-        user_id,
-        gitlab_hostname,
-        plane_app_installation_id,
-      } = req.body;
-      if (
-        !user_id ||
-        !workspace_id ||
-        !workspace_slug ||
-        !plane_api_token ||
-        !target_host ||
-        !plane_app_installation_id
-      )
+      const { workspace_id, workspace_slug, plane_api_token, user_id, gitlab_hostname, plane_app_installation_id } =
+        req.body;
+      if (!user_id || !workspace_id || !workspace_slug || !plane_api_token || !plane_app_installation_id)
         return res.status(400).send({ message: "Missing required fields" });
 
       const gitlabService = createGitLabAuth({
@@ -139,7 +125,7 @@ export default class GitlabController {
           workspace_id: workspace_id,
           workspace_slug: workspace_slug,
           plane_api_token: plane_api_token,
-          target_host: target_host,
+          target_host: env.API_BASE_URL,
           plane_app_installation_id: plane_app_installation_id,
         })
       );
