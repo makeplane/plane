@@ -21,9 +21,7 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        get_preference = WorkspaceUserPreference.objects.filter(
-            user=request.user, workspace_id=workspace.id
-        )
+        get_preference = WorkspaceUserPreference.objects.filter(user=request.user, workspace_id=workspace.id)
 
         create_preference_keys = []
 
@@ -48,9 +46,7 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
                 )
 
         preferences = (
-            WorkspaceUserPreference.objects.filter(
-                user=request.user, workspace_id=workspace.id
-            )
+            WorkspaceUserPreference.objects.filter(user=request.user, workspace_id=workspace.id)
             .order_by("sort_order")
             .values("key", "is_pinned", "sort_order")
         )
@@ -69,20 +65,14 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, key):
-        preference = WorkspaceUserPreference.objects.filter(
-            key=key, workspace__slug=slug, user=request.user
-        ).first()
+        preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug, user=request.user).first()
 
         if preference:
-            serializer = WorkspaceUserPreferenceSerializer(
-                preference, data=request.data, partial=True
-            )
+            serializer = WorkspaceUserPreferenceSerializer(preference, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {"detail": "Preference not found"}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"detail": "Preference not found"}, status=status.HTTP_404_NOT_FOUND)

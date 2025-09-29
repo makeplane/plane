@@ -33,12 +33,9 @@ def preprocess_filter_api_v1_paths(endpoints):
 
         # Check if the callback's view_class inherits from BaseServiceAPIView
         view_class = getattr(callback, "view_class", None)
-        if view_class and (
-            issubclass(view_class, BaseServiceAPIView)
-            or view_class.__name__ in VIEWS_TO_SKIP
-        ):
+        if view_class and (issubclass(view_class, BaseServiceAPIView) or view_class.__name__ in VIEWS_TO_SKIP):
             # Skip views that inherit from BaseServiceAPIView or are in VIEWS_TO_SKIP
-            continue  
+            continue
 
         filtered.append((path, path_regex, method, callback))
     return filtered

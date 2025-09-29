@@ -83,7 +83,7 @@ class IssueLinkMutation:
         try:
             url_validator = URLValidator()
             url_validator(url)
-        except Exception as e:
+        except Exception:
             raise ValueError("Invalid URL")
 
         workspace = await get_workspace(slug)

@@ -13,7 +13,6 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import WorkspaceMember, Workspace, WorkspaceMemberInvite
-from plane.authentication.utils.host import base_host
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 from plane.payment.utils.member_payment_count import count_member_payments

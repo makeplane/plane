@@ -84,9 +84,7 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.AnonRateThrottle"],
     "DEFAULT_THROTTLE_RATES": {"anon": "30/minute"},
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
@@ -123,16 +121,10 @@ TEMPLATES = [
 CORS_ALLOW_CREDENTIALS = True
 cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 # filter out empty strings
-cors_allowed_origins = [
-    origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()
-]
+cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
-    secure_origins = (
-        False
-        if [origin for origin in cors_allowed_origins if "http:" in origin]
-        else True
-    )
+    secure_origins = False if [origin for origin in cors_allowed_origins if "http:" in origin] else True
 else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
@@ -169,9 +161,7 @@ else:
 if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
     if bool(os.environ.get("DATABASE_READ_REPLICA_URL")):
         # Parse database configuration from $DATABASE_URL
-        DATABASES["replica"] = dj_database_url.parse(
-            os.environ.get("DATABASE_READ_REPLICA_URL")
-        )
+        DATABASES["replica"] = dj_database_url.parse(os.environ.get("DATABASE_READ_REPLICA_URL"))
     else:
         DATABASES["replica"] = {
             "ENGINE": "django.db.backends.postgresql",
@@ -214,9 +204,7 @@ else:
 
 # Password validations
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -253,11 +241,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    }
-}
+STORAGES = {"staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
@@ -266,9 +250,7 @@ AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
-AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get(
-    "MINIO_ENDPOINT_URL", None
-)
+AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get("MINIO_ENDPOINT_URL", None)
 if AWS_S3_ENDPOINT_URL and USE_MINIO:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
@@ -299,9 +281,7 @@ AUTOMATION_EVENT_TYPES = os.environ.get("AUTOMATION_EVENT_TYPES", "issue.").spli
 AUTOMATION_EVENT_STREAM_QUEUE_NAME = os.environ.get(
     "AUTOMATION_EVENT_STREAM_QUEUE_NAME", "plane.event_stream.automations"
 )
-AUTOMATION_EXCHANGE_NAME = os.environ.get(
-    "AUTOMATION_EXCHANGE_NAME", "plane.event_stream"
-)
+AUTOMATION_EXCHANGE_NAME = os.environ.get("AUTOMATION_EXCHANGE_NAME", "plane.event_stream")
 
 
 CELERY_IMPORTS = (
@@ -547,13 +527,9 @@ INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
 # JWT Settings
 SIMPLE_JWT = {
     # The number of seconds the access token will be valid
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 15))
-    ),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 15))),
     # The number of seconds the refresh token will be valid
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 90))
-    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 90))),
     # The number of seconds the refresh token will be valid
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -571,9 +547,7 @@ SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
 
 
 # firebase settings
-IS_MOBILE_PUSH_NOTIFICATION_ENABLED = (
-    os.environ.get("IS_MOBILE_PUSH_NOTIFICATION_ENABLED", "0") == "1"
-)
+IS_MOBILE_PUSH_NOTIFICATION_ENABLED = os.environ.get("IS_MOBILE_PUSH_NOTIFICATION_ENABLED", "0") == "1"
 FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
 FIREBASE_PRIVATE_KEY_ID = os.environ.get("FIREBASE_PRIVATE_KEY_ID", "")
 FIREBASE_PRIVATE_KEY = os.environ.get("FIREBASE_PRIVATE_KEY", "")
@@ -612,28 +586,16 @@ if OPENSEARCH_ENABLED:
     OPENSEARCH_REPLICA_COUNT = os.environ.get("OPENSEARCH_REPLICA_COUNT", 0)
 
     # Text Search Performance Optimization
-    OPENSEARCH_SEARCH_TIMEOUT = int(
-        os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
-    )  # seconds
+    OPENSEARCH_SEARCH_TIMEOUT = int(os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60"))  # seconds
     OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
-    OPENSEARCH_DEFAULT_PAGE_SIZE = int(
-        os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25")
-    )
+    OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
 
     # Optimizations for 2-active-data-node setup with heavy indexing
-    OPENSEARCH_BULK_CHUNK_SIZE = int(
-        os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500")
-    )  # Smaller chunks
-    OPENSEARCH_INDEXING_TIMEOUT = int(
-        os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120")
-    )  # Longer indexing timeout
+    OPENSEARCH_BULK_CHUNK_SIZE = int(os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500"))  # Smaller chunks
+    OPENSEARCH_INDEXING_TIMEOUT = int(os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120"))  # Longer indexing timeout
 
-    OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE = os.environ.get(
-        "OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE", None
-    )
-    OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get(
-        "OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None
-    )
+    OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE = os.environ.get("OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE", None)
+    OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get("OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None)
 
     # Batch processing and memory optimization
     OPENSEARCH_UPDATE_CHUNK_SIZE = int(

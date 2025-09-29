@@ -25,17 +25,13 @@ def page_version(page_id, existing_instance, user_id):
         page = Page.objects.get(id=page_id)
 
         # Get the current instance
-        current_instance = (
-            json.loads(existing_instance) if existing_instance is not None else {}
-        )
+        current_instance = json.loads(existing_instance) if existing_instance is not None else {}
 
         sub_pages = list(
             Page.all_objects.filter(parent_id=page_id)
             .annotate(
                 project_ids=Coalesce(
-                    ArrayAgg(
-                        "projects__id", distinct=True, filter=~Q(projects__id=True)
-                    ),
+                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
@@ -62,11 +58,7 @@ def page_version(page_id, existing_instance, user_id):
         # Create a version if description_html is updated
         if current_instance.get("description_html") != page.description_html:
             # Fetch the latest page version
-            page_version = (
-                PageVersion.objects.filter(page_id=page_id)
-                .order_by("-last_saved_at")
-                .first()
-            )
+            page_version = PageVersion.objects.filter(page_id=page_id).order_by("-last_saved_at").first()
 
             # Get the latest page version if it exists and is owned by the user
             if (

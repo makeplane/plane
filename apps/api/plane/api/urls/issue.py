@@ -58,9 +58,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
-        IssueLinkDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssueLinkDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="link",
     ),
     path(
@@ -70,9 +68,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
-        IssueCommentDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssueCommentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="comment",
     ),
     path(
@@ -92,9 +88,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue-attachment",
     ),
     path(

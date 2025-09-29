@@ -92,16 +92,12 @@ class IssueListEndpoint(BaseAPIView):
         issue_ids = request.GET.get("issues", False)
 
         if not issue_ids:
-            return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         issue_ids = [issue_id for issue_id in issue_ids.split(",") if issue_id != ""]
 
         # Base queryset with basic filters
-        queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-        )
+        queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
@@ -112,17 +108,15 @@ class IssueListEndpoint(BaseAPIView):
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
-            issue_queryset = issue_queryset.select_related(
-                "workspace", "project", "state", "parent"
-            ).prefetch_related("assignees", "labels", "issue_module__module")
+            issue_queryset = issue_queryset.select_related("workspace", "project", "state", "parent").prefetch_related(
+                "assignees", "labels", "issue_module__module"
+            )
 
         # Add annotations
         issue_queryset = (
             issue_queryset.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -151,18 +145,14 @@ class IssueListEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
-        issue_queryset, _ = order_issue_queryset(
-            issue_queryset=issue_queryset, order_by_param=order_by_param
-        )
+        issue_queryset, _ = order_issue_queryset(issue_queryset=issue_queryset, order_by_param=order_by_param)
 
         # Group by
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         recent_visited_task.delay(
             slug=slug,
@@ -173,9 +163,7 @@ class IssueListEndpoint(BaseAPIView):
         )
 
         if self.fields or self.expand:
-            issues = IssueSerializer(
-                queryset, many=True, fields=self.fields, expand=self.expand
-            ).data
+            issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
         else:
             issues = issue_queryset.values(
                 "id",
@@ -207,9 +195,7 @@ class IssueListEndpoint(BaseAPIView):
                 "type_id",
             )
             datetime_fields = ["created_at", "updated_at"]
-            issues = user_timezone_converter(
-                issues, datetime_fields, request.user.user_timezone
-            )
+            issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
         return Response(issues, status=status.HTTP_200_OK)
 
 
@@ -221,11 +207,7 @@ class IssueViewSet(BaseViewSet):
     filterset_class = IssueFilterSet
 
     def get_serializer_class(self):
-        return (
-            IssueCreateSerializer
-            if self.action in ["create", "update", "partial_update"]
-            else IssueSerializer
-        )
+        return IssueCreateSerializer if self.action in ["create", "update", "partial_update"] else IssueSerializer
 
     def _validate_order_by_field(self, order_by_param):
         """
@@ -288,9 +270,7 @@ class IssueViewSet(BaseViewSet):
         issues = (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -382,9 +362,7 @@ class IssueViewSet(BaseViewSet):
 
         if sub_issue is not None and sub_issue == "false":
             # If sub_issue is false, show the issues which are attached to epic as well.
-            issue_queryset = issue_queryset.filter(
-                Q(parent__isnull=True) | Q(parent__type__is_epic=True)
-            )
+            issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
 
         # Keeping a copy of the queryset before applying annotations
         filtered_issue_queryset = copy.deepcopy(issue_queryset)
@@ -402,9 +380,7 @@ class IssueViewSet(BaseViewSet):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         recent_visited_task.delay(
             slug=slug,
@@ -422,14 +398,10 @@ class IssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
-            filtered_issue_queryset = filtered_issue_queryset.filter(
-                created_by=request.user
-            )
+            filtered_issue_queryset = filtered_issue_queryset.filter(created_by=request.user)
 
         if group_by:
             if sub_group_by:
@@ -541,9 +513,7 @@ class IssueViewSet(BaseViewSet):
             },
         )
         if request.data.get("state_id"):
-            workflow_state_manager = WorkflowStateManager(
-                project_id=project_id, slug=slug
-            )
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
             if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"), user_id=request.user.id
             ):
@@ -607,9 +577,7 @@ class IssueViewSet(BaseViewSet):
                 .first()
             )
             datetime_fields = ["created_at", "updated_at"]
-            issue = user_timezone_converter(
-                issue, datetime_fields, request.user.user_timezone
-            )
+            issue = user_timezone_converter(issue, datetime_fields, request.user.user_timezone)
             # Send the model activity
             model_activity.delay(
                 model_name="issue",
@@ -630,9 +598,7 @@ class IssueViewSet(BaseViewSet):
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
     def retrieve(self, request, slug, project_id, pk=None):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
@@ -644,13 +610,7 @@ class IssueViewSet(BaseViewSet):
             )
             .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .select_related("state")
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
-                        :1
-                    ]
-                )
-            )
+            .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .annotate(
                 link_count=Subquery(
                     IssueLink.objects.filter(issue=OuterRef("id"))
@@ -779,9 +739,7 @@ class IssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -803,9 +761,7 @@ class IssueViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
@@ -815,10 +771,7 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -852,13 +805,10 @@ class IssueViewSet(BaseViewSet):
         )
 
         if not issue:
-            return Response(
-                {"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        current_instance = json.dumps(
-            IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
+        # TODO: review this and remove if it is unnecessary
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
             pk=project_id,
@@ -868,9 +818,7 @@ class IssueViewSet(BaseViewSet):
 
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if request.data.get(
-            "state_id"
-        ) and not workflow_state_manager.validate_state_transition(
+        if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
             issue=issue,
             new_state_id=request.data.get("state_id"),
             user_id=request.user.id,
@@ -905,13 +853,9 @@ class IssueViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
             )
 
-            if issue.cycle_id and (
-                request.data.get("state_id") or request.data.get("estimate_point")
-            ):
+            if issue.cycle_id and (request.data.get("state_id") or request.data.get("estimate_point")):
                 entity_issue_state_activity_task.delay(
-                    issue_cycle_data=[
-                        {"issue_id": str(issue.id), "cycle_id": str(issue.cycle_id)}
-                    ],
+                    issue_cycle_data=[{"issue_id": str(issue.id), "cycle_id": str(issue.cycle_id)}],
                     user_id=str(request.user.id),
                     slug=slug,
                     action="UPDATED",
@@ -947,9 +891,7 @@ class IssueViewSet(BaseViewSet):
         if issue_cycle:
             # added a entry to remove from the entity issue state activity
             entity_issue_state_activity_task.delay(
-                issue_cycle_data=[
-                    {"issue_id": str(issue.id), "cycle_id": str(issue_cycle.cycle_id)}
-                ],
+                issue_cycle_data=[{"issue_id": str(issue.id), "cycle_id": str(issue_cycle.cycle_id)}],
                 user_id=str(request.user.id),
                 slug=slug,
                 action="REMOVED",
@@ -981,29 +923,19 @@ class IssueViewSet(BaseViewSet):
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = IssueUserProperty.objects.get(
-            user=request.user, project_id=project_id
-        )
+        issue_property = IssueUserProperty.objects.get(user=request.user, project_id=project_id)
 
-        issue_property.rich_filters = request.data.get(
-            "rich_filters", issue_property.rich_filters
-        )
+        issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
         issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get(
-            "display_filters", issue_property.display_filters
-        )
-        issue_property.display_properties = request.data.get(
-            "display_properties", issue_property.display_properties
-        )
+        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
+        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
         issue_property.save()
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueUserProperty.objects.get_or_create(
-            user=request.user, project_id=project_id
-        )
+        issue_property, _ = IssueUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -1014,13 +946,9 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         issue_ids = request.data.get("issue_ids", [])
 
         if not len(issue_ids):
-            return Response(
-                {"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        issues = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-        )
+        issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
 
         total_issues = len(issues)
 
@@ -1031,13 +959,9 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         )
 
         # then trigger the entity issue state activity task for each issue
-        for issue_id, cycle_id in issues_with_cycle_ids.values_list(
-            "issue_id", "cycle_id"
-        ):
+        for issue_id, cycle_id in issues_with_cycle_ids.values_list("issue_id", "cycle_id"):
             entity_issue_state_activity_task.delay(
-                issue_cycle_data=[
-                    {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
-                ],
+                issue_cycle_data=[{"issue_id": str(issue_id), "cycle_id": str(cycle_id)}],
                 user_id=str(request.user.id),
                 slug=slug,
                 action="REMOVED",
@@ -1082,9 +1006,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         workspace_slug = self.kwargs.get("slug")
         project_id = self.kwargs.get("project_id")
 
-        issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id
-        )
+        issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
 
         return (
             issue_queryset.select_related("state")
@@ -1157,9 +1079,7 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         # converting the datetime fields in paginated data
         datetime_fields = ["created_at", "updated_at"]
-        paginated_data = user_timezone_converter(
-            paginated_data, datetime_fields, timezone
-        )
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
         return paginated_data
 
@@ -1206,9 +1126,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             required_fields.append("description_html")
 
         # querying issues
-        base_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id
-        )
+        base_queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
 
         base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
@@ -1225,9 +1143,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         if (
             project_member.exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             base_queryset = base_queryset.filter(created_by=request.user)
             queryset = queryset.filter(created_by=request.user)
@@ -1293,9 +1209,7 @@ class IssueDetailEndpoint(BaseAPIView):
         return (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -1395,9 +1309,7 @@ class IssueDetailEndpoint(BaseAPIView):
         # check for the project member role, if the role is 5 then check for the guest_view_all_features  # noqa: E501
         #  if it is true then show all the issues else show only the issues created by the user  # noqa: E501
         permission_subquery = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project_id, id=OuterRef("id")
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, id=OuterRef("id"))
             .filter(
                 Q(
                     project__project_projectmember__member=self.request.user,
@@ -1421,9 +1333,9 @@ class IssueDetailEndpoint(BaseAPIView):
             .values("id")
         )
         # Main issue query
-        issue = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).filter(Exists(permission_subquery))
+        issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
+            Exists(permission_subquery)
+        )
 
         project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
         if (
@@ -1473,9 +1385,7 @@ class IssueDetailEndpoint(BaseAPIView):
         order_by_param = self._validate_order_by_field(order_by_param)
 
         # Issue queryset
-        issue, order_by_param = order_issue_queryset(
-            issue_queryset=issue, order_by_param=order_by_param
-        )
+        issue, order_by_param = order_issue_queryset(issue_queryset=issue, order_by_param=order_by_param)
         return self.paginate(
             request=request,
             order_by=order_by_param,
@@ -1528,9 +1438,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
             start_date = update.get("start_date")
             target_date = update.get("target_date")
-            validate_dates = self.validate_dates(
-                issue.start_date, issue.target_date, start_date, target_date
-            )
+            validate_dates = self.validate_dates(issue.start_date, issue.target_date, start_date, target_date)
             if not validate_dates:
                 return Response(
                     {"message": "Start date cannot exceed target date"},
@@ -1553,12 +1461,8 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
             if target_date:
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps(
-                        {"target_date": update.get("target_date")}
-                    ),
-                    current_instance=json.dumps(
-                        {"target_date": str(issue.target_date)}
-                    ),
+                    requested_data=json.dumps({"target_date": update.get("target_date")}),
+                    current_instance=json.dumps({"target_date": str(issue.target_date)}),
                     issue_id=str(issue_id),
                     actor_id=str(request.user.id),
                     project_id=str(project_id),
@@ -1570,9 +1474,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         # Bulk update issues
         Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
 
-        return Response(
-            {"message": "Issues updated successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
 
 
 class IssueMetaEndpoint(BaseAPIView):
@@ -1607,9 +1509,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
 
         # Fetch the project
-        project = Project.objects.get(
-            identifier__iexact=project_identifier, workspace__slug=slug
-        )
+        project = Project.objects.get(identifier__iexact=project_identifier, workspace__slug=slug)
 
         # Fetch the issue
         issue = (
@@ -1617,16 +1517,8 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch("parent", queryset=Issue.objects.select_related("type"))
-            )
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
-                        :1
-                    ]
-                )
-            )
+            .prefetch_related(Prefetch("parent", queryset=Issue.objects.select_related("type")))
+            .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
             .prefetch_related(Prefetch("customer_request_issues__customer"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -1655,10 +1547,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -1775,13 +1664,11 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             slug=slug,
             user_id=request.user.id,
         ):
-            teamspace_ids = TeamspaceProject.objects.filter(
-                workspace__slug=slug, project_id=project.id
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceProject.objects.filter(workspace__slug=slug, project_id=project.id).values_list(
+                "team_space_id", flat=True
+            )
 
-            if TeamspaceMember.objects.filter(
-                member=request.user, team_space_id__in=teamspace_ids
-            ).exists():
+            if TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists():
                 has_issue_access = True
 
         # Check if the user has access to the issue if not return 403
@@ -1809,10 +1696,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     {"error": "You are not allowed to view this issue"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-            elif (
-                not project.guest_view_all_features
-                and not issue.created_by_id == request.user.id
-            ):
+            elif not project.guest_view_all_features and not issue.created_by_id == request.user.id:
                 return Response(
                     {"error": "You are not allowed to view this issue"},
                     status=status.HTTP_403_FORBIDDEN,

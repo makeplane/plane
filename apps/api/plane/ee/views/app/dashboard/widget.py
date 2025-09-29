@@ -1,7 +1,6 @@
 # django imports
 from django.db import models
 from django.db.models import F, Q
-from django_filters.rest_framework import FilterSet, filters
 
 # Third party imports
 from rest_framework import status
@@ -23,7 +22,6 @@ from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
-    check_workspace_feature_flag,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 

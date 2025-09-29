@@ -1,7 +1,5 @@
 """plane URL Configuration"""
 
-from oauth2_provider import urls as oauth2_urls
-from django.contrib import admin
 
 
 from django.conf import settings
@@ -55,8 +53,6 @@ if settings.DEBUG:
     try:
         import debug_toolbar
 
-        urlpatterns = [
-            re_path(r"^__debug__/", include(debug_toolbar.urls))
-        ] + urlpatterns
+        urlpatterns = [re_path(r"^__debug__/", include(debug_toolbar.urls))] + urlpatterns
     except ImportError:
         pass

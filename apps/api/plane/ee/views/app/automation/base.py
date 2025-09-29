@@ -3,7 +3,6 @@ import uuid
 import json
 
 # Django imports
-from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.db import IntegrityError
 from django.utils import timezone
@@ -21,7 +20,6 @@ from plane.ee.serializers import (
     AutomationWriteSerializer,
     AutomationReadSerializer,
 )
-from plane.db.models import User, BotTypeEnum, WorkspaceMember
 from plane.ee.models import (
     Automation,
     AutomationRun,

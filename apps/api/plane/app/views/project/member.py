@@ -73,9 +73,7 @@ class ProjectMemberViewSet(BaseViewSet):
         bulk_issue_props = []
 
         # Create a dictionary of the member_id and their roles
-        member_roles = {
-            member.get("member_id"): member.get("role") for member in members
-        }
+        member_roles = {member.get("member_id"): member.get("role") for member in members}
 
         # check the workspace role of the new user
         for member in member_roles:
@@ -84,17 +82,13 @@ class ProjectMemberViewSet(BaseViewSet):
             ).role
             if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
                 return Response(
-                    {
-                        "error": "You cannot add a user with role lower than the workspace role"
-                    },
+                    {"error": "You cannot add a user with role lower than the workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
                 return Response(
-                    {
-                        "error": "You cannot add a user with role higher than the workspace role"
-                    },
+                    {"error": "You cannot add a user with role higher than the workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -108,9 +102,7 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_project_members.append(project_member)
 
         # Update the roles of the existing members
-        ProjectMember.objects.bulk_update(
-            bulk_project_members, ["is_active", "role"], batch_size=100
-        )
+        ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
 
         # Get the list of project members of the requested workspace with the given slug
         project_members = (
@@ -150,13 +142,9 @@ class ProjectMemberViewSet(BaseViewSet):
             )
 
         # Bulk create the project members and issue properties
-        project_members = ProjectMember.objects.bulk_create(
-            bulk_project_members, batch_size=10, ignore_conflicts=True
-        )
+        project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
 
-        _ = IssueUserProperty.objects.bulk_create(
-            bulk_issue_props, batch_size=10, ignore_conflicts=True
-        )
+        _ = IssueUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
@@ -187,9 +175,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def get_teamspace_members(
-        self, slug: str, user_id: UUID, project_id: UUID
-    ) -> list[UUID]:
+    def get_teamspace_members(self, slug: str, user_id: UUID, project_id: UUID) -> list[UUID]:
         """
         Retrieve all members that have access to a project through teamspaces.
 
@@ -203,26 +189,22 @@ class ProjectMemberViewSet(BaseViewSet):
             Returns empty list if teamspaces feature is not enabled
         """
         # Check if teamspaces feature is enabled for this workspace
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             return []
 
         # First get all teamspaces associated with this project
-        teamspace_ids = TeamspaceProject.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).values_list("team_space_id", flat=True)
+        teamspace_ids = TeamspaceProject.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
+            "team_space_id", flat=True
+        )
 
         # Then get all members from those teamspaces
         return list(
-            TeamspaceMember.objects.filter(
-                team_space_id__in=teamspace_ids, member__is_active=True
-            ).values_list("member", flat=True)
+            TeamspaceMember.objects.filter(team_space_id__in=teamspace_ids, member__is_active=True).values_list(
+                "member", flat=True
+            )
         )
 
-    def _process_direct_members(
-        self, project_members, teamspace_members: list[UUID]
-    ) -> list[dict]:
+    def _process_direct_members(self, project_members, teamspace_members: list[UUID]) -> list[dict]:
         """Process direct project members and adjust their roles based on teamspace membership."""
         processed_members = []
 
@@ -265,9 +247,7 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
-        bot_filter = Q(member__is_bot=False) | Q(
-            member__bot_type=BotTypeEnum.APP_BOT.value
-        )  # noqa: E501
+        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value)  # noqa: E501
         project_members = ProjectMember.objects.filter(
             bot_filter,
             project_id=project_id,
@@ -278,30 +258,22 @@ class ProjectMemberViewSet(BaseViewSet):
         ).values("id", "member", "role", "created_at")
         project_member_ids = [member["member"] for member in project_members]
         # Get teamspace members
-        teamspace_members = self.get_teamspace_members(
-            slug, request.user.id, project_id
-        )
+        teamspace_members = self.get_teamspace_members(slug, request.user.id, project_id)
 
         # Build the final member list
         project_member_list = []
 
         # Process direct project members first
-        project_member_list.extend(
-            self._process_direct_members(project_members, teamspace_members)
-        )
+        project_member_list.extend(self._process_direct_members(project_members, teamspace_members))
 
         # Add teamspace-only members
-        project_member_list.extend(
-            self._process_teamspace_only_members(teamspace_members, project_member_ids)
-        )
+        project_member_list.extend(self._process_teamspace_only_members(teamspace_members, project_member_ids))
 
         return Response(project_member_list, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, is_active=True
-        )
+        project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
         # Fetch the workspace role of the project member
         workspace_role = WorkspaceMember.objects.get(
@@ -323,20 +295,15 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        if workspace_role in [5] and int(
-            request.data.get("role", project_member.role)
-        ) in [15, 20]:
+        if workspace_role in [5] and int(request.data.get("role", project_member.role)) in [15, 20]:
             return Response(
-                {
-                    "error": "You cannot add a user with role higher than the workspace role"
-                },
+                {"error": "You cannot add a user with role higher than the workspace role"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if (
             "role" in request.data
-            and int(request.data.get("role", project_member.role))
-            > requested_project_member.role
+            and int(request.data.get("role", project_member.role)) > requested_project_member.role
             and not is_workspace_admin
         ):
             return Response(
@@ -344,9 +311,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = ProjectMemberSerializer(
-            project_member, data=request.data, partial=True
-        )
+        serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -372,9 +337,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot remove himself
         if str(project_member.id) == str(requesting_project_member.id):
             return Response(
-                {
-                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
-                },
+                {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # User cannot deactivate higher role
@@ -399,9 +362,7 @@ class ProjectMemberViewSet(BaseViewSet):
             requested_data=json.dumps({"members": []}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"members": [str(project_member.member_id)], "removed": True}
-            ),
+            current_instance=json.dumps({"members": [str(project_member.member_id)], "removed": True}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
@@ -451,9 +412,7 @@ class ProjectMemberViewSet(BaseViewSet):
             requested_data=json.dumps({"members": []}),
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"members": [str(request.user.id)], "removed": False}
-            ),
+            current_instance=json.dumps({"members": [str(request.user.id)], "removed": False}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
@@ -463,18 +422,14 @@ class ProjectMemberViewSet(BaseViewSet):
 
 class ProjectMemberUserEndpoint(BaseAPIView):
     def user_exists_in_teamspace(self, slug, user_id, project_id):
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             # Get all the teamspace ids for the project
-            teamspace_ids = TeamspaceProject.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceProject.objects.filter(workspace__slug=slug, project_id=project_id).values_list(
+                "team_space_id", flat=True
+            )
 
             # Check if the user is a member of any of the teamspaces
-            return TeamspaceMember.objects.filter(
-                member_id=user_id, team_space_id__in=teamspace_ids
-            ).exists()
+            return TeamspaceMember.objects.filter(member_id=user_id, team_space_id__in=teamspace_ids).exists()
         return False
 
     def get_member_response(self, member_id, role):
@@ -492,19 +447,13 @@ class ProjectMemberUserEndpoint(BaseAPIView):
         if project_member:
             # Regular member or admin
             if project_member.role != ROLE.GUEST.value:
-                return self.get_member_response(
-                    project_member.member_id, project_member.role
-                )
+                return self.get_member_response(project_member.member_id, project_member.role)
 
             # Guest member but part of team - elevate to regular member
             if self.user_exists_in_teamspace(slug, request.user.id, project_id):
-                return self.get_member_response(
-                    project_member.member_id, ROLE.MEMBER.value
-                )
+                return self.get_member_response(project_member.member_id, ROLE.MEMBER.value)
             else:
-                return self.get_member_response(
-                    project_member.member_id, project_member.role
-                )
+                return self.get_member_response(project_member.member_id, project_member.role)
 
         # Not a direct project member but part of team
         if self.user_exists_in_teamspace(slug, request.user.id, project_id):
@@ -535,20 +484,18 @@ class UserProjectRolesEndpoint(BaseAPIView):
         Note:
             Only returns projects if the teamspace feature flag is enabled for the workspace.
         """
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             return []
 
         # Get all teamspaces where user is a member
-        teamspace_ids = TeamspaceMember.objects.filter(
-            member_id=user_id, workspace__slug=slug
-        ).values_list("team_space_id", flat=True)
+        teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+            "team_space_id", flat=True
+        )
 
         # Get all projects associated with those teamspaces
-        teamspace_project_ids = TeamspaceProject.objects.filter(
-            team_space_id__in=teamspace_ids
-        ).values_list("project_id", flat=True)
+        teamspace_project_ids = TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids).values_list(
+            "project_id", flat=True
+        )
 
         return list(teamspace_project_ids)
 
@@ -588,9 +535,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
             project_id = project_member["project_id"]
             if project_id in teamspace_project_ids:
                 # take the higher role between assigned role and MEMBER
-                project_roles[str(project_id)] = max(
-                    project_member["role"], ROLE.MEMBER.value
-                )
+                project_roles[str(project_id)] = max(project_member["role"], ROLE.MEMBER.value)
             else:
                 # For direct membership only, use assigned role
                 project_roles[str(project_id)] = project_member["role"]

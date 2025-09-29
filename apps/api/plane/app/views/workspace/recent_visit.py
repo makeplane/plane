@@ -18,25 +18,14 @@ class UserRecentVisitViewSet(BaseViewSet):
     def list(self, request, slug):
         entity_name = request.query_params.get("entity_name")
 
-        if entity_name and entity_name not in [
-            "issue",
-            "page",
-            "project",
-            "workspace_page",
-        ]:
-            return Response(
-                {"error": "Invalid entity_name"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        if entity_name and entity_name not in ["issue", "page", "project", "workspace_page"]:
+            return Response({"error": "Invalid entity_name"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user_recent_visits = UserRecentVisit.objects.filter(
-            workspace__slug=slug, user=request.user
-        )
+        user_recent_visits = UserRecentVisit.objects.filter(workspace__slug=slug, user=request.user)
         if entity_name:
             user_recent_visits = user_recent_visits.filter(entity_name=entity_name)
         else:
-            user_recent_visits = user_recent_visits.filter(
-                entity_name__in=["issue", "page", "project"]
-            )
+            user_recent_visits = user_recent_visits.filter(entity_name__in=["issue", "page", "project"])
 
         serializer = WorkspaceRecentVisitSerializer(user_recent_visits[:20], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

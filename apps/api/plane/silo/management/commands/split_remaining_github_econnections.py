@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 
 from plane.silo.services import (
     split_github_entity_connections,
-    get_github_entity_connections_ids_split_and_not_split,
 )
 from plane.ee.models.workspace import WorkspaceEntityConnection
 

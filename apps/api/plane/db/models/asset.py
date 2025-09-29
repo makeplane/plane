@@ -59,27 +59,13 @@ class FileAsset(BaseModel):
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    comment = models.ForeignKey(
-        "db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, null=True, related_name="assets")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets")
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, null=True, related_name="assets")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, null=True, related_name="assets")
+    comment = models.ForeignKey("db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, null=True, related_name="assets")
     entity_type = models.CharField(max_length=255, null=True, blank=True)
     entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
@@ -97,12 +83,8 @@ class FileAsset(BaseModel):
         ordering = ("-created_at",)
         indexes = [
             models.Index(fields=["entity_type"], name="asset_entity_type_idx"),
-            models.Index(
-                fields=["entity_identifier"], name="asset_entity_identifier_idx"
-            ),
-            models.Index(
-                fields=["entity_type", "entity_identifier"], name="asset_entity_idx"
-            ),
+            models.Index(fields=["entity_identifier"], name="asset_entity_identifier_idx"),
+            models.Index(fields=["entity_type", "entity_identifier"], name="asset_entity_idx"),
         ]
 
     def __str__(self):
@@ -124,7 +106,7 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type == self.EntityTypeContext.PROJECT_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/attachments/{self.id}/"

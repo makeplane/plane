@@ -20,18 +20,14 @@ class AuthenticationThrottle(AnonRateThrottle):
     rate = "30/minute"
     scope = "authentication"
 
-    def throttle_failure_view(
-        self, request: Request, *args: Any, **kwargs: Any
-    ) -> Response:
+    def throttle_failure_view(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         try:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
                 error_message="RATE_LIMIT_EXCEEDED",
             )
         except AuthenticationException as e:
-            return Response(
-                e.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS
-            )
+            return Response(e.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS)
 
 
 class OAuthTokenRateThrottle(SimpleRateThrottle):
@@ -42,13 +38,9 @@ class OAuthTokenRateThrottle(SimpleRateThrottle):
     rate = "5000/minute"
     scope = "oauth_api_token"
 
-    def get_cache_key(
-        self, request: Request, view: Optional[Any] = None
-    ) -> Optional[str]:
+    def get_cache_key(self, request: Request, view: Optional[Any] = None) -> Optional[str]:
         # Check if the request is authenticated via OAuth
-        oauth2authenticated = isinstance(
-            request.successful_authenticator, OAuth2Authentication
-        )
+        oauth2authenticated = isinstance(request.successful_authenticator, OAuth2Authentication)
 
         if not oauth2authenticated:
             return None  # Allow the request if it's not OauthAuthenticated

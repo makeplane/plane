@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField, Subquery
+from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField
 from django.utils import timezone
 
 # Third party imports
@@ -40,9 +40,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             .select_related("workspace", "project", "triggered_by", "receiver")
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         # Get query parameters
         snoozed = request.GET.get("snoozed", "false")
@@ -59,9 +57,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
 
         notifications = (
-            Notification.objects.filter(
-                workspace__slug=slug, receiver_id=request.user.id
-            )
+            Notification.objects.filter(workspace__slug=slug, receiver_id=request.user.id)
             .filter(entity_name__in=["issue", "epic"])
             .annotate(is_inbox_issue=Exists(intake_issue))
             .annotate(is_intake_issue=Exists(intake_issue))
@@ -106,9 +102,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         # Subscribed issues
         if "subscribed" in type:
             issue_ids = (
-                IssueSubscriber.objects.filter(
-                    workspace__slug=slug, subscriber_id=request.user.id
-                )
+                IssueSubscriber.objects.filter(workspace__slug=slug, subscriber_id=request.user.id)
                 .annotate(
                     created=Exists(
                         Issue.objects.filter(
@@ -117,13 +111,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                         ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
                     )
                 )
-                .annotate(
-                    assigned=Exists(
-                        IssueAssignee.objects.filter(
-                            pk=OuterRef("issue_id"), assignee=request.user
-                        )
-                    )
-                )
+                .annotate(assigned=Exists(IssueAssignee.objects.filter(pk=OuterRef("issue_id"), assignee=request.user)))
                 .filter(created=False, assigned=False)
                 .values_list("issue_id", flat=True)
             )
@@ -131,9 +119,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         # Assigned Issues
         if "assigned" in type:
-            issue_ids = IssueAssignee.objects.filter(
-                workspace__slug=slug, assignee_id=request.user.id
-            ).values_list("issue_id", flat=True)
+            issue_ids = IssueAssignee.objects.filter(workspace__slug=slug, assignee_id=request.user.id).values_list(
+                "issue_id", flat=True
+            )
             q_filters |= Q(entity_identifier__in=issue_ids)
 
         # Created issues
@@ -165,75 +153,51 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(notifications),
-                on_results=lambda notifications: NotificationSerializer(
-                    notifications, many=True
-                ).data,
+                on_results=lambda notifications: NotificationSerializer(notifications, many=True).data,
             )
 
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
-        notification = Notification.objects.get(
-            workspace__slug=slug, pk=pk, receiver=request.user
-        )
+        notification = Notification.objects.get(workspace__slug=slug, pk=pk, receiver=request.user)
         # Only read_at and snoozed_till can be updated
         notification_data = {"snoozed_till": request.data.get("snoozed_till", None)}
-        serializer = NotificationSerializer(
-            notification, data=notification_data, partial=True
-        )
+        serializer = NotificationSerializer(notification, data=notification_data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def mark_read(self, request, slug, pk):
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug, pk=pk
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug, pk=pk)
         notification.read_at = timezone.now()
         notification.save()
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def mark_unread(self, request, slug, pk):
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug, pk=pk
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug, pk=pk)
         notification.read_at = None
         notification.save()
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def archive(self, request, slug, pk):
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug, pk=pk
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug, pk=pk)
         notification.archived_at = timezone.now()
         notification.save()
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def unarchive(self, request, slug, pk):
-        notification = Notification.objects.get(
-            receiver=request.user, workspace__slug=slug, pk=pk
-        )
+        notification = Notification.objects.get(receiver=request.user, workspace__slug=slug, pk=pk)
         notification.archived_at = None
         notification.save()
         serializer = NotificationSerializer(notification)
@@ -243,9 +207,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 class UnreadNotificationEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         # Watching Issues Count
         unread_notifications_count = (
@@ -279,9 +241,7 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
 
 class MarkAllReadNotificationViewSet(BaseViewSet):
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
         snoozed = request.data.get("snoozed", False)
         archived = request.data.get("archived", False)
@@ -299,13 +259,9 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
 
         # Filter for snoozed notifications
         if snoozed:
-            notifications = notifications.filter(
-                Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
-            )
+            notifications = notifications.filter(Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False))
         else:
-            notifications = notifications.filter(
-                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True)
-            )
+            notifications = notifications.filter(Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True))
 
         # Filter for archived or unarchive
         if archived:
@@ -315,16 +271,16 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
 
         # Subscribed issues
         if type == "watching":
-            issue_ids = IssueSubscriber.objects.filter(
-                workspace__slug=slug, subscriber_id=request.user.id
-            ).values_list("issue_id", flat=True)
+            issue_ids = IssueSubscriber.objects.filter(workspace__slug=slug, subscriber_id=request.user.id).values_list(
+                "issue_id", flat=True
+            )
             notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         # Assigned Issues
         if type == "assigned":
-            issue_ids = IssueAssignee.objects.filter(
-                workspace__slug=slug, assignee_id=request.user.id
-            ).values_list("issue_id", flat=True)
+            issue_ids = IssueAssignee.objects.filter(workspace__slug=slug, assignee_id=request.user.id).values_list(
+                "issue_id", flat=True
+            )
             notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         # Created issues
@@ -351,9 +307,7 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
         for notification in notifications:
             notification.read_at = timezone.now()
             updated_notifications.append(notification)
-        Notification.objects.bulk_update(
-            updated_notifications, ["read_at"], batch_size=100
-        )
+        Notification.objects.bulk_update(updated_notifications, ["read_at"], batch_size=100)
         return Response({"message": "Successful"}, status=status.HTTP_200_OK)
 
 
@@ -363,20 +317,14 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
 
     # request the object
     def get(self, request):
-        user_notification_preference = UserNotificationPreference.objects.get(
-            user=request.user
-        )
+        user_notification_preference = UserNotificationPreference.objects.get(user=request.user)
         serializer = UserNotificationPreferenceSerializer(user_notification_preference)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update the object
     def patch(self, request):
-        user_notification_preference = UserNotificationPreference.objects.get(
-            user=request.user
-        )
-        serializer = UserNotificationPreferenceSerializer(
-            user_notification_preference, data=request.data, partial=True
-        )
+        user_notification_preference = UserNotificationPreference.objects.get(user=request.user)
+        serializer = UserNotificationPreferenceSerializer(user_notification_preference, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

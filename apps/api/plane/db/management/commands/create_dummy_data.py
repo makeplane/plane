@@ -25,18 +25,13 @@ class Command(BaseCommand):
         members = input("Enter Member emails (comma separated): ")
         members = members.split(",") if members != "" else []
         # Create workspace
-        workspace = Workspace.objects.create(
-            slug=workspace_slug, name=workspace_name, owner=user
-        )
+        workspace = Workspace.objects.create(slug=workspace_slug, name=workspace_name, owner=user)
         # Create workspace member
         WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
         user_ids = User.objects.filter(email__in=members)
 
         _ = WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(workspace=workspace, member=user_id, role=20)
-                for user_id in user_ids
-            ],
+            [WorkspaceMember(workspace=workspace, member=user_id, role=20) for user_id in user_ids],
             ignore_conflicts=True,
         )
 
@@ -58,9 +53,7 @@ class Command(BaseCommand):
                 workspace = Workspace.objects.get(slug=workspace_slug)
                 creator = workspace.owner.email
                 members = list(
-                    WorkspaceMember.objects.filter(workspace=workspace).values_list(
-                        "member__email", flat=True
-                    )
+                    WorkspaceMember.objects.filter(workspace=workspace).values_list("member__email", flat=True)
                 )
 
             project_count = int(input("Number of projects to be created: "))
@@ -71,9 +64,7 @@ class Command(BaseCommand):
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))
                 pages_count = int(input("Number of pages to be created: "))
-                intake_issue_count = int(
-                    input("Number of intake issues to be created: ")
-                )
+                intake_issue_count = int(input("Number of intake issues to be created: "))
 
                 from plane.bgtasks.dummy_data_task import create_dummy_data
 

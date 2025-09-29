@@ -9,7 +9,6 @@ from plane.db.models import (
     Project,
     IssueLink,
 )
-from unittest.mock import MagicMock
 
 
 @pytest.mark.contract

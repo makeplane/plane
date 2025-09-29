@@ -14,7 +14,6 @@ from plane.db.models import (
     User,
     Label,
     Module,
-    IssueType,
 )
 from plane.utils.exception_logger import log_exception
 from plane.utils.uuid import is_valid_uuid

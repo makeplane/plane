@@ -46,24 +46,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("member", "member__avatar_asset")
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            member=request.user, workspace__slug=slug, is_active=True
-        )
+        workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
 
         # Get all active workspace members
         workspace_members = self.get_queryset()
         if workspace_member.role > 5:
-            serializer = WorkspaceMemberAdminSerializer(
-                workspace_members, fields=("id", "member", "role"), many=True
-            )
+            serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         else:
-            serializer = WorkSpaceMemberSerializer(
-                workspace_members, fields=("id", "member", "role"), many=True
-            )
+            serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
@@ -79,13 +71,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if "role" in request.data and int(request.data.get("role")) == 5:
             # If a user is moved to a guest role he can't have any other role in projects
-            ProjectMember.objects.filter(
-                workspace__slug=slug, member_id=workspace_member.member_id
-            ).update(role=5)
+            ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
             # When a user is moved to a guest role, they must be removed from all teamspaces
-            TeamspaceMember.objects.filter(
-                workspace__slug=slug, member_id=workspace_member.member_id
-            ).delete()
+            TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
 
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
@@ -96,15 +84,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             )
             if not allowed:
                 return Response(
-                    {
-                        "error": "Cannot update the role as it exceeds the purchased seat limit"
-                    },
+                    {"error": "Cannot update the role as it exceeds the purchased seat limit"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = WorkSpaceMemberSerializer(
-            workspace_member, data=request.data, partial=True
-        )
+        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -127,9 +111,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if str(workspace_member.id) == str(requesting_workspace_member.id):
             return Response(
-                {
-                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
-                },
+                {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -155,7 +137,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."
+                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -169,14 +151,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
 
         # Remove the user from the teamspaces where the user is part of
-        TeamspaceMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id
-        ).delete()
+        TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
 
         # Remove the user from the pages where the user is part of
-        PageUser.objects.filter(
-            workspace__slug=slug, user_id=workspace_member.member_id
-        ).delete()
+        PageUser.objects.filter(workspace__slug=slug, user_id=workspace_member.member_id).delete()
 
         # Sync workspace members
         member_sync_task.delay(slug)
@@ -191,25 +169,18 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     )
     @invalidate_cache(path="/api/users/me/settings/")
     @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def leave(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
+        workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
         # Check if the leaving user is the only admin of the workspace
         if (
             workspace_member.role == 20
-            and not WorkspaceMember.objects.filter(
-                workspace__slug=slug, role=20, is_active=True
-            ).count()
-            > 1
+            and not WorkspaceMember.objects.filter(workspace__slug=slug, role=20, is_active=True).count() > 1
         ):
             return Response(
                 {
-                    "error": "You cannot leave the workspace as you are the only admin of the workspace you will have to either delete the workspace or promote another user to admin."
+                    "error": "You cannot leave the workspace as you are the only admin of the workspace you will have to either delete the workspace or promote another user to admin."  # noqa: E501
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -230,7 +201,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."
+                    "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."  # noqa: E501
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -245,14 +216,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.save()
 
         # Remove the user from the teamspaces where the user is part of
-        TeamspaceMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id
-        ).delete()
+        TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
 
         # Remove the user from the pages where the user is part of
-        PageUser.objects.filter(
-            workspace__slug=slug, user_id=workspace_member.member_id
-        ).delete()
+        PageUser.objects.filter(workspace__slug=slug, user_id=workspace_member.member_id).delete()
 
         # # Sync workspace members
         member_sync_task.delay(slug)
@@ -261,9 +228,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
+        workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
         workspace_member.view_props = request.data.get("view_props", {})
         workspace_member.save()
 
@@ -300,19 +265,9 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
         )
 
         workspace_member = (
-            WorkspaceMember.objects.filter(
-                member=request.user, workspace__slug=slug, is_active=True
-            )
-            .annotate(
-                draft_issue_count=Coalesce(
-                    Subquery(draft_issue_count, output_field=IntegerField()), 0
-                )
-            )
-            .annotate(
-                active_cycles_count=Coalesce(
-                    Subquery(active_cycles_count, output_field=IntegerField()), 0
-                )
-            )
+            WorkspaceMember.objects.filter(member=request.user, workspace__slug=slug, is_active=True)
+            .annotate(draft_issue_count=Coalesce(Subquery(draft_issue_count, output_field=IntegerField()), 0))
+            .annotate(active_cycles_count=Coalesce(Subquery(active_cycles_count, output_field=IntegerField()), 0))
             .first()
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)

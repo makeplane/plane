@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import TextChoices
 from plane.db.models.base import BaseModel
-from .enums import ImporterType
 
 
 class ImportReport(BaseModel):

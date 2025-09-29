@@ -87,10 +87,7 @@ def get_assignee_details(slug, filters):
     """Fetch assignee details if required."""
     return (
         Issue.issue_objects.filter(
-            Q(
-                Q(assignees__avatar__isnull=False)
-                | Q(assignees__avatar_asset__isnull=False)
-            ),
+            Q(Q(assignees__avatar__isnull=False) | Q(assignees__avatar_asset__isnull=False)),
             workspace__slug=slug,
             **filters,
         )
@@ -196,11 +193,7 @@ def generate_segmented_rows(
     cycle_details,
     module_details,
 ):
-    segment_zero = list(
-        set(
-            item.get("segment") for sublist in distribution.values() for item in sublist
-        )
-    )
+    segment_zero = list(set(item.get("segment") for sublist in distribution.values() for item in sublist))
 
     segmented = segment
 
@@ -222,38 +215,26 @@ def generate_segmented_rows(
 
         if x_axis == ASSIGNEE_ID:
             assignee = next(
-                (
-                    user
-                    for user in assignee_details
-                    if str(user[ASSIGNEE_ID]) == str(item)
-                ),
+                (user for user in assignee_details if str(user[ASSIGNEE_ID]) == str(item)),
                 None,
             )
             if assignee:
-                generated_row[0] = (
-                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
-                )
+                generated_row[0] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
 
         if x_axis == LABEL_ID:
-            label = next(
-                (lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None
-            )
+            label = next((lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None)
 
             if label:
                 generated_row[0] = f"{label['labels__name']}"
 
         if x_axis == STATE_ID:
-            state = next(
-                (sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None
-            )
+            state = next((sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None)
 
             if state:
                 generated_row[0] = f"{state['state__name']}"
 
         if x_axis == CYCLE_ID:
-            cycle = next(
-                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None
-            )
+            cycle = next((cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None)
 
             if cycle:
                 generated_row[0] = f"{cycle['issue_cycle__cycle__name']}"
@@ -272,47 +253,33 @@ def generate_segmented_rows(
     if segmented == ASSIGNEE_ID:
         for index, segm in enumerate(row_zero[2:]):
             assignee = next(
-                (
-                    user
-                    for user in assignee_details
-                    if str(user[ASSIGNEE_ID]) == str(segm)
-                ),
+                (user for user in assignee_details if str(user[ASSIGNEE_ID]) == str(segm)),
                 None,
             )
             if assignee:
-                row_zero[index + 2] = (
-                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
-                )
+                row_zero[index + 2] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
 
     if segmented == LABEL_ID:
         for index, segm in enumerate(row_zero[2:]):
-            label = next(
-                (lab for lab in label_details if str(lab[LABEL_ID]) == str(segm)), None
-            )
+            label = next((lab for lab in label_details if str(lab[LABEL_ID]) == str(segm)), None)
             if label:
                 row_zero[index + 2] = label["labels__name"]
 
     if segmented == STATE_ID:
         for index, segm in enumerate(row_zero[2:]):
-            state = next(
-                (sta for sta in state_details if str(sta[STATE_ID]) == str(segm)), None
-            )
+            state = next((sta for sta in state_details if str(sta[STATE_ID]) == str(segm)), None)
             if state:
                 row_zero[index + 2] = state["state__name"]
 
     if segmented == MODULE_ID:
         for index, segm in enumerate(row_zero[2:]):
-            module = next(
-                (mod for mod in label_details if str(mod[MODULE_ID]) == str(segm)), None
-            )
+            module = next((mod for mod in label_details if str(mod[MODULE_ID]) == str(segm)), None)
             if module:
                 row_zero[index + 2] = module["issue_module__module__name"]
 
     if segmented == CYCLE_ID:
         for index, segm in enumerate(row_zero[2:]):
-            cycle = next(
-                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(segm)), None
-            )
+            cycle = next((cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(segm)), None)
             if cycle:
                 row_zero[index + 2] = cycle["issue_cycle__cycle__name"]
 
@@ -336,38 +303,26 @@ def generate_non_segmented_rows(
 
         if x_axis == ASSIGNEE_ID:
             assignee = next(
-                (
-                    user
-                    for user in assignee_details
-                    if str(user[ASSIGNEE_ID]) == str(item)
-                ),
+                (user for user in assignee_details if str(user[ASSIGNEE_ID]) == str(item)),
                 None,
             )
             if assignee:
-                row[0] = (
-                    f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
-                )
+                row[0] = f"{assignee['assignees__first_name']} {assignee['assignees__last_name']}"
 
         if x_axis == LABEL_ID:
-            label = next(
-                (lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None
-            )
+            label = next((lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None)
 
             if label:
                 row[0] = f"{label['labels__name']}"
 
         if x_axis == STATE_ID:
-            state = next(
-                (sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None
-            )
+            state = next((sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None)
 
             if state:
                 row[0] = f"{state['state__name']}"
 
         if x_axis == CYCLE_ID:
-            cycle = next(
-                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None
-            )
+            cycle = next((cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None)
 
             if cycle:
                 row[0] = f"{cycle['issue_cycle__cycle__name']}"
@@ -397,40 +352,20 @@ def analytic_export_task(email, data, slug):
         y_axis = data.get("y_axis", False)
         segment = data.get("segment", False)
 
-        distribution = build_graph_plot(
-            queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-        )
+        distribution = build_graph_plot(queryset, x_axis=x_axis, y_axis=y_axis, segment=segment)
         key = "count" if y_axis == "issue_count" else "estimate"
 
         assignee_details = (
-            get_assignee_details(slug, filters)
-            if x_axis == ASSIGNEE_ID or segment == ASSIGNEE_ID
-            else {}
+            get_assignee_details(slug, filters) if x_axis == ASSIGNEE_ID or segment == ASSIGNEE_ID else {}
         )
 
-        label_details = (
-            get_label_details(slug, filters)
-            if x_axis == LABEL_ID or segment == LABEL_ID
-            else {}
-        )
+        label_details = get_label_details(slug, filters) if x_axis == LABEL_ID or segment == LABEL_ID else {}
 
-        state_details = (
-            get_state_details(slug, filters)
-            if x_axis == STATE_ID or segment == STATE_ID
-            else {}
-        )
+        state_details = get_state_details(slug, filters) if x_axis == STATE_ID or segment == STATE_ID else {}
 
-        cycle_details = (
-            get_cycle_details(slug, filters)
-            if x_axis == CYCLE_ID or segment == CYCLE_ID
-            else {}
-        )
+        cycle_details = get_cycle_details(slug, filters) if x_axis == CYCLE_ID or segment == CYCLE_ID else {}
 
-        module_details = (
-            get_module_details(slug, filters)
-            if x_axis == MODULE_ID or segment == MODULE_ID
-            else {}
-        )
+        module_details = get_module_details(slug, filters) if x_axis == MODULE_ID or segment == MODULE_ID else {}
 
         if segment:
             rows = generate_segmented_rows(

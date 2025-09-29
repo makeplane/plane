@@ -21,7 +21,7 @@ from django.test import override_settings
 from django.conf import settings
 
 # Pika exceptions for testing
-from pika.exceptions import AMQPConnectionError, AMQPChannelError, ConnectionClosed
+from pika.exceptions import AMQPConnectionError, AMQPChannelError
 
 # Local imports
 from plane.event_stream.publisher import (

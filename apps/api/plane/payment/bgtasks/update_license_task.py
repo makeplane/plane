@@ -51,7 +51,7 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
         response.raise_for_status()
         response = response.json()
         return response
-    except Exception as e:
+    except Exception:
         return None
 
 

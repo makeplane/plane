@@ -2,21 +2,16 @@
 import uuid
 
 # Django imports
-from django.conf import settings
-from django.http import HttpResponseRedirect
-from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
-from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
 )

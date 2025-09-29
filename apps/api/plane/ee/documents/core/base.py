@@ -1,5 +1,4 @@
 # Standard library imports
-import json
 
 # Third-party imports
 from django_opensearch_dsl import Document

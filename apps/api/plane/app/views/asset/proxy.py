@@ -1,11 +1,7 @@
 # Python imports
 import base64
-import json
-import time
-import hashlib
 
 # Django imports
-from django.conf import settings
 from django.http import HttpResponse
 from django.http import StreamingHttpResponse
 

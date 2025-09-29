@@ -104,7 +104,7 @@ class AddCommentAction(ActionNode):
                     # Current value is neither dict nor list, can't traverse further
                     return None
 
-            except (ValueError, TypeError) as e:
+            except (ValueError, TypeError):
                 # Only catch specific errors we expect (like int conversion)
                 # logger.warning(
                 #     f"Error processing field path '{field_path}' at part '{part}': {e}"
@@ -528,7 +528,7 @@ class ChangePropertyAction(ActionNode):
                             date_value.replace("Z", "+00:00")
                         ).date()
                         return parsed_date
-                except ValueError as e:
+                except ValueError:
                     raise ValueError(
                         f"Invalid date format '{date_value}'. "
                         "Use YYYY-MM-DD or ISO datetime"

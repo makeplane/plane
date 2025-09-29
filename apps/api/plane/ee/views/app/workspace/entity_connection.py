@@ -5,7 +5,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.db.models import Workspace
 from plane.ee.models import WorkspaceEntityConnection
-from plane.ee.views.base import BaseAPIView, BaseViewSet
+from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import WorkspaceEntityConnectionSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag

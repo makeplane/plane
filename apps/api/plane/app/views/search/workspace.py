@@ -1,5 +1,4 @@
 # Python imports
-import re
 
 # Django imports
 from django.db.models import Q
@@ -10,7 +9,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views import BaseAPIView
-from plane.db.models import Workspace, Page, Issue
+from plane.db.models import Workspace, Page
 from plane.app.permissions import WorkspaceEntityPermission
 
 

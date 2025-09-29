@@ -37,9 +37,7 @@ class IssueRelationViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         issue_relations = (
-            IssueRelation.objects.filter(
-                Q(issue_id=issue_id) | Q(related_issue=issue_id)
-            )
+            IssueRelation.objects.filter(Q(issue_id=issue_id) | Q(related_issue=issue_id))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("project")
             .select_related("workspace")
@@ -49,19 +47,19 @@ class IssueRelationViewSet(BaseViewSet):
         )
 
         # get all blocking issues
-        blocking_issues = issue_relations.filter(
-            relation_type="blocked_by", related_issue_id=issue_id
-        ).values_list("issue_id", flat=True)
+        blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id).values_list(
+            "issue_id", flat=True
+        )
 
         # get all blocked by issues
-        blocked_by_issues = issue_relations.filter(
-            relation_type="blocked_by", issue_id=issue_id
-        ).values_list("related_issue_id", flat=True)
+        blocked_by_issues = issue_relations.filter(relation_type="blocked_by", issue_id=issue_id).values_list(
+            "related_issue_id", flat=True
+        )
 
         # get all duplicate issues
-        duplicate_issues = issue_relations.filter(
-            issue_id=issue_id, relation_type="duplicate"
-        ).values_list("related_issue_id", flat=True)
+        duplicate_issues = issue_relations.filter(issue_id=issue_id, relation_type="duplicate").values_list(
+            "related_issue_id", flat=True
+        )
 
         # get all relates to issues
         duplicate_issues_related = issue_relations.filter(
@@ -69,9 +67,9 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         # get all relates to issues
-        relates_to_issues = issue_relations.filter(
-            issue_id=issue_id, relation_type="relates_to"
-        ).values_list("related_issue_id", flat=True)
+        relates_to_issues = issue_relations.filter(issue_id=issue_id, relation_type="relates_to").values_list(
+            "related_issue_id", flat=True
+        )
 
         # get all relates to issues
         relates_to_issues_related = issue_relations.filter(
@@ -84,9 +82,9 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         # get all start_before issues
-        start_before_issues = issue_relations.filter(
-            relation_type="start_before", issue_id=issue_id
-        ).values_list("related_issue_id", flat=True)
+        start_before_issues = issue_relations.filter(relation_type="start_before", issue_id=issue_id).values_list(
+            "related_issue_id", flat=True
+        )
 
         # get all finish after issues
         finish_after_issues = issue_relations.filter(
@@ -94,15 +92,15 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("issue_id", flat=True)
 
         # get all finish before issues
-        finish_before_issues = issue_relations.filter(
-            relation_type="finish_before", issue_id=issue_id
-        ).values_list("related_issue_id", flat=True)
-        
+        finish_before_issues = issue_relations.filter(relation_type="finish_before", issue_id=issue_id).values_list(
+            "related_issue_id", flat=True
+        )
+
         # get all implements issues
-        implements_issues = issue_relations.filter(
-            relation_type="implemented_by", issue_id=issue_id
-        ).values_list("related_issue_id", flat=True)
-        
+        implements_issues = issue_relations.filter(relation_type="implemented_by", issue_id=issue_id).values_list(
+            "related_issue_id", flat=True
+        )
+
         # get all implemented by issues
         implemented_by_issues = issue_relations.filter(
             relation_type="implemented_by", related_issue_id=issue_id
@@ -116,9 +114,7 @@ class IssueRelationViewSet(BaseViewSet):
                 .prefetch_related("assignees", "labels", "issue_module__module")
                 .annotate(
                     cycle_id=Subquery(
-                        CycleIssue.objects.filter(
-                            issue=OuterRef("id"), deleted_at__isnull=True
-                        ).values("cycle_id")[:1]
+                        CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                     )
                 )
                 .annotate(
@@ -147,10 +143,7 @@ class IssueRelationViewSet(BaseViewSet):
                         ArrayAgg(
                             "labels__id",
                             distinct=True,
-                            filter=Q(
-                                ~Q(labels__id__isnull=True)
-                                & (Q(label_issue__deleted_at__isnull=True))
-                            ),
+                            filter=Q(~Q(labels__id__isnull=True) & (Q(label_issue__deleted_at__isnull=True))),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
@@ -298,15 +291,12 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relations = IssueRelation.objects.filter(
             workspace__slug=slug,
         ).filter(
-            Q(issue_id=related_issue, related_issue_id=issue_id)
-            | Q(issue_id=issue_id, related_issue_id=related_issue)
+            Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
-        
+
         issue_relations = issue_relations.first()
-        
-        current_instance = json.dumps(
-            IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder
-        )
+
+        current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",

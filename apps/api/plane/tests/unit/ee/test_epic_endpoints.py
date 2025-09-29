@@ -1,7 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
-from plane.authentication.models import WorkspaceAppInstallation
-from plane.db.models import WorkspaceMember, ProjectMember
+from plane.db.models import ProjectMember
 
 
 class TestEpicEndpoints:

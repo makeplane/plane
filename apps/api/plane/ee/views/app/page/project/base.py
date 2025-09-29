@@ -30,7 +30,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import ROLE
 from plane.app.serializers import (
     PageSerializer,
     PageLiteSerializer,

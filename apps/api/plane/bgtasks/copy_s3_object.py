@@ -27,9 +27,7 @@ def get_entity_id_field(entity_type, entity_id):
         FileAsset.EntityTypeContext.ISSUE_DESCRIPTION: {"issue_id": entity_id},
         FileAsset.EntityTypeContext.PAGE_DESCRIPTION: {"page_id": entity_id},
         FileAsset.EntityTypeContext.COMMENT_DESCRIPTION: {"comment_id": entity_id},
-        FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION: {
-            "draft_issue_id": entity_id
-        },
+        FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION: {"draft_issue_id": entity_id},
     }
     return entity_mapping.get(entity_type, {})
 
@@ -58,9 +56,7 @@ def replace_asset_ids(html, tag, duplicated_assets):
 
 def update_description(entity, duplicated_assets, tags):
     for tag in tags:
-        updated_html = replace_asset_ids(
-            entity.description_html, tag, duplicated_assets
-        )
+        updated_html = replace_asset_ids(entity.description_html, tag, duplicated_assets)
         entity.description_html = updated_html
     entity.save()
     return entity.description_html
@@ -107,9 +103,7 @@ def copy_assets(
         workspace = entity.workspace
         storage = S3Storage()
 
-        original_assets = FileAsset.objects.filter(
-            workspace=workspace, project_id=project_id, id__in=asset_ids
-        )
+        original_assets = FileAsset.objects.filter(workspace=workspace, project_id=project_id, id__in=asset_ids)
 
         if copy_to_entity_project:
             project_id = entity.project_id
@@ -141,9 +135,9 @@ def copy_assets(
             )
 
         if duplicated_assets:
-            FileAsset.objects.filter(
-                pk__in=[item["new_asset_id"] for item in duplicated_assets]
-            ).update(is_uploaded=True)
+            FileAsset.objects.filter(pk__in=[item["new_asset_id"] for item in duplicated_assets]).update(
+                is_uploaded=True
+            )
 
         return duplicated_assets
     except Exception as e:
@@ -179,9 +173,7 @@ def copy_s3_objects_of_description_and_assets(
 
         # if copy_entity_project is true, extend asset_ids to include attachment-component assets
         if copy_to_entity_project:
-            asset_ids.extend(
-                extract_asset_ids(entity.description_html, "attachment-component")
-            )
+            asset_ids.extend(extract_asset_ids(entity.description_html, "attachment-component"))
 
         duplicated_assets = copy_assets(
             entity=entity,
@@ -204,17 +196,13 @@ def copy_s3_objects_of_description_and_assets(
                 entity.save()
 
             else:
-                updated_html = update_description(
-                    entity, duplicated_assets, ["image-component"]
-                )
+                updated_html = update_description(entity, duplicated_assets, ["image-component"])
 
                 external_data = sync_with_external_service(entity_name, updated_html)
 
                 if external_data:
                     entity.description = external_data.get("description")
-                    entity.description_binary = base64.b64decode(
-                        external_data.get("description_binary")
-                    )
+                    entity.description_binary = base64.b64decode(external_data.get("description_binary"))
                     entity.save()
 
         return
@@ -236,9 +224,7 @@ def copy_s3_objects_of_issue_attachment(
     """
     original_asset_ids = []
     issue = Issue.objects.get(pk=original_issue_id)
-    issue_attachment_assets = list(
-        issue.assets.filter(entity_type="ISSUE_ATTACHMENT").values_list("id", flat=True)
-    )
+    issue_attachment_assets = list(issue.assets.filter(entity_type="ISSUE_ATTACHMENT").values_list("id", flat=True))
 
     issue_attachment_asset_ids = [str(asset) for asset in issue_attachment_assets]
 

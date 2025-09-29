@@ -33,23 +33,17 @@ class IssueSearchEndpoint(BaseAPIView):
 
         return issues
 
-    def search_issues_and_excluding_parent(
-        self, issues: QuerySet, issue_id: str
-    ) -> QuerySet:
+    def search_issues_and_excluding_parent(self, issues: QuerySet, issue_id: str) -> QuerySet:
         """
         Search issues and epics by query excluding the parent
         """
 
         issue = Issue.issue_objects.filter(pk=issue_id).first()
         if issue:
-            issues = issues.filter(
-                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
-            )
+            issues = issues.filter(~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id))
         return issues
 
-    def filter_issues_excluding_related_issues(
-        self, issue_id: str, issues: QuerySet
-    ) -> QuerySet:
+    def filter_issues_excluding_related_issues(self, issue_id: str, issues: QuerySet) -> QuerySet:
         """
         Filter issues excluding related issues
         """
@@ -84,18 +78,14 @@ class IssueSearchEndpoint(BaseAPIView):
         """
         Exclude issues in cycles
         """
-        issues = issues.exclude(
-            Q(issue_cycle__isnull=False) & Q(issue_cycle__deleted_at__isnull=True)
-        )
+        issues = issues.exclude(Q(issue_cycle__isnull=False) & Q(issue_cycle__deleted_at__isnull=True))
         return issues
 
     def exclude_issues_in_module(self, issues: QuerySet, module: str) -> QuerySet:
         """
         Exclude issues in a module
         """
-        issues = issues.exclude(
-            Q(issue_module__module=module) & Q(issue_module__deleted_at__isnull=True)
-        )
+        issues = issues.exclude(Q(issue_module__module=module) & Q(issue_module__deleted_at__isnull=True))
         return issues
 
     def filter_issues_without_target_date(self, issues: QuerySet) -> QuerySet:

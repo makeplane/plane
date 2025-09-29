@@ -72,34 +72,22 @@ class WorkspaceViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        if WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=5, is_active=True
-        ).exists():
+        if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists():
             queryset = queryset.filter(owned_by=request.user)
-        views = IssueViewSerializer(
-            queryset, many=True, fields=fields if fields else None
-        ).data
+        views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView
-    )
+    @allow_permission(allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView)
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
-            workspace_view = IssueView.objects.select_for_update().get(
-                pk=pk, workspace__slug=slug
-            )
+            workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
 
             if workspace_view.is_locked:
-                return Response(
-                    {"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Only update the view if owner is updating
             if workspace_view.owned_by_id != request.user.id:
@@ -108,9 +96,7 @@ class WorkspaceViewViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = IssueViewSerializer(
-                workspace_view, data=request.data, partial=True
-            )
+            serializer = IssueViewSerializer(workspace_view, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
@@ -129,9 +115,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
 
@@ -234,9 +218,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         return (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -286,9 +268,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         ).accessible_to(self.request.user.id, self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         issue_queryset = self.get_queryset()
 
@@ -355,9 +335,7 @@ class IssueViewViewSet(BaseViewSet):
     model = IssueView
 
     def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"), owned_by=self.request.user
-        )
+        serializer.save(project_id=self.kwargs.get("project_id"), owned_by=self.request.user)
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
@@ -413,9 +391,7 @@ class IssueViewViewSet(BaseViewSet):
         ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        views = IssueViewSerializer(
-            queryset, many=True, fields=fields if fields else None
-        ).data
+        views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -459,14 +435,10 @@ class IssueViewViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[], creator=True, model=IssueView)
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
-            issue_view = IssueView.objects.select_for_update().get(
-                pk=pk, workspace__slug=slug, project_id=project_id
-            )
+            issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
 
             if issue_view.is_locked:
-                return Response(
-                    {"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Only update the view if owner is updating
             if issue_view.owned_by_id != request.user.id:
@@ -475,9 +447,7 @@ class IssueViewViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = IssueViewSerializer(
-                issue_view, data=request.data, partial=True
-            )
+            serializer = IssueViewSerializer(issue_view, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
@@ -486,9 +456,7 @@ class IssueViewViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def destroy(self, request, slug, project_id, pk):
-        project_view = IssueView.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        project_view = IssueView.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,

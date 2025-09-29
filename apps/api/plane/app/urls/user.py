@@ -22,9 +22,7 @@ urlpatterns = [
     # User Profile
     path(
         "users/me/",
-        UserEndpoint.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "deactivate"}
-        ),
+        UserEndpoint.as_view({"get": "retrieve", "patch": "partial_update", "delete": "deactivate"}),
         name="users",
     ),
     path("users/session/", UserSessionEndpoint.as_view(), name="user-session"),
@@ -45,24 +43,16 @@ urlpatterns = [
         UserEndpoint.as_view({"get": "retrieve_instance_admin"}),
         name="users",
     ),
-    path(
-        "users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"
-    ),
+    path("users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"),
     path(
         "users/me/tour-completed/",
         UpdateUserTourCompletedEndpoint.as_view(),
         name="user-tour",
     ),
-    path(
-        "users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"
-    ),
-    path(
-        "users/me/verify/", UserTokenVerificationEndpoint.as_view(), name="user-verify"
-    ),
+    path("users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
+    path("users/me/verify/", UserTokenVerificationEndpoint.as_view(), name="user-verify"),
     # user workspaces
-    path(
-        "users/me/workspaces/", UserWorkSpacesEndpoint.as_view(), name="user-workspace"
-    ),
+    path("users/me/workspaces/", UserWorkSpacesEndpoint.as_view(), name="user-workspace"),
     # User Graphs
     path(
         "users/me/workspaces/<str:slug>/activity-graph/",

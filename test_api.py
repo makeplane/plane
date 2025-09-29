@@ -21,8 +21,7 @@ import json
 import sys
 import urllib.request
 import urllib.error
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Tuple, Any, Union
+from typing import Dict, List, Optional, Tuple, Any
 
 # ====================================
 # CORE INFRASTRUCTURE
@@ -337,7 +336,7 @@ class CustomersAPI(BaseDomainAPI):
 
             data = {
                 "name": actual_name,
-                "description": description or f"Customer created via API",
+                "description": description or "Customer created via API",
                 **kwargs,
             }
 
@@ -503,7 +502,7 @@ class PropertiesAPI(BaseDomainAPI):
                 "name": actual_name,
                 "display_name": actual_name,
                 "property_type": property_type,
-                "description": kwargs.get("description", f"Property created via API"),
+                "description": kwargs.get("description", "Property created via API"),
                 **kwargs,
             }
 

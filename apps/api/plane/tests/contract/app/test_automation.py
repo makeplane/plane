@@ -10,8 +10,7 @@ from django.urls import reverse
 
 # Module imports
 from plane.ee.models import Automation, AutomationScopeChoices
-from plane.db.models import WorkspaceMember, BotTypeEnum, ProjectMember
-from plane.app.permissions import ROLE
+from plane.db.models import BotTypeEnum
 
 
 @pytest.fixture

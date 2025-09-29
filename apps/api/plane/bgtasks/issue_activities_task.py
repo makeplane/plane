@@ -85,14 +85,8 @@ def track_description(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get(
-        "description_html"
-    ):
-        last_activity = (
-            IssueActivity.objects.filter(issue_id=issue_id)
-            .order_by("-created_at")
-            .first()
-        )
+    if current_instance.get("description_html") != requested_data.get("description_html"):
+        last_activity = IssueActivity.objects.filter(issue_id=issue_id).order_by("-created_at").first()
         if (
             last_activity is not None
             and last_activity.field == "description"
@@ -149,12 +143,8 @@ def track_parent(
     issue_activities,
     epoch,
 ):
-    current_parent_id = current_instance.get("parent_id") or current_instance.get(
-        "parent"
-    )
-    requested_parent_id = requested_data.get("parent_id") or requested_data.get(
-        "parent"
-    )
+    current_parent_id = current_instance.get("parent_id") or current_instance.get("parent")
+    requested_parent_id = requested_data.get("parent_id") or requested_data.get("parent")
 
     # Validate UUIDs before database queries
     if current_parent_id is not None and not is_valid_uuid(current_parent_id):
@@ -163,16 +153,8 @@ def track_parent(
         return
 
     if current_parent_id != requested_parent_id:
-        old_parent = (
-            Issue.objects.filter(pk=current_parent_id).first()
-            if current_parent_id is not None
-            else None
-        )
-        new_parent = (
-            Issue.objects.filter(pk=requested_parent_id).first()
-            if requested_parent_id is not None
-            else None
-        )
+        old_parent = Issue.objects.filter(pk=current_parent_id).first() if current_parent_id is not None else None
+        new_parent = Issue.objects.filter(pk=requested_parent_id).first() if requested_parent_id is not None else None
 
         issue_activities.append(
             IssueActivity(
@@ -180,14 +162,10 @@ def track_parent(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    f"{old_parent.project.identifier}-{old_parent.sequence_id}"
-                    if old_parent is not None
-                    else ""
+                    f"{old_parent.project.identifier}-{old_parent.sequence_id}" if old_parent is not None else ""
                 ),
                 new_value=(
-                    f"{new_parent.project.identifier}-{new_parent.sequence_id}"
-                    if new_parent is not None
-                    else ""
+                    f"{new_parent.project.identifier}-{new_parent.sequence_id}" if new_parent is not None else ""
                 ),
                 field="parent",
                 project_id=project_id,
@@ -248,12 +226,8 @@ def track_state(
         requested_state_id = None
 
     if current_state_id != requested_state_id:
-        new_state = State.objects.filter(
-            pk=requested_state_id, project_id=project_id
-        ).first()
-        old_state = State.objects.filter(
-            pk=current_state_id, project_id=project_id
-        ).first()
+        new_state = State.objects.filter(pk=requested_state_id, project_id=project_id).first()
+        old_state = State.objects.filter(pk=current_state_id, project_id=project_id).first()
 
         issue_activities.append(
             IssueActivity(
@@ -291,15 +265,9 @@ def track_target_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("target_date")
-                    if current_instance.get("target_date") is not None
-                    else ""
+                    current_instance.get("target_date") if current_instance.get("target_date") is not None else ""
                 ),
-                new_value=(
-                    requested_data.get("target_date")
-                    if requested_data.get("target_date") is not None
-                    else ""
-                ),
+                new_value=(requested_data.get("target_date") if requested_data.get("target_date") is not None else ""),
                 field="target_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
@@ -327,15 +295,9 @@ def track_start_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("start_date")
-                    if current_instance.get("start_date") is not None
-                    else ""
+                    current_instance.get("start_date") if current_instance.get("start_date") is not None else ""
                 ),
-                new_value=(
-                    requested_data.get("start_date")
-                    if requested_data.get("start_date") is not None
-                    else ""
-                ),
+                new_value=(requested_data.get("start_date") if requested_data.get("start_date") is not None else ""),
                 field="start_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
@@ -356,7 +318,6 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-
     # Labels
     requested_labels = extract_ids(requested_data, "label_ids", "labels")
     current_labels = extract_ids(current_instance, "label_ids", "labels")
@@ -465,9 +426,7 @@ def track_assignees(
         )
 
     # Create assignees subscribers to the issue and ignore if already
-    IssueSubscriber.objects.bulk_create(
-        bulk_subscribers, batch_size=10, ignore_conflicts=True
-    )
+    IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
 
     for dropped_assignee in dropped_assginees:
         # validate uuids
@@ -504,16 +463,12 @@ def track_estimate_points(
 ):
     if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
         old_estimate = (
-            EstimatePoint.objects.filter(
-                pk=current_instance.get("estimate_point")
-            ).first()
+            EstimatePoint.objects.filter(pk=current_instance.get("estimate_point")).first()
             if current_instance.get("estimate_point") is not None
             else None
         )
         new_estimate = (
-            EstimatePoint.objects.filter(
-                pk=requested_data.get("estimate_point")
-            ).first()
+            EstimatePoint.objects.filter(pk=requested_data.get("estimate_point")).first()
             if requested_data.get("estimate_point") is not None
             else None
         )
@@ -535,9 +490,7 @@ def track_estimate_points(
                     else None
                 ),
                 new_identifier=(
-                    requested_data.get("estimate_point")
-                    if requested_data.get("estimate_point") is not None
-                    else None
+                    requested_data.get("estimate_point") if requested_data.get("estimate_point") is not None else None
                 ),
                 old_value=old_estimate.value if old_estimate else None,
                 new_value=new_estimate.value if new_estimate else None,
@@ -610,9 +563,7 @@ def track_closed_to(
     epoch,
 ):
     if requested_data.get("closed_to") is not None:
-        updated_state = State.objects.get(
-            pk=requested_data.get("closed_to"), project_id=project_id
-        )
+        updated_state = State.objects.get(pk=requested_data.get("closed_to"), project_id=project_id)
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -646,12 +597,8 @@ def track_type(
 
     if new_type_id != old_type_id:
         verb = "updated" if new_type_id else "deleted"
-        old_type = (
-            IssueType.objects.filter(pk=old_type_id).first() if old_type_id else None
-        )
-        new_type = (
-            IssueType.objects.filter(pk=new_type_id).first() if new_type_id else None
-        )
+        old_type = IssueType.objects.filter(pk=old_type_id).first() if old_type_id else None
+        new_type = IssueType.objects.filter(pk=new_type_id).first() if new_type_id else None
 
         issue_activities.append(
             IssueActivity(
@@ -741,9 +688,7 @@ def update_issue_activity(
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key)
@@ -795,9 +740,7 @@ def create_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     issue_activities.append(
         IssueActivity(
@@ -827,9 +770,7 @@ def update_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         issue_activities.append(
@@ -888,21 +829,15 @@ def create_cycle_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # Updated Records:
     updated_records = current_instance.get("updated_cycle_issues", [])
     created_records = json.loads(current_instance.get("created_cycle_issues", []))
 
     for updated_record in updated_records:
-        old_cycle = Cycle.objects.filter(
-            pk=updated_record.get("old_cycle_id", None)
-        ).first()
-        new_cycle = Cycle.objects.filter(
-            pk=updated_record.get("new_cycle_id", None)
-        ).first()
+        old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None)).first()
+        new_cycle = Cycle.objects.filter(pk=updated_record.get("new_cycle_id", None)).first()
         issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
         if issue:
             issue.updated_at = timezone.now()
@@ -927,12 +862,8 @@ def create_cycle_issue_activity(
         )
 
     for created_record in created_records:
-        cycle = Cycle.objects.filter(
-            pk=created_record.get("fields").get("cycle")
-        ).first()
-        issue = Issue.objects.filter(
-            pk=created_record.get("fields").get("issue")
-        ).first()
+        cycle = Cycle.objects.filter(pk=created_record.get("fields").get("cycle")).first()
+        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
         if issue:
             issue.updated_at = timezone.now()
             issue.save(update_fields=["updated_at"])
@@ -965,9 +896,7 @@ def delete_cycle_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     cycle_id = requested_data.get("cycle_id", "")
     cycle_name = requested_data.get("cycle_name", "")
@@ -1039,9 +968,7 @@ def delete_module_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     module_name = current_instance.get("module_name")
     current_issue = Issue.objects.filter(pk=issue_id).first()
     if current_issue:
@@ -1058,11 +985,7 @@ def delete_module_issue_activity(
             project_id=project_id,
             workspace_id=workspace_id,
             comment=f"removed this issue from {module_name}",
-            old_identifier=(
-                requested_data.get("module_id")
-                if requested_data.get("module_id") is not None
-                else None
-            ),
+            old_identifier=(requested_data.get("module_id") if requested_data.get("module_id") is not None else None),
             epoch=epoch,
         )
     )
@@ -1079,9 +1002,7 @@ def create_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     issue_activities.append(
         IssueActivity(
@@ -1110,9 +1031,7 @@ def update_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("url") != requested_data.get("url"):
         issue_activities.append(
@@ -1143,9 +1062,7 @@ def delete_link_activity(
     issue_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     issue_activities.append(
         IssueActivity(
@@ -1174,9 +1091,7 @@ def create_attachment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     issue_activities.append(
         IssueActivity(
@@ -1268,9 +1183,7 @@ def delete_issue_reaction_activity(
     issue_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         issue_activities.append(
             IssueActivity(
@@ -1312,11 +1225,7 @@ def create_comment_reaction_activity(
             .first()
         )
         comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
-        if (
-            comment is not None
-            and comment_reaction_id is not None
-            and comment_id is not None
-        ):
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=comment.issue_id,
@@ -1345,14 +1254,10 @@ def delete_comment_reaction_activity(
     issue_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         issue_id = (
-            IssueComment.objects.filter(
-                pk=current_instance.get("comment_id"), project_id=project_id
-            )
+            IssueComment.objects.filter(pk=current_instance.get("comment_id"), project_id=project_id)
             .values_list("issue_id", flat=True)
             .first()
         )
@@ -1415,9 +1320,7 @@ def delete_issue_vote_activity(
     issue_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("vote") is not None:
         issue_activities.append(
             IssueActivity(
@@ -1448,9 +1351,7 @@ def create_issue_relation_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance is None and requested_data.get("issues") is not None:
         for related_issue in requested_data.get("issues"):
             issue = Issue.objects.get(pk=related_issue)
@@ -1499,9 +1400,7 @@ def delete_issue_relation_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     issue = Issue.objects.get(pk=requested_data.get("related_issue"))
     issue_activities.append(
         IssueActivity(
@@ -1579,13 +1478,8 @@ def update_draft_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
-    if (
-        requested_data.get("is_draft") is not None
-        and requested_data.get("is_draft") is False
-    ):
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    if requested_data.get("is_draft") is not None and requested_data.get("is_draft") is False:
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -1646,9 +1540,7 @@ def create_intake_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     status_dict = {
         -2: "Pending",
         -1: "Rejected",
@@ -1723,11 +1615,7 @@ def create_customer_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
-    field = (
-        "customer_request"
-        if requested_data.get("customer_request_id") is not None
-        else "customer"
-    )
+    field = "customer_request" if requested_data.get("customer_request_id") is not None else "customer"
 
     issue_activities.append(
         IssueActivity(
@@ -1758,11 +1646,7 @@ def delete_customer_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
-    field = (
-        "customer_request"
-        if requested_data.get("customer_request_id") is not None
-        else "customer"
-    )
+    field = "customer_request" if requested_data.get("customer_request_id") is not None else "customer"
 
     issue_activities.append(
         IssueActivity(
@@ -1855,11 +1739,7 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
-            issue = (
-                Issue.objects.filter(pk=issue_id)
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .first()
-            )
+            issue = Issue.objects.filter(pk=issue_id).filter(Q(type__isnull=True) | Q(type__is_epic=False)).first()
             if origin and issue:
                 ri = redis_instance()
                 # set the request origin in redis
@@ -1924,13 +1804,7 @@ def issue_activity(
         if len(issue_activities_created):
             for activity in issue_activities_created:
                 webhook_activity.delay(
-                    event=(
-                        "issue_comment"
-                        if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
-                    ),
+                    event=("issue_comment" if activity.field == "comment" else "intake_issue" if intake else "issue"),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
@@ -1939,15 +1813,9 @@ def issue_activity(
                         else activity.issue_id
                     ),
                     verb=activity.verb,
-                    field=(
-                        "description" if activity.field == "comment" else activity.field
-                    ),
-                    old_value=(
-                        activity.old_value if activity.old_value != "" else None
-                    ),
-                    new_value=(
-                        activity.new_value if activity.new_value != "" else None
-                    ),
+                    field=("description" if activity.field == "comment" else activity.field),
+                    old_value=(activity.old_value if activity.old_value != "" else None),
+                    new_value=(activity.new_value if activity.new_value != "" else None),
                     actor_id=activity.actor_id,
                     current_site=origin,
                     slug=activity.workspace.slug,

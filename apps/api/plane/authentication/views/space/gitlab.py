@@ -18,7 +18,6 @@ from plane.authentication.adapter.error import (
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path, get_allowed_hosts
 
 
-
 class GitLabOauthInitiateSpaceEndpoint(View):
     def get(self, request):
         # Get host and next path
@@ -34,9 +33,7 @@ class GitLabOauthInitiateSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -49,9 +46,7 @@ class GitLabOauthInitiateSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -70,9 +65,7 @@ class GitLabCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -83,9 +76,7 @@ class GitLabCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -106,8 +97,6 @@ class GitLabCallbackSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)

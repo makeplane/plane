@@ -10,7 +10,6 @@ from celery import shared_task
 
 
 # Module imports
-from plane.utils.exception_logger import log_exception
 from plane.ee.models import (
     WorkspaceCredential,
 )

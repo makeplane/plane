@@ -1,5 +1,4 @@
 # Django imports
-from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -11,7 +10,6 @@ from plane.ee.models import (
     PropertyTypeEnum,
     IssueProperty,
 )
-from plane.db.models import Issue
 from plane.utils.exception_logger import log_exception
 
 

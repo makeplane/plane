@@ -1,10 +1,8 @@
 # Python import
 from uuid import uuid4
 from typing import Optional
-from datetime import timedelta
 
 # Django imports
-from django.utils import timezone
 
 # Third party
 from rest_framework.response import Response
@@ -70,10 +68,7 @@ class ServiceApiTokenEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
 
         api_token = APIToken.objects.filter(
-            workspace=workspace,
-            is_service=True,
-            user=request.user,
-            expired_at__isnull=True,
+            workspace=workspace, is_service=True, user=request.user, expired_at__isnull=True
         ).first()
 
         if api_token:
@@ -90,6 +85,4 @@ class ServiceApiTokenEndpoint(BaseAPIView):
                 user_type=user_type,
                 is_service=True,
             )
-            return Response(
-                {"token": str(api_token.token)}, status=status.HTTP_201_CREATED
-            )
+            return Response({"token": str(api_token.token)}, status=status.HTTP_201_CREATED)

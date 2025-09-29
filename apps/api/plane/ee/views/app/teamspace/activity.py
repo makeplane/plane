@@ -1,7 +1,7 @@
 # Python imports
 
 # Django imports
-from django.db.models import Q, F
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 

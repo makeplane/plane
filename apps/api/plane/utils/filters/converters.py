@@ -187,9 +187,7 @@ class LegacyToRichFiltersConverter:
             return self._validate_date(value)
         return True  # No specific validation needed
 
-    def _filter_valid_values(
-        self, rich_field_name: str, values: List[Any]
-    ) -> List[Any]:
+    def _filter_valid_values(self, rich_field_name: str, values: List[Any]) -> List[Any]:
         """Filter out invalid values from a list and return only valid ones"""
         valid_values = []
         for value in values:
@@ -197,25 +195,19 @@ class LegacyToRichFiltersConverter:
                 valid_values.append(value)
         return valid_values
 
-    def _add_validation_error(
-        self, strict: bool, validation_errors: List[str], message: str
-    ) -> None:
+    def _add_validation_error(self, strict: bool, validation_errors: List[str], message: str) -> None:
         """Add validation error if in strict mode."""
         if strict:
             validation_errors.append(message)
 
-    def _add_rich_filter(
-        self, rich_filters: Dict[str, Any], field_name: str, operator: str, value: Any
-    ) -> None:
+    def _add_rich_filter(self, rich_filters: Dict[str, Any], field_name: str, operator: str, value: Any) -> None:
         """Add a rich filter with proper field name formatting."""
         # Convert lists to comma-separated strings for 'in' and 'range' operations
         if operator in ("in", "range") and isinstance(value, list):
             value = ",".join(str(v) for v in value)
         rich_filters[f"{field_name}__{operator}"] = value
 
-    def _handle_value_error(
-        self, e: ValueError, strict: bool, validation_errors: List[str]
-    ) -> None:
+    def _handle_value_error(self, e: ValueError, strict: bool, validation_errors: List[str]) -> None:
         """Handle ValueError with consistent strict/non-strict behavior."""
         if strict:
             validation_errors.append(str(e))
@@ -234,9 +226,7 @@ class LegacyToRichFiltersConverter:
             return False
 
         try:
-            date_filter_result = self._convert_date_value(
-                rich_field_name, values, strict
-            )
+            date_filter_result = self._convert_date_value(rich_field_name, values, strict)
             if date_filter_result:
                 rich_filters.update(date_filter_result)
             return True
@@ -244,9 +234,7 @@ class LegacyToRichFiltersConverter:
             self._handle_value_error(e, strict, validation_errors)
             return True
 
-    def _convert_date_value(
-        self, field_name: str, values: List[str], strict: bool = False
-    ) -> Dict[str, Any]:
+    def _convert_date_value(self, field_name: str, values: List[str], strict: bool = False) -> Dict[str, Any]:
         """
         Convert legacy date values to rich filter format - basic implementation.
 
@@ -349,9 +337,7 @@ class LegacyToRichFiltersConverter:
 
             # Skip if legacy key is not in our mappings (not supported in filterset)
             if legacy_key not in self.FIELD_MAPPINGS:
-                self._add_validation_error(
-                    strict, validation_errors, f"Unsupported filter key: {legacy_key}"
-                )
+                self._add_validation_error(strict, validation_errors, f"Unsupported filter key: {legacy_key}")
                 continue
 
             # Get the new field name
@@ -360,9 +346,7 @@ class LegacyToRichFiltersConverter:
             # Handle list values
             if isinstance(value, list):
                 # Process date fields with helper method
-                if self._process_date_field(
-                    rich_field_name, value, strict, validation_errors, rich_filters
-                ):
+                if self._process_date_field(rich_field_name, value, strict, validation_errors, rich_filters):
                     continue
 
                 # Regular non-date field processing
@@ -392,9 +376,7 @@ class LegacyToRichFiltersConverter:
             else:
                 # Handle single values
                 # Process date fields with helper method
-                if self._process_date_field(
-                    rich_field_name, [value], strict, validation_errors, rich_filters
-                ):
+                if self._process_date_field(rich_field_name, [value], strict, validation_errors, rich_filters):
                     continue
 
                 # For non-list values, use __exact operator for non-date fields

@@ -37,9 +37,7 @@ class S3Storage(S3Boto3Storage):
         # Use the AWS_REGION environment variable for the region
         self.aws_region = os.environ.get("AWS_REGION")
         # Use the AWS_S3_ENDPOINT_URL environment variable for the endpoint URL
-        self.aws_s3_endpoint_url = os.environ.get(
-            "AWS_S3_ENDPOINT_URL"
-        ) or os.environ.get("MINIO_ENDPOINT_URL")
+        self.aws_s3_endpoint_url = os.environ.get("AWS_S3_ENDPOINT_URL") or os.environ.get("MINIO_ENDPOINT_URL")
 
         # Use the USE_STORAGE_PROXY environment variable for the storage proxy
         self.use_storage_proxy = getattr(settings, "USE_STORAGE_PROXY", False)
@@ -71,9 +69,7 @@ class S3Storage(S3Boto3Storage):
                     aws_secret_access_key=self.aws_secret_access_key,
                     region_name=self.aws_region,
                     endpoint_url=(
-                        f"{endpoint_protocol}://{request.get_host()}"
-                        if request
-                        else self.aws_s3_endpoint_url
+                        f"{endpoint_protocol}://{request.get_host()}" if request else self.aws_s3_endpoint_url
                     ),
                     config=boto3.session.Config(signature_version="s3v4"),
                 )
@@ -88,9 +84,7 @@ class S3Storage(S3Boto3Storage):
                 config=boto3.session.Config(signature_version="s3v4"),
             )
 
-    def generate_presigned_post(
-        self, object_name, file_type, file_size, expiration=3600
-    ):
+    def generate_presigned_post(self, object_name, file_type, file_size, expiration=3600):
         """Generate a presigned URL to upload an S3 object"""
         fields = {"Content-Type": file_type}
 
@@ -102,9 +96,7 @@ class S3Storage(S3Boto3Storage):
 
         # Add condition for the object name (key)
         if object_name.startswith("${filename}"):
-            conditions.append(
-                ["starts-with", "$key", object_name[: -len("${filename}")]]
-            )
+            conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
         else:
             fields["key"] = object_name
             conditions.append({"key": object_name})
@@ -152,9 +144,7 @@ class S3Storage(S3Boto3Storage):
             return f"{disposition}; filename*=UTF-8''{encoded_filename}"
         return disposition
 
-    def _generate_proxy_download_url(
-        self, object_name, expiration=3600, disposition="inline", filename=None
-    ):
+    def _generate_proxy_download_url(self, object_name, expiration=3600, disposition="inline", filename=None):
         """Generate a proxy download URL"""
         if not self.request:
             return None
@@ -169,15 +159,11 @@ class S3Storage(S3Boto3Storage):
 
         # Generate a signature for security
         params_json = json.dumps(download_params, sort_keys=True)
-        signature = hashlib.sha256(
-            f"{params_json}{settings.SECRET_KEY}".encode()
-        ).hexdigest()
+        signature = hashlib.sha256(f"{params_json}{settings.SECRET_KEY}".encode()).hexdigest()
         download_params["signature"] = signature
 
         # Base64 encode the parameters
-        encoded_params = base64.urlsafe_b64encode(
-            json.dumps(download_params).encode()
-        ).decode()
+        encoded_params = base64.urlsafe_b64encode(json.dumps(download_params).encode()).decode()
 
         # Build proxy URL
         scheme = self.request.scheme if self.request else "https"
@@ -195,9 +181,7 @@ class S3Storage(S3Boto3Storage):
         content_disposition = self._get_content_disposition(disposition, filename)
 
         if self.use_storage_proxy:
-            return self._generate_proxy_download_url(
-                object_name, expiration, disposition, filename
-            )
+            return self._generate_proxy_download_url(object_name, expiration, disposition, filename)
 
         """Generate a presigned URL to share an S3 object"""
         try:
@@ -221,9 +205,7 @@ class S3Storage(S3Boto3Storage):
     def get_object_metadata(self, object_name):
         """Get the metadata for an S3 object"""
         try:
-            response = self.s3_client.head_object(
-                Bucket=self.aws_storage_bucket_name, Key=object_name
-            )
+            response = self.s3_client.head_object(Bucket=self.aws_storage_bucket_name, Key=object_name)
         except ClientError as e:
             log_exception(e)
             return None
@@ -231,11 +213,7 @@ class S3Storage(S3Boto3Storage):
         return {
             "ContentType": response.get("ContentType"),
             "ContentLength": response.get("ContentLength"),
-            "LastModified": (
-                response.get("LastModified").isoformat()
-                if response.get("LastModified")
-                else None
-            ),
+            "LastModified": (response.get("LastModified").isoformat() if response.get("LastModified") else None),
             "ETag": response.get("ETag"),
             "Metadata": response.get("Metadata", {}),
         }
@@ -282,9 +260,7 @@ class S3Storage(S3Boto3Storage):
         try:
             self.s3_client.delete_objects(
                 Bucket=self.aws_storage_bucket_name,
-                Delete={
-                    "Objects": [{"Key": object_name} for object_name in object_names]
-                },
+                Delete={"Objects": [{"Key": object_name} for object_name in object_names]},
             )
             return True
         except ClientError as e:
@@ -362,17 +338,12 @@ class S3Storage(S3Boto3Storage):
             size_limit_found = False
 
             for condition in conditions:
-                if (
-                    isinstance(condition, dict)
-                    and condition.get("bucket") == self.aws_storage_bucket_name
-                ):
+                if isinstance(condition, dict) and condition.get("bucket") == self.aws_storage_bucket_name:
                     bucket_found = True
                 elif isinstance(condition, list) and len(condition) == 3:
                     if condition[0] == "content-length-range":
                         max_size = condition[2]
-                        max_file_size = getattr(
-                            settings, "FILE_SIZE_LIMIT", 50 * 1024 * 1024
-                        )
+                        max_file_size = getattr(settings, "FILE_SIZE_LIMIT", 50 * 1024 * 1024)
                         if max_size <= max_file_size:
                             size_limit_found = True
 
@@ -380,9 +351,7 @@ class S3Storage(S3Boto3Storage):
                 return False, "Policy validation failed"
 
             # 4. Validate signature if provided (for AWS presigned POST)
-            if signature and not self._validate_aws_policy_signature(
-                policy_b64, signature, self.aws_secret_access_key
-            ):
+            if signature and not self._validate_aws_policy_signature(policy_b64, signature, self.aws_secret_access_key):
                 return False, "Policy validation failed"
 
             return True, None
@@ -423,9 +392,7 @@ class S3Storage(S3Boto3Storage):
 
             # Create expected signature using the same method as generation
             params_json = json.dumps(params_copy, sort_keys=True)
-            expected_signature = hashlib.sha256(
-                f"{params_json}{settings.SECRET_KEY}".encode()
-            ).hexdigest()
+            expected_signature = hashlib.sha256(f"{params_json}{settings.SECRET_KEY}".encode()).hexdigest()
 
             # Use constant-time comparison to prevent timing attacks
             if not hmac.compare_digest(provided_signature, expected_signature):

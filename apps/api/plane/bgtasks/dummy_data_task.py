@@ -54,9 +54,7 @@ def create_project(workspace_id, user_id):
     project = Project.objects.create(
         workspace_id=workspace_id,
         name=f"{name}_{unique_id}",
-        identifier=name[
-            : random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)
-        ].upper(),
+        identifier=name[: random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)].upper(),
         created_by_id=user_id,
         intake_view=True,
         is_issue_type_enabled=True,
@@ -251,10 +249,7 @@ def create_pages(workspace_id, project_id, user_id, pages_count):
     pages = Page.objects.bulk_create(pages, ignore_conflicts=True)
     # Add Page to project
     ProjectPage.objects.bulk_create(
-        [
-            ProjectPage(page=page, project_id=project_id, workspace_id=workspace_id)
-            for page in pages
-        ],
+        [ProjectPage(page=page, project_id=project_id, workspace_id=workspace_id) for page in pages],
         batch_size=1000,
     )
 
@@ -300,16 +295,14 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
         .exclude(group="Triage")
         .values_list("id", flat=True)
     )
-    creators = ProjectMember.objects.filter(
-        workspace_id=workspace_id, project_id=project_id
-    ).values_list("member_id", flat=True)
+    creators = ProjectMember.objects.filter(workspace_id=workspace_id, project_id=project_id).values_list(
+        "member_id", flat=True
+    )
 
     issues = []
 
     # Get the maximum sequence_id
-    last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(
-        largest=Max("sequence")
-    )["largest"]
+    last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(largest=Max("sequence"))["largest"]
 
     last_id = 1 if last_id is None else last_id + 1
 
@@ -318,20 +311,14 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
         project_id=project_id, state_id=states[random.randint(0, len(states) - 1)]
     ).aggregate(largest=Max("sort_order"))["largest"]
 
-    largest_sort_order = (
-        65535 if largest_sort_order is None else largest_sort_order + 10000
-    )
+    largest_sort_order = 65535 if largest_sort_order is None else largest_sort_order + 10000
 
-    estimate_points = list(
-        EstimatePoint.objects.filter(project_id=project_id).values_list("id", flat=True)
-    )
+    estimate_points = list(EstimatePoint.objects.filter(project_id=project_id).values_list("id", flat=True))
 
     estimate_points.append(None)
 
     issue_type_ids = list(
-        ProjectIssueType.objects.filter(project_id=project_id).values_list(
-            "issue_type_id", flat=True
-        )
+        ProjectIssueType.objects.filter(project_id=project_id).values_list("issue_type_id", flat=True)
     )
 
     issue_type_ids.append(None)
@@ -351,9 +338,7 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
         issues.append(
             Issue(
                 state_id=states[random.randint(0, len(states) - 1)],
-                estimate_point_id=estimate_points[
-                    random.randint(0, len(estimate_points) - 1)
-                ],
+                estimate_point_id=estimate_points[random.randint(0, len(estimate_points) - 1)],
                 project_id=project_id,
                 workspace_id=workspace_id,
                 name=text[:254],
@@ -363,9 +348,7 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
                 sort_order=largest_sort_order,
                 start_date=start_date,
                 target_date=end_date,
-                priority=["urgent", "high", "medium", "low", "none"][
-                    random.randint(0, 4)
-                ],
+                priority=["urgent", "high", "medium", "low", "none"][random.randint(0, 4)],
                 created_by_id=creators[random.randint(0, len(creators) - 1)],
                 type_id=issue_type_ids[random.randint(0, len(issue_type_ids) - 1)],
             )
@@ -412,20 +395,14 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
 
 def create_intake_issues(workspace_id, project_id, user_id, intake_issue_count):
     issue_ids = create_issues(workspace_id, project_id, user_id, intake_issue_count)
-    intake, create = Intake.objects.get_or_create(
-        name="Intake", project_id=project_id, is_default=True
-    )
+    intake, create = Intake.objects.get_or_create(name="Intake", project_id=project_id, is_default=True)
     IntakeIssue.objects.bulk_create(
         [
             IntakeIssue(
                 issue_id=issue_id,
                 intake=intake,
                 status=(status := [-2, -1, 0, 1, 2][random.randint(0, 4)]),
-                snoozed_till=(
-                    datetime.now() + timedelta(days=random.randint(1, 30))
-                    if status == 0
-                    else None
-                ),
+                snoozed_till=(datetime.now() + timedelta(days=random.randint(1, 30)) if status == 0 else None),
                 source=SourceType.IN_APP,
                 workspace_id=workspace_id,
                 project_id=project_id,
@@ -439,12 +416,8 @@ def create_intake_issues(workspace_id, project_id, user_id, intake_issue_count):
 def create_issue_parent(workspace_id, project_id, user_id, issue_count):
     parent_count = issue_count / 4
 
-    parent_issues = Issue.objects.filter(project_id=project_id).values_list(
-        "id", flat=True
-    )[: int(parent_count)]
-    sub_issues = Issue.objects.filter(project_id=project_id).exclude(
-        pk__in=parent_issues
-    )[: int(issue_count / 2)]
+    parent_issues = Issue.objects.filter(project_id=project_id).values_list("id", flat=True)[: int(parent_count)]
+    sub_issues = Issue.objects.filter(project_id=project_id).exclude(pk__in=parent_issues)[: int(issue_count / 2)]
 
     bulk_sub_issues = []
     for sub_issue in sub_issues:
@@ -457,9 +430,7 @@ def create_issue_parent(workspace_id, project_id, user_id, issue_count):
 
 def create_issue_assignees(workspace_id, project_id, user_id, issue_count):
     # assignees
-    assignees = ProjectMember.objects.filter(project_id=project_id).values_list(
-        "member_id", flat=True
-    )
+    assignees = ProjectMember.objects.filter(project_id=project_id).values_list("member_id", flat=True)
     issues = random.sample(
         list(Issue.objects.filter(project_id=project_id).values_list("id", flat=True)),
         int(issue_count / 2),
@@ -468,9 +439,7 @@ def create_issue_assignees(workspace_id, project_id, user_id, issue_count):
     # Bulk issue
     bulk_issue_assignees = []
     for issue in issues:
-        for assignee in random.sample(
-            list(assignees), random.randint(0, len(assignees) - 1)
-        ):
+        for assignee in random.sample(list(assignees), random.randint(0, len(assignees) - 1)):
             bulk_issue_assignees.append(
                 IssueAssignee(
                     issue_id=issue,
@@ -481,9 +450,7 @@ def create_issue_assignees(workspace_id, project_id, user_id, issue_count):
             )
 
     # Issue assignees
-    IssueAssignee.objects.bulk_create(
-        bulk_issue_assignees, batch_size=1000, ignore_conflicts=True
-    )
+    IssueAssignee.objects.bulk_create(bulk_issue_assignees, batch_size=1000, ignore_conflicts=True)
 
     return
 
@@ -491,9 +458,7 @@ def create_issue_assignees(workspace_id, project_id, user_id, issue_count):
 def create_issue_labels(workspace_id, project_id, user_id, issue_count):
     # labels
     labels = Label.objects.filter(project_id=project_id).values_list("id", flat=True)
-    issues = list(
-        Issue.objects.filter(project_id=project_id).values_list("id", flat=True)
-    )
+    issues = list(Issue.objects.filter(project_id=project_id).values_list("id", flat=True))
     shuffled_labels = list(labels)
 
     # Bulk issue
@@ -511,9 +476,7 @@ def create_issue_labels(workspace_id, project_id, user_id, issue_count):
             )
 
     # Issue labels
-    IssueLabel.objects.bulk_create(
-        bulk_issue_labels, batch_size=1000, ignore_conflicts=True
-    )
+    IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=1000, ignore_conflicts=True)
 
     del labels
     del issues
@@ -543,18 +506,14 @@ def create_cycle_issues(workspace_id, project_id, user_id, issue_count):
         )
 
     # Issue assignees
-    CycleIssue.objects.bulk_create(
-        bulk_cycle_issues, batch_size=1000, ignore_conflicts=True
-    )
+    CycleIssue.objects.bulk_create(bulk_cycle_issues, batch_size=1000, ignore_conflicts=True)
     return
 
 
 def create_module_issues(workspace_id, project_id, user_id, issue_count):
     # assignees
     modules = Module.objects.filter(project_id=project_id).values_list("id", flat=True)
-    issues = list(
-        Issue.objects.filter(project_id=project_id).values_list("id", flat=True)
-    )
+    issues = list(Issue.objects.filter(project_id=project_id).values_list("id", flat=True))
 
     shuffled_modules = list(modules)
 
@@ -572,9 +531,7 @@ def create_module_issues(workspace_id, project_id, user_id, issue_count):
                 )
             )
     # Issue assignees
-    ModuleIssue.objects.bulk_create(
-        bulk_module_issues, batch_size=1000, ignore_conflicts=True
-    )
+    ModuleIssue.objects.bulk_create(bulk_module_issues, batch_size=1000, ignore_conflicts=True)
 
     return
 
@@ -727,30 +684,24 @@ def create_epics(workspace_id, project_id, user_id):
     Faker.seed(0)
 
     # create the epic issue type
-    epic_type = IssueType.objects.create(
-        workspace_id=workspace_id, is_epic=True, level=1
-    )
+    epic_type = IssueType.objects.create(workspace_id=workspace_id, is_epic=True, level=1)
 
     # add it to the project epic issue type
-    _ = ProjectIssueType.objects.create(
-        project_id=project_id, issue_type_id=epic_type.id, workspace_id=workspace_id
-    )
+    _ = ProjectIssueType.objects.create(project_id=project_id, issue_type_id=epic_type.id, workspace_id=workspace_id)
 
     states = (
         State.objects.filter(workspace_id=workspace_id, project_id=project_id)
         .exclude(group="Triage")
         .values_list("id", flat=True)
     )
-    creators = ProjectMember.objects.filter(
-        workspace_id=workspace_id, project_id=project_id
-    ).values_list("member_id", flat=True)
+    creators = ProjectMember.objects.filter(workspace_id=workspace_id, project_id=project_id).values_list(
+        "member_id", flat=True
+    )
 
     issues = []
 
     # Get the maximum sequence_id
-    last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(
-        largest=Max("sequence")
-    )["largest"]
+    last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(largest=Max("sequence"))["largest"]
 
     last_id = 1 if last_id is None else last_id + 1
 
@@ -759,22 +710,16 @@ def create_epics(workspace_id, project_id, user_id):
         project_id=project_id, state_id=states[random.randint(0, len(states) - 1)]
     ).aggregate(largest=Max("sort_order"))["largest"]
 
-    largest_sort_order = (
-        65535 if largest_sort_order is None else largest_sort_order + 10000
-    )
+    largest_sort_order = 65535 if largest_sort_order is None else largest_sort_order + 10000
 
-    estimate_points = list(
-        EstimatePoint.objects.filter(project_id=project_id).values_list("id", flat=True)
-    )
+    estimate_points = list(EstimatePoint.objects.filter(project_id=project_id).values_list("id", flat=True))
 
     estimate_points.append(None)
 
     issue_type_ids = list(
         IssueType.objects.filter(
             workspace_id=workspace_id,
-            pk__in=ProjectIssueType.objects.filter(project_id=project_id).values_list(
-                "id", flat=True
-            ),
+            pk__in=ProjectIssueType.objects.filter(project_id=project_id).values_list("id", flat=True),
         ).values_list("id", flat=True)
     )
 
@@ -795,9 +740,7 @@ def create_epics(workspace_id, project_id, user_id):
         issues.append(
             Issue(
                 state_id=states[random.randint(0, len(states) - 1)],
-                estimate_point_id=estimate_points[
-                    random.randint(0, len(estimate_points) - 1)
-                ],
+                estimate_point_id=estimate_points[random.randint(0, len(estimate_points) - 1)],
                 project_id=project_id,
                 workspace_id=workspace_id,
                 name=text[:254],
@@ -807,9 +750,7 @@ def create_epics(workspace_id, project_id, user_id):
                 sort_order=largest_sort_order,
                 start_date=start_date,
                 target_date=end_date,
-                priority=["urgent", "high", "medium", "low", "none"][
-                    random.randint(0, 4)
-                ],
+                priority=["urgent", "high", "medium", "low", "none"][random.randint(0, 4)],
                 created_by_id=creators[random.randint(0, len(creators) - 1)],
                 type_id=epic_type.id,
             )
@@ -850,18 +791,12 @@ def create_epics(workspace_id, project_id, user_id):
         batch_size=100,
     )
 
-    parent_issues = Issue.objects.filter(
-        project_id=project_id, type__is_epic=True
-    ).values_list("id", flat=True)
-    sub_issues = Issue.objects.filter(project_id=project_id).exclude(
-        pk__in=parent_issues
-    )[:20]
+    parent_issues = Issue.objects.filter(project_id=project_id, type__is_epic=True).values_list("id", flat=True)
+    sub_issues = Issue.objects.filter(project_id=project_id).exclude(pk__in=parent_issues)[:20]
 
     bulk_sub_issues = []
     for sub_issue in sub_issues:
-        sub_issue.parent_id = parent_issues[
-            random.randint(0, int(len(parent_issues)) - 1)
-        ]
+        sub_issue.parent_id = parent_issues[random.randint(0, int(len(parent_issues)) - 1)]
 
     Issue.objects.bulk_update(bulk_sub_issues, ["parent"], batch_size=1000)
 
@@ -889,9 +824,7 @@ def create_dummy_data(
     project_id = create_project(workspace_id=workspace_id, user_id=user_id)
 
     # create project members
-    create_project_members(
-        workspace_id=workspace_id, project_id=project_id, members=members
-    )
+    create_project_members(workspace_id=workspace_id, project_id=project_id, members=members)
 
     # Create states
     create_states(workspace_id=workspace_id, project_id=project_id, user_id=user_id)
@@ -925,9 +858,7 @@ def create_dummy_data(
 
     create_estimates(workspace_id=workspace_id, project_id=project_id, user_id=user_id)
 
-    create_issue_types(
-        workspace_id=workspace_id, project_id=project_id, user_id=user_id
-    )
+    create_issue_types(workspace_id=workspace_id, project_id=project_id, user_id=user_id)
 
     # create issues
     create_issues(

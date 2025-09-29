@@ -86,9 +86,7 @@ def page_transaction(new_value, old_value, page_id):
             )
 
         # Create new PageLog objects for new transactions
-        PageLog.objects.bulk_create(
-            new_transactions, batch_size=10, ignore_conflicts=True
-        )
+        PageLog.objects.bulk_create(new_transactions, batch_size=10, ignore_conflicts=True)
 
         # Delete the removed transactions
         PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()

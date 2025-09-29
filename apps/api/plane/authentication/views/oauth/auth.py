@@ -15,7 +15,6 @@ from oauth2_provider.oauth2_validators import OAuth2Validator
 from rest_framework import exceptions, status
 
 # Local application imports
-from plane.db.models.webhook import Webhook
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES
 from plane.authentication.models import (
     AccessToken,
@@ -28,7 +27,6 @@ from plane.authentication.rate_limit import (
     auth_ratelimit_key,
     token_ratelimit_key,
 )
-from plane.utils.exception_logger import log_exception
 
 TOKEN_RATE_LIMIT = "5/m"
 APP_INSTALLATION_ID_CACHE_TTL = 60  # 1 minute

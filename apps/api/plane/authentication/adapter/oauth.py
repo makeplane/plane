@@ -81,9 +81,7 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
-            )
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def get_user_response(self):
         try:
@@ -97,9 +95,7 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
-            )
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def set_user_data(self, data):
         self.user_data = data
@@ -116,12 +112,8 @@ class OauthAdapter(Adapter):
             if account:
                 account.access_token = self.token_data.get("access_token")
                 account.refresh_token = self.token_data.get("refresh_token", None)
-                account.access_token_expired_at = self.token_data.get(
-                    "access_token_expired_at"
-                )
-                account.refresh_token_expired_at = self.token_data.get(
-                    "refresh_token_expired_at"
-                )
+                account.access_token_expired_at = self.token_data.get("access_token_expired_at")
+                account.refresh_token_expired_at = self.token_data.get("refresh_token_expired_at")
                 account.last_connected_at = timezone.now()
                 account.id_token = self.token_data.get("id_token", "")
                 account.save()
@@ -130,17 +122,11 @@ class OauthAdapter(Adapter):
                 Account.objects.create(
                     user=user,
                     provider=self.provider,
-                    provider_account_id=self.user_data.get("user", {}).get(
-                        "provider_id"
-                    ),
+                    provider_account_id=self.user_data.get("user", {}).get("provider_id"),
                     access_token=self.token_data.get("access_token"),
                     refresh_token=self.token_data.get("refresh_token", None),
-                    access_token_expired_at=self.token_data.get(
-                        "access_token_expired_at"
-                    ),
-                    refresh_token_expired_at=self.token_data.get(
-                        "refresh_token_expired_at"
-                    ),
+                    access_token_expired_at=self.token_data.get("access_token_expired_at"),
+                    refresh_token_expired_at=self.token_data.get("refresh_token_expired_at"),
                     last_connected_at=timezone.now(),
                     id_token=self.token_data.get("id_token", ""),
                 )

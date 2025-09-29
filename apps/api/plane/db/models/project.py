@@ -81,13 +81,11 @@ class ProjectBaseQuerySet(SoftDeletionQuerySet):
 
         base_query = Q(id__in=member_project_ids)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member_id=user_id, workspace__slug=slug
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
 
             member_project_ids = ProjectMember.objects.filter(
                 member_id=user_id, workspace__slug=slug, is_active=True
@@ -112,9 +110,7 @@ class ProjectBaseManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return ProjectBaseQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True
-        )
+        return ProjectBaseQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
@@ -124,19 +120,11 @@ class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
-    description_text = models.JSONField(
-        verbose_name="Project Description RT", blank=True, null=True
-    )
-    description_html = models.JSONField(
-        verbose_name="Project Description HTML", blank=True, null=True
-    )
+    description_text = models.JSONField(verbose_name="Project Description RT", blank=True, null=True)
+    description_html = models.JSONField(verbose_name="Project Description HTML", blank=True, null=True)
     network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
-    workspace = models.ForeignKey(
-        "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
-    )
-    identifier = models.CharField(
-        max_length=12, verbose_name="Project Identifier", db_index=True
-    )
+    workspace = models.ForeignKey("db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project")
+    identifier = models.CharField(max_length=12, verbose_name="Project Identifier", db_index=True)
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -169,19 +157,11 @@ class Project(BaseModel):
         blank=True,
         related_name="project_cover_image",
     )
-    estimate = models.ForeignKey(
-        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
-    )
-    archive_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
-    close_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
+    estimate = models.ForeignKey("db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True)
+    archive_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
+    close_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     logo_props = models.JSONField(default=dict)
-    default_state = models.ForeignKey(
-        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
-    )
+    default_state = models.ForeignKey("db.State", on_delete=models.SET_NULL, null=True, related_name="default_state")
     archived_at = models.DateTimeField(null=True)
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
@@ -275,13 +255,11 @@ class ProjectQuerySet(SoftDeletionQuerySet):
 
         base_query = Q(project_id__in=member_project_ids)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member_id=user_id, workspace__slug=slug
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
 
             # Get all the projects in the respective teamspaces
             teamspace_project_ids = (
@@ -301,21 +279,15 @@ class ProjectManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return ProjectQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True
-        )
+        return ProjectQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
 
 
 class ProjectBaseModel(BaseModel):
-    project = models.ForeignKey(
-        Project, on_delete=models.CASCADE, related_name="project_%(class)s"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s"
-    )
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_%(class)s")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s")
     objects = ProjectManager()
 
     class Meta:
@@ -393,12 +365,8 @@ class ProjectMember(ProjectBaseModel):
 
 # TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="project_identifiers", null=True
-    )
-    project = models.OneToOneField(
-        Project, on_delete=models.CASCADE, related_name="project_identifier"
-    )
+    workspace = models.ForeignKey("db.Workspace", models.CASCADE, related_name="project_identifiers", null=True)
+    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="project_identifier")
     name = models.CharField(max_length=12, db_index=True)
 
     class Meta:
@@ -433,14 +401,10 @@ def get_default_views():
 # DEPRECATED TODO:
 # used to get the old anchors for the project deploy boards
 class ProjectDeployBoard(ProjectBaseModel):
-    anchor = models.CharField(
-        max_length=255, default=get_anchor, unique=True, db_index=True
-    )
+    anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
     comments = models.BooleanField(default=False)
     reactions = models.BooleanField(default=False)
-    intake = models.ForeignKey(
-        "db.Intake", related_name="board_intake", on_delete=models.SET_NULL, null=True
-    )
+    intake = models.ForeignKey("db.Intake", related_name="board_intake", on_delete=models.SET_NULL, null=True)
     votes = models.BooleanField(default=False)
     views = models.JSONField(default=get_default_views)
 

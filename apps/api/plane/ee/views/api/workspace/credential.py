@@ -7,7 +7,6 @@ from django.conf import settings
 from django.utils import timezone
 
 # Module imports
-from plane.db.models.workspace import Workspace
 from plane.db.models.api import APIToken
 from plane.ee.models.workspace import WorkspaceCredential
 from plane.ee.views.api import BaseServiceAPIView

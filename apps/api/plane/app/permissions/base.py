@@ -31,16 +31,12 @@ def allow_permission(
         def _wrapped_view(instance, request, *args, **kwargs):
             # Check for ownership if required
             if creator and model:
-                obj = model.objects.filter(
-                    id=kwargs["pk"], **{field: request.user}
-                ).exists()
+                obj = model.objects.filter(id=kwargs["pk"], **{field: request.user}).exists()
                 if obj:
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members
-            allowed_role_values = [
-                role.value if isinstance(role, ROLE) else role for role in allowed_roles
-            ]
+            allowed_role_values = [role.value if isinstance(role, ROLE) else role for role in allowed_roles]
 
             # Check role permissions
             if level == "WORKSPACE":
@@ -60,7 +56,7 @@ def allow_permission(
                     is_active=True,
                 ).exists()
 
-                #  Return if the user has allowed roles
+                # Return if the user has the allowed role else if they are workspace admin and part of the project regardless of the role # noqa: E501
                 if is_user_has_allowed_role:
                     return view_func(instance, request, *args, **kwargs)
 
@@ -81,9 +77,7 @@ def allow_permission(
                             project_id=kwargs["project_id"],
                             is_active=True,
                         ).exists()
-                        or TeamspaceMember.objects.filter(
-                            member=request.user, team_space_id__in=teamspace_ids
-                        ).exists()
+                        or TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists()
                     ):
                         return view_func(instance, request, *args, **kwargs)
 
@@ -92,21 +86,16 @@ def allow_permission(
                 # if scope is project further check if user is member of the team space
                 # only if member is present in allowed roles
                 #
-                if (
-                    ROLE.MEMBER.value in allowed_role_values
-                    and check_workspace_feature_flag(
-                        feature_key=FeatureFlag.TEAMSPACES,
-                        slug=kwargs["slug"],
-                        user_id=request.user.id,
-                    )
+                if ROLE.MEMBER.value in allowed_role_values and check_workspace_feature_flag(
+                    feature_key=FeatureFlag.TEAMSPACES,
+                    slug=kwargs["slug"],
+                    user_id=request.user.id,
                 ):
                     teamspace_ids = TeamspaceProject.objects.filter(
                         workspace__slug=kwargs["slug"], project_id=kwargs["project_id"]
                     ).values_list("team_space_id", flat=True)
 
-                    if TeamspaceMember.objects.filter(
-                        member=request.user, team_space_id__in=teamspace_ids
-                    ).exists():
+                    if TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists():
                         return view_func(instance, request, *args, **kwargs)
 
             # Return permission denied if no conditions are met

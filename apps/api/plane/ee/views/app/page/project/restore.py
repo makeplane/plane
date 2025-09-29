@@ -14,7 +14,6 @@ from plane.db.models import (
     PageVersion,
 )
 from plane.ee.views.base import BaseAPIView
-from plane.bgtasks.page_version_task import page_version
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import ProjectPagePermission

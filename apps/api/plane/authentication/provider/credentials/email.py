@@ -40,9 +40,7 @@ class EmailProvider(CredentialAdapter):
 
         if ENABLE_EMAIL_PASSWORD == "0":
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "EMAIL_PASSWORD_AUTHENTICATION_DISABLED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_PASSWORD_AUTHENTICATION_DISABLED"],
                 error_message="EMAIL_PASSWORD_AUTHENTICATION_DISABLED",
             )
 
@@ -89,16 +87,10 @@ class EmailProvider(CredentialAdapter):
             if not user.check_password(self.code):
                 raise AuthenticationException(
                     error_message=(
-                        "AUTHENTICATION_FAILED_SIGN_UP"
-                        if self.is_signup
-                        else "AUTHENTICATION_FAILED_SIGN_IN"
+                        "AUTHENTICATION_FAILED_SIGN_UP" if self.is_signup else "AUTHENTICATION_FAILED_SIGN_IN"
                     ),
                     error_code=AUTHENTICATION_ERROR_CODES[
-                        (
-                            "AUTHENTICATION_FAILED_SIGN_UP"
-                            if self.is_signup
-                            else "AUTHENTICATION_FAILED_SIGN_IN"
-                        )
+                        ("AUTHENTICATION_FAILED_SIGN_UP" if self.is_signup else "AUTHENTICATION_FAILED_SIGN_IN")
                     ],
                     payload=self.exception_payload,
                 )

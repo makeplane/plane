@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.views.base import BaseAPIView, BaseViewSet
+from plane.ee.views.base import BaseAPIView
 from plane.db.models.workspace import Workspace
 from plane.ee.models.workspace import WorkspaceConnection, WorkspaceCredential
 from plane.ee.serializers import WorkspaceConnectionSerializer

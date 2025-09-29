@@ -16,16 +16,10 @@ from rest_framework.response import Response
 from plane.app.serializers import PageSerializer, PageDetailSerializer
 from plane.db.models import Page, Workspace, Project, ProjectPage
 from plane.ee.views.api.base import BaseServiceAPIView
-from plane.app.views.base import BaseAPIView
-from plane.ee.views.app.teamspace.base import TeamspaceBaseEndpoint
-from plane.ee.permissions import TeamspacePermission
-from plane.app.permissions import ProjectMemberPermission
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.models import Teamspace, TeamspacePage
-from plane.ee.serializers import TeamspacePageSerializer, TeamspacePageDetailSerializer
-from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.payment.flags.flag import FeatureFlag
+from plane.ee.serializers import TeamspacePageDetailSerializer
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 

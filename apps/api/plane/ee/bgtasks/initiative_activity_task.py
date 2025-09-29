@@ -9,7 +9,7 @@ from celery import shared_task
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import CommentReaction, Label, Project, Workspace
+from plane.db.models import Label, Project, Workspace
 from plane.ee.models import (
     Initiative,
     InitiativeActivity,

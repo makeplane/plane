@@ -8,7 +8,7 @@ from django.conf import settings
 # Module imports
 from plane.db.models.workspace import Workspace
 from plane.ee.models.workspace import WorkspaceCredential
-from plane.ee.views.base import BaseAPIView, BaseViewSet
+from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import WorkspaceCredentialSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag

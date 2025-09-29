@@ -79,9 +79,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 )
                 | Q(network=2)
             )
-            .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
-            )
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -184,9 +182,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
-                    queryset=ProjectMember.objects.filter(
-                        workspace__slug=slug, is_active=True
-                    ).select_related("member"),
+                    queryset=ProjectMember.objects.filter(workspace__slug=slug, is_active=True).select_related(
+                        "member"
+                    ),
                 )
             )
             .order_by(request.GET.get("order_by", "sort_order"))
@@ -225,9 +223,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectCreateSerializer(
-                data={**request.data}, context={"workspace_id": workspace.id}
-            )
+            serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -253,17 +249,13 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 serializer.save()
 
                 # Add the user as Administrator to the project
-                _ = ProjectMember.objects.create(
-                    project_id=serializer.instance.id, member=request.user, role=20
-                )
+                _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
                 # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(
-                    project_id=serializer.instance.id, user=request.user
-                )
+                _ = IssueUserProperty.objects.create(project_id=serializer.instance.id, user=request.user)
 
-                if serializer.instance.project_lead is not None and str(
-                    serializer.instance.project_lead
-                ) != str(request.user.id):
+                if serializer.instance.project_lead is not None and str(serializer.instance.project_lead) != str(
+                    request.user.id
+                ):
                     ProjectMember.objects.create(
                         project_id=serializer.instance.id,
                         member_id=serializer.instance.project_lead,
@@ -349,9 +341,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
@@ -379,9 +369,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                 )
                 | Q(network=2)
             )
-            .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
-            )
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -486,9 +474,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=pk)
-            current_instance = json.dumps(
-                ProjectSerializer(project).data, cls=DjangoJSONEncoder
-            )
+            current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
 
             intake_view = request.data.get("intake_view", project.intake_view)
 
@@ -526,9 +512,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                     )
                 serializer.save()
                 if serializer.data["intake_view"]:
-                    intake = Intake.objects.filter(
-                        project=project, is_default=True
-                    ).first()
+                    intake = Intake.objects.filter(project=project, is_default=True).first()
                     if not intake:
                         Intake.objects.create(
                             name=f"{project.name} Intake",
@@ -558,9 +542,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
-            return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
@@ -586,9 +568,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         """
         project = Project.objects.get(pk=pk, workspace__slug=slug)
         # Delete the user favorite cycle
-        UserFavorite.objects.filter(
-            entity_type="project", entity_identifier=pk, project_id=pk
-        ).delete()
+        UserFavorite.objects.filter(entity_type="project", entity_identifier=pk, project_id=pk).delete()
         project.delete()
         webhook_activity.delay(
             event="project",

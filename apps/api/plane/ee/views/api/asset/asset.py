@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import Workspace, FileAsset, User
+from plane.db.models import Workspace, FileAsset
 from plane.settings.storage import S3Storage
 from plane.ee.views.api.base import BaseServiceAPIView
 from plane.utils.exception_logger import log_exception

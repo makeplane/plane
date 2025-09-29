@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.views.base import BaseAPIView, BaseViewSet
+from plane.ee.views.base import BaseAPIView
 from plane.ee.models import ImportJob, ImportReport
 from plane.ee.serializers import ImportJobSerializer
 from plane.payment.flags.flag import FeatureFlag

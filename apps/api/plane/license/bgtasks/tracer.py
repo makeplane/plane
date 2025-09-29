@@ -55,14 +55,10 @@ def instance_traces():
                 span.set_attribute("instance_name", instance.instance_name)
                 span.set_attribute("current_version", instance.current_version)
                 span.set_attribute("latest_version", instance.latest_version)
-                span.set_attribute(
-                    "is_telemetry_enabled", instance.is_telemetry_enabled
-                )
+                span.set_attribute("is_telemetry_enabled", instance.is_telemetry_enabled)
                 span.set_attribute("is_support_required", instance.is_support_required)
                 span.set_attribute("is_setup_done", instance.is_setup_done)
-                span.set_attribute(
-                    "is_signup_screen_visited", instance.is_signup_screen_visited
-                )
+                span.set_attribute("is_signup_screen_visited", instance.is_signup_screen_visited)
                 span.set_attribute("is_verified", instance.is_verified)
                 span.set_attribute("edition", instance.edition)
                 span.set_attribute("domain", instance.domain)
@@ -84,16 +80,10 @@ def instance_traces():
                     issue_count = Issue.objects.filter(workspace=workspace).count()
                     module_count = Module.objects.filter(workspace=workspace).count()
                     cycle_count = Cycle.objects.filter(workspace=workspace).count()
-                    cycle_issue_count = CycleIssue.objects.filter(
-                        workspace=workspace
-                    ).count()
-                    module_issue_count = ModuleIssue.objects.filter(
-                        workspace=workspace
-                    ).count()
+                    cycle_issue_count = CycleIssue.objects.filter(workspace=workspace).count()
+                    module_issue_count = ModuleIssue.objects.filter(workspace=workspace).count()
                     page_count = Page.objects.filter(workspace=workspace).count()
-                    member_count = WorkspaceMember.objects.filter(
-                        workspace=workspace
-                    ).count()
+                    member_count = WorkspaceMember.objects.filter(workspace=workspace).count()
 
                     # Set span attributes
                     with tracer.start_as_current_span("workspace_details") as span:
@@ -101,12 +91,8 @@ def instance_traces():
                         span.set_attribute("instance_name", instance.instance_name)
                         span.set_attribute("current_version", instance.current_version)
                         span.set_attribute("latest_version", instance.latest_version)
-                        span.set_attribute(
-                            "is_telemetry_enabled", instance.is_telemetry_enabled
-                        )
-                        span.set_attribute(
-                            "is_support_required", instance.is_support_required
-                        )
+                        span.set_attribute("is_telemetry_enabled", instance.is_telemetry_enabled)
+                        span.set_attribute("is_support_required", instance.is_support_required)
                         span.set_attribute("is_setup_done", instance.is_setup_done)
                         span.set_attribute(
                             "is_signup_screen_visited",
@@ -129,24 +115,14 @@ def instance_traces():
                     # Workspace details
                     for workspace in Workspace.objects.all():
                         # Count of all models
-                        project_count = Project.objects.filter(
-                            workspace=workspace
-                        ).count()
+                        project_count = Project.objects.filter(workspace=workspace).count()
                         issue_count = Issue.objects.filter(workspace=workspace).count()
-                        module_count = Module.objects.filter(
-                            workspace=workspace
-                        ).count()
+                        module_count = Module.objects.filter(workspace=workspace).count()
                         cycle_count = Cycle.objects.filter(workspace=workspace).count()
-                        cycle_issue_count = CycleIssue.objects.filter(
-                            workspace=workspace
-                        ).count()
-                        module_issue_count = ModuleIssue.objects.filter(
-                            workspace=workspace
-                        ).count()
+                        cycle_issue_count = CycleIssue.objects.filter(workspace=workspace).count()
+                        module_issue_count = ModuleIssue.objects.filter(workspace=workspace).count()
                         page_count = Page.objects.filter(workspace=workspace).count()
-                        member_count = WorkspaceMember.objects.filter(
-                            workspace=workspace
-                        ).count()
+                        member_count = WorkspaceMember.objects.filter(workspace=workspace).count()
 
                         # Set span attributes
                         with tracer.start_as_current_span("workspace_details") as span:

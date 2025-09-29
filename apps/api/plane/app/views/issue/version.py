@@ -28,9 +28,7 @@ class IssueVersionEndpoint(BaseAPIView):
         paginated_data = results.values(*fields)
 
         datetime_fields = ["created_at", "updated_at"]
-        paginated_data = user_timezone_converter(
-            paginated_data, datetime_fields, timezone
-        )
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
         return paginated_data
 
@@ -80,18 +78,14 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
         paginated_data = results.values(*fields)
 
         datetime_fields = ["created_at", "updated_at"]
-        paginated_data = user_timezone_converter(
-            paginated_data, datetime_fields, timezone
-        )
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
         return paginated_data
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, work_item_id, pk=None):
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=work_item_id
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=work_item_id)
 
         if (
             ProjectMember.objects.filter(
@@ -120,9 +114,7 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
                 pk=pk,
             )
 
-            serializer = IssueDescriptionVersionDetailSerializer(
-                issue_description_version
-            )
+            serializer = IssueDescriptionVersionDetailSerializer(issue_description_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         cursor = request.GET.get("cursor", None)

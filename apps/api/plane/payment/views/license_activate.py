@@ -8,7 +8,6 @@ import json
 from django.conf import settings
 from django.db.models import F
 from django.core.files.base import ContentFile
-from django.http import HttpResponseRedirect
 
 # Third party imports
 from rest_framework import status

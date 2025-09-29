@@ -10,7 +10,6 @@ from plane.utils.content_validator import (
 )
 from plane.db.models import (
     Page,
-    PageLog,
     PageLabel,
     Label,
     ProjectPage,
@@ -235,9 +234,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
             # Validate the binary data
             is_valid, error_message = validate_binary_data(binary_data)
             if not is_valid:
-                raise serializers.ValidationError(
-                    f"Invalid binary data: {error_message}"
-                )
+                raise serializers.ValidationError(f"Invalid binary data: {error_message}")
 
             return binary_data
         except Exception as e:

@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 
 # Django imports
 from django.db import IntegrityError
-from django.conf import settings
 
 # Third party imports
 from rest_framework import status

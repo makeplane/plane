@@ -6,7 +6,6 @@ from django.db import DatabaseError
 from celery import shared_task
 
 # Module imports
-from django.db.models import Q
 from plane.db.models import UserRecentVisit, Workspace
 from plane.utils.exception_logger import log_exception
 

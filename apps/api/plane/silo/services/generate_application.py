@@ -2,7 +2,6 @@
 from logging import getLogger
 
 # Django imports
-from django.conf import settings
 from django.db import models, transaction
 
 # Third Party imports

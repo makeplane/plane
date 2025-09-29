@@ -17,7 +17,6 @@ from plane.db.models import (
     Page,
     DeployBoard,
 )
-from plane.app.permissions import ROLE
 
 from plane.db.models.api import APIToken
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -61,13 +60,9 @@ def create_user(db, user_data):
 
 def workspace(db, create_user):
     """Create and return a workspace instance"""
-    workspace = Workspace.objects.create(
-        name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
-    )
+    workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user)
 
-    WorkspaceMember.objects.create(
-        workspace=workspace, member=create_user, role=ROLE.ADMIN.value
-    )
+    WorkspaceMember.objects.create(workspace=workspace, member=create_user, role=ROLE.ADMIN.value)
 
     return workspace
 
@@ -236,13 +231,11 @@ def workspace_app_installation(db, workspace, oauth_application, create_user):
 @pytest.fixture
 def epic(db, workspace, project, create_user):
     """Create and return an epic instance"""
-    from plane.tests.factories import EpicFactory, IssueTypeFactory
+    from plane.tests.factories import IssueTypeFactory
     from plane.db.models import State
 
     # Create an epic issue type ignore duplicates
-    _ = IssueTypeFactory(
-        workspace=workspace, name="Epic", description="Epic issue type", is_epic=True
-    )
+    _ = IssueTypeFactory(workspace=workspace, name="Epic", description="Epic issue type", is_epic=True)
 
     # Create a default state for the project
     _ = State.objects.create(
@@ -298,9 +291,7 @@ def mock_feature_flag():
 
         return wrapper
 
-    with patch(
-        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
-    ) as mock:
+    with patch("plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator) as mock:
         yield mock
 
 
@@ -339,10 +330,9 @@ def mock_feature_flag():
 
         return wrapper
 
-    with patch(
-        "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
-    ) as mock:
+    with patch("plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator) as mock:
         yield mock
+
 
 def workspace_page(db, workspace, create_user):
     """Create and return a page instance"""
@@ -392,4 +382,3 @@ def published_page(db, workspace, workspace_page) -> tuple[Page, str]:
         workspace=workspace,
     )
     return workspace_page, deploy_board.anchor
-

@@ -32,9 +32,7 @@ class DeployBoardPublicSettingsEndpoint(BaseAPIView):
             return False
 
         if deploy_board.entity_name == "intake" and not (
-            check_workspace_feature_flag(
-                feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
-            )
+            check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug)
             and IntakeSetting.objects.filter(
                 workspace=deploy_board.workspace,
                 intake_id=deploy_board.entity_identifier,
@@ -64,16 +62,12 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).values_list
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").values_list
         projects = (
             Project.objects.filter(workspace=deploy_board.workspace)
             .annotate(
                 is_public=Exists(
-                    DeployBoard.objects.filter(
-                        anchor=anchor, project_id=OuterRef("pk"), entity_name="project"
-                    )
+                    DeployBoard.objects.filter(anchor=anchor, project_id=OuterRef("pk"), entity_name="project")
                 )
             )
             .filter(is_public=True)
@@ -107,9 +101,7 @@ class ProjectMembersEndpoint(BaseAPIView):
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         if not deploy_board:
-            return Response(
-                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND)
 
         if deploy_board.project:
             members = ProjectMember.objects.filter(
@@ -128,9 +120,7 @@ class ProjectMembersEndpoint(BaseAPIView):
                 "workspace",
             )
         else:
-            members = WorkspaceMember.objects.filter(
-                workspace=deploy_board.workspace, is_active=True
-            ).values(
+            members = WorkspaceMember.objects.filter(workspace=deploy_board.workspace, is_active=True).values(
                 "id",
                 "member",
                 "member__first_name",

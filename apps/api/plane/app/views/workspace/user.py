@@ -101,9 +101,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         return (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -136,9 +134,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = Issue.issue_objects.filter(
             id__in=Issue.issue_objects.filter(
-                Q(assignees__in=[user_id])
-                | Q(created_by_id=user_id)
-                | Q(issue_subscribers__subscriber_id=user_id),
+                Q(assignees__in=[user_id]) | Q(created_by_id=user_id) | Q(issue_subscribers__subscriber_id=user_id),
                 workspace__slug=slug,
             ).values_list("id", flat=True),
             workspace__slug=slug,
@@ -166,9 +162,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             if sub_group_by:
@@ -245,9 +239,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 request=request,
                 queryset=issue_queryset,
                 total_count_queryset=total_issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
 
@@ -255,19 +247,11 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
     def patch(self, request, slug):
-        workspace_properties = WorkspaceUserProperties.objects.get(
-            user=request.user, workspace__slug=slug
-        )
+        workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
 
-        workspace_properties.filters = request.data.get(
-            "filters", workspace_properties.filters
-        )
-        workspace_properties.rich_filters = request.data.get(
-            "rich_filters", workspace_properties.rich_filters
-        )
-        workspace_properties.display_filters = request.data.get(
-            "display_filters", workspace_properties.display_filters
-        )
+        workspace_properties.filters = request.data.get("filters", workspace_properties.filters)
+        workspace_properties.rich_filters = request.data.get("rich_filters", workspace_properties.rich_filters)
+        workspace_properties.display_filters = request.data.get("display_filters", workspace_properties.display_filters)
         workspace_properties.display_properties = request.data.get(
             "display_properties", workspace_properties.display_properties
         )
@@ -397,9 +381,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
-            on_results=lambda issue_activities: IssueActivitySerializer(
-                issue_activities, many=True
-            ).data,
+            on_results=lambda issue_activities: IssueActivitySerializer(issue_activities, many=True).data,
         )
 
 
@@ -409,10 +391,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         state_distribution = (
             Issue.issue_objects.filter(
-                (
-                    Q(assignees__in=[user_id])
-                    & Q(issue_assignee__deleted_at__isnull=True)
-                ),
+                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
             )
             .accessible_to(request.user.id, slug)
@@ -427,10 +406,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         priority_distribution = (
             Issue.issue_objects.filter(
-                (
-                    Q(assignees__in=[user_id])
-                    & Q(issue_assignee__deleted_at__isnull=True)
-                ),
+                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
             )
             .accessible_to(request.user.id, slug)
@@ -440,10 +416,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             .filter(priority_count__gte=1)
             .annotate(
                 priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
+                    *[When(priority=p, then=Value(i)) for i, p in enumerate(priority_order)],
                     default=Value(len(priority_order)),
                     output_field=IntegerField(),
                 )
@@ -463,10 +436,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         assigned_issues_count = (
             Issue.issue_objects.filter(
-                (
-                    Q(assignees__in=[user_id])
-                    & Q(issue_assignee__deleted_at__isnull=True)
-                ),
+                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
             )
             .accessible_to(request.user.id, slug)
@@ -477,10 +447,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         pending_issues_count = (
             Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
-                (
-                    Q(assignees__in=[user_id])
-                    & Q(issue_assignee__deleted_at__isnull=True)
-                ),
+                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
             )
             .accessible_to(request.user.id, slug)
@@ -490,10 +457,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         completed_issues_count = (
             Issue.issue_objects.filter(
-                (
-                    Q(assignees__in=[user_id])
-                    & Q(issue_assignee__deleted_at__isnull=True)
-                ),
+                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
                 state__group="completed",
             )

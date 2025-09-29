@@ -1,6 +1,5 @@
 # Python imports
 import uuid
-import json
 
 # Django imports
 from django.conf import settings

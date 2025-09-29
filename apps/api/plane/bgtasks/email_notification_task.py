@@ -42,42 +42,27 @@ def release_lock(lock_id):
 @shared_task
 def stack_email_notification():
     # get all email notifications
-    email_notifications = (
-        EmailNotificationLog.objects.filter(processed_at__isnull=True)
-        .order_by("receiver")
-        .values()
-    )
+    email_notifications = EmailNotificationLog.objects.filter(processed_at__isnull=True).order_by("receiver").values()
 
     # Create the below format for each of the issues
     # {"issue_id" : { "actor_id1": [ { data }, { data } ], "actor_id2": [ { data }, { data } ] }}
 
     # Convert to unique receivers list
-    receivers = list(
-        set(
-            [
-                str(notification.get("receiver_id"))
-                for notification in email_notifications
-            ]
-        )
-    )
+    receivers = list(set([str(notification.get("receiver_id")) for notification in email_notifications]))
     processed_notifications = []
     # Loop through all the issues to create the emails
     for receiver_id in receivers:
         # Notification triggered for the receiver
         receiver_notifications = [
-            notification
-            for notification in email_notifications
-            if str(notification.get("receiver_id")) == receiver_id
+            notification for notification in email_notifications if str(notification.get("receiver_id")) == receiver_id
         ]
         # create payload for all issues
         payload = {}
         email_notification_ids = []
         for receiver_notification in receiver_notifications:
-            payload.setdefault(
-                receiver_notification.get("entity_identifier"), {}
-            ).setdefault(str(receiver_notification.get("triggered_by_id")), []).append(
-                receiver_notification.get("data")
-            )
+            payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
+                str(receiver_notification.get("triggered_by_id")), []
+            ).append(receiver_notification.get("data"))
             # append processed notifications
             processed_notifications.append(receiver_notification.get("id"))
             email_notification_ids.append(receiver_notification.get("id"))
@@ -92,9 +77,7 @@ def stack_email_notification():
             )
 
     # Update the email notification log
-    EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(
-        processed_at=timezone.now()
-    )
+    EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
 
 
 def create_payload(notification_data):
@@ -115,10 +98,7 @@ def create_payload(notification_data):
                         .setdefault(field, {})
                         .setdefault("old_value", [])
                         .append(old_value)
-                        if old_value
-                        not in data.setdefault(actor_id, {})
-                        .setdefault(field, {})
-                        .get("old_value", [])
+                        if old_value not in data.setdefault(actor_id, {}).setdefault(field, {}).get("old_value", [])
                         else None
                     )
 
@@ -129,18 +109,15 @@ def create_payload(notification_data):
                         .setdefault(field, {})
                         .setdefault("new_value", [])
                         .append(new_value)
-                        if new_value
-                        not in data.setdefault(actor_id, {})
-                        .setdefault(field, {})
-                        .get("new_value", [])
+                        if new_value not in data.setdefault(actor_id, {}).setdefault(field, {}).get("new_value", [])
                         else None
                     )
 
                 if not data.get("actor_id", {}).get("activity_time", False):
                     data[actor_id]["activity_time"] = str(
-                        datetime.fromisoformat(
-                            issue_activity.get("activity_time").rstrip("Z")
-                        ).strftime("%Y-%m-%d %H:%M:%S")
+                        datetime.fromisoformat(issue_activity.get("activity_time").rstrip("Z")).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
                     )
 
     return data
@@ -169,9 +146,7 @@ def process_html_content(content):
 
 
 @shared_task
-def send_email_notification(
-    issue_id, notification_data, receiver_id, email_notification_ids
-):
+def send_email_notification(issue_id, notification_data, receiver_id, email_notification_ids):
     # Convert UUIDs to a sorted, concatenated string
     sorted_ids = sorted(email_notification_ids)
     ids_str = "_".join(str(id) for id in sorted_ids)
@@ -231,12 +206,8 @@ def send_email_notification(
                         }
                     )
                 if mention:
-                    mention["new_value"] = process_html_content(
-                        mention.get("new_value")
-                    )
-                    mention["old_value"] = process_html_content(
-                        mention.get("old_value")
-                    )
+                    mention["new_value"] = process_html_content(mention.get("new_value"))
+                    mention["old_value"] = process_html_content(mention.get("old_value"))
                     comments.append(
                         {
                             "actor_comments": mention,
@@ -249,9 +220,7 @@ def send_email_notification(
                     )
                 activity_time = changes.pop("activity_time")
                 # Parse the input string into a datetime object
-                formatted_time = datetime.strptime(
-                    activity_time, "%Y-%m-%d %H:%M:%S"
-                ).strftime("%H:%M %p")
+                formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
 
                 if changes:
                     template_data.append(
@@ -271,9 +240,7 @@ def send_email_notification(
                     )
 
             summary = "Updates were made to the issue by"
-            issue_identifier = (
-                f"{str(issue.project.identifier)}-{str(issue.sequence_id)}"
-            )
+            issue_identifier = f"{str(issue.project.identifier)}-{str(issue.sequence_id)}"
 
             # Send the mail
             subject = f"{issue.project.identifier}-{issue.sequence_id} {remove_unwanted_characters(issue.name)}"
@@ -288,16 +255,14 @@ def send_email_notification(
                 },
                 "receiver": {"email": receiver.email},
                 "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/browse/{issue_identifier}",
-                "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",
+                "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",  # noqa: E501
                 "workspace": str(issue.project.workspace.slug),
                 "project": str(issue.project.name),
                 "user_preference": f"{base_api}/{str(issue.project.workspace.slug)}/settings/account/notifications/",
                 "comments": comments,
                 "entity_type": entity_type,
             }
-            html_content = render_to_string(
-                "emails/notifications/issue-updates.html", context
-            )
+            html_content = render_to_string("emails/notifications/issue-updates.html", context)
             text_content = strip_tags(html_content)
 
             try:
@@ -322,9 +287,7 @@ def send_email_notification(
                 logging.getLogger("plane.worker").info("Email Sent Successfully")
 
                 # Update the logs
-                EmailNotificationLog.objects.filter(
-                    pk__in=email_notification_ids
-                ).update(sent_at=timezone.now())
+                EmailNotificationLog.objects.filter(pk__in=email_notification_ids).update(sent_at=timezone.now())
 
                 # release the lock
                 release_lock(lock_id=lock_id)

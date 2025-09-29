@@ -70,9 +70,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = issue_activities.prefetch_related(
                 Prefetch(
                     "issue__issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "source_email", "source", "extra"
-                    ),
+                    queryset=IntakeIssue.objects.only("source_email", "source", "extra"),
                     to_attr="source_data",
                 )
             )

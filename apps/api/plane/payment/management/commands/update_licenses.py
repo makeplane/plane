@@ -15,7 +15,7 @@ class Command(BaseCommand):
         # Print the success message
         self.stdout.write(
             self.style.SUCCESS(
-                f"Successfully triggered the sync license on startup task"
+                "Successfully triggered the sync license on startup task"
             )
         )
         return

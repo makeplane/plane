@@ -48,9 +48,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("backlog_estimate_point")[:1]
         )
         unstarted_estimate_point = (
@@ -61,11 +59,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                unstarted_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(unstarted_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("unstarted_estimate_point")[:1]
         )
         started_estimate_point = (
@@ -76,9 +70,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                started_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(started_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("started_estimate_point")[:1]
         )
         cancelled_estimate_point = (
@@ -89,11 +81,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                cancelled_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(cancelled_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("cancelled_estimate_point")[:1]
         )
         completed_estimate_point = (
@@ -104,11 +92,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                completed_estimate_points=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(completed_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
             .values("completed_estimate_points")[:1]
         )
         total_estimate_point = (
@@ -118,9 +102,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
-            .annotate(
-                total_estimate_points=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(total_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
             .values("total_estimate_points")[:1]
         )
         return (
@@ -132,9 +114,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only(
-                        "avatar_asset", "first_name", "id"
-                    ).distinct(),
+                    queryset=User.objects.only("avatar_asset", "first_name", "id").distinct(),
                 )
             )
             .prefetch_related(
@@ -218,8 +198,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
@@ -273,9 +252,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 )
             )
             .annotate(
-                total_estimate_points=Coalesce(
-                    Subquery(total_estimate_point), Value(0, output_field=FloatField())
-                )
+                total_estimate_points=Coalesce(Subquery(total_estimate_point), Value(0, output_field=FloatField()))
             )
             .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("-is_favorite", "name")
@@ -317,9 +294,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             ).order_by("-is_favorite", "-created_at")
             return Response(queryset, status=status.HTTP_200_OK)
         else:
-            queryset = (
-                self.get_queryset().filter(archived_at__isnull=False).filter(pk=pk)
-            )
+            queryset = self.get_queryset().filter(archived_at__isnull=False).filter(pk=pk)
             data = (
                 self.get_queryset()
                 .filter(pk=pk)
@@ -410,9 +385,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         )
                     )
                     .values("display_name", "assignee_id", "avatar_url")
-                    .annotate(
-                        total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                    )
+                    .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                     .annotate(
                         completed_estimates=Sum(
                             Cast("estimate_point__value", FloatField()),
@@ -447,9 +420,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     .annotate(color=F("labels__color"))
                     .annotate(label_id=F("labels__id"))
                     .values("label_name", "color", "label_id")
-                    .annotate(
-                        total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                    )
+                    .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                     .annotate(
                         completed_estimates=Sum(
                             Cast("estimate_point__value", FloatField()),
@@ -526,11 +497,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     "avatar_url",
                     "display_name",
                 )
-                .annotate(
-                    total_issues=Count(
-                        "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                    )
-                )
+                .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
                 .annotate(
                     completed_issues=Count(
                         "id",
@@ -566,11 +533,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(
-                    total_issues=Count(
-                        "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                    )
-                )
+                .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
                 .annotate(
                     completed_issues=Count(
                         "id",
@@ -613,9 +576,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
-        cycle = Cycle.objects.get(
-            pk=cycle_id, project_id=project_id, workspace__slug=slug
-        )
+        cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
 
         if cycle.end_date >= timezone.now():
             return Response(
@@ -631,15 +592,11 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         ).delete()
-        return Response(
-            {"archived_at": str(cycle.archived_at)}, status=status.HTTP_200_OK
-        )
+        return Response({"archived_at": str(cycle.archived_at)}, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id, cycle_id):
-        cycle = Cycle.objects.get(
-            pk=cycle_id, project_id=project_id, workspace__slug=slug
-        )
+        cycle = Cycle.objects.get(pk=cycle_id, project_id=project_id, workspace__slug=slug)
         cycle.archived_at = None
         cycle.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

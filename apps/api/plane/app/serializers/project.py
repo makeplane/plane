@@ -21,9 +21,7 @@ from plane.ee.models.initiative import InitiativeProject
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
-    initiative_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, write_only=True
-    )
+    initiative_ids = serializers.ListField(child=serializers.UUIDField(), required=False, write_only=True)
 
     class Meta:
         model = Project
@@ -50,9 +48,7 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
-        project = Project.objects.filter(
-            identifier=identifier, workspace_id=workspace_id
-        )
+        project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
         if project_id:
             project = project.exclude(id=project_id)
@@ -67,17 +63,13 @@ class ProjectSerializer(BaseSerializer):
     def validate(self, data):
         # Validate description content for security
         if "description_html" in data and data["description_html"]:
-            is_valid, error_msg, sanitized_html = validate_html_content(
-                str(data["description_html"])
-            )
+            is_valid, error_msg, sanitized_html = validate_html_content(str(data["description_html"]))
             # Update the data with sanitized HTML if available
             if sanitized_html is not None:
                 data["description_html"] = sanitized_html
 
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"error": "html content is not valid"}
-                )
+                raise serializers.ValidationError({"error": "html content is not valid"})
 
         return data
 
@@ -86,9 +78,7 @@ class ProjectSerializer(BaseSerializer):
 
         project = Project.objects.create(**validated_data, workspace_id=workspace_id)
 
-        ProjectIdentifier.objects.create(
-            name=project.identifier, project=project, workspace_id=workspace_id
-        )
+        ProjectIdentifier.objects.create(name=project.identifier, project=project, workspace_id=workspace_id)
 
         return project
 
@@ -124,9 +114,7 @@ class ProjectSerializer(BaseSerializer):
         ).first()
         if project_identifier is None:
             project = super().update(instance, validated_data)
-            project_identifier = ProjectIdentifier.objects.filter(
-                project=project
-            ).first()
+            project_identifier = ProjectIdentifier.objects.filter(project=project).first()
             if project_identifier is not None:
                 project_identifier.name = identifier
                 project_identifier.save()
@@ -186,17 +174,11 @@ class ProjectListSerializer(DynamicBaseSerializer):
 
     def get_member_role(self, obj):
         project_members = getattr(obj, "members_list", None)
-        current_user_id = (
-            self.context["request"].user.id if self.context.get("request") else None
-        )
+        current_user_id = self.context["request"].user.id if self.context.get("request") else None
         # calculate the current member role
         if project_members is not None and current_user_id:
             current_member = next(
-                (
-                    member
-                    for member in project_members
-                    if member.member_id == current_user_id
-                ),
+                (member for member in project_members if member.member_id == current_user_id),
                 None,
             )
             return current_member.role if current_member else None

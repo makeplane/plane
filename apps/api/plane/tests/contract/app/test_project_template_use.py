@@ -1,7 +1,6 @@
 import pytest
-import json
 import uuid
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from rest_framework import status
 
 from plane.db.models import (
@@ -22,7 +21,6 @@ from plane.ee.models import (
     ProjectState,
     ProjectFeature,
 )
-from plane.payment.flags.flag import FeatureFlag
 
 
 @pytest.fixture

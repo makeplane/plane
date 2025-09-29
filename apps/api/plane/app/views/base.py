@@ -72,11 +72,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
             response = super().handle_exception(exc)
             return response
         except Exception as e:
-            (
-                print(e, traceback.format_exc())
-                if settings.DEBUG
-                else print("Server Error")
-            )
+            (print(e, traceback.format_exc()) if settings.DEBUG else print("Server Error"))
             if isinstance(e, IntegrityError):
                 log_exception(e)
                 return Response(
@@ -116,9 +112,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
 
             return response
         except Exception as exc:
@@ -140,16 +134,12 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None
 
 
@@ -218,9 +208,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
 
         except Exception as exc:
@@ -237,14 +225,10 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

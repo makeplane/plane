@@ -37,9 +37,7 @@ class SubIssuesEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -68,10 +66,7 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -109,9 +104,7 @@ class SubIssuesEndpoint(BaseAPIView):
         group_by = request.GET.get("group_by", False)
 
         if order_by_param:
-            sub_issues, order_by_param = order_issue_queryset(
-                sub_issues, order_by_param
-            )
+            sub_issues, order_by_param = order_issue_queryset(sub_issues, order_by_param)
 
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
@@ -147,9 +140,7 @@ class SubIssuesEndpoint(BaseAPIView):
             "type_id",
         )
         datetime_fields = ["created_at", "updated_at"]
-        sub_issues = user_timezone_converter(
-            sub_issues, datetime_fields, request.user.user_timezone
-        )
+        sub_issues = user_timezone_converter(sub_issues, datetime_fields, request.user.user_timezone)
         # Grouping
         if group_by:
             result_dict = defaultdict(list)
@@ -193,9 +184,7 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(
-            state_group=F("state__group")
-        )
+        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(state_group=F("state__group"))
 
         # Track the issue
         _ = [

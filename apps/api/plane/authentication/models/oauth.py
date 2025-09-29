@@ -25,9 +25,6 @@ from plane.db.models import (
     Webhook,
 )
 from plane.db.models.user import BotTypeEnum
-from plane.authentication.bgtasks.send_app_uninstall_webhook import (
-    send_app_uninstall_webhook,
-)
 from plane.utils.html_processor import strip_tags
 
 

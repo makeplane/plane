@@ -13,7 +13,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Third party imports
-from rest_framework.views import APIView
 from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication,
     IsAuthenticatedOrTokenHasScope,
@@ -45,9 +44,7 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(
-    TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator
-):
+class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
     authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
     permission_classes = [
         IsAuthenticated,
@@ -68,9 +65,7 @@ class BaseAPIView(
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
-            service_token = APIToken.objects.filter(
-                token=api_key, is_service=True
-            ).first()
+            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
 
             if service_token:
                 throttle_classes.append(ServiceTokenRateThrottle())
@@ -126,9 +121,7 @@ class BaseAPIView(
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
@@ -164,14 +157,10 @@ class BaseAPIView(
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

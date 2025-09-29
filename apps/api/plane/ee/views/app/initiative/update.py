@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Q, Prefetch, Case, When, Value, CharField, Count
+from django.db.models import Q, Prefetch, Case, When, Value, CharField
 
 # Module imports
 from plane.ee.views.base import BaseAPIView

@@ -80,9 +80,7 @@ class IssueCommentViewSet(BaseViewSet):
             )
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, issue_id=issue_id, actor=request.user
-            )
+            serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
             issue_activity.delay(
                 type="comment.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -109,21 +107,12 @@ class IssueCommentViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def partial_update(self, request, slug, project_id, issue_id, pk):
-        issue_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
+        issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(
-            IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder
-        )
-        serializer = IssueCommentSerializer(
-            issue_comment, data=request.data, partial=True
-        )
+        current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
+        serializer = IssueCommentSerializer(issue_comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != issue_comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != issue_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -153,12 +142,8 @@ class IssueCommentViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     def destroy(self, request, slug, project_id, issue_id, pk):
-        issue_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
-        current_instance = json.dumps(
-            IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder
-        )
+        issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
             type="comment.activity.deleted",

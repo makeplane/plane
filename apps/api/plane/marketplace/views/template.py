@@ -1,4 +1,3 @@
-import uuid
 
 from django.db.models import QuerySet
 

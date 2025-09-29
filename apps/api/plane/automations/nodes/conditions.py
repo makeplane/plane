@@ -6,7 +6,6 @@ These nodes evaluate conditions and return consistent success/failure format.
 - success: false = condition failed, stop automation execution
 """
 
-import json
 import re
 from typing import Any, Dict
 from datetime import datetime, date

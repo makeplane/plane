@@ -1,6 +1,5 @@
 import time
 import json
-from datetime import datetime
 from django.core.management.base import BaseCommand, CommandParser
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
@@ -11,7 +10,6 @@ from plane.ee.documents import (
     get_all_search_relevant_models,
     cleanup_stale_queue_for_model,
     force_drain_queue_for_model,
-    get_queue_health_info,
 )
 from plane.utils.exception_logger import log_exception
 

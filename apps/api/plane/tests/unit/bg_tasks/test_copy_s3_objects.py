@@ -14,9 +14,7 @@ class TestCopyS3Objects:
 
     @pytest.fixture
     def project(self, create_user, workspace):
-        project = Project.objects.create(
-            name="Test Project", identifier="test-project", workspace=workspace
-        )
+        project = Project.objects.create(name="Test Project", identifier="test-project", workspace=workspace)
 
         ProjectMember.objects.create(project=project, member=create_user)
         return project
@@ -27,7 +25,7 @@ class TestCopyS3Objects:
             name="Test Issue",
             workspace=workspace,
             project_id=project.id,
-            description_html='<div><image-component src="35e8b958-6ee5-43ce-ae56-fb0e776f421e"></image-component><image-component src="97988198-274f-4dfe-aa7a-4c0ffc684214"></image-component></div>',
+            description_html='<div><image-component src="35e8b958-6ee5-43ce-ae56-fb0e776f421e"></image-component><image-component src="97988198-274f-4dfe-aa7a-4c0ffc684214"></image-component></div>',  # noqa: E501
         )
 
     @pytest.fixture
@@ -72,18 +70,14 @@ class TestCopyS3Objects:
         mock_s3_storage.return_value = mock_storage_instance
 
         # Mock the external service call to avoid actual HTTP requests
-        with patch(
-            "plane.bgtasks.copy_s3_object.sync_with_external_service"
-        ) as mock_sync:
+        with patch("plane.bgtasks.copy_s3_object.sync_with_external_service") as mock_sync:
             mock_sync.return_value = {
                 "description": "test description",
                 "description_binary": base64.b64encode(b"test binary").decode(),
             }
 
             # Call the actual function (not .delay())
-            copy_s3_objects_of_description_and_assets(
-                "ISSUE", issue.id, project.id, "test-workspace", create_user.id
-            )
+            copy_s3_objects_of_description_and_assets("ISSUE", issue.id, project.id, "test-workspace", create_user.id)
 
         # Assert that copy_object was called for each asset
         assert mock_storage_instance.copy_object.call_count == 2
@@ -100,9 +94,7 @@ class TestCopyS3Objects:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.copy_s3_object.S3Storage")
-    def test_copy_assets_successful(
-        self, mock_s3_storage, workspace, project, issue, file_asset
-    ):
+    def test_copy_assets_successful(self, mock_s3_storage, workspace, project, issue, file_asset):
         """Test successful copying of assets"""
         # Arrange
         mock_storage_instance = MagicMock()
@@ -136,9 +128,7 @@ class TestCopyS3Objects:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.copy_s3_object.S3Storage")
-    def test_copy_assets_empty_asset_ids(
-        self, mock_s3_storage, workspace, project, issue
-    ):
+    def test_copy_assets_empty_asset_ids(self, mock_s3_storage, workspace, project, issue):
         """Test copying with empty asset_ids list"""
         # Arrange
         mock_storage_instance = MagicMock()
@@ -159,9 +149,7 @@ class TestCopyS3Objects:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.copy_s3_object.S3Storage")
-    def test_copy_assets_nonexistent_asset(
-        self, mock_s3_storage, workspace, project, issue
-    ):
+    def test_copy_assets_nonexistent_asset(self, mock_s3_storage, workspace, project, issue):
         """Test copying with non-existent asset ID"""
         # Arrange
         mock_storage_instance = MagicMock()

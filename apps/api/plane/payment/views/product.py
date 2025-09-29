@@ -20,8 +20,6 @@ from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
-    is_billing_active,
-    is_on_trial,
 )
 from plane.payment.rate_limit import WorkspaceRateThrottle
 

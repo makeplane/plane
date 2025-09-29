@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 
 from django.views import View
 from rest_framework.permissions import BasePermission

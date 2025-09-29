@@ -3,7 +3,6 @@ import base64
 import json
 from rest_framework import status
 from rest_framework.response import Response
-from django.http import JsonResponse
 import logging
 
 # Module imports

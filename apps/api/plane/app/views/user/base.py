@@ -67,9 +67,7 @@ class UserEndpoint(BaseViewSet):
 
     def retrieve_instance_admin(self, request):
         instance = Instance.objects.first()
-        is_admin = InstanceAdmin.objects.filter(
-            instance=instance, user=request.user
-        ).exists()
+        is_admin = InstanceAdmin.objects.filter(instance=instance, user=request.user).exists()
         return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
@@ -82,18 +80,14 @@ class UserEndpoint(BaseViewSet):
         # Instance admin check
         if InstanceAdmin.objects.filter(user=user).exists():
             return Response(
-                {
-                    "error": "You cannot deactivate your account since you are an instance admin"
-                },
+                {"error": "You cannot deactivate your account since you are an instance admin"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         projects_to_deactivate = []
         workspaces_to_deactivate = []
 
-        projects = ProjectMember.objects.filter(
-            member=request.user, is_active=True
-        ).annotate(
+        projects = ProjectMember.objects.filter(member=request.user, is_active=True).annotate(
             other_admin_exists=Count(
                 Case(
                     When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
@@ -110,15 +104,11 @@ class UserEndpoint(BaseViewSet):
                 projects_to_deactivate.append(project)
             else:
                 return Response(
-                    {
-                        "error": "You cannot deactivate account as you are the only admin in some projects."
-                    },
+                    {"error": "You cannot deactivate account as you are the only admin in some projects."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        workspaces = WorkspaceMember.objects.filter(
-            member=request.user, is_active=True
-        ).annotate(
+        workspaces = WorkspaceMember.objects.filter(member=request.user, is_active=True).annotate(
             other_admin_exists=Count(
                 Case(
                     When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
@@ -135,19 +125,13 @@ class UserEndpoint(BaseViewSet):
                 workspaces_to_deactivate.append(workspace)
             else:
                 return Response(
-                    {
-                        "error": "You cannot deactivate account as you are the only admin in some workspaces."
-                    },
+                    {"error": "You cannot deactivate account as you are the only admin in some workspaces."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        ProjectMember.objects.bulk_update(
-            projects_to_deactivate, ["is_active"], batch_size=100
-        )
+        ProjectMember.objects.bulk_update(projects_to_deactivate, ["is_active"], batch_size=100)
 
-        WorkspaceMember.objects.bulk_update(
-            workspaces_to_deactivate, ["is_active"], batch_size=100
-        )
+        WorkspaceMember.objects.bulk_update(workspaces_to_deactivate, ["is_active"], batch_size=100)
 
         # Remove the user from the teamspaces where the user is part of
         TeamspaceMember.objects.filter(member_id=request.user.id).delete()
@@ -243,9 +227,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=queryset,
-            on_results=lambda issue_activities: IssueActivitySerializer(
-                issue_activities, many=True
-            ).data,
+            on_results=lambda issue_activities: IssueActivitySerializer(issue_activities, many=True).data,
         )
 
 
