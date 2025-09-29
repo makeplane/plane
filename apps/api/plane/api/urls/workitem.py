@@ -3,8 +3,6 @@ from django.urls import path
 from plane.api.views import (
     IssueListCreateAPIEndpoint,
     IssueDetailAPIEndpoint,
-    LabelListCreateAPIEndpoint,
-    LabelDetailAPIEndpoint,
     IssueLinkListCreateAPIEndpoint,
     IssueLinkDetailAPIEndpoint,
     IssueCommentListCreateAPIEndpoint,
@@ -17,7 +15,8 @@ from plane.api.views import (
     IssueSearchEndpoint,
 )
 
-urlpatterns = [
+# Deprecated url patterns
+old_url_patterns = [
     path(
         "workspaces/<str:slug>/issues/search/",
         IssueSearchEndpoint.as_view(http_method_names=["get"]),
@@ -37,16 +36,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
         IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
-        LabelListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
-        name="label",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
-        LabelDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
-        name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
@@ -89,3 +78,69 @@ urlpatterns = [
         name="issue-attachment",
     ),
 ]
+
+# New url patterns with work-items as the prefix
+new_url_patterns = [
+    path(
+        "workspaces/<str:slug>/work-items/search/",
+        IssueSearchEndpoint.as_view(http_method_names=["get"]),
+        name="issue-search",
+    ),
+    path(
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
+        name="issue-by-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/",
+        IssueListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:pk>/",
+        IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/",
+        IssueLinkListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="link",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/links/<uuid:pk>/",
+        IssueLinkDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="link",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/comments/",
+        IssueCommentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="comment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/comments/<uuid:pk>/",
+        IssueCommentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="comment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/activities/",
+        IssueActivityListAPIEndpoint.as_view(http_method_names=["get"]),
+        name="activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/activities/<uuid:pk>/",
+        IssueActivityDetailAPIEndpoint.as_view(http_method_names=["get"]),
+        name="activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/",
+        IssueAttachmentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="issue-attachment",
+    ),
+]
+
+urlpatterns = old_url_patterns + new_url_patterns
