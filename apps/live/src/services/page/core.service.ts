@@ -39,6 +39,64 @@ export abstract class PageCoreService extends APIService {
       });
   }
 
+  async fetchPageProperties(pageId: string): Promise<TPage> {
+    return this.get(`${this.basePath}/pages/${pageId}/`, {
+      headers: this.getHeader(),
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Updates the title of a page
+   */
+  async updatePageProperties(
+    pageId: string,
+    params: { data: Partial<TPage>; abortSignal?: AbortSignal }
+  ): Promise<TPage> {
+    const { data, abortSignal } = params;
+
+    // Early abort check
+    if (abortSignal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
+    }
+
+    // Create an abort listener that will reject the pending promise
+    let abortListener: (() => void) | undefined;
+    const abortPromise = new Promise((_, reject) => {
+      if (abortSignal) {
+        abortListener = () => {
+          reject(new DOMException("Aborted", "AbortError"));
+        };
+        abortSignal.addEventListener("abort", abortListener);
+      }
+    });
+
+    try {
+      return await Promise.race([
+        this.patch(`${this.basePath}/${pageId}`, data, {
+          headers: this.getHeader(),
+          signal: abortSignal,
+        })
+          .then((response) => response?.data)
+          .catch((error) => {
+            if (error.name === "AbortError") {
+              throw new DOMException("Aborted", "AbortError");
+            }
+            throw error;
+          }),
+        abortPromise,
+      ]);
+    } finally {
+      // Clean up abort listener
+      if (abortSignal && abortListener) {
+        abortSignal.removeEventListener("abort", abortListener);
+      }
+    }
+  }
+
   async updateDescriptionBinary(pageId: string, data: TPageDescriptionPayload): Promise<any> {
     return this.patch(`${this.basePath}/pages/${pageId}/description/`, data, {
       headers: this.getHeader(),

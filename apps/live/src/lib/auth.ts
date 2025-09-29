@@ -1,12 +1,11 @@
 // plane imports
+import { type IncomingHttpHeaders } from "http";
 import type { TUserDetails } from "@plane/editor";
-import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
 // services
 import { UserService } from "@/services/user.service";
 // types
-import { HocusPocusServerContext } from "@/types";
-import type { onAuthenticatePayload, onStatelessPayload } from "@hocuspocus/server";
+import { type HocusPocusServerContext, type TDocumentTypes } from "@/types";
 
 /**
  * Authenticate the user
@@ -15,7 +14,17 @@ import type { onAuthenticatePayload, onStatelessPayload } from "@hocuspocus/serv
  * @param token - The token
  * @returns The authenticated user
  */
-export const onAuthenticate = async ({ requestHeaders, requestParameters, context, token }: onAuthenticatePayload) => {
+export const onAuthenticate = async ({
+  requestHeaders,
+  requestParameters,
+  context,
+  token,
+}: {
+  requestHeaders: IncomingHttpHeaders;
+  context: HocusPocusServerContext;
+  requestParameters: URLSearchParams;
+  token: string;
+}) => {
   let cookie: string | undefined = undefined;
   let userId: string | undefined = undefined;
 
@@ -40,12 +49,20 @@ export const onAuthenticate = async ({ requestHeaders, requestParameters, contex
   }
 
   // set cookie in context, so it can be used throughout the ws connection
-  (context as HocusPocusServerContext).cookie = cookie;
+  context.cookie = cookie ?? requestParameters.get("cookie") ?? "";
   context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
+  context.projectId = requestParameters.get("projectId");
   context.userId = userId;
-  context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() ?? "";
-  context.projectId = requestParameters.get("projectId")?.toString() ?? "";
+  context.workspaceSlug = requestParameters.get("workspaceSlug");
 
+  return await handleAuthentication({
+    cookie: context.cookie,
+    userId: context.userId,
+  });
+};
+
+export const handleAuthentication = async ({ cookie, userId }: { cookie: string; userId: string }) => {
+  // fetch current user info
   try {
     const userService = new UserService();
     const user = await userService.currentUser(cookie);
@@ -62,16 +79,4 @@ export const onAuthenticate = async ({ requestHeaders, requestParameters, contex
   } catch (_error) {
     throw Error("Authentication unsuccessful!");
   }
-};
-
-/**
- * Broadcast the client event to all the clients so that they can update their state
- * @param param0
- */
-export const onStateless = async ({ payload, document }: onStatelessPayload) => {
-  // broadcast the client event (derived from the server event) to all the clients so that they can update their state
-  // const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
-  // if (response) {
-  //   document.broadcastStateless(response);
-  // }
 };

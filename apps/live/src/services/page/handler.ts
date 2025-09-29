@@ -1,21 +1,14 @@
-import { TDocumentTypes } from "@/types";
+import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 // services
 import { ProjectPageService } from "./project-page.service";
 
-interface PageServiceParams {
-  documentType?: TDocumentTypes;
-  workspaceSlug?: string;
-  projectId?: string;
-  cookie?: string;
-  pageId?: string;
-  [key: string]: unknown;
-}
-
-export const getPageService = (params: PageServiceParams) => {
-  const documentType = params["documentType"]?.toString() as TDocumentTypes | undefined;
-
+export const getPageService = (documentType: TDocumentTypes, context: HocusPocusServerContext) => {
   if (documentType === "project_page") {
-    return new ProjectPageService(params);
+    return new ProjectPageService({
+      workspaceSlug: context.workspaceSlug,
+      projectId: context.projectId,
+      cookie: context.cookie,
+    });
   }
 
   throw new Error(`Invalid document type ${documentType} provided.`);

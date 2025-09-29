@@ -1,12 +1,13 @@
 import axios, { AxiosInstance } from "axios";
 import { env } from "@/env";
+
 export abstract class APIService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
   private header: Record<string, string> = {};
 
-  constructor() {
-    this.baseURL = env.API_BASE_URL ?? "";
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || env.API_BASE_URL;
     this.axiosInstance = axios.create({
       baseURL: this.baseURL,
       withCredentials: true,

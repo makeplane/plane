@@ -1,5 +1,5 @@
 import { Server as HttpServer } from "http";
-import { Hocuspocus } from "@hocuspocus/server";
+import { type Hocuspocus } from "@hocuspocus/server";
 import compression from "compression";
 import cors from "cors";
 import express, { Express, Request, Response, Router } from "express";
@@ -40,7 +40,6 @@ export class Server {
       this.hocuspocusServer = await manager.initialize();
       logger.info("HocusPocus setup completed");
 
-      // Set up routes and handlers after hocuspocusServer is initialized
       this.setupRoutes(this.hocuspocusServer);
       this.setupNotFoundHandler();
     } catch (error) {
@@ -65,9 +64,7 @@ export class Server {
 
   private setupCors() {
     const allowedOrigins =
-      process.env.CORS_ALLOWED_ORIGINS === "*"
-        ? "*"
-        : process.env.CORS_ALLOWED_ORIGINS?.split(",")?.map((s) => s.trim()) || [];
+      env.CORS_ALLOWED_ORIGINS === "*" ? "*" : env.CORS_ALLOWED_ORIGINS?.split(",")?.map((s) => s.trim()) || [];
     this.app.use(
       cors({
         origin: allowedOrigins,

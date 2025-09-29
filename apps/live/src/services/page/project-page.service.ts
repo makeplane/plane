@@ -1,9 +1,9 @@
 import { PageService } from "./extended.service";
 
 interface ProjectPageServiceParams {
-  workspaceSlug?: string;
-  projectId?: string;
-  cookie?: string;
+  workspaceSlug: string | null;
+  projectId: string | null;
+  cookie: string | null;
   [key: string]: unknown;
 }
 
