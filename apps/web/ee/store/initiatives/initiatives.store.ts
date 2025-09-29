@@ -67,6 +67,7 @@ export interface IInitiativeStore {
   fetchInitiativeDetails: (workspaceSlug: string, initiativeId: string) => Promise<TInitiative | undefined>;
   updateInitiative: (workspaceSlug: string, initiativeId: string, payload: Partial<TInitiative>) => Promise<void>;
   deleteInitiative: (workspaceSlug: string, initiativeId: string) => Promise<void>;
+  initInitiatives: (workspaceSlug: string) => Promise<void>;
 
   addInitiativeReaction: (
     workspaceSlug: string,
@@ -169,6 +170,12 @@ export class InitiativeStore implements IInitiativeStore {
   get initiativeIds() {
     return Object.keys(this.initiativesMap ?? {});
   }
+
+  initInitiatives = async (workspaceSlug: string) => {
+    await this.initiativeFilterStore.initInitiativeFilters(workspaceSlug);
+    const filters = this.initiativeFilterStore.getInitiativeFilters(workspaceSlug);
+    await this.fetchInitiatives(workspaceSlug, filters);
+  };
 
   getGroupedInitiativeIds = computedFn((workspaceSlug: string) => {
     const workspace = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug);

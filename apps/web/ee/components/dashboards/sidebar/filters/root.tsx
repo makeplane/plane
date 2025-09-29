@@ -7,12 +7,13 @@ import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "
  * plane imports
  */
 
-import { CycleGroupIcon, DiceIcon, PriorityIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, DiceIcon, DoubleCircleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import { FilterInstance } from "@plane/shared-state";
 import {
   ICycle,
   IIssueLabel,
   IModule,
+  IState,
   IUserLite,
   TCycleGroups,
   TDashboardWidget,
@@ -31,6 +32,8 @@ import {
   getMentionFilterConfig,
   getModuleFilterConfig,
   getPriorityFilterConfig,
+  getStateFilterConfig,
+  getStateGroupFilterConfig,
   getWorkItemTypeFilterConfig,
 } from "@plane/utils";
 
@@ -44,6 +47,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -82,6 +86,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
   const { getProjectCycleDetails } = useCycle();
   const { getProjectModuleDetails } = useModule();
   const { getProjectIssueTypes } = useIssueTypes();
+  const { getProjectStates } = useProjectState();
 
   /**
    * derived values
@@ -97,6 +102,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
         cycles: [],
         modules: [],
         workItemTypes: [],
+        states: [],
       };
     }
 
@@ -106,6 +112,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
     const joinedProjectCycles = new Set<ICycle>();
     const joinedProjectModules = new Set<IModule>();
     const joinedProjectWorkItemTypes = new Set<TIssueType>();
+    const joinedProjectStates = new Set<IState>();
 
     projectIds.forEach((projectId) => {
       // Collect labels
@@ -132,6 +139,12 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
       if (projectWorkItemTypes) {
         Object.values(projectWorkItemTypes).forEach((workItemType) => joinedProjectWorkItemTypes.add(workItemType));
       }
+
+      // Collect states
+      const projectStates = getProjectStates(projectId);
+      if (projectStates) {
+        projectStates.forEach((state) => joinedProjectStates.add(state));
+      }
     });
 
     const joinedProjectMembers = Array.from(joinedProjectMemberIds)
@@ -144,6 +157,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
       cycles: Array.from(joinedProjectCycles),
       modules: Array.from(joinedProjectModules),
       workItemTypes: Array.from(joinedProjectWorkItemTypes),
+      states: Array.from(joinedProjectStates),
     };
   }, [
     workspaceSlug,
@@ -153,6 +167,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
     getProjectCycleDetails,
     getProjectModuleDetails,
     getProjectIssueTypes,
+    getProjectStates,
     getUserDetails,
   ]);
 
@@ -261,6 +276,29 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
     [joinedProjectData.workItemTypes, operatorConfigs]
   );
 
+  const stateFilterConfig = useMemo(
+    () =>
+      getStateFilterConfig<TDashboardWidgetFilterKeys>("state_id")({
+        isEnabled: true,
+        filterIcon: DoubleCircleIcon,
+        getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
+        states: joinedProjectData.states ?? [],
+        ...operatorConfigs,
+      }),
+    [joinedProjectData.states, operatorConfigs]
+  );
+
+  const stateGroupFilterConfig = useMemo(
+    () =>
+      getStateGroupFilterConfig<TDashboardWidgetFilterKeys>("state_group")({
+        isEnabled: true,
+        filterIcon: DoubleCircleIcon,
+        getOptionIcon: (stateGroupKey) => <StateGroupIcon stateGroup={stateGroupKey} />,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
   if (filterInstance) {
     filterInstance.configManager.registerAll([
       assigneeFilterConfig,
@@ -271,6 +309,8 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
       priorityFilterConfig,
       labelFilterConfig,
       workItemTypeFilterConfig,
+      stateFilterConfig,
+      stateGroupFilterConfig,
     ]);
   }
 

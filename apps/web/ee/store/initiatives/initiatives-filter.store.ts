@@ -18,7 +18,7 @@ export interface IInitiativeFilterStore {
   getInitiativeDisplayFilters: (workspaceSlug: string) => TInitiativeDisplayFilters;
   getInitiativeFilters: (workspaceSlug: string) => TExternalInitiativeFilterExpression | undefined;
 
-  initInitiativeFilters: (workspaceSlug: string) => void;
+  initInitiativeFilters: (workspaceSlug: string) => Promise<void>;
   updateDisplayFilters: (workspaceSlug: string, displayFilters: Partial<TInitiativeDisplayFilters>) => void;
   updateFilters: (workspaceSlug: string, filters: TExternalInitiativeFilterExpression) => void;
   clearAllFilters: (workspaceSlug: string) => void;

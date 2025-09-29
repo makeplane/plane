@@ -10,15 +10,20 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { InitiativesListHeader } from "./header";
 
-export default function InitiativesListLayout({ children }: { children: ReactNode }) {
+const InitiativesListLayout = ({ children }: { children: ReactNode }) => {
   const { workspaceSlug } = useParams();
+
   const {
-    initiativeFilters: { initInitiativeFilters },
+    initiative: { initInitiatives },
   } = useInitiatives();
 
   useSWR(
-    workspaceSlug ? `initInitiativeFilters-${workspaceSlug}` : null,
-    workspaceSlug ? () => initInitiativeFilters(workspaceSlug.toString()) : null
+    workspaceSlug ? `initInitiatives-${workspaceSlug}` : null,
+    workspaceSlug ? () => initInitiatives(workspaceSlug.toString()) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   return (
@@ -27,4 +32,6 @@ export default function InitiativesListLayout({ children }: { children: ReactNod
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );
-}
+};
+
+export default InitiativesListLayout;
