@@ -60,6 +60,4 @@ class Command(BaseCommand):
             msg.send()
             self.stdout.write(self.style.SUCCESS("Email successfully sent"))
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f"Error: Email could not be delivered due to {e}")
-            )
+            self.stdout.write(self.style.ERROR(f"Error: Email could not be delivered due to {e}"))

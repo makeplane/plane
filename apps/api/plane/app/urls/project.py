@@ -77,9 +77,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
-        ProjectMemberViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectMemberViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-member",
     ),
     path(
@@ -119,9 +117,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
-        DeployBoardViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        DeployBoardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-deploy-board",
     ),
     path(

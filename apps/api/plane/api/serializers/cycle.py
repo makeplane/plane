@@ -55,14 +55,9 @@ class CycleCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed end date")
 
-        if (
-            data.get("start_date", None) is not None
-            and data.get("end_date", None) is not None
-        ):
+        if data.get("start_date", None) is not None and data.get("end_date", None) is not None:
             project_id = self.initial_data.get("project_id") or (
-                self.instance.project_id
-                if self.instance and hasattr(self.instance, "project_id")
-                else None
+                self.instance.project_id if self.instance and hasattr(self.instance, "project_id") else None
             )
 
             if not project_id:
@@ -166,9 +161,7 @@ class CycleIssueRequestSerializer(serializers.Serializer):
     cycle assignment and sprint planning workflows.
     """
 
-    issues = serializers.ListField(
-        child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle"
-    )
+    issues = serializers.ListField(child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle")
 
 
 class TransferCycleIssueRequestSerializer(serializers.Serializer):
@@ -179,6 +172,4 @@ class TransferCycleIssueRequestSerializer(serializers.Serializer):
     and relationship updates for sprint reallocation workflows.
     """
 
-    new_cycle_id = serializers.UUIDField(
-        help_text="ID of the target cycle to transfer issues to"
-    )
+    new_cycle_id = serializers.UUIDField(help_text="ID of the target cycle to transfer issues to")

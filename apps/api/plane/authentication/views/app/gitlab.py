@@ -36,9 +36,7 @@ class GitLabOauthInitiateEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
         try:
@@ -50,9 +48,7 @@ class GitLabOauthInitiateEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -70,9 +66,7 @@ class GitLabCallbackEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -83,16 +77,12 @@ class GitLabCallbackEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitLabOAuthProvider(
-                request=request, code=code, callback=post_user_auth_workflow
-            )
+            provider = GitLabOAuthProvider(request=request, code=code, callback=post_user_auth_workflow)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
@@ -103,17 +93,11 @@ class GitLabCallbackEndpoint(View):
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=path,
-                params={}
-            )
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_app=True), next_path=path, params={})
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)

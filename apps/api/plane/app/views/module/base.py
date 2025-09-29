@@ -69,11 +69,7 @@ class ModuleViewSet(BaseViewSet):
     webhook_event = "module"
 
     def get_serializer_class(self):
-        return (
-            ModuleWriteSerializer
-            if self.action in ["create", "update", "partial_update"]
-            else ModuleSerializer
-        )
+        return ModuleWriteSerializer if self.action in ["create", "update", "partial_update"] else ModuleSerializer
 
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
@@ -150,11 +146,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                completed_estimate_points=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(completed_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
             .values("completed_estimate_points")[:1]
         )
 
@@ -165,9 +157,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                total_estimate_points=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(total_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
             .values("total_estimate_points")[:1]
         )
         backlog_estimate_point = (
@@ -178,9 +168,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("backlog_estimate_point")[:1]
         )
         unstarted_estimate_point = (
@@ -191,11 +179,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                unstarted_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(unstarted_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("unstarted_estimate_point")[:1]
         )
         started_estimate_point = (
@@ -206,9 +190,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                started_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
-            )
+            .annotate(started_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("started_estimate_point")[:1]
         )
         cancelled_estimate_point = (
@@ -219,11 +201,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(
-                cancelled_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
-            )
+            .annotate(cancelled_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
             .values("cancelled_estimate_point")[:1]
         )
         return (
@@ -251,27 +229,15 @@ class ModuleViewSet(BaseViewSet):
                     Value(0, output_field=IntegerField()),
                 )
             )
-            .annotate(
-                started_issues=Coalesce(
-                    Subquery(started_issues[:1]), Value(0, output_field=IntegerField())
-                )
-            )
+            .annotate(started_issues=Coalesce(Subquery(started_issues[:1]), Value(0, output_field=IntegerField())))
             .annotate(
                 unstarted_issues=Coalesce(
                     Subquery(unstarted_issues[:1]),
                     Value(0, output_field=IntegerField()),
                 )
             )
-            .annotate(
-                backlog_issues=Coalesce(
-                    Subquery(backlog_issues[:1]), Value(0, output_field=IntegerField())
-                )
-            )
-            .annotate(
-                total_issues=Coalesce(
-                    Subquery(total_issues[:1]), Value(0, output_field=IntegerField())
-                )
-            )
+            .annotate(backlog_issues=Coalesce(Subquery(backlog_issues[:1]), Value(0, output_field=IntegerField())))
+            .annotate(total_issues=Coalesce(Subquery(total_issues[:1]), Value(0, output_field=IntegerField())))
             .annotate(
                 backlog_estimate_points=Coalesce(
                     Subquery(backlog_estimate_point),
@@ -303,9 +269,7 @@ class ModuleViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                total_estimate_points=Coalesce(
-                    Subquery(total_estimate_point), Value(0, output_field=FloatField())
-                )
+                total_estimate_points=Coalesce(Subquery(total_estimate_point), Value(0, output_field=FloatField()))
             )
             .annotate(
                 member_ids=Coalesce(
@@ -326,9 +290,7 @@ class ModuleViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
-        serializer = ModuleWriteSerializer(
-            data=request.data, context={"project": project}
-        )
+        serializer = ModuleWriteSerializer(data=request.data, context={"project": project})
 
         if serializer.is_valid():
             serializer.save()
@@ -380,9 +342,7 @@ class ModuleViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
             )
             datetime_fields = ["created_at", "updated_at"]
-            module = user_timezone_converter(
-                module, datetime_fields, request.user.user_timezone
-            )
+            module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -425,9 +385,7 @@ class ModuleViewSet(BaseViewSet):
                 "updated_at",
             )
             datetime_fields = ["created_at", "updated_at"]
-            modules = user_timezone_converter(
-                modules, datetime_fields, request.user.user_timezone
-            )
+            modules = user_timezone_converter(modules, datetime_fields, request.user.user_timezone)
         return Response(modules, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -450,9 +408,7 @@ class ModuleViewSet(BaseViewSet):
         )
 
         if not queryset.exists():
-            return Response(
-                {"error": "Module not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Module not found"}, status=status.HTTP_404_NOT_FOUND)
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -505,9 +461,7 @@ class ModuleViewSet(BaseViewSet):
                     "avatar_url",
                     "display_name",
                 )
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -542,9 +496,7 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
@@ -602,21 +554,13 @@ class ModuleViewSet(BaseViewSet):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
+                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
             )
-            .values(
-                "first_name", "last_name", "assignee_id", "avatar_url", "display_name"
-            )
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
+            .values("first_name", "last_name", "assignee_id", "avatar_url", "display_name")
+            .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
             .annotate(
                 completed_issues=Count(
                     "id",
@@ -651,11 +595,7 @@ class ModuleViewSet(BaseViewSet):
             .annotate(color=F("labels__color"))
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
+            .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
             .annotate(
                 completed_issues=Count(
                     "id",
@@ -685,12 +625,7 @@ class ModuleViewSet(BaseViewSet):
             "completion_chart": {},
         }
 
-        if (
-            modules
-            and modules.start_date
-            and modules.target_date
-            and modules.total_issues > 0
-        ):
+        if modules and modules.start_date and modules.target_date and modules.total_issues > 0:
             data["distribution"]["completion_chart"] = burndown_plot(
                 queryset=modules,
                 slug=slug,
@@ -726,12 +661,8 @@ class ModuleViewSet(BaseViewSet):
                 {"error": "Archived module cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        current_instance = json.dumps(
-            ModuleSerializer(current_module).data, cls=DjangoJSONEncoder
-        )
-        serializer = ModuleWriteSerializer(
-            current_module, data=request.data, partial=True
-        )
+        current_instance = json.dumps(ModuleSerializer(current_module).data, cls=DjangoJSONEncoder)
+        serializer = ModuleWriteSerializer(current_module, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -781,9 +712,7 @@ class ModuleViewSet(BaseViewSet):
             )
 
             datetime_fields = ["created_at", "updated_at"]
-            module = user_timezone_converter(
-                module, datetime_fields, request.user.user_timezone
-            )
+            module = user_timezone_converter(module, datetime_fields, request.user.user_timezone)
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -791,9 +720,7 @@ class ModuleViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
-        module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
-        )
+        module_issues = list(ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True))
         _ = [
             issue_activity.delay(
                 type="module.activity.deleted",
@@ -901,15 +828,9 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
             workspace__slug=slug,
         )
 
-        module_properties.filters = request.data.get(
-            "filters", module_properties.filters
-        )
-        module_properties.rich_filters = request.data.get(
-            "rich_filters", module_properties.rich_filters
-        )
-        module_properties.display_filters = request.data.get(
-            "display_filters", module_properties.display_filters
-        )
+        module_properties.filters = request.data.get("filters", module_properties.filters)
+        module_properties.rich_filters = request.data.get("rich_filters", module_properties.rich_filters)
+        module_properties.display_filters = request.data.get("display_filters", module_properties.display_filters)
         module_properties.display_properties = request.data.get(
             "display_properties", module_properties.display_properties
         )
