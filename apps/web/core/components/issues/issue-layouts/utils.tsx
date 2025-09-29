@@ -2,11 +2,7 @@
 
 import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import isNil from "lodash/isNil";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
+import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types

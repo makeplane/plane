@@ -1,5 +1,5 @@
 import React from "react";
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const InboxSidebarLoader = () => (
   <div className="flex flex-col">

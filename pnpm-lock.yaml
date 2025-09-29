@@ -6,15 +6,9 @@ settings:
 
 catalogs:
   default:
-    '@tiptap/core':
-      specifier: 3.5.3
-      version: 3.5.3
-    '@tiptap/html':
-      specifier: 3.5.3
-      version: 3.5.3
-    '@types/lodash':
-      specifier: 4.17.20
-      version: 4.17.20
+    '@types/lodash-es':
+      specifier: 4.17.12
+      version: 4.17.12
     '@types/react':
       specifier: 18.3.11
       version: 18.3.11
@@ -27,7 +21,7 @@ catalogs:
     axios:
       specifier: 1.12.0
       version: 1.12.0
-    lodash:
+    lodash-es:
       specifier: 4.17.21
       version: 4.17.21
     lucide-react:
@@ -121,7 +115,7 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.12.0
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
@@ -170,9 +164,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -239,9 +233,6 @@ importers:
       ioredis:
         specifier: ^5.4.1
         version: 5.7.0
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
       morgan:
         specifier: 1.10.1
         version: 1.10.1
@@ -366,7 +357,7 @@ importers:
       dotenv:
         specifier: ^16.3.1
         version: 16.6.1
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lowlight:
@@ -430,9 +421,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: 18.14.1
         version: 18.14.1
@@ -538,7 +529,7 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.12.0
         version: 2.26.0
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
@@ -620,9 +611,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -929,7 +920,7 @@ importers:
       intl-messageformat:
         specifier: ^10.7.11
         version: 10.7.16
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       mobx:
@@ -948,9 +939,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: ^22.5.4
         version: 22.18.0
@@ -1116,7 +1107,7 @@ importers:
       '@plane/utils':
         specifier: workspace:*
         version: link:../utils
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       mobx:
@@ -1138,9 +1129,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: ^22.5.4
         version: 22.18.0
@@ -1246,7 +1237,7 @@ importers:
       emoji-picker-react:
         specifier: ^4.5.16
         version: 4.13.2(react@18.3.1)
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
@@ -1319,9 +1310,9 @@ importers:
       '@storybook/test':
         specifier: ^8.1.1
         version: 8.6.14(storybook@8.6.14(prettier@3.6.2))
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: ^20.5.2
         version: 20.19.11
@@ -1370,7 +1361,7 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.16.0
         version: 2.26.0
-      lodash:
+      lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
@@ -1395,9 +1386,9 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: 'catalog:'
-        version: 4.17.20
+        version: 4.17.12
       '@types/node':
         specifier: ^22.5.4
         version: 22.18.0
@@ -3522,6 +3513,9 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
+
+  '@types/lodash-es@4.17.12':
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
   '@types/lodash@4.17.20':
     resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
@@ -10458,6 +10452,10 @@ snapshots:
   '@types/linkify-it@3.0.5': {}
 
   '@types/linkify-it@5.0.0': {}
+
+  '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.20
 
   '@types/lodash@4.17.20': {}
 

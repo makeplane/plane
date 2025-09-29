@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
-import isNil from "lodash/isNil";
+import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // plane-i18n

@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import range from "lodash/range";
+import { range } from "lodash-es";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 

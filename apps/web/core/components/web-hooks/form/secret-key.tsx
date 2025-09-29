@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FC } from "react";
-import range from "lodash/range";
+import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons

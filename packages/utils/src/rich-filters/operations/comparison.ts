@@ -1,6 +1,4 @@
-import compact from "lodash/compact";
-import isEqual from "lodash/isEqual";
-import sortBy from "lodash/sortBy";
+import { compact, isEqual, sortBy } from "lodash-es";
 // plane imports
 import {
   FILTER_NODE_TYPE,
