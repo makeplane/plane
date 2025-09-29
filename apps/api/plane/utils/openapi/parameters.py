@@ -100,6 +100,21 @@ ASSET_ID_PARAMETER = OpenApiParameter(
     ],
 )
 
+TYPE_ID_PARAMETER = OpenApiParameter(
+    name="type_id",
+    description="Type ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example type ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical type UUID",
+        )
+    ],
+)
+
 CYCLE_ID_PARAMETER = OpenApiParameter(
     name="cycle_id",
     description="Cycle ID",
@@ -113,6 +128,14 @@ CYCLE_ID_PARAMETER = OpenApiParameter(
             description="A typical cycle UUID",
         )
     ],
+)
+
+PROPERTY_ID_PARAMETER = OpenApiParameter(
+    name="property_id",
+    description="Property ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
 )
 
 MODULE_ID_PARAMETER = OpenApiParameter(
@@ -247,6 +270,36 @@ ACTIVITY_ID_PARAMETER = OpenApiParameter(
             name="Example activity ID",
             value="550e8400-e29b-41d4-a716-446655440000",
             description="A typical activity UUID",
+        )
+    ],
+)
+
+PAGE_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Page ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page UUID",
+        )
+    ],
+)
+
+PAGE_ANCHOR_PARAMETER = OpenApiParameter(
+    name="anchor",
+    description="Page anchor",
+    required=True,
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example page anchor",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical page anchor",
         )
     ],
 )

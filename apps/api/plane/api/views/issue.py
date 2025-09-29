@@ -1,7 +1,7 @@
 # Python imports
 import json
-import uuid
 import re
+import uuid
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -40,8 +40,14 @@ from plane.api.serializers import (
     IssueAttachmentSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
+    IssueDetailSerializer,
     IssueLinkSerializer,
     IssueSerializer,
+    IssueRelationSerializer,
+    IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
+    IssueRelationResponseSerializer,
+    RelatedIssueSerializer,
     LabelSerializer,
     IssueAttachmentUploadSerializer,
     IssueSearchSerializer,
@@ -62,6 +68,7 @@ from plane.db.models import (
     FileAsset,
     IssueComment,
     IssueLink,
+    IssueRelation,
     Label,
     Project,
     ProjectMember,
@@ -72,10 +79,13 @@ from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.issue_relation_mapper import get_actual_relation
+
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
+    issue_docs,
     label_docs,
     issue_link_docs,
     issue_comment_docs,
@@ -141,6 +151,13 @@ from plane.utils.openapi import (
     WORKSPACE_NOT_FOUND_RESPONSE,
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
+
 
 def user_has_issue_permission(
     user_id, project_id, issue=None, allowed_roles=None, allow_creator=True
@@ -191,6 +208,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .prefetch_related("type")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
@@ -219,6 +237,31 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
+        # ee start
+        # epics support
+        if (
+            request.GET.get("include_epics") == "true"
+            and issue_identifier
+            and project_identifier
+        ):
+            issue = Issue.issue_and_epics_objects.annotate(
+                sub_issues_count=Issue.issue_and_epics_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(
+                workspace__slug=slug,
+                project__identifier=project_identifier,
+                sequence_id=issue_identifier,
+            )
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+        # ee end
+
         if issue_identifier and project_identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
@@ -448,6 +491,17 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"), user_id=request.user.id
+            ):
+                return Response(
+                    {"error": "You cannot create a work item in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         if serializer.is_valid():
             if (
@@ -551,7 +605,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
-                response=IssueSerializer,
+                response=IssueDetailSerializer,
                 examples=[ISSUE_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
@@ -571,8 +625,15 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
+
+        # Ensure labels and assignees are always expanded for issue details
+        # this is required until we find a better way to create issue detail serializer
+        expand = self.expand or []
+        required_expansions = {"labels", "assignees"}
+        expand = list(set(expand) | required_expansions)
+
         return Response(
-            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            IssueDetailSerializer(issue, fields=self.fields, expand=expand).data,
             status=status.HTTP_200_OK,
         )
 
@@ -641,6 +702,23 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     },
                     partial=True,
                 )
+
+                # Check if state is updated then is the transition allowed
+                workflow_state_manager = WorkflowStateManager(
+                    project_id=project_id, slug=slug
+                )
+                if request.data.get(
+                    "state_id"
+                ) and not workflow_state_manager.validate_state_transition(
+                    issue=issue,
+                    new_state_id=request.data.get("state_id"),
+                    user_id=request.user.id,
+                ):
+                    return Response(
+                        {"error": "State transition is not allowed"},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 if serializer.is_valid():
                     # If the serializer is valid, save the issue and dispatch
                     # the update issue activity worker event.
@@ -654,6 +732,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                     )
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(
                     # If the serializer is not valid, respond with 400 bad
@@ -694,6 +788,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         "created_by", request.user.id
                     )
                     issue.save(update_fields=["created_at", "created_by"])
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
 
                     issue_activity.delay(
                         type="issue.activity.created",
@@ -754,6 +864,21 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             context={"project_id": project_id, "workspace_id": project.workspace_id},
             partial=True,
         )
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -785,6 +910,21 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+            cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+            if cycle_issue and (
+                request.data.get("state_id") or request.data.get("estimate_point")
+            ):
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(cycle_issue.cycle_id),
+                        }
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -824,6 +964,18 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+        if cycle_issue:
+            # added a entry to remove from the entity issue state activity
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {"issue_id": str(issue.id), "cycle_id": str(cycle_issue.cycle_id)}
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+        # EE code end here
         issue.delete()
         issue_activity.delay(
             type="issue.activity.deleted",
@@ -999,6 +1151,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
 
     @label_docs(
         operation_id="update_label",
+        summary="Update a label",
         description="Partially update an existing label's properties like name, color, or description.",
         parameters=[
             LABEL_ID_PARAMETER,
@@ -1056,6 +1209,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
 
     @label_docs(
         operation_id="delete_label",
+        summary="Delete a label",
         description="Permanently remove a label from the project. This action cannot be undone.",
         parameters=[
             LABEL_ID_PARAMETER,
@@ -1251,6 +1405,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="update_issue_link",
+        summary="Update an issue link",
         description="Modify the URL, title, or metadata of an existing issue link.",
         parameters=[
             ISSUE_ID_PARAMETER,
@@ -1399,6 +1554,27 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
         Retrieve all comments for a work item.
         """
+
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            try:
+                issue_comment = IssueComment.objects.get(
+                    external_id=external_id,
+                    external_source=external_source,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_id=issue_id,
+                )
+                serializer = IssueCommentSerializer(
+                    issue_comment, fields=self.fields, expand=self.expand
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueComment.DoesNotExist:
+                return Response(
+                    {"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -1470,7 +1646,8 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
-            issue_comment.save(update_fields=["created_at", "created_by"])
+            issue_comment.actor_id = request.data.get("created_by", request.user.id)
+            issue_comment.save(update_fields=["created_at", "created_by", "actor"])
 
             issue_activity.delay(
                 type="comment.activity.created",
@@ -1492,7 +1669,6 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1631,6 +1807,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
@@ -1641,7 +1818,6 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-
             issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1911,7 +2087,15 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
@@ -2236,6 +2420,191 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class IssueAttachmentServerEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [ProjectEntityPermission]
+    model = FileAsset
+    use_read_replica = True
+
+    def post(self, request, slug, project_id, issue_id):
+        name = request.data.get("name")
+        type = request.data.get("type", False)
+        size = request.data.get("size")
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {"error": "Invalid request.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            return Response(
+                {"error": "Invalid file type.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).exists()
+        ):
+            asset = FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).first()
+            return Response(
+                {
+                    "error": "Issue with the same external id and external source already exists",
+                    "id": str(asset.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            workspace_id=workspace.id,
+            created_by=request.user,
+            issue_id=issue_id,
+            project_id=project_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            external_id=external_id,
+            external_source=external_source,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
+        # Return the presigned URL
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "attachment": IssueAttachmentSerializer(asset).data,
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        issue_attachment.is_deleted = True
+        issue_attachment.deleted_at = timezone.now()
+        issue_attachment.save()
+
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=pk, workspace__slug=slug, project_id=project_id
+            )
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The asset is not uploaded.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        storage = S3Storage(request=request)
+        presigned_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
+        return HttpResponseRedirect(presigned_url)
+
+    def patch(self, request, slug, project_id, issue_id, pk):
+        """Confirm attachment upload
+
+        Mark an attachment as uploaded after successful file transfer to storage.
+        Triggers activity logging and metadata extraction.
+        """
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachment)
+
+        # Send this activity only if the attachment is not uploaded before
+        if not issue_attachment.is_uploaded:
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
+            # Update the attachment
+            issue_attachment.is_uploaded = True
+            issue_attachment.created_by = request.user
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
 
@@ -2311,6 +2680,313 @@ class IssueSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
+            "type_id",
         )[: int(limit)]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
+
+
+class IssueRelationListCreateAPIEndpoint(BaseAPIView):
+    """Issue Relation List and Create Endpoint"""
+
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [ProjectEntityPermission]
+
+    @issue_docs(
+        operation_id="list_work_item_relations",
+        summary="List work item relations",
+        description="Retrieve all relationships for a work item including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after relations.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Work item relations grouped by relation type",
+                response=IssueRelationResponseSerializer,
+                examples=[
+                    OpenApiExample(
+                        name="Work Item Relations Response",
+                        value={
+                            "blocking": [
+                                "550e8400-e29b-41d4-a716-446655440000",
+                                "550e8400-e29b-41d4-a716-446655440001",
+                            ],
+                            "blocked_by": ["550e8400-e29b-41d4-a716-446655440002"],
+                            "duplicate": [],
+                            "relates_to": ["550e8400-e29b-41d4-a716-446655440003"],
+                            "start_after": [],
+                            "start_before": ["550e8400-e29b-41d4-a716-446655440004"],
+                            "finish_after": [],
+                            "finish_before": [],
+                        },
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List work item relations
+
+        Retrieve all relationships for a work item organized by relation type.
+        Returns a structured response with relations grouped by type.
+        """
+        # Fetch all issue relations in a single query
+        issue_relations = list(
+            IssueRelation.objects.filter(
+                Q(issue_id=issue_id) | Q(related_issue=issue_id)
+            )
+            .filter(workspace__slug=slug)
+            .select_related("project", "workspace", "issue", "related_issue")
+            .order_by("-created_at")
+            .distinct()
+        )
+
+        # Initialize lists for different relation types
+        blocking_issues = []
+        blocked_by_issues = []
+        duplicate_issues = []
+        relates_to_issues = []
+        start_after_issues = []
+        start_before_issues = []
+        finish_after_issues = []
+        finish_before_issues = []
+
+        # Process relations on application side to avoid N+1 queries
+        for relation in issue_relations:
+            if relation.relation_type == "blocked_by":
+                if relation.related_issue_id == issue_id:
+                    # This issue is blocked by the related issue
+                    blocking_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue blocks the related issue
+                    blocked_by_issues.append(relation.related_issue_id)
+
+            elif relation.relation_type == "duplicate":
+                if relation.issue_id == issue_id:
+                    duplicate_issues.append(relation.related_issue_id)
+                elif relation.related_issue_id == issue_id:
+                    duplicate_issues.append(relation.issue_id)
+
+            elif relation.relation_type == "relates_to":
+                if relation.issue_id == issue_id:
+                    relates_to_issues.append(relation.related_issue_id)
+                elif relation.related_issue_id == issue_id:
+                    relates_to_issues.append(relation.issue_id)
+
+            elif relation.relation_type == "start_before":
+                if relation.related_issue_id == issue_id:
+                    # The related issue starts after this issue
+                    start_after_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue starts before the related issue
+                    start_before_issues.append(relation.related_issue_id)
+
+            elif relation.relation_type == "finish_before":
+                if relation.related_issue_id == issue_id:
+                    # The related issue finishes after this issue
+                    finish_after_issues.append(relation.issue_id)
+                elif relation.issue_id == issue_id:
+                    # This issue finishes before the related issue
+                    finish_before_issues.append(relation.related_issue_id)
+
+        response_data = {
+            "blocking": blocking_issues,
+            "blocked_by": blocked_by_issues,
+            "duplicate": duplicate_issues,
+            "relates_to": relates_to_issues,
+            "start_after": start_after_issues,
+            "start_before": start_before_issues,
+            "finish_after": finish_after_issues,
+            "finish_before": finish_before_issues,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @issue_docs(
+        operation_id="create_work_item_relation",
+        summary="Create work item relation",
+        description="Create relationships between work items. Supports various relation types including blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, and finish_after.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Create blocking relation",
+                    value={
+                        "relation_type": "blocking",
+                        "issues": [
+                            "550e8400-e29b-41d4-a716-446655440000",
+                            "550e8400-e29b-41d4-a716-446655440001",
+                        ],
+                    },
+                )
+            ],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Work item relations created successfully",
+                response=IssueRelationSerializer(many=True),
+                examples=[
+                    OpenApiExample(
+                        name="Relations created",
+                        value=[
+                            {
+                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "Fix authentication bug",
+                                "sequence_id": 42,
+                                "project_id": "550e8400-e29b-41d4-a716-446655440001",
+                                "relation_type": "blocked_by",
+                                "state_id": "550e8400-e29b-41d4-a716-446655440002",
+                                "priority": "high",
+                                "type_id": "550e8400-e29b-41d4-a716-446655440003",
+                                "is_epic": False,
+                                "created_at": "2024-01-15T10:00:00Z",
+                                "updated_at": "2024-01-15T10:00:00Z",
+                                "created_by": "550e8400-e29b-41d4-a716-446655440004",
+                                "updated_by": "550e8400-e29b-41d4-a716-446655440004",
+                            }
+                        ],
+                    )
+                ],
+            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Create work item relation
+
+        Create relationships between work items with specified relation type.
+        Automatically tracks relation creation activity.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        relation_type = serializer.validated_data["relation_type"]
+        issues = serializer.validated_data["issues"]
+        project = Project.objects.get(pk=project_id)
+
+        issue_relation = IssueRelation.objects.bulk_create(
+            [
+                IssueRelation(
+                    issue_id=(
+                        issue
+                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        else issue_id
+                    ),
+                    related_issue_id=(
+                        issue_id
+                        if relation_type in ["blocking", "start_after", "finish_after"]
+                        else issue
+                    ),
+                    relation_type=(get_actual_relation(relation_type)),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for issue in issues
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+
+        if relation_type in ["blocking", "start_after", "finish_after"]:
+            return Response(
+                RelatedIssueSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                IssueRelationSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+
+
+class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+    """Issue Relation Remove Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+    model = IssueRelation
+
+    @issue_docs(
+        operation_id="remove_work_item_relation",
+        summary="Remove work item relation",
+        description="Remove a relationship between work items by specifying the related work item ID.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueRelationRemoveSerializer,
+            examples=[
+                OpenApiExample(
+                    name="Remove relation",
+                    value={"related_issue": "550e8400-e29b-41d4-a716-446655440000"},
+                )
+            ],
+        ),
+        responses={
+            204: OpenApiResponse(description="Work item relation removed successfully"),
+            404: OpenApiResponse(description="Work item relation not found"),
+        },
+    )
+    def post(self, request, slug, project_id, issue_id):
+        """Remove a work item relation
+
+        Remove a relationship between work items.
+        Records deletion activity for audit purposes.
+        """
+        # Validate request data using serializer
+        serializer = IssueRelationRemoveSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        related_issue = serializer.validated_data["related_issue"]
+
+        issue_relations = IssueRelation.objects.filter(
+            workspace__slug=slug,
+        ).filter(
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
+        )
+        issue_relations = issue_relations.first()
+        current_instance = json.dumps(
+            IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder
+        )
+        issue_relations.delete()
+        issue_activity.delay(
+            type="issue_relation.activity.deleted",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=base_host(request=request, is_app=True),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,0 +1,146 @@
+[
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "8f778616-3839-4910-8626-aa694855679e",
+    "fields": {
+      "created_at": "2025-05-15T10:22:30.575Z",
+      "updated_at": "2025-05-15T10:22:30.575Z",
+      "name": "Engineering",
+      "description": "Engineering Productivity",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "9f778616-3839-4910-8626-aa694855679f",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Agents",
+      "description": "AI Agents and Automation",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "bf778616-3839-4910-8626-aa694855671b",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Customer Experience",
+      "description": "Customer Support and Experience",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "cf778616-3839-4910-8626-aa694855672c",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Communication & Collaboration",
+      "description": "Team Communication, Collaboration, and Documentation Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "df778616-3839-4910-8626-aa694855673d",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Development & DevOps",
+      "description": "Development Tools, DevOps Platforms, and Testing & QA Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "ef778616-3839-4910-8626-aa694855674e",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Design & Creative",
+      "description": "Design and Creative Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "ff778616-3839-4910-8626-aa694855675f",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Analytics & Reporting",
+      "description": "Data Analytics, Reporting, and Time Tracking Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "4f778616-3839-4910-8626-aa6948556804",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Security & Compliance",
+      "description": "Security and Compliance Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "5f778616-3839-4910-8626-aa6948556815",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Marketing & Sales",
+      "description": "Marketing and Sales Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  }
+]

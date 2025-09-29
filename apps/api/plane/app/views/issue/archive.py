@@ -13,10 +13,11 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
-    IssueFlatSerializer,
     IssueSerializer,
+    IssueFlatSerializer,
     IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -167,12 +168,14 @@ class IssueArchiveViewSet(BaseViewSet):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -202,6 +205,7 @@ class IssueArchiveViewSet(BaseViewSet):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        queryset=total_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -268,7 +272,10 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
+                {
+                    "error_code": ERROR_CODES["INVALID_ARCHIVE_STATE_GROUP"],
+                    "error_message": "INVALID_ARCHIVE_STATE_GROUP",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(

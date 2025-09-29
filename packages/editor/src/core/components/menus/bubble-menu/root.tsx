@@ -23,11 +23,16 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import { TEditorCommands } from "@/types";
+import { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
+import { BubbleMenuCommentSelector } from "./comment-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
+type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children"> & {
+  flaggedExtensions?: TExtensions[];
+  extendedEditorProps?: IEditorPropsExtended;
+  editor: Editor;
+};
 
 export type EditorStateType = {
   code: boolean;
@@ -49,11 +54,12 @@ export type EditorStateType = {
     | undefined;
 };
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
+export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
   const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
+  const [isCommentSelectorOpen, setIsCommentSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
 
   const formattingItems = {
@@ -118,6 +124,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
         setIsNodeSelectorOpen(false);
         setIsLinkSelectorOpen(false);
         setIsColorSelectorOpen(false);
+        setIsCommentSelectorOpen(false);
       },
     },
   };
@@ -165,6 +172,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
                 setIsNodeSelectorOpen((prev) => !prev);
                 setIsLinkSelectorOpen(false);
                 setIsColorSelectorOpen(false);
+                setIsCommentSelectorOpen(false);
               }}
             />
           </div>
@@ -177,6 +185,22 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
                   setIsLinkSelectorOpen((prev) => !prev);
                   setIsNodeSelectorOpen(false);
                   setIsColorSelectorOpen(false);
+                  setIsCommentSelectorOpen(false);
+                }}
+              />
+            </div>
+          )}
+          {!props.flaggedExtensions?.includes("comments") && props.extendedEditorProps?.commentConfig?.canComment && (
+            <div className="px-2">
+              <BubbleMenuCommentSelector
+                editor={props.editor}
+                isOpen={isCommentSelectorOpen}
+                onStartNewComment={props.extendedEditorProps.commentConfig?.onStartNewComment}
+                setIsOpen={() => {
+                  setIsCommentSelectorOpen((prev) => !prev);
+                  setIsColorSelectorOpen(false);
+                  setIsNodeSelectorOpen(false);
+                  setIsLinkSelectorOpen(false);
                 }}
               />
             </div>
@@ -188,6 +212,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
                 isOpen={isColorSelectorOpen}
                 editorState={editorState}
                 setIsOpen={() => {
+                  setIsCommentSelectorOpen(false);
                   setIsColorSelectorOpen((prev) => !prev);
                   setIsNodeSelectorOpen(false);
                   setIsLinkSelectorOpen(false);

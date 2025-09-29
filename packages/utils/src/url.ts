@@ -255,7 +255,7 @@ export function extractURLComponents(url: URL | string): IURLComponents | undefi
     }
 
     return undefined;
-  } catch (error) {
+  } catch (_error) {
     return undefined;
   }
 }
@@ -317,7 +317,7 @@ export function isValidNextPath(url: string): boolean {
     ];
 
     return !maliciousPatterns.some((pattern) => pattern.test(pathname));
-  } catch (error) {
+  } catch (_error) {
     // If URL constructor fails, it's an invalid path
     return false;
   }

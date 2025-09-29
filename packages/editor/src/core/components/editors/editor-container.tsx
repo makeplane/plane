@@ -8,7 +8,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
 import { LinkContainer } from "@/plane-editor/components/link-container";
 // types
-import { TDisplayConfig } from "@/types";
+import { type TDisplayConfig } from "@/types";
 
 type Props = {
   children: ReactNode;
@@ -87,7 +87,6 @@ export const EditorContainer: FC<Props> = (props) => {
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
             "active-editor": editor?.isFocused && editor?.isEditable,
-            "wide-layout": displayConfig.wideLayout,
           },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,

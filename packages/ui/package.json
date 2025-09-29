@@ -12,7 +12,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown --minify",
     "dev": "tsdown --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -31,7 +31,6 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
-    "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@plane/constants": "workspace:*",

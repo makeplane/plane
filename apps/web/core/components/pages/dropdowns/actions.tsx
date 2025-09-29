@@ -1,26 +1,12 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import {
-  ArchiveRestoreIcon,
-  Copy,
-  ExternalLink,
-  FileOutput,
-  Globe2,
-  Link,
-  Lock,
-  LockKeyhole,
-  LockKeyholeOpen,
-  Trash2,
-} from "lucide-react";
+import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { ArchiveIcon } from "@plane/propel/icons";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
@@ -29,11 +15,10 @@ import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
-// plane web components
-import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
+// Import the custom menu hook
+import { usePageActionsMenu } from "@/plane-web/hooks/use-page-actions-menu";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -59,51 +44,36 @@ type Props = {
   page: TPageInstance;
   parentRef?: React.RefObject<HTMLElement>;
   storeType: EPageStoreType;
+  realtimeEvents?: boolean;
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
-  // states
+  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
+
+  // states for common modals
   const [deletePageModal, setDeletePageModal] = useState(false);
-  const [movePageModal, setMovePageModal] = useState(false);
-  // params
-  const { workspaceSlug } = useParams();
-  // page flag
-  const { isMovePageEnabled } = usePageFlag({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-  });
+
   // page operations
   const { pageOperations } = usePageOperations({
     editorRef,
     page,
   });
+
+  // Get custom menu items and modals from the environment-specific implementation
+  const { customMenuItems, ModalsComponent } = usePageActionsMenu({
+    page,
+    storeType,
+    pageOperations,
+  });
+
   // derived values
-  const {
-    access,
-    archived_at,
-    is_locked,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-    canCurrentUserMovePage,
-  } = page;
-  // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
-    const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
-      {
-        key: "toggle-lock",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
-          });
-          pageOperations.toggleLock();
-        },
-        title: is_locked ? "Unlock" : "Lock",
-        icon: is_locked ? LockKeyholeOpen : LockKeyhole,
-        shouldRender: canCurrentUserLockPage,
-      },
+  const { access, archived_at, canCurrentUserChangeAccess, canCurrentUserDeletePage, canCurrentUserDuplicatePage } =
+    page;
+
+  const isProjectPage = page.project_ids && page.project_ids.length > 0;
+  // Base menu items that are common across all implementations
+  const baseMenuItems: (TContextMenuItem & { key: TPageActions })[] = useMemo(
+    () => [
       {
         key: "toggle-access",
         action: () => {
@@ -112,7 +82,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           });
           pageOperations.toggleAccess();
         },
-        title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+        title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
@@ -136,23 +106,11 @@ export const PageActions: React.FC<Props> = observer((props) => {
           captureClick({
             elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
           });
-          pageOperations.duplicate();
+          pageOperations.duplicate(realtimeEvents);
         },
         title: "Make a copy",
         icon: Copy,
         shouldRender: canCurrentUserDuplicatePage,
-      },
-      {
-        key: "archive-restore",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ARCHIVE_BUTTON,
-          });
-          pageOperations.toggleArchive();
-        },
-        title: archived_at ? "Restore" : "Archive",
-        icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
-        shouldRender: canCurrentUserArchivePage,
       },
       {
         key: "delete",
@@ -166,32 +124,46 @@ export const PageActions: React.FC<Props> = observer((props) => {
         icon: Trash2,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
-      {
-        key: "move",
-        action: () => setMovePageModal(true),
-        title: "Move",
-        icon: FileOutput,
-        shouldRender: canCurrentUserMovePage && isMovePageEnabled,
-      },
-    ];
+    ],
+    [
+      access,
+      archived_at,
+      canCurrentUserChangeAccess,
+      isProjectPage,
+      canCurrentUserDeletePage,
+      canCurrentUserDuplicatePage,
+      pageOperations,
+      realtimeEvents,
+    ]
+  );
+
+  // Merge base menu items with custom menu items
+  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
+    // Start with base menu items
+    const menuItems = [...baseMenuItems];
+
+    // Add custom menu items
+    customMenuItems.forEach((customItem) => {
+      // Find if there's already an item with the same key
+      const existingIndex = menuItems.findIndex((item) => item.key === customItem.key);
+
+      if (existingIndex >= 0) {
+        // Replace the existing item
+        menuItems[existingIndex] = customItem;
+      } else {
+        // Add as a new item
+        menuItems.push(customItem);
+      }
+    });
+
+    // Add extra options if provided
     if (extraOptions) {
       menuItems.push(...extraOptions);
     }
+
     return menuItems;
-  }, [
-    access,
-    archived_at,
-    extraOptions,
-    is_locked,
-    isMovePageEnabled,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-    canCurrentUserMovePage,
-    pageOperations,
-  ]);
+  }, [baseMenuItems, customMenuItems, extraOptions]);
+
   // arrange options
   const arrangedOptions = useMemo(
     () =>
@@ -203,13 +175,13 @@ export const PageActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} page={page} />
       <DeletePageModal
         isOpen={deletePageModal}
         onClose={() => setDeletePageModal(false)}
         page={page}
         storeType={storeType}
       />
+      <ModalsComponent />
       {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
       <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
         {arrangedOptions.map((item) => {

@@ -31,7 +31,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
-import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
+import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states

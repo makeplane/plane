@@ -5,6 +5,6 @@ export default defineConfig({
   outDir: "dist",
   format: ["esm", "cjs"],
   dts: true,
-  external: ["react", "lodash", "mobx", "mobx-react", "intl-messageformat"],
+  external: ["react", "lodash-es", "mobx", "mobx-react", "intl-messageformat"],
   sourcemap: true,
 });

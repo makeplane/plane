@@ -21,12 +21,14 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
+import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+// plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
@@ -38,7 +40,8 @@ const PageDetailsPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails } = usePageStore(storeType);
+  const { createPage, fetchPageDetails, getOrFetchPageInstance, removePageInstance, isNestedPagesEnabled } =
+    usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -62,9 +65,7 @@ const PageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && projectId && pageId
-      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
-      : null,
+    workspaceSlug && projectId && pageId ? () => fetchPageDetails(projectId?.toString(), pageId.toString()) : null,
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -126,8 +127,8 @@ const PageDetailsPage = observer(() => {
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
             file,
-            projectId: projectId?.toString() ?? "",
             workspaceSlug: workspaceSlug?.toString() ?? "",
+            projectId: projectId?.toString() ?? "",
           });
           return asset_id;
         },
@@ -147,6 +148,29 @@ const PageDetailsPage = observer(() => {
     [projectId, workspaceSlug]
   );
 
+  const customRealtimeEventHandlers: TCustomEventHandlers = useMemo(
+    () => ({
+      moved: async ({ pageIds, data }) => {
+        if (data.new_project_id && data.new_page_id) {
+          // For project pages, handle the move to a different project
+          const newProjectId = data.new_project_id;
+          const newPageId = data.new_page_id;
+
+          // remove the old page instance from the store
+          if (pageIds.includes(page?.id ?? "")) {
+            removePageInstance(page?.id ?? "");
+          }
+
+          // get the new page instance from the store
+          await getOrFetchPageInstance({ pageId: newPageId, projectId: newProjectId });
+
+          router.replace(`/${workspaceSlug}/projects/${newProjectId}/pages/${newPageId}`);
+        }
+      },
+    }),
+    [workspaceSlug, router, getOrFetchPageInstance, removePageInstance, page?.id]
+  );
+
   useEffect(() => {
     if (page?.deleted_at && page?.id) {
       router.push(pageRootHandlers.getRedirectionLink());
@@ -160,9 +184,25 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
+  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
+    return (
+      <div className="size-full flex flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold text-center">Please upgrade your plan to view this nested page</h3>
+        <p className="text-sm text-custom-text-200 text-center mt-3">
+          Please upgrade your plan to view this nested page
+        </p>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/pages`}
+          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+        >
+          View other Pages
+        </Link>
+      </div>
+    );
+
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center">
+      <div className="size-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
         <p className="text-sm text-custom-text-200 text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
@@ -182,17 +222,19 @@ const PageDetailsPage = observer(() => {
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+        <div className="relative size-full flex-shrink-0 flex flex-col overflow-hidden">
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}
             storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
+            projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId?.toString()}
+            customRealtimeEventHandlers={customRealtimeEventHandlers}
           />
           <IssuePeekOverview />
+          <EpicPeekOverview />
         </div>
       </div>
     </>
