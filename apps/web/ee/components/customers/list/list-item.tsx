@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, formatURLForDisplay } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // plane web imports
@@ -67,7 +67,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {customer.website_url}
+                {formatURLForDisplay(customer.website_url)}
               </Link>
             )}
           </div>

@@ -7,7 +7,7 @@ import { CustomersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TCustomer } from "@plane/types";
 import { Button } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, formatURLForDisplay } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useMember } from "@/hooks/store/use-member";
 import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
@@ -59,7 +59,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                     rel="noopener noreferrer"
                   >
                     <ExternalLink className="text-custom-text-300 size-3" />
-                    <span className="truncate">{customer.website_url}</span>
+                    <span className="truncate">{formatURLForDisplay(customer.website_url)}</span>
                   </Link>
                 )}
               </div>

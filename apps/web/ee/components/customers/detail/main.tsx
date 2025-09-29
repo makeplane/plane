@@ -16,6 +16,7 @@ import { TitleInput } from "@/plane-web/components/common/input/title-input";
 import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import { formatURLForDisplay } from "@plane/utils";
 // services
 import { FileService } from "@/services/file.service";
 import { CustomerLogoInput } from "./logo-input";
@@ -170,7 +171,7 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
               rel="noopener noreferrer"
             >
               <ExternalLink className="text-custom-text-300 size-3" />
-              {customer.website_url}
+              {formatURLForDisplay(customer.website_url)}
             </Link>
           )}
         </div>
