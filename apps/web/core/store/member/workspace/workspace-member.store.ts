@@ -152,25 +152,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   });
 
   /**
-   * @description get the filtered and sorted list of all the user ids of all the members of the workspace
-   * @param workspaceSlug
-   */
-  getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
-    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
-    //filter out bots and inactive members
-    members = members.filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot);
-
-    // Use filters store to get filtered member ids
-    const memberIds = this.filtersStore.getFilteredMemberIds(
-      members,
-      this.memberRoot?.memberMap || {},
-      (member) => member.member
-    );
-
-    return memberIds;
-  });
-
-  /**
    * @description get the list of all the user ids that match the search query of all the members of the current workspace
    * @param searchQuery
    */
