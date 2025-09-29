@@ -155,6 +155,7 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
         <WidgetConfigSidebarStyleConfig handleSubmit={handleFormSubmit} />
         <div className="flex-shrink-0 h-px bg-custom-background-80" />
         <WidgetConfigSidebarFilters
+          key={widget?.id}
           handleSubmit={handleFormSubmit}
           projectIds={project_ids}
           initialFilters={filters ?? undefined}
