@@ -60,11 +60,7 @@ class IntakeViewSet(BaseViewSet):
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
             )
-            .annotate(
-                pending_issue_count=Count(
-                    "issue_intake", filter=Q(issue_intake__status=-2)
-                )
-            )
+            .annotate(pending_issue_count=Count("issue_intake", filter=Q(issue_intake__status=-2)))
             .select_related("workspace", "project")
         )
 
@@ -79,9 +75,7 @@ class IntakeViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, pk):
-        intake = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        ).first()
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).first()
         # Handle default intake delete
         if intake.is_default:
             return Response(
@@ -109,16 +103,12 @@ class IntakeIssueViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "status", "duplicate_to", "snoozed_till", "source"
-                    ),
+                    queryset=IntakeIssue.objects.only("status", "duplicate_to", "snoozed_till", "source"),
                 )
             )
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -147,10 +137,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -183,20 +170,14 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        intake = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not intake:
-            return Response(
-                {"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND)
 
         project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
         intake_issue = (
-            IntakeIssue.objects.filter(
-                intake_id=intake.id, project_id=project_id, **filters
-            )
+            IntakeIssue.objects.filter(intake_id=intake.id, project_id=project_id, **filters)
             .select_related("issue")
             .prefetch_related("issue__labels")
             .annotate(
@@ -204,21 +185,14 @@ class IntakeIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue__labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(issue__labels__id__isnull=True)
-                            & Q(issue__label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
         ).order_by(request.GET.get("order_by", "-issue__created_at"))
         # Intake status filter
-        intake_status = [
-            item
-            for item in request.GET.get("status", "-2").split(",")
-            if item != "null"
-        ]
+        intake_status = [item for item in request.GET.get("status", "-2").split(",") if item != "null"]
         if intake_status:
             intake_issue = intake_issue.filter(status__in=intake_status)
 
@@ -236,17 +210,13 @@ class IntakeIssueViewSet(BaseViewSet):
         return self.paginate(
             request=request,
             queryset=(intake_issue),
-            on_results=lambda intake_issues: IntakeIssueSerializer(
-                intake_issues, many=True
-            ).data,
+            on_results=lambda intake_issues: IntakeIssueSerializer(intake_issues, many=True).data,
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
-            return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
@@ -256,9 +226,7 @@ class IntakeIssueViewSet(BaseViewSet):
             "urgent",
             "none",
         ]:
-            return Response(
-                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
         # create an issue
         project = Project.objects.get(pk=project_id)
@@ -272,9 +240,7 @@ class IntakeIssueViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
-            intake_id = Intake.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).first()
+            intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
             # create an intake issue
             intake_issue = IntakeIssue.objects.create(
                 intake_id=intake_id.id,
@@ -311,8 +277,7 @@ class IntakeIssueViewSet(BaseViewSet):
                             "issue__labels__id",
                             distinct=True,
                             filter=Q(
-                                ~Q(issue__labels__id__isnull=True)
-                                & Q(issue__label_issue__deleted_at__isnull=True)
+                                ~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)
                             ),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
@@ -340,9 +305,7 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk):
-        intake_id = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         intake_issue = IntakeIssue.objects.get(
             issue_id=pk,
             workspace__slug=slug,
@@ -371,10 +334,9 @@ class IntakeIssueViewSet(BaseViewSet):
             )
 
         # Only project members admins and created_by users can access this endpoint
-        if (
-            (project_member and project_member.role <= ROLE.GUEST.value)
-            and not is_workspace_admin
-        ) and str(intake_issue.created_by_id) != str(request.user.id):
+        if ((project_member and project_member.role <= ROLE.GUEST.value) and not is_workspace_admin) and str(
+            intake_issue.created_by_id
+        ) != str(request.user.id):
             return Response(
                 {"error": "You cannot edit intake issues"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -388,10 +350,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -399,10 +358,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(assignees__id__isnull=True) & Q(issue_assignee__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -411,15 +367,11 @@ class IntakeIssueViewSet(BaseViewSet):
             if project_member and project_member.role <= ROLE.GUEST.value:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
-                    "description_html": issue_data.get(
-                        "description_html", issue.description_html
-                    ),
+                    "description_html": issue_data.get("description_html", issue.description_html),
                     "description": issue_data.get("description", issue.description),
                 }
 
-            current_instance = json.dumps(
-                IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
-            )
+            current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
             issue_serializer = IssueCreateSerializer(
                 issue, data=issue_data, partial=True, context={"project_id": project_id}
@@ -449,20 +401,12 @@ class IntakeIssueViewSet(BaseViewSet):
                     )
                 issue_serializer.save()
             else:
-                return Response(
-                    issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Only project admins can edit intake issue attributes
-        if (
-            project_member and project_member.role > ROLE.MEMBER.value
-        ) or is_workspace_admin:
-            serializer = IntakeIssueSerializer(
-                intake_issue, data=request.data, partial=True
-            )
-            current_instance = json.dumps(
-                IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder
-            )
+        if (project_member and project_member.role > ROLE.MEMBER.value) or is_workspace_admin:
+            serializer = IntakeIssueSerializer(intake_issue, data=request.data, partial=True)
+            current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
             if serializer.is_valid():
                 serializer.save()
                 # Update the issue state if the issue is rejected or marked as duplicate
@@ -472,9 +416,7 @@ class IntakeIssueViewSet(BaseViewSet):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    state = State.objects.filter(
-                        group="cancelled", workspace__slug=slug, project_id=project_id
-                    ).first()
+                    state = State.objects.filter(group="cancelled", workspace__slug=slug, project_id=project_id).first()
                     if state is not None:
                         issue.state = state
                         issue.save()
@@ -490,9 +432,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     # Update the issue state only if it is in triage state
                     if issue.state.is_triage:
                         # Move to default state
-                        state = State.objects.filter(
-                            workspace__slug=slug, project_id=project_id, default=True
-                        ).first()
+                        state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
                         if state is not None:
                             issue.state = state
                             issue.save()
@@ -519,8 +459,7 @@ class IntakeIssueViewSet(BaseViewSet):
                                 "issue__labels__id",
                                 distinct=True,
                                 filter=Q(
-                                    ~Q(issue__labels__id__isnull=True)
-                                    & Q(issue__label_issue__deleted_at__isnull=True)
+                                    ~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)
                                 ),
                             ),
                             Value([], output_field=ArrayField(UUIDField())),
@@ -546,13 +485,9 @@ class IntakeIssueViewSet(BaseViewSet):
             serializer = IntakeIssueDetailSerializer(intake_issue).data
             return Response(serializer, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
     def retrieve(self, request, slug, project_id, pk):
-        intake_id = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         project = Project.objects.get(pk=project_id)
         intake_issue = (
             IntakeIssue.objects.select_related("issue")
@@ -562,10 +497,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue__labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(issue__labels__id__isnull=True)
-                            & Q(issue__label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -574,8 +506,7 @@ class IntakeIssueViewSet(BaseViewSet):
                         "issue__assignees__id",
                         distinct=True,
                         filter=Q(
-                            ~Q(issue__assignees__id__isnull=True)
-                            & Q(issue__issue_assignee__deleted_at__isnull=True)
+                            ~Q(issue__assignees__id__isnull=True) & Q(issue__issue_assignee__deleted_at__isnull=True)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -603,9 +534,7 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk):
-        intake_id = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         intake_issue = IntakeIssue.objects.get(
             issue_id=pk,
             workspace__slug=slug,
@@ -616,9 +545,7 @@ class IntakeIssueViewSet(BaseViewSet):
         # Check the issue status
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            issue = Issue.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=pk
-            ).first()
+            issue = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).first()
             issue.delete()
 
         intake_issue.delete()
@@ -630,18 +557,14 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
         paginated_data = results.values(*fields)
 
         datetime_fields = ["created_at", "updated_at"]
-        paginated_data = user_timezone_converter(
-            paginated_data, datetime_fields, timezone
-        )
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
         return paginated_data
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, work_item_id, pk=None):
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=work_item_id
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=work_item_id)
 
         if (
             ProjectMember.objects.filter(
@@ -667,9 +590,7 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
                 pk=pk,
             )
 
-            serializer = IssueDescriptionVersionDetailSerializer(
-                issue_description_version
-            )
+            serializer = IssueDescriptionVersionDetailSerializer(issue_description_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         cursor = request.GET.get("cursor", None)

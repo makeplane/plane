@@ -17,9 +17,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/users/notifications/<uuid:pk>/",
-        NotificationViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        NotificationViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="notifications",
     ),
     path(

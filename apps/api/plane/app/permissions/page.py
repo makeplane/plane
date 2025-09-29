@@ -30,9 +30,7 @@ class ProjectPagePermission(BasePermission):
         project_id = view.kwargs.get("project_id")
 
         # Hook for extended validation
-        extended_access, role = self._check_access_and_get_role(
-            request, slug, project_id
-        )
+        extended_access, role = self._check_access_and_get_role(request, slug, project_id)
         if extended_access is False:
             return False
 
@@ -45,9 +43,7 @@ class ProjectPagePermission(BasePermission):
 
             # Handle private page access
             if page.access == Page.PRIVATE_ACCESS:
-                return self._has_private_page_action_access(
-                    request, slug, page, project_id
-                )
+                return self._has_private_page_action_access(request, slug, page, project_id)
 
         # Handle public page access
         return self._has_public_page_action_access(request, role)

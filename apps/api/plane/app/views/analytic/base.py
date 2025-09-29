@@ -55,25 +55,16 @@ class AnalyticsEndpoint(BaseAPIView):
         valid_yaxis = ["issue_count", "estimate"]
 
         # Check for x-axis and y-axis as thery are required parameters
-        if (
-            not x_axis
-            or not y_axis
-            or x_axis not in valid_xaxis_segment
-            or y_axis not in valid_yaxis
-        ):
+        if not x_axis or not y_axis or x_axis not in valid_xaxis_segment or y_axis not in valid_yaxis:
             return Response(
-                {
-                    "error": "x-axis and y-axis dimensions are required and the values should be valid"
-                },
+                {"error": "x-axis and y-axis dimensions are required and the values should be valid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # If segment is present it cannot be same as x-axis
         if segment and (segment not in valid_xaxis_segment or x_axis == segment):
             return Response(
-                {
-                    "error": "Both segment and x axis cannot be same and segment should be valid"
-                },
+                {"error": "Both segment and x axis cannot be same and segment should be valid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -87,9 +78,7 @@ class AnalyticsEndpoint(BaseAPIView):
         total_issues = queryset.count()
 
         # Build the graph payload
-        distribution = build_graph_plot(
-            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-        )
+        distribution = build_graph_plot(queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment)
 
         state_details = {}
         if x_axis in ["state_id"] or segment in ["state_id"]:
@@ -118,10 +107,7 @@ class AnalyticsEndpoint(BaseAPIView):
         if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
             assignee_details = (
                 Issue.issue_objects.filter(
-                    Q(
-                        Q(assignees__avatar__isnull=False)
-                        | Q(assignees__avatar_asset__isnull=False)
-                    ),
+                    Q(Q(assignees__avatar__isnull=False) | Q(assignees__avatar_asset__isnull=False)),
                     workspace__slug=slug,
                     **filters,
                 )
@@ -171,9 +157,7 @@ class AnalyticsEndpoint(BaseAPIView):
             )
 
         module_details = {}
-        if x_axis in ["issue_module__module_id"] or segment in [
-            "issue_module__module_id"
-        ]:
+        if x_axis in ["issue_module__module_id"] or segment in ["issue_module__module_id"]:
             module_details = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
@@ -212,9 +196,7 @@ class AnalyticViewViewset(BaseViewSet):
         serializer.save(workspace_id=workspace.id)
 
     def get_queryset(self):
-        return self.filter_queryset(
-            super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
-        )
+        return self.filter_queryset(super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")))
 
 
 class SavedAnalyticEndpoint(BaseAPIView):
@@ -235,9 +217,7 @@ class SavedAnalyticEndpoint(BaseAPIView):
             )
 
         segment = request.GET.get("segment", False)
-        distribution = build_graph_plot(
-            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-        )
+        distribution = build_graph_plot(queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment)
         total_issues = queryset.count()
         return Response(
             {"total": total_issues, "distribution": distribution},
@@ -270,36 +250,23 @@ class ExportAnalyticsEndpoint(BaseAPIView):
         valid_yaxis = ["issue_count", "estimate"]
 
         # Check for x-axis and y-axis as thery are required parameters
-        if (
-            not x_axis
-            or not y_axis
-            or x_axis not in valid_xaxis_segment
-            or y_axis not in valid_yaxis
-        ):
+        if not x_axis or not y_axis or x_axis not in valid_xaxis_segment or y_axis not in valid_yaxis:
             return Response(
-                {
-                    "error": "x-axis and y-axis dimensions are required and the values should be valid"
-                },
+                {"error": "x-axis and y-axis dimensions are required and the values should be valid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # If segment is present it cannot be same as x-axis
         if segment and (segment not in valid_xaxis_segment or x_axis == segment):
             return Response(
-                {
-                    "error": "Both segment and x axis cannot be same and segment should be valid"
-                },
+                {"error": "Both segment and x axis cannot be same and segment should be valid"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        analytic_export_task.delay(
-            email=request.user.email, data=request.data, slug=slug
-        )
+        analytic_export_task.delay(email=request.user.email, data=request.data, slug=slug)
 
         return Response(
-            {
-                "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
-            },
+            {"message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"},
             status=status.HTTP_200_OK,
         )
 
@@ -315,9 +282,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         state_groups = base_issues.annotate(state_group=F("state__group"))
 
         total_issues_classified = (
-            state_groups.values("state_group")
-            .annotate(state_count=Count("state_group"))
-            .order_by("state_group")
+            state_groups.values("state_group").annotate(state_count=Count("state_group")).order_by("state_group")
         )
 
         open_issues_groups = ["backlog", "unstarted", "started"]
@@ -362,9 +327,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        created_by__avatar_asset__isnull=True, then="created_by__avatar"
-                    ),
+                    When(created_by__avatar_asset__isnull=True, then="created_by__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
@@ -395,9 +358,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
+                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
@@ -422,9 +383,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
+                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
@@ -485,9 +444,7 @@ class ProjectStatsEndpoint(BaseAPIView):
 
         if "completed_issues" in requested_fields:
             annotations["completed_issues"] = (
-                Issue.issue_objects.filter(
-                    project_id=OuterRef("pk"), state__group="completed"
-                )
+                Issue.issue_objects.filter(project_id=OuterRef("pk"), state__group="completed")
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -511,9 +468,7 @@ class ProjectStatsEndpoint(BaseAPIView):
 
         if "total_members" in requested_fields:
             annotations["total_members"] = (
-                ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
-                )
+                ProjectMember.objects.filter(project_id=OuterRef("id"), member__is_bot=False, is_active=True)
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

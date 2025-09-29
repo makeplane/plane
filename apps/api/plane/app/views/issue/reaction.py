@@ -42,9 +42,7 @@ class IssueReactionViewSet(BaseViewSet):
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                issue_id=issue_id, project_id=project_id, actor=request.user
-            )
+            serializer.save(issue_id=issue_id, project_id=project_id, actor=request.user)
             issue_activity.delay(
                 type="issue_reaction.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -74,9 +72,7 @@ class IssueReactionViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}
-            ),
+            current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),
