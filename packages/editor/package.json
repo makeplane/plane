@@ -73,7 +73,7 @@
     "lucide-react": "catalog:",
     "prosemirror-codemark": "^0.4.2",
     "tippy.js": "^6.3.7",
-    "tiptap-markdown": "^0.8.10",
+    "tiptap-markdown": "^0.9.0",
     "uuid": "catalog:",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.15",

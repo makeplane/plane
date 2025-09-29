@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@tiptap/core':
+      specifier: 3.5.3
+      version: 3.5.3
+    '@tiptap/html':
+      specifier: 3.5.3
+      version: 3.5.3
     '@types/lodash-es':
       specifier: 4.17.12
       version: 4.17.12
@@ -805,8 +811,8 @@ importers:
         specifier: ^6.3.7
         version: 6.3.7
       tiptap-markdown:
-        specifier: ^0.8.10
-        version: 0.8.10(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))
+        specifier: ^0.9.0
+        version: 0.9.0(@tiptap/core@3.5.3(@tiptap/pm@3.5.3))
       uuid:
         specifier: 'catalog:'
         version: 10.0.0
@@ -7589,10 +7595,10 @@ packages:
   tippy.js@6.3.7:
     resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
 
-  tiptap-markdown@0.8.10:
-    resolution: {integrity: sha512-iDVkR2BjAqkTDtFX0h94yVvE2AihCXlF0Q7RIXSJPRSR5I0PA1TMuAg6FHFpmqTn4tPxJ0by0CK7PUMlnFLGEQ==}
+  tiptap-markdown@0.9.0:
+    resolution: {integrity: sha512-dKLQ9iiuGNgrlGVjrNauF/UBzWu4LYOx5pkD0jNkmQt/GOwfCJsBuzZTsf1jZ204ANHOm572mZ9PYvGh1S7tpQ==}
     peerDependencies:
-      '@tiptap/core': ^2.0.3
+      '@tiptap/core': ^3.0.1
 
   tlds@1.259.0:
     resolution: {integrity: sha512-AldGGlDP0PNgwppe2quAvuBl18UcjuNtOnDuUkqhd6ipPqrYYBt3aTxK1QTsBVknk97lS2JcafWMghjGWFtunw==}
@@ -15073,7 +15079,7 @@ snapshots:
     dependencies:
       '@popperjs/core': 2.11.8
 
-  tiptap-markdown@0.8.10(@tiptap/core@3.5.3(@tiptap/pm@3.5.3)):
+  tiptap-markdown@0.9.0(@tiptap/core@3.5.3(@tiptap/pm@3.5.3)):
     dependencies:
       '@tiptap/core': 3.5.3(@tiptap/pm@3.5.3)
       '@types/markdown-it': 13.0.9
