@@ -1,11 +1,11 @@
 // plane imports
-import { type IncomingHttpHeaders } from "http";
+import type { IncomingHttpHeaders } from "http";
 import type { TUserDetails } from "@plane/editor";
 import { logger } from "@plane/logger";
 // services
 import { UserService } from "@/services/user.service";
 // types
-import { type HocusPocusServerContext, type TDocumentTypes } from "@/types";
+import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 
 /**
  * Authenticate the user

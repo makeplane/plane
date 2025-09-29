@@ -1,15 +1,4 @@
-import type { onLoadDocumentPayload, fetchPayload, storePayload } from "@hocuspocus/server";
-
-export type TDocumentTypes = "project_page";
-
-// Additional Hocuspocus types that are not exported from the main package
-export type HocusPocusServerContext = {
-  projectId: string | null;
-  cookie: string;
-  documentType: TDocumentTypes;
-  workspaceSlug: string | null;
-  userId: string;
-};
+import type { fetchPayload, onLoadDocumentPayload, storePayload } from "@hocuspocus/server";
 
 export type TConvertDocumentRequestBody = {
   description_html: string;
@@ -27,3 +16,14 @@ export interface FetchPayloadWithContext extends fetchPayload {
 export interface StorePayloadWithContext extends storePayload {
   context: HocusPocusServerContext;
 }
+
+export type TDocumentTypes = "project_page";
+
+// Additional Hocuspocus types that are not exported from the main package
+export type HocusPocusServerContext = {
+  projectId: string | null;
+  cookie: string;
+  documentType: TDocumentTypes;
+  workspaceSlug: string | null;
+  userId: string;
+};
