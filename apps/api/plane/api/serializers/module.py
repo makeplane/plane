@@ -76,9 +76,15 @@ class ModuleCreateSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(name=module_name, project_id=project_id).exists():
+            module = Module.objects.filter(name=module_name, project_id=project_id).first()
+            if module:
                 raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
+                    {
+                        "id": str(module.id),
+                        "code": "MODULE_NAME_ALREADY_EXISTS",
+                        "error": "Module with this name already exists",
+                        "message": "Module with this name already exists",
+                    }
                 )
 
         module = Module.objects.create(**validated_data, project_id=project_id)
@@ -123,14 +129,8 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if (
-                Module.objects.filter(name=module_name, project=instance.project)
-                .exclude(id=instance.id)
-                .exists()
-            ):
-                raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
-                )
+            if Module.objects.filter(name=module_name, project=instance.project).exclude(id=instance.id).exists():
+                raise serializers.ValidationError({"error": "Module with this name already exists"})
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -240,12 +240,8 @@ class ModuleLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if ModuleLink.objects.filter(url=validated_data.get("url"), module_id=validated_data.get("module_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return ModuleLink.objects.create(**validated_data)
 
 

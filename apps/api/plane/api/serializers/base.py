@@ -103,13 +103,9 @@ class BaseSerializer(serializers.ModelSerializer):
                     # Check if field in expansion  then expand the field
                     if expand in expansion:
                         if isinstance(response.get(expand), list):
-                            exp_serializer = expansion[expand](
-                                getattr(instance, expand), many=True
-                            )
+                            exp_serializer = expansion[expand](getattr(instance, expand), many=True)
                         else:
-                            exp_serializer = expansion[expand](
-                                getattr(instance, expand)
-                            )
+                            exp_serializer = expansion[expand](getattr(instance, expand))
                         response[expand] = exp_serializer.data
                     else:
                         # You might need to handle this case differently

@@ -80,9 +80,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         Supports external ID tracking for integration purposes.
         """
         try:
-            serializer = StateSerializer(
-                data=request.data, context={"project_id": project_id}
-            )
+            serializer = StateSerializer(data=request.data, context={"project_id": project_id})
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -153,9 +151,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda states: StateSerializer(
-                states, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda states: StateSerializer(states, many=True, fields=self.fields, expand=self.expand).data,
         )
 
 
@@ -213,7 +209,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="delete_state",
         summary="Delete state",
-        description="Permanently remove a workflow state from a project. Default states and states with existing work items cannot be deleted.",
+        description="Permanently remove a workflow state from a project. Default states and states with existing work items cannot be deleted.",  # noqa: E501
         parameters=[
             STATE_ID_PARAMETER,
         ],
@@ -228,9 +224,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
         Permanently remove a workflow state from a project.
         Default states and states with existing work items cannot be deleted.
         """
-        state = State.objects.get(
-            is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug
-        )
+        state = State.objects.get(is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug)
 
         if state.default:
             return Response(
@@ -277,9 +271,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
         Partially update an existing workflow state's properties like name, color, or group.
         Validates external ID uniqueness if provided.
         """
-        state = State.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=state_id
-        )
+        state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             if (
@@ -288,9 +280,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
                 and State.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get(
-                        "external_source", state.external_source
-                    ),
+                    external_source=request.data.get("external_source", state.external_source),
                     external_id=request.data.get("external_id"),
                 ).exists()
             ):

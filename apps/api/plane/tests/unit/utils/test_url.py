@@ -61,9 +61,7 @@ class TestContainsURL:
         assert contains_url("example.c") is False  # TLD too short
         assert contains_url("999.999.999.999") is False  # Invalid IP (octets > 255)
         assert contains_url("just-a-hyphen") is False  # No domain
-        assert (
-            contains_url("www.") is False
-        )  # Incomplete www - needs at least one char after dot
+        assert contains_url("www.") is False  # Incomplete www - needs at least one char after dot
 
     def test_contains_url_length_limit_under_1000(self):
         """Test contains_url with input under 1000 characters containing URLs"""
@@ -108,9 +106,7 @@ class TestContainsURL:
         assert contains_url(multiline_short) is True
 
         # Multiple lines under total limit
-        multiline_text = (
-            "a" * 200 + "\n" + "b" * 200 + "https://example.com\n" + "c" * 200
-        )
+        multiline_text = "a" * 200 + "\n" + "b" * 200 + "https://example.com\n" + "c" * 200
         assert len(multiline_text) < 1000
         assert contains_url(multiline_text) is True
 
@@ -207,9 +203,7 @@ class TestNormalizeURLPath:
 
     def test_normalize_url_path_with_query_and_fragment(self):
         """Test normalize_url_path preserves query and fragment"""
-        result = normalize_url_path(
-            "https://example.com//foo///bar//baz?x=1&y=2#fragment"
-        )
+        result = normalize_url_path("https://example.com//foo///bar//baz?x=1&y=2#fragment")
         assert result == "https://example.com/foo/bar/baz?x=1&y=2#fragment"
 
     def test_normalize_url_path_with_no_redundant_slashes(self):
@@ -230,9 +224,7 @@ class TestNormalizeURLPath:
 
     def test_normalize_url_path_with_complex_path(self):
         """Test normalize_url_path with complex path structure"""
-        result = normalize_url_path(
-            "https://example.com///api//v1///users//123//profile"
-        )
+        result = normalize_url_path("https://example.com///api//v1///users//123//profile")
         assert result == "https://example.com/api/v1/users/123/profile"
 
     def test_normalize_url_path_with_different_schemes(self):
