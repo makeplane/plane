@@ -1407,6 +1407,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             # Update the created_at and the created_by and save the comment
             issue_comment.created_at = request.data.get("created_at", timezone.now())
             issue_comment.created_by_id = request.data.get("created_by", request.user.id)
+            issue_comment.actor_id = request.data.get("created_by", request.user.id)
             issue_comment.save(update_fields=["created_at", "created_by"])
 
             issue_activity.delay(

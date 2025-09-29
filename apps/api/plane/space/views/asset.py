@@ -62,7 +62,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def post(self, request, anchor):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
@@ -129,7 +129,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def patch(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)

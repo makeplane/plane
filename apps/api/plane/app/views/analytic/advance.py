@@ -60,12 +60,16 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         }
 
     def get_overview_data(self) -> Dict[str, Dict[str, int]]:
-        members_query = WorkspaceMember.objects.filter(workspace__slug=self._workspace_slug, is_active=True)
+        members_query = WorkspaceMember.objects.filter(
+            workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
+        )
 
         if self.request.GET.get("project_ids", None):
             project_ids = self.request.GET.get("project_ids", None)
             project_ids = [str(project_id) for project_id in project_ids.split(",")]
-            members_query = ProjectMember.objects.filter(project_id__in=project_ids, is_active=True)
+            members_query = ProjectMember.objects.filter(
+                project_id__in=project_ids, is_active=True, member__is_bot=False
+            )
 
         return {
             "total_users": self.get_filtered_counts(members_query),
@@ -76,7 +80,9 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "total_work_items": self.get_filtered_counts(Issue.issue_objects.filter(**self.filters["base_filters"])),
             "total_cycles": self.get_filtered_counts(Cycle.objects.filter(**self.filters["base_filters"])),
             "total_intake": self.get_filtered_counts(
-                Issue.objects.filter(**self.filters["base_filters"]).filter(issue_intake__status__in=["-2", "0"])
+                Issue.objects.filter(**self.filters["base_filters"]).filter(
+                    issue_intake__status__in=["-2", "-1", "0", "1", "2"]  # TODO: Add description for reference.
+                )
             ),
         }
 
