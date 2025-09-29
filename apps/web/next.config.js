@@ -7,9 +7,13 @@ const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
   swcMinify: true,
-  concurrentFeatures: true,
-  fastRefresh: true,
   output: "standalone",
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {

@@ -56,7 +56,7 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
         }
 
     def get_work_items_stats(
-        self, project_id, cycle_id=None, module_id=None
+            self, project_id, cycle_id=None, module_id=None
     ) -> Dict[str, Dict[str, int]]:
         """
         Returns work item stats for the workspace, or filtered by cycle_id or module_id if provided.
@@ -90,6 +90,9 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
             ),
             "completed_work_items": self.get_filtered_counts(
                 base_queryset.filter(state__group="completed")
+            ),
+            "cancelled_work_items": self.get_filtered_counts(
+                base_queryset.filter(state__group="cancelled")
             ),
         }
 
@@ -133,7 +136,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
         )
 
     def get_work_items_stats(
-        self, project_id, cycle_id=None, module_id=None
+            self, project_id, cycle_id=None, module_id=None
     ) -> Dict[str, Dict[str, int]]:
         base_queryset = None
         if cycle_id is not None:
@@ -215,7 +218,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
 
 class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
     def work_item_completion_chart(
-        self, project_id, cycle_id=None, module_id=None
+            self, project_id, cycle_id=None, module_id=None
     ) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (

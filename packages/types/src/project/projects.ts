@@ -33,6 +33,7 @@ export interface IPartialProject {
   // actor
   created_by?: string;
   updated_by?: string;
+  description_html?: string | null;
 }
 
 export interface IProject extends IPartialProject {
