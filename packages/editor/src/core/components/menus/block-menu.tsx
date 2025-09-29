@@ -43,6 +43,16 @@ export const BlockMenu = (props: Props) => {
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
 
+  const toggleBlockMenu = useCallback(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    } else {
+      setIsOpen(true);
+      editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
   // Handle click on drag handle
   const handleClickDragHandle = useCallback(
     (event: MouseEvent) => {
@@ -70,31 +80,27 @@ export const BlockMenu = (props: Props) => {
           editor.chain().setNodeSelection(nodePos).run();
         }
         // Show the menu
-        setIsOpen(true);
-        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+        toggleBlockMenu();
         return;
       }
 
       // If clicking outside and not on a menu item, hide the menu
       if (menuRef.current && !menuRef.current.contains(target)) {
-        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
-        setIsOpen(false);
+        toggleBlockMenu();
       }
     },
-    [editor.commands, refs]
+    [editor, refs, toggleBlockMenu]
   );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
-        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+        toggleBlockMenu();
       }
     };
 
     const handleScroll = () => {
-      setIsOpen(false);
-      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+      toggleBlockMenu();
     };
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
@@ -107,7 +113,7 @@ export const BlockMenu = (props: Props) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
-  }, [editor.commands, handleClickDragHandle]);
+  }, [editor.commands, handleClickDragHandle, toggleBlockMenu]);
 
   // Animation effect
   useEffect(() => {
@@ -224,8 +230,7 @@ export const BlockMenu = (props: Props) => {
                 item.onClick(e);
                 e.preventDefault();
                 e.stopPropagation();
-                setIsOpen(false);
-                editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+                toggleBlockMenu();
               }}
               disabled={item.isDisabled}
             >
