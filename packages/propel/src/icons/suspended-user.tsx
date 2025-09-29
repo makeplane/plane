@@ -3,15 +3,7 @@ import * as React from "react";
 import { ISvgIcons } from "./type";
 
 export const SuspendedUserIcon: React.FC<ISvgIcons> = ({ className, ...rest }) => (
-  <svg
-    width="16"
-    height="17"
-    viewBox="0 0 16 17"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    {...rest}
-  >
+  <svg viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...rest}>
     <g clipPath="url(#clip0_806_120890)">
       <path
         d="M3 13C3 12.304 3.18158 11.6201 3.52681 11.0158C3.87204 10.4115 4.36897 9.90774 4.9685 9.55428C5.56802 9.20082 6.24939 9.00989 6.94529 9.00037C7.64119 8.99086 8.32753 9.16307 8.9365 9.5"
