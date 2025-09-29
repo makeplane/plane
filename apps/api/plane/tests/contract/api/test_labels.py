@@ -1,6 +1,5 @@
 import pytest
 from rest_framework import status
-from django.db import IntegrityError
 from uuid import uuid4
 
 from plane.db.models import Label, Project, ProjectMember

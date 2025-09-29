@@ -1,5 +1,4 @@
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import orderBy from "lodash/orderBy";
 import { IFavorite, InstructionType, IPragmaticPayloadLocation, TDropTarget } from "@plane/types";
 
 export type TargetData = {

@@ -55,11 +55,14 @@ const Command = Extension.create<SlashCommandOptions>({
   },
 });
 
-const renderItems = () => {
+const renderItems: SuggestionOptions["render"] = () => {
   let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
   let popup: Instance | null = null;
   return {
-    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
+    onStart: (props) => {
+      // Track active dropdown
+      props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+
       component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
         props,
         editor: props.editor,
@@ -78,14 +81,14 @@ const renderItems = () => {
         placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
+    onUpdate: (props) => {
       component?.updateProps(props);
 
       popup?.[0]?.setProps({
         getReferenceClientRect: props.clientRect,
       });
     },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
+    onKeyDown: (props) => {
       if (props.event.key === "Escape") {
         popup?.[0].hide();
         return true;
@@ -95,7 +98,9 @@ const renderItems = () => {
       }
       return false;
     },
-    onExit: () => {
+    onExit: ({ editor }) => {
+      // Remove from active dropdowns
+      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
       popup?.[0].destroy();
       component?.destroy();
     },

@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages

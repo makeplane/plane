@@ -1,4 +1,4 @@
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { autorun, makeObservable, observable } from "mobx";
 // types
 import {

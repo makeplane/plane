@@ -18,7 +18,7 @@
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/utils": "workspace:*",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "mobx": "catalog:",
     "mobx-utils": "catalog:",
     "uuid": "catalog:",
@@ -28,7 +28,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "@types/lodash": "catalog:",
+    "@types/lodash-es": "catalog:",
     "@types/uuid": "catalog:",
     "typescript": "catalog:"
   }

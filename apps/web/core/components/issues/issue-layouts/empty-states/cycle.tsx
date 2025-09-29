@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports

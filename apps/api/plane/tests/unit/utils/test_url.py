@@ -2,7 +2,6 @@ import pytest
 from plane.utils.url import (
     contains_url,
     is_valid_url,
-    get_url_components,
     normalize_url_path,
 )
 

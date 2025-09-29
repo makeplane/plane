@@ -1,12 +1,21 @@
 # Python imports
 import json
-import base64
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
 from django.db import connection
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    UUIDField,
+    Count,
+    Case,
+    When,
+    IntegerField,
+)
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -41,6 +50,7 @@ from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
+
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
@@ -185,7 +195,9 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -266,7 +278,9 @@ class PageViewSet(BaseViewSet):
             and page.owned_by_id != request.user.id
         ):
             return Response(
-                {"error": "Access cannot be updated since this page is owned by someone else"},
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -392,6 +406,62 @@ class PageViewSet(BaseViewSet):
         ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def summary(self, request, slug, project_id):
+        queryset = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(
+                projects__project_projectmember__member=self.request.user,
+                projects__project_projectmember__is_active=True,
+                projects__archived_at__isnull=True,
+            )
+            .filter(parent__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0))
+            .annotate(
+                project=Exists(
+                    ProjectPage.objects.filter(
+                        page_id=OuterRef("id"), project_id=self.kwargs.get("project_id")
+                    )
+                )
+            )
+            .filter(project=True)
+            .distinct()
+        )
+
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
+
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            private_pages=Count(
+                Case(
+                    When(access=Page.PRIVATE_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
+        )
+
+        return Response(stats, status=status.HTTP_200_OK)
+
 
 class PageFavoriteViewSet(BaseViewSet):
     model = UserFavorite
@@ -506,6 +576,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
 class PageDuplicateEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
+
     def post(self, request, slug, project_id, page_id):
         page = Page.objects.filter(
             pk=page_id, workspace__slug=slug, projects__id=project_id

@@ -1,7 +1,4 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
-import update from "lodash/update";
+import { update, concat, set, sortBy } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types

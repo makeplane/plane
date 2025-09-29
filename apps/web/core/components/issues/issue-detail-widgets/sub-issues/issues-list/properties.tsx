@@ -19,7 +19,7 @@ type Props = {
   workspaceSlug: string;
   parentIssueId: string;
   issueId: string;
-  disabled: boolean;
+  canEdit: boolean;
   updateSubIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -33,7 +33,7 @@ type Props = {
 };
 
 export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, parentIssueId, issueId, disabled, updateSubIssue, displayProperties, issue } = props;
+  const { workspaceSlug, parentIssueId, issueId, canEdit, updateSubIssue, displayProperties, issue } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
 
@@ -94,7 +94,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
                 { ...issue }
               )
             }
-            disabled={!disabled}
+            disabled={!canEdit}
             buttonVariant="transparent-without-text"
             buttonClassName="hover:bg-transparent px-0"
             iconSize="size-5"
@@ -113,7 +113,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
                 priority: val,
               })
             }
-            disabled={!disabled}
+            disabled={!canEdit}
             buttonVariant="border-without-text"
             buttonClassName="border"
             showTooltip
@@ -144,7 +144,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlight ? "text-red-500" : ""}
-            disabled={!disabled}
+            disabled={!canEdit}
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
@@ -167,7 +167,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-30"
-            disabled={!disabled}
+            disabled={!canEdit}
             showTooltip
           />
         </div>
@@ -190,7 +190,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             buttonClassName={shouldHighlight ? "text-red-500" : ""}
             clearIconClassName="text-custom-text-100"
             optionsClassName="z-30"
-            disabled={!disabled}
+            disabled={!canEdit}
             showTooltip
           />
         </div>
@@ -207,7 +207,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
                 assignee_ids: val,
               })
             }
-            disabled={!disabled}
+            disabled={!canEdit}
             multiple
             buttonVariant={(issue?.assignee_ids || []).length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={(issue?.assignee_ids || []).length > 0 ? "hover:bg-transparent px-0" : ""}

@@ -1,8 +1,4 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
-import uniq from "lodash/uniq";
-import unset from "lodash/unset";
-import update from "lodash/update";
+import { uniq, unset, set, update, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

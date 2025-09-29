@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -141,6 +140,25 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
     members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+
+    // Use filters store to get filtered member ids
+    const memberIds = this.filtersStore.getFilteredMemberIds(
+      members,
+      this.memberRoot?.memberMap || {},
+      (member) => member.member
+    );
+
+    return memberIds;
+  });
+
+  /**
+   * @description get the filtered and sorted list of all the user ids of all the members of the workspace
+   * @param workspaceSlug
+   */
+  getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
+    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
+    //filter out bots and inactive members
+    members = members.filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot);
 
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(

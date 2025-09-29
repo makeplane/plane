@@ -1,5 +1,5 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {

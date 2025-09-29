@@ -1,9 +1,10 @@
-import clone from "lodash/clone";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
+import { orderBy, clone, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+// plane imports
 import { THomeWidgetKeys, TWidgetEntityData } from "@plane/types";
+// plane web services
 import { WorkspaceService } from "@/plane-web/services";
+// store
 import { IWorkspaceLinkStore, WorkspaceLinkStore } from "./link.store";
 
 export interface IHomeStore {
