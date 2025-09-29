@@ -73,9 +73,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
     def get_overview_data(self) -> Dict[str, Dict[str, int]]:
         members_query = WorkspaceMember.objects.filter(
-            workspace__slug=self._workspace_slug,
-            is_active=True,
-            member__is_bot=False,
+            workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
         )
 
         if self.request.GET.get("project_ids", None):
@@ -95,7 +93,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "total_cycles": self.get_filtered_counts(Cycle.objects.filter(**self.filters["base_filters"])),
             "total_intake": self.get_filtered_counts(
                 Issue.objects.filter(**self.filters["base_filters"]).filter(
-                    issue_intake__status__in=["-2", "-1", "0", "1", "2"]
+                    issue_intake__status__in=["-2", "-1", "0", "1", "2"]  # TODO: Add description for reference.
                 )
             ),
         }

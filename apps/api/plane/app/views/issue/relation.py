@@ -295,7 +295,6 @@ class IssueRelationViewSet(BaseViewSet):
         )
 
         issue_relations = issue_relations.first()
-
         current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()
         issue_activity.delay(

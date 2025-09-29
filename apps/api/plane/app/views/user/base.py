@@ -140,10 +140,7 @@ class UserEndpoint(BaseViewSet):
         PageUser.objects.filter(user_id=request.user.id).delete()
 
         # Sync workspace members
-        [
-            member_sync_task.delay(workspace.workspace.slug)
-            for workspace in workspaces_to_deactivate
-        ]
+        [member_sync_task.delay(workspace.workspace.slug) for workspace in workspaces_to_deactivate]
 
         # Delete all workspace invites
         WorkspaceMemberInvite.objects.filter(email=user.email).delete()
@@ -271,6 +268,4 @@ class UserTokenVerificationEndpoint(BaseAPIView):
     def get(self, request):
         if request.user:
             return Response({"user_id": request.user.id}, status=status.HTTP_200_OK)
-        return Response(
-            {"error": "Invalid verification token"}, status=status.HTTP_401_UNAUTHORIZED
-        )
+        return Response({"error": "Invalid verification token"}, status=status.HTTP_401_UNAUTHORIZED)

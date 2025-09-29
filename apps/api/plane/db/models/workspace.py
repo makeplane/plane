@@ -197,13 +197,11 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
 
         base_query = Q(project_id__in=member_project_ids)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member_id=user_id, workspace__slug=slug
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
 
             # Get all the projects in the respective teamspaces
             teamspace_project_ids = (
@@ -223,9 +221,7 @@ class WorkspaceManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return WorkspaceQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True
-        )
+        return WorkspaceQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)

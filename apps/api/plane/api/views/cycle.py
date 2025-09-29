@@ -984,19 +984,26 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         issues = request.data.get("issues", [])
 
         if not issues:
-            return Response({"error": "Work items are required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Work items are required", "code": "MISSING_WORK_ITEMS"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 
         if cycle.end_date is not None and cycle.end_date < timezone.now():
             return Response(
-                {"error": "The Cycle has already been completed so no new issues can be added"},
+                {
+                    "code": "CYCLE_COMPLETED",
+                    "message": "The Cycle has already been completed so no new issues can be added",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get all CycleIssues already created
+        # Get all CycleWorkItems already created
         cycle_issues = list(CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues))
-        existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
+        existing_issues = [
+            str(cycle_issue.issue_id) for cycle_issue in cycle_issues if str(cycle_issue.issue_id) in issues
+        ]
         new_issues = list(set(issues) - set(existing_issues))
 
         issue_cycle_data_added = [

@@ -141,9 +141,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         # Check if the role is being updated
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
@@ -154,9 +152,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             )
             if not allowed:
                 return Response(
-                    {
-                        "error": "You cannot change the role the user as it will exceed the purchased limit"
-                    },
+                    {"error": "You cannot change the role the user as it will exceed the purchased limit"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -315,10 +311,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
         )
 
         # Sync workspace members
-        [
-            member_sync_task.delay(invitation.workspace.slug)
-            for invitation in workspace_invitations
-        ]
+        [member_sync_task.delay(invitation.workspace.slug) for invitation in workspace_invitations]
 
         # Delete joined workspace invites
         workspace_invitations.delete()

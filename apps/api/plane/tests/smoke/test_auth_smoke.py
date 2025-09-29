@@ -73,10 +73,14 @@ class TestAuthSmoke:
 <<<<<<< HEAD
                         assert "refresh_token" in data, "JWT auth should return both access and refresh tokens"
 =======
+<<<<<<< HEAD
+                        assert "refresh_token" in data, "JWT auth should return both access and refresh tokens"
+=======
                         assert (
                             "refresh_token" in data
                         ), "JWT auth should return both access and refresh tokens"
 >>>>>>> d63015f53db1ab1962ff810ae82dcfb1a5478140
+>>>>>>> ebeac413faf27b87803939d3aa3829b38a66e19c
                     # If it's a user session response
                     elif "user" in data:
                         assert "is_authenticated" in data and data["is_authenticated"], (

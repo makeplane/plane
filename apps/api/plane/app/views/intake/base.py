@@ -211,9 +211,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             intake_issue = intake_issue.filter(created_by=request.user)
         return self.paginate(
@@ -227,9 +225,7 @@ class IntakeIssueViewSet(BaseViewSet):
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        intake = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
         intake_settings = IntakeSetting.objects.filter(
             workspace__slug=slug, project_id=project_id, intake=intake
@@ -403,12 +399,8 @@ class IntakeIssueViewSet(BaseViewSet):
 
             # EE start
             # Check if state is updated then is the transition allowed
-            workflow_state_manager = WorkflowStateManager(
-                project_id=project_id, slug=slug
-            )
-            if issue_data.get(
-                "state_id", None
-            ) and not workflow_state_manager.validate_state_transition(
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+            if issue_data.get("state_id", None) and not workflow_state_manager.validate_state_transition(
                 issue=issue,
                 new_state_id=issue_data.get("state_id", None),
                 user_id=request.user.id,
@@ -587,9 +579,7 @@ class IntakeIssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not intake_issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -642,9 +632,7 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
