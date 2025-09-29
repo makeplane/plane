@@ -43,7 +43,8 @@ class IssueSerializer(BaseSerializer):
     Comprehensive work item serializer with full relationship management.
 
     Handles complete work item lifecycle including assignees, labels, validation,
-    and related model updates. Supports dynamic field expansion and HTML content processing.
+    and related model updates. Supports dynamic field expansion and HTML content
+    processing.
     """
 
     assignees = serializers.ListField(

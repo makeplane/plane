@@ -30,12 +30,10 @@ from rest_framework.response import Response
 # drf-spectacular imports
 from drf_spectacular.utils import (
     extend_schema,
-    OpenApiParameter,
     OpenApiResponse,
     OpenApiExample,
     OpenApiRequest,
 )
-from drf_spectacular.types import OpenApiTypes
 
 # Module imports
 from plane.api.serializers import (
@@ -99,7 +97,6 @@ from plane.utils.openapi import (
     EXTERNAL_ID_PARAMETER,
     EXTERNAL_SOURCE_PARAMETER,
     ORDER_BY_PARAMETER,
-    SEARCH_PARAMETER,
     SEARCH_PARAMETER_REQUIRED,
     LIMIT_PARAMETER,
     WORKSPACE_SEARCH_PARAMETER,
