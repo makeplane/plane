@@ -1,12 +1,12 @@
 import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
-import type { CustomImageExtension, TCustomImageAttributes } from "../types";
+import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
 
 export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "updateAttributes"> & {
-  extension: CustomImageExtension;
+  extension: CustomImageExtensionType;
   node: NodeViewProps["node"] & {
     attrs: TCustomImageAttributes;
   };

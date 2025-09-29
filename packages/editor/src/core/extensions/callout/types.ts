@@ -1,3 +1,5 @@
+import type { Node as ProseMirrorNode } from "@tiptap/core";
+
 export enum ECalloutAttributeNames {
   ICON_COLOR = "data-icon-color",
   ICON_NAME = "data-icon-name",
@@ -24,3 +26,8 @@ export type TCalloutBlockAttributes = {
   [ECalloutAttributeNames.BLOCK_TYPE]: "callout-component";
 } & TCalloutBlockIconAttributes &
   TCalloutBlockEmojiAttributes;
+
+export type CustomCalloutExtensionOptions = unknown;
+export type CustomCalloutExtensionStorage = unknown;
+
+export type CustomCalloutExtensionType = ProseMirrorNode<CustomCalloutExtensionOptions, CustomCalloutExtensionStorage>;

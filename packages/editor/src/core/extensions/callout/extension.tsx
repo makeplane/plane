@@ -6,9 +6,13 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // local imports
 import { CustomCalloutBlock, type CustomCalloutNodeViewProps } from "./block";
 import { CustomCalloutExtensionConfig } from "./extension-config";
+import type { CustomCalloutExtensionOptions, CustomCalloutExtensionStorage } from "./types";
 import { getStoredBackgroundColor, getStoredLogo } from "./utils";
 
-export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
+export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend<
+  CustomCalloutExtensionOptions,
+  CustomCalloutExtensionStorage
+>({
   selectable: true,
   draggable: true,
 
