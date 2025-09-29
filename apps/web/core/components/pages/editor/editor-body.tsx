@@ -97,6 +97,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+
   // derived values
   const {
     id: pageId,
@@ -121,7 +122,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging({
+  const { document: documentEditorExtensions, isLoadingIntegrations } = useEditorFlagging({
     workspaceSlug,
     storeType,
   });
@@ -224,7 +225,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isPageLoading = pageId === undefined || !realtimeConfig;
+  const isPageLoading = pageId === undefined || !realtimeConfig || isLoadingIntegrations;
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (

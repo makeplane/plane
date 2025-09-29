@@ -50,6 +50,10 @@ export type TAssetInfo = {
   size: number;
 };
 
+export enum TConfluenceContentParserContext {
+  ATTACHMENTS = "attachments",
+}
+
 export type TCalloutConfig = {
   icon: string;
   color: string;

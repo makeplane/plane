@@ -25,6 +25,7 @@ const generalSelectors = [
   ".editor-attachment-component",
   ".page-embed-component",
   ".editor-mathematics-component",
+  ".editor-drawio-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;

@@ -1,5 +1,5 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
-import { FileText, Paperclip } from "lucide-react";
+import { FileText, Paperclip, PenTool, Presentation } from "lucide-react";
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
@@ -18,8 +18,11 @@ import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCursor } from "./collaboration-cursor";
 import { CommentsExtension } from "./comments";
+import { DrawioExtension } from "./drawio/extension";
+import { EDrawioMode } from "./drawio/types";
 
 /**
+
  * Registry for slash commands
  * Each entry defines a single slash command option with its own enabling logic
  */
@@ -98,6 +101,41 @@ const slashCommandRegistry: {
       command: ({ editor, range }) => insertAttachment({ editor, event: "insert", range }),
       section: "general",
       pushAfter: "image",
+    }),
+  },
+  {
+    // Draw.io diagram slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("drawio") && !flaggedExtensions.includes("drawio"),
+    getOption: () => ({
+      commandKey: "drawio-diagram",
+      key: "drawio",
+      title: "Draw.io diagram",
+      description: "Create diagrams, flowcharts, and visual documentation.",
+      searchTerms: ["draw.io", "diagram", "flowchart", "chart", "visual", "drawing"],
+      icon: <PenTool className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).insertDrawioDiagram({ mode: EDrawioMode.DIAGRAM }).run();
+      },
+      section: "general",
+      pushAfter: "attachment",
+    }),
+  },
+  {
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("drawio") && !flaggedExtensions.includes("drawio"),
+    getOption: () => ({
+      commandKey: "drawio-board",
+      key: "drawio-board",
+      title: "Draw.io board",
+      description: "Create whiteboards with freehand drawing and collaboration.",
+      searchTerms: ["draw.io", "board", "whiteboard", "sketch", "brainstorm", "collaboration", "kanban"],
+      icon: <Presentation className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).insertDrawioDiagram({ mode: EDrawioMode.BOARD }).run();
+      },
+      section: "general",
+      pushAfter: "drawio-diagram",
     }),
   },
 ];
@@ -210,6 +248,16 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         shouldHideComment: !!shouldHideComment,
       });
     },
+  },
+  {
+    // Draw.io extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("drawio"),
+    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) =>
+      DrawioExtension({
+        isFlagged: flaggedExtensions.includes("drawio"),
+        fileHandler,
+        logoSpinner: extendedEditorProps?.logoSpinner,
+      }),
   },
 ];
 

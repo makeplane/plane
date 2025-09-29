@@ -8,4 +8,5 @@ export enum ADDITIONAL_EXTENSIONS {
   BLOCK_MATH = "blockMath",
   EXTERNAL_EMBED = "externalEmbedComponent",
   PAGE_LINK_COMPONENT = "pageLinkComponent",
+  DRAWIO = "drawIoComponent",
 }

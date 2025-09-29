@@ -4,6 +4,7 @@ import type { IEditorPropsExtended, TCommentConfig } from "@plane/editor";
 // hooks
 import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane web hooks
+import { LogoSpinner } from "@/components/common";
 import { useUserProfile } from "@/hooks/store";
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 import { type TPageInstance } from "@/store/pages/base-page";
@@ -11,7 +12,7 @@ import { EPageStoreType } from "../store";
 
 export type TExtendedEditorExtensionsConfig = Pick<
   IEditorPropsExtended,
-  "embedHandler" | "commentConfig" | "isSmoothCursorEnabled"
+  "embedHandler" | "commentConfig" | "isSmoothCursorEnabled" | "logoSpinner"
 >;
 
 export type TExtendedEditorExtensionsHookParams = {
@@ -49,6 +50,7 @@ export const useExtendedEditorProps = (
       embedHandler: embedProps,
       commentConfig: extensionHandlers?.get("comments") as TCommentConfig | undefined,
       isSmoothCursorEnabled: is_smooth_cursor_enabled,
+      logoSpinner: LogoSpinner,
     }),
     [embedProps, extensionHandlers, is_smooth_cursor_enabled]
   );

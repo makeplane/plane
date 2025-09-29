@@ -10,7 +10,8 @@ export class ConfluenceFileParserExtension extends NotionFileParserExtension {
     const hasAnchorTag = node.tagName === "A";
     const isNotPageLink = !node.getAttribute("href")?.includes("/pages/");
     const isNotMention = !node.getAttribute("href")?.includes("/people/");
-    return hasAnchorTag && isNotPageLink && isNotMention;
+    const isNonHTMLfile = this.isNonHTMLFile(node.getAttribute("href") || "");
+    return hasAnchorTag && isNotPageLink && isNotMention && isNonHTMLfile;
   }
 
   protected getFileSource(node: HTMLElement): string {

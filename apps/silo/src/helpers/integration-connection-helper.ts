@@ -77,7 +77,7 @@ class IntegrationConnectionHelper {
     connection_type,
   }: {
     workspace_id: string;
-    connection_type: string;
+    connection_type?: string;
   }): Promise<TWorkspaceConnection[]> {
     return this.apiClient.workspaceConnection.listWorkspaceConnections({
       workspace_id,

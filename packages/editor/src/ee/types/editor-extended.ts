@@ -15,11 +15,17 @@ export type IEditorPropsExtended = {
   extensionOptions?: IEditorExtensionOptions;
   commentConfig?: TCommentConfig;
   isSmoothCursorEnabled: boolean;
+  logoSpinner?: React.ComponentType;
 };
 
 export type ICollaborativeDocumentEditorPropsExtended = unknown;
 
-export type TExtendedEditorCommands = "comment" | "block-equation" | "inline-equation";
+export type TExtendedEditorCommands =
+  | "comment"
+  | "block-equation"
+  | "inline-equation"
+  | "drawio-board"
+  | "drawio-diagram";
 
 export type TExtendedCommandExtraProps = {
   attachment: {

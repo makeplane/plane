@@ -29,6 +29,7 @@ export const getSupportedIntegrations = () =>
     isSlackEnabled() && E_INTEGRATION_KEYS.SLACK,
     isGitlabEnabled() && E_INTEGRATION_KEYS.GITLAB,
     isSentryEnabled() && E_INTEGRATION_KEYS.SENTRY,
+    E_INTEGRATION_KEYS.DRAWIO_INTEGRATION,
     E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
     E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
   ].filter(Boolean) as E_INTEGRATION_KEYS[];
@@ -44,6 +45,8 @@ export const checkIntegrationAvailability = (key: E_INTEGRATION_KEYS) => {
     case E_INTEGRATION_KEYS.SENTRY:
       return isSentryEnabled();
     case E_INTEGRATION_KEYS.GITHUB_ENTERPRISE:
+      return true;
+    case E_INTEGRATION_KEYS.DRAWIO_INTEGRATION:
       return true;
     case E_INTEGRATION_KEYS.GITLAB_ENTERPRISE:
       return true;

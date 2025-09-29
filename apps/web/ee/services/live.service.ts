@@ -2,7 +2,7 @@ import { LIVE_URL } from "@plane/constants";
 import { IframelyResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
-export class IframelyService extends APIService {
+export class LiveService extends APIService {
   constructor() {
     super(LIVE_URL);
   }
@@ -32,7 +32,14 @@ export class IframelyService extends APIService {
     );
     return response.data;
   }
+
+  async getContent(url: string): Promise<string> {
+    const response = await this.get(`/content`, {
+      params: { url: url },
+    });
+    return response.data.content;
+  }
 }
 
 // Create a singleton instance
-export const iframelyService = new IframelyService();
+export const liveService = new LiveService();

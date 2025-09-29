@@ -23,7 +23,7 @@ import { TwitterEmbed } from "@plane/ui/src/editor/twitter-embed";
 // local hooks
 import { useUser } from "@/hooks/store/user";
 // plane web services
-import { iframelyService } from "@/plane-web/services/iframely.service";
+import { liveService } from "@/plane-web/services/live.service";
 
 // Types
 type ErrorData = {
@@ -54,7 +54,7 @@ const useEmbedDataManager = (externalEmbedNodeView: ExternalEmbedNodeViewProps) 
   } = useSWR(
     swrKey,
     ([src, isThemeDark, workspaceSlug, userId]: [string, boolean, string, string]) =>
-      iframelyService.getEmbedData(src, isThemeDark, workspaceSlug, userId),
+      liveService.getEmbedData(src, isThemeDark, workspaceSlug, userId),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

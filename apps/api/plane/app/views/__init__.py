@@ -108,6 +108,10 @@ from .asset.v2 import (
     AssetCheckEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
+    ProjectReuploadAssetEndpoint,
+    WorkspaceReuploadAssetEndpoint,
+    WorkspaceFileAssetServerEndpoint,
+    ProjectAssetServerEndpoint,
 )
 from .asset.silo import SiloAssetsEndpoint
 

@@ -38,3 +38,14 @@ export const getEmojiPayload = (htmlContent: string) => {
     in_use: "emoji",
   };
 };
+
+export const CONFLUENCE_ATTACHMENT_CONTAINER_SELECTOR = "div.greybox";
+export const CONFLUENCE_ATTACHMENT_SOURCE_SELECTOR = "a";
+export const CONFLUENCE_BODY_SELECTOR = "div#main-content";
+
+export const CONFLUENCE_DRAWIO_CONTAINER_CLASS = "ap-container";
+export const CONFLUENCE_DRAWIO_CONTAINER_ID_PREFIXES = [
+  "mxgraph.confluence.plugins.diagramly__inc-drawio",
+  "mxgraph.confluence.plugins.diagramly__drawio",
+];
+export const CONFLUENCE_DRAWIO_SCRIPT_SELECTOR = "script.ap-iframe-body-script";

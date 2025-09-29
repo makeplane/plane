@@ -5,6 +5,7 @@ import { logger } from "@plane/logger";
 import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { EZipNodeType } from "@/lib/zip-manager/types";
 import { TDocContentParserConfig } from "../../types";
+import { CONFLUENCE_ATTACHMENT_CONTAINER_SELECTOR, CONFLUENCE_BODY_SELECTOR } from "../../utils/html-helpers";
 import { NotionImageParserExtension } from "../common/content-parser";
 import {
   NotionBlockColorParserExtension,
@@ -24,6 +25,8 @@ import {
   ConfluenceTaskListParserExtension,
   PTagCustomComponentExtension,
 } from "./content-parser";
+import { ConfluenceExtractAttachmentConfigExtension } from "./content-parser/extensions/extract-attachments-config";
+import { ConfluenceExtractDrawioEmbedExtension } from "./content-parser/extensions/extract-drawio-embed";
 
 /*
  * Confluence zip manager is a custom implementation on top of the existing zip
@@ -59,7 +62,8 @@ export class ConfluenceImportDriver implements IZipImportDriver {
     );
 
     const preprocessExtensions: IParserExtension[] = [
-      new ConfluenceExtractBodyExtension({ selector: "div#main-content", context }),
+      new ConfluenceExtractAttachmentConfigExtension({ selector: CONFLUENCE_ATTACHMENT_CONTAINER_SELECTOR, context }),
+      new ConfluenceExtractBodyExtension({ selector: CONFLUENCE_BODY_SELECTOR, context }),
       new ConfluenceTaskListParserExtension(),
       new ConfluenceIconParserExtension(),
       new ConfluencePageParserExtension(config),
@@ -68,6 +72,10 @@ export class ConfluenceImportDriver implements IZipImportDriver {
     /*----------- Core Extensions -----------*/
     const coreExtensions: IParserExtension[] = [
       new ProcessLinksExtension(),
+      new ConfluenceExtractDrawioEmbedExtension({
+        ...config,
+        context,
+      }),
       new ConfluenceStatusMacroParserExtension(),
       new ConfluenceColorIdParserExtension(context),
       new ConfluenceBackgroundColorParserExtension(),
@@ -105,7 +113,8 @@ export class ConfluenceImportDriver implements IZipImportDriver {
     if (!fileTree) {
       return undefined;
     }
-    return fileTree;
+    const mergedFileTree = this.mergeAttachmentsFromToc(fileTree, toc);
+    return mergedFileTree;
   }
 
   /*
@@ -120,6 +129,86 @@ export class ConfluenceImportDriver implements IZipImportDriver {
     }
     const content = await this.zipManager.getFileContent(indexFile);
     return content.toString();
+  }
+
+  /**
+   * Merges attachment files from the table of contents into the file tree
+   * @param root - The root file tree node
+   * @param toc - Table of contents containing all file paths
+   * @returns The updated file tree with merged attachments
+   */
+  private mergeAttachmentsFromToc(root: TZipFileNode, toc: string[]): TZipFileNode {
+    const attachmentPaths = toc.filter((file) => file.includes("attachments/") && !file.endsWith("/"));
+
+    // Group attachments by their reference ID (the number after attachments/)
+    const attachmentsByRef = new Map<string, string[]>();
+
+    attachmentPaths.forEach((path) => {
+      const match = path.match(/attachments\/(\d+)\//);
+      if (match) {
+        const refId = match[1];
+        if (!attachmentsByRef.has(refId)) {
+          attachmentsByRef.set(refId, []);
+        }
+        attachmentsByRef.get(refId)!.push(path);
+      }
+    });
+
+    // Recursively traverse the tree and add missing attachments
+    this.addAttachmentsToNode(root, attachmentsByRef);
+
+    return root;
+  }
+
+  /**
+   * Recursively adds missing attachment nodes to directories that correspond to their reference IDs
+   * @param node - Current node being processed
+   * @param attachmentsByRef - Map of reference IDs to their attachment file paths
+   */
+  private addAttachmentsToNode(node: TZipFileNode, attachmentsByRef: Map<string, string[]>): void {
+    if (!node.children) return;
+
+    // Process each child node
+    for (const child of node.children) {
+      // If this is a directory, check if it corresponds to a file with attachments
+      if (child.type === EZipNodeType.DIRECTORY) {
+        // Extract reference ID from the directory path
+        const pathParts = child.path.split("_");
+        const refId = pathParts[pathParts.length - 1];
+
+        if (refId && attachmentsByRef.has(refId)) {
+          const attachmentPaths = attachmentsByRef.get(refId)!;
+
+          // Get existing attachment paths in this directory
+          const existingAttachmentPaths = new Set(
+            child.children
+              ?.filter((childNode) => childNode.path.includes("attachments/"))
+              .map((childNode) => childNode.path) || []
+          );
+
+          // Add missing attachments
+          attachmentPaths.forEach((attachmentPath) => {
+            if (!existingAttachmentPaths.has(attachmentPath)) {
+              const attachmentNode: TZipFileNode = {
+                id: crypto.randomUUID(),
+                name: attachmentPath.split("/").pop() || attachmentPath,
+                type: EZipNodeType.FILE,
+                path: attachmentPath,
+                children: [],
+              };
+
+              if (!child.children) {
+                child.children = [];
+              }
+              child.children.push(attachmentNode);
+            }
+          });
+        }
+
+        // Recursively process child directories
+        this.addAttachmentsToNode(child, attachmentsByRef);
+      }
+    }
   }
 
   /*

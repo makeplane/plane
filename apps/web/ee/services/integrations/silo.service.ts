@@ -18,4 +18,12 @@ export class SiloAppService {
         throw error?.response?.data;
       });
   }
+  async getEnabledIntegrations(workspaceId: string) {
+    return this.axiosInstance
+      .get(`/api/apps/${workspaceId}/enabled-integrations/`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

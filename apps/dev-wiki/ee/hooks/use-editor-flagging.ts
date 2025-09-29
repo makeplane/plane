@@ -41,15 +41,15 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
     documentDisabled.push("ai");
   }
   if (!isCollaborationCursorEnabled) {
-    documentDisabled.push("collaboration-cursor");
+    // documentDisabled.push("collaboration-cursor");
   }
   if (storeType && !isNestedPagesEnabled(workspaceSlug)) {
     documentFlagged.push("nested-pages");
   }
-  if (!isEditorAttachmentsEnabled) {
-    documentFlagged.push("attachments");
-    richTextFlagged.push("attachments");
-  }
+  // if (!isEditorAttachmentsEnabled) {
+  documentFlagged.push("attachments");
+  richTextFlagged.push("attachments");
+  // }
   if (!isEditorMathematicsEnabled) {
     documentFlagged.push("mathematics");
     richTextFlagged.push("mathematics");

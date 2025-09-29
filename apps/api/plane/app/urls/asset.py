@@ -19,6 +19,10 @@ from plane.app.views import (
     ProjectAssetDownloadEndpoint,
     ProxyUploadEndpoint,
     ProxyDownloadEndpoint,
+    ProjectReuploadAssetEndpoint,
+    WorkspaceReuploadAssetEndpoint,
+    WorkspaceFileAssetServerEndpoint,
+    ProjectAssetServerEndpoint,
 )
 
 
@@ -56,6 +60,11 @@ urlpatterns = [
         name="workspace-file-assets",
     ),
     path(
+        "assets/v2/workspaces/<str:slug>/reupload/<uuid:asset_id>/",
+        WorkspaceReuploadAssetEndpoint.as_view(),
+        name="workspace-reupload-asset",
+    ),
+    path(
         "assets/v2/user-assets/",
         UserAssetsV2Endpoint.as_view(),
         name="user-file-assets",
@@ -79,6 +88,11 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
         ProjectAssetEndpoint.as_view(),
         name="bulk-asset-update",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/reupload/<uuid:asset_id>/",
+        ProjectReuploadAssetEndpoint.as_view(),
+        name="bulk-asset-reupload",
     ),
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:pk>/",
@@ -124,5 +138,15 @@ urlpatterns = [
         "assets/proxy-download/<str:encoded_params>/",
         ProxyDownloadEndpoint.as_view(),
         name="proxy-download",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/server/",
+        WorkspaceFileAssetServerEndpoint.as_view(),
+        name="workspace-file-asset-server",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:asset_id>/server/",
+        ProjectAssetServerEndpoint.as_view(),
+        name="project-asset-server",
     ),
 ]

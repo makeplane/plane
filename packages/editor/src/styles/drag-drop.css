@@ -65,6 +65,7 @@
   &.node-imageComponent,
   &.node-image,
   &.node-externalEmbedComponent,
+  &.node-drawIoComponent,
   &.table-wrapper,
   &.node-blockMath {
     --horizontal-offset: 0px;
@@ -78,7 +79,8 @@
 .ProseMirror node-image,
 .ProseMirror node-imageComponent,
 .ProseMirror node-blockMath,
-.ProseMirror node-externalEmbedComponent {
+.ProseMirror node-externalEmbedComponent,
+.ProseMirror node-drawIoComponent {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;
 

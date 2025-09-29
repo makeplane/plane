@@ -1,17 +1,28 @@
+import { useEffect, useMemo, useState } from "react";
 // plane imports
+import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
 // ce imports
 import type { TEditorFlaggingHookReturnType, TEditorFlaggingHookProps } from "@/ce/hooks/use-editor-flagging";
-// plane web hooks
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// lib
 import { store } from "@/lib/store-context";
+// plane web imports
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 import { EWorkspaceFeatures } from "../types/workspace-feature";
+const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 /**
  * @description extensions disabled in various editors
  */
 export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => {
   const { workspaceSlug, storeType } = props;
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  // feature flags
   const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
@@ -21,61 +32,103 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
+  const [isLoadingIntegrations, setIsLoadingIntegrations] = useState(true);
 
   // disabled and flagged in the document editor
-  const documentDisabled: TExtensions[] = [];
-  const documentFlagged: TExtensions[] = [];
+  const document = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
   // disabled and flagged in the rich text editor
-  const richTextDisabled: TExtensions[] = [];
-  const richTextFlagged: TExtensions[] = [];
+  const richText = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
   // disabled and flagged in the lite text editor
-  const liteTextDisabled: TExtensions[] = [];
-  const liteTextFlagged: TExtensions[] = [];
-
-  liteTextDisabled.push("external-embed");
+  const liteText = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(["external-embed"]),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
 
   if (!isWorkItemEmbedEnabled) {
-    documentFlagged.push("issue-embed");
+    document.flagged.add("issue-embed");
   }
   if (!isEditorAIOpsEnabled) {
-    documentDisabled.push("ai");
+    document.disabled.add("ai");
   }
   if (!isCollaborationCursorEnabled) {
-    documentDisabled.push("collaboration-cursor");
+    document.disabled.add("collaboration-cursor");
   }
   if (storeType && !isNestedPagesEnabled(workspaceSlug)) {
-    documentFlagged.push("nested-pages");
+    document.flagged.add("nested-pages");
   }
   if (!isEditorAttachmentsEnabled) {
-    documentFlagged.push("attachments");
-    richTextFlagged.push("attachments");
+    document.flagged.add("attachments");
+    richText.flagged.add("attachments");
   }
   if (!isEditorMathematicsEnabled) {
-    documentFlagged.push("mathematics");
-    richTextFlagged.push("mathematics");
-    liteTextFlagged.push("mathematics");
+    document.flagged.add("mathematics");
+    richText.flagged.add("mathematics");
+    liteText.flagged.add("mathematics");
   }
   if (storeType && !isCommentsEnabled(workspaceSlug)) {
-    documentFlagged.push("comments");
+    document.flagged.add("comments");
   }
   if (!isExternalEmbedEnabled) {
-    documentFlagged.push("external-embed");
-    richTextFlagged.push("external-embed");
-    liteTextFlagged.push("external-embed");
+    document.flagged.add("external-embed");
+    richText.flagged.add("external-embed");
+    liteText.flagged.add("external-embed");
   }
+
+  // check for drawio integration
+  useEffect(() => {
+    const checkIntegrations = async () => {
+      if (!workspaceId) {
+        document.flagged.add("drawio");
+        setIsLoadingIntegrations(false);
+        return;
+      }
+
+      try {
+        const integrations = await siloAppService.getEnabledIntegrations(workspaceId);
+        const hasDrawio = integrations.some(
+          (integration: { connection_provider: TExtensions }) => integration.connection_provider === "drawio"
+        );
+        if (!hasDrawio) {
+          document.flagged.add("drawio");
+        }
+      } catch (_error) {
+        document.flagged.add("drawio");
+      } finally {
+        setIsLoadingIntegrations(false);
+      }
+    };
+
+    checkIntegrations();
+  }, [document, workspaceId]);
 
   return {
     document: {
-      disabled: documentDisabled,
-      flagged: documentFlagged,
+      disabled: Array.from(document.disabled),
+      flagged: Array.from(document.flagged),
     },
     liteText: {
-      disabled: liteTextDisabled,
-      flagged: liteTextFlagged,
+      disabled: Array.from(liteText.disabled),
+      flagged: Array.from(liteText.flagged),
     },
     richText: {
-      disabled: richTextDisabled,
-      flagged: richTextFlagged,
+      disabled: Array.from(richText.disabled),
+      flagged: Array.from(richText.flagged),
     },
+    isLoadingIntegrations,
   };
 };

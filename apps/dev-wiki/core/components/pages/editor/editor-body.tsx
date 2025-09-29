@@ -277,6 +277,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             id={pageId}
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
+            extendedEditorProps={extendedEditorProps}
             ref={editorForwardRef}
             titleRef={titleEditorRef}
             containerClassName="h-full p-0 pb-64"
@@ -304,7 +305,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             aiHandler={{
               menu: getAIMenu,
             }}
-            extendedEditorProps={extendedEditorProps}
           />
         </div>
       </div>

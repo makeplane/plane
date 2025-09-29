@@ -10,4 +10,5 @@ export type TExtensions =
   | "external-embed"
   | "attachments"
   | "comments"
-  | "mathematics";
+  | "mathematics"
+  | "drawio";

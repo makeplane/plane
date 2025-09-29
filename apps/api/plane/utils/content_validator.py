@@ -138,6 +138,8 @@ EE_ATTRIBUTES = {
     # math components (generic)
     "inline-math-component": {"latex", "id"},
     "block-math-component": {"latex", "id"},
+    # drawio components (generic)
+    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode"},
 }
 
 # Merge nh3 defaults with all attributes used across our custom components

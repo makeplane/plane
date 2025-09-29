@@ -181,11 +181,11 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
-            src={filters.searchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
-            alt="No matching pages"
-          />
+          {/* <Image */}
+          {/*   // src={filters.searchQuery.length > 0 ? NameFilterImage  } */}
+          {/*   className="h-36 sm:h-48 w-36 sm:w-48 mx-auto" */}
+          {/*   alt="No matching pages" */}
+          {/* /> */}
           <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
           <p className="text-custom-text-400 text-base">
             {filters.searchQuery.length > 0

@@ -6,6 +6,7 @@ import {
   type EditorRefApi,
   type IDocumentEditorProps,
   type TFileHandler,
+  TEmbedConfig,
 } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";

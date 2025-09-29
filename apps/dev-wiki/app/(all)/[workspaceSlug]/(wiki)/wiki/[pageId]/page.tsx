@@ -78,7 +78,7 @@ const PageDetailsPage = observer(() => {
       },
       fetchDescriptionBinary: async () => {
         if (!workspaceSlug || !id) return;
-        return await workspacePageService.fetchDescriptionBinary({ workspaceSlug: workspaceSlug.toString() }, id);
+        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {
