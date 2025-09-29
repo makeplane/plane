@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 
 # Module imports

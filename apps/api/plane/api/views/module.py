@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import (
@@ -41,8 +41,6 @@ from plane.utils.host import base_host
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
-    WORKSPACE_SLUG_PARAMETER,
-    PROJECT_ID_PARAMETER,
     MODULE_ID_PARAMETER,
     MODULE_PK_PARAMETER,
     ISSUE_ID_PARAMETER,

@@ -1,4 +1,3 @@
-from lxml import html
 
 # Django imports
 from django.utils import timezone

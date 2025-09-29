@@ -374,7 +374,7 @@ class IssueCreateSerializer(BaseSerializer):
                 issue=instance
             ).values_list("assignee_id", flat=True)
 
-            # Get the assignees to add and assignees to remove from both the current and the new assignees
+            # Get the assignees to add and assignees to remove from both the current and the new assignees #noqa: E501
             assignees_to_add = list(set(assignees) - set(current_assignees))
             assignees_to_remove = list(set(current_assignees) - set(assignees))
 
@@ -413,7 +413,7 @@ class IssueCreateSerializer(BaseSerializer):
 
             requested_label_ids = labels
 
-            # Get the labels to add and labels to remove from both the current and the new labels
+            # Get the labels to add and labels to remove from both the current and the new labels #noqa: E501
             labels_to_add = list(set(requested_label_ids) - set(current_label_ids))
             labels_to_remove = list(set(current_label_ids) - set(requested_label_ids))
 
@@ -827,7 +827,15 @@ class CommentReactionSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at", "created_by", "updated_by"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "comment",
+            "actor",
+            "deleted_at",
+            "created_by",
+            "updated_by",
+        ]
 
 
 class IssueVoteSerializer(BaseSerializer):

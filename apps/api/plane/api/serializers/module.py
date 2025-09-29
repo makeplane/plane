@@ -17,8 +17,9 @@ class ModuleCreateSerializer(BaseSerializer):
     """
     Serializer for creating modules with member validation and date checking.
 
-    Handles module creation including member assignment validation, date range verification,
-    and duplicate name prevention for feature-based project organization setup.
+    Handles module creation including member assignment validation, date range
+    verification, and duplicate name prevention for feature-based
+    project organization setup.
     """
 
     members = serializers.ListField(
@@ -112,8 +113,9 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
     """
     Serializer for updating modules with enhanced validation and member management.
 
-    Extends module creation with update-specific validations including member reassignment,
-    name conflict checking, and relationship management for module modifications.
+    Extends module creation with update-specific validations including
+    member reassignment, name conflict checking,
+    and relationship management for module modifications.
     """
 
     class Meta(ModuleCreateSerializer.Meta):
@@ -162,8 +164,8 @@ class ModuleSerializer(BaseSerializer):
     """
     Comprehensive module serializer with work item metrics and member management.
 
-    Provides complete module data including work item counts by status, member relationships,
-    and progress tracking for feature-based project organization.
+    Provides complete module data including work item counts by status, member
+    relationships, and progress tracking for feature-based project organization.
     """
 
     members = serializers.ListField(

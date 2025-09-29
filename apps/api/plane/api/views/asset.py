@@ -8,7 +8,7 @@ from django.conf import settings
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiExample, OpenApiRequest, OpenApiTypes
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -282,8 +282,9 @@ class UserServerAssetEndpoint(BaseAPIView):
     def post(self, request):
         """Generate presigned URL for user server asset upload.
 
-        Create a presigned URL for uploading user profile assets (avatar or cover image) using server credentials.
-        This endpoint generates the necessary credentials for direct S3 upload with server-side authentication.
+        Create a presigned URL for uploading user profile assets
+        (avatar or cover image) using server credentials. This endpoint generates the
+        necessary credentials for direct S3 upload with server-side authentication.
         """
         # get the asset key
         name = request.data.get("name")
