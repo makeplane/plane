@@ -1,0 +1,24 @@
+{
+  "extends": "@plane/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["core/*"],
+      "@/helpers/*": ["helpers/*"],
+      "@/public/*": ["public/*"],
+      "@/styles/*": ["styles/*"],
+      "@/plane-web/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
+    },
+    "plugins": [{ "name": "next" }],
+    "strictNullChecks": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "ee/components/issues/issue-details/sidebar"
+  ],
+  "exclude": ["node_modules"]
+}

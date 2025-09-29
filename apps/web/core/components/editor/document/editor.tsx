@@ -12,8 +12,11 @@ import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
 import { EditorMentionsRoot } from "../embeds/mentions";
 
@@ -59,6 +62,20 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
+  // issue-embed
+  const { issueEmbedProps } = useIssueEmbed({
+    projectId,
+    workspaceSlug,
+  });
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
+  const {
+    embedHandler,
+    isSmoothCursorEnabled: _isSmoothCursorEnabled,
+    commentConfig,
+    ...restExtendedEditorProps
+  } = extendedEditorProps ?? {};
 
   return (
     <DocumentEditorWithRef
@@ -81,7 +98,22 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         renderComponent: EditorMentionsRoot,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
-      extendedEditorProps={extendedEditorProps}
+      extendedEditorProps={{
+        isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        embedHandler: {
+          issue: issueEmbedProps,
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
+          ...embedHandler,
+        },
+        commentConfig: {
+          canComment: false,
+          shouldHideComment: true,
+          ...commentConfig,
+        },
+        ...restExtendedEditorProps,
+      }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

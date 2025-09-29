@@ -11,6 +11,7 @@ from .issue import (
     LabelCreateUpdateSerializer,
     LabelSerializer,
     IssueLinkSerializer,
+    IssueDetailSerializer,
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,
@@ -21,6 +22,11 @@ from .issue import (
     IssueCommentCreateSerializer,
     IssueLinkCreateSerializer,
     IssueLinkUpdateSerializer,
+    IssueRelationSerializer,
+    IssueRelationCreateSerializer,
+    IssueRelationRemoveSerializer,
+    IssueRelationResponseSerializer,
+    RelatedIssueSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import (
@@ -46,6 +52,7 @@ from .intake import (
     IntakeIssueUpdateSerializer,
 )
 from .estimate import EstimatePointSerializer
+from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from .asset import (
     UserAssetUploadSerializer,
     AssetUpdateSerializer,

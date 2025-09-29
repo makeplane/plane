@@ -98,6 +98,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     labels__id__isnull=False,
                     label_issue__deleted_at__isnull=True,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .distinct("labels__id")
                 .order_by("labels__id")
                 .values("labels__id", "labels__color", "labels__name")
@@ -475,4 +476,5 @@ class ProjectStatsEndpoint(BaseAPIView):
             )
 
         projects = projects.annotate(**annotations).values("id", *requested_fields)
+
         return Response(projects, status=status.HTTP_200_OK)

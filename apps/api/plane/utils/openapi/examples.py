@@ -781,6 +781,20 @@ SAMPLE_CYCLE_ISSUE = {
     "created_at": "2024-01-01T10:30:00Z",
 }
 
+SAMPLE_EPIC = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Epic 1",
+    "description": "Epic 1 description",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
+SAMPLE_PAGE = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Sample Page",
+    "description": "Sample page description",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,
@@ -795,6 +809,8 @@ SCHEMA_EXAMPLES = {
     "Activity": SAMPLE_ACTIVITY,
     "Intake": SAMPLE_INTAKE,
     "CycleIssue": SAMPLE_CYCLE_ISSUE,
+    "Epic": SAMPLE_EPIC,
+    "Page": SAMPLE_PAGE,
 }
 
 

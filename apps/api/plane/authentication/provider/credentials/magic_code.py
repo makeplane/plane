@@ -3,23 +3,37 @@ import json
 import os
 import random
 import string
-
+from typing import Callable, Optional
 
 # Module imports
 from plane.authentication.adapter.credential import CredentialAdapter
-from plane.license.utils.instance_value import get_configuration_value
-from plane.settings.redis import redis_instance
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
 from plane.db.models import User
+from plane.license.utils.instance_value import get_configuration_value
+from plane.settings.redis import redis_instance
 
 
 class MagicCodeProvider(CredentialAdapter):
     provider = "magic-code"
 
-    def __init__(self, request, key, code=None, callback=None):
+    def __init__(
+        self,
+        request,
+        key: str,
+        code: Optional[str] = None,
+        callback: Optional[Callable] = None,
+        invitation_id: Optional[str] = None,
+    ):
+        exception_email = str(key).replace("magic_", "", 1)
+        self.exception_payload = {
+            "email": exception_email,
+        }
+        if invitation_id:
+            self.exception_payload["invitation_id"] = invitation_id
+
         (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
             [
                 {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")},
@@ -34,14 +48,14 @@ class MagicCodeProvider(CredentialAdapter):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
                 error_message="SMTP_NOT_CONFIGURED",
-                payload={"email": str(key)},
+                payload=self.exception_payload,
             )
 
         if ENABLE_MAGIC_LINK_LOGIN == "0":
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["MAGIC_LINK_LOGIN_DISABLED"],
                 error_message="MAGIC_LINK_LOGIN_DISABLED",
-                payload={"email": str(key)},
+                payload=self.exception_payload,
             )
 
         super().__init__(request=request, provider=self.provider, callback=callback)
@@ -74,13 +88,13 @@ class MagicCodeProvider(CredentialAdapter):
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
-                        payload={"email": str(email)},
+                        payload=self.exception_payload,
                     )
                 else:
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
-                        payload={"email": self.key},
+                        payload=self.exception_payload,
                     )
 
             value = {
@@ -126,13 +140,13 @@ class MagicCodeProvider(CredentialAdapter):
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
                         error_message="INVALID_MAGIC_CODE_SIGN_IN",
-                        payload={"email": str(email)},
+                        payload=self.exception_payload,
                     )
                 else:
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
                         error_message="INVALID_MAGIC_CODE_SIGN_UP",
-                        payload={"email": str(email)},
+                        payload=self.exception_payload,
                     )
         else:
             email = str(self.key).replace("magic_", "", 1)
@@ -140,11 +154,11 @@ class MagicCodeProvider(CredentialAdapter):
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_IN"],
                     error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
-                    payload={"email": str(email)},
+                    payload=self.exception_payload,
                 )
             else:
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_UP"],
                     error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
-                    payload={"email": str(email)},
+                    payload=self.exception_payload,
                 )

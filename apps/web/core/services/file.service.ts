@@ -2,7 +2,6 @@ import { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
-// helpers
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
@@ -138,6 +137,38 @@ export class FileService extends APIService {
       });
   }
 
+  async updateBulkInitiativeAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/attachments/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateBulkInitiativeCommentAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    commentId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(
+      `/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/comments/${commentId}/attachments/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async uploadProjectAsset(
     workspaceSlug: string,
     projectId: string,
@@ -217,6 +248,15 @@ export class FileService extends APIService {
       });
   }
 
+  async deleteOldWorkspaceAssetV2(workspaceSlug: string, src: string): Promise<any> {
+    const assetKey = getAssetIdFromUrl(src);
+    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/${assetKey}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteOldUserAsset(src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
     return this.delete(`/api/users/file-assets/${assetKey}/`)
@@ -271,6 +311,62 @@ export class FileService extends APIService {
       .then((res) => res?.data?.results ?? res?.data)
       .catch((err) => {
         throw err?.response?.data;
+      });
+  }
+
+  async reuploadWorkspaceAsset(
+    workspaceSlug: string,
+    assetId: string,
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/reupload/${assetId}/`, {
+      type: fileMetaData.type,
+      size: fileMetaData.size,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        await this.updateWorkspaceAssetUploadStatus(workspaceSlug, signedURLResponse.asset_id);
+        return signedURLResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async reuploadProjectAsset(
+    workspaceSlug: string,
+    projectId: string,
+    assetId: string,
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/reupload/${assetId}/`, {
+      type: fileMetaData.type,
+      size: fileMetaData.size,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
+        return signedURLResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 

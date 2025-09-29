@@ -13,15 +13,16 @@ def get_anchor():
 
 
 class DeployBoard(WorkspaceBaseModel):
-    TYPE_CHOICES = (
-        ("project", "Project"),
-        ("issue", "Issue"),
-        ("module", "Module"),
-        ("cycle", "Task"),
-        ("page", "Page"),
-        ("view", "View"),
-        ("intake", "Intake"),
-    )
+    class DeployBoardType(models.TextChoices):
+        TEAMSPACE_PAGE = "teamspace_page", "Teamspace Page"
+        PROJECT = "project", "Project"
+        ISSUE = "issue", "Issue"
+        MODULE = "module", "Module"
+        CYCLE = "cycle", "Task"
+        PAGE = "page", "Page"
+        VIEW = "view", "View"
+        INTAKE = "intake", "Intake"
+        INTAKE_EMAIL = "intake_email", "Intake Email"
 
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(max_length=30, null=True, blank=True)

@@ -5,6 +5,7 @@ import {
   TFilterConditionNode,
   TFilterExpression,
   TFilterGroupNode,
+  TFilterNotGroupNode,
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
@@ -59,6 +60,26 @@ const createComparableChildren = <P extends TFilterProperty>(
 };
 
 /**
+ * Creates a comparable representation of a NOT group for deep comparison.
+ * This handles NOT groups with single child (supports deep nesting).
+ * @param notGroup - The NOT group to create a comparable representation for
+ * @param baseComparable - The base comparable object
+ * @returns A comparable object without ID
+ */
+const createComparableNotGroup = <P extends TFilterProperty>(
+  notGroup: TFilterNotGroupNode<P>,
+  baseComparable: Record<string, unknown>
+): Record<string, unknown> => {
+  // Handle NOT groups with single child (supports deep nesting)
+  const childComparable = createExpressionComparable(notGroup.child);
+  if (!childComparable) return baseComparable; // Return empty group if child is invalid
+  return {
+    ...baseComparable,
+    child: childComparable,
+  };
+};
+
+/**
  * Creates a comparable representation of a group for deep comparison.
  * This recursively creates comparable representations for all children.
  * IDs are completely excluded to avoid UUID comparison issues.
@@ -76,7 +97,9 @@ export const createGroupComparable = <P extends TFilterProperty>(
   };
 
   return processGroupNode(group, {
+    onNotGroup: (notGroup) => createComparableNotGroup(notGroup, baseComparable),
     onAndGroup: (andGroup) => createComparableChildren(andGroup.children, baseComparable),
+    onOrGroup: (orGroup) => createComparableChildren(orGroup.children, baseComparable),
   });
 };
 

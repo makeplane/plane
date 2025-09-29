@@ -2,12 +2,12 @@
 import json
 
 # Django imports
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
-from django.db.models import Q, Value, UUIDField
-from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q, UUIDField, Value
+from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -23,8 +23,18 @@ from plane.api.serializers import (
 )
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
+from plane.db.models import (
+    Intake,
+    IntakeIssue,
+    Issue,
+    Project,
+    ProjectMember,
+    State,
+    IssueType,
+)
 from plane.utils.host import base_host
+from plane.ee.models import IntakeSetting
+from plane.ee.utils.workflow import WorkflowStateManager
 from .base import BaseAPIView
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
@@ -165,6 +175,11 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Get the issue type
+        issue_type = IssueType.objects.filter(
+            project_issue_types__project_id=project_id, is_epic=False, is_default=True
+        ).first()
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -172,6 +187,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
+            type=issue_type,
         )
 
         # create an intake issue
@@ -292,6 +308,19 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         if intake is None and not project.intake_view:
             return Response(
                 {"error": "Intake is not enabled for this project enable it through the project's api"},
+<<<<<<< HEAD
+=======
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug, project_id=project_id, intake=intake
+        ).first()
+
+        if intake_settings is not None and not intake_settings.is_in_app_enabled:
+            return Response(
+                {"error": "Creating intake issues is disabled"},
+>>>>>>> ebeac413faf27b87803939d3aa3829b38a66e19c
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -344,6 +373,23 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
+
+            # Check if state is updated then is the transition allowed
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if request.data.get(
+                "state_id"
+            ) and not workflow_state_manager.validate_state_transition(
+                issue=issue,
+                new_state_id=request.data.get("state_id"),
+                user_id=request.user.id,
+            ):
+                return Response(
+                    {"error": "State transition is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {

@@ -45,6 +45,7 @@ class IssueRelationViewSet(BaseViewSet):
             .order_by("-created_at")
             .distinct()
         )
+
         # get all blocking issues
         blocking_issues = issue_relations.filter(relation_type="blocked_by", related_issue_id=issue_id).values_list(
             "issue_id", flat=True
@@ -95,59 +96,74 @@ class IssueRelationViewSet(BaseViewSet):
             "related_issue_id", flat=True
         )
 
+        # get all implements issues
+        implements_issues = issue_relations.filter(relation_type="implemented_by", issue_id=issue_id).values_list(
+            "related_issue_id", flat=True
+        )
+
+        # get all implemented by issues
+        implemented_by_issues = issue_relations.filter(
+            relation_type="implemented_by", related_issue_id=issue_id
+        ).values_list("issue_id", flat=True)
+
         queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+            (
+                Issue.objects.filter(workspace__slug=slug)
+                .filter(project__deleted_at__isnull=True)
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related("assignees", "labels", "issue_module__module")
+                .annotate(
+                    cycle_id=Subquery(
+                        CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                    )
                 )
-            )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
                 )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(~Q(labels__id__isnull=True) & (Q(label_issue__deleted_at__isnull=True))),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
+                .annotate(
+                    attachment_count=FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    label_ids=Coalesce(
+                        ArrayAgg(
+                            "labels__id",
+                            distinct=True,
+                            filter=Q(~Q(labels__id__isnull=True) & (Q(label_issue__deleted_at__isnull=True))),
                         ),
+                        Value([], output_field=ArrayField(UUIDField())),
                     ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
+                    assignee_ids=Coalesce(
+                        ArrayAgg(
+                            "assignees__id",
+                            distinct=True,
+                            filter=Q(
+                                ~Q(assignees__id__isnull=True)
+                                & Q(assignees__member_project__is_active=True)
+                                & Q(issue_assignee__deleted_at__isnull=True)
+                            ),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
+                    ),
+                )
             )
-        ).distinct()
+            .annotate(is_epic=F("type__is_epic"))
+            .distinct()
+        )
 
         # Fields
         fields = [
@@ -165,6 +181,8 @@ class IssueRelationViewSet(BaseViewSet):
             "created_by",
             "updated_by",
             "relation_type",
+            "type_id",
+            "is_epic",
         ]
 
         response_data = {
@@ -198,6 +216,12 @@ class IssueRelationViewSet(BaseViewSet):
             "finish_before": queryset.filter(pk__in=finish_before_issues)
             .annotate(relation_type=Value("finish_before", output_field=CharField()))
             .values(*fields),
+            "implements": queryset.filter(pk__in=implements_issues)
+            .annotate(relation_type=Value("implements", output_field=CharField()))
+            .values(*fields),
+            "implemented_by": queryset.filter(pk__in=implemented_by_issues)
+            .annotate(relation_type=Value("implemented_by", output_field=CharField()))
+            .values(*fields),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -216,9 +240,15 @@ class IssueRelationViewSet(BaseViewSet):
         issue_relation = IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
-                    issue_id=(issue if relation_type in ["blocking", "start_after", "finish_after"] else issue_id),
+                    issue_id=(
+                        issue
+                        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]
+                        else issue_id
+                    ),
                     related_issue_id=(
-                        issue_id if relation_type in ["blocking", "start_after", "finish_after"] else issue
+                        issue_id
+                        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]
+                        else issue
                     ),
                     relation_type=(get_actual_relation(relation_type)),
                     project_id=project_id,
@@ -244,7 +274,7 @@ class IssueRelationViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
 
-        if relation_type in ["blocking", "start_after", "finish_after"]:
+        if relation_type in ["blocking", "start_after", "finish_after", "implemented_by"]:
             return Response(
                 RelatedIssueSerializer(issue_relation, many=True).data,
                 status=status.HTTP_201_CREATED,
@@ -263,6 +293,7 @@ class IssueRelationViewSet(BaseViewSet):
         ).filter(
             Q(issue_id=related_issue, related_issue_id=issue_id) | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
+
         issue_relations = issue_relations.first()
         current_instance = json.dumps(IssueRelationSerializer(issue_relations).data, cls=DjangoJSONEncoder)
         issue_relations.delete()

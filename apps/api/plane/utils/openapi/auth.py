@@ -28,3 +28,39 @@ class APIKeyAuthenticationExtension(OpenApiAuthenticationExtension):
             "name": "X-API-Key",
             "description": "API key authentication. Provide your API key in the X-API-Key header.",  # noqa: E501
         }
+
+
+class OAuth2AuthenticationExtension(OpenApiAuthenticationExtension):
+    """
+    OpenAPI authentication extension for oauth2_provider.contrib.rest_framework.OAuth2Authentication
+    """
+
+    target_class = "oauth2_provider.contrib.rest_framework.OAuth2Authentication"
+    name = "OAuth2Authentication"
+    priority = 2
+
+    def get_security_definition(self, auto_schema):
+        """
+        Return the security definition for OAuth2 authentication.
+        """
+        return {
+            "type": "oauth2",
+            "flows": {
+                "authorizationCode": {
+                    "authorizationUrl": "/auth/o/authorize-app/",
+                    "tokenUrl": "/auth/o/token/",
+                    "scopes": {
+                        "read": "Read access to resources",
+                        "write": "Write access to resources",
+                    },
+                },
+                "clientCredentials": {
+                    "tokenUrl": "/auth/o/token/",
+                    "scopes": {
+                        "read": "Read access to resources",
+                        "write": "Write access to resources",
+                    },
+                },
+            },
+            "description": "OAuth2 authentication supporting both authorization code flow and client credentials flow. For client credentials flow, include 'app_installation_id' parameter in the token request payload to receive a bot token for workspace app installations.",  # noqa E501
+        }

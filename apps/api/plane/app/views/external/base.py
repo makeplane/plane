@@ -5,7 +5,6 @@ from typing import List, Dict, Tuple
 # Third party import
 from openai import OpenAI
 import requests
-
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -121,8 +120,8 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
     final_text = task + "\n" + prompt
     try:
         # For Gemini, prepend provider name to model
-        if provider.lower() == "gemini":
-            model = f"gemini/{model}"
+        if provider.lower() != "openai":
+            return None, f"Unsupported provider: {provider}"
 
         client = OpenAI(api_key=api_key)
         chat_completion = client.chat.completions.create(

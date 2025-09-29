@@ -19,6 +19,9 @@ from plane.db.models import IssueComment, ProjectMember, CommentReaction, Projec
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -35,11 +38,7 @@ class IssueCommentViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project__archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
@@ -53,6 +52,7 @@ class IssueCommentViewSet(BaseViewSet):
                     )
                 )
             )
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 
@@ -70,6 +70,9 @@ class IssueCommentViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to comment on the issue"},
@@ -167,12 +170,9 @@ class CommentReactionViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(comment_id=self.kwargs.get("comment_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project__archived_at__isnull=True)
             .order_by("-created_at")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 

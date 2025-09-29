@@ -28,10 +28,11 @@ class ExportIssuesEndpoint(BaseAPIView):
             if not project_ids:
                 project_ids = Project.objects.filter(
                     workspace__slug=slug,
-                    project_projectmember__member=request.user,
-                    project_projectmember__is_active=True,
                     archived_at__isnull=True,
-                ).values_list("id", flat=True)
+                ).accessible_to(request.user.id, slug)
+
+                project_ids = project_ids.values_list("id", flat=True)
+
                 project_ids = [str(project_id) for project_id in project_ids]
 
             exporter = ExporterHistory.objects.create(

@@ -156,6 +156,20 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         Retrieve all projects in a workspace or get details of a specific project.
         Returns projects ordered by user's custom sort order with member information.
         """
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            project = Project.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+            )
+            return Response(
+                ProjectSerializer(project, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
         sort_order_query = ProjectMember.objects.filter(
             member=request.user,
             project_id=OuterRef("pk"),
@@ -211,6 +225,27 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             workspace = Workspace.objects.get(slug=slug)
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
             if serializer.is_valid():
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Project.objects.filter(
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                        workspace__slug=slug,
+                    ).exists()
+                ):
+                    project = Project.objects.filter(
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                        workspace__slug=slug,
+                    ).first()
+                    return Response(
+                        {
+                            "error": "Project with the same external id and external source already exists",
+                            "id": str(project.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
                 serializer.save()
 
                 # Add the user as Administrator to the project
@@ -457,6 +492,24 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             )
 
             if serializer.is_valid():
+                # don't allow external id and external source to be changed
+                # if they are already set for an existing project
+                if (
+                    request.data.get("external_id")
+                    and request.data.get("external_source")
+                    and Project.objects.filter(
+                        external_id=request.data.get("external_id"),
+                        external_source=request.data.get("external_source"),
+                        workspace__slug=slug,
+                    ).exists()
+                ):
+                    return Response(
+                        {
+                            "error": "Project with the same external id and external source already exists",
+                            "id": str(project.id),
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
                 serializer.save()
                 if serializer.data["intake_view"]:
                     intake = Intake.objects.filter(project=project, is_default=True).first()

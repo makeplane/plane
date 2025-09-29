@@ -10,7 +10,6 @@ from plane.db.models import User
 from plane.utils.openapi.decorators import user_docs
 from plane.utils.openapi import USER_EXAMPLE
 
-
 class UserEndpoint(BaseAPIView):
     serializer_class = UserLiteSerializer
     model = User

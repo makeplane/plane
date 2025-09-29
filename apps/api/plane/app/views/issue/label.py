@@ -1,8 +1,11 @@
 # Python imports
 import random
+import json
 
 # Django imports
 from django.db import IntegrityError
+from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
@@ -14,6 +17,7 @@ from plane.app.serializers import LabelSerializer
 from plane.app.permissions import allow_permission, ProjectBasePermission, ROLE
 from plane.db.models import Project, Label
 from plane.utils.cache import invalidate_cache
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class LabelViewSet(BaseViewSet):
@@ -27,11 +31,11 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("sort_order")
         )
 
@@ -42,6 +46,18 @@ class LabelViewSet(BaseViewSet):
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
+                project_activity.delay(
+                    type="project.activity.updated",
+                    requested_data=json.dumps(
+                        {"label": serializer.data.get("id")}, cls=DjangoJSONEncoder
+                    ),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    current_instance=json.dumps({"label": None}, cls=DjangoJSONEncoder),
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
@@ -69,8 +85,23 @@ class LabelViewSet(BaseViewSet):
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+    def destroy(self, request, slug, project_id, pk):
+        label = Label.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"label": None}, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"label": pk, "label_name": label.name}, cls=DjangoJSONEncoder
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        label.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BulkCreateIssueLabelsEndpoint(BaseAPIView):

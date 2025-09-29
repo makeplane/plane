@@ -2,6 +2,8 @@
 from uuid import uuid4
 from typing import Optional
 
+# Django imports
+
 # Third party
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -65,7 +67,9 @@ class ServiceApiTokenEndpoint(BaseAPIView):
     def post(self, request: Request, slug: str) -> Response:
         workspace = Workspace.objects.get(slug=slug)
 
-        api_token = APIToken.objects.filter(workspace=workspace, is_service=True).first()
+        api_token = APIToken.objects.filter(
+            workspace=workspace, is_service=True, user=request.user, expired_at__isnull=True
+        ).first()
 
         if api_token:
             return Response({"token": str(api_token.token)}, status=status.HTTP_200_OK)

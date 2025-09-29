@@ -6,6 +6,9 @@ from urllib.parse import urlencode
 import pytz
 import requests
 
+# Django imports
+from django.conf import settings
+
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
@@ -22,10 +25,16 @@ class GitHubOAuthProvider(OauthAdapter):
 
     provider = "github"
     scope = "read:user user:email"
-
     organization_scope = "read:org"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(
+        self,
+        request,
+        code=None,
+        state=None,
+        callback=None,
+        redirect_uri=None,
+    ):
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = get_configuration_value(
             [
                 {
@@ -56,7 +65,10 @@ class GitHubOAuthProvider(OauthAdapter):
         if self.organization_id:
             self.scope += f" {self.organization_scope}"
 
-        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/github/callback/"""
+        scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+
+        redirect_uri = redirect_uri if redirect_uri else (f"""{scheme}://{request.get_host()}/auth/github/callback/""")
+
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,

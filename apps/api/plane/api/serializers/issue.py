@@ -12,6 +12,7 @@ from plane.db.models import (
     IssueType,
     IssueActivity,
     IssueAssignee,
+    IssueRelation,
     FileAsset,
     IssueComment,
     IssueLabel,
@@ -32,6 +33,7 @@ from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
+from .issue_type import IssueTypeAPISerializer
 
 # Django imports
 from django.core.exceptions import ValidationError
@@ -65,7 +67,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        exclude = ["description"]
 
     def validate(self, data):
         if (
@@ -237,7 +239,22 @@ class IssueSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            # Get the current assignees
+            current_assignees = IssueAssignee.objects.filter(
+                issue=instance
+            ).values_list("assignee_id", flat=True)
+
+            # Get the assignees to add
+            assignees_to_add = list(set(assignees) - set(current_assignees))
+
+            # Get the assignees to remove
+            assignees_to_remove = list(set(current_assignees) - set(assignees))
+
+            # Delete the assignees to remove
+            IssueAssignee.objects.filter(
+                issue=instance, assignee_id__in=assignees_to_remove
+            ).delete()
+
             try:
                 IssueAssignee.objects.bulk_create(
                     [
@@ -249,7 +266,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for assignee_id in assignees
+                        for assignee_id in assignees_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -258,7 +275,23 @@ class IssueSerializer(BaseSerializer):
                 pass
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            # Get the current labels
+            current_labels = IssueLabel.objects.filter(issue=instance).values_list(
+                "label_id", flat=True
+            )
+
+            # Get the labels to add
+            labels_to_add = list(set(labels) - set(current_labels))
+
+            # Get the labels to remove
+            labels_to_remove = list(set(current_labels) - set(labels))
+
+            # Delete the labels to remove
+            IssueLabel.objects.filter(
+                issue=instance, label_id__in=labels_to_remove
+            ).delete()
+
+            # Create the labels to add
             try:
                 IssueLabel.objects.bulk_create(
                     [
@@ -270,7 +303,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label_id in labels
+                        for label_id in labels_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -311,6 +344,10 @@ class IssueSerializer(BaseSerializer):
                 data["labels"] = [
                     str(label) for label in IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
                 ]
+
+        if "type" in self.fields:
+            if "type" in self.expand:
+                data["type"] = IssueTypeAPISerializer(instance.type).data
 
         return data
 
@@ -551,7 +588,7 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-        exclude = ["comment_stripped", "comment_json"]
+        exclude = ["comment_json"]
 
     def validate(self, data):
         try:
@@ -681,9 +718,9 @@ class IssueAttachmentUploadSerializer(serializers.Serializer):
     )
 
 
-class IssueSearchSerializer(serializers.Serializer):
+class IssueSearchItemSerializer(serializers.Serializer):
     """
-    Serializer for work item search result data formatting.
+    Individual issue component for search results.
 
     Provides standardized search result structure including work item identifiers,
     project context, and workspace information for search API responses.
@@ -695,3 +732,225 @@ class IssueSearchSerializer(serializers.Serializer):
     project__identifier = serializers.CharField(required=True, help_text="Project identifier")
     project_id = serializers.CharField(required=True, help_text="Project ID")
     workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
+
+
+class IssueSearchSerializer(serializers.Serializer):
+    """
+    Search results for work items.
+
+    Provides list of issues with their identifiers, names, and project context.
+    """
+
+    issues = IssueSearchItemSerializer(many=True)
+
+
+class IssueRelationResponseSerializer(serializers.Serializer):
+    """
+    Serializer for issue relations response showing grouped relation types.
+
+    Returns issue IDs organized by relation type for efficient client-side processing.
+    """
+
+    blocking = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that are blocking this issue",
+    )
+    blocked_by = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that this issue is blocked by",
+    )
+    duplicate = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that are duplicates of this issue",
+    )
+    relates_to = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that relate to this issue",
+    )
+    start_after = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that start after this issue",
+    )
+    start_before = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that start before this issue",
+    )
+    finish_after = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that finish after this issue",
+    )
+    finish_before = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs that finish before this issue",
+    )
+
+
+class IssueRelationCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating issue relations.
+
+    Creates issue relations with the specified relation type and issues.
+    Validates relation types and ensures proper issue ID format.
+    """
+
+    RELATION_TYPE_CHOICES = [
+        ("blocking", "Blocking"),
+        ("blocked_by", "Blocked By"),
+        ("duplicate", "Duplicate"),
+        ("relates_to", "Relates To"),
+        ("start_before", "Start Before"),
+        ("start_after", "Start After"),
+        ("finish_before", "Finish Before"),
+        ("finish_after", "Finish After"),
+    ]
+
+    relation_type = serializers.ChoiceField(
+        choices=RELATION_TYPE_CHOICES,
+        required=True,
+        help_text="Type of relationship between work items",
+    )
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=True,
+        min_length=1,
+        help_text="Array of work item IDs to create relations with",
+    )
+
+    def validate_issues(self, value):
+        """Validate that issues list is not empty and contains valid UUIDs."""
+        if not value:
+            raise serializers.ValidationError("At least one issue ID is required.")
+        return value
+
+
+class IssueRelationRemoveSerializer(serializers.Serializer):
+    """
+    Serializer for removing issue relations.
+
+    Removes existing relationships between work items by specifying
+    the related issue ID.
+    """
+
+    related_issue = serializers.UUIDField(
+        required=True, help_text="ID of the related work item to remove relation with"
+    )
+
+
+class IssueRelationSerializer(BaseSerializer):
+    """
+    Serializer for issue relationships showing related issue details.
+
+    Provides comprehensive information about related issues including
+    project context, sequence ID, and relationship type.
+    """
+
+    id = serializers.UUIDField(source="related_issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        source="related_issue.project_id", read_only=True
+    )
+    sequence_id = serializers.IntegerField(
+        source="related_issue.sequence_id", read_only=True
+    )
+    name = serializers.CharField(source="related_issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(
+        source="related_issue.type.is_epic", read_only=True
+    )
+    state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
+    priority = serializers.CharField(source="related_issue.priority", read_only=True)
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+            "state_id",
+            "priority",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
+class RelatedIssueSerializer(BaseSerializer):
+    """
+    Serializer for reverse issue relationships showing issue details.
+
+    Provides comprehensive information about the source issue in a relationship
+    including project context, sequence ID, and relationship type.
+    """
+
+    id = serializers.UUIDField(source="issue.id", read_only=True)
+    project_id = serializers.PrimaryKeyRelatedField(
+        source="issue.project_id", read_only=True
+    )
+    sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
+    name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
+    relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
+    state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
+    priority = serializers.CharField(source="issue.priority", read_only=True)
+
+    class Meta:
+        model = IssueRelation
+        fields = [
+            "id",
+            "project_id",
+            "sequence_id",
+            "relation_type",
+            "name",
+            "type_id",
+            "is_epic",
+            "state_id",
+            "priority",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
+
+
+class IssueDetailSerializer(IssueSerializer):
+    """
+    Comprehensive work item serializer with full relationship management.
+
+    Handles complete work item lifecycle including assignees, labels, validation,
+    and related model updates. Supports dynamic field expansion and HTML content processing.
+    """
+
+    assignees = UserLiteSerializer(many=True)
+
+    labels = LabelSerializer(many=True)
+
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Issue
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        exclude = ["description"]

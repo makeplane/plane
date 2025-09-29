@@ -8,21 +8,29 @@ from .project import ProjectBaseModel
 
 
 class State(ProjectBaseModel):
+    BACKLOG = "backlog"
+    UNSTARTED = "unstarted"
+    STARTED = "started"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    TRIAGE = "triage"
+
+    GROUP_CHOICES = (
+        (BACKLOG, "Backlog"),
+        (UNSTARTED, "Unstarted"),
+        (STARTED, "Started"),
+        (COMPLETED, "Completed"),
+        (CANCELLED, "Cancelled"),
+        (TRIAGE, "Triage"),
+    )
     name = models.CharField(max_length=255, verbose_name="State Name")
     description = models.TextField(verbose_name="State Description", blank=True)
     color = models.CharField(max_length=255, verbose_name="State Color")
     slug = models.SlugField(max_length=100, blank=True)
     sequence = models.FloatField(default=65535)
     group = models.CharField(
-        choices=(
-            ("backlog", "Backlog"),
-            ("unstarted", "Unstarted"),
-            ("started", "Started"),
-            ("completed", "Completed"),
-            ("cancelled", "Cancelled"),
-            ("triage", "Triage"),
-        ),
-        default="backlog",
+        choices=GROUP_CHOICES,
+        default=BACKLOG,
         max_length=20,
     )
     is_triage = models.BooleanField(default=False)

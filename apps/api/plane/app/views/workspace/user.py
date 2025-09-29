@@ -138,9 +138,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 workspace__slug=slug,
             ).values_list("id", flat=True),
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-        )
+        ).accessible_to(request.user.id, slug)
 
         # Apply filtering from filterset
         issue_queryset = self.filter_queryset(issue_queryset)
@@ -282,10 +280,9 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
             projects = (
                 Project.objects.filter(
                     workspace__slug=slug,
-                    project_projectmember__member=request.user,
-                    project_projectmember__is_active=True,
                     archived_at__isnull=True,
                 )
+                .accessible_to(request.user.id, slug)
                 .annotate(
                     created_issues=Count(
                         "project_issue",
@@ -366,14 +363,16 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
         projects = request.query_params.getlist("project", [])
 
-        queryset = IssueActivity.objects.filter(
-            ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-            workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            actor=user_id,
-        ).select_related("actor", "workspace", "issue", "project")
+        queryset = (
+            IssueActivity.objects.filter(
+                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                workspace__slug=slug,
+                project__archived_at__isnull=True,
+                actor=user_id,
+            )
+            .select_related("actor", "workspace", "issue", "project")
+            .accessible_to(request.user.id, slug)
+        )
 
         if projects:
             queryset = queryset.filter(project__in=projects)
@@ -394,9 +393,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .annotate(state_group=F("state__group"))
             .values("state_group")
@@ -410,9 +408,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .values("priority")
             .annotate(priority_count=Count("priority"))
@@ -430,10 +427,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         created_issues = (
             Issue.issue_objects.filter(
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
                 created_by_id=user_id,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .count()
         )
@@ -442,9 +438,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .count()
         )
@@ -454,9 +449,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 ~Q(state__group__in=["completed", "cancelled"]),
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .count()
         )
@@ -466,9 +460,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
                 workspace__slug=slug,
                 state__group="completed",
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .count()
         )
@@ -477,10 +470,9 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             IssueSubscriber.objects.filter(
                 workspace__slug=slug,
                 subscriber_id=user_id,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
+            .accessible_to(request.user.id, slug)
             .filter(**filters)
             .count()
         )

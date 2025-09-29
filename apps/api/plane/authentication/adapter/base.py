@@ -126,8 +126,10 @@ class Adapter:
 
         # Check if the user is present
         user = User.objects.filter(email=email).first()
+
         # Check if sign up case or login
-        is_signup = bool(user)
+        is_signup = not bool(user)
+
         # If user is not present, create a new user
         if not user:
             # New user

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, Any
@@ -5,7 +6,9 @@ from django.db.models import QuerySet, Q, Count
 from django.http import HttpRequest
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
-from datetime import timedelta
+from django.db import models
+from django.db.models import F, Case, When, Value
+from django.db.models.functions import Concat
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import (
@@ -16,13 +19,13 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
-from django.db import models
-from django.db.models import F, Case, When, Value
-from django.db.models.functions import Concat
+
 from plane.utils.build_chart import build_analytics_chart
 from plane.utils.date_utils import (
     get_analytics_filters,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class ProjectAdvanceAnalyticsBaseView(BaseAPIView):
@@ -51,7 +54,7 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
             "count": get_filtered_count(),
         }
 
-    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Dict[str, int]]:
+    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None, epic=False) -> Dict[str, Dict[str, int]]:
         """
         Returns work item stats for the workspace, or filtered by cycle_id or module_id if provided.
         """
@@ -66,6 +69,10 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
                 "issue_id", flat=True
             )
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        elif epic:
+            base_queryset = Issue.objects.filter(**self.filters["base_filters"], project_id=project_id).filter(
+                Q(type__isnull=False) & Q(type__is_epic=True)
+            )
         else:
             base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"], project_id=project_id)
 
@@ -84,8 +91,13 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
         # Optionally accept cycle_id or module_id as query params
         cycle_id = request.GET.get("cycle_id", None)
         module_id = request.GET.get("module_id", None)
+        epic = request.GET.get("epic", False) and check_workspace_feature_flag(
+            feature_key=FeatureFlag.EPICS,
+            slug=slug,
+            user_id=request.user.id,
+        )
         return Response(
-            self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id, project_id=project_id),
+            self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id, project_id=project_id, epic=epic),
             status=status.HTTP_200_OK,
         )
 
@@ -112,7 +124,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             .order_by("project_id")
         )
 
-    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Dict[str, int]]:
+    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None, epic=False) -> Dict[str, Dict[str, int]]:
         base_queryset = None
         if cycle_id is not None:
             cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
@@ -124,6 +136,10 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
                 "issue_id", flat=True
             )
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        elif epic:
+            base_queryset = Issue.objects.filter(**self.filters["base_filters"], project_id=project_id).filter(
+                Q(type__isnull=False) & Q(type__is_epic=True)
+            )
         else:
             base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"], project_id=project_id)
         return (
@@ -167,8 +183,18 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             # Optionally accept cycle_id or module_id as query params
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
+            epic = request.GET.get("epic", False) and check_workspace_feature_flag(
+                feature_key=FeatureFlag.EPICS,
+                slug=slug,
+                user_id=request.user.id,
+            )
             return Response(
-                self.get_work_items_stats(project_id=project_id, cycle_id=cycle_id, module_id=module_id),
+                self.get_work_items_stats(
+                    project_id=project_id,
+                    cycle_id=cycle_id,
+                    module_id=module_id,
+                    epic=epic,
+                ),
                 status=status.HTTP_200_OK,
             )
 
@@ -176,14 +202,8 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
 
 
 class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
-    def work_item_completion_chart(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Any]:
-        # Get the base queryset
-        queryset = (
-            Issue.issue_objects.filter(**self.filters["base_filters"])
-            .filter(project_id=project_id)
-            .select_related("workspace", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
-        )
+    def work_item_completion_chart(self, project_id, cycle_id=None, module_id=None, epic=False) -> Dict[str, Any]:
+        queryset = None
 
         if cycle_id is not None:
             cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
@@ -209,7 +229,26 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 return {"data": [], "schema": {}}
             queryset = module_issues
 
+        elif epic:
+            queryset = Issue.objects.filter(**self.filters["base_filters"], project_id=project_id).filter(
+                Q(type__isnull=False) & Q(type__is_epic=True)
+            )
+
+            project = Project.objects.filter(id=project_id).first()
+            if project.created_at:
+                start_date = project.created_at.date().replace(day=1)
+            else:
+                return {"data": [], "schema": {}}
+
         else:
+            # Get the base queryset
+            queryset = (
+                Issue.issue_objects.filter(**self.filters["base_filters"])
+                .filter(project_id=project_id)
+                .select_related("workspace", "state", "parent")
+                .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
+            )
+
             project = Project.objects.filter(id=project_id).first()
             if project.created_at:
                 start_date = project.created_at.date().replace(day=1)
@@ -318,7 +357,11 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
         x_axis = request.GET.get("x_axis", "PRIORITY")
         cycle_id = request.GET.get("cycle_id", None)
         module_id = request.GET.get("module_id", None)
-
+        epic = request.GET.get("epic", False) and check_workspace_feature_flag(
+            feature_key=FeatureFlag.EPICS,
+            slug=slug,
+            user_id=request.user.id,
+        )
         if type == "custom-work-items":
             queryset = (
                 Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -340,6 +383,17 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 ).values_list("issue_id", flat=True)
                 queryset = queryset.filter(id__in=module_issues)
 
+            elif epic:
+                queryset = (
+                    Issue.objects.filter(**self.filters["base_filters"], project_id=project_id)
+                    .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+                    .select_related("workspace", "state", "parent")
+                    .prefetch_related(
+                        "assignees",
+                        "labels",
+                    )
+                )
+
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
                 start_date, end_date = self.filters["chart_period_range"]
@@ -351,12 +405,13 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             )
 
         elif type == "work-items":
-            # Optionally accept cycle_id or module_id as query params
-            cycle_id = request.GET.get("cycle_id", None)
-            module_id = request.GET.get("module_id", None)
-
             return Response(
-                self.work_item_completion_chart(project_id=project_id, cycle_id=cycle_id, module_id=module_id),
+                self.work_item_completion_chart(
+                    project_id=project_id,
+                    cycle_id=cycle_id,
+                    module_id=module_id,
+                    epic=epic,
+                ),
                 status=status.HTTP_200_OK,
             )
 

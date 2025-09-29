@@ -17,18 +17,21 @@ from rest_framework.response import Response
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import CycleIssueSerializer
-from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Cycle, CycleIssue, Issue, FileAsset, IssueLink
+from plane.db.models import Cycle, Issue, FileAsset, CycleIssue, IssueLink
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
     issue_queryset_grouper,
 )
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 
@@ -56,10 +59,6 @@ class CycleIssueViewSet(BaseViewSet):
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .filter(project__archived_at__isnull=True)
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .select_related("project")
@@ -67,6 +66,7 @@ class CycleIssueViewSet(BaseViewSet):
             .select_related("cycle")
             .select_related("issue", "issue__state", "issue__project")
             .prefetch_related("issue__assignees", "issue__labels")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 
@@ -160,12 +160,14 @@ class CycleIssueViewSet(BaseViewSet):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -195,6 +197,7 @@ class CycleIssueViewSet(BaseViewSet):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        queryset=total_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -236,6 +239,20 @@ class CycleIssueViewSet(BaseViewSet):
         existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
 
+        issue_cycle_data_added = [
+            {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
+            for issue_id in issues
+        ]
+
+        issues_removed = CycleIssue.objects.filter(
+            issue_id__in=existing_issues, workspace__slug=slug
+        ).values("issue_id", "cycle_id")
+
+        issue_cycle_data_removed = [
+            {"issue_id": str(issue["issue_id"]), "cycle_id": str(issue["cycle_id"])}
+            for issue in issues_removed
+        ]
+
         # New issues to create
         created_records = CycleIssue.objects.bulk_create(
             [
@@ -249,6 +266,7 @@ class CycleIssueViewSet(BaseViewSet):
                 )
                 for issue in new_issues
             ],
+            ignore_conflicts=True,
             batch_size=10,
         )
 
@@ -273,6 +291,22 @@ class CycleIssueViewSet(BaseViewSet):
 
         # Update the cycle issues
         CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+
+        # For REMOVED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=issue_cycle_data_removed,
+            user_id=str(request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
+
+        # For ADDED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=issue_cycle_data_added,
+            user_id=str(request.user.id),
+            slug=slug,
+            action="ADDED",
+        )
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
@@ -300,6 +334,7 @@ class CycleIssueViewSet(BaseViewSet):
             project_id=project_id,
             cycle_id=cycle_id,
         )
+
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
@@ -317,4 +352,11 @@ class CycleIssueViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
         cycle_issue.delete()
+        # Trigger the entity issue state activity task
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[{"issue_id": str(issue_id), "cycle_id": str(cycle_id)}],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)

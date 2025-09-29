@@ -6,16 +6,38 @@ the generated OpenAPI schema to apply custom filtering, tagging, and other
 transformations.
 """
 
+VIEWS_TO_SKIP = set(
+    [
+        "WikiBulkOperationAPIView",
+        "PublishedPageDetailAPIEndpoint",
+    ]
+)
+
 
 def preprocess_filter_api_v1_paths(endpoints):
     """
-    Filter OpenAPI endpoints to only include /api/v1/ paths and exclude PUT methods.
+    Filter OpenAPI endpoints to only include /api/v1/ paths, exclude PUT methods,
+    and exclude views that inherit from BaseServiceAPIView.
     """
+    from plane.ee.views.api.base import BaseServiceAPIView
+
     filtered = []
     for path, path_regex, method, callback in endpoints:
         # Only include paths that start with /api/v1/ and exclude PUT methods
-        if path.startswith("/api/v1/") and method.upper() != "PUT" and "server" not in path.lower():
-            filtered.append((path, path_regex, method, callback))
+        if not (path.startswith("/api/v1/") and method.upper() != "PUT"):
+            continue
+
+        # Don't include any server or page endpoints
+        if "server" in path.lower():
+            continue
+
+        # Check if the callback's view_class inherits from BaseServiceAPIView
+        view_class = getattr(callback, "view_class", None)
+        if view_class and (issubclass(view_class, BaseServiceAPIView) or view_class.__name__ in VIEWS_TO_SKIP):
+            # Skip views that inherit from BaseServiceAPIView or are in VIEWS_TO_SKIP
+            continue
+
+        filtered.append((path, path_regex, method, callback))
     return filtered
 
 

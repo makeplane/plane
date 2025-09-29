@@ -1,0 +1,180 @@
+name: AMI Build - DigitalOcean
+
+on:
+  push:
+    branches:
+      - appliance-digitalocean
+
+  workflow_dispatch:
+    inputs:
+      ami_prefix:
+        description: 'AMI Prefix'
+        required: true
+        default: 'plane-commercial'
+      prime_host:
+        description: 'Prime Host'
+        required: true
+        default: 'https://prime.plane.so'
+      mark_manifest_latest:
+        description: 'Mark manifest as latest'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  # Inputs
+  AMI_PREFIX: ${{ inputs.ami_prefix || 'plane-commercial' }}
+  PRIME_HOST: ${{ inputs.prime_host || 'https://prime.plane.so' }}
+  # Inputs by Devops
+  AWS_MANIFEST_BUCKET: 'plane-terraform-marketplace'
+  AWS_VPC_REGION: 'us-east-1'
+  # Secrets
+  AWS_ACCESS_KEY: ${{ secrets.MARKETPLACE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_KEY: ${{ secrets.MARKETPLACE_AWS_SECRET_ACCESS_KEY }}
+  # Constants
+  CURRENT_MANIFEST_FILE: 'ee-docker-digital-ocean-manifest.json'
+  EE_PACKER_FILE: 'ee-docker-digital-ocean.pkr.hcl'
+  MARK_MANIFEST_LATEST: ${{ inputs.mark_manifest_latest || false }}
+
+jobs:
+
+  build_ami:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_VPC_REGION }}
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: latest
+      - name: Copy Upload Assets
+        run: |
+          mkdir -p plane-dist
+          cp deployments/ami/commercial/cloudinit-ee/* plane-dist/
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
+
+      - name: Run `packer validate`
+        id: validate
+        run: "packer validate ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
+
+      - name: Make Variables File
+        id: make_variables_file
+        run: |
+          touch variables.pkrvars.hcl
+          echo "ami_name_prefix = \"${AMI_PREFIX}\"" >> variables.pkrvars.hcl
+          echo "prime_host = \"${PRIME_HOST}\"" >> variables.pkrvars.hcl
+          echo "instance_type = \"s-2vcpu-4gb\"" >> variables.pkrvars.hcl
+          echo "manifest_file_name = \"${{ env.CURRENT_MANIFEST_FILE }}\"" >> variables.pkrvars.hcl
+
+          cat variables.pkrvars.hcl
+
+      - name: Run `packer build`
+        id: build
+        run: |
+          packer build \
+            -var "api_token=${{ secrets.MARKETPLACE_DIGITAL_OCEAN_API_TOKEN }}" \
+            -var-file=variables.pkrvars.hcl \
+            ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}
+
+      - name: Extract AMI Information and Create Summary
+        id: ami_info
+        run: |
+          # Extract AMI details from manifest
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ${{env.CURRENT_MANIFEST_FILE}})
+          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Create array of AMI information
+          declare -a AMI_INFO
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            AMI_INFO+=("$REGION:$AMI_ID")
+          done
+          
+          # Add git information to manifest
+          jq --arg branch "${{ github.ref_name }}" \
+             --arg commit "${{ github.sha }}" \
+             --arg build_time "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+             '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
+             ${{env.CURRENT_MANIFEST_FILE}} > temp-manifest.json
+          mv temp-manifest.json ${{env.CURRENT_MANIFEST_FILE}}
+
+      - name: Store Manifest in S3
+        run: |
+          # Also store a versioned copy
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-digitalocean-manifest-${{ github.sha }}.json"
+
+      - name: Store Manifest in S3 as latest
+        if: ${{ env.MARK_MANIFEST_LATEST == 'true' }}
+        run: |
+          # Store the current manifest as latest
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-digitalocean-manifest-latest.json || true
+
+      - name: Upload Build Manifest as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ee-docker-digital-ocean-manifest
+          path: ${{env.CURRENT_MANIFEST_FILE}}
+          retention-days: 30
+
+
+      - name: Print Build Summary
+        id: print_build_summary
+        run: |
+          # Extract AMI details from manifest
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ${{env.CURRENT_MANIFEST_FILE}})
+          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Create array of AMI information
+          declare -a AMI_INFO
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            AMI_INFO+=("$REGION:$AMI_ID")
+          done
+          
+          # Create build summary with all AMIs
+          {
+            echo "### 🌎 Regional AMI Distribution"
+            echo "| Region | AMI ID |"
+            echo "| --- | --- |"
+            for ami_info in "${AMI_INFO[@]}"; do
+              region=${ami_info%:*}
+              ami_id=${ami_info#*:}
+              echo "| \`${region}\` | \`${ami_id}\` |"
+            done
+          } >> $GITHUB_STEP_SUMMARY
+
+          date_string=$(date +%d%b%Y)
+          {
+            echo "### 📁 S3 Files"
+            echo "| File | Path | "
+            echo "| --- | --- |"
+            echo "| Current Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json\` |"
+            echo "| Latest Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json\` |"
+          } >> $GITHUB_STEP_SUMMARY
+          
+          # Console output for logs
+          echo "✅ AMI built successfully!"
+          echo "🔹 AMI Information:"
+          for ami_info in "${AMI_INFO[@]}"; do
+            region=${ami_info%:*}
+            ami_id=${ami_info#*:}
+            echo "   • Region: ${region}, AMI ID: ${ami_id}"
+          done

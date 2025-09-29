@@ -5,6 +5,7 @@ from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 
 # Module imports
+from plane.ee.models import TeamspaceProject
 from plane.db.models import (
     Cycle,
     Issue,
@@ -19,12 +20,12 @@ from plane.db.models import (
     IssueLabel,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 def issue_queryset_grouper(
-    queryset: QuerySet[Issue],
-    group_by: Optional[str],
-    sub_group_by: Optional[str],
+    queryset: QuerySet[Issue], group_by: Optional[str], sub_group_by: Optional[str]
 ) -> QuerySet[Issue]:
     FIELD_MAPPER: Dict[str, str] = {
         "label_ids": "labels__id",
@@ -90,6 +91,8 @@ def issue_on_results(
     issues: QuerySet[Issue],
     group_by: Optional[str],
     sub_group_by: Optional[str],
+    slug: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     FIELD_MAPPER: Dict[str, str] = {
         "labels__id": "label_ids",
@@ -123,7 +126,12 @@ def issue_on_results(
         "is_draft",
         "archived_at",
         "state__group",
+        "type_id",
     ]
+
+    if slug:
+        if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id):
+            required_fields.extend(["customer_ids", "customer_request_ids"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])
@@ -142,6 +150,8 @@ def issue_group_values(
     slug: str,
     project_id: Optional[str] = None,
     filters: Dict[str, Any] = {},
+    team_id: Optional[str] = None,
+    epic: bool = False,
     queryset: Optional[QuerySet] = None,
 ) -> List[Union[str, Any]]:
     if field == "state_id":
@@ -180,34 +190,61 @@ def issue_group_values(
         return list(queryset) + ["None"]
 
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        return list(queryset)
-
+        if team_id:
+            queryset = TeamspaceProject.objects.filter(workspace__slug=slug, team_space_id=team_id).values_list(
+                "project_id", flat=True
+            )
+            return list(queryset)
+        else:
+            queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
+            return list(queryset)
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]
 
     if field == "state__group":
         return ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-    if field == "target_date":
-        queryset = queryset.values_list("target_date", flat=True).distinct()
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
+    if epic:
+        if field == "target_date":
+            queryset = queryset.values_list("target_date", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+        if field == "start_date":
+            queryset = queryset.values_list("start_date", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
 
-    if field == "start_date":
-        queryset = queryset.values_list("start_date", flat=True).distinct()
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
+        if field == "created_by":
+            queryset = queryset.values_list("created_by", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
 
-    if field == "created_by":
-        queryset = queryset.values_list("created_by", flat=True).distinct()
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
+    else:
+        if field == "target_date":
+            queryset = queryset.values_list("target_date", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+
+        if field == "start_date":
+            queryset = queryset.values_list("start_date", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
+
+        if field == "created_by":
+            queryset = queryset.values_list("created_by", flat=True).distinct()
+            if project_id:
+                return list(queryset.filter(project_id=project_id))
+            else:
+                return list(queryset)
 
     return []

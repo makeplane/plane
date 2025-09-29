@@ -13,6 +13,8 @@ from plane.utils.exception_logger import log_exception
 from plane.settings.storage import S3Storage
 from celery import shared_task
 from plane.utils.url import normalize_url_path
+from typing import List, Dict
+from django.db.models import Model
 
 
 def get_entity_id_field(entity_type, entity_id):
@@ -52,14 +54,15 @@ def replace_asset_ids(html, tag, duplicated_assets):
         return html
 
 
-def update_description(entity, duplicated_assets, tag):
-    updated_html = replace_asset_ids(entity.description_html, tag, duplicated_assets)
-    entity.description_html = updated_html
+def update_description(entity, duplicated_assets, tags):
+    for tag in tags:
+        updated_html = replace_asset_ids(entity.description_html, tag, duplicated_assets)
+        entity.description_html = updated_html
     entity.save()
-    return updated_html
+    return entity.description_html
 
 
-# Get the description binary and description from the live server
+# Get the description binary and json from the live server
 def sync_with_external_service(entity_name, description_html):
     try:
         data = {
@@ -73,7 +76,13 @@ def sync_with_external_service(entity_name, description_html):
 
         url = normalize_url_path(f"{live_url}/convert-document/")
 
-        response = requests.post(url, json=data, headers=None)
+        response = requests.post(
+            url,
+            json=data,
+            headers={
+                "LIVE_SERVER_SECRET_KEY": settings.LIVE_SERVER_SECRET_KEY,
+            },
+        )
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:
@@ -81,44 +90,70 @@ def sync_with_external_service(entity_name, description_html):
     return {}
 
 
-def copy_assets(entity, entity_identifier, project_id, asset_ids, user_id):
-    duplicated_assets = []
-    workspace = entity.workspace
-    storage = S3Storage()
-    original_assets = FileAsset.objects.filter(workspace=workspace, project_id=project_id, id__in=asset_ids)
+def copy_assets(
+    entity: Model,
+    asset_ids: List[str],
+    project_id: str,
+    entity_identifier: str,
+    user_id: str,
+    copy_to_entity_project: bool = False,
+) -> List[Dict[str, str]]:
+    try:
+        duplicated_assets = []
+        workspace = entity.workspace
+        storage = S3Storage()
 
-    for original_asset in original_assets:
-        destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
-        duplicated_asset = FileAsset.objects.create(
-            attributes={
-                "name": original_asset.attributes.get("name"),
-                "type": original_asset.attributes.get("type"),
-                "size": original_asset.attributes.get("size"),
-            },
-            asset=destination_key,
-            size=original_asset.size,
-            workspace=workspace,
-            created_by_id=user_id,
-            entity_type=original_asset.entity_type,
-            project_id=project_id,
-            storage_metadata=original_asset.storage_metadata,
-            **get_entity_id_field(original_asset.entity_type, entity_identifier),
-        )
-        storage.copy_object(original_asset.asset, destination_key)
-        duplicated_assets.append(
-            {
-                "new_asset_id": str(duplicated_asset.id),
-                "old_asset_id": str(original_asset.id),
-            }
-        )
-    if duplicated_assets:
-        FileAsset.objects.filter(pk__in=[item["new_asset_id"] for item in duplicated_assets]).update(is_uploaded=True)
+        original_assets = FileAsset.objects.filter(workspace=workspace, project_id=project_id, id__in=asset_ids)
 
-    return duplicated_assets
+        if copy_to_entity_project:
+            project_id = entity.project_id
+
+        for original_asset in original_assets:
+            destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
+            duplicated_asset = FileAsset.objects.create(
+                attributes={
+                    "name": original_asset.attributes.get("name"),
+                    "type": original_asset.attributes.get("type"),
+                    "size": original_asset.attributes.get("size"),
+                },
+                asset=destination_key,
+                size=original_asset.size,
+                workspace=workspace,
+                created_by_id=user_id,
+                entity_type=original_asset.entity_type,
+                project_id=project_id,
+                storage_metadata=original_asset.storage_metadata,
+                **get_entity_id_field(original_asset.entity_type, entity_identifier),
+            )
+
+            storage.copy_object(original_asset.asset, destination_key)
+            duplicated_assets.append(
+                {
+                    "new_asset_id": str(duplicated_asset.id),
+                    "old_asset_id": str(original_asset.id),
+                }
+            )
+
+        if duplicated_assets:
+            FileAsset.objects.filter(pk__in=[item["new_asset_id"] for item in duplicated_assets]).update(
+                is_uploaded=True
+            )
+
+        return duplicated_assets
+    except Exception as e:
+        log_exception(e)
+        return []
 
 
 @shared_task
-def copy_s3_objects_of_description_and_assets(entity_name, entity_identifier, project_id, slug, user_id):
+def copy_s3_objects_of_description_and_assets(
+    entity_name: str,
+    entity_identifier: str,
+    project_id: str,
+    slug: str,
+    user_id: str,
+    copy_to_entity_project: bool = False,
+) -> None:
     """
     Step 1: Extract asset ids from the description_html of the entity
     Step 2: Duplicate the assets
@@ -132,20 +167,74 @@ def copy_s3_objects_of_description_and_assets(entity_name, entity_identifier, pr
             raise ValueError(f"Unsupported entity_name: {entity_name}")
 
         entity = model_class.objects.get(id=entity_identifier)
+
+        asset_ids = []
         asset_ids = extract_asset_ids(entity.description_html, "image-component")
 
-        duplicated_assets = copy_assets(entity, entity_identifier, project_id, asset_ids, user_id)
+        # if copy_entity_project is true, extend asset_ids to include attachment-component assets
+        if copy_to_entity_project:
+            asset_ids.extend(extract_asset_ids(entity.description_html, "attachment-component"))
 
-        updated_html = update_description(entity, duplicated_assets, "image-component")
+        duplicated_assets = copy_assets(
+            entity=entity,
+            asset_ids=asset_ids,
+            project_id=project_id,
+            entity_identifier=entity_identifier,
+            user_id=user_id,
+            copy_to_entity_project=copy_to_entity_project,
+        )
 
-        external_data = sync_with_external_service(entity_name, updated_html)
+        if duplicated_assets:
+            # update the description_html with the image-component assets
+            if copy_to_entity_project:
+                updated_html = update_description(
+                    entity,
+                    duplicated_assets,
+                    ["image-component", "attachment-component"],
+                )
 
-        if external_data:
-            entity.description = external_data.get("description")
-            entity.description_binary = base64.b64decode(external_data.get("description_binary"))
-            entity.save()
+                entity.save()
+
+            else:
+                updated_html = update_description(entity, duplicated_assets, ["image-component"])
+
+                external_data = sync_with_external_service(entity_name, updated_html)
+
+                if external_data:
+                    entity.description = external_data.get("description")
+                    entity.description_binary = base64.b64decode(external_data.get("description_binary"))
+                    entity.save()
 
         return
     except Exception as e:
         log_exception(e)
         return []
+
+
+@shared_task
+def copy_s3_objects_of_issue_attachment(
+    project_id: str,
+    user_id: str,
+    original_issue_id: str,
+    entity_identifier: str,
+    copy_to_entity_project: bool = False,
+) -> None:
+    """
+    This task is used to duplicate the issue attachment assets of an issue
+    """
+    original_asset_ids = []
+    issue = Issue.objects.get(pk=original_issue_id)
+    issue_attachment_assets = list(issue.assets.filter(entity_type="ISSUE_ATTACHMENT").values_list("id", flat=True))
+
+    issue_attachment_asset_ids = [str(asset) for asset in issue_attachment_assets]
+
+    original_asset_ids.extend(issue_attachment_asset_ids)
+    copy_assets(
+        entity=issue,
+        asset_ids=original_asset_ids,
+        project_id=project_id,
+        user_id=user_id,
+        copy_to_entity_project=copy_to_entity_project,
+        entity_identifier=entity_identifier,
+    )
+    return

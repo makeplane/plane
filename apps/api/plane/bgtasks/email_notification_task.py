@@ -178,6 +178,12 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
 
             receiver = User.objects.get(pk=receiver_id)
             issue = Issue.objects.get(pk=issue_id)
+
+            if issue.type and issue.type.is_epic:
+                entity_type = "epic"
+            else:
+                entity_type = "work-item"
+
             template_data = []
             total_changes = 0
             comments = []
@@ -234,6 +240,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     )
 
             summary = "Updates were made to the issue by"
+            issue_identifier = f"{str(issue.project.identifier)}-{str(issue.sequence_id)}"
 
             # Send the mail
             subject = f"{issue.project.identifier}-{issue.sequence_id} {remove_unwanted_characters(issue.name)}"
@@ -242,18 +249,18 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 "summary": summary,
                 "actors_involved": len(set(actors_involved)),
                 "issue": {
-                    "issue_identifier": f"{str(issue.project.identifier)}-{str(issue.sequence_id)}",
+                    "issue_identifier": issue_identifier,
                     "name": issue.name,
-                    "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",  # noqa: E501
+                    "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/browse/{issue_identifier}",
                 },
                 "receiver": {"email": receiver.email},
-                "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",  # noqa: E501
+                "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/browse/{issue_identifier}",
                 "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",  # noqa: E501
                 "workspace": str(issue.project.workspace.slug),
                 "project": str(issue.project.name),
                 "user_preference": f"{base_api}/{str(issue.project.workspace.slug)}/settings/account/notifications/",
                 "comments": comments,
-                "entity_type": "issue",
+                "entity_type": entity_type,
             }
             html_content = render_to_string("emails/notifications/issue-updates.html", context)
             text_content = strip_tags(html_content)

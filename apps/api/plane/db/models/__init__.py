@@ -57,7 +57,7 @@ from .project import (
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State
-from .user import Account, Profile, User
+from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
@@ -74,7 +74,7 @@ from .workspace import (
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, ProjectIssueType
 
 from .recent_visit import UserRecentVisit
 
