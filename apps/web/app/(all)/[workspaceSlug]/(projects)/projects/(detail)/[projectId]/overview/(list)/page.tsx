@@ -32,7 +32,8 @@ const ProjectPagesPage = observer(() => {
   const { getProjectById, currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId.toString());
+  if (!project) return;
   const pageTitle = project?.name ? `${project?.name} - Overview` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/pages" });
@@ -67,7 +68,8 @@ const ProjectPagesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <OverviewListView projectId={projectId.toString()} workspaceSlug={workspaceSlug.toString()}>
+
+      <OverviewListView project={project} workspaceSlug={workspaceSlug.toString()}>
         <h2>qqq</h2>
       </OverviewListView>
     </>

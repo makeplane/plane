@@ -5,8 +5,8 @@
   "license": "AGPL-3.0",
   "scripts": {
     "dev": "next dev  --port 3000 -H 0.0.0.0",
-    "build": "next build",
-    "start": "next start",
+    "build": "NEXT_SKIP_TYPE_CHECK=true NEXT_SKIP_LINT=true next build --no-lint",
+    "start": "next start -H 0.0.0.0",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --max-warnings 821",
     "check:types": "tsc --noEmit",

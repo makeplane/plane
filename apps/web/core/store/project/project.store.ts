@@ -51,6 +51,8 @@ export interface IProjectStore {
   fetchPartialProjects: (workspaceSlug: string) => Promise<TPartialProject[]>;
   fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<TProject>;
+  fetchProjectHistory: (workspaceSlug: string, projectId: string) => Promise<any[]>;
+  fetchProjectAnalyze: (workspaceSlug: string, projectId: string) => Promise<any>;
   fetchProjectAnalyticsCount: (
     workspaceSlug: string,
     params?: TProjectAnalyticsCountParams
@@ -113,6 +115,8 @@ export class ProjectStore implements IProjectStore {
       fetchPartialProjects: action,
       fetchProjects: action,
       fetchProjectDetails: action,
+      fetchProjectHistory: action,
+      fetchProjectAnalyze: action,
       fetchProjectAnalyticsCount: action,
       // favorites actions
       addProjectToFavorites: action,
@@ -351,6 +355,30 @@ export class ProjectStore implements IProjectStore {
         update(this.projectMap, [projectId], (p) => ({ ...p, ...response }));
       });
       return response;
+    } catch (error) {
+      console.log("Error while fetching project details", error);
+      throw error;
+    }
+  };
+
+  fetchProjectAnalyze = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const response = await this.projectService.getProjectAnalyze(workspaceSlug, projectId);
+      return response;
+    } catch (error) {
+      console.log("Error while fetching project details", error);
+      throw error;
+    }
+  };
+
+  fetchProjectHistory = async (workspaceSlug: string, projectId: string) => {
+    try {
+      // 目前后端尚未实现该接口，返回模拟数据
+      // const response = await this.projectService.getProjectHistory(workspaceSlug, projectId);
+      // return response;
+      
+      const response = '[{"id":"83c4c56e-f267-4f18-81a3-d5776d856b8b","deleted_at":null,"actor_detail":{"id":"0b8a2dc5-2043-4a7e-8726-19ec159cf6a8","first_name":"YZ","last_name":"","avatar":"","avatar_url":null,"is_bot":false,"display_name":"xxxx2024"},"project_detail":{"id":"9b9fd37c-359f-4969-87ac-19377ba05c61","identifier":"KF789","name":"kf789","cover_image":"https://images.unsplash.com/photo-1691230995681-480d86cbc135?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80","cover_image_url":"https://images.unsplash.com/photo-1691230995681-480d86cbc135?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80","logo_props":{"emoji":{"url":"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f447.png","value":"128071"},"in_use":"emoji"},"description":"Welcome to the Plane Demo Project! This project throws you into the driver’s seat of Plane, work management software. Through curated work items, you’ll uncover key features, pick up best practices, and see how Plane can streamline your team’s workflow. Whether you’re a startup hungry to scale or an enterprise sharpening efficiency, this demo is your launchpad to mastering Plane. Jump in and see what it can do!"},"workspace_detail":{"name":"kf789","slug":"kf789","id":"a29df89c-6208-4272-a18d-ec491b81d183","logo_url":null},"created_at":"2025-09-25T06:46:35.434624Z","updated_at":"2025-09-25T06:46:35.434638Z","verb":"updated","field":"description","old_value":null,"new_value":"<p class=\\"editor-paragraph-block\\">DSFSDFSD</p>","comment":"updated the description to","old_identifier":null,"new_identifier":null,"epoch":1758869195,"created_by":null,"updated_by":null,"project":"9b9fd37c-359f-4969-87ac-19377ba05c61","workspace":"a29df89c-6208-4272-a18d-ec491b81d183","issue":null,"issue_comment":null,"actor":"0b8a2dc5-2043-4a7e-8726-19ec159cf6a8"},{"id":"93c4c56e-f267-4f18-81a3-d5776d856b8b","deleted_at":null,"actor_detail":{"id":"0b8a2dc5-2043-4a7e-8726-19ec159cf6a8","first_name":"YZ","last_name":"","avatar":"","avatar_url":null,"is_bot":false,"display_name":"zhenggg2024"},"project_detail":{"id":"9b9fd37c-359f-4969-87ac-19377ba05c61","identifier":"KF789","name":"kf789","cover_image":"https://images.unsplash.com/photo-1691230995681-480d86cbc135?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80","cover_image_url":"https://images.unsplash.com/photo-1691230995681-480d86cbc135?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80","logo_props":{"emoji":{"url":"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f447.png","value":"128071"},"in_use":"emoji"},"description":"Welcome to the Plane Demo Project! This project throws you into the driver’s seat of Plane, work management software. Through curated work items, you’ll uncover key features, pick up best practices, and see how Plane can streamline your team’s workflow. Whether you’re a startup hungry to scale or an enterprise sharpening efficiency, this demo is your launchpad to mastering Plane. Jump in and see what it can do!"},"workspace_detail":{"name":"kf789","slug":"kf789","id":"a29df89c-6208-4272-a18d-ec491b81d183","logo_url":null},"created_at":"2025-09-26T06:46:35.434624Z","updated_at":"2025-09-26T06:46:35.434638Z","verb":"updated","field":"description","old_value":null,"new_value":"<p class=\\"editor-paragraph-block\\">DSFSDFSD</p>","comment":"updated the description to","old_identifier":null,"new_identifier":null,"epoch":1758869195,"created_by":null,"updated_by":null,"project":"9b9fd37c-359f-4969-87ac-19377ba05c61","workspace":"a29df89c-6208-4272-a18d-ec491b81d183","issue":null,"issue_comment":null,"actor":"0b8a2dc5-2043-4a7e-8726-19ec159cf6a8"}]'
+      return JSON.parse(response);
     } catch (error) {
       console.log("Error while fetching project details", error);
       throw error;

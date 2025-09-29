@@ -31,7 +31,7 @@ type Props = TDropdownProps & {
   maxDate?: Date;
   onChange: (val: Date | null) => void;
   onClose?: () => void;
-  value: Date | string | null;
+  value: Date | string | null | undefined;
   closeOnSelect?: boolean;
   formatToken?: string;
   renderByDefault?: boolean;
