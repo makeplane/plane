@@ -20,7 +20,7 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // plane web imports
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {
@@ -175,11 +175,12 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   initialWorkItemFilters={workItemFilters}
                   isTemporary
                   updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
+                  showOnMount
                   workspaceSlug={workspaceSlug}
                 >
                   {({ filter: workspaceViewWorkItemsFilter }) =>
                     workspaceViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={workspaceViewWorkItemsFilter} variant="default" />
+                      <WorkItemFiltersRow filter={workspaceViewWorkItemsFilter} variant="modal" />
                     )
                   }
                 </WorkspaceLevelWorkItemFiltersHOC>

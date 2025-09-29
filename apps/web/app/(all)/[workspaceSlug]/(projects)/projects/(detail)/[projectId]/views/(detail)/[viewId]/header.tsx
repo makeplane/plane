@@ -30,6 +30,7 @@ import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label"
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 // constants
 import { ViewQuickActions } from "@/components/views/quick-actions";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -44,8 +45,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // refs
   const parentRef = useRef(null);
   // router
-  const { workspaceSlug, projectId, viewId } = useParams();
   const router = useAppRouter();
+  const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -162,8 +164,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        {!viewDetails?.is_locked ? (
-          <>
+        <>
+          {!viewDetails.is_locked && (
             <LayoutSelection
               layouts={[
                 EIssueLayoutTypes.LIST,
@@ -175,6 +177,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
+          )}
+          {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
+          {!viewDetails.is_locked && (
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -188,10 +193,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-          </>
-        ) : (
-          <></>
-        )}
+          )}
+        </>
         {canUserCreateIssue ? (
           <Button
             onClick={() => {

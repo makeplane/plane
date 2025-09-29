@@ -14,6 +14,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { TProject } from "@/plane-web/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
+import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -102,6 +103,7 @@ export const HeaderFilters = observer((props: Props) => {
           activeLayout={activeLayout}
         />
       </div>
+      <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}
         title={t("common.display")}

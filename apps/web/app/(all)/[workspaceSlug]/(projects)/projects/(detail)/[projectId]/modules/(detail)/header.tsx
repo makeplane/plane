@@ -34,8 +34,8 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
-// helpers
 import { ModuleQuickActions } from "@/components/modules";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -56,7 +56,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, moduleId } = useParams();
+  const { workspaceSlug, projectId, moduleId: routerModuleId } = useParams();
+  const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks
@@ -74,7 +75,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const moduleDetails = moduleId ? getModuleById(moduleId) : undefined;
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -196,6 +197,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 activeLayout={activeLayout}
               />
             </div>
+            {moduleId && <WorkItemFiltersToggle entityType={EIssuesStoreType.MODULE} entityId={moduleId} />}
             <FiltersDropdown
               title="Display"
               placement="bottom-end"
@@ -250,13 +252,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId?.toString()}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
-            customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
-          />
+          {moduleId && (
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+              customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
+            />
+          )}
         </Header.RightItem>
       </Header>
     </>

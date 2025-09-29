@@ -9,7 +9,7 @@ import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: {
-    label?: string;
+    label: string | null;
     variant?: TButtonVariant;
     className?: string;
     defaultOpen?: boolean;
@@ -27,7 +27,7 @@ export const AddFilterButton = observer(
   <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterButtonProps<P, E>) => {
     const { filter, buttonConfig, onFilterSelect } = props;
     const {
-      label = "Filters",
+      label,
       variant = "link-neutral",
       className,
       defaultOpen = false,

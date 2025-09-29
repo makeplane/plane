@@ -22,7 +22,7 @@ import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } 
 // components
 import { Logo } from "@/components/common/logo";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -264,11 +264,12 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   isTemporary
                   updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
                   projectId={projectId}
+                  showOnMount
                   workspaceSlug={workspaceSlug}
                 >
                   {({ filter: projectViewWorkItemsFilter }) =>
                     projectViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="default" />
+                      <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="modal" />
                     )
                   }
                 </ProjectLevelWorkItemFiltersHOC>
