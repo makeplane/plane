@@ -39,16 +39,6 @@ export abstract class PageCoreService extends APIService {
       });
   }
 
-  async fetchPageProperties(pageId: string): Promise<TPage> {
-    return this.get(`${this.basePath}/pages/${pageId}/`, {
-      headers: this.getHeader(),
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   /**
    * Updates the title of a page
    */
@@ -76,7 +66,7 @@ export abstract class PageCoreService extends APIService {
 
     try {
       return await Promise.race([
-        this.patch(`${this.basePath}/${pageId}`, data, {
+        this.patch(`${this.basePath}/pages/${pageId}`, data, {
           headers: this.getHeader(),
           signal: abortSignal,
         })
