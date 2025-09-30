@@ -20,12 +20,11 @@ export class Redis extends HocuspocusRedis {
     const stringPayload = typeof payload === "string" ? payload : JSON.stringify(payload);
     const message = new OutgoingMessage(documentName).writeBroadcastStateless(stringPayload);
 
-    const emptyPrefix = Buffer.concat([Buffer.from([0])]);
-
-    return this.pub.publishBuffer(
+    return this.pub.publish(
       // we're accessing the private method of the hocuspocus redis extension
       this["pubKey"](documentName),
-      Buffer.concat([emptyPrefix, Buffer.from(message.toUint8Array())])
+      // we're accessing the private method of the hocuspocus redis extension to encode the message
+      this["encodeMessage"](message.toUint8Array())
     );
   }
 }
