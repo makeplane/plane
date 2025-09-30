@@ -53,7 +53,13 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
   const filteredMemberIds = workspaceSlug ? getFilteredWorkspaceMemberIds(workspaceSlug.toString()) : [];
   const searchedMemberIds = searchQuery ? getSearchedWorkspaceMemberIds(searchQuery) : filteredMemberIds;
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
-  const memberDetails = searchedMemberIds?.map((memberId) => getWorkspaceMemberDetails(memberId));
+  const memberDetails = searchedMemberIds
+    ?.map((memberId) => getWorkspaceMemberDetails(memberId))
+    .sort((a, b) => {
+      if (a?.is_active && !b?.is_active) return -1;
+      if (!a?.is_active && b?.is_active) return 1;
+      return 0;
+    });
 
   return (
     <>

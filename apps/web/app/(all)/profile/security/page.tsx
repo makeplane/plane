@@ -7,7 +7,8 @@ import { Eye, EyeOff } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";

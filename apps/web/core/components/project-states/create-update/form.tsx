@@ -2,8 +2,9 @@
 
 import { FC, useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
+import { Button } from "@plane/propel/button";
 import { IState } from "@plane/types";
-import { Button, Popover, Input, TextArea } from "@plane/ui";
+import { Popover, Input, TextArea } from "@plane/ui";
 
 type TStateForm = {
   data: Partial<IState>;

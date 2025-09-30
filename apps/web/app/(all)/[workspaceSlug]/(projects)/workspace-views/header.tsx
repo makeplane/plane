@@ -12,6 +12,7 @@ import {
   DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
@@ -19,7 +20,7 @@ import {
   ICustomSearchSelectOption,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";

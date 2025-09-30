@@ -9,9 +9,9 @@ import { mutate } from "swr";
 // icons
 import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
 // types
+import { Button } from "@plane/propel/button";
 import { IJiraImporterForm } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks

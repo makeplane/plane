@@ -7,6 +7,7 @@ import { Layers } from "lucide-react";
 // plane imports
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import {
   EViewAccess,
@@ -17,7 +18,7 @@ import {
   EIssuesStoreType,
   IIssueFilters,
 } from "@plane/types";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

@@ -14,6 +14,7 @@ import {
   EProjectFeatureKey,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { DiceIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
@@ -23,7 +24,7 @@ import {
   IIssueDisplayProperties,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";

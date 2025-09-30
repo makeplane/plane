@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { ChevronLeftIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/ui/src/button";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

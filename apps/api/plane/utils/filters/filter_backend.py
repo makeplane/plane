@@ -55,9 +55,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return raw_filter
             raise ValidationError(f"'{source_label}' must be a dict or a JSON string.")
         except json.JSONDecodeError:
-            raise ValidationError(
-                f"Invalid JSON for '{source_label}'. Expected a valid JSON object."
-            )
+            raise ValidationError(f"Invalid JSON for '{source_label}'. Expected a valid JSON object.")
 
     def _apply_json_filter(self, queryset, filter_data, view):
         """Process a JSON filter structure using OR/AND/NOT set operations."""
@@ -80,14 +78,10 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
     def _validate_fields(self, filter_data, view):
         """Validate that filtered fields are defined in the view's FilterSet."""
         filterset_class = getattr(view, "filterset_class", None)
-        allowed_fields = (
-            set(filterset_class.base_filters.keys()) if filterset_class else None
-        )
+        allowed_fields = set(filterset_class.base_filters.keys()) if filterset_class else None
         if not allowed_fields:
             # If no FilterSet is configured, reject filtering to avoid unintended exposure # noqa: E501
-            raise ValidationError(
-                "Filtering is not enabled for this endpoint (missing filterset_class)"
-            )
+            raise ValidationError("Filtering is not enabled for this endpoint (missing filterset_class)")
 
         # Extract field names from the filter data
         fields = self._extract_field_names(filter_data)
@@ -188,11 +182,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 continue
 
             # Check if this child contains logical operators
-            has_logical = any(
-                k.lower() in ("or", "and", "not")
-                for k in child.keys()
-                if isinstance(k, str)
-            )
+            has_logical = any(k.lower() in ("or", "and", "not") for k in child.keys() if isinstance(k, str))
 
             if has_logical:
                 # This child has logical operators, evaluate separately
@@ -208,9 +198,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
 
         # Apply collected field conditions together if any exist
         if collected_conditions:
-            result_qs = self._filter_leaf_via_backend(
-                collected_conditions, result_qs, view
-            )
+            result_qs = self._filter_leaf_via_backend(collected_conditions, result_qs, view)
             if result_qs is None:
                 return None
 
@@ -284,10 +272,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         - Depth must not exceed max_depth
         """
         if current_depth > max_depth:
-            raise ValidationError(
-                f"Filter nesting is too deep (max {max_depth}); found depth"
-                f" {current_depth}"
-            )
+            raise ValidationError(f"Filter nesting is too deep (max {max_depth}); found depth {current_depth}")
 
         if not isinstance(node, dict):
             raise ValidationError("Each filter node must be a JSON object")
@@ -295,40 +280,26 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         if not node:
             raise ValidationError("Filter objects must not be empty")
 
-        logical_keys = [
-            k
-            for k in node.keys()
-            if isinstance(k, str) and k.lower() in ("or", "and", "not")
-        ]
+        logical_keys = [k for k in node.keys() if isinstance(k, str) and k.lower() in ("or", "and", "not")]
 
         if len(logical_keys) > 1:
-            raise ValidationError(
-                "A filter object cannot contain multiple logical operators at"
-                " the same level"
-            )
+            raise ValidationError("A filter object cannot contain multiple logical operators at the same level")
 
         if len(logical_keys) == 1:
             op_key = logical_keys[0]
             # must not mix operator with other keys
             if len(node) != 1:
-                raise ValidationError(
-                    f"Cannot mix logical operator '{op_key}' with field keys at"
-                    f" the same level"
-                )
+                raise ValidationError(f"Cannot mix logical operator '{op_key}' with field keys at the same level")
 
             op = op_key.lower()
             value = node[op_key]
 
             if op in ("or", "and"):
                 if not isinstance(value, list) or len(value) == 0:
-                    raise ValidationError(
-                        f"'{op}' must be a non-empty list of filter objects"
-                    )
+                    raise ValidationError(f"'{op}' must be a non-empty list of filter objects")
                 for child in value:
                     if not isinstance(child, dict):
-                        raise ValidationError(
-                            f"All children of '{op}' must be JSON objects"
-                        )
+                        raise ValidationError(f"All children of '{op}' must be JSON objects")
                     self._validate_structure(
                         child,
                         max_depth=max_depth,
@@ -339,9 +310,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             if op == "not":
                 if not isinstance(value, dict):
                     raise ValidationError("'not' must be a single JSON object")
-                self._validate_structure(
-                    value, max_depth=max_depth, current_depth=current_depth + 1
-                )
+                self._validate_structure(value, max_depth=max_depth, current_depth=current_depth + 1)
                 return
 
         # Leaf node: validate fields and values
@@ -354,9 +323,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
 
         for key, value in leaf.items():
             if isinstance(key, str) and key.lower() in ("or", "and", "not"):
-                raise ValidationError(
-                    "Logical operators cannot appear in a leaf filter object"
-                )
+                raise ValidationError("Logical operators cannot appear in a leaf filter object")
 
             # Lists/Tuples must contain only scalar values
             if isinstance(value, (list, tuple)):
@@ -364,17 +331,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                     raise ValidationError(f"List value for '{key}' must not be empty")
                 for item in value:
                     if not self._is_scalar(item):
-                        raise ValidationError(
-                            f"List value for '{key}' must contain only scalar items"
-                        )
+                        raise ValidationError(f"List value for '{key}' must contain only scalar items")
                 continue
 
             # Scalars and None are allowed
             if not self._is_scalar(value):
-                raise ValidationError(
-                    f"Value for '{key}' must be a scalar, null, or list/tuple of"
-                    f" scalars"
-                )
+                raise ValidationError(f"Value for '{key}' must be a scalar, null, or list/tuple of scalars")
 
     def _is_scalar(self, value):
         return value is None or isinstance(value, (str, int, float, bool))
