@@ -93,7 +93,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
-          projectId={projectId?.toString() ?? ""}
+          projectId={projectId}
           parentClassName="p-2"
           displayConfig={{
             fontSize: "small-font",
