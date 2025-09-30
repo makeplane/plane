@@ -4,6 +4,7 @@ import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
+  DEFAULT_FILTER_VISIBILITY_OPTIONS,
   TClearFilterOptions,
   TExpressionOptions,
   TFilterOptions,
@@ -71,6 +72,7 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   // computed
   hasActiveFilters: boolean;
   hasChanges: boolean;
+  isVisible: boolean;
   allConditions: TFilterConditionNode<P, TFilterValue>[];
   allConditionsForDisplay: TFilterConditionNodeForDisplay<P, TFilterValue>[];
   // computed option helpers
@@ -81,6 +83,8 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   canClearFilters: boolean;
   canSaveView: boolean;
   canUpdateView: boolean;
+  // visibility
+  toggleVisibility: (isVisible?: boolean) => void;
   // filter expression actions
   resetExpression: (externalExpression: E, shouldResetInitialExpression?: boolean) => void;
   // filter condition
@@ -108,7 +112,7 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   updateExpressionOptions: (newOptions: Partial<TExpressionOptions<E>>) => void;
 }
 
-export type TFilterParams<P extends TFilterProperty, E extends TExternalFilter> = {
+type TFilterParams<P extends TFilterProperty, E extends TExternalFilter> = {
   adapter: IFilterAdapter<P, E>;
   options?: Partial<TFilterOptions<E>>;
   initialExpression?: E;
@@ -131,7 +135,9 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   constructor(params: TFilterParams<P, E>) {
     this.id = uuidv4();
     this.adapter = params.adapter;
-    this.helper = new FilterInstanceHelper<P, E>(this.adapter);
+    this.helper = new FilterInstanceHelper<P, E>(this, {
+      adapter: this.adapter,
+    });
     this.configManager = new FilterConfigManager<P, E>(this, {
       options: params.options?.config,
     });
@@ -141,6 +147,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
     this.expression = cloneDeep(initialExpression);
     this.expressionOptions = this.helper.initializeExpressionOptions(params.options?.expression);
     this.onExpressionChange = params.onExpressionChange;
+    this.helper.setInitialVisibility(params.options?.visibility ?? DEFAULT_FILTER_VISIBILITY_OPTIONS);
 
     makeObservable(this, {
       // observables
@@ -153,6 +160,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       // computed
       hasActiveFilters: computed,
       hasChanges: computed,
+      isVisible: computed,
       allConditions: computed,
       allConditionsForDisplay: computed,
       // computed option helpers
@@ -199,6 +207,14 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   get hasChanges(): IFilterInstance<P, E>["hasChanges"] {
     return !deepCompareFilterExpressions(this.initialFilterExpression, this.expression);
+  }
+
+  /**
+   * Returns the visibility of the filter instance.
+   * @returns The visibility of the filter instance.
+   */
+  get isVisible(): IFilterInstance<P, E>["isVisible"] {
+    return this.helper.isVisible;
   }
 
   /**
@@ -278,6 +294,14 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   }
 
   // ------------ actions ------------
+
+  /**
+   * Toggles the visibility of the filter instance.
+   * @param isVisible - The visibility to set.
+   */
+  toggleVisibility: IFilterInstance<P, E>["toggleVisibility"] = action((isVisible) => {
+    this.helper.toggleVisibility(isVisible);
+  });
 
   /**
    * Resets the filter expression to the initial expression.

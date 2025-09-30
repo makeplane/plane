@@ -38,6 +38,7 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -209,6 +210,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 activeLayout={activeLayout}
               />
             </div>
+            <WorkItemFiltersToggle entityType={EIssuesStoreType.CYCLE} entityId={cycleId} />
             <FiltersDropdown
               title={t("common.display")}
               placement="bottom-end"
