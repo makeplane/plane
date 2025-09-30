@@ -43,6 +43,20 @@ export const BlockMenu = (props: Props) => {
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
 
+  const openBlockMenu = useCallback(() => {
+    if (!isOpen) {
+      setIsOpen(true);
+      editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
+  const closeBlockMenu = useCallback(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
   // Handle click on drag handle
   const handleClickDragHandle = useCallback(
     (event: MouseEvent) => {
@@ -70,27 +84,27 @@ export const BlockMenu = (props: Props) => {
           editor.chain().setNodeSelection(nodePos).run();
         }
         // Show the menu
-        setIsOpen(true);
+        openBlockMenu();
         return;
       }
 
       // If clicking outside and not on a menu item, hide the menu
       if (menuRef.current && !menuRef.current.contains(target)) {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     },
-    [refs]
+    [editor, refs, openBlockMenu, closeBlockMenu]
   );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     };
 
     const handleScroll = () => {
-      setIsOpen(false);
+      closeBlockMenu();
     };
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
@@ -103,7 +117,7 @@ export const BlockMenu = (props: Props) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
-  }, [handleClickDragHandle]);
+  }, [editor.commands, handleClickDragHandle, closeBlockMenu]);
 
   // Animation effect
   useEffect(() => {
@@ -133,14 +147,9 @@ export const BlockMenu = (props: Props) => {
       icon: Trash2,
       key: "delete",
       label: "Delete",
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
-
-        setIsOpen(false);
       },
     },
     {
@@ -150,10 +159,7 @@ export const BlockMenu = (props: Props) => {
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         try {
           const { state } = editor;
           const { selection } = state;
@@ -187,7 +193,6 @@ export const BlockMenu = (props: Props) => {
             console.error(error.message);
           }
         }
-        setIsOpen(false);
       },
     },
   ];
@@ -225,7 +230,12 @@ export const BlockMenu = (props: Props) => {
               key={item.key}
               type="button"
               className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-90"
-              onClick={item.onClick}
+              onClick={(e) => {
+                item.onClick(e);
+                e.preventDefault();
+                e.stopPropagation();
+                closeBlockMenu();
+              }}
               disabled={item.isDisabled}
             >
               <item.icon className="h-3 w-3" />
