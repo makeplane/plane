@@ -3,9 +3,10 @@
 import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
+import { Button } from "@plane/propel/button";
 import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 // ui
-import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
 // hooks

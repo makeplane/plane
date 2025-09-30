@@ -9,8 +9,9 @@ import {
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
-import { getButtonStyling, getUpgradeButtonStyle } from "@plane/ui";
+import { getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";

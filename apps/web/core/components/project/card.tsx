@@ -8,12 +8,12 @@ import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Tras
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
 import {
   Avatar,
   AvatarGroup,
-  Button,
   TOAST_TYPE,
   setToast,
   setPromiseToast,

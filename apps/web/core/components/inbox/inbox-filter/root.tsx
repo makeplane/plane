@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { ChevronDown, ListFilter } from "lucide-react";
 // plane imports
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";

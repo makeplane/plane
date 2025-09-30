@@ -5,7 +5,8 @@ import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { Logo } from "@/components/common/logo";

@@ -2,9 +2,10 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { IFilterInstance } from "@plane/shared-state";
 import { TExternalFilter, TFilterProperty } from "@plane/types";
-import { Button, EHeaderVariant, Header } from "@plane/ui";
+import { EHeaderVariant, Header } from "@plane/ui";
 // local imports
 import { AddFilterButton, TAddFilterButtonProps } from "./add-filters-button";
 import { FilterItem } from "./filter-item";

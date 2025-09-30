@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { Home, Shapes } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
