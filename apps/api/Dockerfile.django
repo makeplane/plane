@@ -1,0 +1,79 @@
+# 使用Python 3.12官方镜像作为基础镜像
+FROM python:3.12.10-alpine
+
+# 设置环境变量
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+
+# 更新系统包以确保安全性
+RUN apk update && apk upgrade
+
+# 设置工作目录
+WORKDIR /code
+
+# 安装运行时依赖
+RUN apk add --no-cache --upgrade \
+    "libpq" \
+    "libxslt" \
+    "xmlsec" \
+    "ca-certificates" \
+    "openssl" \
+    "bash~=5.2"
+
+# 复制依赖文件
+COPY requirements.txt ./
+COPY requirements ./requirements
+
+# 安装Python依赖
+RUN apk add --no-cache libffi-dev && \
+    apk add --no-cache --virtual .build-deps \
+    "g++" \
+    "gcc" \
+    "cargo" \
+    "git" \
+    "make" \
+    "postgresql-dev" \
+    "libc-dev" \
+    "linux-headers" && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt --compile --no-cache-dir && \
+    apk del .build-deps && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /root/.cache/pip/*
+
+# 复制Django项目文件
+COPY manage.py manage.py
+COPY plane plane/
+COPY templates templates/
+COPY package.json package.json
+
+# 复制启动脚本
+COPY ./bin ./bin/
+
+# 创建必要的目录并设置权限
+RUN mkdir -p /code/plane/logs && \
+    mkdir -p /code/uploads && \
+    chmod +x ./bin/* && \
+    chmod -R 777 /code
+
+# 创建非root用户（安全最佳实践）
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# 更改文件所有权
+RUN chown -R appuser:appgroup /code
+
+# 切换到非root用户
+USER appuser
+
+# 暴露端口
+EXPOSE 8000
+
+# 设置健康检查
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python manage.py check --deploy || exit 1
+
+# 启动命令 - 使用本地开发启动脚本
+CMD ["./bin/docker-entrypoint-api-local.sh"]
