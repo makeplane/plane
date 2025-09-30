@@ -1,4 +1,4 @@
-import { Server, Hocuspocus } from "@hocuspocus/server";
+import { Hocuspocus } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
 // env
 import { env } from "@/env";
@@ -36,7 +36,7 @@ export class HocusPocusServerManager {
       return this.server;
     }
 
-    this.server = Server.configure({
+    this.server = new Hocuspocus({
       name: this.serverName,
       onAuthenticate,
       onStateless,
