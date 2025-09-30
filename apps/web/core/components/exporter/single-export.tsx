@@ -2,8 +2,8 @@
 
 import { useState, FC } from "react";
 // ui
+import { Button } from "@plane/propel/button";
 import { IExportData } from "@plane/types";
-import { Button } from "@plane/ui";
 // helpers
 import { getDate, renderFormattedDate } from "@plane/utils";
 // types

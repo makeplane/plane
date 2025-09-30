@@ -46,9 +46,7 @@ class AssetUpdateSerializer(serializers.Serializer):
     and upload confirmation for S3-based file storage workflows.
     """
 
-    attributes = serializers.JSONField(
-        required=False, help_text="Additional attributes to update for the asset"
-    )
+    attributes = serializers.JSONField(required=False, help_text="Additional attributes to update for the asset")
 
 
 class GenericAssetUploadSerializer(serializers.Serializer):
@@ -85,9 +83,7 @@ class GenericAssetUpdateSerializer(serializers.Serializer):
     upload completion marking and metadata finalization.
     """
 
-    is_uploaded = serializers.BooleanField(
-        default=True, help_text="Whether the asset has been successfully uploaded"
-    )
+    is_uploaded = serializers.BooleanField(default=True, help_text="Whether the asset has been successfully uploaded")
 
 
 class FileAssetSerializer(BaseSerializer):

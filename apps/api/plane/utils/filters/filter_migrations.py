@@ -48,17 +48,13 @@ def migrate_single_model_filters(
                 updated_records.append(record)
 
         except Exception as e:
-            logger.warning(
-                f"Failed to convert filters for {model_name} ID {record.id}: {str(e)}"
-            )
+            logger.warning(f"Failed to convert filters for {model_name} ID {record.id}: {str(e)}")
             conversion_errors += 1
             continue
 
     # Bulk update all successfully converted records
     if updated_records:
-        model_class.objects.bulk_update(
-            updated_records, ["rich_filters"], batch_size=1000
-        )
+        model_class.objects.bulk_update(updated_records, ["rich_filters"], batch_size=1000)
         logger.info(f"Successfully updated {len(updated_records)} {model_name} records")
 
     return len(updated_records), conversion_errors
@@ -87,9 +83,7 @@ def migrate_models_filters_to_rich_filters(
 
     for model_name, model_class in models_to_migrate.items():
         try:
-            updated_count, error_count = migrate_single_model_filters(
-                model_class, model_name, converter
-            )
+            updated_count, error_count = migrate_single_model_filters(model_class, model_name, converter)
 
             results[model_name] = (updated_count, error_count)
             total_updated += updated_count
@@ -102,10 +96,7 @@ def migrate_models_filters_to_rich_filters(
             continue
 
     # Log final summary
-    logger.info(
-        f"Migration completed for all models. Total updated: {total_updated}, "
-        f"Total errors: {total_errors}"
-    )
+    logger.info(f"Migration completed for all models. Total updated: {total_updated}, Total errors: {total_errors}")
 
     return results
 
@@ -128,14 +119,10 @@ def clear_models_rich_filters(models_to_clear: Dict[str, Any]) -> Dict[str, int]
     for model_name, model_class in models_to_clear.items():
         try:
             # Clear rich_filters for all records that have them
-            updated_count = model_class.objects.exclude(rich_filters={}).update(
-                rich_filters={}
-            )
+            updated_count = model_class.objects.exclude(rich_filters={}).update(rich_filters={})
             results[model_name] = updated_count
             total_cleared += updated_count
-            logger.info(
-                f"Cleared rich_filters for {updated_count} {model_name} records"
-            )
+            logger.info(f"Cleared rich_filters for {updated_count} {model_name} records")
 
         except Exception as e:
             logger.error(f"Failed to clear rich_filters for {model_name}: {str(e)}")

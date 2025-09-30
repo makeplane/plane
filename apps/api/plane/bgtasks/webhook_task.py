@@ -80,15 +80,11 @@ logger = logging.getLogger("plane.worker")
 def get_issue_prefetches():
     return [
         Prefetch("label_issue", queryset=IssueLabel.objects.select_related("label")),
-        Prefetch(
-            "issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")
-        ),
+        Prefetch("issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")),
     ]
 
 
-def get_model_data(
-    event: str, event_id: Union[str, List[str]], many: bool = False
-) -> Dict[str, Any]:
+def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = False) -> Dict[str, Any]:
     """
     Retrieve and serialize model data based on the event type.
 
@@ -125,15 +121,9 @@ def get_model_data(
                 queryset = queryset.prefetch_related(*issue_prefetches)
             else:
                 issue_id = queryset.id
-                queryset = (
-                    model.objects.filter(pk=issue_id)
-                    .prefetch_related(*issue_prefetches)
-                    .first()
-                )
+                queryset = model.objects.filter(pk=issue_id).prefetch_related(*issue_prefetches).first()
 
-            return serializer(
-                queryset, many=many, context={"expand": ["labels", "assignees"]}
-            ).data
+            return serializer(queryset, many=many, context={"expand": ["labels", "assignees"]}).data
         else:
             return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
@@ -141,9 +131,7 @@ def get_model_data(
 
 
 @shared_task
-def send_webhook_deactivation_email(
-    webhook_id: str, receiver_id: str, current_site: str, reason: str
-) -> None:
+def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_site: str, reason: str) -> None:
     """
     Send an email notification when a webhook is deactivated.
 
@@ -177,9 +165,7 @@ def send_webhook_deactivation_email(
             "message": message,
             "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
         }
-        html_content = render_to_string(
-            "emails/notifications/webhook-deactivate.html", context
-        )
+        html_content = render_to_string("emails/notifications/webhook-deactivate.html", context)
         text_content = strip_tags(html_content)
 
         # Set the email connection
@@ -248,17 +234,9 @@ def webhook_send_task(
         }
 
         # # Your secret key
-        event_data = (
-            json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))
-            if event_data is not None
-            else None
-        )
+        event_data = json.loads(json.dumps(event_data, cls=DjangoJSONEncoder)) if event_data is not None else None
 
-        activity = (
-            json.loads(json.dumps(activity, cls=DjangoJSONEncoder))
-            if activity is not None
-            else None
-        )
+        activity = json.loads(json.dumps(activity, cls=DjangoJSONEncoder)) if activity is not None else None
 
         action = {
             "POST": "create",
@@ -405,11 +383,7 @@ def webhook_activity(
                 webhook_id=webhook.id,
                 slug=slug,
                 event=event,
-                event_data=(
-                    {"id": event_id}
-                    if verb == "deleted"
-                    else get_model_data(event=event, event_id=event_id)
-                ),
+                event_data=({"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)),
                 action=verb,
                 current_site=current_site,
                 activity={
@@ -433,9 +407,7 @@ def webhook_activity(
 
 
 @shared_task
-def model_activity(
-    model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None
-):
+def model_activity(model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None):
     """Function takes in two json and computes differences between keys of both the json"""
     if current_instance is None:
         webhook_activity.delay(
@@ -454,9 +426,7 @@ def model_activity(
         return
 
     # Load the current instance
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:

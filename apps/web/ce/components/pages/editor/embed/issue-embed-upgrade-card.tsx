@@ -1,5 +1,5 @@
 // plane imports
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // components
 import { ProIcon } from "@/components/common/pro-icon";

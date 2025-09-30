@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";

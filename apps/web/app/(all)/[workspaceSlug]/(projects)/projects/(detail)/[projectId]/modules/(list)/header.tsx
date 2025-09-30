@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { ModuleViewHeader } from "@/components/modules";
 // hooks

@@ -131,8 +131,6 @@ def workspace(create_user):
         slug="test-workspace",
     )
 
-    WorkspaceMember.objects.create(
-        workspace=created_workspace, member=create_user, role=20
-    )
+    WorkspaceMember.objects.create(workspace=created_workspace, member=create_user, role=20)
 
     return created_workspace

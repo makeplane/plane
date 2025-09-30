@@ -50,9 +50,7 @@ class ModuleIssueViewSet(BaseViewSet):
         return (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -119,18 +117,14 @@ class ModuleIssueViewSet(BaseViewSet):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             # Check group and sub group value paginate
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -205,9 +199,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 request=request,
                 queryset=issue_queryset,
                 total_count_queryset=total_issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -215,9 +207,7 @@ class ModuleIssueViewSet(BaseViewSet):
     def create_module_issues(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
         if not issues:
-            return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
         project = Project.objects.get(pk=project_id)
         _ = ModuleIssue.objects.bulk_create(
             [
@@ -334,9 +324,7 @@ class ModuleIssueViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"module_name": module_issue.first().module.name}
-            ),
+            current_instance=json.dumps({"module_name": module_issue.first().module.name}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=base_host(request=request, is_app=True),

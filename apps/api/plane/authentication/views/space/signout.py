@@ -22,14 +22,8 @@ class SignOutAuthSpaceEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path
-            )
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_space=True), next_path=next_path)
             return HttpResponseRedirect(url)
         except Exception:
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path
-            )
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_space=True), next_path=next_path)
             return HttpResponseRedirect(url)

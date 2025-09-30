@@ -402,9 +402,7 @@ def create_paginated_response(
 
 
 # Asset-specific Responses
-PRESIGNED_URL_SUCCESS_RESPONSE = OpenApiResponse(
-    description="Presigned URL generated successfully"
-)
+PRESIGNED_URL_SUCCESS_RESPONSE = OpenApiResponse(description="Presigned URL generated successfully")
 
 GENERIC_ASSET_UPLOAD_SUCCESS_RESPONSE = OpenApiResponse(
     description="Presigned URL generated successfully",
@@ -474,9 +472,7 @@ ASSET_DOWNLOAD_SUCCESS_RESPONSE = OpenApiResponse(
 ASSET_DOWNLOAD_ERROR_RESPONSE = OpenApiResponse(
     description="Bad request",
     examples=[
-        OpenApiExample(
-            name="Asset not uploaded", value={"error": "Asset not yet uploaded"}
-        ),
+        OpenApiExample(name="Asset not uploaded", value={"error": "Asset not yet uploaded"}),
     ],
 )
 
@@ -486,7 +482,5 @@ ASSET_DELETED_RESPONSE = OpenApiResponse(description="Asset deleted successfully
 
 ASSET_NOT_FOUND_RESPONSE = OpenApiResponse(
     description="Asset not found",
-    examples=[
-        OpenApiExample(name="Asset not found", value={"error": "Asset not found"})
-    ],
+    examples=[OpenApiExample(name="Asset not found", value={"error": "Asset not found"})],
 )

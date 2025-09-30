@@ -93,15 +93,11 @@ def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
 
 
 # TODO: Change the upload_to_s3 function to use the new storage method with entry in file asset table
-def upload_to_s3(
-    zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: str
-) -> None:
+def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: str) -> None:
     """
     Upload a ZIP file to S3 and generate a presigned URL.
     """
-    file_name = (
-        f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
-    )
+    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
     expires_in = 7 * 24 * 60 * 60
 
     if settings.USE_MINIO:
@@ -122,7 +118,7 @@ def upload_to_s3(
         # Generate presigned url for the uploaded file with different base
         presign_s3 = boto3.client(
             "s3",
-            endpoint_url=f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/",
+            endpoint_url=f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/",  # noqa: E501
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             config=Config(signature_version="s3v4"),
@@ -260,11 +256,7 @@ def update_json_row(rows: List[dict], row: dict) -> None:
     Update the json row with the new assignee and label.
     """
     matched_index = next(
-        (
-            index
-            for index, existing_row in enumerate(rows)
-            if existing_row["ID"] == row["ID"]
-        ),
+        (index for index, existing_row in enumerate(rows) if existing_row["ID"] == row["ID"]),
         None,
     )
 
@@ -275,13 +267,9 @@ def update_json_row(rows: List[dict], row: dict) -> None:
         )
         assignee, label = row["Assignee"], row["Labels"]
 
-        if assignee is not None and (
-            existing_assignees is None or label not in existing_assignees
-        ):
+        if assignee is not None and (existing_assignees is None or label not in existing_assignees):
             rows[matched_index]["Assignee"] += f", {assignee}"
-        if label is not None and (
-            existing_labels is None or label not in existing_labels
-        ):
+        if label is not None and (existing_labels is None or label not in existing_labels):
             rows[matched_index]["Labels"] += f", {label}"
     else:
         rows.append(row)
@@ -300,13 +288,9 @@ def update_table_row(rows: List[List[str]], row: List[str]) -> None:
         existing_assignees, existing_labels = rows[matched_index][7:9]
         assignee, label = row[7:9]
 
-        if assignee is not None and (
-            existing_assignees is None or label not in existing_assignees
-        ):
+        if assignee is not None and (existing_assignees is None or label not in existing_assignees):
             rows[matched_index][8] += f", {assignee}"
-        if label is not None and (
-            existing_labels is None or label not in existing_labels
-        ):
+        if label is not None and (existing_labels is None or label not in existing_labels):
             rows[matched_index][8] += f", {label}"
     else:
         rows.append(row)
@@ -465,9 +449,7 @@ def issue_export_task(
                 "updated_at": issue.updated_at,
                 "completed_at": issue.completed_at,
                 "archived_at": issue.archived_at,
-                "module_name": [
-                    module.module.name for module in issue.issue_module.all()
-                ],
+                "module_name": [module.module.name for module in issue.issue_module.all()],
                 "created_by": get_created_by(issue),
                 "labels": [label.name for label in issue.label_details],
                 "comments": [
@@ -478,14 +460,9 @@ def issue_export_task(
                     }
                     for comment in issue.issue_comments.all()
                 ],
-                "estimate": issue.estimate_point.value
-                if issue.estimate_point and issue.estimate_point.value
-                else "",
+                "estimate": issue.estimate_point.value if issue.estimate_point and issue.estimate_point.value else "",
                 "link": [link.url for link in issue.issue_link.all()],
-                "assignees": [
-                    f"{assignee.first_name} {assignee.last_name}"
-                    for assignee in issue.assignee_details
-                ],
+                "assignees": [f"{assignee.first_name} {assignee.last_name}" for assignee in issue.assignee_details],
                 "subscribers_count": issue.issue_subscribers.count(),
                 "attachment_count": len(attachments),
                 "attachment_links": [

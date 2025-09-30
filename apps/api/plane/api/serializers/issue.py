@@ -48,17 +48,13 @@ class IssueSerializer(BaseSerializer):
     """
 
     assignees = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=User.objects.values_list("id", flat=True)
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.values_list("id", flat=True)),
         write_only=True,
         required=False,
     )
 
     labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=Label.objects.values_list("id", flat=True)
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.values_list("id", flat=True)),
         write_only=True,
         required=False,
     )
@@ -90,13 +86,9 @@ class IssueSerializer(BaseSerializer):
 
         # Validate description content for security
         if data.get("description_html"):
-            is_valid, error_msg, sanitized_html = validate_html_content(
-                data["description_html"]
-            )
+            is_valid, error_msg, sanitized_html = validate_html_content(data["description_html"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"error": "html content is not valid"}
-                )
+                raise serializers.ValidationError({"error": "html content is not valid"})
             # Update the data with sanitized HTML if available
             if sanitized_html is not None:
                 data["description_html"] = sanitized_html
@@ -104,9 +96,7 @@ class IssueSerializer(BaseSerializer):
         if data.get("description_binary"):
             is_valid, error_msg = validate_binary_data(data["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"description_binary": "Invalid binary data"}
-                )
+                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
 
         # Validate assignees are from project
         if data.get("assignees", []):
@@ -126,13 +116,9 @@ class IssueSerializer(BaseSerializer):
         # Check state is from the project only else raise validation error
         if (
             data.get("state")
-            and not State.objects.filter(
-                project_id=self.context.get("project_id"), pk=data.get("state").id
-            ).exists()
+            and not State.objects.filter(project_id=self.context.get("project_id"), pk=data.get("state").id).exists()
         ):
-            raise serializers.ValidationError(
-                "State is not valid please pass a valid state_id"
-            )
+            raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
         # Check parent issue is from workspace as it can be cross workspace
         if (
@@ -143,9 +129,7 @@ class IssueSerializer(BaseSerializer):
                 pk=data.get("parent").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Parent is not valid issue_id please pass a valid issue_id"
-            )
+            raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")
 
         if (
             data.get("estimate_point")
@@ -155,9 +139,7 @@ class IssueSerializer(BaseSerializer):
                 pk=data.get("estimate_point").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Estimate point is not valid please pass a valid estimate_point_id"
-            )
+            raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
         return data
 
@@ -173,14 +155,10 @@ class IssueSerializer(BaseSerializer):
 
         if not issue_type:
             # Get default issue type
-            issue_type = IssueType.objects.filter(
-                project_issue_types__project_id=project_id, is_default=True
-            ).first()
+            issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
             issue_type = issue_type
 
-        issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type=issue_type
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -312,35 +290,26 @@ class IssueSerializer(BaseSerializer):
 
                 data["assignees"] = UserLiteSerializer(
                     User.objects.filter(
-                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list(
-                            "assignee_id", flat=True
-                        )
+                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
                     ),
                     many=True,
                 ).data
             else:
                 data["assignees"] = [
                     str(assignee)
-                    for assignee in IssueAssignee.objects.filter(
-                        issue=instance
-                    ).values_list("assignee_id", flat=True)
+                    for assignee in IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
                 data["labels"] = LabelSerializer(
                     Label.objects.filter(
-                        pk__in=IssueLabel.objects.filter(issue=instance).values_list(
-                            "label_id", flat=True
-                        )
+                        pk__in=IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
                     ),
                     many=True,
                 ).data
             else:
                 data["labels"] = [
-                    str(label)
-                    for label in IssueLabel.objects.filter(issue=instance).values_list(
-                        "label_id", flat=True
-                    )
+                    str(label) for label in IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
                 ]
 
         return data
@@ -452,12 +421,8 @@ class IssueLinkCreateSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if IssueLink.objects.filter(url=validated_data.get("url"), issue_id=validated_data.get("issue_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return IssueLink.objects.create(**validated_data)
 
 
@@ -478,15 +443,11 @@ class IssueLinkUpdateSerializer(IssueLinkCreateSerializer):
 
     def update(self, instance, validated_data):
         if (
-            IssueLink.objects.filter(
-                url=validated_data.get("url"), issue_id=instance.issue_id
-            )
+            IssueLink.objects.filter(url=validated_data.get("url"), issue_id=instance.issue_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
@@ -677,17 +638,13 @@ class IssueExpandSerializer(BaseSerializer):
         expand = self.context.get("expand", [])
         if "labels" in expand:
             # Use prefetched data
-            return LabelLiteSerializer(
-                [il.label for il in obj.label_issue.all()], many=True
-            ).data
+            return LabelLiteSerializer([il.label for il in obj.label_issue.all()], many=True).data
         return [il.label_id for il in obj.label_issue.all()]
 
     def get_assignees(self, obj):
         expand = self.context.get("expand", [])
         if "assignees" in expand:
-            return UserLiteSerializer(
-                [ia.assignee for ia in obj.issue_assignee.all()], many=True
-            ).data
+            return UserLiteSerializer([ia.assignee for ia in obj.issue_assignee.all()], many=True).data
         return [ia.assignee_id for ia in obj.issue_assignee.all()]
 
     class Meta:
@@ -735,8 +692,6 @@ class IssueSearchSerializer(serializers.Serializer):
     id = serializers.CharField(required=True, help_text="Issue ID")
     name = serializers.CharField(required=True, help_text="Issue name")
     sequence_id = serializers.CharField(required=True, help_text="Issue sequence ID")
-    project__identifier = serializers.CharField(
-        required=True, help_text="Project identifier"
-    )
+    project__identifier = serializers.CharField(required=True, help_text="Project identifier")
     project_id = serializers.CharField(required=True, help_text="Project ID")
     workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
