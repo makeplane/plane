@@ -1,10 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import groupBy from "lodash/groupBy";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
+import { uniq, orderBy, isEmpty, indexOf, groupBy, cloneDeep, set } from "lodash-es";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,

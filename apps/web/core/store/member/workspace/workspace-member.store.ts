@@ -1,5 +1,4 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -12,8 +11,9 @@ import { WorkspaceService } from "@/plane-web/services";
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-import type { CoreRootStore } from "../root.store";
-import type { IMemberRootStore } from ".";
+import type { CoreRootStore } from "../../root.store";
+import type { IMemberRootStore } from "../index.ts";
+import { WorkspaceMemberFiltersStore, IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -26,12 +26,15 @@ export interface IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]>;
+  // filters store
+  filtersStore: IWorkspaceMemberFiltersStore;
   // computed
   workspaceMemberIds: string[] | null;
   workspaceMemberInvitationIds: string[] | null;
   memberMap: Record<string, IWorkspaceMembership> | null;
   // computed actions
   getWorkspaceMemberIds: (workspaceSlug: string) => string[];
+  getFilteredWorkspaceMemberIds: (workspaceSlug: string) => string[];
   getSearchedWorkspaceMemberIds: (searchQuery: string) => string[] | null;
   getSearchedWorkspaceInvitationIds: (searchQuery: string) => string[] | null;
   getWorkspaceMemberDetails: (workspaceMemberId: string) => IWorkspaceMember | null;
@@ -50,6 +53,7 @@ export interface IWorkspaceMemberStore {
     data: Partial<IWorkspaceMemberInvitation>
   ) => Promise<void>;
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
+  isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
 }
 
 export class WorkspaceMemberStore implements IWorkspaceMemberStore {
@@ -58,6 +62,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     [workspaceSlug: string]: Record<string, IWorkspaceMembership>;
   } = {}; // { workspaceSlug: { userId: userDetails } }
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
+  // filters store
+  filtersStore: IWorkspaceMemberFiltersStore;
   // stores
   routerStore: IRouterStore;
   userStore: IUserStore;
@@ -82,7 +88,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       updateMemberInvitation: action,
       deleteMemberInvitation: action,
     });
-
+    // initialize filters store
+    this.filtersStore = new WorkspaceMemberFiltersStore();
     // root store
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
@@ -120,9 +127,26 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
-    const memberIds = members
-      .filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot)
-      .map((m) => m.member);
+    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
+    return memberIds;
+  });
+
+  /**
+   * @description get the filtered and sorted list of all the user ids of all the members of the workspace
+   * @param workspaceSlug
+   */
+  getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
+    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
+    //filter out bots and inactive members
+    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+
+    // Use filters store to get filtered member ids
+    const memberIds = this.filtersStore.getFilteredMemberIds(
+      members,
+      this.memberRoot?.memberMap || {},
+      (member) => member.member
+    );
+
     return memberIds;
   });
 
@@ -133,9 +157,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getSearchedWorkspaceMemberIds = computedFn((searchQuery: string) => {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
-    const workspaceMemberIds = this.workspaceMemberIds;
-    if (!workspaceMemberIds) return null;
-    const searchedWorkspaceMemberIds = workspaceMemberIds?.filter((userId) => {
+    const filteredMemberIds = this.getFilteredWorkspaceMemberIds(workspaceSlug);
+    if (!filteredMemberIds) return null;
+    const searchedWorkspaceMemberIds = filteredMemberIds.filter((userId) => {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
       const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
@@ -325,4 +349,10 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         );
       });
     });
+
+  isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
+    if (!workspaceSlug) return false;
+    const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    return workspaceMember?.is_active === false;
+  });
 }

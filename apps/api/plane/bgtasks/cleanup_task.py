@@ -61,9 +61,7 @@ def flush_to_mongo_and_delete(
         logger.debug("No records to flush - buffer is empty")
         return
 
-    logger.info(
-        f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete"
-    )
+    logger.info(f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete")
 
     mongo_archival_failed = False
 
@@ -83,9 +81,7 @@ def flush_to_mongo_and_delete(
 
     # Delete from PostgreSQL - delete() returns (count, {model: count})
     delete_result = model.all_objects.filter(id__in=ids_to_delete).delete()
-    deleted_count = (
-        delete_result[0] if delete_result and isinstance(delete_result, tuple) else 0
-    )
+    deleted_count = delete_result[0] if delete_result and isinstance(delete_result, tuple) else 0
     logger.info(f"Batch flush completed: {deleted_count} records deleted")
 
 
@@ -193,9 +189,7 @@ def transform_email_log(record: Dict) -> Dict:
         "entity_identifier": str(record["entity_identifier"]),
         "entity_name": record["entity_name"],
         "data": record["data"],
-        "processed_at": (
-            str(record["processed_at"]) if record.get("processed_at") else None
-        ),
+        "processed_at": (str(record["processed_at"]) if record.get("processed_at") else None),
         "sent_at": str(record["sent_at"]) if record.get("sent_at") else None,
         "entity": record["entity"],
         "old_value": str(record["old_value"]),
@@ -220,9 +214,7 @@ def transform_page_version(record: Dict) -> Dict:
         "created_by_id": str(record["created_by_id"]),
         "updated_by_id": str(record["updated_by_id"]),
         "deleted_at": str(record["deleted_at"]) if record.get("deleted_at") else None,
-        "last_saved_at": (
-            str(record["last_saved_at"]) if record.get("last_saved_at") else None
-        ),
+        "last_saved_at": (str(record["last_saved_at"]) if record.get("last_saved_at") else None),
     }
 
 
@@ -237,9 +229,7 @@ def transform_issue_description_version(record: Dict) -> Dict:
         "created_by_id": str(record["created_by_id"]),
         "updated_by_id": str(record["updated_by_id"]),
         "owned_by_id": str(record["owned_by_id"]),
-        "last_saved_at": (
-            str(record["last_saved_at"]) if record.get("last_saved_at") else None
-        ),
+        "last_saved_at": (str(record["last_saved_at"]) if record.get("last_saved_at") else None),
         "description_binary": record["description_binary"],
         "description_html": record["description_html"],
         "description_stripped": record["description_stripped"],

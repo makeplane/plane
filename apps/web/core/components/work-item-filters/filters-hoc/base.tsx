@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import { IFilterInstance } from "@plane/shared-state";
-import { IIssueFilters, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import { IWorkItemFilterInstance } from "@plane/shared-state";
+import { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 // store hooks
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
@@ -39,9 +39,7 @@ export const WorkItemFiltersHOC = observer((props: TWorkItemFiltersHOCProps) => 
 type TWorkItemFilterProps = TSharedWorkItemFiltersProps &
   TAdditionalWorkItemFiltersProps & {
     initialWorkItemFilters: IIssueFilters;
-    children:
-      | React.ReactNode
-      | ((props: { filter: IFilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression> }) => React.ReactNode);
+    children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance }) => React.ReactNode);
   };
 
 const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
@@ -55,6 +53,7 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
     saveViewOptions,
     updateFilters,
     updateViewOptions,
+    showOnMount,
     ...entityConfigProps
   } = props;
   // store hooks
@@ -84,6 +83,7 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
       saveViewOptions,
       updateViewOptions,
     },
+    showOnMount,
   });
 
   // delete filter instance when component unmounts

@@ -65,9 +65,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/invitations/<uuid:pk>/",
-        WorkspaceInvitationsViewset.as_view(
-            {"delete": "destroy", "get": "retrieve", "patch": "partial_update"}
-        ),
+        WorkspaceInvitationsViewset.as_view({"delete": "destroy", "get": "retrieve", "patch": "partial_update"}),
         name="workspace-invitations",
     ),
     # user workspace invitations
@@ -94,9 +92,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
-        WorkSpaceMemberViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy", "get": "retrieve"}
-        ),
+        WorkSpaceMemberViewSet.as_view({"patch": "partial_update", "delete": "destroy", "get": "retrieve"}),
         name="workspace-member",
     ),
     path(
@@ -126,9 +122,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
-        WorkspaceThemeViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        WorkspaceThemeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-themes",
     ),
     path(
@@ -208,9 +202,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/draft-issues/<uuid:pk>/",
-        WorkspaceDraftIssueViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        WorkspaceDraftIssueViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-drafts-issues",
     ),
     path(
@@ -226,9 +218,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/quick-links/<uuid:pk>/",
-        QuickLinkViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-quick-links",
     ),
     # Widgets
@@ -254,9 +244,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/stickies/<uuid:pk>/",
-        WorkspaceStickyViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        WorkspaceStickyViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-sticky",
     ),
     # User Preference

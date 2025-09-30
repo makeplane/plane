@@ -6,14 +6,15 @@ import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EIssueLayoutTypes, EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { Button } from "@plane/ui";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 // plane web imports
 import { TProject } from "@/plane-web/types";
 // local imports
 import { WorkItemsModal } from "../analytics/work-items/modal";
+import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
@@ -102,6 +103,7 @@ export const HeaderFilters = observer((props: Props) => {
           activeLayout={activeLayout}
         />
       </div>
+      <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}
         title={t("common.display")}

@@ -45,9 +45,7 @@ class IntakeIssueSerializer(BaseSerializer):
 
 class IntakeIssueDetailSerializer(BaseSerializer):
     issue = IssueDetailSerializer(read_only=True)
-    duplicate_issue_detail = IssueIntakeSerializer(
-        read_only=True, source="duplicate_to"
-    )
+    duplicate_issue_detail = IssueIntakeSerializer(read_only=True, source="duplicate_to")
 
     class Meta:
         model = IntakeIssue

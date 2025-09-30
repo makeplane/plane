@@ -1,5 +1,4 @@
-import groupBy from "lodash/groupBy";
-import set from "lodash/set";
+import { set, groupBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

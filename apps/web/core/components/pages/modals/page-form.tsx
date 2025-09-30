@@ -5,8 +5,9 @@ import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import type { TPage } from "@plane/types";
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
 import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";

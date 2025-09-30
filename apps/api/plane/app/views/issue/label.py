@@ -35,9 +35,7 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
@@ -58,9 +56,7 @@ class LabelViewSet(BaseViewSet):
         # Check if the label name is unique within the project
         if (
             "name" in request.data
-            and Label.objects.filter(
-                project_id=kwargs["project_id"], name=request.data["name"]
-            )
+            and Label.objects.filter(project_id=kwargs["project_id"], name=request.data["name"])
             .exclude(pk=kwargs["pk"])
             .exists()
         ):

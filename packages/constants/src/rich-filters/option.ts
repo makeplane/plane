@@ -53,6 +53,25 @@ export type TExpressionOptions<E extends TExternalFilter> = {
 export const DEFAULT_FILTER_EXPRESSION_OPTIONS: TExpressionOptions<TExternalFilter> = {};
 
 /**
+ * Auto visibility options.
+ */
+export type TAutoVisibilityOptions =
+  | {
+      autoSetVisibility: true;
+    }
+  | {
+      autoSetVisibility: false;
+      isVisibleOnMount: boolean;
+    };
+
+/**
+ * Default filter visibility options.
+ */
+export const DEFAULT_FILTER_VISIBILITY_OPTIONS: TAutoVisibilityOptions = {
+  autoSetVisibility: true,
+};
+
+/**
  * Filter options.
  * - expression: Filter expression options.
  * - config: Filter config options.
@@ -60,4 +79,5 @@ export const DEFAULT_FILTER_EXPRESSION_OPTIONS: TExpressionOptions<TExternalFilt
 export type TFilterOptions<E extends TExternalFilter> = {
   expression: Partial<TExpressionOptions<E>>;
   config: Partial<TConfigOptions>;
+  visibility: TAutoVisibilityOptions;
 };

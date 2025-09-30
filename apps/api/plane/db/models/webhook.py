@@ -28,12 +28,8 @@ def validate_domain(value):
 
 
 class Webhook(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks"
-    )
-    url = models.URLField(
-        validators=[validate_schema, validate_domain], max_length=1024
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks")
+    url = models.URLField(validators=[validate_schema, validate_domain], max_length=1024)
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)
     project = models.BooleanField(default=False)
@@ -62,9 +58,7 @@ class Webhook(BaseModel):
 
 
 class WebhookLog(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs")
     # Associated webhook
     webhook = models.UUIDField()
 
@@ -92,11 +86,8 @@ class WebhookLog(BaseModel):
         return f"{self.event_type} {str(self.webhook)}"
 
 
-
 class ProjectWebhook(ProjectBaseModel):
-    webhook = models.ForeignKey(
-        "db.Webhook", on_delete=models.CASCADE, related_name="project_webhooks"
-    )
+    webhook = models.ForeignKey("db.Webhook", on_delete=models.CASCADE, related_name="project_webhooks")
 
     class Meta:
         unique_together = ["project", "webhook", "deleted_at"]

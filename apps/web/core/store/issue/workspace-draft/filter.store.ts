@@ -1,8 +1,7 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// base class
 import { computedFn } from "mobx-utils";
+// Plane Imports
 import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
@@ -16,13 +15,12 @@ import {
   TSupportedFilterForUpdate,
 } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
+// services
 import { IssueFiltersService } from "@/services/issue_filter.service";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers
+import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // types
 import { IIssueRootStore } from "../root.store";
-// constants
-// services
 
 export interface IWorkspaceDraftIssuesFilter extends IBaseIssueFilterStore {
   // observables

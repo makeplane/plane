@@ -66,27 +66,15 @@ def mock_mongodb():
 
     # Configure common MongoDB collection operations
     mock_mongo_collection.find_one.return_value = None
-    mock_mongo_collection.find.return_value = MagicMock(
-        __iter__=lambda x: iter([]), count=lambda: 0
-    )
-    mock_mongo_collection.insert_one.return_value = MagicMock(
-        inserted_id="mock_id_123", acknowledged=True
-    )
+    mock_mongo_collection.find.return_value = MagicMock(__iter__=lambda x: iter([]), count=lambda: 0)
+    mock_mongo_collection.insert_one.return_value = MagicMock(inserted_id="mock_id_123", acknowledged=True)
     mock_mongo_collection.insert_many.return_value = MagicMock(
         inserted_ids=["mock_id_123", "mock_id_456"], acknowledged=True
     )
-    mock_mongo_collection.update_one.return_value = MagicMock(
-        modified_count=1, matched_count=1, acknowledged=True
-    )
-    mock_mongo_collection.update_many.return_value = MagicMock(
-        modified_count=2, matched_count=2, acknowledged=True
-    )
-    mock_mongo_collection.delete_one.return_value = MagicMock(
-        deleted_count=1, acknowledged=True
-    )
-    mock_mongo_collection.delete_many.return_value = MagicMock(
-        deleted_count=2, acknowledged=True
-    )
+    mock_mongo_collection.update_one.return_value = MagicMock(modified_count=1, matched_count=1, acknowledged=True)
+    mock_mongo_collection.update_many.return_value = MagicMock(modified_count=2, matched_count=2, acknowledged=True)
+    mock_mongo_collection.delete_one.return_value = MagicMock(deleted_count=1, acknowledged=True)
+    mock_mongo_collection.delete_many.return_value = MagicMock(deleted_count=2, acknowledged=True)
     mock_mongo_collection.count_documents.return_value = 0
 
     # Start the patch
