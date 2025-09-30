@@ -20,8 +20,8 @@ import { redisManager } from "@/redis";
 export class Server {
   private app: Express;
   private router: Router;
-  private hocuspocusServer: Hocuspocus | null = null;
-  private httpServer: HttpServer | null = null;
+  private hocuspocusServer: Hocuspocus | undefined;
+  private httpServer: HttpServer | undefined;
 
   constructor() {
     this.app = express();
@@ -52,7 +52,7 @@ export class Server {
     // Security middleware
     this.app.use(helmet());
     // Middleware for response compression
-    this.app.use(compression({ level: 6, threshold: 5 * 1000 }));
+    this.app.use(compression({ level: env.COMPRESSION_LEVEL, threshold: env.COMPRESSION_THRESHOLD }));
     // Logging middleware
     this.app.use(loggerMiddleware);
     // Body parsing middleware
@@ -64,7 +64,7 @@ export class Server {
 
   private setupCors() {
     const allowedOrigins =
-      env.CORS_ALLOWED_ORIGINS === "*" ? "*" : env.CORS_ALLOWED_ORIGINS?.split(",")?.map((s) => s.trim()) || [];
+      env.CORS_ALLOWED_ORIGINS === "*" ? "*" : env.CORS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
     this.app.use(
       cors({
         origin: allowedOrigins,
@@ -88,30 +88,36 @@ export class Server {
   }
 
   public listen() {
-    this.httpServer = this.app.listen(this.app.get("port"), () => {
-      logger.info(`Plane Live server has started at port ${this.app.get("port")}`);
-    });
+    this.httpServer = this.app
+      .listen(this.app.get("port"), () => {
+        logger.info(`Plane Live server has started at port ${this.app.get("port")}`);
+      })
+      .on("error", (err) => {
+        logger.error("Failed to start server:", err);
+        throw err;
+      });
   }
 
   public async destroy() {
-    // Close the HocusPocus server WebSocket connections
     if (this.hocuspocusServer) {
       await this.hocuspocusServer.destroy();
-      logger.info("HocusPocus server WebSocket connections closed gracefully.");
+      logger.info("HocusPocus server closed gracefully.");
     }
 
-    // Disconnect Redis
     await redisManager.disconnect();
     logger.info("Redis connection closed gracefully.");
 
     if (this.httpServer) {
-      // Close the Express server
-      this.httpServer.close(() => {
-        logger.info("Express server closed gracefully.");
+      await new Promise<void>((resolve, reject) => {
+        this.httpServer!.close((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            logger.info("Express server closed gracefully.");
+            resolve();
+          }
+        });
       });
-    } else {
-      logger.warn("Express server not found");
-      throw new Error("Express server not found");
     }
   }
 }

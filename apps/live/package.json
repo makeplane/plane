@@ -7,8 +7,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "tsc --noEmit && tsdown",
+    "dev": "tsdown --watch --onSuccess \"node --env-file=.env dist/start.js\"",
     "start": "node --env-file=.env dist/start.js",
     "check:lint": "eslint . --max-warnings 10",
     "check:types": "tsc --noEmit",
