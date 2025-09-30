@@ -23,13 +23,14 @@ export interface IPartialProject {
   issue_views_view: boolean;
   module_view: boolean;
   page_view: boolean;
+  overview_view: boolean;
   inbox_view: boolean;
   guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
   network?: number;
   // Timestamps
-  created_at?: Date;
-  updated_at?: Date;
+  created_at?: Date | string | null;
+  updated_at?: Date | string | null;
   // actor
   created_by?: string;
   updated_by?: string;

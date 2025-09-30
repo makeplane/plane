@@ -1,4 +1,4 @@
-import { FileText, Layers } from "lucide-react";
+import { FileText, Layers, Rss } from "lucide-react";
 // plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { ContrastIcon, DiceIcon, LayersIcon, Intake } from "@plane/propel/icons";
@@ -16,6 +16,16 @@ export const getProjectFeatureNavigation = (
     inbox_view: boolean;
   }
 ): TNavigationItem[] => [
+  {
+    i18n_key: "sidebar.overview",
+    key: EProjectFeatureKey.OVERVIEW,
+    name: "Overview",
+    href: `/${workspaceSlug}/projects/${projectId}/overview`,
+    icon: Rss,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    shouldRender: true,
+    sortOrder: 0,
+  },
   {
     i18n_key: "sidebar.work_items",
     key: EProjectFeatureKey.WORK_ITEMS,

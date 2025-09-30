@@ -129,7 +129,7 @@ export const ProjectActivity: FC<TProjectActivity> = observer((props) => {
     <div className="space-y-4 pt-3">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-custom-text-100">项目活动</div>
+        <h5 className="text-sm font-medium">项目活动</h5>
         <div className="flex items-center gap-2">
           <button
             onClick={toggleSortOrder}

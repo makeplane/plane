@@ -22,6 +22,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { PanelLeft } from "lucide-react";
 
 export const OverviewListHeader = observer(() => {
   // states
@@ -33,42 +35,8 @@ export const OverviewListHeader = observer(() => {
   const pageType = searchParams.get("type");
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
-  // handle page create
-  const handleCreatePage = async () => {
-    setIsCreatingPage(true);
-
-    const payload: Partial<TPage> = {
-      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-    };
-
-    await createPage(payload)
-      .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
-        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
-        router.push(pageId);
-      })
-      .catch((err) => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.data?.error || "Page could not be created. Please try again.",
-        });
-      })
-      .finally(() => setIsCreatingPage(false));
-  };
+  const { canCurrentUserCreatePage } = usePageStore(EPageStoreType.PROJECT);
+  const { overviewPeek, overviewSidebarPeek } = useAppTheme();
 
   return (
     <Header>
@@ -77,22 +45,21 @@ export const OverviewListHeader = observer(() => {
           <CommonProjectBreadcrumbs
             workspaceSlug={workspaceSlug?.toString() ?? ""}
             projectId={currentProjectDetails?.id?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.PAGES}
+            featureKey={EProjectFeatureKey.OVERVIEW}
             isLast
           />
         </Breadcrumbs>
       </Header.LeftItem>
       {canCurrentUserCreatePage ? (
         <Header.RightItem>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleCreatePage}
-            loading={isCreatingPage}
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
+          <button
+            className="flex items-center justify-center size-6 rounded-md text-custom-text-400 hover:text-custom-primary-100 hover:bg-custom-background-90"
+            onClick={() => {
+              overviewSidebarPeek(!overviewPeek);
+            }}
           >
-            {isCreatingPage ? "Adding" : "Add page"}
-          </Button>
+            <PanelLeft className="size-4" />
+          </button>
         </Header.RightItem>
       ) : (
         <></>
