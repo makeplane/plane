@@ -5,6 +5,7 @@ import { useState } from "react";
 // plane web hooks
 import { cn, getFileURL } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { Logo } from "@/components/common/logo";
 import { ProjectDescriptionInput } from "@/components/project/project-description-input";
 import { ProjectProperties } from "@/components/project/project-properties";
@@ -25,14 +26,15 @@ export const OverviewListView: React.FC<TPageView> = observer((props) => {
   const [activeTab, setActiveTab] = useState<"properties" | "activity">("properties");
 
   // store hooks
+  const { overviewPeek } = useAppTheme();
 
   // pages loader
   return (
     <div className="w-full">
       {/* 主要布局：左右两栏 */}
       <div className="flex gap-6 min-h-[600px]">
-        {/* 左侧区域 - 占2/3宽度 */}
-        <div className="w-2/3 flex flex-col">
+        {/* 左侧区域 - 根据右侧是否显示调整宽度 */}
+        <div className={cn("flex flex-col", overviewPeek ? "w-3/4" : "w-full")}>
           {/* 背景图区域 - 固定高度 */}
           <div className="relative h-[140px] flex-shrink-0 overflow-hidden">
             <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
@@ -95,43 +97,45 @@ export const OverviewListView: React.FC<TPageView> = observer((props) => {
           </div>
         </div>
 
-        {/* 右侧功能区域 - 独占1/3宽度，使用粘性定位 */}
-        <div className="w-2/5 bg-custom-background-100 rounded-lg flex flex-col sticky top-4 h-fit max-h-[calc(100vh-2rem)] self-start">
-          {/* 切换按钮 */}
-          <div className="flex justify-center px-4 py-2 ">
-            <button
-              onClick={() => setActiveTab("properties")}
-              className={cn(
-                "w-2/5 h-8 text-sm font-medium transition-colors flex items-center justify-center rounded-l-md",
-                activeTab === "properties"
-                  ? "bg-white text-black shadow-sm border "
-                  : "bg-custom-background-90 text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-200"
-              )}
-            >
-              <BadgeInfo className="h-4 w-4 flex-shrink-0" />
-            </button>
-            <button
-              onClick={() => setActiveTab("activity")}
-              className={cn(
-                "w-1/3 h-8 text-sm font-medium transition-colors flex items-center justify-center rounded-r-md",
-                activeTab === "activity"
-                  ? "bg-white text-black shadow-sm border border-custom-border-200"
-                  : "bg-custom-background-90 text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-200"
-              )}
-            >
-              <Activity className="h-4 w-4 flex-shrink-0" />
-            </button>
-          </div>
+        {/* 右侧功能区域 - 根据 overviewPeek 状态条件渲染 */}
+        {overviewPeek && (
+          <div className="w-1/4 bg-custom-background-100 rounded-lg flex flex-col sticky top-4 h-fit max-h-[calc(100vh-2rem)] self-start">
+            {/* 切换按钮 */}
+            <div className="flex justify-center px-4 py-2 ">
+              <button
+                onClick={() => setActiveTab("properties")}
+                className={cn(
+                  "w-1/2 h-8 text-sm font-medium transition-colors flex items-center justify-center rounded-l-md",
+                  activeTab === "properties"
+                    ? "bg-white text-black shadow-sm border "
+                    : "bg-custom-background-90 text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-200"
+                )}
+              >
+                <BadgeInfo className="h-4 w-4 flex-shrink-0" />
+              </button>
+              <button
+                onClick={() => setActiveTab("activity")}
+                className={cn(
+                  "w-1/2 h-8 text-sm font-medium transition-colors flex items-center justify-center rounded-r-md",
+                  activeTab === "activity"
+                    ? "bg-white text-black shadow-sm border border-custom-border-200"
+                    : "bg-custom-background-90 text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-200"
+                )}
+              >
+                <Activity className="h-4 w-4 flex-shrink-0" />
+              </button>
+            </div>
 
-          {/* 内容区域 */}
-          <div className="flex-1 overflow-y-auto p-4 min-h-0">
-            {activeTab === "properties" ? (
-              <ProjectProperties workspaceSlug={workspaceSlug} projectId={project.id} />
-            ) : (
-              <ProjectActivity workspaceSlug={workspaceSlug} projectId={project.id} />
-            )}
+            {/* 内容区域 */}
+            <div className="flex-1 overflow-y-auto p-4 min-h-0">
+              {activeTab === "properties" ? (
+                <ProjectProperties workspaceSlug={workspaceSlug} projectId={project.id} />
+              ) : (
+                <ProjectActivity workspaceSlug={workspaceSlug} projectId={project.id} />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

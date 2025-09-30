@@ -50,7 +50,7 @@ export const ProjectProperties: FC<IProjectProperties> = observer((props) => {
 
   return (
     <div>
-      <h6 className="text-sm font-medium">{t("common.properties")}</h6>
+      <h5 className="text-sm font-medium">{t("common.properties")}</h5>
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
         {/* 项目状态 */}
         <div className="flex w-full items-center gap-3 h-8">
@@ -167,7 +167,7 @@ export const ProjectProperties: FC<IProjectProperties> = observer((props) => {
             value={project.created_at}
             onChange={(val) =>
               handleProjectUpdate({
-                created_at: val ? renderFormattedPayloadDate(val) : null,
+                created_at: val ? renderFormattedPayloadDate(val) : undefined,
               })
             }
             placeholder="选择创建时间"
