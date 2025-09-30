@@ -3,16 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -37,6 +41,8 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     placement,
     referenceElement,
   } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
@@ -46,6 +52,9 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    workspace: { isUserSuspended },
+  } = useMember();
   const { isMobile } = usePlatformOS();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -84,8 +93,19 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
         content: (
           <div className="flex items-center gap-2">
-            <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
-            <span className="flex-grow truncate">
+            <div className="w-4">
+              {isUserSuspended(userId, workspaceSlug?.toString()) ? (
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
+              ) : (
+                <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
+              )}
+            </div>
+            <span
+              className={cn(
+                "flex-grow truncate",
+                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-custom-text-400" : ""
+              )}
+            >
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
@@ -133,15 +153,26 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        cn(
+                          "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                          active && "bg-custom-background-80",
+                          selected ? "text-custom-text-100" : "text-custom-text-200",
+                          isUserSuspended(option.value, workspaceSlug?.toString())
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer"
+                        )
                       }
+                      disabled={isUserSuspended(option.value, workspaceSlug?.toString())}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {isUserSuspended(option.value, workspaceSlug?.toString()) && (
+                            <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                              Suspended
+                            </Pill>
+                          )}
                         </>
                       )}
                     </Combobox.Option>
