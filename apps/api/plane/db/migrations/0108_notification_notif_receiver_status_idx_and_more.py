@@ -32,4 +32,8 @@ class Migration(migrations.Migration):
             model_name='notification',
             index=models.Index(fields=['workspace', 'entity_identifier', 'entity_name'], name='notif_entity_lookup_idx'),
         ),
+        AddIndexConcurrently(
+            model_name='fileasset',
+            index=models.Index(fields=['asset'], name='asset_asset_idx'),
+        ),
     ]
