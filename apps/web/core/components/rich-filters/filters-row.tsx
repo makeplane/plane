@@ -47,8 +47,11 @@ export const FiltersRow = observer(
 
     const handleUpdate = useCallback(async () => {
       setIsUpdating(true);
-      await filter.updateView();
-      setTimeout(() => setIsUpdating(false), 240); // To avoid flickering
+      try {
+        await filter.updateView();
+      } finally {
+        setTimeout(() => setIsUpdating(false), 240); // To avoid flickering
+      }
     }, [filter]);
 
     const leftContent = (

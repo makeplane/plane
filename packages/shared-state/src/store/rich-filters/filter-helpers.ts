@@ -15,7 +15,7 @@ import {
 } from "@plane/types";
 import { addAndCondition, createConditionNode, updateNodeInExpression } from "@plane/utils";
 // local imports
-import { IFilterInstance } from "./filter";
+import { type IFilterInstance } from "./filter";
 
 type TFilterInstanceHelperParams<P extends TFilterProperty, E extends TExternalFilter> = {
   adapter: IFilterAdapter<P, E>;
