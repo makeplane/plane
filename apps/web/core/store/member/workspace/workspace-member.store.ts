@@ -53,6 +53,7 @@ export interface IWorkspaceMemberStore {
     data: Partial<IWorkspaceMemberInvitation>
   ) => Promise<void>;
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
+  isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
 }
 
 export class WorkspaceMemberStore implements IWorkspaceMemberStore {
@@ -126,9 +127,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
-    const memberIds = members
-      .filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot)
-      .map((m) => m.member);
+    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
     return memberIds;
   });
 
@@ -139,7 +138,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
-    members = members.filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
 
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(
@@ -350,4 +349,10 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         );
       });
     });
+
+  isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
+    if (!workspaceSlug) return false;
+    const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    return workspaceMember?.is_active === false;
+  });
 }
