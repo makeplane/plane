@@ -9,7 +9,8 @@ import { UseFormSetValue } from "react-hook-form";
 import useSWR from "swr";
 // services
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Loader } from "@plane/ui";
 // types
 import { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
 // fetch-keys

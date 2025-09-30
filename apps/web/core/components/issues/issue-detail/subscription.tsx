@@ -8,8 +8,9 @@ import { Bell, BellOff } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
+import { Button } from "@plane/propel/button";
 import { EIssueServiceType } from "@plane/types";
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";

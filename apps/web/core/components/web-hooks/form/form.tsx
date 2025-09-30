@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
-import { Button } from "@plane/ui";
 import {
   WebhookIndividualEventOptions,
   WebhookInput,
