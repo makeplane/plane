@@ -114,6 +114,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}
                 workspaceSlug={workspaceSlug}
+                projectId={projectId}
                 onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
                     handleSubmit(onSubmit)(e);
