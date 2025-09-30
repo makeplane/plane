@@ -7,10 +7,10 @@ settings:
 catalogs:
   default:
     '@tiptap/core':
-      specifier: 3.5.3
+      specifier: ^3.5.3
       version: 3.5.3
     '@tiptap/html':
-      specifier: 3.5.3
+      specifier: ^3.5.3
       version: 3.5.3
     '@types/lodash-es':
       specifier: 4.17.12

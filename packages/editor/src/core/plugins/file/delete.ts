@@ -1,13 +1,13 @@
-import { Editor } from "@tiptap/core";
-import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { Editor } from "@tiptap/core";
+import { type EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
 import { TFileHandler } from "@/types";
 // local imports
+import type { NodeFileMapType } from "../../../ce/constants/utility";
 import { TFileNode } from "./types";
 
 const DELETE_PLUGIN_KEY = new PluginKey("delete-utility");
@@ -22,7 +22,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
       if (!transactions.some((tr) => tr.docChanged)) return null;
 
       newState.doc.descendants((node) => {
-        const nodeType = node.type.name as CORE_EXTENSIONS;
+        const nodeType = node.type.name as keyof NodeFileMapType;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
           if (newFileSources[nodeType]) {
@@ -41,7 +41,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
 
         // iterate through all the nodes in the old state
         oldState.doc.descendants((node) => {
-          const nodeType = node.type.name as CORE_EXTENSIONS;
+          const nodeType = node.type.name as keyof NodeFileMapType;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
           if (!isAValidNode) return;
@@ -52,7 +52,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         });
 
         removedFiles.forEach(async (node) => {
-          const nodeType = node.type.name as CORE_EXTENSIONS;
+          const nodeType = node.type.name as keyof NodeFileMapType;
           const src = node.attrs.src;
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
           if (!nodeFileSetDetails || !src) return;
