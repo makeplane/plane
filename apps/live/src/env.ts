@@ -10,7 +10,7 @@ const envSchema = z.object({
   PORT: z.string().default("3000"),
   API_BASE_URL: z.string().url("API_BASE_URL must be a valid URL"),
   // CORS configuration
-  CORS_ALLOWED_ORIGINS: z.string().default("*"),
+  CORS_ALLOWED_ORIGINS: z.string().default(""),
   // Live running location
   LIVE_BASE_PATH: z.string().default("/live"),
   // Compression options

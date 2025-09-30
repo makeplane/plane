@@ -63,11 +63,10 @@ export class Server {
   }
 
   private setupCors() {
-    const allowedOrigins =
-      env.CORS_ALLOWED_ORIGINS === "*" ? "*" : env.CORS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    const allowedOrigins = env.CORS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
     this.app.use(
       cors({
-        origin: allowedOrigins,
+        origin: allowedOrigins.length > 0 ? allowedOrigins : false,
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
