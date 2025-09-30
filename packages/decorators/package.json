@@ -6,10 +6,10 @@
   "private": true,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsdown",
@@ -30,5 +30,8 @@
     "reflect-metadata": "^0.2.2",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
 }

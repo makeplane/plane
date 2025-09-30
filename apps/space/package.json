@@ -61,7 +61,6 @@
     "@types/nprogress": "^0.2.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^9.0.1",
     "typescript": "catalog:"
   }
 }

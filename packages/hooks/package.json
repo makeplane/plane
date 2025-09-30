@@ -4,12 +4,13 @@
   "license": "AGPL-3.0",
   "description": "React hooks that are shared across multiple apps internally",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    }
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsdown",
@@ -31,5 +32,8 @@
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts"
 }

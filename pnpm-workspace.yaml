@@ -1,10 +1,13 @@
 packages:
-- apps/*
-- packages/*
-- "!apps/api"
-- "!apps/proxy"
+  - apps/*
+  - packages/*
+  - "!apps/api"
+  - "!apps/proxy"
 
 catalog:
+  "@atlaskit/pragmatic-drag-and-drop": 1.7.4
+  "@atlaskit/pragmatic-drag-and-drop-auto-scroll": 1.4.0
+  "@atlaskit/pragmatic-drag-and-drop-hitbox": 1.1.0
   axios: 1.12.0
   mobx: 6.12.0
   mobx-react: 9.1.1
@@ -19,11 +22,10 @@ catalog:
   react-dom: 18.3.1
   "@types/react": 18.3.11
   "@types/react-dom": 18.3.1
-  "@types/uuid": 9.0.8
   typescript: 5.8.3
-  tsdown: 0.14.2
+  tsdown: 0.15.5
   uuid: 10.0.0
 
 onlyBuiltDependencies:
-- turbo
-- sharp
+  - turbo
+  - sharp

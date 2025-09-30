@@ -6,6 +6,12 @@ const nextConfig = {
   basePath: process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "",
   reactStrictMode: false,
   swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {

@@ -35,7 +35,15 @@
       "typescript": "catalog:",
       "sharp": "catalog:",
       "vite": "7.0.7"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "core-js",
+      "esbuild",
+      "sharp",
+      "turbo",
+      "unrs-resolver"
+    ]
   },
   "packageManager": "pnpm@10.12.1",
   "engines": {

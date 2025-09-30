@@ -34,6 +34,13 @@ export default defineConfig({
   ],
   outDir: "dist",
   format: ["esm", "cjs"],
+  exports: {
+    customExports: (out) => ({
+      ...out,
+      "./styles/fonts": "./dist/styles/fonts/index.css",
+      "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
+    }),
+  },
   copy: ["src/styles"],
   dts: true,
   clean: true,

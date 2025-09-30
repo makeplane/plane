@@ -5,13 +5,7 @@
   "version": "1.0.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
-    }
-  },
+  "type": "module",
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -30,8 +24,8 @@
     "react-dom": "catalog:"
   },
   "dependencies": {
-    "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
-    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
+    "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
@@ -79,5 +73,15 @@
     "storybook": "^8.1.1",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   }
 }
