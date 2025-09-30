@@ -1,21 +1,26 @@
 import axios, { AxiosInstance } from "axios";
-import { config } from "dotenv";
-
-config();
-
-export const API_BASE_URL = process.env.API_BASE_URL ?? "";
+import { env } from "@/env";
 
 export abstract class APIService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
+  private header: Record<string, string> = {};
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || env.API_BASE_URL;
     this.axiosInstance = axios.create({
-      baseURL,
+      baseURL: this.baseURL,
       withCredentials: true,
       timeout: 20000,
     });
+  }
+
+  setHeader(key: string, value: string) {
+    this.header[key] = value;
+  }
+
+  getHeader() {
+    return this.header;
   }
 
   get(url: string, params = {}, config = {}) {
