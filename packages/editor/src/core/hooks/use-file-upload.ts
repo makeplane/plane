@@ -99,8 +99,6 @@ export const useDropZone = (args: TDropzoneArgs) => {
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
-  // derived values
-  const pos = getPos();
 
   useEffect(() => {
     const dragStartHandler = () => {
@@ -125,6 +123,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
       e.preventDefault();
       setDraggedInside(false);
       const filesList = e.dataTransfer.files;
+      const pos = getPos();
 
       if (filesList.length === 0 || !editor.isEditable || pos === undefined) {
         return;
@@ -138,7 +137,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
         uploader,
       });
     },
-    [editor, pos, type, uploader]
+    [editor, type, uploader, getPos]
   );
   const onDragEnter = useCallback(() => setDraggedInside(true), []);
   const onDragLeave = useCallback(() => setDraggedInside(false), []);

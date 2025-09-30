@@ -19,13 +19,15 @@ export const updateFloatingUIFloaterPosition = (
     placement: options?.placement ?? "bottom-start",
     strategy: options?.strategy ?? "absolute",
     middleware: options?.middleware ?? [shift(), flip()],
-  }).then(({ x, y, strategy }) => {
-    Object.assign(element.style, {
-      width: "max-content",
-      position: strategy,
-      left: `${x}px`,
-      top: `${y}px`,
-      ...options?.elementStyle,
-    });
-  });
+  })
+    .then(({ x, y, strategy }) => {
+      Object.assign(element.style, {
+        width: "max-content",
+        position: strategy,
+        left: `${x}px`,
+        top: `${y}px`,
+        ...options?.elementStyle,
+      });
+    })
+    .catch((error) => console.error("An error occurred while updating floating UI floter position:", error));
 };
