@@ -1,7 +1,7 @@
 import { cloneDeep } from "lodash-es";
-import { toJS } from "mobx";
+import { action, makeObservable, observable, toJS } from "mobx";
 // plane imports
-import { DEFAULT_FILTER_EXPRESSION_OPTIONS, TExpressionOptions } from "@plane/constants";
+import { DEFAULT_FILTER_EXPRESSION_OPTIONS, TAutoVisibilityOptions, TExpressionOptions } from "@plane/constants";
 import {
   IFilterAdapter,
   LOGICAL_OPERATOR,
@@ -14,6 +14,12 @@ import {
   TFilterConditionPayload,
 } from "@plane/types";
 import { addAndCondition, createConditionNode, updateNodeInExpression } from "@plane/utils";
+// local imports
+import { type IFilterInstance } from "./filter";
+
+type TFilterInstanceHelperParams<P extends TFilterProperty, E extends TExternalFilter> = {
+  adapter: IFilterAdapter<P, E>;
+};
 
 /**
  * Interface for filter instance helper utilities.
@@ -23,9 +29,13 @@ import { addAndCondition, createConditionNode, updateNodeInExpression } from "@p
  * @template E - The external filter type extending TExternalFilter
  */
 export interface IFilterInstanceHelper<P extends TFilterProperty, E extends TExternalFilter> {
+  isVisible: boolean;
   // initialization
   initializeExpression: (initialExpression?: E) => TFilterExpression<P> | null;
   initializeExpressionOptions: (expressionOptions?: Partial<TExpressionOptions<E>>) => TExpressionOptions<E>;
+  // visibility
+  setInitialVisibility: (visibilityOption: TAutoVisibilityOptions) => void;
+  toggleVisibility: (isVisible?: boolean) => void;
   // condition operations
   addConditionToExpression: <V extends TFilterValue>(
     expression: TFilterExpression<P> | null,
@@ -54,15 +64,28 @@ export interface IFilterInstanceHelper<P extends TFilterProperty, E extends TExt
 export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternalFilter>
   implements IFilterInstanceHelper<P, E>
 {
+  // parent filter instance
+  private _filterInstance: IFilterInstance<P, E>;
+  // adapter
   private adapter: IFilterAdapter<P, E>;
+  // visibility
+  isVisible: boolean;
 
   /**
    * Creates a new FilterInstanceHelper instance.
    *
    * @param adapter - The filter adapter for converting between internal and external formats
    */
-  constructor(adapter: IFilterAdapter<P, E>) {
-    this.adapter = adapter;
+  constructor(filterInstance: IFilterInstance<P, E>, params: TFilterInstanceHelperParams<P, E>) {
+    this._filterInstance = filterInstance;
+    this.adapter = params.adapter;
+    this.isVisible = false;
+
+    makeObservable(this, {
+      isVisible: observable,
+      setInitialVisibility: action,
+      toggleVisibility: action,
+    });
   }
 
   // ------------ initialization ------------
@@ -85,6 +108,41 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
   initializeExpressionOptions: IFilterInstanceHelper<P, E>["initializeExpressionOptions"] = (expressionOptions) => ({
     ...DEFAULT_FILTER_EXPRESSION_OPTIONS,
     ...expressionOptions,
+  });
+
+  /**
+   * Sets the initial visibility state for the filter based on options and active filters.
+   * @param visibilityOption - The visibility options for the filter instance.
+   * @returns The initial visibility state
+   */
+  setInitialVisibility: IFilterInstanceHelper<P, E>["setInitialVisibility"] = action((visibilityOption) => {
+    // If explicit initial visibility is provided, use it
+    if (visibilityOption.autoSetVisibility === false) {
+      this.isVisible = visibilityOption.isVisibleOnMount;
+      return;
+    }
+
+    // If filter has active filters, make it visible
+    if (this._filterInstance.hasActiveFilters) {
+      this.isVisible = true;
+      return;
+    }
+
+    // Default to hidden if no active filters
+    this.isVisible = false;
+    return;
+  });
+
+  /**
+   * Toggles the visibility of the filter.
+   * @param isVisible - The visibility to set.
+   */
+  toggleVisibility: IFilterInstanceHelper<P, E>["toggleVisibility"] = action((isVisible) => {
+    if (isVisible !== undefined) {
+      this.isVisible = isVisible;
+      return;
+    }
+    this.isVisible = !this.isVisible;
   });
 
   // ------------ condition operations ------------
