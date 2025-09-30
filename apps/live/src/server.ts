@@ -99,8 +99,8 @@ export class Server {
 
   public async destroy() {
     if (this.hocuspocusServer) {
-      await this.hocuspocusServer.destroy();
-      logger.info("HocusPocus server closed gracefully.");
+      this.hocuspocusServer.closeConnections();
+      logger.info("HocusPocus connections closed gracefully.");
     }
 
     await redisManager.disconnect();
