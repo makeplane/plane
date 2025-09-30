@@ -60,6 +60,15 @@ export const BlockMenu = (props: Props) => {
         // Set the virtual reference as the reference element
         refs.setReference(virtualReferenceRef.current);
 
+        // Ensure the targeted block is selected
+        const rect = dragHandle.getBoundingClientRect();
+        const coords = { left: rect.left + rect.width / 2, top: rect.top + rect.height / 2 };
+        const posAtCoords = editor.view.posAtCoords(coords);
+        if (posAtCoords) {
+          const $pos = editor.state.doc.resolve(posAtCoords.pos);
+          const nodePos = $pos.before($pos.depth);
+          editor.chain().setNodeSelection(nodePos).run();
+        }
         // Show the menu
         setIsOpen(true);
         return;
