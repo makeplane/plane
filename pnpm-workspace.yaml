@@ -23,6 +23,8 @@ catalog:
   typescript: 5.8.3
   tsdown: 0.14.2
   uuid: 10.0.0
+  "@tiptap/core": ^3.5.3
+  "@tiptap/html": ^3.5.3
 
 onlyBuiltDependencies:
 - turbo
