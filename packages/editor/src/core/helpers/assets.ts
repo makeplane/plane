@@ -1,16 +1,18 @@
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+// plane imports
+import { ADDITIONAL_EXTENSIONS, CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { getImageBlockId } from "@/extensions/custom-image/utils";
 // plane editor imports
 import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/plane-editor/constants/assets";
 // types
-import { TEditorAsset } from "@/types";
+import type { TEditorAsset } from "@/types";
 
 export type TAssetMetaDataRecord = (attrs: ProseMirrorNode["attrs"]) => TEditorAsset | undefined;
 
-export const CORE_ASSETS_META_DATA_RECORD: Partial<Record<CORE_EXTENSIONS, TAssetMetaDataRecord>> = {
+export const CORE_ASSETS_META_DATA_RECORD: Partial<
+  Record<CORE_EXTENSIONS | ADDITIONAL_EXTENSIONS, TAssetMetaDataRecord>
+> = {
   [CORE_EXTENSIONS.IMAGE]: (attrs) => {
     if (!attrs?.src) return;
     return {

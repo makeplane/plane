@@ -53,4 +53,4 @@ export type CustomImageExtensionStorage = {
   maxFileSize: number;
 };
 
-export type CustomImageExtension = Node<CustomImageExtensionOptions, CustomImageExtensionStorage>;
+export type CustomImageExtensionType = Node<CustomImageExtensionOptions, CustomImageExtensionStorage>;

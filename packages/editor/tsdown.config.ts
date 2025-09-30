@@ -7,5 +7,6 @@ export default defineConfig({
   dts: true,
   clean: false,
   sourcemap: true,
+  minify: true,
   copy: ["src/styles"],
 });
