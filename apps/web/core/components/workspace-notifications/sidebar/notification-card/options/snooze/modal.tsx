@@ -7,7 +7,8 @@ import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
-import { Button, CustomSelect } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";

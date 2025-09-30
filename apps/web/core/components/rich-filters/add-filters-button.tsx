@@ -2,9 +2,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { IFilterInstance } from "@plane/shared-state";
 import { LOGICAL_OPERATOR, TExternalFilter, TFilterProperty } from "@plane/types";
-import { CustomSearchSelect, getButtonStyling, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
+import { CustomSearchSelect, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
 import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
