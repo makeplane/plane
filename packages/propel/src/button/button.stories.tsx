@@ -1,56 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./button";
-import type { TButtonVariant, TButtonSizes } from "./helper";
 
-const buttonVariants: TButtonVariant[] = [
-  "primary",
-  "accent-primary",
-  "outline-primary",
-  "neutral-primary",
-  "link-primary",
-  "danger",
-  "accent-danger",
-  "outline-danger",
-  "link-danger",
-  "tertiary-danger",
-  "link-neutral",
-];
-
-const buttonSizes: TButtonSizes[] = ["sm", "md", "lg", "xl"];
-
-const meta: Meta<typeof Button> = {
+const meta = {
   title: "Components/Button",
   component: Button,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    variant: {
-      control: "select",
-      options: buttonVariants,
-    },
-    size: {
-      control: "select",
-      options: buttonSizes,
-    },
-    loading: {
-      control: "boolean",
-    },
-    disabled: {
-      control: "boolean",
-    },
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof Button>;
-
-export const Default: Story = {
   args: {
     children: "Button",
   },
-};
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 export const Primary: Story = {
   args: {
@@ -212,62 +178,68 @@ export const WithAppendIcon: Story = {
 };
 
 export const AllVariants: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Primary Variants</h3>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="primary">Primary</Button>
-          <Button variant="accent-primary">Accent Primary</Button>
-          <Button variant="outline-primary">Outline Primary</Button>
-          <Button variant="neutral-primary">Neutral Primary</Button>
-          <Button variant="link-primary">Link Primary</Button>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Primary Variants</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="primary">Primary</Button>
+            <Button variant="accent-primary">Accent Primary</Button>
+            <Button variant="outline-primary">Outline Primary</Button>
+            <Button variant="neutral-primary">Neutral Primary</Button>
+            <Button variant="link-primary">Link Primary</Button>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Danger Variants</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="danger">Danger</Button>
+            <Button variant="accent-danger">Accent Danger</Button>
+            <Button variant="outline-danger">Outline Danger</Button>
+            <Button variant="link-danger">Link Danger</Button>
+            <Button variant="tertiary-danger">Tertiary Danger</Button>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Other Variants</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="link-neutral">Link Neutral</Button>
+          </div>
         </div>
       </div>
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Danger Variants</h3>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="danger">Danger</Button>
-          <Button variant="accent-danger">Accent Danger</Button>
-          <Button variant="outline-danger">Outline Danger</Button>
-          <Button variant="link-danger">Link Danger</Button>
-          <Button variant="tertiary-danger">Tertiary Danger</Button>
-        </div>
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Other Variants</h3>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="link-neutral">Link Neutral</Button>
-        </div>
-      </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
-        <Button size="xl">Extra Large</Button>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+          <Button size="xl">Extra Large</Button>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const AllStates: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Button States</h3>
-        <div className="flex flex-wrap gap-2">
-          <Button>Default</Button>
-          <Button loading>Loading</Button>
-          <Button disabled>Disabled</Button>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Button States</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button>Default</Button>
+            <Button loading>Loading</Button>
+            <Button disabled>Disabled</Button>
+          </div>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
