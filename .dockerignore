@@ -22,7 +22,7 @@ pnpm-debug.log*
 .pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+yarn-fast
 # OS junk
 .DS_Store
 Thumbs.db
