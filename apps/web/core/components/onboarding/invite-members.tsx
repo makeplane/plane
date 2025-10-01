@@ -21,9 +21,10 @@ import { Listbox } from "@headlessui/react";
 import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { Button } from "@plane/propel/button";
 import { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
 // hooks

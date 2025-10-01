@@ -1,10 +1,9 @@
-import { Editor } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import { SuggestionOptions } from "@tiptap/suggestion";
-import tippy, { Instance } from "tippy.js";
-// helpers
+import type { SuggestionOptions } from "@tiptap/suggestion";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// helpers
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { TMentionHandler } from "@/types";
@@ -17,63 +16,48 @@ export const renderMentionsDropdown =
   () => {
     const { searchCallback } = props;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
-    let popup: Instance | null = null;
 
     return {
-      onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onStart: ({ clientRect, editor }) => {
         if (!searchCallback) return;
-        if (!props.clientRect) return;
+        if (!clientRect) return;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
           props: {
             ...props,
             searchCallback,
           },
-          editor: props.editor,
+          editor: editor,
         });
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(
-          CORE_EXTENSIONS.MENTION
-        );
-        // @ts-expect-error - Tippy types are incorrect
-        popup = tippy("body", {
-          getReferenceClientRect: props.clientRect,
-          appendTo: () =>
-            document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]'),
-          content: component.element,
-          showOnCreate: true,
-          interactive: true,
-          trigger: "manual",
-          placement: "bottom-start",
-        });
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+        const element = component.element as HTMLElement;
+        element.style.position = "absolute";
+        document.body.appendChild(element);
+        updateFloatingUIFloaterPosition(editor, element);
       },
-      onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onUpdate: ({ clientRect, editor }) => {
         component?.updateProps(props);
-        popup?.[0]?.setProps({
-          getReferenceClientRect: props.clientRect,
-        });
+        if (!clientRect) return;
+        if (component?.element) {
+          updateFloatingUIFloaterPosition(editor, component?.element as HTMLElement);
+        }
       },
-      onKeyDown: (props: { event: KeyboardEvent }) => {
-        if (props.event.key === "Escape") {
-          popup?.[0]?.hide();
+      onKeyDown: ({ event }) => {
+        if (event.key === "Escape") {
+          component?.destroy();
           return true;
         }
 
         const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
 
-        if (navigationKeys.includes(props.event.key)) {
-          props.event?.stopPropagation();
-          if (component?.ref?.onKeyDown(props)) {
-            return true;
-          }
+        if (navigationKeys.includes(event.key)) {
+          event?.stopPropagation();
+          return component?.ref?.onKeyDown({ event });
         }
-        return false;
+        return component?.ref?.onKeyDown({ event });
       },
-      onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
-        const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.MENTION);
-        if (index > -1) {
-          utilityStorage.activeDropbarExtensions.splice(index, 1);
-        }
-        popup?.[0]?.destroy();
+      onExit: ({ editor }) => {
+        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+        component?.element.remove();
         component?.destroy();
       },
     };

@@ -98,9 +98,7 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
     and embedded issue updates for issue queue processing workflows.
     """
 
-    issue = IssueForIntakeSerializer(
-        required=False, help_text="Issue data to update in the intake issue"
-    )
+    issue = IssueForIntakeSerializer(required=False, help_text="Issue data to update in the intake issue")
 
     class Meta:
         model = IntakeIssue
@@ -132,9 +130,5 @@ class IssueDataSerializer(serializers.Serializer):
     """
 
     name = serializers.CharField(max_length=255, help_text="Issue name")
-    description_html = serializers.CharField(
-        required=False, allow_null=True, help_text="Issue description HTML"
-    )
-    priority = serializers.ChoiceField(
-        choices=Issue.PRIORITY_CHOICES, default="none", help_text="Issue priority"
-    )
+    description_html = serializers.CharField(required=False, allow_null=True, help_text="Issue description HTML")
+    priority = serializers.ChoiceField(choices=Issue.PRIORITY_CHOICES, default="none", help_text="Issue priority")

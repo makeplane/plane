@@ -63,9 +63,7 @@ class MagicSignInEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
@@ -108,11 +106,7 @@ class MagicSignInEndpoint(View):
                 path = "/"
             else:
                 # Get the redirection path
-                path = (
-                    str(next_path)
-                    if next_path
-                    else str(get_redirection_path(user=user))
-                )
+                path = str(next_path) if next_path else str(get_redirection_path(user=user))
             # redirect to referer path
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
@@ -140,9 +134,7 @@ class MagicSignUpEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()

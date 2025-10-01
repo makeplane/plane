@@ -1,4 +1,4 @@
-import { orderBy, set } from "lodash";
+import { orderBy, set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { STICKIES_PER_PAGE } from "@plane/constants";

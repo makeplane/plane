@@ -6,8 +6,9 @@ import { observer } from "mobx-react";
 import { CircleAlert, XCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IEmailCheckData } from "@plane/types";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
 type TAuthEmailForm = {

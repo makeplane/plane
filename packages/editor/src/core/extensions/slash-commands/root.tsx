@@ -1,10 +1,10 @@
-import { Editor, Range, Extension } from "@tiptap/core";
+import { type Editor, type Range, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
-import tippy, { Instance } from "tippy.js";
+import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
@@ -32,7 +32,6 @@ const Command = Extension.create<SlashCommandOptions>({
         },
         allow({ editor }: { editor: Editor }) {
           const { selection } = editor.state;
-
           const parentNode = selection.$from.node(selection.$from.depth);
           const blockType = parentNode.type.name;
 
@@ -49,63 +48,66 @@ const Command = Extension.create<SlashCommandOptions>({
     return [
       Suggestion({
         editor: this.editor,
+        render: () => {
+          let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+
+          return {
+            onStart: (props) => {
+              // Track active dropdown
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+              component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
+                props,
+                editor: props.editor,
+              });
+
+              if (!props.clientRect) {
+                return;
+              }
+
+              const element = component.element as HTMLElement;
+              element.style.position = "absolute";
+              element.style.zIndex = "100";
+              document.body.appendChild(element);
+
+              updateFloatingUIFloaterPosition(props.editor, element);
+            },
+
+            onUpdate: (props) => {
+              if (!component || !component.element) return;
+
+              component.updateProps(props);
+
+              if (!props.clientRect) {
+                return;
+              }
+
+              const element = component.element as HTMLElement;
+              updateFloatingUIFloaterPosition(props.editor, element);
+            },
+
+            onKeyDown: (props) => {
+              if (props.event.key === "Escape") {
+                component?.destroy();
+                component = null;
+                return true;
+              }
+
+              return component?.ref?.onKeyDown(props) ?? false;
+            },
+
+            onExit: ({ editor }) => {
+              // Remove from active dropdowns
+              editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+              component?.destroy();
+              component = null;
+            },
+          };
+        },
         ...this.options.suggestion,
       }),
     ];
   },
 });
-
-const renderItems: SuggestionOptions["render"] = () => {
-  let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
-  let popup: Instance | null = null;
-  return {
-    onStart: (props) => {
-      // Track active dropdown
-      props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
-
-      component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
-        props,
-        editor: props.editor,
-      });
-
-      const tippyContainer =
-        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
-      // @ts-expect-error - Tippy types are incorrect
-      popup = tippy("body", {
-        getReferenceClientRect: props.clientRect,
-        appendTo: tippyContainer,
-        content: component.element,
-        showOnCreate: true,
-        interactive: true,
-        trigger: "manual",
-        placement: "bottom-start",
-      });
-    },
-    onUpdate: (props) => {
-      component?.updateProps(props);
-
-      popup?.[0]?.setProps({
-        getReferenceClientRect: props.clientRect,
-      });
-    },
-    onKeyDown: (props) => {
-      if (props.event.key === "Escape") {
-        popup?.[0].hide();
-        return true;
-      }
-      if (component?.ref?.onKeyDown(props)) {
-        return true;
-      }
-      return false;
-    },
-    onExit: ({ editor }) => {
-      // Remove from active dropdowns
-      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
-      popup?.[0].destroy();
-      component?.destroy();
-    },
-  };
-};
 
 export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions"> & {
   additionalOptions?: TSlashCommandAdditionalOption[];
@@ -115,6 +117,5 @@ export const SlashCommands = (props: TExtensionProps) =>
   Command.configure({
     suggestion: {
       items: getSlashCommandFilteredSections(props),
-      render: renderItems,
     },
   });

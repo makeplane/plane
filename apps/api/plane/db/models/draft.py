@@ -38,9 +38,7 @@ class DraftIssue(WorkspaceBaseModel):
         null=True,
         blank=True,
     )
-    name = models.CharField(
-        max_length=255, verbose_name="Issue Name", blank=True, null=True
-    )
+    name = models.CharField(max_length=255, verbose_name="Issue Name", blank=True, null=True)
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
@@ -60,9 +58,7 @@ class DraftIssue(WorkspaceBaseModel):
         through="DraftIssueAssignee",
         through_fields=("draft_issue", "assignee"),
     )
-    labels = models.ManyToManyField(
-        "db.Label", blank=True, related_name="draft_labels", through="DraftIssueLabel"
-    )
+    labels = models.ManyToManyField("db.Label", blank=True, related_name="draft_labels", through="DraftIssueLabel")
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
@@ -90,9 +86,7 @@ class DraftIssue(WorkspaceBaseModel):
                     ~models.Q(is_triage=True), project=self.project, default=True
                 ).first()
                 if default_state is None:
-                    random_state = State.objects.filter(
-                        ~models.Q(is_triage=True), project=self.project
-                    ).first()
+                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
                     self.state = random_state
                 else:
                     self.state = default_state
@@ -116,9 +110,9 @@ class DraftIssue(WorkspaceBaseModel):
                 if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
-            largest_sort_order = DraftIssue.objects.filter(
-                project=self.project, state=self.state
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            largest_sort_order = DraftIssue.objects.filter(project=self.project, state=self.state).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
 
@@ -139,9 +133,7 @@ class DraftIssue(WorkspaceBaseModel):
 
 
 class DraftIssueAssignee(WorkspaceBaseModel):
-    draft_issue = models.ForeignKey(
-        DraftIssue, on_delete=models.CASCADE, related_name="draft_issue_assignee"
-    )
+    draft_issue = models.ForeignKey(DraftIssue, on_delete=models.CASCADE, related_name="draft_issue_assignee")
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -167,12 +159,8 @@ class DraftIssueAssignee(WorkspaceBaseModel):
 
 
 class DraftIssueLabel(WorkspaceBaseModel):
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_label_issue"
-    )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="draft_label_issue"
-    )
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_label_issue")
+    label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="draft_label_issue")
 
     class Meta:
         verbose_name = "Draft Issue Label"
@@ -185,12 +173,8 @@ class DraftIssueLabel(WorkspaceBaseModel):
 
 
 class DraftIssueModule(WorkspaceBaseModel):
-    module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="draft_issue_module"
-    )
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_module"
-    )
+    module = models.ForeignKey("db.Module", on_delete=models.CASCADE, related_name="draft_issue_module")
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_module")
 
     class Meta:
         unique_together = ["draft_issue", "module", "deleted_at"]
@@ -215,12 +199,8 @@ class DraftIssueCycle(WorkspaceBaseModel):
     Draft Issue Cycles
     """
 
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_cycle"
-    )
-    cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="draft_issue_cycle"
-    )
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_cycle")
+    cycle = models.ForeignKey("db.Cycle", on_delete=models.CASCADE, related_name="draft_issue_cycle")
 
     class Meta:
         unique_together = ["draft_issue", "cycle", "deleted_at"]

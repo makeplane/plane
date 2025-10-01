@@ -11,7 +11,12 @@ type CodeBlockLowlightOptions = CodeBlockOptions & {
 export const CodeBlockLowlight = CodeBlock.extend<CodeBlockLowlightOptions>({
   addOptions() {
     return {
-      ...this.parent?.(),
+      ...(this.parent?.() ?? {
+        languageClassPrefix: "language-",
+        exitOnTripleEnter: true,
+        exitOnArrowDown: true,
+        HTMLAttributes: {},
+      }),
       lowlight: {},
       defaultLanguage: null,
     };

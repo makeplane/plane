@@ -43,23 +43,15 @@ class Command(BaseCommand):
             issue_sequence = self.strict_str_to_int(identifier[1])
 
             # Fetch the project
-            project = Project.objects.get(
-                identifier__iexact=project_identifier, workspace__slug=workspace_slug
-            )
+            project = Project.objects.get(identifier__iexact=project_identifier, workspace__slug=workspace_slug)
 
             # Get the issues
             issues = Issue.objects.filter(project=project, sequence_id=issue_sequence)
             # Check if there are duplicate issues
             if not issues.count() > 1:
-                raise CommandError(
-                    "No duplicate issues found with the given identifier"
-                )
+                raise CommandError("No duplicate issues found with the given identifier")
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"{issues.count()} issues found with identifier {issue_identifier}"
-                )
-            )
+            self.stdout.write(self.style.SUCCESS(f"{issues.count()} issues found with identifier {issue_identifier}"))
             with transaction.atomic():
                 # This ensures only one transaction per project can execute this code at a time
                 lock_key = convert_uuid_to_integer(project.id)
@@ -70,17 +62,14 @@ class Command(BaseCommand):
                     cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
                 # Get the maximum sequence ID for the project
-                last_sequence = IssueSequence.objects.filter(project=project).aggregate(
-                    largest=Max("sequence")
-                )["largest"]
+                last_sequence = IssueSequence.objects.filter(project=project).aggregate(largest=Max("sequence"))[
+                    "largest"
+                ]
 
                 bulk_issues = []
                 bulk_issue_sequences = []
 
-                issue_sequence_map = {
-                    isq.issue_id: isq
-                    for isq in IssueSequence.objects.filter(project=project)
-                }
+                issue_sequence_map = {isq.issue_id: isq for isq in IssueSequence.objects.filter(project=project)}
 
                 # change the ids of duplicate issues
                 for index, issue in enumerate(issues[1:]):

@@ -1,5 +1,5 @@
 import { Fragment, forwardRef } from "react";
-import range from "lodash/range";
+import { range } from "lodash-es";
 // plane ui
 import { Row } from "@plane/ui";
 // plane utils
