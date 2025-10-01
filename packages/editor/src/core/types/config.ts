@@ -17,8 +17,8 @@ export type TFileHandler = {
      * @example enter 5242880(5 * 1024 * 1024) for 5MB
      */
     maxFileSize: number;
-  } & TExtendedFileHandler;
-};
+  };
+} & TExtendedFileHandler;
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
