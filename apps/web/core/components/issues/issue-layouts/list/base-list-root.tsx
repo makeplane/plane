@@ -132,7 +132,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
-  // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
+  // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used because the state is shared between kanban view and list view
   const handleCollapsedGroups = useCallback(
     (value: string) => {
       if (workspaceSlug) {
