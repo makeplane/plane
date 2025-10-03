@@ -53,7 +53,19 @@ class BaseFilterSet(FilterSet):
 
         combined_q = Q()
 
+        # Handle case where cleaned_data might be None or empty
+        if not self.form.cleaned_data:
+            return combined_q
+
+        # Only process filters that were actually provided in the request data
+        # This avoids processing all declared filters with None/empty default values
+        provided_filters = set(self.data.keys()) if self.data else set()
+
         for name, value in self.form.cleaned_data.items():
+            # Skip filters that weren't provided in the request
+            if name not in provided_filters:
+                continue
+
             f = self.filters[name]
 
             # Build the Q object for this filter
