@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { useUser } from "@/hooks/store/user";
 import { Props } from "./confirm-workspace-member-remove";
 

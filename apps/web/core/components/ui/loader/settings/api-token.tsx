@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 import { useTranslation } from "@plane/i18n";
 export const APITokenSettingsLoader = () => {
   const { t } = useTranslation();

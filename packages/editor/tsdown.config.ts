@@ -5,7 +5,8 @@ export default defineConfig({
   outDir: "dist",
   format: ["esm", "cjs"],
   dts: true,
-  clean: true,
+  clean: false,
   sourcemap: true,
+  minify: true,
   copy: ["src/styles"],
 });

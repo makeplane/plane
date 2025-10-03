@@ -50,9 +50,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return IntakeIssue.objects.none()
 
     def list(self, request, anchor, intake_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -95,9 +93,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "status", "duplicate_to", "snoozed_till", "source"
-                    ),
+                    queryset=IntakeIssue.objects.only("status", "duplicate_to", "snoozed_till", "source"),
                 )
             )
         )
@@ -105,9 +101,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(issues_data, status=status.HTTP_200_OK)
 
     def create(self, request, anchor, intake_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -115,9 +109,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             )
 
         if not request.data.get("issue", {}).get("name", False):
-            return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
@@ -127,17 +119,13 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             "urgent",
             "none",
         ]:
-            return Response(
-                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
             description=request.data.get("issue", {}).get("description", {}),
-            description_html=request.data.get("issue", {}).get(
-                "description_html", "<p></p>"
-            ),
+            description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
         )
@@ -164,9 +152,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -197,9 +183,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         # viewers and guests since only viewers and guests
         issue_data = {
             "name": issue_data.get("name", issue.name),
-            "description_html": issue_data.get(
-                "description_html", issue.description_html
-            ),
+            "description_html": issue_data.get("description_html", issue.description_html),
             "description": issue_data.get("description", issue.description),
         }
 
@@ -221,9 +205,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                     actor_id=str(request.user.id),
                     issue_id=str(issue.id),
                     project_id=str(project_deploy_board.project_id),
-                    current_instance=json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
+                    current_instance=json.dumps(IssueSerializer(current_instance).data, cls=DjangoJSONEncoder),
                     epoch=int(timezone.now().timestamp()),
                 )
             issue_serializer.save()
@@ -231,9 +213,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},
@@ -255,9 +235,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, anchor, intake_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if project_deploy_board.intake is None:
             return Response(
                 {"error": "Intake is not enabled for this Project Board"},

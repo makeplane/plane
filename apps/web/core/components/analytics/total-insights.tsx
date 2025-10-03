@@ -19,7 +19,7 @@ const getInsightLabel = (
   analyticsType: TAnalyticsTabsBase,
   item: IInsightField,
   isEpic: boolean | undefined,
-  t: (key: string, options?: any) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ) => {
   if (analyticsType === "work-items") {
     return isEpic
@@ -50,15 +50,7 @@ const TotalInsights: React.FC<{
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();
-  const {
-    selectedDuration,
-    selectedProjects,
-    selectedDurationLabel,
-    selectedCycle,
-    selectedModule,
-    isPeekView,
-    isEpic,
-  } = useAnalytics();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { data: totalInsightsData, isLoading } = useSWR(
     `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isEpic}`,
     () =>

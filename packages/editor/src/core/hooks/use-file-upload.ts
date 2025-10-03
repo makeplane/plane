@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/core";
+import type { Editor, NodeViewProps } from "@tiptap/core";
 import { DragEvent, useCallback, useEffect, useState } from "react";
 // helpers
 import { EFileError, isFileValid } from "@/helpers/file";
@@ -66,9 +66,8 @@ export const useUploader = (args: TUploaderArgs) => {
           throw new Error("Something went wrong while uploading the file.");
         }
         onUpload(url, file);
-      } catch (errPayload) {
-        const error = errPayload?.response?.data?.error || "Something went wrong";
-        console.error(error);
+      } catch {
+        console.error("useFileUpload: Error in uploading file");
       } finally {
         handleProgressStatus?.(false);
         setIsUploading(false);
@@ -90,13 +89,13 @@ export const useUploader = (args: TUploaderArgs) => {
 
 type TDropzoneArgs = {
   editor: Editor;
-  pos: number;
+  getPos: NodeViewProps["getPos"];
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
 export const useDropZone = (args: TDropzoneArgs) => {
-  const { editor, pos, type, uploader } = args;
+  const { editor, getPos, type, uploader } = args;
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
@@ -124,8 +123,9 @@ export const useDropZone = (args: TDropzoneArgs) => {
       e.preventDefault();
       setDraggedInside(false);
       const filesList = e.dataTransfer.files;
+      const pos = getPos();
 
-      if (filesList.length === 0 || !editor.isEditable) {
+      if (filesList.length === 0 || !editor.isEditable || pos === undefined) {
         return;
       }
 
@@ -137,7 +137,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
         uploader,
       });
     },
-    [editor, pos, type, uploader]
+    [editor, type, uploader, getPos]
   );
   const onDragEnter = useCallback(() => setDraggedInside(true), []);
   const onDragLeave = useCallback(() => setDraggedInside(false), []);

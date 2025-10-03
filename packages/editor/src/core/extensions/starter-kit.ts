@@ -27,6 +27,8 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    link: false,
+    listKeymap: false,
     paragraph: {
       HTMLAttributes: {
         class: "editor-paragraph-block",
@@ -41,6 +43,6 @@ export const CustomStarterKitExtension = (args: TArgs) => {
       class:
         "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
     },
-    ...(enableHistory ? {} : { history: false }),
+    ...(enableHistory ? {} : { undoRedo: false }),
   });
 };

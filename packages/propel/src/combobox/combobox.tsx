@@ -39,6 +39,7 @@ export interface ComboboxOptionsProps {
   maxHeight?: "lg" | "md" | "rg" | "sm";
   inputClassName?: string;
   optionsContainerClassName?: string;
+  positionerClassName?: string;
 }
 
 export interface ComboboxOptionProps {
@@ -237,10 +238,11 @@ function ComboboxOptions({
   inputClassName,
   optionsContainerClassName,
   emptyMessage,
+  positionerClassName,
 }: ComboboxOptionsProps) {
   const { multiSelect } = useComboboxContext();
   return (
-    <Popover.Panel sideOffset={8} className={cn(className)}>
+    <Popover.Panel sideOffset={8} className={cn(className)} positionerClassName={positionerClassName}>
       <Command>
         {showSearch && <Command.Input placeholder={searchPlaceholder} className={cn(inputClassName)} />}
         <Command.List

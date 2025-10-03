@@ -14,9 +14,7 @@ def get_configuration_value(keys):
     environment_list = []
     if settings.SKIP_ENV_VAR:
         # Get the configurations
-        instance_configuration = InstanceConfiguration.objects.values(
-            "key", "value", "is_encrypted"
-        )
+        instance_configuration = InstanceConfiguration.objects.values("key", "value", "is_encrypted")
 
         for key in keys:
             for item in instance_configuration:
@@ -51,9 +49,7 @@ def get_email_configuration():
             {"key": "EMAIL_USE_SSL", "default": os.environ.get("EMAIL_USE_SSL", "0")},
             {
                 "key": "EMAIL_FROM",
-                "default": os.environ.get(
-                    "EMAIL_FROM", "Team Plane <team@mailer.plane.so>"
-                ),
+                "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
             },
         ]
     )

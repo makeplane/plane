@@ -13,8 +13,9 @@ import {
   WORKSPACE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IWorkspace } from "@plane/types";
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -241,7 +242,6 @@ export const WorkspaceDetails: FC = observer(() => {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}

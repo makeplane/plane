@@ -1,6 +1,4 @@
-import get from "lodash/get";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
+import { uniq, get, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports

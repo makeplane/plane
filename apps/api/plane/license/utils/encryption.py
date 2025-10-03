@@ -31,9 +31,7 @@ def decrypt_data(encrypted_data):
     try:
         if encrypted_data:
             cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
-            decrypted_data = cipher_suite.decrypt(
-                encrypted_data.encode()
-            )  # Convert string back to bytes
+            decrypted_data = cipher_suite.decrypt(encrypted_data.encode())  # Convert string back to bytes
             return decrypted_data.decode()
         else:
             return ""

@@ -4,9 +4,10 @@ import React from "react";
 import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
+import { Button } from "@plane/propel/button";
 import { IProject } from "@plane/types";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 
 export interface IArchiveProject {
   projectDetails: IProject;

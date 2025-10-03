@@ -17,8 +17,9 @@ class ModuleCreateSerializer(BaseSerializer):
     """
     Serializer for creating modules with member validation and date checking.
 
-    Handles module creation including member assignment validation, date range verification,
-    and duplicate name prevention for feature-based project organization setup.
+    Handles module creation including member assignment validation, date range
+    verification, and duplicate name prevention for feature-based
+    project organization setup.
     """
 
     members = serializers.ListField(
@@ -75,9 +76,15 @@ class ModuleCreateSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(name=module_name, project_id=project_id).exists():
+            module = Module.objects.filter(name=module_name, project_id=project_id).first()
+            if module:
                 raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
+                    {
+                        "id": str(module.id),
+                        "code": "MODULE_NAME_ALREADY_EXISTS",
+                        "error": "Module with this name already exists",
+                        "message": "Module with this name already exists",
+                    }
                 )
 
         module = Module.objects.create(**validated_data, project_id=project_id)
@@ -105,8 +112,9 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
     """
     Serializer for updating modules with enhanced validation and member management.
 
-    Extends module creation with update-specific validations including member reassignment,
-    name conflict checking, and relationship management for module modifications.
+    Extends module creation with update-specific validations including
+    member reassignment, name conflict checking,
+    and relationship management for module modifications.
     """
 
     class Meta(ModuleCreateSerializer.Meta):
@@ -121,14 +129,8 @@ class ModuleUpdateSerializer(ModuleCreateSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if (
-                Module.objects.filter(name=module_name, project=instance.project)
-                .exclude(id=instance.id)
-                .exists()
-            ):
-                raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
-                )
+            if Module.objects.filter(name=module_name, project=instance.project).exclude(id=instance.id).exists():
+                raise serializers.ValidationError({"error": "Module with this name already exists"})
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -155,8 +157,8 @@ class ModuleSerializer(BaseSerializer):
     """
     Comprehensive module serializer with work item metrics and member management.
 
-    Provides complete module data including work item counts by status, member relationships,
-    and progress tracking for feature-based project organization.
+    Provides complete module data including work item counts by status, member
+    relationships, and progress tracking for feature-based project organization.
     """
 
     members = serializers.ListField(
@@ -238,12 +240,8 @@ class ModuleLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if ModuleLink.objects.filter(
-            url=validated_data.get("url"), module_id=validated_data.get("module_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if ModuleLink.objects.filter(url=validated_data.get("url"), module_id=validated_data.get("module_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return ModuleLink.objects.create(**validated_data)
 
 

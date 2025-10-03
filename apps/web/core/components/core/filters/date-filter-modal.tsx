@@ -5,8 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
+import { Button } from "@plane/propel/button";
 import { Calendar } from "@plane/propel/calendar";
-import { Button } from "@plane/ui";
 
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
 import { DateFilterSelect } from "./date-filter-select";
@@ -95,13 +95,11 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         const date2Value = getDate(watch("date2"));
                         return (
                           <Calendar
-                            classNames={{
-                              root: ` border border-custom-border-200 p-3 rounded-md`,
-                            }}
+                            className="rounded-md border border-custom-border-200 p-3"
                             captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
-                            onSelect={(date) => {
+                            onSelect={(date: Date | undefined) => {
                               if (!date) return;
                               onChange(date);
                             }}
@@ -120,13 +118,11 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           const date1Value = getDate(watch("date1"));
                           return (
                             <Calendar
-                              classNames={{
-                                root: ` border border-custom-border-200 p-3 rounded-md`,
-                              }}
+                              className="rounded-md border border-custom-border-200 p-3"
                               captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}
-                              onSelect={(date) => {
+                              onSelect={(date: Date | undefined) => {
                                 if (!date) return;
                                 onChange(date);
                               }}

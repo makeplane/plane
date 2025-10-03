@@ -29,8 +29,7 @@ class Cursor:
     # Return the cursor value
     def __eq__(self, other):
         return all(
-            getattr(self, attr) == getattr(other, attr)
-            for attr in ("value", "offset", "is_prev", "has_results")
+            getattr(self, attr) == getattr(other, attr) for attr in ("value", "offset", "is_prev", "has_results")
         )
 
     # Return the representation of the cursor
@@ -131,11 +130,7 @@ class OffsetPaginator:
         queryset = self.queryset
         if self.key:
             queryset = queryset.order_by(
-                (
-                    F(*self.key).desc(nulls_last=True)
-                    if self.desc
-                    else F(*self.key).asc(nulls_last=True)
-                ),
+                (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
                 "-created_at",
             )
         # The current page
@@ -157,11 +152,7 @@ class OffsetPaginator:
         if cursor.value != limit and cursor.is_prev:
             results = results[-(limit + 1) :]
 
-        total_count = (
-            self.total_count_queryset.count()
-            if self.total_count_queryset
-            else queryset.count()
-        )
+        total_count = self.total_count_queryset.count() if self.total_count_queryset else queryset.count()
 
         # Check if there are more results available after the current page
 
@@ -221,7 +212,8 @@ class GroupedOffsetPaginator(OffsetPaginator):
         self.group_by_field_name = group_by_field_name
         # Set the group by fields
         self.group_by_fields = group_by_fields
-        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
+        # Set the count filter - this are extra filters that need to be passed
+        # to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=50, cursor=None):
@@ -256,9 +248,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
                 partition_by=[F(self.group_by_field_name)],
                 order_by=(
                     (
-                        F(*self.key).desc(
-                            nulls_last=True
-                        )  # order by desc if desc is set
+                        F(*self.key).desc(nulls_last=True)  # order by desc if desc is set
                         if self.desc
                         else F(*self.key).asc(nulls_last=True)  # Order by asc if set
                     ),
@@ -268,18 +258,12 @@ class GroupedOffsetPaginator(OffsetPaginator):
         )
         # Filter the results by row number
         results = queryset.filter(row_number__gt=offset, row_number__lt=stop).order_by(
-            (
-                F(*self.key).desc(nulls_last=True)
-                if self.desc
-                else F(*self.key).asc(nulls_last=True)
-            ),
+            (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
             F("created_at").desc(),
         )
 
         # Adjust cursors based on the grouped results for pagination
-        next_cursor = Cursor(
-            limit, page + 1, False, queryset.filter(row_number__gte=stop).exists()
-        )
+        next_cursor = Cursor(limit, page + 1, False, queryset.filter(row_number__gte=stop).exists())
 
         # Add previous cursors
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
@@ -318,10 +302,9 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Convert the total into dictionary of keys as group name and value as the total
         total_group_dict = {}
         for group in self.__get_total_queryset():
-            total_group_dict[str(group.get(self.group_by_field_name))] = (
-                total_group_dict.get(str(group.get(self.group_by_field_name)), 0)
-                + (1 if group.get("count") == 0 else group.get("count"))
-            )
+            total_group_dict[str(group.get(self.group_by_field_name))] = total_group_dict.get(
+                str(group.get(self.group_by_field_name)), 0
+            ) + (1 if group.get("count") == 0 else group.get("count"))
         return total_group_dict
 
     def __get_field_dict(self):
@@ -361,14 +344,10 @@ class GroupedOffsetPaginator(OffsetPaginator):
         for result in results:
             result_id = result["id"]
             group_ids = list(result_group_mapping[str(result_id)])
-            result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
-                [] if "None" in group_ids else group_ids
-            )
+            result[self.FIELD_MAPPER.get(self.group_by_field_name)] = [] if "None" in group_ids else group_ids
             # If a result belongs to multiple groups, add it to each group
             for group_id in group_ids:
-                if not self.__result_already_added(
-                    result, grouped_by_field_name[group_id]
-                ):
+                if not self.__result_already_added(result, grouped_by_field_name[group_id]):
                     grouped_by_field_name[group_id].append(result)
 
         # Convert grouped_by_field_name back to a list for each group
@@ -434,7 +413,8 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         self.sub_group_by_field_name = sub_group_by_field_name
         self.sub_group_by_fields = sub_group_by_fields
 
-        # Set the count filter - this are extra filters that need to be passed to calculate the counts with the filters
+        # Set the count filter - this are extra filters that need
+        # to be passed to calculate the counts with the filters
         self.count_filter = count_filter
 
     def get_result(self, limit=30, cursor=None):
@@ -475,11 +455,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                     F(self.sub_group_by_field_name),
                 ],
                 order_by=(
-                    (
-                        F(*self.key).desc(nulls_last=True)
-                        if self.desc
-                        else F(*self.key).asc(nulls_last=True)
-                    ),
+                    (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
                     "-created_at",
                 ),
             )
@@ -487,18 +463,12 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
 
         # Filter the results
         results = queryset.filter(row_number__gt=offset, row_number__lt=stop).order_by(
-            (
-                F(*self.key).desc(nulls_last=True)
-                if self.desc
-                else F(*self.key).asc(nulls_last=True)
-            ),
+            (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
             F("created_at").desc(),
         )
 
         # Adjust cursors based on the grouped results for pagination
-        next_cursor = Cursor(
-            limit, page + 1, False, queryset.filter(row_number__gte=stop).exists()
-        )
+        next_cursor = Cursor(limit, page + 1, False, queryset.filter(row_number__gte=stop).exists())
 
         # Add previous cursors
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
@@ -548,10 +518,9 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         total_group_dict = {}
         total_sub_group_dict = {}
         for group in self.__get_group_total_queryset():
-            total_group_dict[str(group.get(self.group_by_field_name))] = (
-                total_group_dict.get(str(group.get(self.group_by_field_name)), 0)
-                + (1 if group.get("count") == 0 else group.get("count"))
-            )
+            total_group_dict[str(group.get(self.group_by_field_name))] = total_group_dict.get(
+                str(group.get(self.group_by_field_name)), 0
+            ) + (1 if group.get("count") == 0 else group.get("count"))
 
         # Sub group total values
         for item in self.__get_subgroup_total_queryset():
@@ -582,9 +551,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 "results": {
                     str(sub_group): {
                         "results": [],
-                        "total_results": total_sub_group_dict.get(str(group)).get(
-                            str(sub_group), 0
-                        ),
+                        "total_results": total_sub_group_dict.get(str(group)).get(str(sub_group), 0),
                     }
                     for sub_group in total_sub_group_dict.get(str(group), [])
                 },
@@ -622,16 +589,11 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             # Check if the group value is in the processed results
             result_id = result["id"]
 
-            if (
-                group_value in processed_results
-                and sub_group_value in processed_results[str(group_value)]["results"]
-            ):
+            if group_value in processed_results and sub_group_value in processed_results[str(group_value)]["results"]:
                 if self.group_by_field_name in self.FIELD_MAPPER:
                     # for multi grouper
                     group_ids = list(result_group_mapping[str(result_id)])
-                    result[self.FIELD_MAPPER.get(self.group_by_field_name)] = (
-                        [] if "None" in group_ids else group_ids
-                    )
+                    result[self.FIELD_MAPPER.get(self.group_by_field_name)] = [] if "None" in group_ids else group_ids
                 if self.sub_group_by_field_name in self.FIELD_MAPPER:
                     sub_group_ids = list(result_sub_group_mapping[str(result_id)])
                     # for multi groups
@@ -639,9 +601,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                         [] if "None" in sub_group_ids else sub_group_ids
                     )
                 # If a result belongs to multiple groups, add it to each group
-                processed_results[str(group_value)]["results"][str(sub_group_value)][
-                    "results"
-                ].append(result)
+                processed_results[str(group_value)]["results"][str(sub_group_value)]["results"].append(result)
 
         return processed_results
 
@@ -651,18 +611,13 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         for result in results:
             group_value = str(result.get(self.group_by_field_name))
             sub_group_value = str(result.get(self.sub_group_by_field_name))
-            processed_results[group_value]["results"][sub_group_value][
-                "results"
-            ].append(result)
+            processed_results[group_value]["results"][sub_group_value]["results"].append(result)
 
         return processed_results
 
     def process_results(self, results):
         if results:
-            if (
-                self.group_by_field_name in self.FIELD_MAPPER
-                or self.sub_group_by_field_name in self.FIELD_MAPPER
-            ):
+            if self.group_by_field_name in self.FIELD_MAPPER or self.sub_group_by_field_name in self.FIELD_MAPPER:
                 # if the grouping is done through m2m then
                 processed_results = self.__query_multi_grouper(results=results)
             else:
@@ -688,9 +643,7 @@ class BasePaginator:
 
         max_per_page = max(max_per_page, default_per_page)
         if per_page > max_per_page:
-            raise ParseError(
-                detail=f"Invalid per_page value. Cannot exceed {max_per_page}."
-            )
+            raise ParseError(detail=f"Invalid per_page value. Cannot exceed {max_per_page}.")
 
         return per_page
 
@@ -718,9 +671,7 @@ class BasePaginator:
         # Convert the cursor value to integer and float from string
         input_cursor = None
         try:
-            input_cursor = cursor_cls.from_string(
-                request.GET.get(self.cursor_name, f"{per_page}:0:0")
-            )
+            input_cursor = cursor_cls.from_string(request.GET.get(self.cursor_name, f"{per_page}:0:0"))
         except ValueError:
             raise ParseError(detail="Invalid cursor parameter.")
 
@@ -731,9 +682,7 @@ class BasePaginator:
                 paginator_kwargs["count_filter"] = count_filter
 
                 if sub_group_by_field_name:
-                    paginator_kwargs["sub_group_by_field_name"] = (
-                        sub_group_by_field_name
-                    )
+                    paginator_kwargs["sub_group_by_field_name"] = sub_group_by_field_name
                     paginator_kwargs["sub_group_by_fields"] = sub_group_by_fields
 
             paginator_kwargs["total_count_queryset"] = total_count_queryset

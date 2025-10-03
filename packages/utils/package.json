@@ -26,7 +26,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "tailwind-merge": "^2.5.5",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "catalog:",
+    "@types/lodash-es": "catalog:",
     "@types/node": "^22.5.4",
     "@types/react": "catalog:",
     "@types/uuid": "^9.0.8",

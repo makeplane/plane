@@ -1,8 +1,6 @@
-import Placeholder from "@tiptap/extension-placeholder";
+import { Placeholder } from "@tiptap/extensions";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // types
 import type { IEditorProps } from "@/types";
 
@@ -19,7 +17,7 @@ export const CustomPlaceholderExtension = (args: TArgs) => {
 
       if (node.type.name === CORE_EXTENSIONS.HEADING) return `Heading ${node.attrs.level}`;
 
-      const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+      const isUploadInProgress = editor.storage.utility?.uploadInProgress;
 
       if (isUploadInProgress) return "";
 

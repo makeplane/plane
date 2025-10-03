@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useCallback, useRef, useState } from "react";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search, X } from "lucide-react";

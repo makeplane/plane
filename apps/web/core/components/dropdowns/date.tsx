@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -21,6 +23,7 @@ import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
+  defaultOpen?: boolean;
   optionsClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
@@ -41,6 +44,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    defaultOpen = false,
     optionsClassName = "",
     closeOnSelect = true,
     disabled = false,
@@ -60,7 +64,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
     renderByDefault = true,
   } = props;
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // hooks
@@ -178,11 +182,11 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
               {...attributes.popper}
             >
               <Calendar
+                className="rounded-md border border-custom-border-200 p-3"
                 captionLayout="dropdown"
-                classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
-                onSelect={(date) => {
+                onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays

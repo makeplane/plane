@@ -36,9 +36,7 @@ def get_mobile_default_onboarding():
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     username = models.CharField(max_length=128, unique=True)
     # user fields
     mobile_number = models.CharField(max_length=255, blank=True, null=True)
@@ -97,15 +95,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     # my_issues_prop = models.JSONField(null=True)
 
     is_bot = models.BooleanField(default=False)
-    bot_type = models.CharField(
-        max_length=30, verbose_name="Bot Type", blank=True, null=True
-    )
+    bot_type = models.CharField(max_length=30, verbose_name="Bot Type", blank=True, null=True)
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
-    user_timezone = models.CharField(
-        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
-    )
+    user_timezone = models.CharField(max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES)
 
     # email validation
     is_email_valid = models.BooleanField(default=False)
@@ -189,13 +183,9 @@ class Profile(TimeAuditModel):
         (SATURDAY, "Saturday"),
     )
 
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     # User
-    user = models.OneToOneField(
-        "db.User", on_delete=models.CASCADE, related_name="profile"
-    )
+    user = models.OneToOneField("db.User", on_delete=models.CASCADE, related_name="profile")
     # General
     theme = models.JSONField(default=dict)
     is_app_rail_docked = models.BooleanField(default=True)
@@ -220,9 +210,7 @@ class Profile(TimeAuditModel):
     mobile_timezone_auto_set = models.BooleanField(default=False)
     # language
     language = models.CharField(max_length=255, default="en")
-    start_of_the_week = models.PositiveSmallIntegerField(
-        choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY
-    )
+    start_of_the_week = models.PositiveSmallIntegerField(choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY)
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
@@ -243,12 +231,8 @@ class Account(TimeAuditModel):
         ("gitlab", "GitLab"),
     )
 
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, related_name="accounts"
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="accounts")
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(choices=PROVIDER_CHOICES)
     access_token = models.TextField()

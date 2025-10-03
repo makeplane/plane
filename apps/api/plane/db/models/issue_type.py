@@ -8,9 +8,7 @@ from .base import BaseModel
 
 
 class IssueType(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", related_name="issue_types", on_delete=models.CASCADE
-    )
+    workspace = models.ForeignKey("db.Workspace", related_name="issue_types", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
@@ -31,9 +29,7 @@ class IssueType(BaseModel):
 
 
 class ProjectIssueType(ProjectBaseModel):
-    issue_type = models.ForeignKey(
-        "db.IssueType", related_name="project_issue_types", on_delete=models.CASCADE
-    )
+    issue_type = models.ForeignKey("db.IssueType", related_name="project_issue_types", on_delete=models.CASCADE)
     level = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)
 
