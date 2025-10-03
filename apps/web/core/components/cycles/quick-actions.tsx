@@ -223,9 +223,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: CYCLE_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

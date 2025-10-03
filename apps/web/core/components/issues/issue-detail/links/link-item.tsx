@@ -95,9 +95,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
           >
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 toggleIssueLinkModal(true);
               }}
             >
@@ -106,9 +104,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 linkOperations.remove(linkDetail.id);
               }}
             >

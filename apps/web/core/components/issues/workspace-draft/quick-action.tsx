@@ -31,9 +31,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props)
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
             className={cn(
