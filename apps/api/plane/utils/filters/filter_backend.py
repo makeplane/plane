@@ -70,7 +70,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         self._validate_fields(filter_data, view)
 
         # Build combined Q object from the filter tree
-        combined_q = self._evaluate_node(filter_data, view)
+        combined_q = self._evaluate_node(filter_data, view, queryset)
         if combined_q is None:
             return queryset
 
@@ -117,7 +117,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             return fields
         return []
 
-    def _evaluate_node(self, node, view):
+    def _evaluate_node(self, node, view, queryset):
         """
         Recursively evaluate a JSON node into a combined Q object.
 
@@ -139,7 +139,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return None
             combined_q = Q()
             for child in children:
-                child_q = self._evaluate_node(child, view)
+                child_q = self._evaluate_node(child, view, queryset)
                 if child_q is None:
                     continue
                 combined_q |= child_q
@@ -152,7 +152,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return None
             combined_q = Q()
             for child in children:
-                child_q = self._evaluate_node(child, view)
+                child_q = self._evaluate_node(child, view, queryset)
                 if child_q is None:
                     continue
                 combined_q &= child_q
@@ -163,15 +163,15 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             child = node["not"]
             if not isinstance(child, dict):
                 return None
-            child_q = self._evaluate_node(child, view)
+            child_q = self._evaluate_node(child, view, queryset)
             if child_q is None:
                 return None
             return ~child_q
 
         # Leaf dict: evaluate via FilterSet to get a Q object
-        return self._build_leaf_q(node, view)
+        return self._build_leaf_q(node, view, queryset)
 
-    def _build_leaf_q(self, leaf_conditions, view):
+    def _build_leaf_q(self, leaf_conditions, view, queryset):
         """Build a Q object from leaf filter conditions using the view's FilterSet.
 
         We serialize the leaf dict into a QueryDict and let the view's
@@ -201,11 +201,9 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         qd = qd.copy()
         qd._mutable = False
 
-        # Instantiate and validate the filterset with a dummy queryset
-        # (we only need the Q object, not the actual filtered results)
-        model = filterset_class._meta.model
-        dummy_qs = model.objects.none()
-        fs = filterset_class(data=qd, queryset=dummy_qs)
+        # Instantiate the filterset with the actual queryset
+        # Custom filter methods may need access to the queryset for filtering
+        fs = filterset_class(data=qd, queryset=queryset)
 
         if not fs.is_valid():
             raise translate_validation(fs.errors)
