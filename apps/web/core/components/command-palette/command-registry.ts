@@ -1,7 +1,7 @@
 "use client";
 
 import { commandExecutor } from "./command-executor";
-import { CommandConfig, CommandExecutionContext, CommandGroup, CommandContext } from "./types";
+import { CommandConfig, CommandExecutionContext, CommandGroup, CommandContext } from "./power-k/types";
 
 /**
  * Enhanced CommandRegistry with context-aware filtering and multi-step execution

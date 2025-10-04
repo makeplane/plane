@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandContext, RouteContext } from "./types";
+import { CommandContext, RouteContext } from "./power-k/types";
 
 /**
  * Utility functions for building and managing command context
@@ -11,37 +11,37 @@ import { CommandContext, RouteContext } from "./types";
  */
 export function determineRouteContext(pathname: string): RouteContext {
   // Issue context - when viewing a specific work item
-  if (pathname.includes('/work-item/') || pathname.match(/\/-\//)) {
-    return 'issue';
+  if (pathname.includes("/work-item/") || pathname.match(/\/-\//)) {
+    return "issue";
   }
 
   // Cycle context - when viewing a specific cycle
-  if (pathname.includes('/cycles/') && pathname.split('/').filter(Boolean).length > 5) {
-    return 'cycle';
+  if (pathname.includes("/cycles/") && pathname.split("/").filter(Boolean).length > 5) {
+    return "cycle";
   }
 
   // Module context - when viewing a specific module
-  if (pathname.includes('/modules/') && pathname.split('/').filter(Boolean).length > 5) {
-    return 'module';
+  if (pathname.includes("/modules/") && pathname.split("/").filter(Boolean).length > 5) {
+    return "module";
   }
 
   // Page context - when viewing a specific page
-  if (pathname.includes('/pages/') && pathname.split('/').filter(Boolean).length > 5) {
-    return 'page';
+  if (pathname.includes("/pages/") && pathname.split("/").filter(Boolean).length > 5) {
+    return "page";
   }
 
   // View context - when viewing a specific view
-  if (pathname.includes('/views/') && pathname.split('/').filter(Boolean).length > 5) {
-    return 'view';
+  if (pathname.includes("/views/") && pathname.split("/").filter(Boolean).length > 5) {
+    return "view";
   }
 
   // Project context - when in a project but not viewing specific entity
-  if (pathname.includes('/projects/') && pathname.split('/').filter(Boolean).length > 3) {
-    return 'project';
+  if (pathname.includes("/projects/") && pathname.split("/").filter(Boolean).length > 3) {
+    return "project";
   }
 
   // Default to workspace context
-  return 'workspace';
+  return "workspace";
 }
 
 /**
@@ -68,7 +68,7 @@ export function buildCommandContext(params: {
     moduleId,
     pageId,
     viewId,
-    pathname = '',
+    pathname = "",
     canPerformAnyCreateAction = false,
     canPerformWorkspaceActions = false,
     canPerformProjectActions = false,
@@ -97,10 +97,7 @@ export function buildCommandContext(params: {
 /**
  * Update context with step data (used during multi-step flows)
  */
-export function updateContextWithStepData(
-  context: CommandContext,
-  stepData: Record<string, any>
-): CommandContext {
+export function updateContextWithStepData(context: CommandContext, stepData: Record<string, any>): CommandContext {
   return {
     ...context,
     stepData: {
@@ -113,19 +110,22 @@ export function updateContextWithStepData(
 /**
  * Check if a specific entity context is available
  */
-export function hasEntityContext(context: CommandContext, entity: 'project' | 'issue' | 'cycle' | 'module' | 'page' | 'view'): boolean {
+export function hasEntityContext(
+  context: CommandContext,
+  entity: "project" | "issue" | "cycle" | "module" | "page" | "view"
+): boolean {
   switch (entity) {
-    case 'project':
+    case "project":
       return Boolean(context.projectId);
-    case 'issue':
+    case "issue":
       return Boolean(context.issueId);
-    case 'cycle':
+    case "cycle":
       return Boolean(context.cycleId);
-    case 'module':
+    case "module":
       return Boolean(context.moduleId);
-    case 'page':
+    case "page":
       return Boolean(context.pageId);
-    case 'view':
+    case "view":
       return Boolean(context.viewId);
     default:
       return false;
@@ -143,24 +143,24 @@ export function getContextBreadcrumbs(context: CommandContext): string[] {
   }
 
   if (context.projectId) {
-    breadcrumbs.push('project');
+    breadcrumbs.push("project");
   }
 
   switch (context.routeContext) {
-    case 'issue':
-      breadcrumbs.push('issue');
+    case "issue":
+      breadcrumbs.push("issue");
       break;
-    case 'cycle':
-      breadcrumbs.push('cycle');
+    case "cycle":
+      breadcrumbs.push("cycle");
       break;
-    case 'module':
-      breadcrumbs.push('module');
+    case "module":
+      breadcrumbs.push("module");
       break;
-    case 'page':
-      breadcrumbs.push('page');
+    case "page":
+      breadcrumbs.push("page");
       break;
-    case 'view':
-      breadcrumbs.push('view');
+    case "view":
+      breadcrumbs.push("view");
       break;
   }
 
@@ -172,14 +172,14 @@ export function getContextBreadcrumbs(context: CommandContext): string[] {
  */
 export function hasPermission(
   context: CommandContext,
-  required: 'create' | 'workspace-admin' | 'project-admin'
+  required: "create" | "workspace-admin" | "project-admin"
 ): boolean {
   switch (required) {
-    case 'create':
+    case "create":
       return Boolean(context.canPerformAnyCreateAction);
-    case 'workspace-admin':
+    case "workspace-admin":
       return Boolean(context.canPerformWorkspaceActions);
-    case 'project-admin':
+    case "project-admin":
       return Boolean(context.canPerformProjectActions);
     default:
       return false;

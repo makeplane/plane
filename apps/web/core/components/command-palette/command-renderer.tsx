@@ -2,12 +2,13 @@
 
 import React from "react";
 import { Command } from "cmdk";
-import { CommandConfig, CommandGroup as CommandGroupType } from "./types";
+// local imports
+import type { CommandConfig, CommandGroup as CommandGroupType } from "./power-k/types";
 
-interface CommandRendererProps {
+type Props = {
   commands: CommandConfig[];
   onCommandSelect: (command: CommandConfig) => void;
-}
+};
 
 const groupPriority: Record<CommandGroupType, number> = {
   navigate: 1,
@@ -23,13 +24,13 @@ const groupTitles: Record<CommandGroupType, string> = {
   navigate: "Navigate",
   create: "Work item",
   project: "Project",
-  workspace: "Workspace Settings",
+  workspace: "Workspace settings",
   account: "Account",
   help: "Help",
   contextual: "Actions",
 };
 
-export const CommandRenderer: React.FC<CommandRendererProps> = ({ commands, onCommandSelect }) => {
+export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) => {
   const commandsByGroup = commands.reduce(
     (acc, command) => {
       const group = command.group || "help";
@@ -41,8 +42,8 @@ export const CommandRenderer: React.FC<CommandRendererProps> = ({ commands, onCo
   );
 
   const sortedGroups = Object.keys(commandsByGroup).sort((a, b) => {
-    const aPriority = groupPriority[a as CommandGroupType] || 999;
-    const bPriority = groupPriority[b as CommandGroupType] || 999;
+    const aPriority = groupPriority[a as CommandGroupType];
+    const bPriority = groupPriority[b as CommandGroupType];
     return aPriority - bPriority;
   }) as CommandGroupType[];
 
@@ -57,7 +58,7 @@ export const CommandRenderer: React.FC<CommandRendererProps> = ({ commands, onCo
             {groupCommands.map((command) => (
               <Command.Item key={command.id} onSelect={() => onCommandSelect(command)} className="focus:outline-none">
                 <div className="flex items-center gap-2 text-custom-text-200">
-                  {command.icon && <command.icon className="h-3.5 w-3.5" />}
+                  {command.icon && <command.icon className="shrink-0 size-3.5" />}
                   {command.title}
                 </div>
                 {(command.shortcut || command.keySequence) && (

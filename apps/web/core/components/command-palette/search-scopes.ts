@@ -1,8 +1,10 @@
 "use client";
 
 import { Search, Layers, FolderKanban, FileText } from "lucide-react";
+// plane imports
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
-import { SearchScope, SearchScopeConfig } from "./types";
+// local imports
+import type { SearchScope, SearchScopeConfig } from "./power-k/types";
 
 /**
  * Search scope configurations
@@ -15,8 +17,8 @@ export const SEARCH_SCOPES: Record<SearchScope, SearchScopeConfig> = {
     placeholder: "Search everything",
     icon: Search,
   },
-  issues: {
-    id: "issues",
+  "work-items": {
+    id: "work-items",
     title: "Work Items",
     placeholder: "Search work items",
     icon: Layers,
@@ -72,16 +74,11 @@ export function getAllScopes(): SearchScopeConfig[] {
  * Some scopes may only be available in certain contexts (e.g., cycles only in project context)
  */
 export function getAvailableScopes(hasProjectContext: boolean): SearchScopeConfig[] {
-  const scopes = [SEARCH_SCOPES.all, SEARCH_SCOPES.issues, SEARCH_SCOPES.projects];
+  const scopes = [SEARCH_SCOPES.all, SEARCH_SCOPES["work-items"], SEARCH_SCOPES.projects];
 
   // Project-level scopes only available when in project context
   if (hasProjectContext) {
-    scopes.push(
-      SEARCH_SCOPES.cycles,
-      SEARCH_SCOPES.modules,
-      SEARCH_SCOPES.pages,
-      SEARCH_SCOPES.views
-    );
+    scopes.push(SEARCH_SCOPES.cycles, SEARCH_SCOPES.modules, SEARCH_SCOPES.pages, SEARCH_SCOPES.views);
   }
 
   return scopes;
@@ -90,10 +87,7 @@ export function getAvailableScopes(hasProjectContext: boolean): SearchScopeConfi
 /**
  * Filter search results based on active scope
  */
-export function filterResultsByScope<T extends { results: any }>(
-  results: T,
-  scope: SearchScope
-): T {
+export function filterResultsByScope<T extends { results: any }>(results: T, scope: SearchScope): T {
   if (scope === "all") {
     return results;
   }
@@ -102,7 +96,7 @@ export function filterResultsByScope<T extends { results: any }>(
   const filtered = {
     ...results,
     results: {
-      issues: scope === "issues" ? results.results.issues : [],
+      issues: scope === "work-items" ? results.results.issues : [],
       projects: scope === "projects" ? results.results.projects : [],
       cycles: scope === "cycles" ? results.results.cycles : [],
       modules: scope === "modules" ? results.results.modules : [],
@@ -120,9 +114,9 @@ export function filterResultsByScope<T extends { results: any }>(
 export function getScopeShortcut(scope: SearchScope): string | undefined {
   const shortcuts: Record<SearchScope, string | undefined> = {
     all: undefined,
-    issues: "i",
+    "work-items": "c",
     projects: "p",
-    cycles: "c",
+    cycles: "q",
     modules: "m",
     pages: "d",
     views: "v",

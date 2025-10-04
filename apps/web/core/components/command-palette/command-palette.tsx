@@ -9,7 +9,7 @@ import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLev
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
-import { CommandModal, ShortcutsModal } from "@/components/command-palette";
+import { ShortcutsModal } from "@/components/command-palette";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -33,6 +33,7 @@ import {
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
 import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
+import { PowerKModal } from "./power-k/modal";
 
 export const CommandPalette: FC = observer(() => {
   // router params
@@ -295,7 +296,7 @@ export const CommandPalette: FC = observer(() => {
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
       <IssueLevelModals projectId={projectId} issueId={issueId} />
-      <CommandModal />
+      <PowerKModal />
     </>
   );
 });

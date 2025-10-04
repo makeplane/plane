@@ -6,7 +6,7 @@ import {
   CommandStep,
   CommandContext,
   StepExecutionResult,
-} from "./types";
+} from "./power-k/types";
 
 /**
  * CommandExecutor handles the execution of commands with multi-step flows.
@@ -79,7 +79,10 @@ export class CommandExecutor {
   /**
    * Execute a single step
    */
-  private async executeStep(step: CommandStep, executionContext: CommandExecutionContext): Promise<StepExecutionResult> {
+  private async executeStep(
+    step: CommandStep,
+    executionContext: CommandExecutionContext
+  ): Promise<StepExecutionResult> {
     switch (step.type) {
       case "navigate":
         return this.executeNavigateStep(step, executionContext);
