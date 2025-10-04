@@ -20,6 +20,7 @@ import {
   CommandSearchResults,
   CommandPageContent,
   CommandModalFooter,
+  CommandConfig,
 } from "@/components/command-palette";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "@/components/command-palette/hooks";
 // helpers
@@ -204,7 +205,7 @@ export const CommandModal: React.FC = observer(() => {
     isInitializedRef.current = false;
   }
 
-  const handleCommandSelect = useCallback((command: { id: string; action: () => void }) => {
+  const handleCommandSelect = useCallback(async (command: CommandConfig) => {
     if (command.id === "create-work-item") {
       captureClick({
         elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
@@ -212,8 +213,10 @@ export const CommandModal: React.FC = observer(() => {
     } else if (command.id === "create-project") {
       captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
     }
-    command.action();
-  }, []);
+
+    // Execute command using registry
+    await registry.executeCommand(command.id, executionContext);
+  }, [registry, executionContext]);
 
   if (!isCommandPaletteOpen) {
     return null;

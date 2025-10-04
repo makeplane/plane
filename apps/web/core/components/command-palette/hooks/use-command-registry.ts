@@ -76,6 +76,7 @@ export const useCommandRegistryInitializer = (
       setPlaceholder,
       setSearchTerm,
       context,
+      updateContext: () => {}, // Will be properly implemented during UI integration
     }),
     [closePalette, router, setPages, setPlaceholder, setSearchTerm, context]
   );
@@ -102,15 +103,7 @@ export const useCommandRegistryInitializer = (
     registry.clear();
 
     const commands = [
-      ...createNavigationCommands(openProjectList, openCycleList, openIssueList),
-      ...createCreationCommands(
-        toggleCreateIssueModal,
-        toggleCreateProjectModal,
-        () => canPerformAnyCreateAction,
-        () => canPerformWorkspaceActions,
-        workspaceSlug?.toString(),
-        workspaceProjectIds
-      ),
+      ...createNavigationCommands(),
       ...createAccountCommands(createNewWorkspace, openThemeSettings),
       ...createSettingsCommands(openWorkspaceSettings, () => canPerformWorkspaceActions),
     ];

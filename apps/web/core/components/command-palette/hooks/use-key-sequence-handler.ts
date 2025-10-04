@@ -13,7 +13,7 @@ export const useKeySequenceHandler = (
   const sequenceTimeout = useRef<number | null>(null);
 
   const handleKeySequence = useCallback(
-    (e: React.KeyboardEvent) => {
+    async (e: React.KeyboardEvent) => {
       const key = e.key.toLowerCase();
       sequence.current = (sequence.current + key).slice(-2);
 
@@ -22,7 +22,7 @@ export const useKeySequenceHandler = (
         sequence.current = "";
       }, timeout);
 
-      const executed = registry.executeKeySequence(sequence.current, executionContext);
+      const executed = await registry.executeKeySequence(sequence.current, executionContext);
       if (executed) {
         e.preventDefault();
         sequence.current = "";
