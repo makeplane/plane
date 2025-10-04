@@ -186,10 +186,16 @@ export type CommandExecutionContext = {
 // ============================================================================
 
 export type StepExecutionResult = {
-  // Continue to next step
+  // Continue to next step automatically
   continue: boolean;
   // Updated context for next step
   updatedContext?: Partial<CommandContext>;
   // Close palette after this step
   closePalette?: boolean;
+  // This step is waiting for user selection (for selection steps)
+  waitingForSelection?: boolean;
+  // The key to use for storing selected data (for selection steps)
+  dataKey?: string;
+  // This step was skipped due to condition
+  skipped?: boolean;
 };

@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
@@ -18,9 +17,6 @@ type TCommandRegistryInitializerArgs = {
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   closePalette: () => void;
-  openProjectList: () => void;
-  openCycleList: () => void;
-  openIssueList: () => void;
   isWorkspaceLevel: boolean;
 };
 
@@ -29,22 +25,12 @@ type TCommandRegistryInitializerArgs = {
  * This should only be used to initialize the registry with commands once
  */
 export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerArgs) => {
-  const {
-    setPages,
-    setPlaceholder,
-    setSearchTerm,
-    closePalette,
-    openProjectList,
-    openCycleList,
-    openIssueList,
-    isWorkspaceLevel,
-  } = args;
+  const { setPages, setPlaceholder, setSearchTerm, closePalette, isWorkspaceLevel } = args;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // store hooks
-  const { toggleCreateIssueModal, toggleCreateProjectModal, getCommandRegistry } = useCommandPalette();
-  const { workspaceProjectIds } = useProject();
+  const { getCommandRegistry } = useCommandPalette();
   const { canPerformAnyCreateAction } = useUser();
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -110,19 +96,7 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     ];
 
     registry.registerMultiple(commands);
-  }, [
-    registry,
-    workspaceSlug,
-    workspaceProjectIds,
-    canPerformAnyCreateAction,
-    canPerformWorkspaceActions,
-    openProjectList,
-    openCycleList,
-    openIssueList,
-    toggleCreateIssueModal,
-    toggleCreateProjectModal,
-    openWorkspaceSettings,
-  ]);
+  }, [registry, executionContext, openWorkspaceSettings, canPerformWorkspaceActions]);
 
   return {
     registry,

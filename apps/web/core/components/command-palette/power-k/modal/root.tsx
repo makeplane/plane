@@ -19,20 +19,19 @@ import { CommandConfig, TPowerKPageKeys } from "@/components/command-palette";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
+import { commandExecutor } from "../../command-executor";
+import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
+import { PowerKModalPagesList } from "../pages";
 import { PowerKContextBasedActions } from "../pages/context-based-actions";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
-import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
-import { PowerKModalPagesList } from "../pages";
 import { PowerKModalSearchResults } from "./search-results";
 
 const workspaceService = new WorkspaceService();
@@ -50,14 +49,17 @@ export const PowerKModal: React.FC = observer(() => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<TPowerKPageKeys[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
-  const [projectSelectionAction, setProjectSelectionAction] = useState<"navigate" | "cycle" | null>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+
+  // Command execution state
+  const [activeCommand, setActiveCommand] = useState<CommandConfig | null>(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [commandStepData, setCommandStepData] = useState<Record<string, any>>({});
+  const [executedSteps, setExecutedSteps] = useState<number[]>([]); // Track which steps were actually executed (not skipped)
+
   // store hooks
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
-  const { fetchAllCycles } = useCycle();
-  const { getPartialProjectById } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, activeEntity, clearActiveEntity } = useCommandPalette();
   // derived values
@@ -69,73 +71,171 @@ export const PowerKModal: React.FC = observer(() => {
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
-  const openProjectSelection = useCallback(
-    (action: "navigate" | "cycle") => {
-      if (!workspaceSlug) return;
-      setPlaceholder("Search projects");
-      setSearchTerm("");
-      setProjectSelectionAction(action);
-      setSelectedProjectId(null);
-      setPages((p) => [...p, "open-project"]);
-    },
-    [workspaceSlug]
-  );
-
-  const openProjectList = useCallback(() => openProjectSelection("navigate"), [openProjectSelection]);
-
-  const openCycleList = useCallback(() => {
-    if (!workspaceSlug) return;
-    const currentProject = projectId ? getPartialProjectById(projectId.toString()) : null;
-    if (currentProject && currentProject.cycle_view) {
-      setSelectedProjectId(projectId.toString());
-      setPlaceholder("Search cycles");
-      setSearchTerm("");
-      setPages((p) => [...p, "open-cycle"]);
-      fetchAllCycles(workspaceSlug.toString(), projectId.toString());
-    } else {
-      openProjectSelection("cycle");
-    }
-  }, [openProjectSelection, workspaceSlug, projectId, getPartialProjectById, fetchAllCycles]);
-
-  const openIssueList = useCallback(() => {
-    if (!workspaceSlug) return;
-    setPlaceholder("Search issues");
-    setSearchTerm("");
-    setPages((p) => [...p, "open-issue"]);
-  }, [workspaceSlug]);
+  // Reset command execution state
+  const resetCommandExecution = useCallback(() => {
+    setActiveCommand(null);
+    setCurrentStepIndex(0);
+    setCommandStepData({});
+    setExecutedSteps([]);
+    setPages([]);
+    setPlaceholder("Type a command or search");
+  }, []);
 
   const closePalette = useCallback(() => {
     toggleCommandPaletteModal(false);
     setTimeout(() => {
-      setPages([]);
-      setPlaceholder("Type a command or search");
-      setProjectSelectionAction(null);
-      setSelectedProjectId(null);
+      resetCommandExecution();
     }, 500);
   }, [toggleCommandPaletteModal]);
 
-  // Initialize command registry
+  // Initialize command registry (we'll update context with stepData dynamically)
   const { context, registry, executionContext, initializeCommands } = useCommandRegistryInitializer({
     setPages,
     setPlaceholder,
     setSearchTerm,
     closePalette,
-    openProjectList,
-    openCycleList,
-    openIssueList,
     isWorkspaceLevel,
   });
 
   const handleKeySequence = useKeySequenceHandler(registry, executionContext);
 
+  // Execute the current step of the active command
+  const executeCurrentStep = useCallback(async () => {
+    if (!activeCommand || !activeCommand.steps) return;
+
+    const step = activeCommand.steps[currentStepIndex];
+    if (!step) {
+      // No more steps, reset and close
+      resetCommandExecution();
+      return;
+    }
+
+    // Update context with stepData
+    const updatedContext = {
+      ...executionContext,
+      context: {
+        ...context,
+        stepData: commandStepData,
+      },
+    };
+
+    // Execute the step
+    const result = await commandExecutor.executeSingleStep(step, updatedContext);
+
+    // Handle result
+    if (result.skipped) {
+      // Step was skipped due to condition, don't track it
+      // Move to next step without adding to executed steps
+      setCurrentStepIndex((i) => i + 1);
+      return;
+    }
+
+    if (result.closePalette) {
+      // Step closes palette (navigate/modal)
+      closePalette();
+      resetCommandExecution();
+      return;
+    }
+
+    if (result.waitingForSelection) {
+      // Step is waiting for user selection, track it as executed
+      setExecutedSteps((prev) => {
+        // Only add if not already in the list (for backspace re-execution)
+        if (prev.includes(currentStepIndex)) return prev;
+        return [...prev, currentStepIndex];
+      });
+      // The selection handler will call handleStepComplete when done
+      return;
+    }
+
+    if (result.continue) {
+      // Step completed (action step), track and move to next
+      setExecutedSteps((prev) => {
+        if (prev.includes(currentStepIndex)) return prev;
+        return [...prev, currentStepIndex];
+      });
+      setCurrentStepIndex((i) => i + 1);
+    } else {
+      // Step says don't continue, reset
+      resetCommandExecution();
+    }
+  }, [
+    activeCommand,
+    currentStepIndex,
+    commandStepData,
+    context,
+    executionContext,
+    closePalette,
+    resetCommandExecution,
+  ]);
+
+  // Handle step completion (called by selection components)
+  const handleStepComplete = useCallback(async (selectedData?: { key: string; value: any }) => {
+    // Update step data if selection was made
+    if (selectedData) {
+      setCommandStepData((prev) => ({
+        ...prev,
+        [selectedData.key]: selectedData.value,
+      }));
+    }
+
+    // Don't remove the page - keep page stack for backspace navigation
+    // Pages will be cleared when palette closes or final step executes
+
+    // Move to next step (this will trigger executeCurrentStep via useEffect)
+    setCurrentStepIndex((i) => i + 1);
+  }, []);
+
+  // Start executing a command
+  const startCommandExecution = useCallback(
+    async (command: CommandConfig) => {
+      // If it's a simple action command, just execute it
+      if (command.action) {
+        await commandExecutor.executeCommand(command, executionContext);
+        return;
+      }
+
+      // If it has steps, set up for multi-step execution
+      if (command.steps && command.steps.length > 0) {
+        setActiveCommand(command);
+        setCurrentStepIndex(0);
+        setCommandStepData({});
+        setExecutedSteps([]); // Reset executed steps for new command
+        // executeCurrentStep will be called by useEffect when state updates
+      }
+    },
+    [executionContext]
+  );
+
+  // Auto-execute current step when it changes
+  useEffect(() => {
+    if (activeCommand && activeCommand.steps) {
+      executeCurrentStep();
+    }
+  }, [activeCommand, currentStepIndex, executeCurrentStep]);
+
   useEffect(() => {
     if (!isCommandPaletteOpen || !activeEntity) return;
 
-    if (activeEntity === "project") openProjectList();
-    if (activeEntity === "cycle") openCycleList();
-    if (activeEntity === "issue") openIssueList();
-    clearActiveEntity();
-  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, openProjectList, openCycleList, openIssueList]);
+    const executeShortcut = async () => {
+      const commandMap: Record<string, string> = {
+        project: "navigate-project",
+        cycle: "navigate-cycle",
+        issue: "navigate-issue",
+      };
+
+      const commandId = commandMap[activeEntity];
+      if (commandId) {
+        const command = registry.getCommand(commandId);
+        if (command) {
+          await startCommandExecution(command);
+        }
+      }
+      clearActiveEntity();
+    };
+
+    executeShortcut();
+  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, registry, startCommandExecution]);
 
   useEffect(() => {
     if (workItemDetails && isCommandPaletteOpen) {
@@ -157,7 +257,7 @@ export const PowerKModal: React.FC = observer(() => {
 
     setIsLoading(true);
 
-    if (debouncedSearchTerm && activePage !== "open-issue") {
+    if (debouncedSearchTerm && activePage !== "select-issue") {
       setIsSearching(true);
       workspaceService
         .searchWorkspace(workspaceSlug.toString(), {
@@ -208,10 +308,10 @@ export const PowerKModal: React.FC = observer(() => {
         });
       }
 
-      // Execute command using registry
-      await registry.executeCommand(command.id, executionContext);
+      // Execute command using new execution flow
+      await startCommandExecution(command);
     },
-    [registry, executionContext]
+    [startCommandExecution]
   );
 
   const handleKeydown = useCallback(
@@ -261,14 +361,38 @@ export const PowerKModal: React.FC = observer(() => {
 
       if (e.key === "Backspace" && !searchTerm && activePage) {
         e.preventDefault();
+
+        // Remove the last page from stack
         const newPages = pages.slice(0, -1);
         const newPage = newPages[newPages.length - 1];
         setPages(newPages);
-        if (!newPage) setPlaceholder("Type a command or search");
-        else if (newPage === "open-project") setPlaceholder("Search projects");
-        else if (newPage === "open-cycle") setPlaceholder("Search cycles");
-        if (activePage === "open-cycle") setSelectedProjectId(null);
-        if (activePage === "open-project" && !newPage) setProjectSelectionAction(null);
+
+        // Update placeholder based on the page we're going back to
+        if (!newPage) {
+          setPlaceholder("Type a command or search");
+        } else if (newPage === "select-project") {
+          setPlaceholder("Search projects");
+        } else if (newPage === "select-cycle") {
+          setPlaceholder("Search cycles");
+        }
+
+        // If we're in a multi-step command, go back to the previous EXECUTED step
+        if (activeCommand && executedSteps.length > 0) {
+          // Remove the current step from executed steps
+          const previousExecutedSteps = executedSteps.slice(0, -1);
+          setExecutedSteps(previousExecutedSteps);
+
+          // Get the previous executed step index
+          const previousStepIndex = previousExecutedSteps[previousExecutedSteps.length - 1];
+
+          if (previousStepIndex !== undefined) {
+            // Go back to previous executed step
+            setCurrentStepIndex(previousStepIndex);
+          } else {
+            // No more executed steps, reset to show main page
+            resetCommandExecution();
+          }
+        }
       }
     },
     [
@@ -278,9 +402,10 @@ export const PowerKModal: React.FC = observer(() => {
       pages,
       setPages,
       setPlaceholder,
-      setProjectSelectionAction,
-      setSelectedProjectId,
       closePalette,
+      activeCommand,
+      executedSteps,
+      resetCommandExecution,
     ]
   );
 
@@ -366,15 +491,15 @@ export const PowerKModal: React.FC = observer(() => {
                         debouncedSearchTerm={debouncedSearchTerm}
                         isLoading={isLoading}
                         isSearching={isSearching}
-                        projectSelectionAction={projectSelectionAction}
-                        selectedProjectId={selectedProjectId}
+                        results={results}
                         resolvedPath={resolvedPath}
                         setPages={setPages}
-                        setPlaceholder={setPlaceholder}
-                        setSelectedProjectId={setSelectedProjectId}
-                        fetchAllCycles={fetchAllCycles}
                         onCommandSelect={handleCommandSelect}
                         isWorkspaceLevel={isWorkspaceLevel}
+                        activeCommand={activeCommand}
+                        currentStepIndex={currentStepIndex}
+                        commandStepData={commandStepData}
+                        onStepComplete={handleStepComplete}
                       />
                     </Command.List>
                     <PowerKModalFooter
