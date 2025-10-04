@@ -2,43 +2,60 @@
 
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
 import {
   createNavigationCommands,
   createCreationCommands,
   createAccountCommands,
   createSettingsCommands,
 } from "../commands";
-import { CommandContext, CommandExecutionContext } from "../types";
+import { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
+
+type TCommandRegistryInitializerArgs = {
+  setPages: (pages: string[] | ((pages: string[]) => string[])) => void;
+  setPlaceholder: (placeholder: string) => void;
+  setSearchTerm: (term: string) => void;
+  closePalette: () => void;
+  openProjectList: () => void;
+  openCycleList: () => void;
+  openIssueList: () => void;
+  isWorkspaceLevel: boolean;
+};
 
 /**
  * Centralized hook for accessing the command registry from MobX store
  * This should only be used to initialize the registry with commands once
  */
-export const useCommandRegistryInitializer = (
-  setPages: (pages: string[] | ((pages: string[]) => string[])) => void,
-  setPlaceholder: (placeholder: string) => void,
-  setSearchTerm: (term: string) => void,
-  closePalette: () => void,
-  openProjectList: () => void,
-  openCycleList: () => void,
-  openIssueList: () => void,
-  isWorkspaceLevel: boolean
-) => {
+export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerArgs) => {
+  const {
+    setPages,
+    setPlaceholder,
+    setSearchTerm,
+    closePalette,
+    openProjectList,
+    openCycleList,
+    openIssueList,
+    isWorkspaceLevel,
+  } = args;
+  // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
+  // store hooks
   const { toggleCreateIssueModal, toggleCreateProjectModal, getCommandRegistry } = useCommandPalette();
   const { workspaceProjectIds } = useProject();
   const { canPerformAnyCreateAction } = useUser();
   const { allowPermissions } = useUserPermissions();
-
+  // derived values
   const projectId = routerProjectId?.toString();
   const registry = getCommandRegistry();
-
+  // permissions
   const canPerformWorkspaceActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -102,7 +119,7 @@ export const useCommandRegistryInitializer = (
     // Clear existing commands to avoid duplicates
     registry.clear();
 
-    const commands = [
+    const commands: CommandConfig[] = [
       ...createNavigationCommands(),
       ...createAccountCommands(createNewWorkspace, openThemeSettings),
       ...createSettingsCommands(openWorkspaceSettings, () => canPerformWorkspaceActions),

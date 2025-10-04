@@ -124,7 +124,7 @@ export const CommandModal: React.FC = observer(() => {
   }, [toggleCommandPaletteModal]);
 
   // Initialize command registry
-  const { registry, executionContext, initializeCommands } = useCommandRegistryInitializer(
+  const { registry, executionContext, initializeCommands } = useCommandRegistryInitializer({
     setPages,
     setPlaceholder,
     setSearchTerm,
@@ -132,8 +132,8 @@ export const CommandModal: React.FC = observer(() => {
     openProjectList,
     openCycleList,
     openIssueList,
-    isWorkspaceLevel
-  );
+    isWorkspaceLevel,
+  });
 
   const handleKeySequence = useKeySequenceHandler(registry, executionContext);
 
@@ -218,6 +218,76 @@ export const CommandModal: React.FC = observer(() => {
     await registry.executeCommand(command.id, executionContext);
   }, [registry, executionContext]);
 
+  const handleKeydown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !page && searchTerm === "") {
+        handleKeySequence(e);
+      }
+      if ((e.metaKey || e.ctrlKey) && key === "k") {
+        e.preventDefault();
+        e.stopPropagation();
+        closePalette();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const commandList = document.querySelector("[cmdk-list]");
+        const items = commandList?.querySelectorAll("[cmdk-item]") || [];
+        const selectedItem = commandList?.querySelector('[aria-selected="true"]');
+        if (items.length === 0) return;
+
+        const currentIndex = Array.from(items).indexOf(selectedItem as Element);
+        let nextIndex;
+
+        if (e.shiftKey) {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+        } else {
+          nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+        }
+
+        const nextItem = items[nextIndex] as HTMLElement;
+        if (nextItem) {
+          nextItem.setAttribute("aria-selected", "true");
+          selectedItem?.setAttribute("aria-selected", "false");
+          nextItem.focus();
+          nextItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (searchTerm) setSearchTerm("");
+        else closePalette();
+        return;
+      }
+
+      if (e.key === "Backspace" && !searchTerm && page) {
+        e.preventDefault();
+        const newPages = pages.slice(0, -1);
+        const newPage = newPages[newPages.length - 1];
+        setPages(newPages);
+        if (!newPage) setPlaceholder("Type a command or search");
+        else if (newPage === "open-project") setPlaceholder("Search projects");
+        else if (newPage === "open-cycle") setPlaceholder("Search cycles");
+        if (page === "open-cycle") setSelectedProjectId(null);
+        if (page === "open-project" && !newPage) setProjectSelectionAction(null);
+      }
+    },
+    [
+      handleKeySequence,
+      page,
+      searchTerm,
+      pages,
+      setPages,
+      setPlaceholder,
+      setProjectSelectionAction,
+      setSelectedProjectId,
+      closePalette,
+    ]
+  );
+
   if (!isCommandPaletteOpen) {
     return null;
   }
@@ -265,62 +335,7 @@ export const CommandModal: React.FC = observer(() => {
                       return 0;
                     }}
                     shouldFilter={searchTerm.length > 0}
-                    onKeyDown={(e: any) => {
-                      const key = e.key.toLowerCase();
-                      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !page && searchTerm === "") {
-                        handleKeySequence(e);
-                      }
-                      if ((e.metaKey || e.ctrlKey) && key === "k") {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        closePalette();
-                        return;
-                      }
-
-                      if (e.key === "Tab") {
-                        e.preventDefault();
-                        const commandList = document.querySelector("[cmdk-list]");
-                        const items = commandList?.querySelectorAll("[cmdk-item]") || [];
-                        const selectedItem = commandList?.querySelector('[aria-selected="true"]');
-                        if (items.length === 0) return;
-
-                        const currentIndex = Array.from(items).indexOf(selectedItem as Element);
-                        let nextIndex;
-
-                        if (e.shiftKey) {
-                          nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-                        } else {
-                          nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-                        }
-
-                        const nextItem = items[nextIndex] as HTMLElement;
-                        if (nextItem) {
-                          nextItem.setAttribute("aria-selected", "true");
-                          selectedItem?.setAttribute("aria-selected", "false");
-                          nextItem.focus();
-                          nextItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                        }
-                      }
-
-                      if (e.key === "Escape") {
-                        e.preventDefault();
-                        if (searchTerm) setSearchTerm("");
-                        else closePalette();
-                        return;
-                      }
-
-                      if (e.key === "Backspace" && !searchTerm && page) {
-                        e.preventDefault();
-                        const newPages = pages.slice(0, -1);
-                        const newPage = newPages[newPages.length - 1];
-                        setPages(newPages);
-                        if (!newPage) setPlaceholder("Type a command or search");
-                        else if (newPage === "open-project") setPlaceholder("Search projects");
-                        else if (newPage === "open-cycle") setPlaceholder("Search cycles");
-                        if (page === "open-cycle") setSelectedProjectId(null);
-                        if (page === "open-project" && !newPage) setProjectSelectionAction(null);
-                      }
-                    }}
+                    onKeyDown={handleKeydown}
                   >
                     <CommandInputHeader
                       placeholder={placeholder}
@@ -339,35 +354,33 @@ export const CommandModal: React.FC = observer(() => {
                         resultsCount={resultsCount}
                         isLoading={isLoading}
                         isSearching={isSearching}
-                        projectId={projectId?.toString()}
-                        isWorkspaceLevel={isWorkspaceLevel}
+                        isWorkspaceLevel={!projectId || isWorkspaceLevel}
                         resolvedPath={resolvedPath}
-                      >
-                        <CommandPageContent
-                          page={page}
-                          workspaceSlug={workspaceSlug?.toString()}
-                          projectId={projectId?.toString()}
-                          issueId={issueId}
-                          issueDetails={issueDetails || null}
-                          searchTerm={searchTerm}
-                          debouncedSearchTerm={debouncedSearchTerm}
-                          isLoading={isLoading}
-                          isSearching={isSearching}
-                          searchInIssue={searchInIssue}
-                          projectSelectionAction={projectSelectionAction}
-                          selectedProjectId={selectedProjectId}
-                          results={results}
-                          resolvedPath={resolvedPath}
-                          pages={pages}
-                          setPages={setPages}
-                          setPlaceholder={setPlaceholder}
-                          setSearchTerm={setSearchTerm}
-                          setSelectedProjectId={setSelectedProjectId}
-                          fetchAllCycles={fetchAllCycles}
-                          onCommandSelect={handleCommandSelect}
-                          isWorkspaceLevel={isWorkspaceLevel}
-                        />
-                      </CommandSearchResults>
+                      />
+                      <CommandPageContent
+                        page={page}
+                        workspaceSlug={workspaceSlug?.toString()}
+                        projectId={projectId?.toString()}
+                        issueId={issueId}
+                        issueDetails={issueDetails || null}
+                        searchTerm={searchTerm}
+                        debouncedSearchTerm={debouncedSearchTerm}
+                        isLoading={isLoading}
+                        isSearching={isSearching}
+                        searchInIssue={searchInIssue}
+                        projectSelectionAction={projectSelectionAction}
+                        selectedProjectId={selectedProjectId}
+                        results={results}
+                        resolvedPath={resolvedPath}
+                        pages={pages}
+                        setPages={setPages}
+                        setPlaceholder={setPlaceholder}
+                        setSearchTerm={setSearchTerm}
+                        setSelectedProjectId={setSelectedProjectId}
+                        fetchAllCycles={fetchAllCycles}
+                        onCommandSelect={handleCommandSelect}
+                        isWorkspaceLevel={isWorkspaceLevel}
+                      />
                     </Command.List>
                     <CommandModalFooter
                       platform={platform}
