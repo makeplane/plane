@@ -45,6 +45,10 @@ export class CommandExecutor {
       return { continue: true, skipped: true };
     }
 
+    if (step.type.startsWith("change-page-")) {
+      return this.executeSelectionStep(step, executionContext);
+    }
+
     switch (step.type) {
       case "navigate":
         return this.executeNavigateStep(step, executionContext);
@@ -54,17 +58,6 @@ export class CommandExecutor {
 
       case "modal":
         return this.executeModalStep(step, executionContext);
-
-      case "select-project":
-      case "select-cycle":
-      case "select-module":
-      case "select-issue":
-      case "select-page":
-      case "select-view":
-      case "select-state":
-      case "select-priority":
-      case "select-assignee":
-        return this.executeSelectionStep(step, executionContext);
 
       default:
         console.warn(`Unknown step type: ${step.type}`);
