@@ -1,10 +1,15 @@
 import type { AppRouterProgressInstance } from "@bprogress/next";
+// plane web imports
+import type { TPowerKPageKeysExtended } from "@/plane-web/components/command-palette/power-k/types";
 
 export type TPowerKPageKeys =
   // work-item actions
   | "change-work-item-assignee"
   | "change-work-item-priority"
   | "change-work-item-state"
+  // module actions
+  | "change-module-member"
+  | "change-module-status"
   // configs
   | "settings"
   // navigation
@@ -25,7 +30,8 @@ export type TPowerKPageKeys =
   | "select-priority"
   | "select-assignee"
   // personalization
-  | "change-theme";
+  | "change-theme"
+  | TPowerKPageKeysExtended;
 
 // ============================================================================
 // Command Types & Groups
