@@ -1,3 +1,5 @@
+// plane web imports
+import { PowerKContextBasedActionsExtended } from "@/plane-web/components/command-palette/power-k/context-based-actions";
 // local imports
 import type { TPowerKPageKeys } from "../../types";
 import { PowerKWorkItemActionsMenu } from "./work-item/root";
@@ -15,6 +17,12 @@ export const PowerKContextBasedActions: React.FC<Props> = (props) => {
   return (
     <>
       <PowerKWorkItemActionsMenu
+        activePage={activePage}
+        handleClose={handleClose}
+        handleUpdatePage={handleUpdatePage}
+        handleUpdateSearchTerm={handleUpdateSearchTerm}
+      />
+      <PowerKContextBasedActionsExtended
         activePage={activePage}
         handleClose={handleClose}
         handleUpdatePage={handleUpdatePage}

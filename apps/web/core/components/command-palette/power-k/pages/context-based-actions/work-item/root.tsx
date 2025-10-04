@@ -38,23 +38,19 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
     issue: { getIssueById, getIssueIdByIdentifier },
     updateIssue,
   } = useIssueDetail(EIssueServiceType.ISSUES);
-  const {
-    issue: { getIssueById: getEpicById, getIssueIdByIdentifier: getEpicIdByIdentifier },
-    updateIssue: updateEpic,
-  } = useIssueDetail(EIssueServiceType.EPICS);
+  const { updateIssue: updateEpic } = useIssueDetail(EIssueServiceType.EPICS);
   const {
     project: { getProjectMemberIds },
   } = useMember();
   const { toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
   // derived values
-  const workItemId = entityIdentifier ? getIssueIdByIdentifier(entityIdentifier.toString()) : null;
-  const epicId = entityIdentifier ? getEpicIdByIdentifier(entityIdentifier.toString()) : null;
-  const entityDetails = workItemId ? getIssueById(workItemId) : epicId ? getEpicById(epicId) : null;
+  const entityId = entityIdentifier ? getIssueIdByIdentifier(entityIdentifier.toString()) : null;
+  const entityDetails = entityId ? getIssueById(entityId) : null;
   const isCurrentUserAssigned = entityDetails?.assignee_ids.includes(currentUser?.id ?? "");
   const projectMemberIds = entityDetails?.project_id ? getProjectMemberIds(entityDetails.project_id, false) : [];
   // handlers
-  const updateEntity = workItemId ? updateIssue : updateEpic;
+  const updateEntity = entityDetails?.is_epic ? updateEpic : updateIssue;
 
   const handleUpdateEntity = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -93,7 +89,7 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
   }, [handleClose, toggleDeleteIssueModal]);
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!workItemId) return;
+    if (!entityId) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -109,7 +105,7 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
           title: "Some error occurred",
         });
       });
-  }, [workItemId]);
+  }, [entityId]);
 
   if (!entityDetails) return null;
 
