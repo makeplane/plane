@@ -349,6 +349,7 @@ export const PowerKModal: React.FC = observer(() => {
                       />
                       <PowerKModalPagesList
                         context={context}
+                        executionContext={executionContext}
                         activePage={activePage}
                         workspaceSlug={workspaceSlug?.toString()}
                         projectId={projectId?.toString()}

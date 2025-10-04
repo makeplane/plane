@@ -7,12 +7,14 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
 // local imports
 import { CommandRenderer } from "../../command-renderer";
-import { CommandPaletteHelpActions, CommandPaletteIssueActions, PowerKModalCreateActionsMenu } from "../actions";
+import { CommandPaletteHelpActions, CommandPaletteIssueActions } from "../actions";
+import { PowerKModalCreateActionsMenu } from "../actions/create-actions";
 import { useCommandRegistry } from "../hooks";
-import type { CommandConfig, CommandContext } from "../types";
+import type { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
 
 type Props = {
   context: CommandContext;
+  executionContext: CommandExecutionContext;
   projectId: string | undefined;
   issueId: string | undefined;
   issueDetails: { id: string; project_id: string | null; name?: string } | null;
@@ -27,6 +29,7 @@ type Props = {
 export const MainPage: React.FC<Props> = (props) => {
   const {
     context,
+    executionContext,
     projectId,
     issueId,
     issueDetails,
@@ -60,9 +63,7 @@ export const MainPage: React.FC<Props> = (props) => {
       )}
 
       {/* project actions */}
-      {projectId && canPerformAnyCreateAction && (
-        <PowerKModalCreateActionsMenu closePalette={() => toggleCommandPaletteModal(false)} />
-      )}
+      {projectId && canPerformAnyCreateAction && <PowerKModalCreateActionsMenu executionContext={executionContext} />}
 
       {/* New command renderer */}
       <CommandRenderer commands={registry.getVisibleCommands(context)} onCommandSelect={onCommandSelect} />

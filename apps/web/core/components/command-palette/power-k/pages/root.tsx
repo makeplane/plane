@@ -8,7 +8,7 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
-import type { CommandConfig, CommandContext } from "../types";
+import type { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
 import {
   ChangeIssueAssignee,
   ChangeIssuePriority,
@@ -23,6 +23,7 @@ import { ProjectSelectionPage } from "./project-selection-page";
 
 type Props = {
   context: CommandContext;
+  executionContext: CommandExecutionContext;
   activePage: string | undefined;
   workspaceSlug: string | undefined;
   projectId: string | undefined;
@@ -50,6 +51,7 @@ type Props = {
 export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   const {
     context,
+    executionContext,
     activePage,
     workspaceSlug,
     projectId,
@@ -62,7 +64,6 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     searchInIssue,
     projectSelectionAction,
     selectedProjectId,
-    results,
     resolvedPath,
     pages,
     setPages,
@@ -84,6 +85,7 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     return (
       <MainPage
         context={context}
+        executionContext={executionContext}
         projectId={projectId}
         issueId={issueId}
         issueDetails={issueDetails}
