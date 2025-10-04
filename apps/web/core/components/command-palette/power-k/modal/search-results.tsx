@@ -4,8 +4,13 @@ import React, { useState, useEffect } from "react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import type { IWorkspaceSearchResults } from "@plane/types";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+// hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+// local imports
+import { CommandPaletteSearchResults } from "../actions";
 
 type Props = {
   searchTerm: string;
@@ -14,15 +19,27 @@ type Props = {
   isLoading: boolean;
   isSearching: boolean;
   isWorkspaceLevel: boolean;
+  activePage: string | undefined;
+  results: IWorkspaceSearchResults;
   resolvedPath: string;
 };
 
 export const PowerKModalSearchResults: React.FC<Props> = (props) => {
-  const { searchTerm, debouncedSearchTerm, resultsCount, isLoading, isSearching, isWorkspaceLevel, resolvedPath } =
-    props;
+  const {
+    searchTerm,
+    debouncedSearchTerm,
+    resultsCount,
+    isLoading,
+    isSearching,
+    isWorkspaceLevel,
+    activePage,
+    results,
+    resolvedPath,
+  } = props;
+  // store hooks
+  const { toggleCommandPaletteModal } = useCommandPalette();
   // plane hooks
   const { t } = useTranslation();
-
   // State for delayed loading indicator
   const [showDelayedLoader, setShowDelayedLoader] = useState(false);
 
@@ -82,6 +99,10 @@ export const PowerKModalSearchResults: React.FC<Props> = (props) => {
             <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
           </div>
         )}
+
+      {!activePage && debouncedSearchTerm.trim() !== "" && (
+        <CommandPaletteSearchResults closePalette={() => toggleCommandPaletteModal(false)} results={results} />
+      )}
     </>
   );
 };

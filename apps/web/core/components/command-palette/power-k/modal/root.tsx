@@ -54,7 +54,6 @@ export const PowerKModal: React.FC = observer(() => {
   // store hooks
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
-    fetchIssueWithIdentifier,
   } = useIssueDetail();
   const { fetchAllCycles } = useCycle();
   const { getPartialProjectById } = useProject();
@@ -64,7 +63,7 @@ export const PowerKModal: React.FC = observer(() => {
   const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier.toString()) : null;
   const workItemDetails = workItemId ? getIssueById(workItemId) : null;
   const projectId = workItemDetails?.project_id ?? routerProjectId;
-  const page = pages[pages.length - 1];
+  const activePage = pages.length > 0 ? pages[pages.length - 1] : undefined;
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
@@ -155,7 +154,7 @@ export const PowerKModal: React.FC = observer(() => {
 
     setIsLoading(true);
 
-    if (debouncedSearchTerm && page !== "open-issue") {
+    if (debouncedSearchTerm && activePage !== "open-issue") {
       setIsSearching(true);
       workspaceService
         .searchWorkspace(workspaceSlug.toString(), {
@@ -180,7 +179,7 @@ export const PowerKModal: React.FC = observer(() => {
       setIsLoading(false);
       setIsSearching(false);
     }
-  }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, page]);
+  }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, activePage]);
 
   // Track initialization to prevent multiple calls
   const isInitializedRef = useRef(false);
@@ -215,7 +214,7 @@ export const PowerKModal: React.FC = observer(() => {
   const handleKeydown = useCallback(
     (e: React.KeyboardEvent) => {
       const key = e.key.toLowerCase();
-      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !page && searchTerm === "") {
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !activePage && searchTerm === "") {
         handleKeySequence(e);
       }
       if ((e.metaKey || e.ctrlKey) && key === "k") {
@@ -257,7 +256,7 @@ export const PowerKModal: React.FC = observer(() => {
         return;
       }
 
-      if (e.key === "Backspace" && !searchTerm && page) {
+      if (e.key === "Backspace" && !searchTerm && activePage) {
         e.preventDefault();
         const newPages = pages.slice(0, -1);
         const newPage = newPages[newPages.length - 1];
@@ -265,13 +264,13 @@ export const PowerKModal: React.FC = observer(() => {
         if (!newPage) setPlaceholder("Type a command or search");
         else if (newPage === "open-project") setPlaceholder("Search projects");
         else if (newPage === "open-cycle") setPlaceholder("Search cycles");
-        if (page === "open-cycle") setSelectedProjectId(null);
-        if (page === "open-project" && !newPage) setProjectSelectionAction(null);
+        if (activePage === "open-cycle") setSelectedProjectId(null);
+        if (activePage === "open-project" && !newPage) setProjectSelectionAction(null);
       }
     },
     [
       handleKeySequence,
-      page,
+      activePage,
       searchTerm,
       pages,
       setPages,
@@ -344,11 +343,13 @@ export const PowerKModal: React.FC = observer(() => {
                         isLoading={isLoading}
                         isSearching={isSearching}
                         isWorkspaceLevel={!projectId || isWorkspaceLevel}
+                        activePage={activePage}
+                        results={results}
                         resolvedPath={resolvedPath}
                       />
                       <PowerKModalPagesList
                         context={context}
-                        page={page}
+                        activePage={activePage}
                         workspaceSlug={workspaceSlug?.toString()}
                         projectId={projectId?.toString()}
                         issueId={workItemId ?? undefined}

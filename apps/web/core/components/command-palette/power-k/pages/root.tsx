@@ -23,7 +23,7 @@ import { ProjectSelectionPage } from "./project-selection-page";
 
 type Props = {
   context: CommandContext;
-  page: string | undefined;
+  activePage: string | undefined;
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   issueId: string | undefined;
@@ -50,7 +50,7 @@ type Props = {
 export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   const {
     context,
-    page,
+    activePage,
     workspaceSlug,
     projectId,
     issueId,
@@ -80,15 +80,13 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
 
   // Main page content (no specific page)
-  if (!page) {
+  if (!activePage) {
     return (
       <MainPage
         context={context}
         projectId={projectId}
         issueId={issueId}
         issueDetails={issueDetails}
-        debouncedSearchTerm={debouncedSearchTerm}
-        results={results}
         searchInIssue={searchInIssue}
         pages={pages}
         setPages={setPages}
@@ -100,7 +98,7 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   }
 
   // Project selection page
-  if (page === "open-project" && workspaceSlug) {
+  if (activePage === "open-project" && workspaceSlug) {
     return (
       <ProjectSelectionPage
         workspaceSlug={workspaceSlug}
@@ -114,12 +112,12 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   }
 
   // Cycle selection page
-  if (page === "open-cycle" && workspaceSlug && selectedProjectId) {
+  if (activePage === "open-cycle" && workspaceSlug && selectedProjectId) {
     return <CycleSelectionPage workspaceSlug={workspaceSlug} selectedProjectId={selectedProjectId} />;
   }
 
   // Issue selection page
-  if (page === "open-issue" && workspaceSlug) {
+  if (activePage === "open-issue" && workspaceSlug) {
     return (
       <IssueSelectionPage
         workspaceSlug={workspaceSlug}
@@ -135,26 +133,26 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   }
 
   // Workspace settings page
-  if (page === "settings" && workspaceSlug) {
+  if (activePage === "settings" && workspaceSlug) {
     return <CommandPaletteWorkspaceSettingsActions closePalette={() => toggleCommandPaletteModal(false)} />;
   }
 
   // Issue details pages
-  if (page === "change-issue-state" && issueDetails && issueId && getIssueById) {
+  if (activePage === "change-issue-state" && issueDetails && issueId && getIssueById) {
     const fullIssue = getIssueById(issueId);
     if (fullIssue) {
       return <ChangeIssueState closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
     }
   }
 
-  if (page === "change-issue-priority" && issueDetails && issueId && getIssueById) {
+  if (activePage === "change-issue-priority" && issueDetails && issueId && getIssueById) {
     const fullIssue = getIssueById(issueId);
     if (fullIssue) {
       return <ChangeIssuePriority closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
     }
   }
 
-  if (page === "change-issue-assignee" && issueDetails && issueId && getIssueById) {
+  if (activePage === "change-issue-assignee" && issueDetails && issueId && getIssueById) {
     const fullIssue = getIssueById(issueId);
     if (fullIssue) {
       return <ChangeIssueAssignee closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
@@ -162,7 +160,7 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   }
 
   // Theme actions page
-  if (page === "change-interface-theme") {
+  if (activePage === "change-interface-theme") {
     return (
       <CommandPaletteThemeActions
         closePalette={() => {

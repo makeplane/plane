@@ -18,7 +18,7 @@ type Props = {
   closePalette: () => void;
 };
 
-export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
+export const PowerKModalCreateActionsMenu: React.FC<Props> = (props) => {
   const { closePalette } = props;
   // store hooks
   const { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal } =

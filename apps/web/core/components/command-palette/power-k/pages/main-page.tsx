@@ -1,20 +1,13 @@
 "use client";
 
 import React from "react";
-// plane types
-import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
 // local imports
 import { CommandRenderer } from "../../command-renderer";
-import {
-  CommandPaletteHelpActions,
-  CommandPaletteIssueActions,
-  CommandPaletteProjectActions,
-  CommandPaletteSearchResults,
-} from "../actions";
+import { CommandPaletteHelpActions, CommandPaletteIssueActions, PowerKModalCreateActionsMenu } from "../actions";
 import { useCommandRegistry } from "../hooks";
 import type { CommandConfig, CommandContext } from "../types";
 
@@ -23,8 +16,6 @@ type Props = {
   projectId: string | undefined;
   issueId: string | undefined;
   issueDetails: { id: string; project_id: string | null; name?: string } | null;
-  debouncedSearchTerm: string;
-  results: IWorkspaceSearchResults;
   searchInIssue: boolean;
   pages: string[];
   setPages: (pages: string[] | ((prev: string[]) => string[])) => void;
@@ -39,8 +30,6 @@ export const MainPage: React.FC<Props> = (props) => {
     projectId,
     issueId,
     issueDetails,
-    debouncedSearchTerm,
-    results,
     searchInIssue,
     pages,
     setPages,
@@ -58,10 +47,6 @@ export const MainPage: React.FC<Props> = (props) => {
 
   return (
     <>
-      {debouncedSearchTerm !== "" && (
-        <CommandPaletteSearchResults closePalette={() => toggleCommandPaletteModal(false)} results={results} />
-      )}
-
       {/* issue actions */}
       {issueId && issueDetails && searchInIssue && getIssueById && (
         <CommandPaletteIssueActions
@@ -76,7 +61,7 @@ export const MainPage: React.FC<Props> = (props) => {
 
       {/* project actions */}
       {projectId && canPerformAnyCreateAction && (
-        <CommandPaletteProjectActions closePalette={() => toggleCommandPaletteModal(false)} />
+        <PowerKModalCreateActionsMenu closePalette={() => toggleCommandPaletteModal(false)} />
       )}
 
       {/* New command renderer */}
