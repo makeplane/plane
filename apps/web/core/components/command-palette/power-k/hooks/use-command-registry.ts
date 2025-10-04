@@ -14,7 +14,6 @@ import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPag
 
 type TCommandRegistryInitializerArgs = {
   setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
-  setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   closePalette: () => void;
   isWorkspaceLevel: boolean;
@@ -25,7 +24,7 @@ type TCommandRegistryInitializerArgs = {
  * This should only be used to initialize the registry with commands once
  */
 export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerArgs) => {
-  const { setPages, setPlaceholder, setSearchTerm, closePalette, isWorkspaceLevel } = args;
+  const { setPages, setSearchTerm, closePalette, isWorkspaceLevel } = args;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
@@ -71,19 +70,17 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
       closePalette,
       router,
       setPages,
-      setPlaceholder,
       setSearchTerm,
       context,
       updateContext: () => {}, // Will be properly implemented during UI integration
     }),
-    [closePalette, router, setPages, setPlaceholder, setSearchTerm, context]
+    [closePalette, router, setPages, setSearchTerm, context]
   );
 
   const openWorkspaceSettings = useCallback(() => {
-    setPlaceholder("Search workspace settings");
     setSearchTerm("");
     setPages((pages) => [...pages, "settings"]);
-  }, [setPlaceholder, setSearchTerm, setPages]);
+  }, [setSearchTerm, setPages]);
 
   const initializeCommands = useCallback(() => {
     // Clear existing commands to avoid duplicates

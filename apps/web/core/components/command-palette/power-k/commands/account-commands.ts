@@ -5,7 +5,7 @@ import { FolderPlus, Settings } from "lucide-react";
 import type { CommandConfig, CommandExecutionContext } from "../types";
 
 export const accountCommandsRegistry = (executionContext: CommandExecutionContext): CommandConfig[] => {
-  const { closePalette, setPages, setPlaceholder, setSearchTerm, router } = executionContext;
+  const { closePalette, setPages, setSearchTerm, router } = executionContext;
 
   return [
     {
@@ -32,7 +32,6 @@ export const accountCommandsRegistry = (executionContext: CommandExecutionContex
       isEnabled: () => true,
       isVisible: () => true,
       action: () => {
-        setPlaceholder("Change interface theme");
         setSearchTerm("");
         setPages((pages) => [...pages, "change-theme"]);
       },

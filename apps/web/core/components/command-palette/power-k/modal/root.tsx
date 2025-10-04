@@ -27,6 +27,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
 import { commandExecutor } from "../../command-executor";
+import { PAGE_PLACEHOLDERS } from "../../constants";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
 import { PowerKModalPagesList } from "../pages";
 import { PowerKContextBasedActions } from "../pages/context-based-actions";
@@ -40,7 +41,6 @@ export const PowerKModal: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId: routerProjectId, workItem: workItemIdentifier } = useParams();
   // states
-  const [placeholder, setPlaceholder] = useState("Type a command or search");
   const [resultsCount, setResultsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -67,6 +67,7 @@ export const PowerKModal: React.FC = observer(() => {
   const workItemDetails = workItemId ? getIssueById(workItemId) : null;
   const projectId = workItemDetails?.project_id ?? routerProjectId;
   const activePage = pages.length > 0 ? pages[pages.length - 1] : undefined;
+  const placeholder = activePage ? PAGE_PLACEHOLDERS[activePage] : PAGE_PLACEHOLDERS.default;
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
@@ -78,7 +79,6 @@ export const PowerKModal: React.FC = observer(() => {
     setCommandStepData({});
     setExecutedSteps([]);
     setPages([]);
-    setPlaceholder("Type a command or search");
   }, []);
 
   const closePalette = useCallback(() => {
@@ -86,12 +86,11 @@ export const PowerKModal: React.FC = observer(() => {
     setTimeout(() => {
       resetCommandExecution();
     }, 500);
-  }, [toggleCommandPaletteModal]);
+  }, [resetCommandExecution, toggleCommandPaletteModal]);
 
   // Initialize command registry (we'll update context with stepData dynamically)
   const { context, registry, executionContext, initializeCommands } = useCommandRegistryInitializer({
     setPages,
-    setPlaceholder,
     setSearchTerm,
     closePalette,
     isWorkspaceLevel,
@@ -362,19 +361,8 @@ export const PowerKModal: React.FC = observer(() => {
       if (e.key === "Backspace" && !searchTerm && activePage) {
         e.preventDefault();
 
-        // Remove the last page from stack
-        const newPages = pages.slice(0, -1);
-        const newPage = newPages[newPages.length - 1];
-        setPages(newPages);
-
-        // Update placeholder based on the page we're going back to
-        if (!newPage) {
-          setPlaceholder("Type a command or search");
-        } else if (newPage === "select-project") {
-          setPlaceholder("Search projects");
-        } else if (newPage === "select-cycle") {
-          setPlaceholder("Search cycles");
-        }
+        // Remove the last page from stack (placeholder will auto-update from derived value)
+        setPages((p) => p.slice(0, -1));
 
         // If we're in a multi-step command, go back to the previous EXECUTED step
         if (activeCommand && executedSteps.length > 0) {
@@ -395,18 +383,7 @@ export const PowerKModal: React.FC = observer(() => {
         }
       }
     },
-    [
-      handleKeySequence,
-      activePage,
-      searchTerm,
-      pages,
-      setPages,
-      setPlaceholder,
-      closePalette,
-      activeCommand,
-      executedSteps,
-      resetCommandExecution,
-    ]
+    [handleKeySequence, activePage, searchTerm, closePalette, activeCommand, executedSteps, resetCommandExecution]
   );
 
   return (

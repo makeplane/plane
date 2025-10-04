@@ -24,8 +24,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     keySequence: "op",
     steps: [
       {
-        type: "select-project",
-        placeholder: "Search projects",
+        type: "change-page-project",
         dataKey: "projectId",
       },
       {
@@ -50,15 +49,13 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     steps: [
       // If no project context, first select project
       {
-        type: "select-project",
-        placeholder: "Search projects",
+        type: "change-page-project",
         condition: (context) => !context.projectId,
         dataKey: "projectId",
       },
       // Then select cycle
       {
-        type: "select-cycle",
-        placeholder: "Search cycles",
+        type: "change-page-cycle",
         dataKey: "cycleId",
       },
       // Navigate to cycle
@@ -88,15 +85,13 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     steps: [
       // If no project context, first select project
       {
-        type: "select-project",
-        placeholder: "Search projects",
+        type: "change-page-project",
         condition: (context) => !context.projectId,
         dataKey: "projectId",
       },
       // Then select module
       {
-        type: "select-module",
-        placeholder: "Search modules",
+        type: "change-page-module",
         dataKey: "moduleId",
       },
       // Navigate to module
@@ -125,8 +120,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     keySequence: "oi",
     steps: [
       {
-        type: "select-issue",
-        placeholder: "Search work items",
+        type: "change-page-issue",
         dataKey: "issueId",
       },
     ],

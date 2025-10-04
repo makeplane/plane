@@ -164,9 +164,7 @@ export class CommandExecutor {
     }
 
     // Update UI state for the selection page
-    if (step.placeholder) {
-      executionContext.setPlaceholder(step.placeholder);
-    }
+    // Placeholder is automatically derived from page key in modal component
     executionContext.setSearchTerm("");
 
     // Only add page if it's not already the active page (for backspace navigation support)

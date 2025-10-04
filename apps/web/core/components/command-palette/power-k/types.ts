@@ -12,13 +12,6 @@ export type TPowerKPageKeys =
   | "change-module-status"
   // configs
   | "settings"
-  // navigation
-  | "open-project"
-  | "open-cycle"
-  | "open-module"
-  | "open-issue"
-  | "open-page"
-  | "open-view"
   // selection
   | "select-project"
   | "select-cycle"
@@ -87,15 +80,15 @@ export type CommandContext = {
 // ============================================================================
 
 export type StepType =
-  | "select-project"
-  | "select-cycle"
-  | "select-module"
-  | "select-issue"
-  | "select-page"
-  | "select-view"
-  | "select-state"
-  | "select-priority"
-  | "select-assignee"
+  | "change-page-project"
+  | "change-page-cycle"
+  | "change-page-module"
+  | "change-page-issue"
+  | "change-page-page"
+  | "change-page-view"
+  | "change-page-state"
+  | "change-page-priority"
+  | "change-page-assignee"
   | "navigate"
   | "action"
   | "modal";
@@ -105,7 +98,6 @@ export type CommandStep = {
   // Unique identifier for this step
   id?: string;
   // Display configuration
-  placeholder?: string;
   title?: string;
   // Condition to execute this step (if returns false, skip)
   condition?: (context: CommandContext) => boolean;
@@ -174,7 +166,6 @@ export type CommandExecutionContext = {
   closePalette: () => void;
   router: AppRouterProgressInstance;
   setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
-  setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   setSearchScope?: (scope: SearchScope) => void;
   context: CommandContext;
