@@ -1,5 +1,32 @@
 import type { AppRouterProgressInstance } from "@bprogress/next";
 
+export type TPowerKPageKeys =
+  // work-item actions
+  | "change-work-item-assignee"
+  | "change-work-item-priority"
+  | "change-work-item-state"
+  // configs
+  | "settings"
+  // navigation
+  | "open-project"
+  | "open-cycle"
+  | "open-module"
+  | "open-issue"
+  | "open-page"
+  | "open-view"
+  // selection
+  | "select-project"
+  | "select-cycle"
+  | "select-module"
+  | "select-issue"
+  | "select-page"
+  | "select-view"
+  | "select-state"
+  | "select-priority"
+  | "select-assignee"
+  // personalization
+  | "change-theme";
+
 // ============================================================================
 // Command Types & Groups
 // ============================================================================
@@ -140,7 +167,7 @@ export type CommandGroupConfig = {
 export type CommandExecutionContext = {
   closePalette: () => void;
   router: AppRouterProgressInstance;
-  setPages: (pages: string[] | ((pages: string[]) => string[])) => void;
+  setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   setSearchScope?: (scope: SearchScope) => void;

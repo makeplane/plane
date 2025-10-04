@@ -6,6 +6,7 @@ import {
   CommandStep,
   CommandContext,
   StepExecutionResult,
+  TPowerKPageKeys,
 } from "./power-k/types";
 
 /**
@@ -182,7 +183,7 @@ export class CommandExecutor {
     executionContext: CommandExecutionContext
   ): Promise<StepExecutionResult> {
     // Map step type to page identifier
-    const pageMap: Record<string, string> = {
+    const pageMap: Record<string, TPowerKPageKeys> = {
       "select-project": "select-project",
       "select-cycle": "select-cycle",
       "select-module": "select-module",

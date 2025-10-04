@@ -10,7 +10,7 @@ import { CommandRenderer } from "../../command-renderer";
 import { CommandPaletteHelpActions, CommandPaletteIssueActions } from "../actions";
 import { PowerKModalCreateActionsMenu } from "../actions/create-actions";
 import { useCommandRegistry } from "../hooks";
-import type { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
+import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
 
 type Props = {
   context: CommandContext;
@@ -19,8 +19,8 @@ type Props = {
   issueId: string | undefined;
   issueDetails: { id: string; project_id: string | null; name?: string } | null;
   searchInIssue: boolean;
-  pages: string[];
-  setPages: (pages: string[] | ((prev: string[]) => string[])) => void;
+  pages: TPowerKPageKeys[];
+  setPages: (pages: TPowerKPageKeys[] | ((prev: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   onCommandSelect: (command: CommandConfig) => void;

@@ -34,7 +34,7 @@ export const accountCommandsRegistry = (executionContext: CommandExecutionContex
       action: () => {
         setPlaceholder("Change interface theme");
         setSearchTerm("");
-        setPages((pages) => [...pages, "change-interface-theme"]);
+        setPages((pages) => [...pages, "change-theme"]);
       },
     },
   ];

@@ -14,12 +14,14 @@ import { copyTextToClipboard } from "@plane/utils";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
+// local imports
+import { TPowerKPageKeys } from "../../types";
 
 type Props = {
   closePalette: () => void;
   issueDetails: TIssue | undefined;
-  pages: string[];
-  setPages: (pages: string[]) => void;
+  pages: TPowerKPageKeys[];
+  setPages: (pages: TPowerKPageKeys[] | ((prev: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (searchTerm: string) => void;
 };
@@ -84,7 +86,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         onSelect={() => {
           setPlaceholder("Change state...");
           setSearchTerm("");
-          setPages([...pages, "change-issue-state"]);
+          setPages([...pages, "change-work-item-state"]);
         }}
         className="focus:outline-none"
       >
@@ -97,7 +99,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         onSelect={() => {
           setPlaceholder("Change priority...");
           setSearchTerm("");
-          setPages([...pages, "change-issue-priority"]);
+          setPages([...pages, "change-work-item-priority"]);
         }}
         className="focus:outline-none"
       >
@@ -110,7 +112,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         onSelect={() => {
           setPlaceholder("Assign to...");
           setSearchTerm("");
-          setPages([...pages, "change-issue-assignee"]);
+          setPages([...pages, "change-work-item-assignee"]);
         }}
         className="focus:outline-none"
       >

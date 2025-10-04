@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 // plane imports
 import type { IPartialProject } from "@plane/types";
 // components
-import { CommandPaletteProjectSelector } from "@/components/command-palette";
+import { CommandPaletteProjectSelector, TPowerKPageKeys } from "@/components/command-palette";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -15,7 +15,7 @@ type Props = {
   projectSelectionAction: "navigate" | "cycle" | null;
   setSelectedProjectId: (id: string | null) => void;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => void;
-  setPages: (pages: string[] | ((prev: string[]) => string[])) => void;
+  setPages: (pages: TPowerKPageKeys[] | ((prev: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
 };
 

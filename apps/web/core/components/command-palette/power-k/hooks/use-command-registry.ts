@@ -11,10 +11,10 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { navigationCommandsRegistry, settingsCommandsRegistry, accountCommandsRegistry } from "../commands";
-import type { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
+import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
 
 type TCommandRegistryInitializerArgs = {
-  setPages: (pages: string[] | ((pages: string[]) => string[])) => void;
+  setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   closePalette: () => void;

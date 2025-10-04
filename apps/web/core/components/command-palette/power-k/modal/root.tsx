@@ -14,7 +14,7 @@ import {
 import { IWorkspaceSearchResults } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // components
-import { CommandConfig } from "@/components/command-palette";
+import { CommandConfig, TPowerKPageKeys } from "@/components/command-palette";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -47,7 +47,7 @@ export const PowerKModal: React.FC = observer(() => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<IWorkspaceSearchResults>(WORKSPACE_DEFAULT_SEARCH_RESULT);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-  const [pages, setPages] = useState<string[]>([]);
+  const [pages, setPages] = useState<TPowerKPageKeys[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
   const [projectSelectionAction, setProjectSelectionAction] = useState<"navigate" | "cycle" | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
