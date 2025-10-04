@@ -1,14 +1,13 @@
 "use client";
 
+import { useCallback } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Users } from "lucide-react";
 // plane imports
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { IModule } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -16,8 +15,8 @@ import { useModule } from "@/hooks/store/use-module";
 import type { TPowerKPageKeys } from "../../../types";
 import { PowerKModalCommandItem } from "../../../modal/command-item";
 import { PowerKMembersMenu } from "../members-menu";
+import { getPowerKModuleContextBasedActions } from "./actions";
 import { PowerKModuleStatusMenu } from "./status-menu";
-import { useCallback } from "react";
 
 type Props = {
   activePage: TPowerKPageKeys | undefined;
@@ -38,17 +37,18 @@ export const PowerKModuleActionsMenu: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : null;
   const projectMemberIds = moduleDetails?.project_id ? getProjectMemberIds(moduleDetails.project_id, false) : [];
+  // translation
+  const { t } = useTranslation();
 
   const handleUpdateModule = useCallback(
     async (formData: Partial<IModule>) => {
       if (!workspaceSlug || !projectId || !moduleDetails) return;
       await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleDetails.id, formData).catch(
-        (error) => {
-          console.error("Error in updating issue from Power K:", error);
+        () => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Issue could not be updated. Please try again.",
+            message: "Module could not be updated. Please try again.",
           });
         }
       );
@@ -69,53 +69,31 @@ export const PowerKModuleActionsMenu: React.FC<Props> = observer((props) => {
     [handleUpdateModule, moduleDetails]
   );
 
-  const copyModuleUrlToClipboard = useCallback(() => {
-    const url = new URL(window.location.href);
-    copyTextToClipboard(url.href)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
-        });
-      });
-  }, []);
+  const ACTIONS_LIST = getPowerKModuleContextBasedActions({
+    handleClose,
+    handleUpdatePage,
+    handleUpdateSearchTerm,
+    moduleDetails,
+  });
 
   if (!moduleDetails) return null;
 
   return (
     <>
       {!activePage && (
-        <Command.Group heading="Module actions">
-          <PowerKModalCommandItem
-            icon={Users}
-            label="Add/remove members"
-            onSelect={() => {
-              handleUpdateSearchTerm("");
-              handleUpdatePage("change-module-member");
-            }}
-          />
-          <PowerKModalCommandItem
-            icon={DoubleCircleIcon}
-            label="Change status"
-            onSelect={() => {
-              handleUpdateSearchTerm("");
-              handleUpdatePage("change-module-status");
-            }}
-          />
-          <PowerKModalCommandItem
-            icon={LinkIcon}
-            label="Copy URL"
-            onSelect={() => {
-              handleClose();
-              copyModuleUrlToClipboard();
-            }}
-          />
+        <Command.Group heading={t("power_k.contextual_actions.module.title")}>
+          {ACTIONS_LIST.map((action) => {
+            if (action.shouldRender === false) return null;
+
+            return (
+              <PowerKModalCommandItem
+                key={action.key}
+                icon={action.icon}
+                label={t(action.i18n_label)}
+                onSelect={action.action}
+              />
+            );
+          })}
         </Command.Group>
       )}
       {/* members menu */}

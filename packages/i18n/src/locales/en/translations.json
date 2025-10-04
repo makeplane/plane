@@ -2412,5 +2412,29 @@
     "email": "Email",
     "joining_date": "Joining date",
     "role": "Role"
+  },
+  "power_k": {
+    "contextual_actions": {
+      "work_item": {
+        "title": "Work item actions",
+        "change_state": "Change state",
+        "change_priority": "Change priority",
+        "change_assignee": "Assign to",
+        "assign_to_me": "Assign to me",
+        "unassign_from_me": "Un-assign from me",
+        "delete": "Delete",
+        "copy_url": "Copy URL"
+      },
+      "cycle": {
+        "title": "Cycle actions",
+        "copy_url": "Copy URL"
+      },
+      "module": {
+        "title": "Module actions",
+        "add_remove_members": "Add/remove members",
+        "change_status": "Change status",
+        "copy_url": "Copy URL"
+      }
+    }
   }
 }

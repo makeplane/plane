@@ -3,7 +3,7 @@ import type { AppRouterProgressInstance } from "@bprogress/next";
 import type { TPowerKPageKeysExtended } from "@/plane-web/components/command-palette/power-k/types";
 
 export type TPowerKPageKeys =
-  // work-item actions
+  // work item actions
   | "change-work-item-assignee"
   | "change-work-item-priority"
   | "change-work-item-state"
@@ -192,4 +192,12 @@ export type StepExecutionResult = {
   updatedContext?: Partial<CommandContext>;
   // Close palette after this step
   closePalette?: boolean;
+};
+
+export type ContextBasedAction = {
+  key: string;
+  i18n_label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  action: () => void;
+  shouldRender?: boolean;
 };
