@@ -181,23 +181,6 @@ export class CommandRegistry implements ICommandRegistry {
     return true;
   }
 
-  /**
-   * Execute a shortcut command
-   */
-  async executeShortcut(shortcut: string, executionContext: CommandExecutionContext): Promise<boolean> {
-    const command = this.getCommandByShortcut(shortcut);
-    if (!command) {
-      return false;
-    }
-
-    if (command.isEnabled && !command.isEnabled(executionContext.context)) {
-      return false;
-    }
-
-    await commandExecutor.executeCommand(command, executionContext);
-    return true;
-  }
-
   // ============================================================================
   // Utility
   // ============================================================================
