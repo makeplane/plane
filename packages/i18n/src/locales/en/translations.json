@@ -2444,6 +2444,18 @@
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL"
+      },
+      "page": {
+        "title": "Page actions",
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "make_private": "Make private",
+        "make_public": "Make public",
+        "archive": "Archive",
+        "restore": "Restore",
+        "add_to_favorites": "Add to favorites",
+        "remove_from_favorites": "Remove from favorites",
+        "copy_url": "Copy URL"
       }
     }
   }

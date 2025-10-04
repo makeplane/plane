@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
 import { SelectProjectStep, SelectCycleStep, SelectModuleStep } from "../steps";
@@ -61,9 +60,6 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   const currentStepDataKey = activeCommand?.steps?.[currentStepIndex]?.dataKey;
   // store hooks
   const { toggleCommandPaletteModal } = useCommandPalette();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
 
   // Main page content (no specific page)
   if (!activePage) {

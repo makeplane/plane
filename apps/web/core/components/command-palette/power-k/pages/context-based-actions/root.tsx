@@ -4,6 +4,7 @@ import { PowerKContextBasedActionsExtended } from "@/plane-web/components/comman
 import type { TPowerKPageKeys } from "../../types";
 import { PowerKCycleActionsMenu } from "./cycle";
 import { PowerKModuleActionsMenu } from "./module";
+import { PowerKPageActionsMenu } from "./page";
 import { PowerKWorkItemActionsMenu } from "./work-item";
 
 type Props = {
@@ -31,6 +32,12 @@ export const PowerKContextBasedActions: React.FC<Props> = (props) => {
         handleUpdateSearchTerm={handleUpdateSearchTerm}
       />
       <PowerKModuleActionsMenu
+        activePage={activePage}
+        handleClose={handleClose}
+        handleUpdatePage={handleUpdatePage}
+        handleUpdateSearchTerm={handleUpdateSearchTerm}
+      />
+      <PowerKPageActionsMenu
         activePage={activePage}
         handleClose={handleClose}
         handleUpdatePage={handleUpdatePage}
