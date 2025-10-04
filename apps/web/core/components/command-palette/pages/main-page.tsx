@@ -74,7 +74,14 @@ export const MainPage: React.FC<IMainPageProps> = (props) => {
       )}
 
       {/* New command renderer */}
-      <CommandRenderer commands={registry.getVisibleCommands()} onCommandSelect={onCommandSelect} />
+      <CommandRenderer
+        commands={registry.getVisibleCommands({
+          workspaceSlug: undefined,
+          projectId,
+          issueId,
+        })}
+        onCommandSelect={onCommandSelect}
+      />
 
       {/* project actions */}
       {projectId && canPerformAnyCreateAction && (

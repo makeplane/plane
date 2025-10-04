@@ -16,6 +16,7 @@ const groupPriority: Record<CommandGroupType, number> = {
   workspace: 4,
   account: 5,
   help: 6,
+  contextual: 7,
 };
 
 const groupTitles: Record<CommandGroupType, string> = {
@@ -25,6 +26,7 @@ const groupTitles: Record<CommandGroupType, string> = {
   workspace: "Workspace Settings",
   account: "Account",
   help: "Help",
+  contextual: "Actions",
 };
 
 export const CommandRenderer: React.FC<CommandRendererProps> = ({ commands, onCommandSelect }) => {
