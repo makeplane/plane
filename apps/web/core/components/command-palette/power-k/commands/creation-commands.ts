@@ -10,7 +10,7 @@ import type { CommandConfig, CommandExecutionContext } from "../types";
  * Creation commands - Create any entity in the app
  * Uses the new modal step type for opening creation modals
  */
-export const createCreationCommands = (
+export const creationCommandsRegistry = (
   executionContext: CommandExecutionContext,
   toggleCreateIssueModal: (open: boolean) => void,
   toggleCreateProjectModal: (open: boolean) => void,

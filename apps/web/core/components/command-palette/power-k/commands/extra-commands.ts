@@ -9,7 +9,7 @@ import type { CommandConfig } from "../types";
  * These are commands that don't fit into other categories but provide important functionality
  */
 
-export const createExtraCommands = (
+export const extraCommandsRegistry = (
   signOut: () => void,
   toggleInviteModal: () => void,
   copyCurrentPageUrl: () => void,

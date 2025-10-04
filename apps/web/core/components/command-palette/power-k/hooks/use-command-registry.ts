@@ -10,12 +10,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import {
-  createNavigationCommands,
-  createCreationCommands,
-  createAccountCommands,
-  createSettingsCommands,
-} from "../commands";
+import { navigationCommandsRegistry, settingsCommandsRegistry, accountCommandsRegistry } from "../commands";
 import type { CommandConfig, CommandContext, CommandExecutionContext } from "../types";
 
 type TCommandRegistryInitializerArgs = {
@@ -98,17 +93,6 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     [closePalette, router, setPages, setPlaceholder, setSearchTerm, context]
   );
 
-  const createNewWorkspace = useCallback(() => {
-    closePalette();
-    router.push("/create-workspace");
-  }, [closePalette, router]);
-
-  const openThemeSettings = useCallback(() => {
-    setPlaceholder("Change interface theme");
-    setSearchTerm("");
-    setPages((pages) => [...pages, "change-interface-theme"]);
-  }, [setPlaceholder, setSearchTerm, setPages]);
-
   const openWorkspaceSettings = useCallback(() => {
     setPlaceholder("Search workspace settings");
     setSearchTerm("");
@@ -120,9 +104,9 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     registry.clear();
 
     const commands: CommandConfig[] = [
-      ...createNavigationCommands(),
-      ...createAccountCommands(createNewWorkspace, openThemeSettings),
-      ...createSettingsCommands(openWorkspaceSettings, () => canPerformWorkspaceActions),
+      ...navigationCommandsRegistry(),
+      ...accountCommandsRegistry(executionContext),
+      ...settingsCommandsRegistry(openWorkspaceSettings, () => canPerformWorkspaceActions),
     ];
 
     registry.registerMultiple(commands);
@@ -137,8 +121,6 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     openIssueList,
     toggleCreateIssueModal,
     toggleCreateProjectModal,
-    createNewWorkspace,
-    openThemeSettings,
     openWorkspaceSettings,
   ]);
 

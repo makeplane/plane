@@ -8,8 +8,7 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
-import { ProjectSelectionPage, CycleSelectionPage, IssueSelectionPage, MainPage } from "../pages";
-import { CommandConfig } from "../types";
+import type { CommandConfig } from "../types";
 import {
   ChangeIssueAssignee,
   ChangeIssuePriority,
@@ -17,6 +16,10 @@ import {
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
 } from "../actions";
+import { CycleSelectionPage } from "./cycle-selection-page";
+import { IssueSelectionPage } from "./issue-selection-page";
+import { MainPage } from "./main-page";
+import { ProjectSelectionPage } from "./project-selection-page";
 
 type Props = {
   page: string | undefined;

@@ -32,7 +32,7 @@ import { WorkspaceService } from "@/plane-web/services";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
-import { PowerKModalPagesList } from "./pages-list";
+import { PowerKModalPagesList } from "../pages";
 import { PowerKModalSearchResults } from "./search-results";
 
 const workspaceService = new WorkspaceService();
@@ -211,7 +211,9 @@ export const PowerKModal: React.FC = observer(() => {
           elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
         });
       } else if (command.id === "create-project") {
-        captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
+        captureClick({
+          elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON,
+        });
       }
 
       // Execute command using registry

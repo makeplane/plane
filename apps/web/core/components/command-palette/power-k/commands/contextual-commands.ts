@@ -15,7 +15,7 @@ import type { CommandConfig } from "../types";
 // Issue Contextual Commands
 // ============================================================================
 
-export const createIssueContextualCommands = (
+export const contextualWorkItemsCommandsRegistry = (
   currentUserId: string,
   updateIssue: (updates: any) => Promise<void>,
   toggleDeleteIssueModal: (open: boolean) => void,

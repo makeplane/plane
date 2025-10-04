@@ -47,6 +47,8 @@ export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) 
     return aPriority - bPriority;
   }) as CommandGroupType[];
 
+  console.log("sortedGroups", sortedGroups);
+
   return (
     <>
       {sortedGroups.map((groupKey) => {

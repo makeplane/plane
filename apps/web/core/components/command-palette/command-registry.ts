@@ -1,12 +1,31 @@
 "use client";
 
+// local imports
 import { commandExecutor } from "./command-executor";
-import { CommandConfig, CommandExecutionContext, CommandGroup, CommandContext } from "./power-k/types";
+import type { CommandConfig, CommandExecutionContext, CommandGroup, CommandContext } from "./power-k/types";
+
+interface ICommandRegistry {
+  // Register commands
+  register(command: CommandConfig): void;
+  registerMultiple(commands: CommandConfig[]): void;
+
+  // Get commands
+  getCommand(id: string): CommandConfig | undefined;
+  getVisibleCommands(context: CommandContext): CommandConfig[];
+  getCommandsByGroup(group: CommandGroup, context: CommandContext): CommandConfig[];
+  getContextualCommands(context: CommandContext): CommandConfig[];
+
+  // Execute commands
+  executeCommand(commandId: string, executionContext: CommandExecutionContext): Promise<void>;
+
+  // Clear registry
+  clear(): void;
+}
 
 /**
  * Enhanced CommandRegistry with context-aware filtering and multi-step execution
  */
-export class CommandRegistry {
+export class CommandRegistry implements ICommandRegistry {
   private commands = new Map<string, CommandConfig>();
   private keySequenceMap = new Map<string, string>();
   private shortcutMap = new Map<string, string>();

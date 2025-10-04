@@ -4,7 +4,7 @@ import { Settings } from "lucide-react";
 // local imports
 import type { CommandConfig } from "../types";
 
-export const createSettingsCommands = (
+export const settingsCommandsRegistry = (
   openWorkspaceSettings: () => void,
   canPerformWorkspaceActions: () => boolean
 ): CommandConfig[] => [

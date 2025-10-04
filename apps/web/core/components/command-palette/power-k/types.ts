@@ -160,25 +160,3 @@ export type StepExecutionResult = {
   // Close palette after this step
   closePalette?: boolean;
 };
-
-// ============================================================================
-// Command Registry Interface
-// ============================================================================
-
-export type ICommandRegistry = {
-  // Register commands
-  register(command: CommandConfig): void;
-  registerMultiple(commands: CommandConfig[]): void;
-
-  // Get commands
-  getCommand(id: string): CommandConfig | undefined;
-  getVisibleCommands(context: CommandContext): CommandConfig[];
-  getCommandsByGroup(group: CommandGroup, context: CommandContext): CommandConfig[];
-  getContextualCommands(context: CommandContext): CommandConfig[];
-
-  // Execute commands
-  executeCommand(commandId: string, executionContext: CommandExecutionContext): Promise<void>;
-
-  // Clear registry
-  clear(): void;
-};

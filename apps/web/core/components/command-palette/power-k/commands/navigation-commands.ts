@@ -10,7 +10,7 @@ import type { CommandConfig } from "../types";
  * Navigation commands - Navigate to all pages in the app
  * Uses the new multi-step system for complex navigation flows
  */
-export const createNavigationCommands = (): CommandConfig[] => [
+export const navigationCommandsRegistry = (): CommandConfig[] => [
   // ============================================================================
   // Project Navigation
   // ============================================================================
