@@ -2,15 +2,15 @@
 
 import React from "react";
 import type { TPartialProject } from "@/plane-web/types";
-import { CommandPaletteEntityList } from "./entity-list";
+import { PowerKMenuBuilder } from "./builder";
 
-interface Props {
+type Props = {
   projects: TPartialProject[];
   onSelect: (project: TPartialProject) => void;
-}
+};
 
-export const CommandPaletteProjectSelector: React.FC<Props> = ({ projects, onSelect }) => (
-  <CommandPaletteEntityList
+export const PowerKProjectsMenu: React.FC<Props> = ({ projects, onSelect }) => (
+  <PowerKMenuBuilder
     heading="Projects"
     items={projects}
     getKey={(project) => project.id}

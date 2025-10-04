@@ -4,10 +4,10 @@ import React, { useMemo, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { ICycle } from "@plane/types";
-// components
-import { CommandPaletteCycleSelector } from "@/components/command-palette";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
+// local imports
+import { PowerKCyclesMenu } from "../menus/cycles";
 
 interface SelectCycleStepProps {
   workspaceSlug: string;
@@ -52,6 +52,6 @@ export const SelectCycleStep: React.FC<SelectCycleStepProps> = observer(
 
     if (!workspaceSlug || !projectId) return null;
 
-    return <CommandPaletteCycleSelector cycles={cycleOptions} onSelect={onSelect} />;
+    return <PowerKCyclesMenu cycles={cycleOptions} onSelect={onSelect} />;
   }
 );

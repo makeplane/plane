@@ -4,7 +4,7 @@ import React from "react";
 import { Command } from "cmdk";
 import { cn } from "@plane/utils";
 
-interface CommandPaletteEntityListProps<T> {
+type Props<T> = {
   heading: string;
   items: T[];
   onSelect: (item: T) => void;
@@ -12,9 +12,9 @@ interface CommandPaletteEntityListProps<T> {
   getLabel: (item: T) => string;
   renderItem?: (item: T) => React.ReactNode;
   emptyText?: string;
-}
+};
 
-export const CommandPaletteEntityList = <T,>({
+export const PowerKMenuBuilder = <T,>({
   heading,
   items,
   onSelect,
@@ -22,19 +22,19 @@ export const CommandPaletteEntityList = <T,>({
   getLabel,
   renderItem,
   emptyText = "No results found",
-}: CommandPaletteEntityListProps<T>) => {
+}: Props<T>) => {
   if (items.length === 0) return <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>;
 
   return (
     <Command.Group heading={heading}>
       {items.map((item) => (
         <Command.Item
-          key={getKey ? getKey(item) : getLabel(item)}
+          key={getKey?.(item) ?? getLabel(item)}
           value={getLabel(item)}
           onSelect={() => onSelect(item)}
           className={cn("focus:outline-none")}
         >
-          {renderItem ? renderItem(item) : getLabel(item)}
+          {renderItem?.(item) ?? getLabel(item)}
         </Command.Item>
       ))}
     </Command.Group>

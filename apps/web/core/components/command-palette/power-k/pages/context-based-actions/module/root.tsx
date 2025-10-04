@@ -12,9 +12,9 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 // local imports
-import type { TPowerKPageKeys } from "../../../types";
+import { PowerKMembersMenu } from "../../../menus/members";
 import { PowerKModalCommandItem } from "../../../modal/command-item";
-import { PowerKMembersMenu } from "../members-menu";
+import type { TPowerKPageKeys } from "../../../types";
 import { getPowerKModuleContextBasedActions } from "./actions";
 import { PowerKModuleStatusMenu } from "./status-menu";
 
@@ -99,7 +99,7 @@ export const PowerKModuleActionsMenu: React.FC<Props> = observer((props) => {
       {/* members menu */}
       {activePage === "change-module-member" && moduleDetails && (
         <PowerKMembersMenu
-          handleUpdateMember={handleUpdateMember}
+          handleSelect={handleUpdateMember}
           userIds={projectMemberIds ?? undefined}
           value={moduleDetails.member_ids}
         />

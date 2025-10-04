@@ -4,9 +4,13 @@ import type { TPowerKPageKeysExtended } from "@/plane-web/components/command-pal
 
 export type TPowerKPageKeys =
   // work item actions
-  | "change-work-item-assignee"
-  | "change-work-item-priority"
   | "change-work-item-state"
+  | "change-work-item-priority"
+  | "change-work-item-assignee"
+  | "change-work-item-estimate"
+  | "change-work-item-cycle"
+  | "change-work-item-module"
+  | "change-work-item-label"
   // module actions
   | "change-module-member"
   | "change-module-status"

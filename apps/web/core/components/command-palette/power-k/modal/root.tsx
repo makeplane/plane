@@ -13,8 +13,6 @@ import {
 } from "@plane/constants";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
-// components
-import { CommandConfig, TPowerKPageKeys } from "@/components/command-palette";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -28,6 +26,7 @@ import { WorkspaceService } from "@/plane-web/services";
 // local imports
 import { commandExecutor } from "../../command-executor";
 import { PAGE_PLACEHOLDERS } from "../../constants";
+import type { CommandConfig, TPowerKPageKeys } from "../../power-k/types";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
 import { PowerKModalPagesList } from "../pages";
 import { PowerKContextBasedActions } from "../pages/context-based-actions";

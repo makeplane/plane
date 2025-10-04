@@ -12,11 +12,15 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 // local imports
+import { PowerKMembersMenu } from "../../../menus/members";
 import { PowerKModalCommandItem } from "../../../modal/command-item";
 import type { TPowerKPageKeys } from "../../../types";
-import { PowerKMembersMenu } from "../members-menu";
 import { getPowerKWorkItemContextBasedActions } from "./actions";
-import { PowerKPrioritiesMenu } from "./priorities-menu";
+import { PowerKWorkItemCyclesMenu } from "./cycles-menu";
+import { PowerKWorkItemEstimatesMenu } from "./estimates-menu";
+import { PowerKWorkItemLabelsMenu } from "./labels-menu";
+import { PowerKWorkItemModulesMenu } from "./modules-menu";
+import { PowerKWorkItemPrioritiesMenu } from "./priorities-menu";
 import { PowerKProjectStatesMenu } from "./states-menu";
 
 type Props = {
@@ -33,9 +37,13 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
+    subscription: { getSubscriptionByIssueId, createSubscription, removeSubscription },
     updateIssue,
   } = useIssueDetail(EIssueServiceType.ISSUES);
-  const { updateIssue: updateEpic } = useIssueDetail(EIssueServiceType.EPICS);
+  const {
+    updateIssue: updateEpic,
+    subscription: { createSubscription: createEpicSubscription, removeSubscription: removeEpicSubscription },
+  } = useIssueDetail(EIssueServiceType.EPICS);
   const {
     project: { getProjectMemberIds },
   } = useMember();
@@ -44,8 +52,11 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
   const entityDetails = entityId ? getIssueById(entityId) : null;
   const projectMemberIds = entityDetails?.project_id ? getProjectMemberIds(entityDetails.project_id, false) : [];
   const isEpic = !!entityDetails?.is_epic;
+  const isSubscribed = Boolean(entityId ? getSubscriptionByIssueId(entityId) : false);
   // handlers
   const updateEntity = isEpic ? updateEpic : updateIssue;
+  const createEntitySubscription = isEpic ? createEpicSubscription : createSubscription;
+  const removeEntitySubscription = isEpic ? removeEpicSubscription : removeSubscription;
   // translation
   const { t } = useTranslation();
 
@@ -60,7 +71,7 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
         });
       });
     },
-    [entityDetails, updateEntity, workspaceSlug]
+    [entityDetails, isEpic, updateEntity, workspaceSlug]
   );
 
   const handleUpdateAssignee = useCallback(
@@ -77,11 +88,39 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
     [entityDetails, handleClose, handleUpdateEntity]
   );
 
+  const handleSubscription = useCallback(async () => {
+    if (!workspaceSlug || !entityDetails || !entityDetails.project_id) return;
+
+    try {
+      if (isSubscribed) {
+        await removeEntitySubscription(workspaceSlug.toString(), entityDetails.project_id, entityDetails.id);
+      } else {
+        await createEntitySubscription(workspaceSlug.toString(), entityDetails.project_id, entityDetails.id);
+      }
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: isSubscribed
+          ? t("issue.subscription.actions.unsubscribed")
+          : t("issue.subscription.actions.subscribed"),
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.error.message"),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createEntitySubscription, entityDetails, isSubscribed, removeEntitySubscription, workspaceSlug]);
+
   const ACTIONS_LIST = getPowerKWorkItemContextBasedActions({
     handleClose,
+    handleSubscription,
     handleUpdateAssignee,
     handleUpdatePage,
     handleUpdateSearchTerm,
+    isSubscribed,
     workItemDetails: entityDetails,
   });
 
@@ -106,23 +145,51 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
         </Command.Group>
       )}
       {/* states menu */}
-      {activePage === "change-work-item-state" && entityDetails && (
+      {activePage === "change-work-item-state" && (
         <PowerKProjectStatesMenu
           handleClose={handleClose}
-          handleUpdateIssue={handleUpdateEntity}
-          issue={entityDetails}
+          handleUpdateWorkItem={handleUpdateEntity}
+          workItemDetails={entityDetails}
         />
       )}
       {/* priority menu */}
-      {activePage === "change-work-item-priority" && entityDetails && (
-        <PowerKPrioritiesMenu handleClose={handleClose} handleUpdateIssue={handleUpdateEntity} issue={entityDetails} />
+      {activePage === "change-work-item-priority" && (
+        <PowerKWorkItemPrioritiesMenu
+          handleClose={handleClose}
+          handleUpdateWorkItem={handleUpdateEntity}
+          workItemDetails={entityDetails}
+        />
       )}
       {/* members menu */}
-      {activePage === "change-work-item-assignee" && entityDetails && (
+      {activePage === "change-work-item-assignee" && (
         <PowerKMembersMenu
-          handleUpdateMember={handleUpdateAssignee}
+          handleSelect={handleUpdateAssignee}
           userIds={projectMemberIds ?? undefined}
           value={entityDetails.assignee_ids}
+        />
+      )}
+      {/* estimates menu */}
+      {activePage === "change-work-item-estimate" && (
+        <PowerKWorkItemEstimatesMenu
+          handleClose={handleClose}
+          handleUpdateWorkItem={handleUpdateEntity}
+          workItemDetails={entityDetails}
+        />
+      )}
+      {/* cycles menu */}
+      {activePage === "change-work-item-cycle" && (
+        <PowerKWorkItemCyclesMenu handleClose={handleClose} workItemDetails={entityDetails} />
+      )}
+      {/* modules menu */}
+      {activePage === "change-work-item-module" && (
+        <PowerKWorkItemModulesMenu handleClose={handleClose} workItemDetails={entityDetails} />
+      )}
+      {/* labels menu */}
+      {activePage === "change-work-item-label" && (
+        <PowerKWorkItemLabelsMenu
+          handleClose={handleClose}
+          handleUpdateWorkItem={handleUpdateEntity}
+          workItemDetails={entityDetails}
         />
       )}
     </>

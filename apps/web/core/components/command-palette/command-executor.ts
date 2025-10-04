@@ -55,15 +55,15 @@ export class CommandExecutor {
       case "modal":
         return this.executeModalStep(step, executionContext);
 
-      case "select-project":
-      case "select-cycle":
-      case "select-module":
-      case "select-issue":
-      case "select-page":
-      case "select-view":
-      case "select-state":
-      case "select-priority":
-      case "select-assignee":
+      case "change-page-project":
+      case "change-page-cycle":
+      case "change-page-module":
+      case "change-page-issue":
+      case "change-page-page":
+      case "change-page-view":
+      case "change-page-state":
+      case "change-page-priority":
+      case "change-page-assignee":
         return this.executeSelectionStep(step, executionContext);
 
       default:

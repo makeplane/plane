@@ -8,8 +8,8 @@ import { useTranslation } from "@plane/i18n";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 // local imports
-import type { TPowerKPageKeys } from "../../../types";
 import { PowerKModalCommandItem } from "../../../modal/command-item";
+import type { TPowerKPageKeys } from "../../../types";
 import { getPowerKCycleContextBasedActions } from "./actions";
 
 type Props = {
@@ -31,6 +31,7 @@ export const PowerKCycleActionsMenu: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   const ACTIONS_LIST = getPowerKCycleContextBasedActions({
+    cycleDetails,
     handleClose,
     handleUpdatePage,
     handleUpdateSearchTerm,

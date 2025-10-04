@@ -2,16 +2,18 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+// plane imports
 import type { ICycle } from "@plane/types";
-import { CommandPaletteEntityList } from "./entity-list";
+// local imports
+import { PowerKMenuBuilder } from "./builder";
 
-interface Props {
+type Props = {
   cycles: ICycle[];
   onSelect: (cycle: ICycle) => void;
-}
+};
 
-export const CommandPaletteCycleSelector: React.FC<Props> = observer(({ cycles, onSelect }) => (
-  <CommandPaletteEntityList
+export const PowerKCyclesMenu: React.FC<Props> = observer(({ cycles, onSelect }) => (
+  <PowerKMenuBuilder
     heading="Cycles"
     items={cycles}
     getKey={(cycle) => cycle.id}

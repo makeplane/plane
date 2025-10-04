@@ -134,7 +134,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-dashboard",
     type: "navigation",
     group: "navigate",
-    title: "Go to Dashboard",
+    title: "Go to dashboards",
     description: "Navigate to workspace dashboard",
     icon: LayoutDashboard,
     steps: [
@@ -150,8 +150,8 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-all-issues",
     type: "navigation",
     group: "navigate",
-    title: "Go to All Issues",
-    description: "View all issues across workspace",
+    title: "Go to all work items",
+    description: "View all work items across workspace",
     icon: Layers,
     steps: [
       {
@@ -166,8 +166,8 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-assigned-issues",
     type: "navigation",
     group: "navigate",
-    title: "Go to Assigned",
-    description: "View issues assigned to you",
+    title: "Go to assigned work items",
+    description: "View work items assigned to you",
     icon: Layers,
     steps: [
       {
@@ -182,8 +182,8 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-created-issues",
     type: "navigation",
     group: "navigate",
-    title: "Go to Created",
-    description: "View issues created by you",
+    title: "Go to created work items",
+    description: "View work items created by you",
     icon: Layers,
     steps: [
       {
@@ -198,8 +198,8 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-subscribed-issues",
     type: "navigation",
     group: "navigate",
-    title: "Go to Subscribed",
-    description: "View issues you're subscribed to",
+    title: "Go to subscribed work items",
+    description: "View work items you're subscribed to",
     icon: Layers,
     steps: [
       {
@@ -214,7 +214,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-projects-list",
     type: "navigation",
     group: "navigate",
-    title: "Go to Projects",
+    title: "Go to projects",
     description: "View all projects",
     icon: FolderKanban,
     steps: [
@@ -233,8 +233,8 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-issues",
     type: "navigation",
     group: "navigate",
-    title: "Go to Issues",
-    description: "Navigate to project issues",
+    title: "Go to work items",
+    description: "Navigate to project work items",
     icon: Layers,
     showOnRoutes: ["project"],
     steps: [
@@ -250,7 +250,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-cycles",
     type: "navigation",
     group: "navigate",
-    title: "Go to Cycles",
+    title: "Go to cycles",
     description: "Navigate to project cycles",
     icon: ContrastIcon,
     showOnRoutes: ["project"],
@@ -267,7 +267,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-modules",
     type: "navigation",
     group: "navigate",
-    title: "Go to Modules",
+    title: "Go to modules",
     description: "Navigate to project modules",
     icon: DiceIcon,
     showOnRoutes: ["project"],
@@ -284,7 +284,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-views",
     type: "navigation",
     group: "navigate",
-    title: "Go to Views",
+    title: "Go to views",
     description: "Navigate to project views",
     icon: Layers,
     showOnRoutes: ["project"],
@@ -301,7 +301,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-pages",
     type: "navigation",
     group: "navigate",
-    title: "Go to Pages",
+    title: "Go to pages",
     description: "Navigate to project pages",
     icon: FileText,
     showOnRoutes: ["project"],
@@ -318,7 +318,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
     id: "navigate-project-settings",
     type: "navigation",
     group: "navigate",
-    title: "Go to Project Settings",
+    title: "Go to project settings",
     description: "Navigate to project settings",
     icon: Settings,
     showOnRoutes: ["project"],

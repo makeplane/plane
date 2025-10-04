@@ -10,12 +10,12 @@ import type { TIssue } from "@plane/types";
 
 type Props = {
   handleClose: () => void;
-  handleUpdateIssue: (data: Partial<TIssue>) => void;
-  issue: TIssue;
+  handleUpdateWorkItem: (data: Partial<TIssue>) => void;
+  workItemDetails: TIssue;
 };
 
-export const PowerKPrioritiesMenu: React.FC<Props> = observer((props) => {
-  const { handleClose, handleUpdateIssue, issue } = props;
+export const PowerKWorkItemPrioritiesMenu: React.FC<Props> = observer((props) => {
+  const { handleClose, handleUpdateWorkItem, workItemDetails } = props;
 
   return (
     <>
@@ -23,7 +23,8 @@ export const PowerKPrioritiesMenu: React.FC<Props> = observer((props) => {
         <Command.Item
           key={priority.key}
           onSelect={() => {
-            handleUpdateIssue({
+            if (workItemDetails.priority === priority.key) return;
+            handleUpdateWorkItem({
               priority: priority.key,
             });
             handleClose();
@@ -34,7 +35,9 @@ export const PowerKPrioritiesMenu: React.FC<Props> = observer((props) => {
             <PriorityIcon priority={priority.key} />
             <span className="capitalize">{priority.title}</span>
           </div>
-          <div className="flex-shrink-0">{priority.key === issue.priority && <Check className="size-3" />}</div>
+          <div className="flex-shrink-0">
+            {priority.key === workItemDetails.priority && <Check className="size-3" />}
+          </div>
         </Command.Item>
       ))}
     </>

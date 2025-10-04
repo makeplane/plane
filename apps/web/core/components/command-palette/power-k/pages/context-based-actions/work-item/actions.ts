@@ -1,7 +1,7 @@
-import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
+import { Bell, BellOff, LinkIcon, Signal, TagIcon, Trash2, Triangle, UserMinus2, UserPlus2, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { EUserPermissions, TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -12,21 +12,37 @@ import type { ContextBasedAction, TPowerKPageKeys } from "../../../types";
 
 type TArgs = {
   handleClose: () => void;
+  handleSubscription: () => void;
   handleUpdateAssignee: (assigneeId: string) => void;
   handleUpdatePage: (page: TPowerKPageKeys) => void;
   handleUpdateSearchTerm: (searchTerm: string) => void;
+  isSubscribed: boolean;
   workItemDetails: TIssue | undefined | null;
 };
 
 export const getPowerKWorkItemContextBasedActions = (args: TArgs): ContextBasedAction[] => {
-  const { handleClose, handleUpdateAssignee, handleUpdatePage, handleUpdateSearchTerm, workItemDetails } = args;
+  const {
+    handleClose,
+    handleSubscription,
+    handleUpdateAssignee,
+    handleUpdatePage,
+    handleUpdateSearchTerm,
+    isSubscribed,
+    workItemDetails,
+  } = args;
   // store
   const { workspaceSlug } = store.router;
   const { data: currentUser } = store.user;
   const { allowPermissions } = store.user.permission;
   const { toggleDeleteIssueModal } = store.commandPalette;
+  const { getProjectById } = store.projectRoot.project;
+  const { areEstimateEnabledByProjectId } = store.projectEstimate;
   // derived values
+  const projectDetails = workItemDetails?.project_id ? getProjectById(workItemDetails?.project_id) : undefined;
   const isCurrentUserAssigned = workItemDetails?.assignee_ids.includes(currentUser?.id ?? "");
+  const isEstimateEnabled = workItemDetails?.project_id
+    ? areEstimateEnabledByProjectId(workItemDetails?.project_id)
+    : false;
   // permission
   const isEditingAllowed =
     allowPermissions(
@@ -80,8 +96,8 @@ export const getPowerKWorkItemContextBasedActions = (args: TArgs): ContextBasedA
       shouldRender: isEditingAllowed,
     },
     {
-      key: "change-assignee",
-      i18n_label: "power_k.contextual_actions.work_item.change_assignee",
+      key: "change-assignees",
+      i18n_label: "power_k.contextual_actions.work_item.change_assignees",
       icon: Users,
       action: () => {
         handleUpdateSearchTerm("");
@@ -99,6 +115,58 @@ export const getPowerKWorkItemContextBasedActions = (args: TArgs): ContextBasedA
         if (!currentUser) return;
         handleUpdateAssignee(currentUser.id);
         handleClose();
+      },
+      shouldRender: isEditingAllowed,
+    },
+    {
+      key: "change-estimate",
+      i18n_label: "power_k.contextual_actions.work_item.change_estimate",
+      icon: Triangle,
+      action: () => {
+        handleUpdateSearchTerm("");
+        handleUpdatePage("change-work-item-estimate");
+      },
+      shouldRender: isEstimateEnabled && isEditingAllowed,
+    },
+    {
+      key: "add-to-cycle",
+      i18n_label: "power_k.contextual_actions.work_item.add_to_cycle",
+      icon: ContrastIcon,
+      action: () => {
+        handleUpdateSearchTerm("");
+        handleUpdatePage("change-work-item-cycle");
+      },
+      shouldRender: Boolean(projectDetails?.cycle_view && isEditingAllowed),
+    },
+    {
+      key: "add-to-modules",
+      i18n_label: "power_k.contextual_actions.work_item.add_to_modules",
+      icon: DiceIcon,
+      action: () => {
+        handleUpdateSearchTerm("");
+        handleUpdatePage("change-work-item-module");
+      },
+      shouldRender: Boolean(projectDetails?.module_view && isEditingAllowed),
+    },
+    {
+      key: "add-labels",
+      i18n_label: "power_k.contextual_actions.work_item.add_labels",
+      icon: TagIcon,
+      action: () => {
+        handleUpdateSearchTerm("");
+        handleUpdatePage("change-work-item-label");
+      },
+      shouldRender: isEditingAllowed,
+    },
+    {
+      key: "subscribe",
+      i18n_label: isSubscribed
+        ? "power_k.contextual_actions.work_item.unsubscribe"
+        : "power_k.contextual_actions.work_item.subscribe",
+      icon: isSubscribed ? BellOff : Bell,
+      action: () => {
+        handleClose();
+        handleSubscription();
       },
       shouldRender: isEditingAllowed,
     },

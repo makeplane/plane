@@ -10,13 +10,13 @@ import { getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
-  handleUpdateMember: (assigneeId: string) => void;
+  handleSelect: (assigneeId: string) => void;
   userIds: string[] | undefined;
   value: string[];
 };
 
 export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
-  const { handleUpdateMember, userIds, value } = props;
+  const { handleSelect, userIds, value } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
@@ -27,7 +27,7 @@ export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
         if (!memberDetails) return;
 
         return (
-          <Command.Item key={memberId} onSelect={() => handleUpdateMember(memberId)} className="focus:outline-none">
+          <Command.Item key={memberId} onSelect={() => handleSelect(memberId)} className="focus:outline-none">
             <div className="flex items-center gap-2">
               <Avatar
                 name={memberDetails?.display_name}

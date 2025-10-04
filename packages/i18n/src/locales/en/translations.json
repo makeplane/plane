@@ -2419,20 +2419,30 @@
         "title": "Work item actions",
         "change_state": "Change state",
         "change_priority": "Change priority",
-        "change_assignee": "Assign to",
+        "change_assignees": "Assign to",
         "assign_to_me": "Assign to me",
         "unassign_from_me": "Un-assign from me",
+        "change_estimate": "Change estimate",
+        "add_to_cycle": "Add to cycle",
+        "add_to_modules": "Add to modules",
+        "add_labels": "Add labels",
+        "subscribe": "Subscribe to notifications",
+        "unsubscribe": "Unsubscribe from notifications",
         "delete": "Delete",
         "copy_url": "Copy URL"
       },
       "cycle": {
         "title": "Cycle actions",
+        "add_to_favorites": "Add to favorites",
+        "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL"
       },
       "module": {
         "title": "Module actions",
         "add_remove_members": "Add/remove members",
         "change_status": "Change status",
+        "add_to_favorites": "Add to favorites",
+        "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL"
       }
     }

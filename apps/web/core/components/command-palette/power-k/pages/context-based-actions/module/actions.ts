@@ -1,4 +1,4 @@
-import { LinkIcon, Users } from "lucide-react";
+import { LinkIcon, Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { DoubleCircleIcon } from "@plane/propel/icons";
@@ -20,7 +20,11 @@ type TArgs = {
 export const getPowerKModuleContextBasedActions = (args: TArgs): ContextBasedAction[] => {
   const { handleClose, handleUpdatePage, handleUpdateSearchTerm, moduleDetails } = args;
   // store
+  const { workspaceSlug } = store.router;
   const { allowPermissions } = store.user.permission;
+  const { addModuleToFavorites, removeModuleFromFavorites } = store.module;
+  // derived values
+  const isFavorite = !!moduleDetails?.is_favorite;
   // permission
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
@@ -43,9 +47,22 @@ export const getPowerKModuleContextBasedActions = (args: TArgs): ContextBasedAct
       });
   };
 
+  const toggleFavorite = () => {
+    if (!workspaceSlug || !moduleDetails || !moduleDetails.project_id) return;
+    try {
+      if (isFavorite) removeModuleFromFavorites(workspaceSlug.toString(), moduleDetails.project_id, moduleDetails.id);
+      else addModuleToFavorites(workspaceSlug.toString(), moduleDetails.project_id, moduleDetails.id);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Some error occurred",
+      });
+    }
+  };
+
   return [
     {
-      key: "change-member",
+      key: "add-remove-members",
       i18n_label: "power_k.contextual_actions.module.add_remove_members",
       icon: Users,
       action: () => {
@@ -61,6 +78,18 @@ export const getPowerKModuleContextBasedActions = (args: TArgs): ContextBasedAct
       action: () => {
         handleUpdateSearchTerm("");
         handleUpdatePage("change-module-status");
+      },
+      shouldRender: isEditingAllowed,
+    },
+    {
+      key: "toggle-favorite",
+      i18n_label: isFavorite
+        ? "power_k.contextual_actions.module.remove_from_favorites"
+        : "power_k.contextual_actions.module.add_to_favorites",
+      icon: isFavorite ? StarOff : Star,
+      action: () => {
+        handleClose();
+        toggleFavorite();
       },
       shouldRender: isEditingAllowed,
     },

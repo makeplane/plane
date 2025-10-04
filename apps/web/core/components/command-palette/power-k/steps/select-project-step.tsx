@@ -3,10 +3,10 @@
 import React, { useMemo } from "react";
 // plane imports
 import type { IPartialProject } from "@plane/types";
-// components
-import { CommandPaletteProjectSelector } from "@/components/command-palette";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+// local imports
+import { PowerKProjectsMenu } from "../menus/projects";
 
 interface SelectProjectStepProps {
   workspaceSlug: string;
@@ -37,5 +37,5 @@ export const SelectProjectStep: React.FC<SelectProjectStepProps> = ({ workspaceS
 
   if (!workspaceSlug) return null;
 
-  return <CommandPaletteProjectSelector projects={projectOptions} onSelect={onSelect} />;
+  return <PowerKProjectsMenu projects={projectOptions} onSelect={onSelect} />;
 };
