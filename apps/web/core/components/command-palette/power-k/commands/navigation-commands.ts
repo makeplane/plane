@@ -33,10 +33,7 @@ export const navigationCommandsRegistry = (): CommandConfig[] => [
         route: "/:workspace/projects/:projectId/issues",
       },
     ],
-    isVisible: (context) => {
-      console.log("workspaceSlug", context.workspaceSlug);
-      return Boolean(context.workspaceSlug);
-    },
+    isVisible: (context) => Boolean(context.workspaceSlug),
   },
 
   // ============================================================================

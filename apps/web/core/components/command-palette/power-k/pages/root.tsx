@@ -8,40 +8,28 @@ import type { IWorkspaceSearchResults } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
+import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
 import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
-import {
-  ChangeIssueAssignee,
-  ChangeIssuePriority,
-  ChangeIssueState,
-  CommandPaletteThemeActions,
-  CommandPaletteWorkspaceSettingsActions,
-} from "../actions";
 import { CycleSelectionPage } from "./cycle-selection-page";
 import { IssueSelectionPage } from "./issue-selection-page";
-import { MainPage } from "./main-page";
+import { PowerKModalDefaultPage } from "./default";
 import { ProjectSelectionPage } from "./project-selection-page";
 
 type Props = {
+  activePage: TPowerKPageKeys | undefined;
   context: CommandContext;
   executionContext: CommandExecutionContext;
-  activePage: TPowerKPageKeys | undefined;
   workspaceSlug: string | undefined;
   projectId: string | undefined;
-  issueId: string | undefined;
-  issueDetails: { id: string; project_id: string | null; name?: string } | null;
   searchTerm: string;
   debouncedSearchTerm: string;
   isLoading: boolean;
   isSearching: boolean;
-  searchInIssue: boolean;
   projectSelectionAction: "navigate" | "cycle" | null;
   selectedProjectId: string | null;
-  results: IWorkspaceSearchResults;
   resolvedPath: string;
-  pages: TPowerKPageKeys[];
   setPages: (pages: TPowerKPageKeys[] | ((prev: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
   setPlaceholder: (placeholder: string) => void;
-  setSearchTerm: (term: string) => void;
   setSelectedProjectId: (id: string | null) => void;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => void;
   onCommandSelect: (command: CommandConfig) => void;
@@ -50,25 +38,20 @@ type Props = {
 
 export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   const {
+    activePage,
     context,
     executionContext,
-    activePage,
     workspaceSlug,
     projectId,
-    issueId,
-    issueDetails,
     searchTerm,
     debouncedSearchTerm,
     isLoading,
     isSearching,
-    searchInIssue,
     projectSelectionAction,
     selectedProjectId,
     resolvedPath,
-    pages,
     setPages,
     setPlaceholder,
-    setSearchTerm,
     setSelectedProjectId,
     fetchAllCycles,
     onCommandSelect,
@@ -83,17 +66,10 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   // Main page content (no specific page)
   if (!activePage) {
     return (
-      <MainPage
+      <PowerKModalDefaultPage
         context={context}
         executionContext={executionContext}
         projectId={projectId}
-        issueId={issueId}
-        issueDetails={issueDetails}
-        searchInIssue={searchInIssue}
-        pages={pages}
-        setPages={setPages}
-        setPlaceholder={setPlaceholder}
-        setSearchTerm={setSearchTerm}
         onCommandSelect={onCommandSelect}
       />
     );
@@ -137,28 +113,6 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   // Workspace settings page
   if (activePage === "settings" && workspaceSlug) {
     return <CommandPaletteWorkspaceSettingsActions closePalette={() => toggleCommandPaletteModal(false)} />;
-  }
-
-  // Issue details pages
-  if (activePage === "change-work-item-state" && issueDetails && issueId && getIssueById) {
-    const fullIssue = getIssueById(issueId);
-    if (fullIssue) {
-      return <ChangeIssueState closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
-    }
-  }
-
-  if (activePage === "change-work-item-priority" && issueDetails && issueId && getIssueById) {
-    const fullIssue = getIssueById(issueId);
-    if (fullIssue) {
-      return <ChangeIssuePriority closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
-    }
-  }
-
-  if (activePage === "change-work-item-assignee" && issueDetails && issueId && getIssueById) {
-    const fullIssue = getIssueById(issueId);
-    if (fullIssue) {
-      return <ChangeIssueAssignee closePalette={() => toggleCommandPaletteModal(false)} issue={fullIssue} />;
-    }
   }
 
   // Theme actions page

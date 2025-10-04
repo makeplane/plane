@@ -28,6 +28,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
+import { PowerKContextBasedActions } from "../pages/context-based-actions";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
@@ -105,10 +106,12 @@ export const PowerKModal: React.FC = observer(() => {
 
   const closePalette = useCallback(() => {
     toggleCommandPaletteModal(false);
-    setPages([]);
-    setPlaceholder("Type a command or search");
-    setProjectSelectionAction(null);
-    setSelectedProjectId(null);
+    setTimeout(() => {
+      setPages([]);
+      setPlaceholder("Type a command or search");
+      setProjectSelectionAction(null);
+      setSelectedProjectId(null);
+    }, 500);
   }, [toggleCommandPaletteModal]);
 
   // Initialize command registry
@@ -347,27 +350,27 @@ export const PowerKModal: React.FC = observer(() => {
                         results={results}
                         resolvedPath={resolvedPath}
                       />
+                      <PowerKContextBasedActions
+                        activePage={activePage}
+                        handleClose={closePalette}
+                        handleUpdateSearchTerm={setSearchTerm}
+                        handleUpdatePage={(page) => setPages((pages) => [...pages, page])}
+                      />
                       <PowerKModalPagesList
+                        activePage={activePage}
                         context={context}
                         executionContext={executionContext}
-                        activePage={activePage}
                         workspaceSlug={workspaceSlug?.toString()}
                         projectId={projectId?.toString()}
-                        issueId={workItemId ?? undefined}
-                        issueDetails={workItemDetails || null}
                         searchTerm={searchTerm}
                         debouncedSearchTerm={debouncedSearchTerm}
                         isLoading={isLoading}
                         isSearching={isSearching}
-                        searchInIssue={searchInIssue}
                         projectSelectionAction={projectSelectionAction}
                         selectedProjectId={selectedProjectId}
-                        results={results}
                         resolvedPath={resolvedPath}
-                        pages={pages}
                         setPages={setPages}
                         setPlaceholder={setPlaceholder}
-                        setSearchTerm={setSearchTerm}
                         setSelectedProjectId={setSelectedProjectId}
                         fetchAllCycles={fetchAllCycles}
                         onCommandSelect={handleCommandSelect}
