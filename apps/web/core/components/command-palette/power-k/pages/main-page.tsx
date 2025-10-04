@@ -16,9 +16,10 @@ import {
   CommandPaletteSearchResults,
 } from "../actions";
 import { useCommandRegistry } from "../hooks";
-import type { CommandConfig } from "../types";
+import type { CommandConfig, CommandContext } from "../types";
 
-interface IMainPageProps {
+type Props = {
+  context: CommandContext;
   projectId: string | undefined;
   issueId: string | undefined;
   issueDetails: { id: string; project_id: string | null; name?: string } | null;
@@ -30,10 +31,11 @@ interface IMainPageProps {
   setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   onCommandSelect: (command: CommandConfig) => void;
-}
+};
 
-export const MainPage: React.FC<IMainPageProps> = (props) => {
+export const MainPage: React.FC<Props> = (props) => {
   const {
+    context,
     projectId,
     issueId,
     issueDetails,
@@ -72,20 +74,13 @@ export const MainPage: React.FC<IMainPageProps> = (props) => {
         />
       )}
 
-      {/* New command renderer */}
-      <CommandRenderer
-        commands={registry.getVisibleCommands({
-          workspaceSlug: undefined,
-          projectId,
-          issueId,
-        })}
-        onCommandSelect={onCommandSelect}
-      />
-
       {/* project actions */}
       {projectId && canPerformAnyCreateAction && (
         <CommandPaletteProjectActions closePalette={() => toggleCommandPaletteModal(false)} />
       )}
+
+      {/* New command renderer */}
+      <CommandRenderer commands={registry.getVisibleCommands(context)} onCommandSelect={onCommandSelect} />
 
       {/* help options */}
       <CommandPaletteHelpActions closePalette={() => toggleCommandPaletteModal(false)} />

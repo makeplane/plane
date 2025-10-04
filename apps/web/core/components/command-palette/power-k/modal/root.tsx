@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import {
@@ -39,7 +38,7 @@ const workspaceService = new WorkspaceService();
 
 export const PowerKModal: React.FC = observer(() => {
   // router
-  const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, workItem: workItemIdentifier } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search");
   const [resultsCount, setResultsCount] = useState(0);
@@ -54,26 +53,17 @@ export const PowerKModal: React.FC = observer(() => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   // store hooks
   const {
-    issue: { getIssueById },
+    issue: { getIssueById, getIssueIdByIdentifier },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
   const { fetchAllCycles } = useCycle();
   const { getPartialProjectById } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { isCommandPaletteOpen, toggleCommandPaletteModal, activeEntity, clearActiveEntity } = useCommandPalette();
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
-  // fetch work item details using identifier
-  const { data: workItemDetailsSWR } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
-  );
   // derived values
-  const issueDetails = workItemDetailsSWR ? getIssueById(workItemDetailsSWR?.id) : null;
-  const issueId = issueDetails?.id;
-  const projectId = issueDetails?.project_id ?? routerProjectId;
+  const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier.toString()) : null;
+  const workItemDetails = workItemId ? getIssueById(workItemId) : null;
+  const projectId = workItemDetails?.project_id ?? routerProjectId;
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
@@ -123,7 +113,7 @@ export const PowerKModal: React.FC = observer(() => {
   }, [toggleCommandPaletteModal]);
 
   // Initialize command registry
-  const { registry, executionContext, initializeCommands } = useCommandRegistryInitializer({
+  const { context, registry, executionContext, initializeCommands } = useCommandRegistryInitializer({
     setPages,
     setPlaceholder,
     setSearchTerm,
@@ -146,10 +136,10 @@ export const PowerKModal: React.FC = observer(() => {
   }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, openProjectList, openCycleList, openIssueList]);
 
   useEffect(() => {
-    if (issueDetails && isCommandPaletteOpen) {
+    if (workItemDetails && isCommandPaletteOpen) {
       setSearchInIssue(true);
     }
-  }, [issueDetails, isCommandPaletteOpen]);
+  }, [workItemDetails, isCommandPaletteOpen]);
 
   useEffect(() => {
     if (!projectId && !isWorkspaceLevel) {
@@ -343,7 +333,7 @@ export const PowerKModal: React.FC = observer(() => {
                       onSearchTermChange={setSearchTerm}
                       baseTabIndex={baseTabIndex}
                       searchInIssue={searchInIssue}
-                      issueDetails={issueDetails}
+                      issueDetails={workItemDetails}
                       onClearSearchInIssue={() => setSearchInIssue(false)}
                     />
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
@@ -357,11 +347,12 @@ export const PowerKModal: React.FC = observer(() => {
                         resolvedPath={resolvedPath}
                       />
                       <PowerKModalPagesList
+                        context={context}
                         page={page}
                         workspaceSlug={workspaceSlug?.toString()}
                         projectId={projectId?.toString()}
-                        issueId={issueId}
-                        issueDetails={issueDetails || null}
+                        issueId={workItemId ?? undefined}
+                        issueDetails={workItemDetails || null}
                         searchTerm={searchTerm}
                         debouncedSearchTerm={debouncedSearchTerm}
                         isLoading={isLoading}
