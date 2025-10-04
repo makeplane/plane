@@ -7,6 +7,7 @@ import {
   CommandContext,
   StepExecutionResult,
   TPowerKPageKeys,
+  TPowerKChangePageStepType,
 } from "./power-k/types";
 
 /**
@@ -138,19 +139,19 @@ export class CommandExecutor {
     executionContext: CommandExecutionContext
   ): Promise<StepExecutionResult> {
     // Map step type to page identifier
-    const pageMap: Record<string, TPowerKPageKeys> = {
-      "select-project": "select-project",
-      "select-cycle": "select-cycle",
-      "select-module": "select-module",
-      "select-issue": "select-issue",
-      "select-page": "select-page",
-      "select-view": "select-view",
-      "select-state": "select-state",
-      "select-priority": "select-priority",
-      "select-assignee": "select-assignee",
+    const pageMap: Record<TPowerKChangePageStepType, TPowerKPageKeys> = {
+      "change-page-project": "select-project",
+      "change-page-cycle": "select-cycle",
+      "change-page-module": "select-module",
+      "change-page-issue": "select-issue",
+      "change-page-page": "select-page",
+      "change-page-view": "select-view",
+      "change-page-state": "select-state",
+      "change-page-priority": "select-priority",
+      "change-page-assignee": "select-assignee",
     };
 
-    const pageId = pageMap[step.type];
+    const pageId = pageMap[step.type as TPowerKChangePageStepType];
     if (!pageId) {
       console.warn(`Unknown selection step type: ${step.type}`);
       return { continue: false };

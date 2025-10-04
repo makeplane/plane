@@ -83,7 +83,7 @@ export type CommandContext = {
 // Step System Types
 // ============================================================================
 
-export type StepType =
+export type TPowerKChangePageStepType =
   | "change-page-project"
   | "change-page-cycle"
   | "change-page-module"
@@ -92,13 +92,12 @@ export type StepType =
   | "change-page-view"
   | "change-page-state"
   | "change-page-priority"
-  | "change-page-assignee"
-  | "navigate"
-  | "action"
-  | "modal";
+  | "change-page-assignee";
+
+export type TPowerKStepType = TPowerKChangePageStepType | "navigate" | "action" | "modal";
 
 export type CommandStep = {
-  type: StepType;
+  type: TPowerKStepType;
   // Unique identifier for this step
   id?: string;
   // Display configuration
