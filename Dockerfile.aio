@@ -1,0 +1,120 @@
+# syntax=docker/dockerfile:1.7
+#
+# All-in-one assembler image that composes Plane runtime from per-app images
+# and the community supervisor/Caddy configuration.
+#
+# Build requirements:
+#  - Build and tag the per-app images first (or override args below):
+#      plane-web:latest, plane-space:latest, plane-admin:latest, plane-live:latest,
+#      plane-api:latest, plane-proxy:latest
+#
+# Example:
+#   docker build \
+#     -f plane/Dockerfile.aio \
+#     --build-arg WEB_IMG=plane-web:latest \
+#     --build-arg SPACE_IMG=plane-space:latest \
+#     --build-arg ADMIN_IMG=plane-admin:latest \
+#     --build-arg LIVE_IMG=plane-live:latest \
+#     --build-arg API_IMG=plane-api:latest \
+#     --build-arg PROXY_IMG=plane-proxy:latest \
+#     -t plane-aio:latest .
+#
+# Run:
+#   docker run --rm -it -p 80:80 plane-aio:latest
+#
+# Provide required env vars; see deployments/aio/community/README.md.
+
+# ------------------------------------------------------------------------------
+# Arguments to reference locally-built component images
+# ------------------------------------------------------------------------------
+# Build contexts are used for component images:
+#   --build-context web_ctx=target:web
+#   --build-context space_ctx=target:space
+#   --build-context admin_ctx=target:admin
+#   --build-context live_ctx=target:live
+#   --build-context api_ctx=target:api
+#   --build-context proxy_ctx=target:proxy
+ARG NODE_VERSION=22-alpine
+ARG PY_VERSION=3.12.10-alpine
+
+# ------------------------------------------------------------------------------
+# Source stages: pull artifacts from pre-built images
+# ------------------------------------------------------------------------------
+FROM node:${NODE_VERSION} AS node
+
+# ------------------------------------------------------------------------------
+# Final runner: Python as base (Supervisor + API deps live here)
+# ------------------------------------------------------------------------------
+FROM python:${PY_VERSION} AS runner
+
+WORKDIR /app
+
+# Base system libs for API/Caddy/Node runtime
+RUN apk add --no-cache \
+    libpq \
+    libxslt \
+    xmlsec \
+    nss-tools \
+    bash \
+    curl \
+    ca-certificates \
+    openssl
+
+# Install supervisor
+RUN pip install --no-cache-dir supervisor && mkdir -p /etc/supervisor/conf.d
+
+# Copy Node runtime into the AIO container for Next standalone apps
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
+
+# Copy Next.js standalone app artifacts (namespaced under /app/<app>)
+COPY --from=web_ctx   /app /app/web
+COPY --from=space_ctx /app /app/space
+COPY --from=admin_ctx /app /app/admin
+COPY --from=live_ctx  /app /app/live
+
+# Clean potential Next caches (optional)
+RUN rm -rf /app/web/apps/web/.next/cache || true \
+    && rm -rf /app/space/apps/space/.next/cache || true \
+    && rm -rf /app/admin/apps/admin/.next/cache || true
+
+# Copy Python backend code and installed packages/binaries
+COPY --from=api_ctx /code /app/backend
+# Match CPython version path (PY_VERSION=3.12.x-alpine)
+COPY --from=api_ctx /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
+COPY --from=api_ctx /usr/local/bin/ /usr/local/bin/
+
+# Caddy binary from proxy image
+COPY --from=proxy_ctx /usr/bin/caddy /usr/bin/caddy
+
+# Community supervisor config and startup script
+COPY deployments/aio/community/start.sh /app/start.sh
+COPY deployments/aio/community/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+
+# Provide a default plane.env from variables template; start.sh will update it
+COPY deployments/aio/community/variables.env /app/plane.env
+
+# Prepare Caddy configuration:
+# - Start from the repository Caddyfile.ce
+# - Update upstreams to localhost-bound ports managed by supervisor
+RUN mkdir -p /app/proxy
+COPY apps/proxy/Caddyfile.ce /app/proxy/Caddyfile
+RUN set -eux; \
+    sed -i 's|web:3000|localhost:3001|g'    /app/proxy/Caddyfile; \
+    sed -i 's|space:3000|localhost:3002|g'  /app/proxy/Caddyfile; \
+    sed -i 's|admin:3000|localhost:3003|g'  /app/proxy/Caddyfile; \
+    sed -i 's|api:8000|localhost:3004|g'    /app/proxy/Caddyfile; \
+    sed -i 's|live:3000|localhost:3005|g'   /app/proxy/Caddyfile; \
+    sed -i '/plane-minio:9000/d'            /app/proxy/Caddyfile
+
+# Folders and permissions
+RUN mkdir -p /app/logs/access /app/logs/error /app/data \
+    && chmod +x /app/start.sh
+
+VOLUME ["/app/data", "/app/logs"]
+
+EXPOSE 80 443
+
+CMD ["/app/start.sh"]

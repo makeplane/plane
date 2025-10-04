@@ -1,0 +1,14 @@
+# Repo-wide tool versions managed by mise
+# See: https://mise.jdx.dev
+
+[tools]
+# Node LTS "Jod" to match .nvmrc and package.json engines
+node = "22.18.0"
+
+# Python version to match Dockerfile.api
+python = "3.12.10"
+
+# Global CLI utilities installed via pipx
+# This provides the `ruff` command used by CI and local checks
+pipx = "latest"
+"pipx:ruff" = "0.9.7"
