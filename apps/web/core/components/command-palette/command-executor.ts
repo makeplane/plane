@@ -10,12 +10,12 @@ import {
 } from "./power-k/types";
 
 /**
- * CommandExecutor handles the execution of commands with multi-step flows.
- * It orchestrates step execution, context passing, and navigation.
+ * CommandExecutor handles execution of individual command steps.
+ * It does NOT manage multi-step flow - that's handled by the modal component.
  */
 export class CommandExecutor {
   /**
-   * Execute a command with its configured steps or action
+   * Execute a command - either a simple action or start multi-step flow
    */
   async executeCommand(command: CommandConfig, executionContext: CommandExecutionContext): Promise<void> {
     // Check if command is enabled
@@ -24,66 +24,27 @@ export class CommandExecutor {
       return;
     }
 
-    // Execute based on configuration
-    if (command.steps && command.steps.length > 0) {
-      await this.executeSteps(command.steps, executionContext);
-    } else if (command.action) {
-      // Fallback to simple action
+    // If it's a simple action command, execute and done
+    if (command.action) {
       command.action(executionContext);
-    } else {
-      console.warn(`Command ${command.id} has no execution strategy`);
+      return;
     }
+
+    // If it has steps, execution will be handled by the modal component
+    // This is just a passthrough - the modal will call executeSingleStep() for each step
   }
 
   /**
-   * Execute a sequence of steps
+   * Execute a single step at a given index
+   * Returns the result which tells the caller what to do next
    */
-  private async executeSteps(steps: CommandStep[], executionContext: CommandExecutionContext): Promise<void> {
-    let currentContext = { ...executionContext.context };
-
-    for (let i = 0; i < steps.length; i++) {
-      const step = steps[i];
-
-      // Check step condition
-      if (step.condition && !step.condition(currentContext)) {
-        continue; // Skip this step
-      }
-
-      // Execute the step
-      const result = await this.executeStep(step, {
-        ...executionContext,
-        context: currentContext,
-      });
-
-      // Update context if step provided updates
-      if (result.updatedContext) {
-        currentContext = {
-          ...currentContext,
-          ...result.updatedContext,
-        };
-        executionContext.updateContext(result.updatedContext);
-      }
-
-      // If step says to close palette, do it
-      if (result.closePalette) {
-        executionContext.closePalette();
-        return;
-      }
-
-      // If step says not to continue, stop
-      if (!result.continue) {
-        return;
-      }
+  async executeSingleStep(step: CommandStep, executionContext: CommandExecutionContext): Promise<StepExecutionResult> {
+    // Check step condition
+    if (step.condition && !step.condition(executionContext.context)) {
+      // Skip this step, continue to next
+      return { continue: true, skipped: true };
     }
-  }
 
-  /**
-   * Execute a single step
-   */
-  private async executeStep(
-    step: CommandStep,
-    executionContext: CommandExecutionContext
-  ): Promise<StepExecutionResult> {
     switch (step.type) {
       case "navigate":
         return this.executeNavigateStep(step, executionContext);
@@ -107,7 +68,7 @@ export class CommandExecutor {
 
       default:
         console.warn(`Unknown step type: ${step.type}`);
-        return { continue: true };
+        return { continue: false };
     }
   }
 
@@ -177,6 +138,7 @@ export class CommandExecutor {
 
   /**
    * Execute a selection step (opens a selection page)
+   * The modal component will handle waiting for user selection
    */
   private async executeSelectionStep(
     step: CommandStep,
@@ -202,60 +164,37 @@ export class CommandExecutor {
     }
 
     // Update UI state for the selection page
-    if (step.placeholder) {
-      executionContext.setPlaceholder(step.placeholder);
-    }
+    // Placeholder is automatically derived from page key in modal component
     executionContext.setSearchTerm("");
-    executionContext.setPages((pages) => [...pages, pageId]);
 
-    // Selection steps are interactive - they don't continue automatically
-    // The selection will be handled by the UI component and will trigger
-    // the next step when a selection is made
-    return { continue: false };
+    // Only add page if it's not already the active page (for backspace navigation support)
+    executionContext.setPages((pages) => {
+      const lastPage = pages[pages.length - 1];
+      if (lastPage === pageId) {
+        // Page already showing, don't add duplicate
+        return pages;
+      }
+      // Add new page to stack
+      return [...pages, pageId];
+    });
+
+    // Return that we need to wait for user interaction
+    // The modal will handle this and call executeSingleStep again when selection is made
+    return {
+      continue: false,
+      waitingForSelection: true,
+      dataKey: step.dataKey, // Tell modal what key to use for storing selected data
+    };
   }
 
   /**
    * Resolve route parameters using context values
+   * Priority: stepData > direct context properties
    */
-  private resolveRouteParameters(route: string, context: CommandContext): string {
+  resolveRouteParameters(route: string, context: CommandContext): string {
     let resolvedRoute = route;
 
-    // Replace :workspace with workspaceSlug
-    if (context.workspaceSlug) {
-      resolvedRoute = resolvedRoute.replace(/:workspace/g, context.workspaceSlug);
-    }
-
-    // Replace :project with projectId
-    if (context.projectId) {
-      resolvedRoute = resolvedRoute.replace(/:project/g, context.projectId);
-    }
-
-    // Replace :issue with issueId
-    if (context.issueId) {
-      resolvedRoute = resolvedRoute.replace(/:issue/g, context.issueId);
-    }
-
-    // Replace :cycle with cycleId
-    if (context.cycleId) {
-      resolvedRoute = resolvedRoute.replace(/:cycle/g, context.cycleId);
-    }
-
-    // Replace :module with moduleId
-    if (context.moduleId) {
-      resolvedRoute = resolvedRoute.replace(/:module/g, context.moduleId);
-    }
-
-    // Replace :page with pageId
-    if (context.pageId) {
-      resolvedRoute = resolvedRoute.replace(/:page/g, context.pageId);
-    }
-
-    // Replace :view with viewId
-    if (context.viewId) {
-      resolvedRoute = resolvedRoute.replace(/:view/g, context.viewId);
-    }
-
-    // Handle stepData replacements
+    // First, handle stepData replacements (highest priority for multi-step flows)
     if (context.stepData) {
       Object.keys(context.stepData).forEach((key) => {
         const placeholder = `:${key}`;
@@ -263,6 +202,41 @@ export class CommandExecutor {
           resolvedRoute = resolvedRoute.replace(new RegExp(placeholder, "g"), context.stepData![key]);
         }
       });
+    }
+
+    // Replace :workspace with workspaceSlug
+    if (context.workspaceSlug && resolvedRoute.includes(":workspace")) {
+      resolvedRoute = resolvedRoute.replace(/:workspace/g, context.workspaceSlug);
+    }
+
+    // Replace :project with projectId (only if not already replaced by stepData)
+    if (context.projectId && resolvedRoute.includes(":project")) {
+      resolvedRoute = resolvedRoute.replace(/:project/g, context.projectId);
+    }
+
+    // Replace :issue with issueId (only if not already replaced by stepData)
+    if (context.issueId && resolvedRoute.includes(":issue")) {
+      resolvedRoute = resolvedRoute.replace(/:issue/g, context.issueId);
+    }
+
+    // Replace :cycle with cycleId (only if not already replaced by stepData)
+    if (context.cycleId && resolvedRoute.includes(":cycle")) {
+      resolvedRoute = resolvedRoute.replace(/:cycle/g, context.cycleId);
+    }
+
+    // Replace :module with moduleId (only if not already replaced by stepData)
+    if (context.moduleId && resolvedRoute.includes(":module")) {
+      resolvedRoute = resolvedRoute.replace(/:module/g, context.moduleId);
+    }
+
+    // Replace :page with pageId (only if not already replaced by stepData)
+    if (context.pageId && resolvedRoute.includes(":page")) {
+      resolvedRoute = resolvedRoute.replace(/:page/g, context.pageId);
+    }
+
+    // Replace :view with viewId (only if not already replaced by stepData)
+    if (context.viewId && resolvedRoute.includes(":view")) {
+      resolvedRoute = resolvedRoute.replace(/:view/g, context.viewId);
     }
 
     return resolvedRoute;

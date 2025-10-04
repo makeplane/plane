@@ -31,8 +31,7 @@ export const contextualWorkItemsCommandsRegistry = (
     showOnRoutes: ["issue"],
     steps: [
       {
-        type: "select-state",
-        placeholder: "Select state",
+        type: "change-page-state",
         dataKey: "stateId",
       },
       {
@@ -57,8 +56,7 @@ export const contextualWorkItemsCommandsRegistry = (
     showOnRoutes: ["issue"],
     steps: [
       {
-        type: "select-priority",
-        placeholder: "Select priority",
+        type: "change-page-priority",
         dataKey: "priority",
       },
       {
@@ -83,8 +81,7 @@ export const contextualWorkItemsCommandsRegistry = (
     showOnRoutes: ["issue"],
     steps: [
       {
-        type: "select-assignee",
-        placeholder: "Select assignee",
+        type: "change-page-assignee",
         dataKey: "assigneeIds",
       },
       {

@@ -9,11 +9,10 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
+import { SelectProjectStep, SelectCycleStep, SelectModuleStep } from "../steps";
 import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
-import { CycleSelectionPage } from "./cycle-selection-page";
-import { IssueSelectionPage } from "./issue-selection-page";
 import { PowerKModalDefaultPage } from "./default";
-import { ProjectSelectionPage } from "./project-selection-page";
+import { IssueSelectionPage } from "./issue-selection-page";
 
 type Props = {
   activePage: TPowerKPageKeys | undefined;
@@ -25,15 +24,16 @@ type Props = {
   debouncedSearchTerm: string;
   isLoading: boolean;
   isSearching: boolean;
-  projectSelectionAction: "navigate" | "cycle" | null;
-  selectedProjectId: string | null;
+  results: IWorkspaceSearchResults;
   resolvedPath: string;
   setPages: (pages: TPowerKPageKeys[] | ((prev: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
-  setPlaceholder: (placeholder: string) => void;
-  setSelectedProjectId: (id: string | null) => void;
-  fetchAllCycles: (workspaceSlug: string, projectId: string) => void;
   onCommandSelect: (command: CommandConfig) => void;
   isWorkspaceLevel?: boolean;
+  // New props for step execution
+  activeCommand: CommandConfig | null;
+  currentStepIndex: number;
+  commandStepData: Record<string, any>;
+  onStepComplete: (selectedData?: { key: string; value: any }) => Promise<void>;
 };
 
 export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
@@ -47,16 +47,18 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     debouncedSearchTerm,
     isLoading,
     isSearching,
-    projectSelectionAction,
-    selectedProjectId,
     resolvedPath,
     setPages,
-    setPlaceholder,
-    setSelectedProjectId,
-    fetchAllCycles,
     onCommandSelect,
     isWorkspaceLevel = false,
+    activeCommand,
+    currentStepIndex,
+    commandStepData,
+    onStepComplete,
   } = props;
+
+  // Get the current step's dataKey if we're in a multi-step flow
+  const currentStepDataKey = activeCommand?.steps?.[currentStepIndex]?.dataKey;
   // store hooks
   const { toggleCommandPaletteModal } = useCommandPalette();
   const {
@@ -75,27 +77,58 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     );
   }
 
-  // Project selection page
-  if (activePage === "open-project" && workspaceSlug) {
+  // Project selection step
+  if (activePage === "select-project" && workspaceSlug) {
     return (
-      <ProjectSelectionPage
+      <SelectProjectStep
         workspaceSlug={workspaceSlug}
-        projectSelectionAction={projectSelectionAction}
-        setSelectedProjectId={setSelectedProjectId}
-        fetchAllCycles={fetchAllCycles}
-        setPages={setPages}
-        setPlaceholder={setPlaceholder}
+        onSelect={async (project) => {
+          if (currentStepDataKey) {
+            await onStepComplete({ key: currentStepDataKey, value: project.id });
+          }
+        }}
       />
     );
   }
 
-  // Cycle selection page
-  if (activePage === "open-cycle" && workspaceSlug && selectedProjectId) {
-    return <CycleSelectionPage workspaceSlug={workspaceSlug} selectedProjectId={selectedProjectId} />;
+  // Cycle selection step
+  if (activePage === "select-cycle" && workspaceSlug) {
+    const selectedProjectId = commandStepData?.projectId || projectId;
+    if (!selectedProjectId) return null;
+
+    return (
+      <SelectCycleStep
+        workspaceSlug={workspaceSlug}
+        projectId={selectedProjectId}
+        onSelect={async (cycle) => {
+          if (currentStepDataKey) {
+            await onStepComplete({ key: currentStepDataKey, value: cycle.id });
+          }
+        }}
+      />
+    );
   }
 
-  // Issue selection page
-  if (activePage === "open-issue" && workspaceSlug) {
+  // Module selection step
+  if (activePage === "select-module" && workspaceSlug) {
+    const selectedProjectId = commandStepData?.projectId || projectId;
+    if (!selectedProjectId) return null;
+
+    return (
+      <SelectModuleStep
+        workspaceSlug={workspaceSlug}
+        projectId={selectedProjectId}
+        onSelect={async (module) => {
+          if (currentStepDataKey) {
+            await onStepComplete({ key: currentStepDataKey, value: module.id });
+          }
+        }}
+      />
+    );
+  }
+
+  // Issue selection step
+  if (activePage === "select-issue" && workspaceSlug) {
     return (
       <IssueSelectionPage
         workspaceSlug={workspaceSlug}

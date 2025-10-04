@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
@@ -15,12 +14,8 @@ import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPag
 
 type TCommandRegistryInitializerArgs = {
   setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
-  setPlaceholder: (placeholder: string) => void;
   setSearchTerm: (term: string) => void;
   closePalette: () => void;
-  openProjectList: () => void;
-  openCycleList: () => void;
-  openIssueList: () => void;
   isWorkspaceLevel: boolean;
 };
 
@@ -29,22 +24,12 @@ type TCommandRegistryInitializerArgs = {
  * This should only be used to initialize the registry with commands once
  */
 export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerArgs) => {
-  const {
-    setPages,
-    setPlaceholder,
-    setSearchTerm,
-    closePalette,
-    openProjectList,
-    openCycleList,
-    openIssueList,
-    isWorkspaceLevel,
-  } = args;
+  const { setPages, setSearchTerm, closePalette, isWorkspaceLevel } = args;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // store hooks
-  const { toggleCreateIssueModal, toggleCreateProjectModal, getCommandRegistry } = useCommandPalette();
-  const { workspaceProjectIds } = useProject();
+  const { getCommandRegistry } = useCommandPalette();
   const { canPerformAnyCreateAction } = useUser();
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -85,19 +70,17 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
       closePalette,
       router,
       setPages,
-      setPlaceholder,
       setSearchTerm,
       context,
       updateContext: () => {}, // Will be properly implemented during UI integration
     }),
-    [closePalette, router, setPages, setPlaceholder, setSearchTerm, context]
+    [closePalette, router, setPages, setSearchTerm, context]
   );
 
   const openWorkspaceSettings = useCallback(() => {
-    setPlaceholder("Search workspace settings");
     setSearchTerm("");
     setPages((pages) => [...pages, "settings"]);
-  }, [setPlaceholder, setSearchTerm, setPages]);
+  }, [setSearchTerm, setPages]);
 
   const initializeCommands = useCallback(() => {
     // Clear existing commands to avoid duplicates
@@ -110,19 +93,7 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     ];
 
     registry.registerMultiple(commands);
-  }, [
-    registry,
-    workspaceSlug,
-    workspaceProjectIds,
-    canPerformAnyCreateAction,
-    canPerformWorkspaceActions,
-    openProjectList,
-    openCycleList,
-    openIssueList,
-    toggleCreateIssueModal,
-    toggleCreateProjectModal,
-    openWorkspaceSettings,
-  ]);
+  }, [registry, executionContext, openWorkspaceSettings, canPerformWorkspaceActions]);
 
   return {
     registry,

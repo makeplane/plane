@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useMemo, useEffect } from "react";
-import { observer } from "mobx-react";
 import { Command } from "cmdk";
+import { observer } from "mobx-react";
 // plane imports
-import type { IModule } from "@plane/types";
 import { DiceIcon } from "@plane/propel/icons";
+import type { IModule } from "@plane/types";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 
@@ -30,9 +30,9 @@ export const SelectModuleStep: React.FC<SelectModuleStepProps> = observer(
       const modules: IModule[] = [];
       if (projectModuleIds) {
         projectModuleIds.forEach((mid) => {
-          const module = getModuleById(mid);
-          if (module) {
-            modules.push(module);
+          const projectModule = getModuleById(mid);
+          if (projectModule) {
+            modules.push(projectModule);
           }
         });
       }
