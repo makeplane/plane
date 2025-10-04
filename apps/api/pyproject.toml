@@ -31,7 +31,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 88
+line-length = 120
 indent-width = 4
 
 [tool.ruff.format]

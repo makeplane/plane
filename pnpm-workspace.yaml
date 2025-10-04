@@ -5,12 +5,12 @@ packages:
 - "!apps/proxy"
 
 catalog:
-  axios: 1.11.0
+  axios: 1.12.0
   mobx: 6.12.0
   mobx-react: 9.1.1
   mobx-utils: 6.0.8
-  lodash: 4.17.21
-  "@types/lodash": 4.17.20
+  lodash-es: 4.17.21
+  "@types/lodash-es": 4.17.12
   lucide-react: 0.469.0
   next: 14.2.32
   sharp: 0.33.5
@@ -19,9 +19,12 @@ catalog:
   react-dom: 18.3.1
   "@types/react": 18.3.11
   "@types/react-dom": 18.3.1
+  "@types/uuid": 9.0.8
   typescript: 5.8.3
   tsdown: 0.14.2
   uuid: 10.0.0
+  "@tiptap/core": ^3.5.3
+  "@tiptap/html": ^3.5.3
 
 onlyBuiltDependencies:
 - turbo

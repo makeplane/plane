@@ -21,9 +21,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/",
-        BulkEstimatePointEndpoint.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        BulkEstimatePointEndpoint.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="bulk-create-estimate-points",
     ),
     path(

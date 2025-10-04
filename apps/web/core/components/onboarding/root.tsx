@@ -132,7 +132,7 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* Header with progress */}
       <OnboardingHeader
         currentStep={currentStep}
@@ -142,6 +142,6 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
 
       {/* Main content area */}
       <OnboardingStepRoot currentStep={currentStep} invitations={invitations} handleStepChange={handleStepChange} />
-    </>
+    </div>
   );
 });

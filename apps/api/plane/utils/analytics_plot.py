@@ -73,30 +73,19 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
             dimension_ex=Coalesce("dimension", Value("null")),
         ).values("dimension")
         queryset = queryset.annotate(segment=F(segment)) if segment else queryset
-        queryset = (
-            queryset.values("dimension", "segment")
-            if segment
-            else queryset.values("dimension")
-        )
+        queryset = queryset.values("dimension", "segment") if segment else queryset.values("dimension")
         queryset = queryset.annotate(count=Count("*")).order_by("dimension")
 
     # Estimate
     else:
-        queryset = queryset.annotate(
-            estimate=Sum(Cast("estimate_point__value", FloatField()))
-        ).order_by(x_axis)
+        queryset = queryset.annotate(estimate=Sum(Cast("estimate_point__value", FloatField()))).order_by(x_axis)
         queryset = queryset.annotate(segment=F(segment)) if segment else queryset
         queryset = (
-            queryset.values("dimension", "segment", "estimate")
-            if segment
-            else queryset.values("dimension", "estimate")
+            queryset.values("dimension", "segment", "estimate") if segment else queryset.values("dimension", "estimate")
         )
 
     result_values = list(queryset)
-    grouped_data = {
-        str(key): list(items)
-        for key, items in groupby(result_values, key=lambda x: x[str("dimension")])
-    }
+    grouped_data = {str(key): list(items) for key, items in groupby(result_values, key=lambda x: x[str("dimension")])}
 
     return sort_data(grouped_data, temp_axis)
 
@@ -140,9 +129,7 @@ def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_i
             # Get all dates between the two dates
             date_range = [
                 (queryset.start_date + timedelta(days=x)).date()
-                for x in range(
-                    (queryset.end_date.date() - queryset.start_date.date()).days + 1
-                )
+                for x in range((queryset.end_date.date() - queryset.start_date.date()).days + 1)
             ]
         else:
             date_range = []

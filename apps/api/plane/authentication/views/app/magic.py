@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urlencode, urljoin
-
 # Django imports
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
@@ -26,7 +23,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.rate_limit import AuthenticationThrottle
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url
 
 
 class MagicGenerateEndpoint(APIView):
@@ -66,16 +63,14 @@ class MagicSignInEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -88,10 +83,10 @@ class MagicSignInEndpoint(View):
                 error_message="USER_DOES_NOT_EXIST",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -107,24 +102,25 @@ class MagicSignInEndpoint(View):
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
             if user.is_password_autoset and profile.is_onboarded:
-                path = "accounts/set-password"
+                # Redirect to the home page
+                path = "/"
             else:
                 # Get the redirection path
-                path = (
-                    str(next_path)
-                    if next_path
-                    else str(get_redirection_path(user=user))
-                )
+                path = str(next_path) if next_path else str(get_redirection_path(user=user))
             # redirect to referer path
-            url = urljoin(base_host(request=request, is_app=True), path)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=path,
+                params={},
+            )
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -138,16 +134,14 @@ class MagicSignUpEndpoint(View):
 
         if code == "" or email == "":
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED"],
                 error_message="MAGIC_SIGN_UP_EMAIL_CODE_REQUIRED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
         # Existing user
@@ -158,10 +152,10 @@ class MagicSignUpEndpoint(View):
                 error_message="USER_ALREADY_EXIST",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -177,18 +171,22 @@ class MagicSignUpEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = str(validate_next_path(next_path))
+                path = next_path
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host(request=request, is_app=True), path)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=path,
+                params={},
+            )
             return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)

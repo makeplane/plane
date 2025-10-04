@@ -1,5 +1,4 @@
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
+import { isEqual, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // components

@@ -9,11 +9,9 @@ import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsh
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
-import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
-import { IssuePeekOverview } from "../../../peek-overview";
 import { IssueLayoutHOC } from "../../issue-layout-HOC";
 import { TRenderQuickActions } from "../../list/list-view-types";
 import { SpreadsheetView } from "../spreadsheet-view";
@@ -108,23 +106,19 @@ export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props)
 
   // Render spreadsheet
   return (
-    <IssuesStoreContext.Provider value={EIssuesStoreType.GLOBAL}>
-      <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
-        <SpreadsheetView
-          displayProperties={issueFilters?.displayProperties ?? {}}
-          displayFilters={issueFilters?.displayFilters ?? {}}
-          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-          issueIds={Array.isArray(issueIds) ? issueIds : []}
-          quickActions={renderQuickActions}
-          updateIssue={updateIssue}
-          canEditProperties={canEditProperties}
-          canLoadMoreIssues={!!nextPageResults}
-          loadMoreIssues={fetchNextPages}
-          isWorkspaceLevel
-        />
-        {/* peek overview */}
-        <IssuePeekOverview />
-      </IssueLayoutHOC>
-    </IssuesStoreContext.Provider>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
+      <SpreadsheetView
+        displayProperties={issueFilters?.displayProperties ?? {}}
+        displayFilters={issueFilters?.displayFilters ?? {}}
+        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        issueIds={Array.isArray(issueIds) ? issueIds : []}
+        quickActions={renderQuickActions}
+        updateIssue={updateIssue}
+        canEditProperties={canEditProperties}
+        canLoadMoreIssues={!!nextPageResults}
+        loadMoreIssues={fetchNextPages}
+        isWorkspaceLevel
+      />
+    </IssueLayoutHOC>
   );
 });

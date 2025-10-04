@@ -1,4 +1,4 @@
-import pick from "lodash/pick";
+import { pick } from "lodash-es";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 import { persistence } from "../storage.sqlite";

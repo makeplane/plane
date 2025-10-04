@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // plane internal packages
 import { EInstanceStatus, TInstanceStatus } from "@plane/constants";

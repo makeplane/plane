@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { getButtonStyling } from "@plane/propel/button";
 import { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@plane/types";
-import { CustomMenu, getButtonStyling } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // constants
 // helpers
 import { cn } from "@plane/utils";

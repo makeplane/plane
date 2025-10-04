@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { estimateCount } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Button, Sortable } from "@plane/ui";
+import { Sortable } from "@plane/ui";
 // local imports
 import { EstimatePointCreate } from "./create";
 import { EstimatePointItemPreview } from "./preview";

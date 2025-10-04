@@ -1,5 +1,4 @@
-import clone from "lodash/clone";
-import set from "lodash/set";
+import { clone, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import {
   TInboxIssue,

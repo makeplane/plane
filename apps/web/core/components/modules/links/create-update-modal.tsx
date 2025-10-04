@@ -3,9 +3,10 @@
 import { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
+import { Button } from "@plane/propel/button";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
-import { Button, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 
 type Props = {
   createLink: (formData: ModuleLink) => Promise<void>;

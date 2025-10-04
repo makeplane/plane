@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useCallback } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // hooks

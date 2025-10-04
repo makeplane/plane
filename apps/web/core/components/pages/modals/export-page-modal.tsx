@@ -6,7 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { Button, CustomSelect, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomSelect, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { PDFDocument } from "@/components/editor/pdf";
 // hooks

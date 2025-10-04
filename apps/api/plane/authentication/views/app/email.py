@@ -1,6 +1,3 @@
-# Python imports
-from urllib.parse import urlencode, urljoin
-
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -19,7 +16,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url
 
 
 class SignInAuthEndpoint(View):
@@ -34,11 +31,11 @@ class SignInAuthEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
             # Base URL join
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -50,18 +47,16 @@ class SignInAuthEndpoint(View):
         if not email or not password:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_IN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
             # Next path
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -76,10 +71,10 @@ class SignInAuthEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -92,10 +87,10 @@ class SignInAuthEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -112,19 +107,23 @@ class SignInAuthEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = str(validate_next_path(next_path))
+                path = next_path
             else:
                 path = get_redirection_path(user=user)
 
-            # redirect to referer path
-            url = urljoin(base_host(request=request, is_app=True), path)
+            # Get the safe redirect URL
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=path,
+                params={},
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -141,10 +140,10 @@ class SignUpAuthEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -154,17 +153,15 @@ class SignUpAuthEndpoint(View):
         if not email or not password:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_UP"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_UP"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_UP",
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -179,10 +176,10 @@ class SignUpAuthEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -197,10 +194,10 @@ class SignUpAuthEndpoint(View):
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
 
@@ -217,17 +214,21 @@ class SignUpAuthEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = str(validate_next_path(next_path))
+                path = next_path
             else:
                 path = get_redirection_path(user=user)
-            # redirect to referer path
-            url = urljoin(base_host(request=request, is_app=True), path)
+
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=path,
+                params={},
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True),
+                next_path=next_path,
+                params=params,
             )
             return HttpResponseRedirect(url)
