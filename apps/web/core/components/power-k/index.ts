@@ -3,13 +3,7 @@ export { CommandPaletteV2ModalWrapper } from "./modal-wrapper";
 export { CommandPaletteV2GlobalShortcuts } from "./global-shortcuts";
 
 // Types
-export type {
-  TPowerKCommandConfig,
-  TPowerKContext,
-  TPowerKContextEntity,
-  TPowerKPageType,
-  TPowerKCommandGroup,
-} from "./core/types";
+export type { TPowerKCommandConfig, TPowerKContext, TPowerKPageType, TPowerKCommandGroup } from "./core/types";
 
 // Registry (if needed for custom commands)
 export { commandRegistry } from "./core/registry";

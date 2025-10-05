@@ -111,7 +111,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const isLoading = false;
   const isSearching = false;
   const results = {
-    results: {},
+    results: {
+      workspace: [],
+      project: [],
+      issue: [],
+      cycle: [],
+      module: [],
+      issue_view: [],
+      page: [],
+    },
   };
   const resolvedPath = "";
 

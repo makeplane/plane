@@ -58,7 +58,6 @@ export const CommandPalette: FC = observer(() => {
       : null
   );
 
-  const issueId = issueDetails?.id;
   const projectId = paramsProjectId?.toString() ?? issueDetails?.project_id;
 
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -295,7 +294,7 @@ export const CommandPalette: FC = observer(() => {
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals projectId={projectId} issueId={issueId} />
+      <IssueLevelModals workItemIdentifier={workItem?.toString()} />
       <PowerKModal />
     </>
   );

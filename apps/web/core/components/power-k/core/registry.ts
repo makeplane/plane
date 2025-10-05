@@ -118,7 +118,7 @@ class TPowerKCommandRegistryImpl implements IPowerKCommandRegistry {
     // Check context type filtering
     if (command.contextType) {
       // Command requires specific context
-      if (!ctx.contextEntity || ctx.contextEntity.type !== command.contextType) {
+      if (!ctx.activeContext || ctx.activeContext !== command.contextType) {
         return false;
       }
     }

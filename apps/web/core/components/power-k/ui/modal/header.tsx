@@ -13,23 +13,10 @@ type Props = {
   activePage: TPowerKPageType | null;
 };
 
-const PAGE_PLACEHOLDERS: Record<TPowerKPageType, string> = {
-  "select-state": "Select a state...",
-  "select-priority": "Select a priority...",
-  "select-assignee": "Select an assignee...",
-  "select-project": "Select a project...",
-  "select-cycle": "Select a cycle...",
-  "select-module": "Select a module...",
-  "select-label": "Select a label...",
-  "select-team": "Select a team...",
-  "select-user": "Select a user...",
-  "select-work-item": "Select a work item...",
-};
-
 export const PowerKModalHeader: React.FC<Props> = (props) => {
   const { activeContext, searchTerm, onSearchChange, onClearContext, activePage } = props;
   // derived values
-  const placeholder = activePage ? PAGE_PLACEHOLDERS[activePage] : "Type a command or search...";
+  const placeholder = "Type a command or search...";
 
   return (
     <div className="border-b border-custom-border-200">
