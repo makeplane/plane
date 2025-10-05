@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 // components
-import { CommandPalette } from "@/components/command-palette";
+// import { CommandPalette } from "@/components/command-palette";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // layout
@@ -17,7 +17,7 @@ export default function ProfileSettingsLayout(props: Props) {
 
   return (
     <>
-      <CommandPalette />
+      {/* <CommandPalette /> */}
       <AuthenticationWrapper>
         <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
           <ProfileLayoutSidebar />

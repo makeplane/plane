@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
-import { CommandPaletteEntityList } from "@/components/command-palette";
+// import { CommandPaletteEntityList } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -85,7 +85,7 @@ export const IssueSelectionPage: React.FC<Props> = (props) => {
 
   return (
     <>
-      {searchTerm === "" ? (
+      {/* {searchTerm === "" ? (
         recentIssues.length > 0 ? (
           <CommandPaletteEntityList
             heading="Issues"
@@ -165,7 +165,7 @@ export const IssueSelectionPage: React.FC<Props> = (props) => {
             <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
           </div>
         )
-      )}
+      )} */}
     </>
   );
 };

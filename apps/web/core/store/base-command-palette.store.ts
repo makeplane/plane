@@ -8,6 +8,9 @@ import {
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 import { CommandRegistry } from "@/components/command-palette/command-registry";
+// V2 imports
+import { commandRegistry } from "@/components/power-k/core/registry";
+import type { TPowerKContextEntity, TPowerKPageType, TPowerKCommandRegistry } from "@/components/power-k/core/types";
 
 export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
@@ -38,6 +41,12 @@ export interface IBaseCommandPaletteStore {
   activateEntity: (entity: CommandPaletteEntity) => void;
   clearActiveEntity: () => void;
   getCommandRegistry: () => CommandRegistry;
+  // V2 state
+  contextEntityV2: TPowerKContextEntity | null;
+  activePageV2: TPowerKPageType | null;
+  setContextEntityV2: (entity: TPowerKContextEntity | null) => void;
+  setActivePageV2: (page: TPowerKPageType | null) => void;
+  getCommandRegistryV2: () => TPowerKCommandRegistry;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -71,6 +80,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   projectListOpenMap: Record<string, boolean> = {};
   activeEntity: CommandPaletteEntity | null = null;
   commandRegistry: CommandRegistry = new CommandRegistry();
+  // V2 observables
+  contextEntityV2: TPowerKContextEntity | null = null;
+  activePageV2: TPowerKPageType | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -91,6 +103,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       projectListOpenMap: observable,
       activeEntity: observable,
       commandRegistry: observable.ref,
+      // V2 observables
+      contextEntityV2: observable,
+      activePageV2: observable,
       // toggle actions
       toggleCommandPaletteModal: action,
       toggleShortcutModal: action,
@@ -107,6 +122,10 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       activateEntity: action,
       clearActiveEntity: action,
       getCommandRegistry: action,
+      // V2 actions
+      setContextEntityV2: action,
+      setActivePageV2: action,
+      getCommandRegistryV2: action,
     });
   }
 
@@ -315,4 +334,25 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       this.allStickiesModal = !this.allStickiesModal;
     }
   };
+
+  /**
+   * Sets the V2 context entity
+   * @param entity
+   */
+  setContextEntityV2 = (entity: TPowerKContextEntity | null) => {
+    this.contextEntityV2 = entity;
+  };
+
+  /**
+   * Sets the V2 active page
+   * @param page
+   */
+  setActivePageV2 = (page: TPowerKPageType | null) => {
+    this.activePageV2 = page;
+  };
+
+  /**
+   * Get the V2 command registry instance
+   */
+  getCommandRegistryV2 = (): TPowerKCommandRegistry => commandRegistry;
 }

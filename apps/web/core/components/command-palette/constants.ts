@@ -18,5 +18,9 @@ export const PAGE_PLACEHOLDERS: Record<TPowerKPageKeys | "default", string> = {
   "change-module-status": "Search status",
   settings: "Search settings",
   "change-theme": "Select theme",
+  "change-work-item-estimate": "Search estimates",
+  "change-work-item-cycle": "Search cycles",
+  "change-work-item-module": "Search modules",
+  "change-work-item-label": "Search labels",
   default: "Type a command or search",
 };

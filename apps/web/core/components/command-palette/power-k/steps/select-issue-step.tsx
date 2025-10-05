@@ -23,6 +23,4 @@ interface SelectIssueStepProps {
  * Reusable issue selection step component
  * Can be used in any multi-step command flow
  */
-export const SelectIssueStep: React.FC<SelectIssueStepProps> = ({ onClose, results }) => {
-  return <CommandPaletteSearchResults closePalette={onClose} results={results} />;
-};
+export const SelectIssueStep: React.FC<SelectIssueStepProps> = ({ onClose, results }) => <CommandPaletteSearchResults closePalette={onClose} results={results} />;

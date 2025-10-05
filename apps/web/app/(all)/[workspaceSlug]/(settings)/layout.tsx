@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandPalette } from "@/components/command-palette";
+// import { CommandPalette } from "@/components/command-palette";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { SettingsHeader } from "@/components/settings/header";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
@@ -10,7 +10,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   return (
     <AuthenticationWrapper>
       <WorkspaceAuthWrapper>
-        <CommandPalette />
+        {/* <CommandPalette /> */}
         <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
             {/* Header */}
