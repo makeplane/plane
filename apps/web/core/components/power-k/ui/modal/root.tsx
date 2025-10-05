@@ -102,9 +102,10 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
         setSearchTerm("");
         setActivePage(null);
         context.setActiveCommand(null);
-      }, 500);
+      }, 200);
     }
-  }, [isOpen, setActivePage, context]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const debouncedSearchTerm = "";
   const resultsCount = 0;
