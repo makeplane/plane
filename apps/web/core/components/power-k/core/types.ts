@@ -7,16 +7,16 @@ import type { AppRouterProgressInstance } from "@bprogress/next";
 /**
  * Context type - determines which entity is currently active
  */
-export type TPowerKContextType = "work-item" | "project" | "cycle" | "module" | null;
+export type TPowerKContextType = "work-item" | "project" | "cycle" | "module";
 
 /**
  * Context entity - information about the currently active entity
  */
 export type TPowerKContextEntity = {
-  type: Exclude<TPowerKContextType, null>;
+  type: TPowerKContextType;
+  icon?: React.ReactNode;
   id: string;
   title: string;
-  identifier?: string; // For work items (e.g., "PLANE-123")
 };
 
 /**
@@ -24,22 +24,13 @@ export type TPowerKContextEntity = {
  */
 export type TPowerKContext = {
   // Route information
-  workspaceSlug?: string;
-  projectId?: string;
-  issueId?: string;
-  cycleId?: string;
-  moduleId?: string;
+  params: Record<string, string | string[] | undefined>;
 
   // Current user
   currentUserId?: string;
 
   // Active context entity
   contextEntity?: TPowerKContextEntity | null;
-
-  // Permissions
-  canPerformAnyCreateAction?: boolean;
-  canPerformWorkspaceActions?: boolean;
-  canPerformProjectActions?: boolean;
 
   // Router for navigation
   router: AppRouterProgressInstance;
@@ -98,15 +89,19 @@ export type TPowerKCommandConfig = {
   isVisible?: (ctx: TPowerKContext) => boolean; // Dynamic visibility
   isEnabled?: (ctx: TPowerKContext) => boolean; // Dynamic enablement
 
-  page?: TPowerKPageType; // Opens selection page
-
-  // Execution (ONE of these)
-  action?: (ctx: TPowerKContext) => void | Promise<void>; // Direct action
-  onSelect?: (selected: any, ctx: TPowerKContext) => void | Promise<void>; // Called after page selection
-
   // Search
-  searchTerms?: string[]; // Alternative search keywords
-};
+  keywords?: string[]; // Alternative search keywords
+} & (
+  | {
+      type: "change-page";
+      page: TPowerKPageType; // Opens selection page
+      onSelect: (selected: any, ctx: TPowerKContext) => void | Promise<void>; // Called after page selection
+    }
+  | {
+      type: "action";
+      action: (ctx: TPowerKContext) => void | Promise<void>; // Direct action
+    }
+);
 
 // ============================================================================
 // Registry Types

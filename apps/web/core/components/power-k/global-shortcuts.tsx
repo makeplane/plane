@@ -12,6 +12,7 @@ import { ShortcutHandler } from "./core/shortcut-handler";
 import type { TPowerKContext } from "./core/types";
 
 type GlobalShortcutsProps = {
+  context: TPowerKContext;
   workspaceSlug?: string;
   projectId?: string;
   issueId?: string;
@@ -31,6 +32,7 @@ type GlobalShortcutsProps = {
  */
 export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsProps) => {
   const {
+    context,
     workspaceSlug,
     projectId,
     issueId,
@@ -38,10 +40,6 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
     canPerformAnyCreateAction = false,
     canPerformWorkspaceActions = false,
     canPerformProjectActions = false,
-    toggleCreateIssueModal = () => {},
-    toggleCreateProjectModal = () => {},
-    toggleCreateCycleModal = () => {},
-    deleteIssue = () => {},
   } = props;
   // router
   const pathname = usePathname();
@@ -57,37 +55,18 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
 
   // Register commands on mount
   useEffect(() => {
-    const commands = getExampleCommands(
-      toggleCreateIssueModal,
-      toggleCreateProjectModal,
-      toggleCreateCycleModal,
-      deleteIssue
-    );
+    const commands = getExampleCommands();
     const registry = commandPaletteStore.getCommandRegistryV2();
     registry.clear();
     registry.registerMultiple(commands);
-  }, [toggleCreateIssueModal, toggleCreateProjectModal, toggleCreateCycleModal, deleteIssue, commandPaletteStore]);
+  }, [commandPaletteStore]);
 
   // Setup global shortcut handler
   useEffect(() => {
-    const commandContext: TPowerKContext = {
-      workspaceSlug,
-      projectId,
-      issueId,
-      currentUserId,
-      contextEntity: commandPaletteStore.contextEntityV2,
-      canPerformAnyCreateAction,
-      canPerformWorkspaceActions,
-      canPerformProjectActions,
-      router,
-      closePalette: () => commandPaletteStore.toggleCommandPaletteModal(false),
-      setActivePage: (page) => commandPaletteStore.setActivePageV2(page),
-    };
-
     const registry = commandPaletteStore.getCommandRegistryV2();
     const handler = new ShortcutHandler(
       registry,
-      () => commandContext,
+      () => context,
       () => commandPaletteStore.toggleCommandPaletteModal(true)
     );
 
@@ -98,6 +77,7 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
       handler.destroy();
     };
   }, [
+    context,
     workspaceSlug,
     projectId,
     issueId,

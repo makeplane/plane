@@ -45,11 +45,7 @@ export class ShortcutHandler {
   private openPalette: () => void;
   private isEnabled = true;
 
-  constructor(
-    registry: TPowerKCommandRegistry,
-    getContext: () => TPowerKContext,
-    openPalette: () => void
-  ) {
+  constructor(registry: TPowerKCommandRegistry, getContext: () => TPowerKContext, openPalette: () => void) {
     this.registry = registry;
     this.getContext = getContext;
     this.openPalette = openPalette;
@@ -193,10 +189,10 @@ export class ShortcutHandler {
   private executeCommand(command: TPowerKCommandConfig): void {
     const ctx = this.getContext();
 
-    if (command.action) {
+    if (command.type === "action") {
       // Direct action
       command.action(ctx);
-    } else if (command.page) {
+    } else if (command.type === "change-page") {
       // Opens a selection page - open palette and set active page
       this.openPalette();
       ctx.setActivePage(command.page);
