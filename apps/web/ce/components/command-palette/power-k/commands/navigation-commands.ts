@@ -2,7 +2,15 @@ import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, PenSquare, Setting
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, UserActivityIcon, LayersIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
+import {
+  EUserProjectRoles,
+  EUserWorkspaceRoles,
+  ICycle,
+  IModule,
+  IPartialProject,
+  IProjectView,
+  IWorkspace,
+} from "@plane/types";
 // components
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k";
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";
@@ -11,10 +19,12 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 export type TPowerKNavigationCommandKeys =
+  | "open-workspace"
   | "nav-home"
   | "nav-inbox"
   | "nav-your-work"
   | "nav-account-settings"
+  | "open-project"
   | "nav-projects-list"
   | "nav-all-workspace-work-items"
   | "nav-assigned-workspace-work-items"
@@ -23,14 +33,19 @@ export type TPowerKNavigationCommandKeys =
   | "nav-workspace-analytics"
   | "nav-workspace-drafts"
   | "nav-workspace-archives"
+  | "open-workspace-setting"
   | "nav-workspace-settings"
   | "nav-project-work-items"
+  | "open-project-cycle"
   | "nav-project-cycles"
+  | "open-project-module"
   | "nav-project-modules"
+  | "open-project-view"
   | "nav-project-views"
   | "nav-project-pages"
   | "nav-project-intake"
   | "nav-project-archives"
+  | "open-project-setting"
   | "nav-project-settings";
 
 /**
@@ -63,6 +78,23 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
   const getContextProject = (ctx: TPowerKContext) => getPartialProjectById(ctx.params.projectId?.toString());
 
   return {
+    "open-workspace": {
+      id: "open-workspace",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a workspace",
+      i18n_description: "Open a workspace",
+      icon: Briefcase,
+      keySequence: "ow",
+      page: "open-workspace",
+      onSelect: (data, ctx) => {
+        const workspaceDetails = data as IWorkspace;
+        handlePowerKNavigate(ctx, [workspaceDetails.slug]);
+      },
+      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
+      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      closeOnSelect: true,
+    },
     "nav-home": {
       id: "nav-home",
       type: "action",
@@ -111,6 +143,23 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
       icon: Settings,
       keySequence: "gsa",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "settings", "account"]),
+      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
+      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      closeOnSelect: true,
+    },
+    "open-project": {
+      id: "open-project",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a project",
+      i18n_description: "Open a project",
+      icon: Briefcase,
+      keySequence: "op",
+      page: "open-project",
+      onSelect: (data, ctx) => {
+        const projectDetails = data as IPartialProject;
+        handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects", projectDetails.id, "issues"]);
+      },
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
@@ -221,6 +270,23 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
+    "open-workspace-setting": {
+      id: "open-workspace-setting",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a workspace settings",
+      i18n_description: "Navigate to workspace settings",
+      icon: Settings,
+      keySequence: "osw",
+      page: "open-workspace-setting",
+      onSelect: (data, ctx) => {
+        const settingsHref = data as string;
+        handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), settingsHref]);
+      },
+      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
+      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      closeOnSelect: true,
+    },
     "nav-workspace-settings": {
       id: "nav-workspace-settings",
       type: "action",
@@ -253,6 +319,31 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
       isVisible: (ctx) => baseProjectConditions(ctx),
       closeOnSelect: true,
     },
+    "open-project-cycle": {
+      id: "open-project-cycle",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a project cycle",
+      i18n_description: "Navigate to project cycles",
+      icon: ContrastIcon,
+      keySequence: "oc",
+      page: "open-project-cycle",
+      onSelect: (data, ctx) => {
+        const cycleDetails = data as ICycle;
+        handlePowerKNavigate(ctx, [
+          ctx.params.workspaceSlug?.toString(),
+          "projects",
+          ctx.params.projectId?.toString(),
+          "cycles",
+          cycleDetails.id,
+        ]);
+      },
+      isEnabled: (ctx) =>
+        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
+      isVisible: (ctx) =>
+        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
+      closeOnSelect: true,
+    },
     "nav-project-cycles": {
       id: "nav-project-cycles",
       type: "action",
@@ -274,6 +365,31 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
       closeOnSelect: true,
     },
+    "open-project-module": {
+      id: "open-project-module",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a project module",
+      i18n_description: "Navigate to project modules",
+      icon: DiceIcon,
+      keySequence: "om",
+      page: "open-project-module",
+      onSelect: (data, ctx) => {
+        const moduleDetails = data as IModule;
+        handlePowerKNavigate(ctx, [
+          ctx.params.workspaceSlug?.toString(),
+          "projects",
+          ctx.params.projectId?.toString(),
+          "modules",
+          moduleDetails.id,
+        ]);
+      },
+      isEnabled: (ctx) =>
+        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
+      isVisible: (ctx) =>
+        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
+      closeOnSelect: true,
+    },
     "nav-project-modules": {
       id: "nav-project-modules",
       type: "action",
@@ -293,6 +409,29 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
       isVisible: (ctx) =>
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
+      closeOnSelect: true,
+    },
+    "open-project-view": {
+      id: "open-project-view",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a project view",
+      i18n_description: "Navigate to project views",
+      icon: Layers,
+      keySequence: "ov",
+      page: "open-project-view",
+      onSelect: (data, ctx) => {
+        const viewDetails = data as IProjectView;
+        handlePowerKNavigate(ctx, [
+          ctx.params.workspaceSlug?.toString(),
+          "projects",
+          ctx.params.projectId?.toString(),
+          "views",
+          viewDetails.id,
+        ]);
+      },
+      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
+      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
       closeOnSelect: true,
     },
     "nav-project-views": {
@@ -372,6 +511,29 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
       isVisible: (ctx) => baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
+    "open-project-setting": {
+      id: "open-project-setting",
+      type: "change-page",
+      group: "navigation",
+      i18n_title: "Open a project settings",
+      i18n_description: "Navigate to project settings",
+      icon: Settings,
+      keySequence: "os",
+      page: "open-project-setting",
+      onSelect: (data, ctx) => {
+        const settingsHref = data as string;
+        handlePowerKNavigate(ctx, [
+          ctx.params.workspaceSlug?.toString(),
+          "settings",
+          "projects",
+          ctx.params.projectId?.toString(),
+          settingsHref,
+        ]);
+      },
+      isEnabled: (ctx) => baseProjectConditions(ctx),
+      isVisible: (ctx) => baseProjectConditions(ctx),
+      closeOnSelect: true,
+    },
     "nav-project-settings": {
       id: "nav-project-settings",
       type: "action",
@@ -397,12 +559,14 @@ const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKey
 export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
   const optionsList: Record<TPowerKNavigationCommandKeys, TPowerKCommandConfig> = usePowerKNavigationCommandsRecord();
   return [
-    // Common Navigation
+    // User-level Navigation
+    optionsList["open-workspace"],
     optionsList["nav-home"],
     optionsList["nav-inbox"],
     optionsList["nav-your-work"],
     optionsList["nav-account-settings"],
     // Workspace-Level Navigation
+    optionsList["open-project"],
     optionsList["nav-projects-list"],
     optionsList["nav-all-workspace-work-items"],
     optionsList["nav-assigned-workspace-work-items"],
@@ -411,15 +575,20 @@ export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
     optionsList["nav-workspace-analytics"],
     optionsList["nav-workspace-drafts"],
     optionsList["nav-workspace-archives"],
+    optionsList["open-workspace-setting"],
     optionsList["nav-workspace-settings"],
     // Project-Level Navigation (Only visible in project context)
     optionsList["nav-project-work-items"],
+    optionsList["open-project-cycle"],
     optionsList["nav-project-cycles"],
+    optionsList["open-project-module"],
     optionsList["nav-project-modules"],
+    optionsList["open-project-view"],
     optionsList["nav-project-views"],
     optionsList["nav-project-pages"],
     optionsList["nav-project-intake"],
     optionsList["nav-project-archives"],
+    optionsList["open-project-setting"],
     optionsList["nav-project-settings"],
   ];
 };

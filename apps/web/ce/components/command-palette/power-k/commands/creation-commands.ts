@@ -133,6 +133,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       i18n_title: "New workspace",
       i18n_description: "Create a new workspace",
       icon: SquarePlus,
+      shortcut: "w",
       action: (context) => context.router.push("/create-workspace"),
       isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
       isVisible: () => Boolean(!isWorkspaceCreationDisabled),

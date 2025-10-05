@@ -32,6 +32,14 @@ export type TPowerKContext = {
 // ============================================================================
 
 export type TPowerKPageType =
+  // open entity based actions
+  | "open-workspace"
+  | "open-project"
+  | "open-workspace-setting"
+  | "open-project-cycle"
+  | "open-project-module"
+  | "open-project-view"
+  | "open-project-setting"
   // work item context based actions
   | "update-work-item-state"
   | "update-work-item-priority"

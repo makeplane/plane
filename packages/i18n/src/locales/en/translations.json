@@ -2475,6 +2475,13 @@
     },
     "page_placeholders": {
       "default": "Type a command or search",
+      "open_workspace": "Open a workspace",
+      "open_project": "Open a project",
+      "open_workspace_setting": "Open a workspace setting",
+      "open_project_cycle": "Open a project cycle",
+      "open_project_module": "Open a project module",
+      "open_project_view": "Open a project view",
+      "open_project_setting": "Open a project setting",
       "update_work_item_state": "Change state",
       "update_work_item_priority": "Change priority",
       "update_work_item_assignee": "Assign to",

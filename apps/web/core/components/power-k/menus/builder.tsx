@@ -2,7 +2,10 @@
 
 import React from "react";
 import { Command } from "cmdk";
+// plane imports
 import { cn } from "@plane/utils";
+// local imports
+import { PowerKMenuEmptyState } from "./empty-state";
 
 type Props<T> = {
   heading: string;
@@ -21,9 +24,9 @@ export const PowerKMenuBuilder = <T,>({
   getKey,
   getLabel,
   renderItem,
-  emptyText = "No results found",
+  emptyText,
 }: Props<T>) => {
-  if (items.length === 0) return <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>;
+  if (items.length === 0) return <PowerKMenuEmptyState emptyText={emptyText} />;
 
   return (
     <Command.Group heading={heading}>

@@ -47,7 +47,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   );
 
   // Handle selection page item selection
-  const handlePageSelection = useCallback(
+  const handlePageDataSelection = useCallback(
     (data: unknown) => {
       if (context.activeCommand?.type === "change-page") {
         context.activeCommand.onSelect(data, context);
@@ -184,20 +184,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                         activeContext={context.activeContext}
                         activePage={activePageV2}
                         handleClose={context.closePalette}
-                        handleSelection={handlePageSelection}
+                        handleSelection={handlePageDataSelection}
                         handleUpdateSearchTerm={setSearchTerm}
                         handleUpdatePage={context.setActivePage}
                       />
                       <PowerKModalPagesList
                         activePage={activePageV2}
                         context={context}
-                        searchTerm={searchTerm}
-                        debouncedSearchTerm={debouncedSearchTerm}
-                        isLoading={isLoading}
-                        isSearching={isSearching}
-                        resolvedPath={resolvedPath}
+                        onPageDataSelect={handlePageDataSelection}
                         onCommandSelect={handleCommandSelect}
-                        isWorkspaceLevel={isWorkspaceLevel}
                       />
                     </Command.List>
                     {/* Footer hints */}
