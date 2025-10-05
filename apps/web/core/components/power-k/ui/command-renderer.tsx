@@ -7,6 +7,7 @@ import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../core/types";
 import { CONTEXT_ENTITY_MAP } from "./pages/context-based-actions";
+import { PowerKModalCommandItem } from "./modal/command-item";
 
 type Props = {
   commands: TPowerKCommandConfig[];
@@ -71,21 +72,14 @@ export const CommandRenderer: React.FC<Props> = (props) => {
         return (
           <Command.Group key={groupKey} heading={title}>
             {groupCommands.map((command) => (
-              <Command.Item key={command.id} onSelect={() => onCommandSelect(command)} className="focus:outline-none">
-                <div className="flex items-center gap-2 text-custom-text-200">
-                  {command.icon && <command.icon className="shrink-0 size-3.5" />}
-                  {t(command.i18n_title)}
-                </div>
-                {(command.shortcut || command.keySequence) && (
-                  <div className="flex items-center gap-1">
-                    {command.keySequence ? (
-                      command.keySequence.split("").map((key, index) => <kbd key={index}>{key.toUpperCase()}</kbd>)
-                    ) : (
-                      <kbd>{command.shortcut?.toUpperCase()}</kbd>
-                    )}
-                  </div>
-                )}
-              </Command.Item>
+              <PowerKModalCommandItem
+                key={command.id}
+                icon={command.icon}
+                label={t(command.i18n_title)}
+                keySequence={command.keySequence}
+                shortcut={command.shortcut || command.modifierShortcut}
+                onSelect={() => onCommandSelect(command)}
+              />
             ))}
           </Command.Group>
         );

@@ -19,17 +19,6 @@
   cursor: pointer;
 }
 
-[cmdk-item] kbd {
-  height: 1.25rem;
-  width: 1.25rem;
-  display: grid;
-  place-items: center;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  border-radius: 0.25rem;
-  background-color: rgba(var(--color-background-100));
-}
-
 [cmdk-item]:focus {
   background-color: rgba(var(--color-background-80));
 }

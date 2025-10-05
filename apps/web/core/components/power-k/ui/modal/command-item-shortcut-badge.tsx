@@ -4,7 +4,7 @@ import React from "react";
  * Formats a shortcut string for display
  * Converts "cmd+shift+," to proper keyboard symbols
  */
-export function formatShortcutForDisplay(shortcut: string | undefined): React.ReactNode {
+export const formatShortcutForDisplay = (shortcut: string | undefined): string | null => {
   if (!shortcut) return null;
 
   const isMac = typeof window !== "undefined" && navigator.platform.toUpperCase().indexOf("MAC") >= 0;
@@ -59,46 +59,46 @@ export function formatShortcutForDisplay(shortcut: string | undefined): React.Re
   });
 
   return parts.join("");
-}
+};
 
-/**
- * Renders a shortcut badge component
- */
-export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
+export const ShortcutBadge = ({ shortcut }: { shortcut: string | undefined }) => {
   if (!shortcut) return null;
 
   const formatted = formatShortcutForDisplay(shortcut);
 
   return (
-    <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-custom-border-200 bg-custom-background-90 px-1.5 font-mono text-[10px] font-medium text-custom-text-300 opacity-100">
-      {formatted}
-    </kbd>
+    <div className="pointer-events-none inline-flex items-center gap-1 select-none font-medium">
+      {formatted?.split("").map((char, index) => (
+        <React.Fragment key={index}>
+          <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
+            {char.toUpperCase()}
+          </kbd>
+        </React.Fragment>
+      ))}
+    </div>
   );
-}
+};
 
 /**
  * Formats key sequence for display (e.g., "gm" -> "G then M")
  */
-export function formatKeySequenceForDisplay(sequence: string | undefined): string {
+export const formatKeySequenceForDisplay = (sequence: string | undefined): string => {
   if (!sequence) return "";
 
   const chars = sequence.split("");
   return chars.map((c) => c.toUpperCase()).join(" then ");
-}
+};
 
-/**
- * Renders a key sequence badge
- */
-export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
+export const KeySequenceBadge = ({ sequence }: { sequence: string | undefined }) => {
   if (!sequence) return null;
 
   const chars = sequence.split("");
 
   return (
-    <div className="pointer-events-none inline-flex select-none items-center gap-1">
+    <div className="pointer-events-none inline-flex items-center gap-1 select-none font-medium">
       {chars.map((char, index) => (
         <React.Fragment key={index}>
-          <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-200 bg-custom-background-90 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
+          <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
             {char.toUpperCase()}
           </kbd>
           {index < chars.length - 1 && <span className="text-[10px] text-custom-text-400">then</span>}
@@ -106,4 +106,4 @@ export function KeySequenceBadge({ sequence }: { sequence: string | undefined })
       ))}
     </div>
   );
-}
+};

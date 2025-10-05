@@ -1,7 +1,7 @@
 import React from "react";
 import { Command } from "cmdk";
-import { LucideIcon } from "lucide-react";
-import type { ISvgIcons } from "@plane/propel/icons";
+// local imports
+import { KeySequenceBadge, ShortcutBadge } from "./command-item-shortcut-badge";
 
 type Props = {
   icon?: React.ComponentType<{ className?: string }>;
@@ -21,8 +21,8 @@ export const PowerKModalCommandItem: React.FC<Props> = (props) => {
         {Icon && <Icon className="shrink-0 size-3.5" />}
         {label}
       </div>
-      {keySequence && keySequence.split("").map((key, index) => <kbd key={index}>{key.toUpperCase()}</kbd>)}
-      {shortcut && <kbd>{shortcut.toUpperCase()}</kbd>}
+      {keySequence && <KeySequenceBadge sequence={keySequence} />}
+      {shortcut && <ShortcutBadge shortcut={shortcut} />}
     </Command.Item>
   );
 };

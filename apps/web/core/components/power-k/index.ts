@@ -9,4 +9,4 @@ export type { TPowerKCommandConfig, TPowerKContext, TPowerKPageType, TPowerKComm
 export { commandRegistry } from "./core/registry";
 
 // Utils
-export { formatShortcutForDisplay, ShortcutBadge, KeySequenceBadge } from "./utils/format-shortcut";
+export { formatShortcutForDisplay, ShortcutBadge, KeySequenceBadge } from "./ui/modal/command-item-shortcut-badge";
