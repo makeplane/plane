@@ -46,16 +46,16 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
 
   // Handle selection page item selection
   const handlePageSelection = useCallback(
-    (selectedValue: unknown) => {
+    (data: unknown) => {
       if (activeCommand?.type === "change-page") {
-        activeCommand.onSelect(selectedValue, context);
+        activeCommand.onSelect(data, context);
       }
       // Go back to main page
-      commandPaletteStore.setActivePageV2(null);
+      setActivePageV2(null);
       setActiveCommand(null);
       setSearchTerm("");
     },
-    [activeCommand, context, commandPaletteStore]
+    [activeCommand, context, setActivePageV2]
   );
 
   // Handle keyboard navigation
@@ -82,17 +82,17 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
       // Backspace clears context or goes back from page
       if (e.key === "Backspace" && !searchTerm) {
         e.preventDefault();
-        if (activePage) {
+        if (activePageV2) {
           // Go back from selection page
-          commandPaletteStore.setActivePageV2(null);
+          setActivePageV2(null);
         } else if (context.contextEntity) {
           // Clear context
-          commandPaletteStore.setContextEntityV2(null);
+          setContextEntityV2(null);
         }
         return;
       }
     },
-    [searchTerm, activePage, context.contextEntity, onClose, commandPaletteStore]
+    [searchTerm, activePageV2, context.contextEntity, onClose, setActivePageV2, setContextEntityV2]
   );
 
   // Reset state when modal closes
@@ -102,6 +102,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
       setActivePageV2(null);
     }
   }, [isOpen, setActivePageV2]);
+
+  const debouncedSearchTerm = "";
+  const resultsCount = 0;
+  const isLoading = false;
+  const isSearching = false;
+  const results = {
+    results: {},
+  };
+  const resolvedPath = "";
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -152,12 +161,12 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                         results={results}
                         resolvedPath={resolvedPath}
                       />
-                      <PowerKContextBasedActions
+                      {/* <PowerKContextBasedActions
                         activePage={activePageV2}
                         handleClose={context.closePalette}
                         handleUpdateSearchTerm={setSearchTerm}
                         handleUpdatePage={context.setActivePage}
-                      />
+                      /> */}
                       <PowerKModalPagesList
                         activePage={activePageV2}
                         context={context}

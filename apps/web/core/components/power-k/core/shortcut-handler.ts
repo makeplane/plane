@@ -1,4 +1,5 @@
-import type { TPowerKCommandConfig, TPowerKContext, TPowerKCommandRegistry } from "./types";
+import type { IPowerKCommandRegistry } from "./registry";
+import type { TPowerKCommandConfig, TPowerKContext } from "./types";
 
 /**
  * Formats a keyboard event into a modifier shortcut string
@@ -40,12 +41,12 @@ export function isTypingInInput(target: EventTarget | null): boolean {
 export class ShortcutHandler {
   private sequence = "";
   private sequenceTimeout: number | null = null;
-  private registry: TPowerKCommandRegistry;
+  private registry: IPowerKCommandRegistry;
   private getContext: () => TPowerKContext;
   private openPalette: () => void;
   private isEnabled = true;
 
-  constructor(registry: TPowerKCommandRegistry, getContext: () => TPowerKContext, openPalette: () => void) {
+  constructor(registry: IPowerKCommandRegistry, getContext: () => TPowerKContext, openPalette: () => void) {
     this.registry = registry;
     this.getContext = getContext;
     this.openPalette = openPalette;

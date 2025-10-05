@@ -8,6 +8,8 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { creationCommandsRegistry } from "@/plane-web/components/command-palette/power-k/commands/creation-commands";
 // local imports
 import { navigationCommandsRegistry, settingsCommandsRegistry, accountCommandsRegistry } from "../commands";
 import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
@@ -87,6 +89,7 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     registry.clear();
 
     const commands: CommandConfig[] = [
+      ...creationCommandsRegistry(),
       ...navigationCommandsRegistry(),
       ...accountCommandsRegistry(executionContext),
       ...settingsCommandsRegistry(openWorkspaceSettings, () => canPerformWorkspaceActions),

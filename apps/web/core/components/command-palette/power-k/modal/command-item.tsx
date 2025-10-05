@@ -1,7 +1,5 @@
-import React from "react";
+import type React from "react";
 import { Command } from "cmdk";
-import { LucideIcon } from "lucide-react";
-import type { ISvgIcons } from "@plane/propel/icons";
 
 type Props = {
   icon?: React.ComponentType<{ className?: string }>;

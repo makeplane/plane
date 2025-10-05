@@ -9,8 +9,8 @@ import {
 import { EIssuesStoreType } from "@plane/types";
 import { CommandRegistry } from "@/components/command-palette/command-registry";
 // V2 imports
-import { commandRegistry } from "@/components/power-k/core/registry";
-import type { TPowerKContextEntity, TPowerKPageType, TPowerKCommandRegistry } from "@/components/power-k/core/types";
+import { commandRegistry, IPowerKCommandRegistry } from "@/components/power-k/core/registry";
+import type { TPowerKContextEntity, TPowerKPageType } from "@/components/power-k/core/types";
 
 export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
@@ -46,7 +46,7 @@ export interface IBaseCommandPaletteStore {
   activePageV2: TPowerKPageType | null;
   setContextEntityV2: (entity: TPowerKContextEntity | null) => void;
   setActivePageV2: (page: TPowerKPageType | null) => void;
-  getCommandRegistryV2: () => TPowerKCommandRegistry;
+  getCommandRegistryV2: () => IPowerKCommandRegistry;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -354,5 +354,5 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   /**
    * Get the V2 command registry instance
    */
-  getCommandRegistryV2 = (): TPowerKCommandRegistry => commandRegistry;
+  getCommandRegistryV2 = (): IPowerKCommandRegistry => commandRegistry;
 }

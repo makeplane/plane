@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
 import { TPowerKCommandConfig, TPowerKContext, TPowerKPageType } from "../../core/types";
-import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
+// import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
 // import { SelectProjectStep, SelectCycleStep, SelectModuleStep } from "../steps";
 import { PowerKModalDefaultPage } from "./default";
 import { IssueSelectionPage } from "./issue-selection-page";
@@ -106,15 +106,15 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     );
   }
 
-  // Workspace settings page
-  if (activePage === "settings") {
-    return <CommandPaletteWorkspaceSettingsActions closePalette={() => toggleCommandPaletteModal(false)} />;
-  }
+  // // Workspace settings page
+  // if (activePage === "settings") {
+  //   return <CommandPaletteWorkspaceSettingsActions closePalette={() => toggleCommandPaletteModal(false)} />;
+  // }
 
-  // Theme actions page
-  if (activePage === "change-theme") {
-    return <CommandPaletteThemeActions closePalette={context.closePalette} />;
-  }
+  // // Theme actions page
+  // if (activePage === "change-theme") {
+  //   return <CommandPaletteThemeActions closePalette={context.closePalette} />;
+  // }
 
   return null;
 });

@@ -5,14 +5,14 @@ import { DoubleCircleIcon } from "@plane/propel/icons";
 import { EUserPermissions, type IModule } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
+// components
+import type { TPowerKPageType } from "@/components/power-k/core/types";
 // lib
 import { store } from "@/lib/store-context";
-// local imports
-import type { ContextBasedAction, TPowerKPageKeys } from "../../../types";
 
 type TArgs = {
   handleClose: () => void;
-  handleUpdatePage: (page: TPowerKPageKeys) => void;
+  handleUpdatePage: (page: TPowerKPageType) => void;
   handleUpdateSearchTerm: (searchTerm: string) => void;
   moduleDetails: IModule | undefined | null;
 };

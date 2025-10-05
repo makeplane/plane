@@ -10,19 +10,19 @@ import { CommandRenderer } from "../command-renderer";
 type Props = {
   context: TPowerKContext;
   onCommandSelect: (command: TPowerKCommandConfig) => void;
-  searchTerm: string;
 };
 
 export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
-  const { context, onCommandSelect, searchTerm } = props;
+  const { context, onCommandSelect } = props;
   // store hooks
   const { getCommandRegistryV2 } = useCommandPalette();
   // Get registry and commands from store
   const commandRegistry = getCommandRegistryV2();
   // Get commands to display
-  const commands = searchTerm
-    ? commandRegistry.search(searchTerm, context)
-    : commandRegistry.getVisibleCommands(context);
+  const commands = commandRegistry.getVisibleCommands(context);
+
+  console.log("all commands", commandRegistry.getAllCommands());
+  console.log("visible commands", commands);
 
   return (
     <>

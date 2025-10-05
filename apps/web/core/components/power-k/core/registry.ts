@@ -1,15 +1,30 @@
-import type {
-  TPowerKCommandConfig,
-  TPowerKContext,
-  TPowerKCommandGroup,
-  TPowerKCommandRegistry as ITPowerKCommandRegistry,
-} from "./types";
+import type { TPowerKCommandConfig, TPowerKContext, TPowerKCommandGroup } from "./types";
+
+export interface IPowerKCommandRegistry {
+  // Registration
+  register(command: TPowerKCommandConfig): void;
+  registerMultiple(commands: TPowerKCommandConfig[]): void;
+
+  // Retrieval
+  getCommand(id: string): TPowerKCommandConfig | undefined;
+  getAllCommands(): TPowerKCommandConfig[];
+  getVisibleCommands(ctx: TPowerKContext): TPowerKCommandConfig[];
+  getCommandsByGroup(group: TPowerKCommandGroup, ctx: TPowerKContext): TPowerKCommandConfig[];
+
+  // Shortcut lookup
+  findByShortcut(key: string): TPowerKCommandConfig | undefined;
+  findByKeySequence(sequence: string): TPowerKCommandConfig | undefined;
+  findByModifierShortcut(shortcut: string): TPowerKCommandConfig | undefined;
+
+  // Utility
+  clear(): void;
+}
 
 /**
  * Simple, clean command registry
  * Stores commands and provides lookup by shortcuts, search, etc.
  */
-class TPowerKCommandRegistryImpl implements ITPowerKCommandRegistry {
+class TPowerKCommandRegistryImpl implements IPowerKCommandRegistry {
   private commands = new Map<string, TPowerKCommandConfig>();
   private shortcutMap = new Map<string, string>(); // key -> command id
   private keySequenceMap = new Map<string, string>(); // sequence -> command id
@@ -77,50 +92,6 @@ class TPowerKCommandRegistryImpl implements ITPowerKCommandRegistry {
   findByModifierShortcut(shortcut: string): TPowerKCommandConfig | undefined {
     const commandId = this.modifierShortcutMap.get(shortcut.toLowerCase());
     return commandId ? this.commands.get(commandId) : undefined;
-  }
-
-  // ============================================================================
-  // Search
-  // ============================================================================
-
-  search(query: string, ctx: TPowerKContext): TPowerKCommandConfig[] {
-    const lowerQuery = query.toLowerCase().trim();
-    if (!lowerQuery) return this.getVisibleCommands(ctx);
-
-    const visibleCommands = this.getVisibleCommands(ctx);
-
-    return visibleCommands
-      .filter((command) => {
-        // Search in title
-        if (command.title.toLowerCase().includes(lowerQuery)) return true;
-
-        // Search in description
-        if (command.description?.toLowerCase().includes(lowerQuery)) return true;
-
-        // Search in search terms
-        if (command.searchTerms?.some((term) => term.toLowerCase().includes(lowerQuery))) return true;
-
-        // Search in shortcuts
-        if (command.shortcut?.toLowerCase().includes(lowerQuery)) return true;
-        if (command.keySequence?.toLowerCase().includes(lowerQuery)) return true;
-
-        return false;
-      })
-      .sort((a, b) => {
-        // Prioritize exact matches
-        const aExact = a.title.toLowerCase() === lowerQuery;
-        const bExact = b.title.toLowerCase() === lowerQuery;
-        if (aExact && !bExact) return -1;
-        if (!aExact && bExact) return 1;
-
-        // Prioritize title matches over description matches
-        const aTitle = a.title.toLowerCase().includes(lowerQuery);
-        const bTitle = b.title.toLowerCase().includes(lowerQuery);
-        if (aTitle && !bTitle) return -1;
-        if (!aTitle && bTitle) return 1;
-
-        return 0;
-      });
   }
 
   // ============================================================================

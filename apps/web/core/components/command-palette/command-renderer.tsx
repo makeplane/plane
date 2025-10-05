@@ -3,6 +3,7 @@
 import React from "react";
 import { Command } from "cmdk";
 // local imports
+import { PowerKModalCommandItem } from "./power-k/modal/command-item";
 import type { CommandConfig, CommandGroup as CommandGroupType } from "./power-k/types";
 
 type Props = {
@@ -11,13 +12,13 @@ type Props = {
 };
 
 const groupPriority: Record<CommandGroupType, number> = {
-  navigate: 1,
+  contextual: 1,
   create: 2,
-  project: 3,
-  workspace: 4,
-  account: 5,
-  help: 6,
-  contextual: 7,
+  navigate: 3,
+  project: 4,
+  workspace: 5,
+  account: 6,
+  help: 7,
 };
 
 const groupTitles: Record<CommandGroupType, string> = {
@@ -56,21 +57,14 @@ export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) 
         return (
           <Command.Group key={groupKey} heading={groupTitles[groupKey]}>
             {groupCommands.map((command) => (
-              <Command.Item key={command.id} onSelect={() => onCommandSelect(command)} className="focus:outline-none">
-                <div className="flex items-center gap-2 text-custom-text-200">
-                  {command.icon && <command.icon className="shrink-0 size-3.5" />}
-                  {command.title}
-                </div>
-                {(command.shortcut || command.keySequence) && (
-                  <div className="flex items-center gap-1">
-                    {command.keySequence ? (
-                      command.keySequence.split("").map((key, index) => <kbd key={index}>{key.toUpperCase()}</kbd>)
-                    ) : (
-                      <kbd>{command.shortcut?.toUpperCase()}</kbd>
-                    )}
-                  </div>
-                )}
-              </Command.Item>
+              <PowerKModalCommandItem
+                key={command.id}
+                icon={command.icon}
+                keySequence={command.keySequence}
+                label={command.title}
+                onSelect={() => onCommandSelect(command)}
+                shortcut={command.shortcut}
+              />
             ))}
           </Command.Group>
         );

@@ -3,10 +3,12 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
 import { ShortcutsModal } from "../command-palette/shortcuts-modal/modal";
-import { getExampleCommands } from "./config/commands";
+import { usePowerKCommands } from "./config/commands";
 import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
 import type { TPowerKContext } from "./core/types";
@@ -46,6 +48,7 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
   const router = useAppRouter();
   const params = useParams();
   const commandPaletteStore = useCommandPalette();
+  const commands = usePowerKCommands(context);
 
   // Detect context from URL and update store
   useEffect(() => {
@@ -55,15 +58,16 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
 
   // Register commands on mount
   useEffect(() => {
-    const commands = getExampleCommands();
     const registry = commandPaletteStore.getCommandRegistryV2();
+
     registry.clear();
     registry.registerMultiple(commands);
-  }, [commandPaletteStore]);
+  }, [commandPaletteStore, commands]);
 
   // Setup global shortcut handler
   useEffect(() => {
     const registry = commandPaletteStore.getCommandRegistryV2();
+
     const handler = new ShortcutHandler(
       registry,
       () => context,

@@ -42,8 +42,6 @@ export const CommandPaletteV2ModalWrapper = observer((props: Props) => {
   // Build command context from props and store
   const context: TPowerKContext = useMemo(
     () => ({
-      workspaceSlug,
-      projectId,
       issueId,
       currentUserId,
       contextEntity: commandPaletteContext,
@@ -52,7 +50,7 @@ export const CommandPaletteV2ModalWrapper = observer((props: Props) => {
       closePalette: () => commandPaletteStore.toggleCommandPaletteModal(false),
       setActivePage: (page) => commandPaletteStore.setActivePageV2(page),
     }),
-    [workspaceSlug, projectId, issueId, currentUserId, commandPaletteContext, commandPaletteStore, router, params]
+    [issueId, currentUserId, commandPaletteContext, commandPaletteStore, router, params]
   );
 
   return (

@@ -8,21 +8,22 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import type { IModule } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import type { TPowerKPageType } from "@/components/power-k/core/types";
+import { PowerKMembersMenu } from "@/components/power-k/menus/members";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 // local imports
-import { PowerKMembersMenu } from "../../../menus/members";
 import { PowerKModalCommandItem } from "../../../modal/command-item";
-import type { TPowerKPageKeys } from "../../../types";
 import { getPowerKModuleContextBasedActions } from "./actions";
 import { PowerKModuleStatusMenu } from "./status-menu";
 
 type Props = {
-  activePage: TPowerKPageKeys | undefined;
+  activePage: TPowerKPageType | null;
   handleClose: () => void;
   handleUpdateSearchTerm: (searchTerm: string) => void;
-  handleUpdatePage: (page: TPowerKPageKeys) => void;
+  handleUpdatePage: (page: TPowerKPageType) => void;
 };
 
 export const PowerKModuleActionsMenu: React.FC<Props> = observer((props) => {

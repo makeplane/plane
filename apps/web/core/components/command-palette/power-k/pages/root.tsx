@@ -9,14 +9,13 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
 import { CommandPaletteThemeActions, CommandPaletteWorkspaceSettingsActions } from "../actions";
 import { SelectProjectStep, SelectCycleStep, SelectModuleStep } from "../steps";
-import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
+import type { CommandConfig, CommandContext, TPowerKPageKeys } from "../types";
 import { PowerKModalDefaultPage } from "./default";
 import { IssueSelectionPage } from "./issue-selection-page";
 
 type Props = {
   activePage: TPowerKPageKeys | undefined;
   context: CommandContext;
-  executionContext: CommandExecutionContext;
   workspaceSlug: string | undefined;
   projectId: string | undefined;
   searchTerm: string;
@@ -39,7 +38,6 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
   const {
     activePage,
     context,
-    executionContext,
     workspaceSlug,
     projectId,
     searchTerm,
@@ -63,14 +61,7 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
 
   // Main page content (no specific page)
   if (!activePage) {
-    return (
-      <PowerKModalDefaultPage
-        context={context}
-        executionContext={executionContext}
-        projectId={projectId}
-        onCommandSelect={onCommandSelect}
-      />
-    );
+    return <PowerKModalDefaultPage context={context} onCommandSelect={onCommandSelect} />;
   }
 
   // Project selection step

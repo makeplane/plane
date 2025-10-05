@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Command } from "cmdk";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup } from "../core/types";
 
@@ -18,7 +20,7 @@ const groupPriority: Record<TPowerKCommandGroup, number> = {
 
 const groupTitles: Record<TPowerKCommandGroup, string> = {
   navigation: "Navigate",
-  create: "Work item",
+  create: "Create",
   project: "Project",
   cycle: "Cycle",
   general: "General",
@@ -26,6 +28,8 @@ const groupTitles: Record<TPowerKCommandGroup, string> = {
 };
 
 export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) => {
+  const { t } = useTranslation();
+
   const commandsByGroup = commands.reduce(
     (acc, command) => {
       const group = command.group || "general";
@@ -54,7 +58,7 @@ export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) 
               <Command.Item key={command.id} onSelect={() => onCommandSelect(command)} className="focus:outline-none">
                 <div className="flex items-center gap-2 text-custom-text-200">
                   {command.icon && <command.icon className="shrink-0 size-3.5" />}
-                  {command.title}
+                  {t(command.i18n_title)}
                 </div>
                 {(command.shortcut || command.keySequence) && (
                   <div className="flex items-center gap-1">
