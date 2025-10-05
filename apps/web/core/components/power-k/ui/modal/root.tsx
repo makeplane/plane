@@ -152,7 +152,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
             >
               <Dialog.Panel className="relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <div className="w-full max-w-2xl">
-                  <Command shouldFilter={false} onKeyDown={handleKeyDown} className="w-full">
+                  <Command
+                    filter={(i18nValue: string, search: string) => {
+                      if (i18nValue.toLowerCase().includes(search.toLowerCase())) return 1;
+                      return 0;
+                    }}
+                    shouldFilter={searchTerm.length > 0}
+                    onKeyDown={handleKeyDown}
+                    className="w-full"
+                  >
                     <PowerKModalHeader
                       searchTerm={searchTerm}
                       onSearchChange={setSearchTerm}

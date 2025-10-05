@@ -1,21 +1,25 @@
+import { action, observable, makeObservable } from "mobx";
+import { computedFn } from "mobx-utils";
 import type { TPowerKCommandConfig, TPowerKContext, TPowerKCommandGroup } from "./types";
 
 export interface IPowerKCommandRegistry {
+  // observables
+  commands: Map<string, TPowerKCommandConfig>;
   // Registration
   register(command: TPowerKCommandConfig): void;
   registerMultiple(commands: TPowerKCommandConfig[]): void;
-
   // Retrieval
   getCommand(id: string): TPowerKCommandConfig | undefined;
   getAllCommands(): TPowerKCommandConfig[];
   getVisibleCommands(ctx: TPowerKContext): TPowerKCommandConfig[];
   getCommandsByGroup(group: TPowerKCommandGroup, ctx: TPowerKContext): TPowerKCommandConfig[];
-
   // Shortcut lookup
-  findByShortcut(key: string): TPowerKCommandConfig | undefined;
-  findByKeySequence(sequence: string): TPowerKCommandConfig | undefined;
-  findByModifierShortcut(shortcut: string): TPowerKCommandConfig | undefined;
-
+  getShortcutMap: (ctx: TPowerKContext) => Map<string, string>; // key -> command id
+  getKeySequenceMap: (ctx: TPowerKContext) => Map<string, string>; // sequence -> command id
+  getModifierShortcutMap: (ctx: TPowerKContext) => Map<string, string>; // modifier shortcut -> command id
+  findByShortcut(ctx: TPowerKContext, key: string): TPowerKCommandConfig | undefined;
+  findByKeySequence(ctx: TPowerKContext, sequence: string): TPowerKCommandConfig | undefined;
+  findByModifierShortcut(ctx: TPowerKContext, shortcut: string): TPowerKCommandConfig | undefined;
   // Utility
   clear(): void;
 }
@@ -24,86 +28,105 @@ export interface IPowerKCommandRegistry {
  * Simple, clean command registry
  * Stores commands and provides lookup by shortcuts, search, etc.
  */
-class TPowerKCommandRegistryImpl implements IPowerKCommandRegistry {
-  private commands = new Map<string, TPowerKCommandConfig>();
-  private shortcutMap = new Map<string, string>(); // key -> command id
-  private keySequenceMap = new Map<string, string>(); // sequence -> command id
-  private modifierShortcutMap = new Map<string, string>(); // modifier shortcut -> command id
+class TPowerKCommandRegistry implements IPowerKCommandRegistry {
+  // observables
+  commands = new Map<string, TPowerKCommandConfig>();
+
+  constructor() {
+    makeObservable(this, {
+      // observables
+      commands: observable,
+      // actions
+      register: action,
+      registerMultiple: action,
+      clear: action,
+    });
+  }
 
   // ============================================================================
   // Registration
   // ============================================================================
 
-  register(command: TPowerKCommandConfig): void {
+  register: IPowerKCommandRegistry["register"] = action((command) => {
     this.commands.set(command.id, command);
+  });
 
-    // Index shortcuts
-    if (command.shortcut) {
-      this.shortcutMap.set(command.shortcut.toLowerCase(), command.id);
-    }
-
-    if (command.keySequence) {
-      this.keySequenceMap.set(command.keySequence.toLowerCase(), command.id);
-    }
-
-    if (command.modifierShortcut) {
-      this.modifierShortcutMap.set(command.modifierShortcut.toLowerCase(), command.id);
-    }
-  }
-
-  registerMultiple(commands: TPowerKCommandConfig[]): void {
+  registerMultiple: IPowerKCommandRegistry["registerMultiple"] = action((commands) => {
     commands.forEach((command) => this.register(command));
-  }
+  });
 
   // ============================================================================
   // Retrieval
   // ============================================================================
 
-  getCommand(id: string): TPowerKCommandConfig | undefined {
-    return this.commands.get(id);
-  }
+  getCommand: IPowerKCommandRegistry["getCommand"] = (id) => this.commands.get(id);
 
-  getAllCommands(): TPowerKCommandConfig[] {
-    return Array.from(this.commands.values());
-  }
+  getAllCommands: IPowerKCommandRegistry["getAllCommands"] = () => Array.from(this.commands.values());
 
-  getVisibleCommands(ctx: TPowerKContext): TPowerKCommandConfig[] {
-    return Array.from(this.commands.values()).filter((command) => this.isCommandVisible(command, ctx));
-  }
+  getVisibleCommands: IPowerKCommandRegistry["getVisibleCommands"] = computedFn((ctx) =>
+    Array.from(this.commands.values()).filter((command) => this.isCommandVisible(command, ctx))
+  );
 
-  getCommandsByGroup(group: TPowerKCommandGroup, ctx: TPowerKContext): TPowerKCommandConfig[] {
-    return this.getVisibleCommands(ctx).filter((command) => command.group === group);
-  }
+  getCommandsByGroup: IPowerKCommandRegistry["getCommandsByGroup"] = computedFn((group, ctx) =>
+    this.getVisibleCommands(ctx).filter((command) => command.group === group)
+  );
 
   // ============================================================================
   // Shortcut Lookup
   // ============================================================================
 
-  findByShortcut(key: string): TPowerKCommandConfig | undefined {
-    const commandId = this.shortcutMap.get(key.toLowerCase());
-    return commandId ? this.commands.get(commandId) : undefined;
-  }
+  getShortcutMap: IPowerKCommandRegistry["getShortcutMap"] = computedFn((ctx) => {
+    const shortcutMap = new Map<string, string>();
+    this.getVisibleCommands(ctx).forEach((command) => {
+      if (command.shortcut) {
+        shortcutMap.set(command.shortcut.toLowerCase(), command.id);
+      }
+    });
+    return shortcutMap;
+  });
 
-  findByKeySequence(sequence: string): TPowerKCommandConfig | undefined {
-    const commandId = this.keySequenceMap.get(sequence.toLowerCase());
-    return commandId ? this.commands.get(commandId) : undefined;
-  }
+  getKeySequenceMap: IPowerKCommandRegistry["getKeySequenceMap"] = computedFn((ctx) => {
+    const keySequenceMap = new Map<string, string>();
+    this.getVisibleCommands(ctx).forEach((command) => {
+      if (command.keySequence) {
+        keySequenceMap.set(command.keySequence.toLowerCase(), command.id);
+      }
+    });
+    return keySequenceMap;
+  });
 
-  findByModifierShortcut(shortcut: string): TPowerKCommandConfig | undefined {
-    const commandId = this.modifierShortcutMap.get(shortcut.toLowerCase());
+  getModifierShortcutMap: IPowerKCommandRegistry["getModifierShortcutMap"] = computedFn((ctx) => {
+    const modifierShortcutMap = new Map<string, string>();
+    this.getVisibleCommands(ctx).forEach((command) => {
+      if (command.modifierShortcut) {
+        modifierShortcutMap.set(command.modifierShortcut.toLowerCase(), command.id);
+      }
+    });
+    return modifierShortcutMap;
+  });
+
+  findByShortcut: IPowerKCommandRegistry["findByShortcut"] = computedFn((ctx, key) => {
+    const commandId = this.getShortcutMap(ctx).get(key.toLowerCase());
     return commandId ? this.commands.get(commandId) : undefined;
-  }
+  });
+
+  findByKeySequence: IPowerKCommandRegistry["findByKeySequence"] = computedFn((ctx, sequence) => {
+    const commandId = this.getKeySequenceMap(ctx).get(sequence.toLowerCase());
+    return commandId ? this.commands.get(commandId) : undefined;
+  });
+
+  findByModifierShortcut: IPowerKCommandRegistry["findByModifierShortcut"] = computedFn((ctx, shortcut) => {
+    const commandId = this.getModifierShortcutMap(ctx).get(shortcut.toLowerCase());
+    return commandId ? this.commands.get(commandId) : undefined;
+  });
 
   // ============================================================================
   // Utility
   // ============================================================================
 
-  clear(): void {
+  clear: IPowerKCommandRegistry["clear"] = action(() => {
     this.commands.clear();
-    this.shortcutMap.clear();
-    this.keySequenceMap.clear();
-    this.modifierShortcutMap.clear();
-  }
+  });
 
   // ============================================================================
   // Private Helpers
@@ -128,4 +151,4 @@ class TPowerKCommandRegistryImpl implements IPowerKCommandRegistry {
 }
 
 // Export singleton instance
-export const commandRegistry = new TPowerKCommandRegistryImpl();
+export const commandRegistry = new TPowerKCommandRegistry();

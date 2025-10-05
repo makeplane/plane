@@ -59,7 +59,6 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
   // Register commands on mount
   useEffect(() => {
     const registry = commandPaletteStore.getCommandRegistryV2();
-
     registry.clear();
     registry.registerMultiple(commands);
   }, [commandPaletteStore, commands]);
