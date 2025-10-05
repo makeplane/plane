@@ -95,7 +95,7 @@ export class ShortcutHandler {
    */
   private handleModifierShortcut(e: KeyboardEvent): void {
     const shortcut = formatModifierShortcut(e);
-    const command = this.registry.findByModifierShortcut(shortcut);
+    const command = this.registry.findByModifierShortcut(this.getContext(), shortcut);
 
     if (command && this.canExecuteCommand(command)) {
       e.preventDefault();
@@ -111,7 +111,7 @@ export class ShortcutHandler {
     this.sequence += key;
 
     // Check if sequence matches a command (e.g., "gm", "op")
-    const sequenceCommand = this.registry.findByKeySequence(this.sequence);
+    const sequenceCommand = this.registry.findByKeySequence(this.getContext(), this.sequence);
     if (sequenceCommand && this.canExecuteCommand(sequenceCommand)) {
       e.preventDefault();
       this.executeCommand(sequenceCommand);
@@ -121,7 +121,7 @@ export class ShortcutHandler {
 
     // If sequence is one character, check for single-key shortcut
     if (this.sequence.length === 1) {
-      const singleKeyCommand = this.registry.findByShortcut(key);
+      const singleKeyCommand = this.registry.findByShortcut(this.getContext(), key);
       if (singleKeyCommand && this.canExecuteCommand(singleKeyCommand)) {
         e.preventDefault();
         this.executeCommand(singleKeyCommand);
@@ -175,7 +175,7 @@ export class ShortcutHandler {
     }
 
     // Check context type requirement
-    if (command.contextType) {
+    if ("contextType" in command) {
       if (!ctx.activeContext || ctx.activeContext !== command.contextType) {
         return false;
       }
