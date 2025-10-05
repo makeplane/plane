@@ -39,17 +39,10 @@ export type TPowerKPageType =
   | "update-work-item-estimate"
   | "update-work-item-cycle"
   | "update-work-item-module"
-  | "update-work-item-label"
+  | "update-work-item-labels"
   // module context based actions
   | "update-module-member"
   | "update-module-status"
-  | "select-project"
-  | "select-cycle"
-  | "select-module"
-  | "select-label"
-  | "select-team"
-  | "select-user"
-  | "select-work-item"
   | TPowerKPageTypeExtended;
 
 // ============================================================================

@@ -2457,6 +2457,18 @@
         "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL"
       }
+    },
+    "page_placeholders": {
+      "default": "Type a command or search",
+      "update_work_item_state": "Change state",
+      "update_work_item_priority": "Change priority",
+      "update_work_item_assignee": "Assign to",
+      "update_work_item_estimate": "Change estimate",
+      "update_work_item_cycle": "Add to cycle",
+      "update_work_item_module": "Add to modules",
+      "update_work_item_labels": "Add labels",
+      "update_module_member": "Change members",
+      "update_module_status": "Change status"
     }
   }
 }

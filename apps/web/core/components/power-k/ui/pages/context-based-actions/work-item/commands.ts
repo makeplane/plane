@@ -324,7 +324,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       group: "contextual",
       contextType: "work-item",
       type: "change-page",
-      page: "update-work-item-label",
+      page: "update-work-item-labels",
       onSelect: (data) => {
         const labelId = (data as IIssueLabel)?.id;
         if (!workspaceSlug || !entityDetails || !entityDetails.project_id) return;

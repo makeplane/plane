@@ -3,7 +3,11 @@
 import React from "react";
 import { Command } from "cmdk";
 import { X, Search } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+// local imports
 import type { TPowerKContextType, TPowerKPageType } from "../../core/types";
+import { POWER_K_MODAL_PAGE_DETAILS } from "./constants";
 
 type Props = {
   searchTerm: string;
@@ -15,8 +19,12 @@ type Props = {
 
 export const PowerKModalHeader: React.FC<Props> = (props) => {
   const { activeContext, searchTerm, onSearchChange, onClearContext, activePage } = props;
+  // translation
+  const { t } = useTranslation();
   // derived values
-  const placeholder = "Type a command or search...";
+  const placeholder = activePage
+    ? POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder
+    : t("power_k.page_placeholders.default");
 
   return (
     <div className="border-b border-custom-border-200">

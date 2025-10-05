@@ -72,7 +72,7 @@ export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
         <PowerKWorkItemModulesMenu handleSelect={handleSelection} workItemDetails={entityDetails} />
       )}
       {/* labels menu */}
-      {activePage === "update-work-item-label" && (
+      {activePage === "update-work-item-labels" && (
         <PowerKWorkItemLabelsMenu handleSelect={handleSelection} workItemDetails={entityDetails} />
       )}
     </>
