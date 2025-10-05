@@ -13,14 +13,14 @@ import { ProjectLevelModals } from "@/plane-web/components/command-palette/modal
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
-import { GlobalShortcuts } from "./global-shortcuts";
+import { GlobalShortcutsProvider } from "./global-shortcuts";
 import { CommandPaletteModal } from "./ui/modal/root";
 
 /**
  * MobX-aware wrapper for the Command Palette modal
  * Connects the modal to the MobX store
  */
-export const CommandPaletteModalWrapper = observer(() => {
+export const CommandPaletteProvider = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -50,7 +50,7 @@ export const CommandPaletteModalWrapper = observer(() => {
 
   return (
     <>
-      <GlobalShortcuts context={context} />
+      <GlobalShortcutsProvider context={context} />
       {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />

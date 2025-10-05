@@ -4,7 +4,7 @@ import { LogOut, Mails } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import type { TPowerKCommandConfig } from "@/components/power-k";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

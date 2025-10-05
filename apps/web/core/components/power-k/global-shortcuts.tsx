@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -21,36 +21,38 @@ type GlobalShortcutsProps = {
  * Global shortcuts component - sets up keyboard listeners and context detection
  * Should be mounted once at the app root level
  */
-export const GlobalShortcuts = observer((props: GlobalShortcutsProps) => {
+export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) => {
   const { context } = props;
   // router
-  const pathname = usePathname();
   const router = useAppRouter();
   const params = useParams();
-  const commandPaletteStore = useCommandPalette();
+  // store hooks
+  const { getCommandRegistry, isShortcutModalOpen, setActiveContext, toggleCommandPaletteModal, toggleShortcutModal } =
+    useCommandPalette();
+  // derived values
   const commands = usePowerKCommands(context);
 
   // Detect context from URL and update store
   useEffect(() => {
-    const detected = detectContextFromURL(params, pathname);
-    commandPaletteStore.setActiveContext(detected);
-  }, [params, pathname, commandPaletteStore]);
+    const detected = detectContextFromURL(params);
+    setActiveContext(detected);
+  }, [params, setActiveContext]);
 
   // Register commands on mount
   useEffect(() => {
-    const registry = commandPaletteStore.getCommandRegistry();
+    const registry = getCommandRegistry();
     registry.clear();
     registry.registerMultiple(commands);
-  }, [commandPaletteStore, commands]);
+  }, [getCommandRegistry, context, commands]);
 
   // Setup global shortcut handler
   useEffect(() => {
-    const registry = commandPaletteStore.getCommandRegistry();
+    const registry = getCommandRegistry();
 
     const handler = new ShortcutHandler(
       registry,
       () => context,
-      () => commandPaletteStore.toggleCommandPaletteModal(true)
+      () => toggleCommandPaletteModal(true)
     );
 
     document.addEventListener("keydown", handler.handleKeyDown);
@@ -59,12 +61,7 @@ export const GlobalShortcuts = observer((props: GlobalShortcutsProps) => {
       document.removeEventListener("keydown", handler.handleKeyDown);
       handler.destroy();
     };
-  }, [context, router, commandPaletteStore]);
+  }, [context, router, getCommandRegistry, toggleCommandPaletteModal]);
 
-  return (
-    <ShortcutsModal
-      isOpen={commandPaletteStore.isShortcutModalOpen}
-      onClose={() => commandPaletteStore.toggleShortcutModal(false)}
-    />
-  );
+  return <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />;
 });

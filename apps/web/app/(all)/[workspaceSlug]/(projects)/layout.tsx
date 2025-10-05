@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { CommandPaletteModalWrapper } from "@/components/power-k/modal-wrapper";
+import { CommandPaletteProvider } from "@/components/power-k/modal-wrapper";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
@@ -9,7 +9,7 @@ import { ProjectAppSidebar } from "./_sidebar";
 
 const WorkspaceLayoutContent = observer(({ children }: { children: React.ReactNode }) => (
   <>
-    <CommandPaletteModalWrapper />
+    <CommandPaletteProvider />
     <WorkspaceAuthWrapper>
       <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
         <div id="full-screen-portal" className="inset-0 absolute w-full" />

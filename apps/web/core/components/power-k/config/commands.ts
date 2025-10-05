@@ -4,8 +4,8 @@ import { usePowerKNavigationCommands } from "@/plane-web/components/command-pale
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../core/types";
 import { usePowerKContextBasedActions } from "../ui/pages/context-based-actions";
-import { usePowerKHelpCommands } from "./help-commands";
 import { usePowerKAccountCommands } from "./account-commands";
+import { usePowerKHelpCommands } from "./help-commands";
 
 export const usePowerKCommands = (context: TPowerKContext): TPowerKCommandConfig[] => {
   const navigationCommands = usePowerKNavigationCommands();

@@ -2,7 +2,7 @@ import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // plane imports
 import { DiscordIcon } from "@plane/propel/icons";
 // components
-import type { TPowerKCommandConfig } from "@/components/power-k";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useTransient } from "@/hooks/store/use-transient";
