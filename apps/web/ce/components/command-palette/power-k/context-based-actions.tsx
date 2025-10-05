@@ -1,11 +1,13 @@
 // components
-import type { TPowerKPageKeys } from "@/components/command-palette/power-k/types";
+import type { ContextBasedActionsProps } from "@/components/power-k/ui/pages/context-based-actions";
+// local imports
+import type { TPowerKContextTypeExtended } from "./types";
 
-export type PowerKContextBasedActionsExtendedProps = {
-  activePage: TPowerKPageKeys | undefined;
-  handleClose: () => void;
-  handleUpdateSearchTerm: (searchTerm: string) => void;
-  handleUpdatePage: (page: TPowerKPageKeys) => void;
-};
+export const CONTEXT_BASED_ACTIONS_MAP_EXTENDED: Record<
+  TPowerKContextTypeExtended,
+  {
+    i18n_title: string;
+  }
+> = {};
 
-export const PowerKContextBasedActionsExtended: React.FC<PowerKContextBasedActionsExtendedProps> = () => null;
+export const PowerKContextBasedActionsExtended: React.FC<ContextBasedActionsProps> = () => null;

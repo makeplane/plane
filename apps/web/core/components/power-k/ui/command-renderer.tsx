@@ -5,29 +5,36 @@ import { Command } from "cmdk";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // local imports
-import type { TPowerKCommandConfig, TPowerKCommandGroup } from "../core/types";
+import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../core/types";
+import { CONTEXT_BASED_ACTIONS_MAP } from "./pages/context-based-actions";
 
 type Props = {
   commands: TPowerKCommandConfig[];
+  context: TPowerKContext;
   onCommandSelect: (command: TPowerKCommandConfig) => void;
 };
 
 const groupPriority: Record<TPowerKCommandGroup, number> = {
-  navigation: 1,
-  create: 2,
-  project: 3,
+  contextual: 1,
+  navigation: 2,
+  create: 3,
+  general: 7,
+  settings: 8,
 };
 
 const groupTitles: Record<TPowerKCommandGroup, string> = {
+  contextual: "Contextual",
   navigation: "Navigate",
   create: "Create",
-  project: "Project",
-  cycle: "Cycle",
   general: "General",
   settings: "Settings",
 };
 
-export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) => {
+export const CommandRenderer: React.FC<Props> = (props) => {
+  const { commands, context, onCommandSelect } = props;
+  // derived values
+  const { activeContext } = context;
+  // translation
   const { t } = useTranslation();
 
   const commandsByGroup = commands.reduce(
@@ -52,8 +59,13 @@ export const CommandRenderer: React.FC<Props> = ({ commands, onCommandSelect }) 
         const groupCommands = commandsByGroup[groupKey];
         if (!groupCommands || groupCommands.length === 0) return null;
 
+        const title =
+          groupKey === "contextual" && activeContext
+            ? t(CONTEXT_BASED_ACTIONS_MAP[activeContext].i18n_title)
+            : groupTitles[groupKey];
+
         return (
-          <Command.Group key={groupKey} heading={groupTitles[groupKey]}>
+          <Command.Group key={groupKey} heading={title}>
             {groupCommands.map((command) => (
               <Command.Item key={command.id} onSelect={() => onCommandSelect(command)} className="focus:outline-none">
                 <div className="flex items-center gap-2 text-custom-text-200">

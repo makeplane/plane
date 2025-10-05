@@ -55,6 +55,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       action: () => toggleCreateIssueModal(true),
       isEnabled: () => Boolean(canCreateWorkItem),
       isVisible: () => Boolean(canCreateWorkItem),
+      closeOnSelect: true,
     },
     page: {
       id: "create-page",
@@ -70,6 +71,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
         console.log("context", context);
         return Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions);
       },
+      closeOnSelect: true,
     },
     view: {
       id: "create-view",
@@ -83,6 +85,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       isEnabled: () => Boolean(currentProjectDetails?.issue_views_view && canPerformProjectActions),
       isVisible: (context) =>
         Boolean(context.params.projectId && currentProjectDetails?.issue_views_view && canPerformProjectActions),
+      closeOnSelect: true,
     },
     cycle: {
       id: "create-cycle",
@@ -96,6 +99,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       isEnabled: () => Boolean(currentProjectDetails?.cycle_view && canPerformProjectActions),
       isVisible: (context) =>
         Boolean(context.params.projectId && currentProjectDetails?.cycle_view && canPerformProjectActions),
+      closeOnSelect: true,
     },
     module: {
       id: "create-module",
@@ -109,6 +113,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       isEnabled: () => Boolean(currentProjectDetails?.module_view && canPerformProjectActions),
       isVisible: (context) =>
         Boolean(context.params.projectId && currentProjectDetails?.module_view && canPerformProjectActions),
+      closeOnSelect: true,
     },
     project: {
       id: "create-project",
@@ -121,6 +126,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       action: () => toggleCreateProjectModal(true),
       isEnabled: () => Boolean(canCreateProject),
       isVisible: () => Boolean(canCreateProject),
+      closeOnSelect: true,
     },
     workspace: {
       id: "create-workspace",
@@ -132,6 +138,7 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       action: (context) => context.router.push("/create-workspace"),
       isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
       isVisible: () => Boolean(!isWorkspaceCreationDisabled),
+      closeOnSelect: true,
     },
   };
 };

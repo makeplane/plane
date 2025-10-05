@@ -1,26 +1,21 @@
 "use client";
 
-import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane types
-import type { TIssue } from "@plane/types";
+import type { IIssueLabel, TIssue } from "@plane/types";
 import { Spinner } from "@plane/ui";
+// components
+import { PowerKLabelsMenu } from "@/components/power-k/menus/labels";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-// local imports
-import { PowerKLabelsMenu } from "../../../menus/labels";
 
 type Props = {
-  handleClose: () => void;
-  handleUpdateWorkItem: (data: Partial<TIssue>) => void;
+  handleSelect: (label: IIssueLabel) => void;
   workItemDetails: TIssue;
 };
 
 export const PowerKWorkItemLabelsMenu: React.FC<Props> = observer((props) => {
-  const { workItemDetails } = props;
-  // navigation
-  const { workspaceSlug } = useParams();
+  const { handleSelect, workItemDetails } = props;
   // store hooks
   const { getProjectLabelIds, getLabelById } = useLabel();
   // derived values
@@ -28,17 +23,7 @@ export const PowerKWorkItemLabelsMenu: React.FC<Props> = observer((props) => {
   const labelsList = projectLabelIds ? projectLabelIds.map((labelId) => getLabelById(labelId)) : undefined;
   const filteredLabelsList = labelsList ? labelsList.filter((label) => !!label) : undefined;
 
-  const handleUpdateLabels = useCallback(
-    (labelId: string) => {
-      if (!workspaceSlug || !workItemDetails || !workItemDetails.project_id) return;
-      const updatedLabels = workItemDetails.label_ids ?? [];
-      if (updatedLabels.includes(labelId)) updatedLabels.splice(updatedLabels.indexOf(labelId), 1);
-      else updatedLabels.push(labelId);
-    },
-    [workItemDetails, workspaceSlug]
-  );
-
   if (!filteredLabelsList) return <Spinner />;
 
-  return <PowerKLabelsMenu labels={filteredLabelsList} onSelect={(label) => handleUpdateLabels(label.id)} />;
+  return <PowerKLabelsMenu labels={filteredLabelsList} onSelect={handleSelect} />;
 });

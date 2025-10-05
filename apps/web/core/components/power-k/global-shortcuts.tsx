@@ -53,7 +53,7 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
   // Detect context from URL and update store
   useEffect(() => {
     const detected = detectContextFromURL(params, pathname);
-    commandPaletteStore.setContextEntityV2(detected);
+    commandPaletteStore.setActiveContextV2(detected);
   }, [params, pathname, commandPaletteStore]);
 
   // Register commands on mount

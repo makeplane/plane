@@ -3,12 +3,12 @@
 import React from "react";
 import { Command } from "cmdk";
 import { X, Search } from "lucide-react";
-import type { TPowerKContextEntity, TPowerKPageType } from "../../core/types";
+import type { TPowerKContextType, TPowerKPageType } from "../../core/types";
 
 type Props = {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  contextEntity: TPowerKContextEntity | null;
+  activeContext: TPowerKContextType | null;
   onClearContext: () => void;
   activePage: TPowerKPageType | null;
 };
@@ -27,14 +27,14 @@ const PAGE_PLACEHOLDERS: Record<TPowerKPageType, string> = {
 };
 
 export const PowerKModalHeader: React.FC<Props> = (props) => {
-  const { searchTerm, onSearchChange, contextEntity, onClearContext, activePage } = props;
+  const { activeContext, searchTerm, onSearchChange, onClearContext, activePage } = props;
   // derived values
   const placeholder = activePage ? PAGE_PLACEHOLDERS[activePage] : "Type a command or search...";
 
   return (
     <div className="border-b border-custom-border-200">
       {/* Context Indicator */}
-      {contextEntity && !activePage && (
+      {/* {contextEntity && !activePage && (
         <div className="flex items-center justify-between border-b border-custom-border-200 bg-custom-primary-100/10 px-4 py-2">
           <div className="flex items-center gap-2 overflow-hidden">
             <span className="flex-shrink-0 text-xs font-medium uppercase text-custom-primary-100">
@@ -52,7 +52,7 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
             <X className="h-3 w-3" />
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Search Input */}
       <div className="flex items-center gap-2 px-4 py-3">

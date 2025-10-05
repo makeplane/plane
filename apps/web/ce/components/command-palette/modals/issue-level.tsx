@@ -15,20 +15,22 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 export type TIssueLevelModalsProps = {
-  projectId: string | undefined;
-  issueId: string | undefined;
+  workItemIdentifier: string | undefined;
 };
 
 export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
-  const { projectId, issueId } = props;
+  const { workItemIdentifier } = props;
   // router
   const { workspaceSlug, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
   const {
-    issue: { getIssueById },
+    issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
+  // derived values
+  const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier) : undefined;
+  const workItemDetails = workItemId ? getIssueById(workItemId) : undefined;
 
   const { removeIssue: removeEpic } = useIssuesActions(EIssuesStoreType.EPIC);
   const { removeIssue: removeWorkItem } = useIssuesActions(EIssuesStoreType.PROJECT);
@@ -43,13 +45,12 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
     createWorkItemAllowedProjectIds,
   } = useCommandPalette();
   // derived values
-  const issueDetails = issueId ? getIssueById(issueId) : undefined;
   const { fetchSubIssues: fetchSubWorkItems } = useIssueDetail();
   const { fetchSubIssues: fetchEpicSubWorkItems } = useIssueDetail(EIssueServiceType.EPICS);
 
   const handleDeleteIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const isEpic = issueDetails?.is_epic;
+      const isEpic = workItemDetails?.is_epic;
       const deleteAction = isEpic ? removeEpic : removeWorkItem;
       const redirectPath = `/${workspaceSlug}/projects/${projectId}/${isEpic ? "epics" : "issues"}`;
 
@@ -61,10 +62,10 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
   };
 
   const handleCreateIssueSubmit = async (newIssue: TIssue) => {
-    if (!workspaceSlug || !newIssue.project_id || !newIssue.id || newIssue.parent_id !== issueDetails?.id) return;
+    if (!workspaceSlug || !newIssue.project_id || !newIssue.id || newIssue.parent_id !== workItemDetails?.id) return;
 
-    const fetchAction = issueDetails?.is_epic ? fetchEpicSubWorkItems : fetchSubWorkItems;
-    await fetchAction(workspaceSlug?.toString(), newIssue.project_id, issueDetails.id);
+    const fetchAction = workItemDetails?.is_epic ? fetchEpicSubWorkItems : fetchSubWorkItems;
+    await fetchAction(workspaceSlug?.toString(), newIssue.project_id, workItemDetails.id);
   };
 
   const getCreateIssueModalData = () => {
@@ -82,13 +83,15 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
         onSubmit={handleCreateIssueSubmit}
         allowedProjectIds={createWorkItemAllowedProjectIds}
       />
-      {workspaceSlug && projectId && issueId && issueDetails && (
+      {workspaceSlug && workItemId && workItemDetails && workItemDetails.project_id && (
         <DeleteIssueModal
           handleClose={() => toggleDeleteIssueModal(false)}
           isOpen={isDeleteIssueModalOpen}
-          data={issueDetails}
-          onSubmit={() => handleDeleteIssue(workspaceSlug.toString(), projectId?.toString(), issueId?.toString())}
-          isEpic={issueDetails?.is_epic}
+          data={workItemDetails}
+          onSubmit={() =>
+            handleDeleteIssue(workspaceSlug.toString(), workItemDetails.project_id!, workItemId?.toString())
+          }
+          isEpic={workItemDetails?.is_epic}
         />
       )}
       <BulkDeleteIssuesModal

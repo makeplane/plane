@@ -1,1 +1,3 @@
-export type TPowerKPageKeysExtended = never;
+export type TPowerKContextTypeExtended = never;
+
+export type TPowerKPageTypeExtended = never;

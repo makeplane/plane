@@ -10,16 +10,14 @@ import { Spinner } from "@plane/ui";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
 import { useEstimate, useProjectEstimates } from "@/hooks/store/estimates";
-import { useCallback } from "react";
 
 type Props = {
-  handleClose: () => void;
-  handleUpdateWorkItem: (data: Partial<TIssue>) => void;
+  handleSelect: (estimatePointId: string | null) => void;
   workItemDetails: TIssue;
 };
 
 export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => {
-  const { handleClose, handleUpdateWorkItem, workItemDetails } = props;
+  const { handleSelect, workItemDetails } = props;
   // store hooks
   const { currentActiveEstimateIdByProjectId, getEstimateById } = useProjectEstimates();
   const currentActiveEstimateId = workItemDetails.project_id
@@ -31,22 +29,11 @@ export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => 
   // translation
   const { t } = useTranslation();
 
-  const handleUpdateEstimatePoint = useCallback(
-    (estimatePointId: string | null) => {
-      if (workItemDetails.estimate_point === estimatePointId) return;
-      handleUpdateWorkItem({
-        estimate_point: estimatePointId,
-      });
-      handleClose();
-    },
-    [workItemDetails.estimate_point, handleUpdateWorkItem, handleClose]
-  );
-
   if (!estimatePointIds) return <Spinner />;
 
   return (
     <>
-      <Command.Item onSelect={() => handleUpdateEstimatePoint(null)} className="focus:outline-none">
+      <Command.Item onSelect={() => handleSelect(null)} className="focus:outline-none">
         <div className="flex items-center space-x-3">
           <Triangle className="shrink-0 size-3.5" />
           <p>{t("project_settings.estimates.no_estimate")}</p>
@@ -61,7 +48,7 @@ export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => 
           return (
             <Command.Item
               key={estimatePoint.id}
-              onSelect={() => handleUpdateEstimatePoint(estimatePoint.id ?? null)}
+              onSelect={() => handleSelect(estimatePoint.id ?? null)}
               className="focus:outline-none"
             >
               <div className="flex items-center space-x-3">

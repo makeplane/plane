@@ -3,6 +3,7 @@ import { Home, FolderKanban } from "lucide-react";
 import { usePowerKCreationCommands } from "@/plane-web/components/command-palette/power-k/commands/creation-commands";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../core/types";
+import { usePowerKContextBasedActions } from "../ui/pages/context-based-actions";
 
 /**
  * Example commands demonstrating all patterns
@@ -30,6 +31,7 @@ function getExampleCommands(): TPowerKCommandConfig[] {
       },
       isEnabled: (ctx) => Boolean(ctx.params.workspaceSlug?.toString()),
       isVisible: (ctx) => Boolean(ctx.params.workspaceSlug?.toString()),
+      closeOnSelect: false,
     },
     {
       id: "nav-open-project",
@@ -40,18 +42,20 @@ function getExampleCommands(): TPowerKCommandConfig[] {
       group: "navigation",
       page: "select-project",
       type: "change-page",
-      onSelect: (projectId: string, ctx) => {
-        ctx.router.push(`/${ctx.params.workspaceSlug?.toString()}/projects/${projectId}/issues`);
+      onSelect: (data, ctx) => {
+        ctx.router.push(`/${ctx.params.workspaceSlug?.toString()}/projects/${data}/issues`);
         ctx.closePalette();
       },
       isEnabled: (ctx) => Boolean(ctx.params.workspaceSlug?.toString()),
       isVisible: (ctx) => Boolean(ctx.params.workspaceSlug?.toString()),
+      closeOnSelect: false,
     },
   ];
 }
 
 export const usePowerKCommands = (context: TPowerKContext): TPowerKCommandConfig[] => {
   const creationCommands = usePowerKCreationCommands(context);
+  const contextualCommands = usePowerKContextBasedActions();
 
-  return [...getExampleCommands(), ...creationCommands];
+  return [...getExampleCommands(), ...creationCommands, ...contextualCommands];
 };

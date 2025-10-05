@@ -6,31 +6,20 @@ import { Check } from "lucide-react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { PriorityIcon } from "@plane/propel/icons";
-import type { TIssue } from "@plane/types";
+import type { TIssue, TIssuePriorities } from "@plane/types";
 
 type Props = {
-  handleClose: () => void;
-  handleUpdateWorkItem: (data: Partial<TIssue>) => void;
+  handleSelect: (priority: TIssuePriorities) => void;
   workItemDetails: TIssue;
 };
 
 export const PowerKWorkItemPrioritiesMenu: React.FC<Props> = observer((props) => {
-  const { handleClose, handleUpdateWorkItem, workItemDetails } = props;
+  const { handleSelect, workItemDetails } = props;
 
   return (
     <>
       {ISSUE_PRIORITIES.map((priority) => (
-        <Command.Item
-          key={priority.key}
-          onSelect={() => {
-            if (workItemDetails.priority === priority.key) return;
-            handleUpdateWorkItem({
-              priority: priority.key,
-            });
-            handleClose();
-          }}
-          className="focus:outline-none"
-        >
+        <Command.Item key={priority.key} onSelect={() => handleSelect(priority.key)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <PriorityIcon priority={priority.key} />
             <span className="capitalize">{priority.title}</span>

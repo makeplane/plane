@@ -176,7 +176,7 @@ export class ShortcutHandler {
 
     // Check context type requirement
     if (command.contextType) {
-      if (!ctx.contextEntity || ctx.contextEntity.type !== command.contextType) {
+      if (!ctx.activeContext || ctx.activeContext !== command.contextType) {
         return false;
       }
     }
@@ -196,6 +196,7 @@ export class ShortcutHandler {
     } else if (command.type === "change-page") {
       // Opens a selection page - open palette and set active page
       this.openPalette();
+      ctx.setActiveCommand(command);
       ctx.setActivePage(command.page);
     }
   }

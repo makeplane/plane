@@ -1,54 +1,62 @@
+// components
+import type { TPowerKCommandConfig, TPowerKContextType, TPowerKPageType } from "@/components/power-k/core/types";
 // plane web imports
 import { PowerKContextBasedActionsExtended } from "@/plane-web/components/command-palette/power-k/context-based-actions";
 // local imports
-import type { TPowerKPageKeys } from "../../types";
 import { PowerKCycleActionsMenu } from "./cycle";
 import { PowerKModuleActionsMenu } from "./module";
 import { PowerKPageActionsMenu } from "./page";
 import { PowerKWorkItemActionsMenu } from "./work-item";
+import { usePowerKWorkItemContextBasedCommands } from "./work-item/commands";
 
-type Props = {
-  activePage: TPowerKPageKeys | undefined;
+export type ContextBasedActionsProps = {
+  activePage: TPowerKPageType | null;
+  activeContext: TPowerKContextType | null;
   handleClose: () => void;
+  handleSelection: (data: unknown) => void;
   handleUpdateSearchTerm: (searchTerm: string) => void;
-  handleUpdatePage: (page: TPowerKPageKeys) => void;
+  handleUpdatePage: (page: TPowerKPageType) => void;
 };
 
-export const PowerKContextBasedActions: React.FC<Props> = (props) => {
-  const { activePage, handleClose, handleUpdateSearchTerm, handleUpdatePage } = props;
+export const PowerKContextBasedActions: React.FC<ContextBasedActionsProps> = (props) => {
+  const { activeContext, activePage, handleClose, handleSelection, handleUpdateSearchTerm, handleUpdatePage } = props;
 
   return (
     <>
-      <PowerKWorkItemActionsMenu
-        activePage={activePage}
-        handleClose={handleClose}
-        handleUpdatePage={handleUpdatePage}
-        handleUpdateSearchTerm={handleUpdateSearchTerm}
-      />
-      <PowerKCycleActionsMenu
-        activePage={activePage}
-        handleClose={handleClose}
-        handleUpdatePage={handleUpdatePage}
-        handleUpdateSearchTerm={handleUpdateSearchTerm}
-      />
-      <PowerKModuleActionsMenu
-        activePage={activePage}
-        handleClose={handleClose}
-        handleUpdatePage={handleUpdatePage}
-        handleUpdateSearchTerm={handleUpdateSearchTerm}
-      />
-      <PowerKPageActionsMenu
-        activePage={activePage}
-        handleClose={handleClose}
-        handleUpdatePage={handleUpdatePage}
-        handleUpdateSearchTerm={handleUpdateSearchTerm}
-      />
-      <PowerKContextBasedActionsExtended
-        activePage={activePage}
-        handleClose={handleClose}
-        handleUpdatePage={handleUpdatePage}
-        handleUpdateSearchTerm={handleUpdateSearchTerm}
-      />
+      {activeContext === "work-item" && (
+        <PowerKWorkItemActionsMenu activePage={activePage} handleSelection={handleSelection} />
+      )}
+      {activeContext === "cycle" && (
+        <PowerKCycleActionsMenu
+          activePage={activePage}
+          handleClose={handleClose}
+          handleUpdatePage={handleUpdatePage}
+          handleUpdateSearchTerm={handleUpdateSearchTerm}
+        />
+      )}
+      {activeContext === "module" && (
+        <PowerKModuleActionsMenu
+          activePage={activePage}
+          handleClose={handleClose}
+          handleUpdatePage={handleUpdatePage}
+          handleUpdateSearchTerm={handleUpdateSearchTerm}
+        />
+      )}
+      {activeContext === "page" && (
+        <PowerKPageActionsMenu
+          activePage={activePage}
+          handleClose={handleClose}
+          handleUpdatePage={handleUpdatePage}
+          handleUpdateSearchTerm={handleUpdateSearchTerm}
+        />
+      )}
+      <PowerKContextBasedActionsExtended {...props} />
     </>
   );
+};
+
+export const usePowerKContextBasedActions = (): TPowerKCommandConfig[] => {
+  const workItemCommands = usePowerKWorkItemContextBasedCommands();
+
+  return [...workItemCommands];
 };

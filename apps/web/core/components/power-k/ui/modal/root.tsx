@@ -23,10 +23,9 @@ type Props = {
 export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props) => {
   // states
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeCommand, setActiveCommand] = useState<TPowerKCommandConfig | null>(null);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
-  const { activePageV2, setActivePageV2, setContextEntityV2 } = useCommandPalette();
+  const { activePageV2, setActivePageV2, setActiveContextV2 } = useCommandPalette();
 
   // Handle command selection
   const handleCommandSelect = useCallback(
@@ -34,9 +33,12 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
       if (command.type === "action") {
         // Direct action - execute and potentially close
         command.action(context);
+        if (command.closeOnSelect === true) {
+          context.closePalette();
+        }
       } else if (command.type === "change-page") {
         // Opens a selection page
-        setActiveCommand(command);
+        context.setActiveCommand(command);
         setActivePageV2(command.page);
         setSearchTerm("");
       }
@@ -47,15 +49,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   // Handle selection page item selection
   const handlePageSelection = useCallback(
     (data: unknown) => {
-      if (activeCommand?.type === "change-page") {
-        activeCommand.onSelect(data, context);
+      if (context.activeCommand?.type === "change-page") {
+        context.activeCommand.onSelect(data, context);
       }
       // Go back to main page
-      setActivePageV2(null);
-      setActiveCommand(null);
-      setSearchTerm("");
+      if (context.activeCommand?.closeOnSelect === true) {
+        context.closePalette();
+      }
     },
-    [activeCommand, context, setActivePageV2]
+    [context]
   );
 
   // Handle keyboard navigation
@@ -85,23 +87,24 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
         if (activePageV2) {
           // Go back from selection page
           setActivePageV2(null);
-        } else if (context.contextEntity) {
-          // Clear context
-          setContextEntityV2(null);
+          context.setActiveCommand(null);
         }
         return;
       }
     },
-    [searchTerm, activePageV2, context.contextEntity, onClose, setActivePageV2, setContextEntityV2]
+    [searchTerm, activePageV2, onClose, setActivePageV2, context]
   );
 
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setSearchTerm("");
-      setActivePageV2(null);
+      setTimeout(() => {
+        setSearchTerm("");
+        setActivePageV2(null);
+        context.setActiveCommand(null);
+      }, 500);
     }
-  }, [isOpen, setActivePageV2]);
+  }, [isOpen, setActivePageV2, context]);
 
   const debouncedSearchTerm = "";
   const resultsCount = 0;
@@ -145,8 +148,8 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                     <PowerKModalHeader
                       searchTerm={searchTerm}
                       onSearchChange={setSearchTerm}
-                      contextEntity={context.contextEntity || null}
-                      onClearContext={() => setContextEntityV2(null)}
+                      activeContext={context.activeContext}
+                      onClearContext={() => setActiveContextV2(null)}
                       activePage={activePageV2}
                     />
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
@@ -161,12 +164,14 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                         results={results}
                         resolvedPath={resolvedPath}
                       />
-                      {/* <PowerKContextBasedActions
+                      <PowerKContextBasedActions
+                        activeContext={context.activeContext}
                         activePage={activePageV2}
                         handleClose={context.closePalette}
+                        handleSelection={handlePageSelection}
                         handleUpdateSearchTerm={setSearchTerm}
                         handleUpdatePage={context.setActivePage}
-                      /> */}
+                      />
                       <PowerKModalPagesList
                         activePage={activePageV2}
                         context={context}

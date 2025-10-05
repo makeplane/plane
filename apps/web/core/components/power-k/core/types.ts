@@ -1,23 +1,12 @@
 import type { AppRouterProgressInstance } from "@bprogress/next";
+// plane web imports
+import type {
+  TPowerKContextTypeExtended,
+  TPowerKPageTypeExtended,
+} from "@/plane-web/components/command-palette/power-k/types";
 
-// ============================================================================
-// Context Types
-// ============================================================================
-
-/**
- * Context type - determines which entity is currently active
- */
-export type TPowerKContextType = "work-item" | "project" | "cycle" | "module";
-
-/**
- * Context entity - information about the currently active entity
- */
-export type TPowerKContextEntity = {
-  type: TPowerKContextType;
-  icon?: React.ReactNode;
-  id: string;
-  title: string;
-};
+// entities for which contextual actions are available
+export type TPowerKContextType = "work-item" | "page" | "cycle" | "module" | TPowerKContextTypeExtended;
 
 /**
  * Command execution context - available data during command execution
@@ -25,18 +14,16 @@ export type TPowerKContextEntity = {
 export type TPowerKContext = {
   // Route information
   params: Record<string, string | string[] | undefined>;
-
   // Current user
   currentUserId?: string;
-
-  // Active context entity
-  contextEntity?: TPowerKContextEntity | null;
-
+  activeCommand: TPowerKCommandConfig | null;
+  // Active context
+  activeContext: TPowerKContextType | null;
   // Router for navigation
   router: AppRouterProgressInstance;
-
   // UI control
   closePalette: () => void;
+  setActiveCommand: (command: TPowerKCommandConfig | null) => void;
   setActivePage: (page: TPowerKPageType | null) => void;
 };
 
@@ -45,16 +32,22 @@ export type TPowerKContext = {
 // ============================================================================
 
 export type TPowerKPageType =
-  | "select-state"
-  | "select-priority"
-  | "select-assignee"
+  // work item context based actions
+  | "update-work-item-state"
+  | "update-work-item-priority"
+  | "update-work-item-assignee"
+  | "update-work-item-estimate"
+  | "update-work-item-cycle"
+  | "update-work-item-module"
+  | "update-work-item-label"
   | "select-project"
   | "select-cycle"
   | "select-module"
   | "select-label"
   | "select-team"
   | "select-user"
-  | "select-work-item";
+  | "select-work-item"
+  | TPowerKPageTypeExtended;
 
 // ============================================================================
 // Command Types
@@ -63,7 +56,9 @@ export type TPowerKPageType =
 /**
  * Command group for UI organization
  */
-export type TPowerKCommandGroup = "navigation" | "create" | "work-item" | "project" | "cycle" | "general" | "settings";
+export type TPowerKCommandGroup =
+  // context based groups
+  "contextual" | "navigation" | "create" | "general" | "settings";
 
 /**
  * Command configuration
@@ -82,7 +77,8 @@ export type TPowerKCommandConfig = {
 
   // Visibility & Context
   contextType?: TPowerKContextType; // Only show when this context is active
-  group?: TPowerKCommandGroup; // For UI grouping
+  group: TPowerKCommandGroup; // For UI grouping
+  closeOnSelect: boolean; // Whether to close the palette after selection
 
   // Conditions
   isVisible: (ctx: TPowerKContext) => boolean; // Dynamic visibility
@@ -110,7 +106,7 @@ export type TCommandPaletteState = {
   isOpen: boolean;
   searchTerm: string;
   activePage: TPowerKPageType | null;
-  contextEntity: TPowerKContextEntity | null;
+  activeContext: TPowerKContextType | null;
   selectedCommand: TPowerKCommandConfig | null;
 };
 

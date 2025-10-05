@@ -11,13 +11,12 @@ import { Spinner } from "@plane/ui";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
-  handleClose: () => void;
-  handleUpdateWorkItem: (data: Partial<TIssue>) => void;
+  handleSelect: (stateId: string) => void;
   workItemDetails: TIssue;
 };
 
 export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
-  const { handleClose, handleUpdateWorkItem, workItemDetails } = props;
+  const { handleSelect, workItemDetails } = props;
   // store hooks
   const { getProjectStateIds, getStateById } = useProjectState();
   // derived values
@@ -30,17 +29,7 @@ export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
   return (
     <>
       {filteredProjectStates.map((state) => (
-        <Command.Item
-          key={state.id}
-          onSelect={() => {
-            if (workItemDetails.state_id === state.id) return;
-            handleUpdateWorkItem({
-              state_id: state.id,
-            });
-            handleClose();
-          }}
-          className="focus:outline-none"
-        >
+        <Command.Item key={state.id} onSelect={() => handleSelect(state.id)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />
             <p>{state.name}</p>

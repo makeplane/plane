@@ -10,7 +10,7 @@ import { EIssuesStoreType } from "@plane/types";
 import { CommandRegistry } from "@/components/command-palette/command-registry";
 // V2 imports
 import { commandRegistry, IPowerKCommandRegistry } from "@/components/power-k/core/registry";
-import type { TPowerKContextEntity, TPowerKPageType } from "@/components/power-k/core/types";
+import type { TPowerKContextType, TPowerKPageType } from "@/components/power-k/core/types";
 
 export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
@@ -42,9 +42,9 @@ export interface IBaseCommandPaletteStore {
   clearActiveEntity: () => void;
   getCommandRegistry: () => CommandRegistry;
   // V2 state
-  contextEntityV2: TPowerKContextEntity | null;
+  activeContextV2: TPowerKContextType | null;
   activePageV2: TPowerKPageType | null;
-  setContextEntityV2: (entity: TPowerKContextEntity | null) => void;
+  setActiveContextV2: (entity: TPowerKContextType | null) => void;
   setActivePageV2: (page: TPowerKPageType | null) => void;
   getCommandRegistryV2: () => IPowerKCommandRegistry;
   // toggle actions
@@ -81,7 +81,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   activeEntity: CommandPaletteEntity | null = null;
   commandRegistry: CommandRegistry = new CommandRegistry();
   // V2 observables
-  contextEntityV2: TPowerKContextEntity | null = null;
+  activeContextV2: TPowerKContextType | null = null;
   activePageV2: TPowerKPageType | null = null;
 
   constructor() {
@@ -104,7 +104,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       activeEntity: observable,
       commandRegistry: observable.ref,
       // V2 observables
-      contextEntityV2: observable,
+      activeContextV2: observable,
       activePageV2: observable,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -123,7 +123,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       clearActiveEntity: action,
       getCommandRegistry: action,
       // V2 actions
-      setContextEntityV2: action,
+      setActiveContextV2: action,
       setActivePageV2: action,
       getCommandRegistryV2: action,
     });
@@ -339,8 +339,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
    * Sets the V2 context entity
    * @param entity
    */
-  setContextEntityV2 = (entity: TPowerKContextEntity | null) => {
-    this.contextEntityV2 = entity;
+  setActiveContextV2 = (entity: TPowerKContextType | null) => {
+    this.activeContextV2 = entity;
   };
 
   /**
