@@ -7,11 +7,10 @@ import { useParams } from "next/navigation";
 import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
-import { SEARCH_RESULTS_GROUPS_MAP } from "@/plane-web/components/command-palette/power-k/search-helpers";
 // helpers
 import { openProjectAndScrollToSidebar } from "../../actions/helper";
 import { PowerKModalCommandItem } from "./command-item";
+import { SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 
 type Props = {
   closePalette: () => void;
