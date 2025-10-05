@@ -54,7 +54,7 @@ export type TPowerKPageType =
  */
 export type TPowerKCommandGroup =
   // context based groups
-  "contextual" | "navigation" | "create" | "general" | "settings";
+  "contextual" | "navigation" | "create" | "general" | "settings" | "help" | "account";
 
 /**
  * Command configuration

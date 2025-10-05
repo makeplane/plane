@@ -40,6 +40,7 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
           onValueChange={onSearchChange}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-400 outline-none"
+          autoFocus
         />
         {searchTerm && (
           <button

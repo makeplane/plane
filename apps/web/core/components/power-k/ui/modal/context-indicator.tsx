@@ -33,6 +33,7 @@ export const PowerKModalContextIndicator: React.FC<Props> = (props) => {
           className="shrink-0 grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100 transition-colors"
           title="Clear context (Backspace)"
           aria-label="Clear context (Backspace)"
+          tabIndex={-1}
         >
           <X className="size-2.5" />
         </button>

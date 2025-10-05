@@ -5,7 +5,6 @@ import React from "react";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
 import { CommandRenderer } from "../../command-renderer";
-import { CommandPaletteHelpActions } from "../actions";
 import { useCommandRegistry } from "../hooks";
 import type { CommandConfig, CommandContext } from "../types";
 
@@ -24,9 +23,6 @@ export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
     <>
       {/* New command renderer */}
       <CommandRenderer commands={registry.getVisibleCommands(context)} onCommandSelect={onCommandSelect} />
-
-      {/* help options */}
-      <CommandPaletteHelpActions closePalette={() => toggleCommandPaletteModal(false)} />
     </>
   );
 };

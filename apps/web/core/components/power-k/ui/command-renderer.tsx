@@ -16,10 +16,12 @@ type Props = {
 
 const groupPriority: Record<TPowerKCommandGroup, number> = {
   contextual: 1,
-  navigation: 2,
-  create: 3,
+  create: 2,
+  navigation: 3,
   general: 7,
   settings: 8,
+  account: 9,
+  help: 10,
 };
 
 const groupTitles: Record<TPowerKCommandGroup, string> = {
@@ -28,6 +30,8 @@ const groupTitles: Record<TPowerKCommandGroup, string> = {
   create: "Create",
   general: "General",
   settings: "Settings",
+  help: "Help",
+  account: "Account",
 };
 
 export const CommandRenderer: React.FC<Props> = (props) => {

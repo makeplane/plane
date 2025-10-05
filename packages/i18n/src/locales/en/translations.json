@@ -2462,6 +2462,17 @@
         "copy_url": "Copy URL"
       }
     },
+    "account_actions": {
+      "sign_out": "Sign out",
+      "workspace_invites": "Workspace invites"
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Open keyboard shortcuts",
+      "open_plane_documentation": "Open Plane documentation",
+      "join_discord": "Join our Discord",
+      "report_bug": "Report a bug",
+      "chat_with_us": "Chat with us"
+    },
     "page_placeholders": {
       "default": "Type a command or search",
       "update_work_item_state": "Change state",
