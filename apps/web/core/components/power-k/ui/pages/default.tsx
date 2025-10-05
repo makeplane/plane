@@ -5,7 +5,7 @@ import React from "react";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
-import { CommandRenderer } from "../command-renderer";
+import { CommandRenderer } from "../renderer/command";
 
 type Props = {
   context: TPowerKContext;

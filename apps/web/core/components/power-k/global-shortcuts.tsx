@@ -7,11 +7,11 @@ import { useParams } from "next/navigation";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { ShortcutsModal } from "../command-palette/shortcuts-modal/modal";
 import { usePowerKCommands } from "./config/commands";
 import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
 import type { TPowerKContext } from "./core/types";
+import { ShortcutsModal } from "./ui/modal/shortcuts-root";
 
 type GlobalShortcutsProps = {
   context: TPowerKContext;

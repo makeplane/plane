@@ -11,6 +11,7 @@ export interface IPowerKCommandRegistry {
   // Retrieval
   getCommand(id: string): TPowerKCommandConfig | undefined;
   getAllCommands(): TPowerKCommandConfig[];
+  getAllCommandsWithShortcuts(): TPowerKCommandConfig[];
   getVisibleCommands(ctx: TPowerKContext): TPowerKCommandConfig[];
   getCommandsByGroup(group: TPowerKCommandGroup, ctx: TPowerKContext): TPowerKCommandConfig[];
   // Shortcut lookup
@@ -61,6 +62,11 @@ export class PowerKCommandRegistry implements IPowerKCommandRegistry {
   getCommand: IPowerKCommandRegistry["getCommand"] = (id) => this.commands.get(id);
 
   getAllCommands: IPowerKCommandRegistry["getAllCommands"] = () => Array.from(this.commands.values());
+
+  getAllCommandsWithShortcuts: IPowerKCommandRegistry["getAllCommandsWithShortcuts"] = () =>
+    Array.from(this.commands.values()).filter(
+      (command) => command.shortcut || command.keySequence || command.modifierShortcut
+    );
 
   getVisibleCommands: IPowerKCommandRegistry["getVisibleCommands"] = computedFn((ctx) =>
     Array.from(this.commands.values()).filter((command) => this.isCommandVisible(command, ctx))
