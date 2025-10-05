@@ -1,35 +1,33 @@
+import { useCallback } from "react";
+import { useParams } from "next/navigation";
 import { LinkIcon, Star, StarOff } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { ICycle } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
-// lib
-import { store } from "@/lib/store-context";
-// local imports
-import type { ContextBasedAction, TPowerKPageKeys } from "../../../types";
+// components
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
+// hooks
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useUser } from "@/hooks/store/user";
 
-type TArgs = {
-  cycleDetails: ICycle | undefined | null;
-  handleClose: () => void;
-  handleUpdatePage: (page: TPowerKPageKeys) => void;
-  handleUpdateSearchTerm: (searchTerm: string) => void;
-};
-
-export const getPowerKCycleContextBasedActions = (args: TArgs): ContextBasedAction[] => {
-  const { cycleDetails, handleClose } = args;
+export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
+  // navigation
+  const { workspaceSlug, cycleId } = useParams();
   // store
-  const { workspaceSlug } = store.router;
-  const { allowPermissions } = store.user.permission;
-  const { addCycleToFavorites, removeCycleFromFavorites } = store.cycle;
+  const {
+    permission: { allowPermissions },
+  } = useUser();
+  const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   // derived values
+  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : null;
   const isFavorite = !!cycleDetails?.is_favorite;
   // permission
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
     !cycleDetails?.archived_at;
 
-  const toggleFavorite = () => {
+  const toggleFavorite = useCallback(() => {
     if (!workspaceSlug || !cycleDetails || !cycleDetails.project_id) return;
     try {
       if (isFavorite) removeCycleFromFavorites(workspaceSlug.toString(), cycleDetails.project_id, cycleDetails.id);
@@ -40,9 +38,9 @@ export const getPowerKCycleContextBasedActions = (args: TArgs): ContextBasedActi
         title: "Some error occurred",
       });
     }
-  };
+  }, [addCycleToFavorites, removeCycleFromFavorites, workspaceSlug, cycleDetails, isFavorite]);
 
-  const copyCycleUrlToClipboard = () => {
+  const copyCycleUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
@@ -57,29 +55,36 @@ export const getPowerKCycleContextBasedActions = (args: TArgs): ContextBasedActi
           title: "Some error occurred",
         });
       });
-  };
+  }, []);
 
   return [
     {
-      key: "toggle-favorite",
-      i18n_label: isFavorite
+      id: "toggle-cycle-favorite",
+      i18n_title: isFavorite
         ? "power_k.contextual_actions.cycle.remove_from_favorites"
         : "power_k.contextual_actions.cycle.add_to_favorites",
       icon: isFavorite ? StarOff : Star,
-      action: () => {
-        handleClose();
-        toggleFavorite();
-      },
-      shouldRender: isEditingAllowed,
+      group: "contextual",
+      contextType: "cycle",
+      type: "action",
+      action: toggleFavorite,
+      modifierShortcut: "shift+f",
+      isEnabled: () => isEditingAllowed,
+      isVisible: () => isEditingAllowed,
+      closeOnSelect: true,
     },
     {
-      key: "copy-url",
-      i18n_label: "power_k.contextual_actions.cycle.copy_url",
+      id: "copy-cycle-url",
+      i18n_title: "power_k.contextual_actions.cycle.copy_url",
       icon: LinkIcon,
-      action: () => {
-        handleClose();
-        copyCycleUrlToClipboard();
-      },
+      group: "contextual",
+      contextType: "cycle",
+      type: "action",
+      action: copyCycleUrlToClipboard,
+      modifierShortcut: "cmd+shift+,",
+      isEnabled: () => true,
+      isVisible: () => true,
+      closeOnSelect: true,
     },
   ];
 };

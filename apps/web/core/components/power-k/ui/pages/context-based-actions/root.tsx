@@ -3,9 +3,10 @@ import type { TPowerKCommandConfig, TPowerKContextType, TPowerKPageType } from "
 // plane web imports
 import { PowerKContextBasedActionsExtended } from "@/plane-web/components/command-palette/power-k/context-based-actions";
 // local imports
-import { PowerKCycleActionsMenu } from "./cycle";
+import { usePowerKCycleContextBasedActions } from "./cycle/commands";
 import { PowerKModuleActionsMenu } from "./module";
-import { PowerKPageActionsMenu } from "./page";
+import { usePowerKModuleContextBasedActions } from "./module/commands";
+import { usePowerKPageContextBasedActions } from "./page/commands";
 import { PowerKWorkItemActionsMenu } from "./work-item";
 import { usePowerKWorkItemContextBasedCommands } from "./work-item/commands";
 
@@ -19,36 +20,15 @@ export type ContextBasedActionsProps = {
 };
 
 export const PowerKContextBasedActions: React.FC<ContextBasedActionsProps> = (props) => {
-  const { activeContext, activePage, handleClose, handleSelection, handleUpdateSearchTerm, handleUpdatePage } = props;
+  const { activeContext, activePage, handleSelection } = props;
 
   return (
     <>
       {activeContext === "work-item" && (
         <PowerKWorkItemActionsMenu activePage={activePage} handleSelection={handleSelection} />
       )}
-      {activeContext === "cycle" && (
-        <PowerKCycleActionsMenu
-          activePage={activePage}
-          handleClose={handleClose}
-          handleUpdatePage={handleUpdatePage}
-          handleUpdateSearchTerm={handleUpdateSearchTerm}
-        />
-      )}
       {activeContext === "module" && (
-        <PowerKModuleActionsMenu
-          activePage={activePage}
-          handleClose={handleClose}
-          handleUpdatePage={handleUpdatePage}
-          handleUpdateSearchTerm={handleUpdateSearchTerm}
-        />
-      )}
-      {activeContext === "page" && (
-        <PowerKPageActionsMenu
-          activePage={activePage}
-          handleClose={handleClose}
-          handleUpdatePage={handleUpdatePage}
-          handleUpdateSearchTerm={handleUpdateSearchTerm}
-        />
+        <PowerKModuleActionsMenu activePage={activePage} handleSelection={handleSelection} />
       )}
       <PowerKContextBasedActionsExtended {...props} />
     </>
@@ -57,6 +37,9 @@ export const PowerKContextBasedActions: React.FC<ContextBasedActionsProps> = (pr
 
 export const usePowerKContextBasedActions = (): TPowerKCommandConfig[] => {
   const workItemCommands = usePowerKWorkItemContextBasedCommands();
+  const cycleCommands = usePowerKCycleContextBasedActions();
+  const moduleCommands = usePowerKModuleContextBasedActions();
+  const pageCommands = usePowerKPageContextBasedActions();
 
-  return [...workItemCommands];
+  return [...workItemCommands, ...cycleCommands, ...moduleCommands, ...pageCommands];
 };

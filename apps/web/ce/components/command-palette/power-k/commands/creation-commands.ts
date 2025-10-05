@@ -67,10 +67,8 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       shortcut: "d",
       action: () => toggleCreatePageModal({ isOpen: true }),
       isEnabled: () => Boolean(currentProjectDetails?.page_view && canPerformProjectActions),
-      isVisible: (context) => {
-        console.log("context", context);
-        return Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions);
-      },
+      isVisible: (context) =>
+        Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions),
       closeOnSelect: true,
     },
     view: {

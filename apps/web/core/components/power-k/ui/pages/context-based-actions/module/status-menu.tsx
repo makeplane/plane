@@ -5,34 +5,23 @@ import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane imports
 import { MODULE_STATUS } from "@plane/constants";
-import { ModuleStatusIcon, TModuleStatus } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import type { IModule } from "@plane/types";
+import { ModuleStatusIcon, TModuleStatus } from "@plane/propel/icons";
 
 type Props = {
-  handleClose: () => void;
-  handleUpdateModule: (data: Partial<IModule>) => void;
+  handleSelect: (data: TModuleStatus) => void;
   value: TModuleStatus;
 };
 
 export const PowerKModuleStatusMenu: React.FC<Props> = observer((props) => {
-  const { handleClose, handleUpdateModule, value } = props;
+  const { handleSelect, value } = props;
   // translation
   const { t } = useTranslation();
 
   return (
     <>
       {MODULE_STATUS.map((status) => (
-        <Command.Item
-          key={status.value}
-          onSelect={() => {
-            handleUpdateModule({
-              status: status.value,
-            });
-            handleClose();
-          }}
-          className="focus:outline-none"
-        >
+        <Command.Item key={status.value} onSelect={() => handleSelect(status.value)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <ModuleStatusIcon status={status.value} height="14px" width="14px" />
             <p>{t(status.i18n_label)}</p>

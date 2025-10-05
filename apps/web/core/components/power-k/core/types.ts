@@ -40,6 +40,9 @@ export type TPowerKPageType =
   | "update-work-item-cycle"
   | "update-work-item-module"
   | "update-work-item-label"
+  // module context based actions
+  | "update-module-member"
+  | "update-module-status"
   | "select-project"
   | "select-cycle"
   | "select-module"
@@ -76,8 +79,6 @@ export type TPowerKCommandConfig = {
   modifierShortcut?: string; // With modifiers: "cmd+k", "cmd+delete", "cmd+shift+,"
 
   // Visibility & Context
-  contextType?: TPowerKContextType; // Only show when this context is active
-  group: TPowerKCommandGroup; // For UI grouping
   closeOnSelect: boolean; // Whether to close the palette after selection
 
   // Conditions
@@ -88,15 +89,24 @@ export type TPowerKCommandConfig = {
   keywords?: string[]; // Alternative search keywords
 } & (
   | {
-      type: "change-page";
-      page: TPowerKPageType; // Opens selection page
-      onSelect: (data: unknown, ctx: TPowerKContext) => void | Promise<void>; // Called after page selection
+      group: Extract<TPowerKCommandGroup, "contextual">; // For UI grouping
+      contextType: TPowerKContextType; // Only show when this context is active
     }
   | {
-      type: "action";
-      action: (ctx: TPowerKContext) => void | Promise<void>; // Direct action
+      group: Exclude<TPowerKCommandGroup, "contextual">;
     }
-);
+) &
+  (
+    | {
+        type: "change-page";
+        page: TPowerKPageType; // Opens selection page
+        onSelect: (data: unknown, ctx: TPowerKContext) => void | Promise<void>; // Called after page selection
+      }
+    | {
+        type: "action";
+        action: (ctx: TPowerKContext) => void | Promise<void>; // Direct action
+      }
+  );
 
 // ============================================================================
 // UI State Types
