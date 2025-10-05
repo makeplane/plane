@@ -11,10 +11,14 @@ import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
+export type TPowerKCreationCommandKeys = "work_item" | "page" | "view" | "cycle" | "module" | "project" | "workspace";
+
 /**
  * Creation commands - Create any entity in the app
  */
-const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string, TPowerKCommandConfig> => {
+export const usePowerKCreationCommandsRecord = (
+  context: TPowerKContext
+): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
   // store
   const {
     canPerformAnyCreateAction,
@@ -140,17 +144,4 @@ const usePowerKCreationCommandsRecord = (context: TPowerKContext): Record<string
       closeOnSelect: true,
     },
   };
-};
-
-export const usePowerKCreationCommands = (context: TPowerKContext): TPowerKCommandConfig[] => {
-  const optionsList = usePowerKCreationCommandsRecord(context);
-  return [
-    optionsList["work_item"],
-    optionsList["page"],
-    optionsList["view"],
-    optionsList["cycle"],
-    optionsList["module"],
-    optionsList["project"],
-    optionsList["workspace"],
-  ];
 };
