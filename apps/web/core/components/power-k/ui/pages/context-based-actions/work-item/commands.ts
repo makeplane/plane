@@ -240,7 +240,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           estimate_point: estimatePointId,
         });
       },
-      shortcut: "e",
+      modifierShortcut: "shift+e",
       isEnabled: () => isEstimateEnabled && isEditingAllowed,
       isVisible: () => isEstimateEnabled && isEditingAllowed,
       closeOnSelect: true,
@@ -280,7 +280,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           });
         }
       },
-      shortcut: "c",
+      modifierShortcut: "shift+c",
       isEnabled: () => Boolean(projectDetails?.cycle_view && isEditingAllowed),
       isVisible: () => Boolean(projectDetails?.cycle_view && isEditingAllowed),
       closeOnSelect: true,
@@ -312,7 +312,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
           });
         }
       },
-      shortcut: "m",
+      modifierShortcut: "shift+m",
       isEnabled: () => Boolean(projectDetails?.module_view && isEditingAllowed),
       isVisible: () => Boolean(projectDetails?.module_view && isEditingAllowed),
       closeOnSelect: false,

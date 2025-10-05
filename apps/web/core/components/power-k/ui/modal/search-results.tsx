@@ -1,109 +1,75 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Loader as Spinner } from "lucide-react";
+import { Command } from "cmdk";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
-import { useTranslation } from "@plane/i18n";
-import type { IWorkspaceSearchResults } from "@plane/types";
-// components
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
-// local imports
-import { CommandPaletteSearchResults } from "../../actions/search-results";
-import type { TPowerKPageType } from "../../core/types";
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { commandGroups } from "@/plane-web/components/command-palette";
+// helpers
+import { openProjectAndScrollToSidebar } from "../../actions/helper";
+import { PowerKModalCommandItem } from "./command-item";
 
 type Props = {
-  searchTerm: string;
-  debouncedSearchTerm: string;
-  resultsCount: number;
-  isLoading: boolean;
-  isSearching: boolean;
-  isWorkspaceLevel: boolean;
-  activePage: TPowerKPageType | null;
+  closePalette: () => void;
   results: IWorkspaceSearchResults;
-  resolvedPath: string;
 };
 
-export const PowerKModalSearchResults: React.FC<Props> = (props) => {
-  const {
-    searchTerm,
-    debouncedSearchTerm,
-    resultsCount,
-    isLoading,
-    isSearching,
-    isWorkspaceLevel,
-    activePage,
-    results,
-    resolvedPath,
-  } = props;
-  // store hooks
-  const { toggleCommandPaletteModal } = useCommandPalette();
-  // plane hooks
-  const { t } = useTranslation();
-  // State for delayed loading indicator
-  const [showDelayedLoader, setShowDelayedLoader] = useState(false);
-
-  // Only show loader after a delay to prevent flash during quick searches
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    if (isLoading || isSearching) {
-      // Only show loader if there's a search term and after 300ms delay
-      if (searchTerm.trim() !== "") {
-        timeoutId = setTimeout(() => {
-          setShowDelayedLoader(true);
-        }, 300);
-      }
-    } else {
-      // Immediately hide loader when not loading
-      setShowDelayedLoader(false);
-    }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [isLoading, isSearching, searchTerm]);
+export const PowerKModalSearchResults: React.FC<Props> = observer((props) => {
+  const { closePalette, results } = props;
+  // router
+  const router = useAppRouter();
+  const { projectId: routerProjectId } = useParams();
+  // derived values
+  const projectId = routerProjectId?.toString();
 
   return (
     <>
-      {searchTerm.trim() !== "" && (
-        <div className="flex items-center justify-between mx-[3px] my-4">
-          <h5 className="text-xs text-custom-text-100">
-            Search results for{" "}
-            <span className="font-medium">
-              {'"'}
-              {searchTerm}
-              {'"'}
-            </span>{" "}
-            in {isWorkspaceLevel ? "workspace" : "project"}:
-          </h5>
-          {/* Inline loading indicator - less intrusive */}
-          {showDelayedLoader && (
-            <div className="flex items-center gap-1.5 text-xs text-custom-text-300">
-              <Spinner className="shrink-0 size-3 animate-spin" />
-              <span className="animate-pulse">Searching</span>
-            </div>
-          )}
-        </div>
-      )}
+      {Object.keys(results.results).map((key) => {
+        const section = results.results[key as keyof typeof results.results];
+        const currentSection = commandGroups[key as keyof typeof commandGroups];
 
-      {/* Show empty state only when not loading and no results */}
-      {!isLoading &&
-        !isSearching &&
-        resultsCount === 0 &&
-        searchTerm.trim() !== "" &&
-        debouncedSearchTerm.trim() !== "" && (
-          <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-            <SimpleEmptyState title={t("command_k.empty_state.search.title")} assetPath={resolvedPath} />
-          </div>
-        )}
+        if (!currentSection) return null;
+        if (section.length <= 0) return null;
 
-      {!activePage && debouncedSearchTerm.trim() !== "" && (
-        <CommandPaletteSearchResults closePalette={() => toggleCommandPaletteModal(false)} results={results} />
-      )}
+        return (
+          <Command.Group key={key} heading={currentSection.title}>
+            {section.map((item) => {
+              let value = `${key}-${item?.id}-${item.name}`;
+
+              if ("project__identifier" in item) {
+                value = `${value}-${item.project__identifier}`;
+              }
+
+              if ("sequence_id" in item) {
+                value = `${value}-${item.sequence_id}`;
+              }
+
+              return (
+                <PowerKModalCommandItem
+                  key={item.id}
+                  label={currentSection.itemName(item)}
+                  icon={currentSection.icon}
+                  onSelect={() => {
+                    closePalette();
+                    router.push(currentSection.path(item, projectId));
+                    // const itemProjectId =
+                    //   item?.project_id ||
+                    //   (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
+                    //     ? item?.project_ids[0]
+                    //     : undefined);
+                    // if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
+                  }}
+                  value={value}
+                />
+              );
+            })}
+          </Command.Group>
+        );
+      })}
     </>
   );
-};
+});

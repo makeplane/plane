@@ -3,14 +3,11 @@ import type { AppRouterProgressInstance } from "@bprogress/next";
 import type {
   TPowerKContextTypeExtended,
   TPowerKPageTypeExtended,
+  TPowerKSearchResultsKeysExtended,
 } from "@/plane-web/components/command-palette/power-k/types";
 
-// entities for which contextual actions are available
 export type TPowerKContextType = "work-item" | "page" | "cycle" | "module" | TPowerKContextTypeExtended;
 
-/**
- * Command execution context - available data during command execution
- */
 export type TPowerKContext = {
   // Route information
   params: Record<string, string | string[] | undefined>;
@@ -26,10 +23,6 @@ export type TPowerKContext = {
   setActiveCommand: (command: TPowerKCommandConfig | null) => void;
   setActivePage: (page: TPowerKPageType | null) => void;
 };
-
-// ============================================================================
-// Page Types (Selection Pages)
-// ============================================================================
 
 export type TPowerKPageType =
   // open entity based actions
@@ -53,20 +46,8 @@ export type TPowerKPageType =
   | "update-module-status"
   | TPowerKPageTypeExtended;
 
-// ============================================================================
-// Command Types
-// ============================================================================
+export type TPowerKCommandGroup = "contextual" | "navigation" | "create" | "general" | "settings" | "help" | "account";
 
-/**
- * Command group for UI organization
- */
-export type TPowerKCommandGroup =
-  // context based groups
-  "contextual" | "navigation" | "create" | "general" | "settings" | "help" | "account";
-
-/**
- * Command configuration
- */
 export type TPowerKCommandConfig = {
   // Identity
   id: string;
@@ -121,10 +102,6 @@ export type TCommandPaletteState = {
   selectedCommand: TPowerKCommandConfig | null;
 };
 
-// ============================================================================
-// Selection Page Props
-// ============================================================================
-
 export type TSelectionPageProps<T = any> = {
   workspaceSlug: string;
   projectId?: string;
@@ -132,3 +109,13 @@ export type TSelectionPageProps<T = any> = {
   onSelect: (item: T) => void;
   onClose: () => void;
 };
+
+export type TPowerKSearchResultsKeys =
+  | "workspace"
+  | "project"
+  | "issue"
+  | "cycle"
+  | "module"
+  | "issue_view"
+  | "page"
+  | TPowerKSearchResultsKeysExtended;

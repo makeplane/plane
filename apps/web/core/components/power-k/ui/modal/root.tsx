@@ -6,13 +6,14 @@ import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import { PowerKModalPagesList } from "../pages";
 import { PowerKContextBasedActions } from "../pages/context-based-actions";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
-import { PowerKModalSearchResults } from "./search-results";
+import { PowerKModalSearchMenu } from "./search-menu";
 
 type Props = {
   context: TPowerKContext;
@@ -26,6 +27,8 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
   const { activePage, setActivePage, setActiveContext } = useCommandPalette();
+  // empty state
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   // Handle command selection
   const handleCommandSelect = useCallback(
@@ -107,23 +110,6 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const debouncedSearchTerm = "";
-  const resultsCount = 0;
-  const isLoading = false;
-  const isSearching = false;
-  const results = {
-    results: {
-      workspace: [],
-      project: [],
-      issue: [],
-      cycle: [],
-      module: [],
-      issue_view: [],
-      page: [],
-    },
-  };
-  const resolvedPath = "";
-
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -170,15 +156,10 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                       activePage={activePage}
                     />
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
-                      <PowerKModalSearchResults
+                      <PowerKModalSearchMenu
                         searchTerm={searchTerm}
-                        debouncedSearchTerm={debouncedSearchTerm}
-                        resultsCount={resultsCount}
-                        isLoading={isLoading}
-                        isSearching={isSearching}
                         isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
                         activePage={activePage}
-                        results={results}
                         resolvedPath={resolvedPath}
                       />
                       <PowerKContextBasedActions

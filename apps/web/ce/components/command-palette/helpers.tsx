@@ -1,7 +1,7 @@
 "use client";
 
-// types
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
+// plane imports
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
 import {
   IWorkspaceDefaultSearchResult,
@@ -10,85 +10,82 @@ import {
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
-// ui
-// helpers
 import { generateWorkItemLink } from "@plane/utils";
-// plane web components
+// components
+import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
+// plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
-export type TCommandGroups = {
-  [key: string]: {
-    icon: React.ReactNode | null;
-    itemName: (item: any) => React.ReactNode;
-    path: (item: any, projectId: string | undefined) => string;
-    title: string;
-  };
+export type TPowerKSearchResultGroupDetails = {
+  icon?: React.ComponentType<{ className?: string }>;
+  itemName: (item: any) => React.ReactNode;
+  path: (item: any, projectId: string | undefined) => string;
+  title: string;
 };
 
-export const commandGroups: TCommandGroups = {
+export const commandGroups: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
   cycle: {
-    icon: <ContrastIcon className="h-3 w-3" />,
+    icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
-      <h6>
+      <p>
         <span className="text-xs text-custom-text-300">{cycle.project__identifier}</span> {cycle.name}
-      </h6>
+      </p>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
       `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
     title: "Cycles",
   },
   issue: {
-    icon: null,
-    itemName: (issue: IWorkspaceIssueSearchResult) => (
+    itemName: (workItem: IWorkspaceIssueSearchResult) => (
       <div className="flex gap-2">
         <IssueIdentifier
-          projectId={issue.project_id}
-          issueTypeId={issue.type_id}
-          projectIdentifier={issue.project__identifier}
-          issueSequenceId={issue.sequence_id}
+          projectId={workItem.project_id}
+          issueTypeId={workItem.type_id}
+          projectIdentifier={workItem.project__identifier}
+          issueSequenceId={workItem.sequence_id}
           textContainerClassName="text-xs"
         />{" "}
-        {issue.name}
+        {workItem.name}
       </div>
     ),
-    path: (issue: IWorkspaceIssueSearchResult) =>
+    path: (workItem: IWorkspaceIssueSearchResult) =>
       generateWorkItemLink({
-        workspaceSlug: issue?.workspace__slug,
-        projectId: issue?.project_id,
-        issueId: issue?.id,
-        projectIdentifier: issue.project__identifier,
-        sequenceId: issue?.sequence_id,
+        workspaceSlug: workItem?.workspace__slug,
+        projectId: workItem?.project_id,
+        issueId: workItem?.id,
+        projectIdentifier: workItem.project__identifier,
+        sequenceId: workItem?.sequence_id,
       }),
     title: "Work items",
   },
   issue_view: {
-    icon: <Layers className="h-3 w-3" />,
+    icon: Layers,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
-      <h6>
+      <p>
         <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}
-      </h6>
+      </p>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
       `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
     title: "Views",
   },
   module: {
-    icon: <DiceIcon className="h-3 w-3" />,
+    icon: DiceIcon,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
-      <h6>
+      <p>
         <span className="text-xs text-custom-text-300">{module.project__identifier}</span> {module.name}
-      </h6>
+      </p>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
       `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
     title: "Modules",
   },
   page: {
-    icon: <FileText className="h-3 w-3" />,
+    icon: FileText,
     itemName: (page: IWorkspacePageSearchResult) => (
-      <h6>
+      <p>
         <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
-      </h6>
+      </p>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
       let redirectProjectId = page?.project_ids?.[0];
@@ -100,13 +97,13 @@ export const commandGroups: TCommandGroups = {
     title: "Pages",
   },
   project: {
-    icon: <Briefcase className="h-3 w-3" />,
+    icon: Briefcase,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
-    icon: <LayoutGrid className="h-3 w-3" />,
+    icon: LayoutGrid,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",
