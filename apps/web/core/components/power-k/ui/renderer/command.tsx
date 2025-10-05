@@ -5,34 +5,15 @@ import { Command } from "cmdk";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // local imports
-import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../core/types";
-import { CONTEXT_ENTITY_MAP } from "./pages/context-based-actions";
-import { PowerKModalCommandItem } from "./modal/command-item";
+import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../../core/types";
+import { PowerKModalCommandItem } from "../modal/command-item";
+import { CONTEXT_ENTITY_MAP } from "../pages/context-based-actions";
+import { POWER_K_GROUP_PRIORITY, POWER_K_GROUP_TITLES } from "./shared";
 
 type Props = {
   commands: TPowerKCommandConfig[];
   context: TPowerKContext;
   onCommandSelect: (command: TPowerKCommandConfig) => void;
-};
-
-const groupPriority: Record<TPowerKCommandGroup, number> = {
-  contextual: 1,
-  create: 2,
-  navigation: 3,
-  general: 7,
-  settings: 8,
-  account: 9,
-  help: 10,
-};
-
-const groupTitles: Record<TPowerKCommandGroup, string> = {
-  contextual: "Contextual",
-  navigation: "Navigate",
-  create: "Create",
-  general: "General",
-  settings: "Settings",
-  help: "Help",
-  account: "Account",
 };
 
 export const CommandRenderer: React.FC<Props> = (props) => {
@@ -53,8 +34,8 @@ export const CommandRenderer: React.FC<Props> = (props) => {
   );
 
   const sortedGroups = Object.keys(commandsByGroup).sort((a, b) => {
-    const aPriority = groupPriority[a as TPowerKCommandGroup];
-    const bPriority = groupPriority[b as TPowerKCommandGroup];
+    const aPriority = POWER_K_GROUP_PRIORITY[a as TPowerKCommandGroup];
+    const bPriority = POWER_K_GROUP_PRIORITY[b as TPowerKCommandGroup];
     return aPriority - bPriority;
   }) as TPowerKCommandGroup[];
 
@@ -67,7 +48,7 @@ export const CommandRenderer: React.FC<Props> = (props) => {
         const title =
           groupKey === "contextual" && activeContext
             ? t(CONTEXT_ENTITY_MAP[activeContext].i18n_title)
-            : groupTitles[groupKey];
+            : POWER_K_GROUP_TITLES[groupKey];
 
         return (
           <Command.Group key={groupKey} heading={title}>
