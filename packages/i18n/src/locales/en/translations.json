@@ -2417,6 +2417,7 @@
     "contextual_actions": {
       "work_item": {
         "title": "Work item actions",
+        "indicator": "Work item",
         "change_state": "Change state",
         "change_priority": "Change priority",
         "change_assignees": "Assign to",
@@ -2433,12 +2434,14 @@
       },
       "cycle": {
         "title": "Cycle actions",
+        "indicator": "Cycle",
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
         "copy_url": "Copy URL"
       },
       "module": {
         "title": "Module actions",
+        "indicator": "Module",
         "add_remove_members": "Add/remove members",
         "change_status": "Change status",
         "add_to_favorites": "Add to favorites",
@@ -2447,6 +2450,7 @@
       },
       "page": {
         "title": "Page actions",
+        "indicator": "Page",
         "lock": "Lock",
         "unlock": "Unlock",
         "make_private": "Make private",

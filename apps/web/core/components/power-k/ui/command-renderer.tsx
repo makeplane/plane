@@ -6,7 +6,7 @@ import { Command } from "cmdk";
 import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../core/types";
-import { CONTEXT_BASED_ACTIONS_MAP } from "./pages/context-based-actions";
+import { CONTEXT_ENTITY_MAP } from "./pages/context-based-actions";
 
 type Props = {
   commands: TPowerKCommandConfig[];
@@ -61,7 +61,7 @@ export const CommandRenderer: React.FC<Props> = (props) => {
 
         const title =
           groupKey === "contextual" && activeContext
-            ? t(CONTEXT_BASED_ACTIONS_MAP[activeContext].i18n_title)
+            ? t(CONTEXT_ENTITY_MAP[activeContext].i18n_title)
             : groupTitles[groupKey];
 
         return (

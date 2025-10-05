@@ -3,12 +3,11 @@ import { POWER_K_MODAL_PAGE_DETAILS_EXTENDED } from "@/plane-web/components/comm
 // local imports
 import type { TPowerKPageType } from "../../core/types";
 
-export const POWER_K_MODAL_PAGE_DETAILS: Record<
-  TPowerKPageType,
-  {
-    i18n_placeholder: string;
-  }
-> = {
+export type TPowerKModalPageDetails = {
+  i18n_placeholder: string;
+};
+
+export const POWER_K_MODAL_PAGE_DETAILS: Record<TPowerKPageType, TPowerKModalPageDetails> = {
   "update-work-item-state": {
     i18n_placeholder: "power_k.page_placeholders.update_work_item_state",
   },

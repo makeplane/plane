@@ -157,7 +157,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                       searchTerm={searchTerm}
                       onSearchChange={setSearchTerm}
                       activeContext={context.activeContext}
-                      onClearContext={() => setActiveContextV2(null)}
+                      handleClearContext={() => setActiveContextV2(null)}
                       activePage={activePageV2}
                     />
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
