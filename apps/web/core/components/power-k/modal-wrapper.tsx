@@ -13,14 +13,14 @@ import { ProjectLevelModals } from "@/plane-web/components/command-palette/modal
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
-import { CommandPaletteV2GlobalShortcuts } from "./global-shortcuts";
+import { GlobalShortcuts } from "./global-shortcuts";
 import { CommandPaletteModal } from "./ui/modal/root";
 
 /**
- * MobX-aware wrapper for the Command Palette V2 modal
+ * MobX-aware wrapper for the Command Palette modal
  * Connects the modal to the MobX store
  */
-export const CommandPaletteV2ModalWrapper = observer(() => {
+export const CommandPaletteModalWrapper = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -30,7 +30,7 @@ export const CommandPaletteV2ModalWrapper = observer(() => {
   const commandPaletteStore = useCommandPalette();
   const { data: currentUser } = useUser();
   // derived values
-  const { activeContextV2 } = commandPaletteStore;
+  const { activeContext } = commandPaletteStore;
   const { workspaceSlug, projectId, workItem: workItemIdentifier } = params;
 
   // Build command context from props and store
@@ -38,28 +38,19 @@ export const CommandPaletteV2ModalWrapper = observer(() => {
     () => ({
       currentUserId: currentUser?.id,
       activeCommand,
-      activeContext: activeContextV2,
+      activeContext: activeContext,
       params,
       router,
       closePalette: () => commandPaletteStore.toggleCommandPaletteModal(false),
       setActiveCommand,
-      setActivePage: (page) => commandPaletteStore.setActivePageV2(page),
+      setActivePage: (page) => commandPaletteStore.setActivePage(page),
     }),
-    [currentUser?.id, activeContextV2, commandPaletteStore, router, params, activeCommand]
+    [currentUser?.id, activeContext, commandPaletteStore, router, params, activeCommand]
   );
 
   return (
     <>
-      <CommandPaletteV2GlobalShortcuts
-        context={context}
-        workspaceSlug={workspaceSlug?.toString()}
-        projectId={projectId?.toString()}
-        currentUserId={currentUser?.id}
-        canPerformAnyCreateAction
-        canPerformWorkspaceActions
-        canPerformProjectActions
-        deleteIssue={(issueId) => console.log("Delete issue:", issueId)}
-      />
+      <GlobalShortcuts context={context} />
       {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />

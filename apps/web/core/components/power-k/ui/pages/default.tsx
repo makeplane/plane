@@ -15,9 +15,9 @@ type Props = {
 export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
   const { context, onCommandSelect } = props;
   // store hooks
-  const { getCommandRegistryV2 } = useCommandPalette();
+  const { getCommandRegistry } = useCommandPalette();
   // Get registry and commands from store
-  const commandRegistry = getCommandRegistryV2();
+  const commandRegistry = getCommandRegistry();
   // Get commands to display
   const commands = commandRegistry.getVisibleCommands(context);
 

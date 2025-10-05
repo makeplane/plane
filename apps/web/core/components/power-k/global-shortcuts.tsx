@@ -15,34 +15,14 @@ import type { TPowerKContext } from "./core/types";
 
 type GlobalShortcutsProps = {
   context: TPowerKContext;
-  workspaceSlug?: string;
-  projectId?: string;
-  issueId?: string;
-  currentUserId?: string;
-  canPerformAnyCreateAction?: boolean;
-  canPerformWorkspaceActions?: boolean;
-  canPerformProjectActions?: boolean;
-  toggleCreateIssueModal?: (open: boolean) => void;
-  toggleCreateProjectModal?: (open: boolean) => void;
-  toggleCreateCycleModal?: (open: boolean) => void;
-  deleteIssue?: (issueId: string) => void;
 };
 
 /**
  * Global shortcuts component - sets up keyboard listeners and context detection
  * Should be mounted once at the app root level
  */
-export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsProps) => {
-  const {
-    context,
-    workspaceSlug,
-    projectId,
-    issueId,
-    currentUserId,
-    canPerformAnyCreateAction = false,
-    canPerformWorkspaceActions = false,
-    canPerformProjectActions = false,
-  } = props;
+export const GlobalShortcuts = observer((props: GlobalShortcutsProps) => {
+  const { context } = props;
   // router
   const pathname = usePathname();
   const router = useAppRouter();
@@ -53,19 +33,19 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
   // Detect context from URL and update store
   useEffect(() => {
     const detected = detectContextFromURL(params, pathname);
-    commandPaletteStore.setActiveContextV2(detected);
+    commandPaletteStore.setActiveContext(detected);
   }, [params, pathname, commandPaletteStore]);
 
   // Register commands on mount
   useEffect(() => {
-    const registry = commandPaletteStore.getCommandRegistryV2();
+    const registry = commandPaletteStore.getCommandRegistry();
     registry.clear();
     registry.registerMultiple(commands);
   }, [commandPaletteStore, commands]);
 
   // Setup global shortcut handler
   useEffect(() => {
-    const registry = commandPaletteStore.getCommandRegistryV2();
+    const registry = commandPaletteStore.getCommandRegistry();
 
     const handler = new ShortcutHandler(
       registry,
@@ -79,18 +59,7 @@ export const CommandPaletteV2GlobalShortcuts = observer((props: GlobalShortcutsP
       document.removeEventListener("keydown", handler.handleKeyDown);
       handler.destroy();
     };
-  }, [
-    context,
-    workspaceSlug,
-    projectId,
-    issueId,
-    currentUserId,
-    canPerformAnyCreateAction,
-    canPerformWorkspaceActions,
-    canPerformProjectActions,
-    router,
-    commandPaletteStore,
-  ]);
+  }, [context, router, commandPaletteStore]);
 
   return (
     <ShortcutsModal

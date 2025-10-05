@@ -27,7 +27,7 @@ import { WorkspaceService } from "@/plane-web/services";
 import { commandExecutor } from "../../command-executor";
 import { PAGE_PLACEHOLDERS } from "../../constants";
 import type { CommandConfig, TPowerKPageKeys } from "../../power-k/types";
-import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
+import { useCommandRegistryInitializer } from "../hooks";
 import { PowerKModalPagesList } from "../pages";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
@@ -59,7 +59,7 @@ export const PowerKModal: React.FC = observer(() => {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   const { platform, isMobile } = usePlatformOS();
-  const { isCommandPaletteOpen, toggleCommandPaletteModal, activeEntity, clearActiveEntity } = useCommandPalette();
+  const { isCommandPaletteOpen, toggleCommandPaletteModal } = useCommandPalette();
   // derived values
   const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier.toString()) : null;
   const workItemDetails = workItemId ? getIssueById(workItemId) : null;
@@ -94,7 +94,7 @@ export const PowerKModal: React.FC = observer(() => {
     isWorkspaceLevel,
   });
 
-  const handleKeySequence = useKeySequenceHandler(registry, executionContext);
+  // const handleKeySequence = useKeySequenceHandler(registry, executionContext);
 
   // Execute the current step of the active command
   const executeCurrentStep = useCallback(async () => {
@@ -212,29 +212,6 @@ export const PowerKModal: React.FC = observer(() => {
   }, [activeCommand, currentStepIndex, executeCurrentStep]);
 
   useEffect(() => {
-    if (!isCommandPaletteOpen || !activeEntity) return;
-
-    const executeShortcut = async () => {
-      const commandMap: Record<string, string> = {
-        project: "navigate-project",
-        cycle: "navigate-cycle",
-        issue: "navigate-issue",
-      };
-
-      const commandId = commandMap[activeEntity];
-      if (commandId) {
-        const command = registry.getCommand(commandId);
-        if (command) {
-          await startCommandExecution(command);
-        }
-      }
-      clearActiveEntity();
-    };
-
-    executeShortcut();
-  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, registry, startCommandExecution]);
-
-  useEffect(() => {
     if (workItemDetails && isCommandPaletteOpen) {
       setSearchInIssue(true);
     }
@@ -314,9 +291,6 @@ export const PowerKModal: React.FC = observer(() => {
   const handleKeydown = useCallback(
     (e: React.KeyboardEvent) => {
       const key = e.key.toLowerCase();
-      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !activePage && searchTerm === "") {
-        handleKeySequence(e);
-      }
       if ((e.metaKey || e.ctrlKey) && key === "k") {
         e.preventDefault();
         e.stopPropagation();
@@ -381,7 +355,7 @@ export const PowerKModal: React.FC = observer(() => {
         }
       }
     },
-    [handleKeySequence, activePage, searchTerm, closePalette, activeCommand, executedSteps, resetCommandExecution]
+    [activePage, searchTerm, closePalette, activeCommand, executedSteps, resetCommandExecution]
   );
 
   return (

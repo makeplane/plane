@@ -25,10 +25,9 @@ export interface IPowerKCommandRegistry {
 }
 
 /**
- * Simple, clean command registry
  * Stores commands and provides lookup by shortcuts, search, etc.
  */
-class TPowerKCommandRegistry implements IPowerKCommandRegistry {
+export class PowerKCommandRegistry implements IPowerKCommandRegistry {
   // observables
   commands = new Map<string, TPowerKCommandConfig>();
 
@@ -149,6 +148,3 @@ class TPowerKCommandRegistry implements IPowerKCommandRegistry {
     return true;
   }
 }
-
-// Export singleton instance
-export const commandRegistry = new TPowerKCommandRegistry();

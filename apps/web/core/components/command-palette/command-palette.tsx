@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -11,8 +11,8 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 import { ShortcutsModal } from "@/components/command-palette";
 // helpers
-// hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
+// hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -32,7 +32,6 @@ import {
   getWorkspaceShortcutsList,
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
-import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 import { PowerKModal } from "./power-k/modal";
 
 export const CommandPalette: FC = observer(() => {
@@ -43,8 +42,7 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen, activateEntity } =
-    useCommandPalette();
+  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
@@ -160,9 +158,6 @@ export const CommandPalette: FC = observer(() => {
     []
   );
 
-  const keySequence = useRef("");
-  const sequenceTimeout = useRef<number | null>(null);
-
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
@@ -193,28 +188,6 @@ export const CommandPalette: FC = observer(() => {
       if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
         e.preventDefault();
         toggleShortcutModal(true);
-      }
-
-      if (!cmdClicked && !altKey && !shiftKey && !isAnyModalOpen) {
-        keySequence.current = (keySequence.current + keyPressed).slice(-2);
-        if (sequenceTimeout.current) window.clearTimeout(sequenceTimeout.current);
-        sequenceTimeout.current = window.setTimeout(() => {
-          keySequence.current = "";
-        }, 500);
-        // Check if the current key sequence matches a command
-        const entityShortcutMap: Record<string, CommandPaletteEntity> = {
-          op: "project",
-          oc: "cycle",
-          om: "module",
-          oi: "issue",
-        };
-        const entity = entityShortcutMap[keySequence.current];
-        if (entity) {
-          e.preventDefault();
-          activateEntity(entity);
-          keySequence.current = "";
-          return;
-        }
       }
 
       if (deleteKey) {
@@ -272,7 +245,6 @@ export const CommandPalette: FC = observer(() => {
       projectId,
       shortcutsList,
       toggleCommandPaletteModal,
-      activateEntity,
       toggleShortcutModal,
       toggleSidebar,
       toggleExtendedSidebar,

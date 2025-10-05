@@ -1,5 +1,6 @@
 import { observable, action, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import {
   TCreateModalStoreTypes,
   DEFAULT_CREATE_PAGE_MODAL_DATA,
@@ -7,12 +8,9 @@ import {
   TCreatePageModal,
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { CommandRegistry } from "@/components/command-palette/command-registry";
-// V2 imports
-import { commandRegistry, IPowerKCommandRegistry } from "@/components/power-k/core/registry";
+// components
+import { IPowerKCommandRegistry, PowerKCommandRegistry } from "@/components/power-k/core/registry";
 import type { TPowerKContextType, TPowerKPageType } from "@/components/power-k/core/types";
-
-export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -35,18 +33,13 @@ export interface IBaseCommandPaletteStore {
   createWorkItemAllowedProjectIds: string[] | undefined;
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
+  commandRegistry: IPowerKCommandRegistry;
+  activeContext: TPowerKContextType | null;
+  activePage: TPowerKPageType | null;
+  setActiveContext: (entity: TPowerKContextType | null) => void;
+  setActivePage: (page: TPowerKPageType | null) => void;
+  getCommandRegistry: () => IPowerKCommandRegistry;
   getIsProjectListOpen: (projectId: string) => boolean;
-  activeEntity: CommandPaletteEntity | null;
-  commandRegistry: CommandRegistry;
-  activateEntity: (entity: CommandPaletteEntity) => void;
-  clearActiveEntity: () => void;
-  getCommandRegistry: () => CommandRegistry;
-  // V2 state
-  activeContextV2: TPowerKContextType | null;
-  activePageV2: TPowerKPageType | null;
-  setActiveContextV2: (entity: TPowerKContextType | null) => void;
-  setActivePageV2: (page: TPowerKPageType | null) => void;
-  getCommandRegistryV2: () => IPowerKCommandRegistry;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -78,11 +71,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
-  activeEntity: CommandPaletteEntity | null = null;
-  commandRegistry: CommandRegistry = new CommandRegistry();
-  // V2 observables
-  activeContextV2: TPowerKContextType | null = null;
-  activePageV2: TPowerKPageType | null = null;
+  commandRegistry: IPowerKCommandRegistry = new PowerKCommandRegistry();
+  activeContext: TPowerKContextType | null = null;
+  activePage: TPowerKPageType | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -101,11 +92,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      activeEntity: observable,
       commandRegistry: observable.ref,
-      // V2 observables
-      activeContextV2: observable,
-      activePageV2: observable,
+      activeContext: observable,
+      activePage: observable,
       // toggle actions
       toggleCommandPaletteModal: action,
       toggleShortcutModal: action,
@@ -119,13 +108,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
-      activateEntity: action,
-      clearActiveEntity: action,
+      setActiveContext: action,
+      setActivePage: action,
       getCommandRegistry: action,
-      // V2 actions
-      setActiveContextV2: action,
-      setActivePageV2: action,
-      getCommandRegistryV2: action,
     });
   }
 
@@ -161,25 +146,25 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   };
 
   /**
-   * Opens the command palette with a specific entity pre-selected
+   * Sets the active context entity
    * @param entity
    */
-  activateEntity = (entity: CommandPaletteEntity) => {
-    this.isCommandPaletteOpen = true;
-    this.activeEntity = entity;
+  setActiveContext = (entity: TPowerKContextType | null) => {
+    this.activeContext = entity;
   };
 
   /**
-   * Clears the active entity trigger
+   * Sets the active page
+   * @param page
    */
-  clearActiveEntity = () => {
-    this.activeEntity = null;
+  setActivePage = (page: TPowerKPageType | null) => {
+    this.activePage = page;
   };
 
   /**
    * Get the command registry instance
    */
-  getCommandRegistry = (): CommandRegistry => this.commandRegistry;
+  getCommandRegistry = (): IPowerKCommandRegistry => this.commandRegistry;
 
   /**
    * Toggles the command palette modal
@@ -334,25 +319,4 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       this.allStickiesModal = !this.allStickiesModal;
     }
   };
-
-  /**
-   * Sets the V2 context entity
-   * @param entity
-   */
-  setActiveContextV2 = (entity: TPowerKContextType | null) => {
-    this.activeContextV2 = entity;
-  };
-
-  /**
-   * Sets the V2 active page
-   * @param page
-   */
-  setActivePageV2 = (page: TPowerKPageType | null) => {
-    this.activePageV2 = page;
-  };
-
-  /**
-   * Get the V2 command registry instance
-   */
-  getCommandRegistryV2 = (): IPowerKCommandRegistry => commandRegistry;
 }

@@ -9,8 +9,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { navigationCommandsRegistry, settingsCommandsRegistry, accountCommandsRegistry } from "../commands";
-import type { CommandConfig, CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
+import type { CommandContext, CommandExecutionContext, TPowerKPageKeys } from "../types";
 
 type TCommandRegistryInitializerArgs = {
   setPages: (pages: TPowerKPageKeys[] | ((pages: TPowerKPageKeys[]) => TPowerKPageKeys[])) => void;
@@ -86,13 +85,13 @@ export const useCommandRegistryInitializer = (args: TCommandRegistryInitializerA
     // Clear existing commands to avoid duplicates
     registry.clear();
 
-    const commands: CommandConfig[] = [
-      ...navigationCommandsRegistry(),
-      ...accountCommandsRegistry(executionContext),
-      ...settingsCommandsRegistry(openWorkspaceSettings, () => canPerformWorkspaceActions),
-    ];
+    // const commands: CommandConfig[] = [
+    //   ...navigationCommandsRegistry(),
+    //   ...accountCommandsRegistry(executionContext),
+    //   ...settingsCommandsRegistry(openWorkspaceSettings, () => canPerformWorkspaceActions),
+    // ];
 
-    registry.registerMultiple(commands);
+    // registry.registerMultiple(commands);
   }, [registry, executionContext, openWorkspaceSettings, canPerformWorkspaceActions]);
 
   return {

@@ -25,7 +25,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const [searchTerm, setSearchTerm] = useState("");
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
-  const { activePageV2, setActivePageV2, setActiveContextV2 } = useCommandPalette();
+  const { activePage, setActivePage, setActiveContext } = useCommandPalette();
 
   // Handle command selection
   const handleCommandSelect = useCallback(
@@ -39,11 +39,11 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
       } else if (command.type === "change-page") {
         // Opens a selection page
         context.setActiveCommand(command);
-        setActivePageV2(command.page);
+        setActivePage(command.page);
         setSearchTerm("");
       }
     },
-    [context, setActivePageV2]
+    [context, setActivePage]
   );
 
   // Handle selection page item selection
@@ -84,15 +84,15 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
       // Backspace clears context or goes back from page
       if (e.key === "Backspace" && !searchTerm) {
         e.preventDefault();
-        if (activePageV2) {
+        if (activePage) {
           // Go back from selection page
-          setActivePageV2(null);
+          setActivePage(null);
           context.setActiveCommand(null);
         }
         return;
       }
     },
-    [searchTerm, activePageV2, onClose, setActivePageV2, context]
+    [searchTerm, activePage, onClose, setActivePage, context]
   );
 
   // Reset state when modal closes
@@ -100,11 +100,11 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
     if (!isOpen) {
       setTimeout(() => {
         setSearchTerm("");
-        setActivePageV2(null);
+        setActivePage(null);
         context.setActiveCommand(null);
       }, 500);
     }
-  }, [isOpen, setActivePageV2, context]);
+  }, [isOpen, setActivePage, context]);
 
   const debouncedSearchTerm = "";
   const resultsCount = 0;
@@ -165,8 +165,8 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                       searchTerm={searchTerm}
                       onSearchChange={setSearchTerm}
                       activeContext={context.activeContext}
-                      handleClearContext={() => setActiveContextV2(null)}
-                      activePage={activePageV2}
+                      handleClearContext={() => setActiveContext(null)}
+                      activePage={activePage}
                     />
                     <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
                       <PowerKModalSearchResults
@@ -176,20 +176,20 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                         isLoading={isLoading}
                         isSearching={isSearching}
                         isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
-                        activePage={activePageV2}
+                        activePage={activePage}
                         results={results}
                         resolvedPath={resolvedPath}
                       />
                       <PowerKContextBasedActions
                         activeContext={context.activeContext}
-                        activePage={activePageV2}
+                        activePage={activePage}
                         handleClose={context.closePalette}
                         handleSelection={handlePageDataSelection}
                         handleUpdateSearchTerm={setSearchTerm}
                         handleUpdatePage={context.setActivePage}
                       />
                       <PowerKModalPagesList
-                        activePage={activePageV2}
+                        activePage={activePage}
                         context={context}
                         onPageDataSelect={handlePageDataSelection}
                         onCommandSelect={handleCommandSelect}

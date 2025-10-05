@@ -17,12 +17,12 @@ export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
   const { context, onCommandSelect } = props;
   // store hooks
   const { toggleCommandPaletteModal } = useCommandPalette();
-  const { registry } = useCommandRegistry();
+  // const { registry } = useCommandRegistry();
 
   return (
     <>
       {/* New command renderer */}
-      <CommandRenderer commands={registry.getVisibleCommands(context)} onCommandSelect={onCommandSelect} />
+      {/* <CommandRenderer commands={registry.getVisibleCommands(context)} onCommandSelect={onCommandSelect} /> */}
     </>
   );
 };

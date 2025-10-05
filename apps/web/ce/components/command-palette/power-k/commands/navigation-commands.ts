@@ -12,7 +12,7 @@ import {
   IWorkspace,
 } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k";
+import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
