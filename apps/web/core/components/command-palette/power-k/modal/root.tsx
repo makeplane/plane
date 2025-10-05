@@ -29,7 +29,6 @@ import { PAGE_PLACEHOLDERS } from "../../constants";
 import type { CommandConfig, TPowerKPageKeys } from "../../power-k/types";
 import { useCommandRegistryInitializer, useKeySequenceHandler } from "../hooks";
 import { PowerKModalPagesList } from "../pages";
-import { PowerKContextBasedActions } from "../pages/context-based-actions";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
 import { PowerKModalSearchResults } from "./search-results";
@@ -450,12 +449,6 @@ export const PowerKModal: React.FC = observer(() => {
                         activePage={activePage}
                         results={results}
                         resolvedPath={resolvedPath}
-                      />
-                      <PowerKContextBasedActions
-                        activePage={activePage}
-                        handleClose={closePalette}
-                        handleUpdateSearchTerm={setSearchTerm}
-                        handleUpdatePage={(page) => setPages((pages) => [...pages, page])}
                       />
                       <PowerKModalPagesList
                         activePage={activePage}
