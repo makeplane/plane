@@ -23,7 +23,7 @@ export type TPowerKSearchResultGroupDetails = {
   title: string;
 };
 
-export const commandGroups: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
+export const SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
   cycle: {
     icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (

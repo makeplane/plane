@@ -8,7 +8,7 @@ import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { commandGroups } from "@/plane-web/components/command-palette";
+import { SEARCH_RESULTS_GROUPS_MAP } from "@/plane-web/components/command-palette/power-k/search-helpers";
 // helpers
 import { openProjectAndScrollToSidebar } from "../../actions/helper";
 import { PowerKModalCommandItem } from "./command-item";
@@ -30,7 +30,7 @@ export const PowerKModalSearchResults: React.FC<Props> = observer((props) => {
     <>
       {Object.keys(results.results).map((key) => {
         const section = results.results[key as keyof typeof results.results];
-        const currentSection = commandGroups[key as keyof typeof commandGroups];
+        const currentSection = SEARCH_RESULTS_GROUPS_MAP[key as keyof typeof SEARCH_RESULTS_GROUPS_MAP];
 
         if (!currentSection) return null;
         if (section.length <= 0) return null;

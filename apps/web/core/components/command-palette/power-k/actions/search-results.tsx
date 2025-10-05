@@ -8,7 +8,7 @@ import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { commandGroups } from "@/plane-web/components/command-palette";
+import { SEARCH_RESULTS_GROUPS_MAP } from "@/plane-web/components/command-palette";
 // helpers
 import { openProjectAndScrollToSidebar } from "./helper";
 
@@ -30,7 +30,7 @@ export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => 
       {Object.keys(results.results).map((key) => {
         // TODO: add type for results
         const section = (results.results as any)[key];
-        const currentSection = commandGroups[key];
+        const currentSection = SEARCH_RESULTS_GROUPS_MAP[key];
         if (!currentSection) return null;
         if (section.length > 0) {
           return (
