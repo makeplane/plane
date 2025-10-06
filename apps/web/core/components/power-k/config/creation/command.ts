@@ -137,7 +137,6 @@ export const usePowerKCreationCommandsRecord = (
       group: "create",
       i18n_title: "power_k.creation_actions.create_workspace",
       icon: SquarePlus,
-      shortcut: "w",
       action: (context) => context.router.push("/create-workspace"),
       isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
       isVisible: () => Boolean(!isWorkspaceCreationDisabled),
