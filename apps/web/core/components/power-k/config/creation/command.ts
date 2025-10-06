@@ -11,7 +11,14 @@ import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
-export type TPowerKCreationCommandKeys = "work_item" | "page" | "view" | "cycle" | "module" | "project" | "workspace";
+export type TPowerKCreationCommandKeys =
+  | "create-work_item"
+  | "create-page"
+  | "create-view"
+  | "create-cycle"
+  | "create-module"
+  | "create-project"
+  | "create-workspace";
 
 /**
  * Creation commands - Create any entity in the app
@@ -48,7 +55,7 @@ export const usePowerKCreationCommandsRecord = (
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
 
   return {
-    work_item: {
+    "create-work_item": {
       id: "create-work-item",
       type: "action",
       group: "create",
@@ -61,7 +68,7 @@ export const usePowerKCreationCommandsRecord = (
       isVisible: () => Boolean(canCreateWorkItem),
       closeOnSelect: true,
     },
-    page: {
+    "create-page": {
       id: "create-page",
       type: "action",
       group: "create",
@@ -75,7 +82,7 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    view: {
+    "create-view": {
       id: "create-view",
       type: "action",
       group: "create",
@@ -89,7 +96,7 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.issue_views_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    cycle: {
+    "create-cycle": {
       id: "create-cycle",
       type: "action",
       group: "create",
@@ -103,7 +110,7 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.cycle_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    module: {
+    "create-module": {
       id: "create-module",
       type: "action",
       group: "create",
@@ -117,7 +124,7 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.module_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    project: {
+    "create-project": {
       id: "create-project",
       type: "action",
       group: "create",
@@ -130,7 +137,7 @@ export const usePowerKCreationCommandsRecord = (
       isVisible: () => Boolean(canCreateProject),
       closeOnSelect: true,
     },
-    workspace: {
+    "create-workspace": {
       id: "create-workspace",
       type: "action",
       group: "create",
