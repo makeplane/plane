@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { LinkIcon, Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { EUserPermissions, type IModule, type TModuleStatus } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
