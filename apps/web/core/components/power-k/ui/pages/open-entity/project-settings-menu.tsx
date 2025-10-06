@@ -31,6 +31,10 @@ export const PowerKOpenProjectSettingsMenu: React.FC<Props> = observer((props) =
         context.params.projectId?.toString()
       )
   );
+  const settingsListWithIcons = settingsList.map((setting) => ({
+    ...setting,
+    icon: setting.Icon,
+  }));
 
-  return <PowerKSettingsMenu settings={settingsList} onSelect={(setting) => handleSelect(setting.href)} />;
+  return <PowerKSettingsMenu settings={settingsListWithIcons} onSelect={(setting) => handleSelect(setting.href)} />;
 });

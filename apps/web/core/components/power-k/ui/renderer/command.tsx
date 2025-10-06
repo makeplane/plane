@@ -7,8 +7,8 @@ import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../../core/types";
 import { PowerKModalCommandItem } from "../modal/command-item";
-import { CONTEXT_ENTITY_MAP } from "../pages/context-based-actions";
-import { POWER_K_GROUP_PRIORITY, POWER_K_GROUP_TITLES } from "./shared";
+import { CONTEXT_ENTITY_MAP } from "../pages/context-based";
+import { POWER_K_GROUP_PRIORITY, POWER_K_GROUP_I18N_TITLES } from "./shared";
 
 type Props = {
   commands: TPowerKCommandConfig[];
@@ -48,7 +48,7 @@ export const CommandRenderer: React.FC<Props> = (props) => {
         const title =
           groupKey === "contextual" && activeContext
             ? t(CONTEXT_ENTITY_MAP[activeContext].i18n_title)
-            : POWER_K_GROUP_TITLES[groupKey];
+            : t(POWER_K_GROUP_I18N_TITLES[groupKey]);
 
         return (
           <Command.Group key={groupKey} heading={title}>

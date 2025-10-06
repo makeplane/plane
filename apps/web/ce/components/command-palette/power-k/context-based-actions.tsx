@@ -1,5 +1,5 @@
 // components
-import type { ContextBasedActionsProps, TContextEntityMap } from "@/components/power-k/ui/pages/context-based-actions";
+import type { ContextBasedActionsProps, TContextEntityMap } from "@/components/power-k/ui/pages/context-based";
 // local imports
 import type { TPowerKContextTypeExtended } from "./types";
 

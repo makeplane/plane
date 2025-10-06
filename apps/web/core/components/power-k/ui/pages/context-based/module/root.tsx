@@ -16,7 +16,7 @@ type Props = {
   handleSelection: (data: unknown) => void;
 };
 
-export const PowerKModuleActionsMenu: React.FC<Props> = observer((props) => {
+export const PowerKModuleContextBasedPages: React.FC<Props> = observer((props) => {
   const { activePage, handleSelection } = props;
   // navigation
   const { moduleId } = useParams();

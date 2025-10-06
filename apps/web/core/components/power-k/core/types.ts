@@ -46,9 +46,22 @@ export type TPowerKPageType =
   // module context based actions
   | "update-module-member"
   | "update-module-status"
+  // preferences
+  | "update-theme"
+  | "update-timezone"
+  | "update-start-of-week"
+  | "update-language"
   | TPowerKPageTypeExtended;
 
-export type TPowerKCommandGroup = "contextual" | "navigation" | "create" | "general" | "settings" | "help" | "account";
+export type TPowerKCommandGroup =
+  | "contextual"
+  | "navigation"
+  | "create"
+  | "general"
+  | "settings"
+  | "help"
+  | "account"
+  | "preferences";
 
 export type TPowerKCommandConfig = {
   // Identity

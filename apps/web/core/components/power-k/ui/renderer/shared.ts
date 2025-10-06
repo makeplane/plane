@@ -7,15 +7,17 @@ export const POWER_K_GROUP_PRIORITY: Record<TPowerKCommandGroup, number> = {
   general: 7,
   settings: 8,
   account: 9,
-  help: 10,
+  preferences: 10,
+  help: 11,
 };
 
-export const POWER_K_GROUP_TITLES: Record<TPowerKCommandGroup, string> = {
-  contextual: "Contextual",
-  navigation: "Navigate",
-  create: "Create",
-  general: "General",
-  settings: "Settings",
-  help: "Help",
-  account: "Account",
+export const POWER_K_GROUP_I18N_TITLES: Record<TPowerKCommandGroup, string> = {
+  contextual: "power_k.group_titles.contextual",
+  navigation: "power_k.group_titles.navigation",
+  create: "power_k.group_titles.create",
+  general: "power_k.group_titles.general",
+  settings: "power_k.group_titles.settings",
+  help: "power_k.group_titles.help",
+  account: "power_k.group_titles.account",
+  preferences: "power_k.group_titles.preferences",
 };

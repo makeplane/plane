@@ -5,9 +5,9 @@ import { substringMatch } from "@plane/utils";
 import type { TPowerKCommandConfig, TPowerKCommandGroup } from "@/components/power-k/core/types";
 import { KeySequenceBadge, ShortcutBadge } from "@/components/power-k/ui/modal/command-item-shortcut-badge";
 // types
-import { CONTEXT_ENTITY_MAP } from "@/components/power-k/ui/pages/context-based-actions";
+import { CONTEXT_ENTITY_MAP } from "@/components/power-k/ui/pages/context-based";
 // local imports
-import { POWER_K_GROUP_PRIORITY, POWER_K_GROUP_TITLES } from "./shared";
+import { POWER_K_GROUP_I18N_TITLES, POWER_K_GROUP_PRIORITY } from "./shared";
 
 type Props = {
   searchQuery: string;
@@ -56,7 +56,7 @@ export const ShortcutRenderer: React.FC<Props> = (props) => {
       if (!group) {
         group = {
           key: groupKey,
-          title: POWER_K_GROUP_TITLES[groupKey as TPowerKCommandGroup],
+          title: t(POWER_K_GROUP_I18N_TITLES[groupKey as TPowerKCommandGroup]),
           priority: POWER_K_GROUP_PRIORITY[groupKey as TPowerKCommandGroup],
           commands: [],
         };
