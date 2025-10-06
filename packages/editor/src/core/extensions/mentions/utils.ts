@@ -31,6 +31,12 @@ export const renderMentionsDropdown =
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
         element.style.zIndex = "100";
+
+        // Add event handlers to prevent modal closing
+        element.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+
         document.body.appendChild(element);
         updateFloatingUIFloaterPosition(props.editor, element);
       },
