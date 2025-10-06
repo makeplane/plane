@@ -3,13 +3,13 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // plane types
-import { StateGroupIcon } from "@plane/propel/icons";
+import { useParams } from "next/navigation";
 import type { TIssue } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
-import { PowerKModalCommandItem } from "../../../modal/command-item";
+import { PowerKProjectStatesMenuItems } from "@/plane-web/components/command-palette/power-k/pages/context-based/work-item/state-menu-item";
 
 type Props = {
   handleSelect: (stateId: string) => void;
@@ -17,7 +17,9 @@ type Props = {
 };
 
 export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
-  const { handleSelect, workItemDetails } = props;
+  const { workItemDetails } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectStateIds, getStateById } = useProjectState();
   // derived values
@@ -29,15 +31,13 @@ export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
 
   return (
     <Command.Group>
-      {filteredProjectStates.map((state) => (
-        <PowerKModalCommandItem
-          key={state.id}
-          iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />}
-          label={state.name}
-          isSelected={state.id === workItemDetails.state_id}
-          onSelect={() => handleSelect(state.id)}
-        />
-      ))}
+      <PowerKProjectStatesMenuItems
+        {...props}
+        projectId={workItemDetails.project_id ?? undefined}
+        selectedStateId={workItemDetails.state_id ?? undefined}
+        states={filteredProjectStates}
+        workspaceSlug={workspaceSlug?.toString()}
+      />
     </Command.Group>
   );
 });
