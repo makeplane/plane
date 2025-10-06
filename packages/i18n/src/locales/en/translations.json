@@ -2462,6 +2462,15 @@
         "copy_url": "Copy URL"
       }
     },
+    "creation_actions": {
+      "create_work_item": "New work item",
+      "create_page": "New page",
+      "create_view": "New view",
+      "create_cycle": "New cycle",
+      "create_module": "New module",
+      "create_project": "New project",
+      "create_workspace": "New workspace"
+    },
     "account_actions": {
       "sign_out": "Sign out",
       "workspace_invites": "Workspace invites"
