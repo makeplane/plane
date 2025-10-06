@@ -1,172 +1,4 @@
 {
-  "sidebar": {
-    "projects": "專案",
-    "pages": "頁面",
-    "new_work_item": "新工作項目",
-    "home": "首頁",
-    "your_work": "你的工作",
-    "inbox": "收件匣",
-    "workspace": "工作區",
-    "views": "視圖",
-    "analytics": "分析",
-    "work_items": "工作項目",
-    "cycles": "週期",
-    "modules": "模組",
-    "intake": "接收",
-    "drafts": "草稿",
-    "favorites": "收藏",
-    "pro": "專業版",
-    "upgrade": "升級"
-  },
-  "auth": {
-    "common": {
-      "email": {
-        "label": "電子郵件",
-        "placeholder": "name@company.com",
-        "errors": {
-          "required": "必須填寫電子郵件",
-          "invalid": "電子郵件無效"
-        }
-      },
-      "password": {
-        "label": "密碼",
-        "set_password": "設定密碼",
-        "placeholder": "輸入密碼",
-        "confirm_password": {
-          "label": "確認密碼",
-          "placeholder": "確認密碼"
-        },
-        "current_password": {
-          "label": "目前密碼"
-        },
-        "new_password": {
-          "label": "新密碼",
-          "placeholder": "輸入新密碼"
-        },
-        "change_password": {
-          "label": {
-            "default": "更改密碼",
-            "submitting": "正在更改密碼"
-          }
-        },
-        "errors": {
-          "match": "密碼不匹配",
-          "empty": "請輸入密碼",
-          "length": "密碼長度應超過8個字符",
-          "strength": {
-            "weak": "密碼強度弱",
-            "strong": "密碼強度強"
-          }
-        },
-        "submit": "設定密碼",
-        "toast": {
-          "change_password": {
-            "success": {
-              "title": "成功！",
-              "message": "密碼已成功更改。"
-            },
-            "error": {
-              "title": "錯誤！",
-              "message": "出現問題。請重試。"
-            }
-          }
-        }
-      },
-      "unique_code": {
-        "label": "唯一代碼",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "貼上傳送到您電子郵件的代碼",
-        "requesting_new_code": "正在請求新代碼",
-        "sending_code": "正在發送代碼"
-      },
-      "already_have_an_account": "已有帳戶？",
-      "login": "登入",
-      "create_account": "創建帳戶",
-      "new_to_plane": "初次使用Plane？",
-      "back_to_sign_in": "返回登入",
-      "resend_in": "{seconds}秒後重新發送",
-      "sign_in_with_unique_code": "使用唯一代碼登入",
-      "forgot_password": "忘記密碼？"
-    },
-    "sign_up": {
-      "header": {
-        "label": "創建帳戶開始與團隊一起管理工作。",
-        "step": {
-          "email": {
-            "header": "註冊",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "註冊",
-            "sub_header": "使用電子郵件-密碼組合註冊。"
-          },
-          "unique_code": {
-            "header": "註冊",
-            "sub_header": "使用發送到上述電子郵件的唯一代碼註冊。"
-          }
-        }
-      },
-      "errors": {
-        "password": {
-          "strength": "請設定強密碼以繼續"
-        }
-      }
-    },
-    "sign_in": {
-      "header": {
-        "label": "登入開始與團隊一起管理工作。",
-        "step": {
-          "email": {
-            "header": "登入或註冊",
-            "sub_header": ""
-          },
-          "password": {
-            "header": "登入或註冊",
-            "sub_header": "使用您的電子郵件-密碼組合登入。"
-          },
-          "unique_code": {
-            "header": "登入或註冊",
-            "sub_header": "使用發送到上述電子郵件地址的唯一代碼登入。"
-          }
-        }
-      }
-    },
-    "forgot_password": {
-      "title": "重設密碼",
-      "description": "輸入您的用戶帳戶已驗證的電子郵件地址，我們將向您發送密碼重設連結。",
-      "email_sent": "我們已將重設連結發送到您的電子郵件地址",
-      "send_reset_link": "發送重設連結",
-      "errors": {
-        "smtp_not_enabled": "我們發現您的管理員尚未啟用SMTP，我們將無法發送密碼重設連結"
-      },
-      "toast": {
-        "success": {
-          "title": "郵件已發送",
-          "message": "請查看您的收件箱以獲取重設密碼的連結。如果幾分鐘內未收到，請檢查垃圾郵件文件夾。"
-        },
-        "error": {
-          "title": "錯誤！",
-          "message": "出現問題。請重試。"
-        }
-      }
-    },
-    "reset_password": {
-      "title": "設定新密碼",
-      "description": "使用強密碼保護您的帳戶"
-    },
-    "set_password": {
-      "title": "保護您的帳戶",
-      "description": "設定密碼有助於您安全登入"
-    },
-    "sign_out": {
-      "toast": {
-        "error": {
-          "title": "錯誤！",
-          "message": "登出失敗。請重試。"
-        }
-      }
-    }
-  },
   "submit": "送出",
   "cancel": "取消",
   "loading": "載入中",
@@ -191,7 +23,7 @@
   "adding": "新增中",
   "remove": "移除",
   "add_new": "新增",
-  "remove_selected": "移除已選取項目",
+  "remove_selected": "移除已選取內容",
   "first_name": "名字",
   "last_name": "姓氏",
   "email": "電子郵件",
@@ -211,7 +43,8 @@
   "your_account": "您的帳號",
   "security": "安全性",
   "activity": "活動",
-  "appearance": "外觀",
+  "preferences": "偏好設定",
+  "language_and_time": "語言與時間",
   "notifications": "通知",
   "workspaces": "工作區",
   "create_workspace": "建立工作區",
@@ -224,6 +57,10 @@
   "something_went_wrong_please_try_again": "發生錯誤，請再試一次。",
   "load_more": "載入更多",
   "select_or_customize_your_interface_color_scheme": "選擇或自訂您的介面配色方案。",
+  "timezone_setting": "目前的時區設定。",
+  "language_setting": "選擇介面使用的語言。",
+  "settings_moved_to_preferences": "時區與語言設定已移到偏好設定。",
+  "go_to_preferences": "前往偏好設定",
   "theme": "主題",
   "system_preference": "系統偏好設定",
   "light": "淺色",
@@ -286,7 +123,7 @@
   "analytics": "分析",
   "workspace_invites": "工作區邀請",
   "enter_god_mode": "進入管理員模式",
-  "workspace_logo": "工作區標誌",
+  "workspace_logo": "工作區 Logo",
   "new_issue": "新增工作事項",
   "your_work": "您的工作",
   "drafts": "草稿",
@@ -504,6 +341,8 @@
   "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
   "edited": "已編輯",
   "bot": "機器人",
+  "settings_description": "集中管理帳號、工作區與專案的偏好設定。切換分頁即可輕鬆設定。",
+  "back_to_workspace": "回到工作區",
   "project_view": {
     "sort_by": {
       "created_at": "建立時間",
@@ -587,7 +426,7 @@
         "project": "一旦您造訪專案，您的最近專案就會出現在這裡。",
         "page": "一旦您造訪頁面，您的最近頁面就會出現在這裡。",
         "issue": "一旦您造訪工作事項，您的最近工作事項就會出現在這裡。",
-        "default": "您還沒有任何最近項目。"
+        "default": "您還沒有任何最近紀錄。"
       },
       "filters": {
         "all": "所有",
@@ -639,6 +478,9 @@
     "modules": "模組",
     "labels": "標籤",
     "label": "標籤",
+    "admins": "管理員",
+    "users": "使用者",
+    "guests": "訪客",
     "assignees": "指派對象",
     "assignee": "指派對象",
     "created_by": "建立者",
@@ -740,7 +582,7 @@
     "progress": "進度",
     "optional": "選填",
     "join": "加入",
-    "go_back": "返回",
+    "go_back": "回上一頁",
     "continue": "繼續",
     "resend": "重新傳送",
     "relations": "關聯",
@@ -775,10 +617,20 @@
     "quarter": "季",
     "press_for_commands": "按 '/' 以使用指令",
     "click_to_add_description": "點選以新增描述",
+    "on_track": "進展順利",
+    "off_track": "偏離軌道",
+    "at_risk": "有風險",
+    "timeline": "時間軸",
+    "completion": "完成",
+    "upcoming": "即將發生",
+    "completed": "已完成",
+    "in_progress": "進行中",
+    "planned": "已計劃",
+    "paused": "暫停",
     "search": {
       "label": "搜尋",
       "placeholder": "輸入以搜尋",
-      "no_matches_found": "找不到符合的項目",
+      "no_matches_found": "找不到符合的內容",
       "no_matching_results": "沒有符合的結果"
     },
     "actions": {
@@ -795,7 +647,8 @@
       "clear_sorting": "清除排序",
       "show_weekends": "顯示週末",
       "enable": "啟用",
-      "disable": "停用"
+      "disable": "停用",
+      "copy_markdown": "複製 Markdown"
     },
     "name": "名稱",
     "discard": "捨棄",
@@ -816,7 +669,7 @@
     "beta": "測試版",
     "or": "或",
     "next": "下一步",
-    "back": "返回",
+    "back": "回上一步",
     "cancelling": "取消中",
     "configuring": "設定中",
     "clear": "清除",
@@ -868,22 +721,10 @@
     "pending": "待處理",
     "invite": "邀請",
     "view": "檢視",
-    "deactivated_user": "已停用用戶",
+    "deactivated_user": "已停用使用者",
     "apply": "應用",
     "applying": "應用中",
-    "users": "使用者",
-    "admins": "管理員",
-    "guests": "訪客",
-    "on_track": "進展順利",
-    "off_track": "偏離軌道",
-    "timeline": "時間軸",
-    "completion": "完成",
-    "upcoming": "即將發生",
-    "completed": "已完成",
-    "in_progress": "進行中",
-    "planned": "已計劃",
-    "paused": "暫停",
-    "at_risk": "有風險",
+    "overview": "總覽",
     "no_of": "{entity} 的數量",
     "resolved": "已解決"
   },
@@ -1142,12 +983,12 @@
     "empty_state": {
       "sub_list_filters": {
         "title": "您沒有符合您應用過的過濾器的子工作事項。",
-        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "description": "要檢視所有子工作事項，請清除所有應用過的過濾器。",
         "action": "清除過濾器"
       },
       "list_filters": {
         "title": "您沒有符合您應用過的過濾器的工作事項。",
-        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "description": "要檢視所有工作事項，請清除所有應用過的過濾器。",
         "action": "清除過濾器"
       }
     }
@@ -1301,7 +1142,7 @@
     "empty_state": {
       "general": {
         "title": "您的專案、活動和指標概覽",
-        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助他們團隊進展的項目。",
+        "description": "歡迎使用 Plane，我們很高興您在這裡。建立您的第一個專案並追蹤您的工作事項，這個頁面將會變成一個協助您進展的空間。管理員也會看到協助團隊前進的資訊。",
         "primary_button": {
           "text": "建立您的第一個專案",
           "comic": {
@@ -1342,49 +1183,43 @@
       "scope_and_demand": "範圍與需求",
       "custom": "自訂分析"
     },
+    "total": "{entity}總數",
+    "started_work_items": "已開始的{entity}",
+    "backlog_work_items": "待辦的{entity}",
+    "un_started_work_items": "未開始的{entity}",
+    "completed_work_items": "已完成的{entity}",
+    "project_insights": "專案洞察",
+    "summary_of_projects": "專案摘要",
+    "all_projects": "所有專案",
+    "trend_on_charts": "圖表趨勢",
+    "active_projects": "啟用中的專案",
+    "customized_insights": "自訂化洞察",
+    "created_vs_resolved": "已建立 vs 已解決",
     "empty_state": {
-      "customized_insights": {
-        "description": "指派給您的工作項目將依狀態分類顯示在此處。",
-        "title": "尚無資料"
-      },
-      "created_vs_resolved": {
-        "description": "隨著時間推移所建立與解決的工作項目將顯示在此處。",
-        "title": "尚無資料"
-      },
       "project_insights": {
         "title": "尚無資料",
-        "description": "指派給您的工作項目將依狀態分類顯示在此處。"
+        "description": "指派給您的工作事項將依狀態分類顯示在此處。"
+      },
+      "created_vs_resolved": {
+        "title": "尚無資料",
+        "description": "隨著時間推移所建立與解決的工作事項將顯示在此處。"
+      },
+      "customized_insights": {
+        "title": "尚無資料",
+        "description": "指派給您的工作事項將依狀態分類顯示在此處。"
       },
       "general": {
         "title": "追蹤進度、工作量和分配。發現趨勢，消除障礙，加速工作進展",
-        "description": "查看範圍與需求、估算和範圍蔓延。獲取團隊成員和團隊的績效，確保您的專案按時運行。",
+        "description": "檢視範圍與需求、估算與範圍蔓延，掌握團隊成員與團隊的績效，讓專案能按時完成。",
         "primary_button": {
           "text": "開始您的第一個專案",
           "comic": {
             "title": "分析功能在週期 + 模組中效果最佳",
-            "description": "首先，將您的問題在週期中進行時間限制，如果可能的話，將跨越多個週期的問題分組到模組中。在左側導覽中查看這兩個功能。"
+            "description": "首先，將您的問題在週期中進行時間限制，如果可能的話，將跨越多個週期的問題分組到模組中。在左側導覽中檢視這兩個功能。"
           }
         }
       }
-    },
-    "created_vs_resolved": "已建立 vs 已解決",
-    "customized_insights": "自訂化洞察",
-    "backlog_work_items": "待辦的{entity}",
-    "active_projects": "啟用中的專案",
-    "trend_on_charts": "圖表趨勢",
-    "all_projects": "所有專案",
-    "summary_of_projects": "專案摘要",
-    "project_insights": "專案洞察",
-    "started_work_items": "已開始的{entity}",
-    "total_work_items": "{entity}總數",
-    "total_projects": "專案總數",
-    "total_admins": "管理員總數",
-    "total_users": "使用者總數",
-    "total_intake": "總收入",
-    "un_started_work_items": "未開始的{entity}",
-    "total_guests": "訪客總數",
-    "completed_work_items": "已完成的{entity}",
-    "total": "{entity}總數"
+    }
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -1494,6 +1329,28 @@
       }
     }
   },
+  "account_settings": {
+    "profile": {},
+    "preferences": {
+      "heading": "偏好設定",
+      "description": "依照工作習慣自訂 Plane 的使用體驗"
+    },
+    "notifications": {
+      "heading": "電子郵件通知",
+      "description": "持續掌握已訂閱的工作事項動態，啟用後即可收到通知。"
+    },
+    "security": {
+      "heading": "安全性"
+    },
+    "api_tokens": {
+      "heading": "個人存取權杖",
+      "description": "產生安全的 API 權杖，整合 Plane 資料到外部系統與應用服務。"
+    },
+    "activity": {
+      "heading": "活動",
+      "description": "追蹤您在所有專案與工作事項的最新動態。"
+    }
+  },
   "workspace_settings": {
     "label": "工作區設定",
     "page_label": "{workspace} - 一般設定",
@@ -1503,8 +1360,8 @@
     "settings": {
       "general": {
         "title": "一般",
-        "upload_logo": "上傳標誌",
-        "edit_logo": "編輯標誌",
+        "upload_logo": "上傳 Logo",
+        "edit_logo": "編輯 Logo",
         "name": "工作區名稱",
         "company_size": "公司規模",
         "url": "工作區網址",
@@ -1560,16 +1417,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "計費與方案",
+        "description": "選擇合適的方案、管理訂閱，並能隨需求成長輕鬆升級。",
         "title": "計費和方案",
         "current_plan": "目前方案",
         "free_plan": "您目前使用的是免費方案",
         "view_plans": "檢視方案"
       },
       "exports": {
+        "heading": "匯出",
+        "description": "將專案資料匯出為多種格式，並在此存取匯出紀錄與下載連結。",
         "title": "匯出",
         "exporting": "匯出中",
         "previous_exports": "先前的匯出",
         "export_separate_files": "將資料匯出為個別檔案",
+        "exporting_projects": "匯出專案",
+        "format": "格式",
         "modal": {
           "title": "匯出至",
           "toasts": {
@@ -1585,6 +1448,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "當專案發生事件時，自動通知外部服務。",
         "title": "Webhook",
         "add_webhook": "新增 Webhook",
         "modal": {
@@ -1708,8 +1573,9 @@
       "profile": "個人資料",
       "security": "安全性",
       "activity": "活動",
-      "appearance": "外觀",
-      "notifications": "通知"
+      "preferences": "偏好設定",
+      "notifications": "通知",
+      "api-tokens": "個人存取權杖"
     },
     "tabs": {
       "summary": "摘要",
@@ -1771,6 +1637,8 @@
       }
     },
     "states": {
+      "heading": "狀態",
+      "description": "定義並自訂工作流程狀態，以掌握工作事項進度。",
       "describe_this_state_for_your_members": "為您的成員描述此狀態。",
       "empty_state": {
         "title": "{groupKey} 群組沒有可用的狀態",
@@ -1778,6 +1646,8 @@
       }
     },
     "labels": {
+      "heading": "標籤",
+      "description": "建立自訂標籤以分類並整理工作事項。",
       "label_title": "標籤標題",
       "label_title_is_required": "標籤標題為必填",
       "label_max_char": "標籤名稱不應超過 255 個字元",
@@ -1786,9 +1656,11 @@
       }
     },
     "estimates": {
+      "heading": "預估",
+      "description": "設定預估系統，追蹤並溝通每個工作事項所需的工作量。",
       "label": "預估",
       "title": "為我的專案啟用預估",
-      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "enable_description": "協助團隊溝通工作複雜度與負載。",
       "no_estimate": "無預估",
       "new": "新估算系統",
       "create": {
@@ -1839,13 +1711,13 @@
         }
       },
       "validation": {
-        "min_length": "預估必須大於0。",
+        "min_length": "預估必須大於 0。",
         "unable_to_process": "我們無法處理你的請求，請重試。",
         "numeric": "預估必須是數值。",
         "character": "預估必須是字元值。",
         "empty": "預估值不能為空。",
         "already_exists": "預估值已存在。",
-        "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
+        "unsaved_changes": "你有未儲存的變更。請先儲存，再按下「完成」。",
         "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。"
       },
       "systems": {
@@ -1858,7 +1730,7 @@
         },
         "categories": {
           "label": "類別",
-          "t_shirt_sizes": "T恤尺寸",
+          "t_shirt_sizes": "T 恤尺寸",
           "easy_to_hard": "簡單到困難",
           "custom": "自訂"
         },
@@ -1870,15 +1742,17 @@
     },
     "automations": {
       "label": "自動化",
+      "heading": "自動化",
+      "description": "設定自動化動作，讓專案流程更順暢並減少手動作業。",
       "auto-archive": {
-        "title": "自動封存已關閉的工作項目",
-        "description": "Plane將自動封存已完成或已取消的工作項目。",
-        "duration": "自動封存已關閉的工作項目"
+        "title": "自動封存已關閉的工作事項",
+        "description": "Plane 會自動封存已完成或已取消的工作事項。",
+        "duration": "自動封存已關閉的工作事項"
       },
       "auto-close": {
-        "title": "自動關閉工作項目",
-        "description": "Plane將自動關閉未完成或未取消的工作項目。",
-        "duration": "自動關閉非活動工作項目",
+        "title": "自動關閉工作事項",
+        "description": "Plane 會自動關閉未完成或未取消的工作事項。",
+        "duration": "自動關閉非活動工作事項",
         "auto_close_status": "自動關閉狀態"
       }
     },
@@ -2023,7 +1897,7 @@
     "empty_state": {
       "no_issues": {
         "title": "建立工作事項並指派給某人，甚至是您自己",
-        "description": "將工作事項視為工作、任務、工作或待辦事項。我們喜歡這樣。工作事項及其子工作事項通常是指派給團隊成員的以時間為基礎的可執行項目。您的團隊建立、指派和完成工作事項，以推動您的專案朝向其目標前進。",
+        "description": "將工作事項視為職務、任務、工作或待辦目標。我們喜歡這樣。工作事項及其子工作事項通常是指派給團隊成員、以時間為基礎的可執行事項。團隊建立、指派並完成工作事項，推動專案朝目標前進。",
         "primary_button": {
           "text": "建立您的第一個工作事項",
           "comic": {
@@ -2499,7 +2373,7 @@
         "label": "大綱",
         "empty_state": {
           "title": "缺少標題",
-          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+          "description": "讓我們在這個頁面新增一些標題，就能在這裡看到它們。"
         }
       },
       "info": {
@@ -2524,12 +2398,19 @@
         "download_button": "下載",
         "empty_state": {
           "title": "缺少圖片",
-          "description": "添加圖片以在這裡查看它們。"
+          "description": "新增圖片後就會在這裡顯示。"
         }
       }
     },
-    "open_button": "打開導航面板",
-    "close_button": "關閉導航面板",
-    "outline_floating_button": "打開大綱"
+    "open_button": "開啟導覽面板",
+    "close_button": "關閉導覽面板",
+    "outline_floating_button": "開啟大綱"
+  },
+  "project_members": {
+    "full_name": "全名",
+    "display_name": "顯示名稱",
+    "email": "電子郵件",
+    "joining_date": "加入日期",
+    "role": "角色"
   }
 }
