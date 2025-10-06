@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 // local imports
 import { TPowerKCommandConfig, TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalDefaultPage } from "./default";
-import { PowerKOpenEntityActions } from "./open-entity-actions/root";
+import { PowerKOpenEntityPages } from "./open-entity/root";
+import { PowerKAccountPreferencesPages } from "./preferences";
 
 type Props = {
   activePage: TPowerKPageType | null;
@@ -22,9 +23,10 @@ export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
     return <PowerKModalDefaultPage context={context} onCommandSelect={onCommandSelect} />;
   }
 
-  if (activePage.startsWith("open-")) {
-    return <PowerKOpenEntityActions activePage={activePage} context={context} handleSelection={onPageDataSelect} />;
-  }
-
-  return null;
+  return (
+    <>
+      <PowerKOpenEntityPages activePage={activePage} context={context} handleSelection={onPageDataSelect} />
+      <PowerKAccountPreferencesPages activePage={activePage} handleSelection={onPageDataSelect} />
+    </>
+  );
 });

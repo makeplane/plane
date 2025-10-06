@@ -7,6 +7,7 @@ import { PowerKMenuBuilder } from "./builder";
 
 type TSettingItem = {
   key: string;
+  icon: React.ComponentType<{ className?: string }>;
   i18n_label: string;
   href: string;
 };
@@ -18,9 +19,9 @@ type Props = {
 
 export const PowerKSettingsMenu: React.FC<Props> = observer(({ settings, onSelect }) => (
   <PowerKMenuBuilder
-    heading="Settings"
     items={settings}
     getKey={(setting) => setting.key}
+    getIcon={(setting) => setting.icon}
     getValue={(setting) => setting.i18n_label}
     getLabel={(setting) => setting.i18n_label}
     onSelect={onSelect}

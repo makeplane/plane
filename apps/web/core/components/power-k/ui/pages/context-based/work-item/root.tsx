@@ -23,7 +23,7 @@ type Props = {
   handleSelection: (data: unknown) => void;
 };
 
-export const PowerKWorkItemActionsMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemContextBasedPages: React.FC<Props> = observer((props) => {
   const { activePage, handleSelection } = props;
   // navigation
   const { workItem: entityIdentifier } = useParams();

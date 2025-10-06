@@ -1,5 +1,6 @@
 "use client";
 
+import { WORKSPACE_SETTINGS_ICONS } from "app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/sidebar";
 import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel, WORKSPACE_SETTINGS } from "@plane/constants";
@@ -26,6 +27,10 @@ export const PowerKOpenWorkspaceSettingsMenu: React.FC<Props> = observer((props)
       shouldRenderSettingLink(context.params.workspaceSlug?.toString(), setting.key) &&
       allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, context.params.workspaceSlug?.toString())
   );
+  const settingsListWithIcons = settingsList.map((setting) => ({
+    ...setting,
+    icon: WORKSPACE_SETTINGS_ICONS[setting.key as keyof typeof WORKSPACE_SETTINGS_ICONS],
+  }));
 
-  return <PowerKSettingsMenu settings={settingsList} onSelect={(setting) => handleSelect(setting.href)} />;
+  return <PowerKSettingsMenu settings={settingsListWithIcons} onSelect={(setting) => handleSelect(setting.href)} />;
 });

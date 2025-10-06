@@ -1,9 +1,9 @@
-import { Dot, X } from "lucide-react";
+import { X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKContextType } from "../../core/types";
-import { CONTEXT_ENTITY_MAP } from "../pages/context-based-actions";
+import { CONTEXT_ENTITY_MAP } from "../pages/context-based";
 
 type Props = {
   activeContext: TPowerKContextType | null;

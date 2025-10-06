@@ -9,7 +9,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import { PowerKModalPagesList } from "../pages";
-import { PowerKContextBasedActions } from "../pages/context-based-actions";
+import { PowerKContextBasedPagesList } from "../pages/context-based";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
 import { PowerKModalSearchMenu } from "./search-menu";
@@ -157,20 +157,17 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                     handleClearContext={() => context.setShouldShowContextBasedActions(false)}
                     activePage={activePage}
                   />
-                  <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll">
+                  <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll outline-none">
                     <PowerKModalSearchMenu
                       activePage={activePage}
                       isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
                       searchTerm={searchTerm}
                       updateSearchTerm={setSearchTerm}
                     />
-                    <PowerKContextBasedActions
+                    <PowerKContextBasedPagesList
                       activeContext={context.activeContext}
                       activePage={activePage}
-                      handleClose={context.closePalette}
                       handleSelection={handlePageDataSelection}
-                      handleUpdateSearchTerm={setSearchTerm}
-                      handleUpdatePage={context.setActivePage}
                     />
                     <PowerKModalPagesList
                       activePage={activePage}

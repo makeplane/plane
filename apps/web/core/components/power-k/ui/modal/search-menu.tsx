@@ -43,10 +43,10 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!workspaceSlug) return;
+    if (activePage || !workspaceSlug) return;
     setIsSearching(true);
 
-    if (debouncedSearchTerm && !activePage) {
+    if (debouncedSearchTerm) {
       workspaceService
         .searchWorkspace(workspaceSlug.toString(), {
           ...(projectId ? { project_id: projectId.toString() } : {}),
@@ -67,6 +67,8 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
       setIsSearching(false);
     }
   }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, activePage]);
+
+  if (activePage) return null;
 
   return (
     <>
@@ -105,7 +107,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
         </Command.Group>
       )}
 
-      {!activePage && searchTerm.trim() !== "" && (
+      {searchTerm.trim() !== "" && (
         <PowerKModalSearchResults closePalette={() => toggleCommandPaletteModal(false)} results={results} />
       )}
     </>

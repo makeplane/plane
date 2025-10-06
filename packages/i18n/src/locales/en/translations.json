@@ -2466,6 +2466,12 @@
       "sign_out": "Sign out",
       "workspace_invites": "Workspace invites"
     },
+    "preferences_actions": {
+      "update_theme": "Change interface theme",
+      "update_timezone": "Change timezone",
+      "update_start_of_week": "Change first day of week",
+      "update_language": "Change interface language"
+    },
     "help_actions": {
       "open_keyboard_shortcuts": "Open keyboard shortcuts",
       "open_plane_documentation": "Open Plane documentation",
@@ -2490,7 +2496,11 @@
       "update_work_item_module": "Add to modules",
       "update_work_item_labels": "Add labels",
       "update_module_member": "Change members",
-      "update_module_status": "Change status"
+      "update_module_status": "Change status",
+      "update_theme": "Change theme",
+      "update_timezone": "Change timezone",
+      "update_start_of_week": "Change first day of week",
+      "update_language": "Change language"
     },
     "search_menu": {
       "no_results": "No results found",
@@ -2498,6 +2508,16 @@
     },
     "footer": {
       "workspace_level": "Workspace level"
+    },
+    "group_titles": {
+      "contextual": "Contextual",
+      "navigation": "Navigate",
+      "create": "Create",
+      "general": "General",
+      "settings": "Settings",
+      "help": "Help",
+      "account": "Account",
+      "preferences": "Preferences"
     }
   }
 }
