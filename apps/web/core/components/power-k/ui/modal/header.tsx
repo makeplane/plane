@@ -24,7 +24,7 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   // derived values
   const placeholder = activePage
-    ? POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder
+    ? t(POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder)
     : t("power_k.page_placeholders.default");
 
   return (

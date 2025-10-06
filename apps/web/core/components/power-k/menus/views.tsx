@@ -2,6 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { Layers } from "lucide-react";
 // plane imports
 import type { IProjectView } from "@plane/types";
 // local imports
@@ -14,9 +15,10 @@ type Props = {
 
 export const PowerKViewsMenu: React.FC<Props> = observer(({ views, onSelect }) => (
   <PowerKMenuBuilder
-    heading="Views"
     items={views}
     getKey={(view) => view.id}
+    getIcon={() => Layers}
+    getValue={(view) => view.name}
     getLabel={(view) => view.name}
     onSelect={onSelect}
     emptyText="No views found"

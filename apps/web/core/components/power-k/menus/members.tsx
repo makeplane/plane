@@ -11,17 +11,18 @@ import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   handleSelect: (assigneeId: string) => void;
+  heading?: string;
   userIds: string[] | undefined;
   value: string[];
 };
 
 export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
-  const { handleSelect, userIds, value } = props;
+  const { handleSelect, heading, userIds, value } = props;
   // store hooks
   const { getUserDetails } = useMember();
 
   return (
-    <>
+    <Command.Group heading={heading}>
       {userIds?.map((memberId) => {
         const memberDetails = getUserDetails(memberId);
         if (!memberDetails) return;
@@ -33,18 +34,18 @@ export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
                 name={memberDetails?.display_name}
                 src={getFileURL(memberDetails?.avatar_url ?? "")}
                 showTooltip={false}
-                className="flex-shrink-0"
+                className="shrink-0"
               />
               {memberDetails?.display_name}
             </div>
             {value.includes(memberId ?? "") && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Check className="size-3" />
               </div>
             )}
           </Command.Item>
         );
       })}
-    </>
+    </Command.Group>
   );
 });

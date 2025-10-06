@@ -14,9 +14,14 @@ type Props = {
 
 export const PowerKLabelsMenu: React.FC<Props> = observer(({ labels, onSelect }) => (
   <PowerKMenuBuilder
-    heading="Labels"
     items={labels}
+    getIconNode={(label) => (
+      <span className="shrink-0 size-3.5 grid place-items-center">
+        <span className="size-2.5 rounded-full" style={{ backgroundColor: label.color }} />
+      </span>
+    )}
     getKey={(label) => label.id}
+    getValue={(label) => label.name}
     getLabel={(label) => label.name}
     onSelect={onSelect}
     emptyText="No labels found"

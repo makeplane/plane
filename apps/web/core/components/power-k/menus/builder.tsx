@@ -2,18 +2,19 @@
 
 import React from "react";
 import { Command } from "cmdk";
-// plane imports
-import { cn } from "@plane/utils";
 // local imports
+import { PowerKModalCommandItem } from "../ui/modal/command-item";
 import { PowerKMenuEmptyState } from "./empty-state";
 
 type Props<T> = {
-  heading: string;
+  heading?: string;
   items: T[];
   onSelect: (item: T) => void;
-  getKey?: (item: T) => string;
-  getLabel: (item: T) => string;
-  renderItem?: (item: T) => React.ReactNode;
+  getIcon?: (item: T) => React.ComponentType<{ className?: string }>;
+  getIconNode?: (item: T) => React.ReactNode;
+  getKey: (item: T) => string;
+  getLabel: (item: T) => React.ReactNode;
+  getValue: (item: T) => string;
   emptyText?: string;
 };
 
@@ -21,9 +22,11 @@ export const PowerKMenuBuilder = <T,>({
   heading,
   items,
   onSelect,
+  getIcon,
+  getIconNode,
   getKey,
   getLabel,
-  renderItem,
+  getValue,
   emptyText,
 }: Props<T>) => {
   if (items.length === 0) return <PowerKMenuEmptyState emptyText={emptyText} />;
@@ -31,14 +34,14 @@ export const PowerKMenuBuilder = <T,>({
   return (
     <Command.Group heading={heading}>
       {items.map((item) => (
-        <Command.Item
-          key={getKey?.(item) ?? getLabel(item)}
-          value={getLabel(item)}
+        <PowerKModalCommandItem
+          key={getKey(item)}
+          icon={getIcon?.(item)}
+          iconNode={getIconNode?.(item)}
+          value={getValue(item)}
+          label={getLabel(item)}
           onSelect={() => onSelect(item)}
-          className={cn("focus:outline-none")}
-        >
-          {renderItem?.(item) ?? getLabel(item)}
-        </Command.Item>
+        />
       ))}
     </Command.Group>
   );

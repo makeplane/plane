@@ -21,6 +21,7 @@ export const PowerKSettingsMenu: React.FC<Props> = observer(({ settings, onSelec
     heading="Settings"
     items={settings}
     getKey={(setting) => setting.key}
+    getValue={(setting) => setting.i18n_label}
     getLabel={(setting) => setting.i18n_label}
     onSelect={onSelect}
     emptyText="No settings found"

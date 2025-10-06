@@ -5,6 +5,7 @@ import { KeySequenceBadge, ShortcutBadge } from "./command-item-shortcut-badge";
 
 type Props = {
   icon?: React.ComponentType<{ className?: string }>;
+  iconNode?: React.ReactNode;
   keySequence?: string;
   label: string | React.ReactNode;
   onSelect: () => void;
@@ -13,12 +14,13 @@ type Props = {
 };
 
 export const PowerKModalCommandItem: React.FC<Props> = (props) => {
-  const { icon: Icon, keySequence, label, onSelect, shortcut, value } = props;
+  const { icon: Icon, iconNode, keySequence, label, onSelect, shortcut, value } = props;
 
   return (
     <Command.Item value={value} onSelect={onSelect} className="focus:outline-none">
       <div className="flex items-center gap-2 text-custom-text-200">
         {Icon && <Icon className="shrink-0 size-3.5" />}
+        {iconNode}
         {label}
       </div>
       {keySequence && <KeySequenceBadge sequence={keySequence} />}
