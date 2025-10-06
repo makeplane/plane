@@ -8,8 +8,9 @@ import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
 
 export type TPowerKModalNoSearchResultsCommandProps = {
-  updateSearchTerm: (value: string) => void;
   context: TPowerKContext;
+  searchTerm: string;
+  updateSearchTerm: (value: string) => void;
 };
 
 export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchResultsCommandProps> = (props) => {

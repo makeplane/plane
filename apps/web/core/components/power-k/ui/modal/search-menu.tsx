@@ -88,7 +88,11 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
 
       {/* Show empty state only when not loading and no results */}
       {!isSearching && resultsCount === 0 && searchTerm.trim() !== "" && debouncedSearchTerm.trim() !== "" && (
-        <PowerKModalNoSearchResultsCommand context={context} updateSearchTerm={updateSearchTerm} />
+        <PowerKModalNoSearchResultsCommand
+          context={context}
+          searchTerm={searchTerm}
+          updateSearchTerm={updateSearchTerm}
+        />
       )}
 
       {searchTerm.trim() !== "" && (
