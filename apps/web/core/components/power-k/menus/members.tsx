@@ -2,12 +2,13 @@
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+// local imports
+import { PowerKModalCommandItem } from "../ui/modal/command-item";
 
 type Props = {
   handleSelect: (assigneeId: string) => void;
@@ -28,22 +29,20 @@ export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
         if (!memberDetails) return;
 
         return (
-          <Command.Item key={memberId} onSelect={() => handleSelect(memberId)} className="focus:outline-none">
-            <div className="flex items-center gap-2">
+          <PowerKModalCommandItem
+            key={memberId}
+            iconNode={
               <Avatar
                 name={memberDetails?.display_name}
                 src={getFileURL(memberDetails?.avatar_url ?? "")}
                 showTooltip={false}
                 className="shrink-0"
               />
-              {memberDetails?.display_name}
-            </div>
-            {value.includes(memberId ?? "") && (
-              <div className="shrink-0">
-                <Check className="size-3" />
-              </div>
-            )}
-          </Command.Item>
+            }
+            isSelected={value.includes(memberId)}
+            label={memberDetails?.display_name}
+            onSelect={() => handleSelect(memberId)}
+          />
         );
       })}
     </Command.Group>

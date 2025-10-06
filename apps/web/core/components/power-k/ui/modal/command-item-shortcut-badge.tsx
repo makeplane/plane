@@ -67,7 +67,7 @@ export const ShortcutBadge = ({ shortcut }: { shortcut: string | undefined }) =>
   const formatted = formatShortcutForDisplay(shortcut);
 
   return (
-    <div className="pointer-events-none inline-flex items-center gap-1 select-none font-medium">
+    <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
       {formatted?.split("").map((char, index) => (
         <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">
@@ -95,7 +95,7 @@ export const KeySequenceBadge = ({ sequence }: { sequence: string | undefined })
   const chars = sequence.split("");
 
   return (
-    <div className="pointer-events-none inline-flex items-center gap-1 select-none font-medium">
+    <div className="shrink-0 pointer-events-none inline-flex items-center gap-1 select-none font-medium">
       {chars.map((char, index) => (
         <React.Fragment key={index}>
           <kbd className="inline-flex h-5 items-center justify-center rounded border border-custom-border-300 bg-custom-background-100 px-1.5 font-mono text-[10px] font-medium text-custom-text-300">

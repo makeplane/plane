@@ -2,7 +2,7 @@
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { Check, Triangle } from "lucide-react";
+import { Triangle } from "lucide-react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import { EEstimateSystem, type TIssue } from "@plane/types";
@@ -10,6 +10,8 @@ import { Spinner } from "@plane/ui";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
 import { useEstimate, useProjectEstimates } from "@/hooks/store/estimates";
+// local imports
+import { PowerKModalCommandItem } from "../../../modal/command-item";
 
 type Props = {
   handleSelect: (estimatePointId: string | null) => void;
@@ -32,42 +34,35 @@ export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => 
   if (!estimatePointIds) return <Spinner />;
 
   return (
-    <>
-      <Command.Item onSelect={() => handleSelect(null)} className="focus:outline-none">
-        <div className="flex items-center space-x-3">
-          <Triangle className="shrink-0 size-3.5" />
-          <p>{t("project_settings.estimates.no_estimate")}</p>
-        </div>
-        <div className="flex-shrink-0">{workItemDetails.estimate_point === null && <Check className="size-3" />}</div>
-      </Command.Item>
+    <Command.Group>
+      <PowerKModalCommandItem
+        icon={Triangle}
+        label={t("project_settings.estimates.no_estimate")}
+        isSelected={workItemDetails.estimate_point === null}
+        onSelect={() => handleSelect(null)}
+      />
       {estimatePointIds.length > 0 ? (
         estimatePointIds.map((estimatePointId) => {
           const estimatePoint = estimatePointById(estimatePointId);
           if (!estimatePoint) return null;
 
           return (
-            <Command.Item
+            <PowerKModalCommandItem
               key={estimatePoint.id}
+              icon={Triangle}
+              label={
+                currentActiveEstimate?.type === EEstimateSystem.TIME
+                  ? convertMinutesToHoursMinutesString(Number(estimatePoint.value))
+                  : estimatePoint.value
+              }
+              isSelected={workItemDetails.estimate_point === estimatePoint.id}
               onSelect={() => handleSelect(estimatePoint.id ?? null)}
-              className="focus:outline-none"
-            >
-              <div className="flex items-center space-x-3">
-                <Triangle className="shrink-0 size-3.5" />
-                <p>
-                  {currentActiveEstimate?.type === EEstimateSystem.TIME
-                    ? convertMinutesToHoursMinutesString(Number(estimatePoint.value))
-                    : estimatePoint.value}
-                </p>
-              </div>
-              <div className="flex-shrink-0">
-                {workItemDetails.estimate_point === estimatePoint.id && <Check className="size-3" />}
-              </div>
-            </Command.Item>
+            />
           );
         })
       ) : (
         <div className="text-center">No estimate found</div>
       )}
-    </>
+    </Command.Group>
   );
 });

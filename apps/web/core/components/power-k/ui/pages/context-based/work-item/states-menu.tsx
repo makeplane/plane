@@ -2,13 +2,14 @@
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane types
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
+// local imports
+import { PowerKModalCommandItem } from "../../../modal/command-item";
 
 type Props = {
   handleSelect: (stateId: string) => void;
@@ -27,16 +28,16 @@ export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
   if (!filteredProjectStates) return <Spinner />;
 
   return (
-    <>
+    <Command.Group>
       {filteredProjectStates.map((state) => (
-        <Command.Item key={state.id} onSelect={() => handleSelect(state.id)} className="focus:outline-none">
-          <div className="flex items-center space-x-3">
-            <StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />
-            <p>{state.name}</p>
-          </div>
-          <div className="flex-shrink-0">{state.id === workItemDetails.state_id && <Check className="size-3" />}</div>
-        </Command.Item>
+        <PowerKModalCommandItem
+          key={state.id}
+          iconNode={<StateGroupIcon stateGroup={state.group} color={state.color} className="shrink-0 size-3.5" />}
+          label={state.name}
+          isSelected={state.id === workItemDetails.state_id}
+          onSelect={() => handleSelect(state.id)}
+        />
       ))}
-    </>
+    </Command.Group>
   );
 });
