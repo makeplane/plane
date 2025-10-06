@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { WorkItemHorizontalStackIllustration } from "./assets/horizontal-stack";
+import { HorizontalStackAssetsMap } from "./assets/horizontal-stack/constant";
+import { WorkItemVerticalStackIllustration } from "./assets/vertical-stack";
+import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
 import type { EmptyStateProps } from "./empty-state";
 import { EmptyState } from "./empty-state";
-import { HorizontalStackAssetsMap } from "./assets/horizontal-stack/constant";
-import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
-import { WorkItemVerticalStackIllustration } from "./assets/vertical-stack";
-import { WorkItemHorizontalStackIllustration } from "./assets/horizontal-stack";
 
 const meta: Meta<EmptyStateProps> = {
   title: "Components/EmptyState",
