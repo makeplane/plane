@@ -2,11 +2,14 @@ import { Command } from "cmdk";
 import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// components
+import type { TPowerKContext } from "@/components/power-k/core/types";
 // plane web imports
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
 
 export type TPowerKModalNoSearchResultsCommandProps = {
   updateSearchTerm: (value: string) => void;
+  context: TPowerKContext;
 };
 
 export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchResultsCommandProps> = (props) => {

@@ -13,20 +13,21 @@ import useDebounce from "@/hooks/use-debounce";
 import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
-import type { TPowerKPageType } from "../../core/types";
+import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalSearchResults } from "./search-results";
 // services init
 const workspaceService = new WorkspaceService();
 
 type Props = {
   activePage: TPowerKPageType | null;
+  context: TPowerKContext;
   isWorkspaceLevel: boolean;
   searchTerm: string;
   updateSearchTerm: (value: string) => void;
 };
 
 export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
-  const { activePage, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
+  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
   // states
   const [resultsCount, setResultsCount] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
@@ -87,7 +88,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
 
       {/* Show empty state only when not loading and no results */}
       {!isSearching && resultsCount === 0 && searchTerm.trim() !== "" && debouncedSearchTerm.trim() !== "" && (
-        <PowerKModalNoSearchResultsCommand updateSearchTerm={updateSearchTerm} />
+        <PowerKModalNoSearchResultsCommand context={context} updateSearchTerm={updateSearchTerm} />
       )}
 
       {searchTerm.trim() !== "" && (

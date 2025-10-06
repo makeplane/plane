@@ -160,6 +160,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                   <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll outline-none">
                     <PowerKModalSearchMenu
                       activePage={activePage}
+                      context={context}
                       isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
                       searchTerm={searchTerm}
                       updateSearchTerm={setSearchTerm}
