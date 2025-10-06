@@ -23,7 +23,7 @@ export const PowerKModuleStatusMenu: React.FC<Props> = observer((props) => {
       {MODULE_STATUS.map((status) => (
         <Command.Item key={status.value} onSelect={() => handleSelect(status.value)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
-            <ModuleStatusIcon status={status.value} height="14px" width="14px" />
+            <ModuleStatusIcon status={status.value} className="shrink-0 size-3.5" />
             <p>{t(status.i18n_label)}</p>
           </div>
           <div className="flex-shrink-0">{status.value === value && <Check className="size-3" />}</div>

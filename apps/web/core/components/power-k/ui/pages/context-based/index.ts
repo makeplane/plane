@@ -3,7 +3,7 @@ export * from "./root";
 // components
 import type { TPowerKContextType } from "@/components/power-k/core/types";
 // plane web imports
-import { CONTEXT_ENTITY_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/context-based-actions";
+import { CONTEXT_ENTITY_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/pages/context-based";
 
 export type TContextEntityMap = {
   i18n_title: string;

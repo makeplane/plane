@@ -1,4 +1,6 @@
 import type { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+// plane web imports
+import { detectExtendedContextFromURL } from "@/plane-web/components/command-palette/power-k/context-detector";
 // local imports
 import type { TPowerKContextType } from "./types";
 
@@ -12,5 +14,5 @@ export const detectContextFromURL = (params: Params): TPowerKContextType | null 
   if (params.moduleId) return "module";
   if (params.pageId) return "page";
 
-  return null;
+  return detectExtendedContextFromURL(params);
 };

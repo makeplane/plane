@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { LinkIcon, Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import { EUserPermissions, type IModule, type TModuleStatus } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -109,7 +109,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "change-module-status",
       i18n_title: "power_k.contextual_actions.module.change_status",
-      icon: DoubleCircleIcon,
+      iconNode: <ModuleStatusIcon status="backlog" className="shrink-0 size-3.5" />,
       group: "contextual",
       contextType: "module",
       type: "change-page",

@@ -56,6 +56,7 @@ export const CommandRenderer: React.FC<Props> = (props) => {
               <PowerKModalCommandItem
                 key={command.id}
                 icon={command.icon}
+                iconNode={command.iconNode}
                 label={t(command.i18n_title)}
                 keySequence={command.keySequence}
                 shortcut={command.shortcut || command.modifierShortcut}

@@ -69,6 +69,7 @@ export type TPowerKCommandConfig = {
   i18n_title: string;
   i18n_description?: string;
   icon?: React.ComponentType<{ className?: string }>;
+  iconNode?: React.ReactNode;
 
   // Shortcuts (ONE of these)
   shortcut?: string; // Single key: "c", "p", "s"
