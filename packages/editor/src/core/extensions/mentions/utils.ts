@@ -31,6 +31,7 @@ export const renderMentionsDropdown =
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
         element.style.zIndex = "100";
+
         document.body.appendChild(element);
         updateFloatingUIFloaterPosition(props.editor, element);
       },

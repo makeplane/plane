@@ -115,6 +115,12 @@ export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps
     <div
       ref={commandListContainer}
       className="z-10 max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
     >
       {isLoading ? (
         <div className="text-center text-sm text-custom-text-400">Loading...</div>
@@ -138,6 +144,7 @@ export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps
                   )}
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     selectItem(sectionIndex, itemIndex);
                   }}
                   onMouseEnter={() =>
