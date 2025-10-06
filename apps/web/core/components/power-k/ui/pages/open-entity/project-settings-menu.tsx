@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
+import { useTranslation } from "@plane/i18n";
 import { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 // hooks
@@ -17,6 +18,8 @@ type Props = {
 
 export const PowerKOpenProjectSettingsMenu: React.FC<Props> = observer((props) => {
   const { context, handleSelect } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -33,6 +36,7 @@ export const PowerKOpenProjectSettingsMenu: React.FC<Props> = observer((props) =
   );
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,
+    label: t(setting.i18n_label),
     icon: setting.Icon,
   }));
 
