@@ -90,7 +90,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
 
   return [
     {
-      id: "add-remove-module-members",
+      id: "add_remove_module_members",
       i18n_title: "power_k.contextual_actions.module.add_remove_members",
       icon: Users,
       group: "contextual",
@@ -107,7 +107,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       closeOnSelect: false,
     },
     {
-      id: "change-module-status",
+      id: "change_module_status",
       i18n_title: "power_k.contextual_actions.module.change_status",
       icon: DoubleCircleIcon,
       group: "contextual",
@@ -124,7 +124,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       closeOnSelect: true,
     },
     {
-      id: "toggle-module-favorite",
+      id: "toggle_module_favorite",
       i18n_title: isFavorite
         ? "power_k.contextual_actions.module.remove_from_favorites"
         : "power_k.contextual_actions.module.add_to_favorites",
@@ -139,7 +139,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       closeOnSelect: true,
     },
     {
-      id: "copy-module-url",
+      id: "copy_module_url",
       i18n_title: "power_k.contextual_actions.module.copy_url",
       icon: LinkIcon,
       group: "contextual",

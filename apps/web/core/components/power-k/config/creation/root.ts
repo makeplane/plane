@@ -7,12 +7,12 @@ export const usePowerKCreationCommands = (context: TPowerKContext): TPowerKComma
   const optionsList: Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> =
     usePowerKCreationCommandsRecord(context);
   return [
-    optionsList["create-work_item"],
-    optionsList["create-page"],
-    optionsList["create-view"],
-    optionsList["create-cycle"],
-    optionsList["create-module"],
-    optionsList["create-project"],
-    optionsList["create-workspace"],
+    optionsList["create_work_item"],
+    optionsList["create_page"],
+    optionsList["create_view"],
+    optionsList["create_cycle"],
+    optionsList["create_module"],
+    optionsList["create_project"],
+    optionsList["create_workspace"],
   ];
 };

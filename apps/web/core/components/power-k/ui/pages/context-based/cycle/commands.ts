@@ -59,7 +59,7 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
 
   return [
     {
-      id: "toggle-cycle-favorite",
+      id: "toggle_cycle_favorite",
       i18n_title: isFavorite
         ? "power_k.contextual_actions.cycle.remove_from_favorites"
         : "power_k.contextual_actions.cycle.add_to_favorites",
@@ -74,7 +74,7 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "copy-cycle-url",
+      id: "copy_cycle_url",
       i18n_title: "power_k.contextual_actions.cycle.copy_url",
       icon: LinkIcon,
       group: "contextual",

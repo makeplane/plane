@@ -17,7 +17,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
 
   return [
     {
-      id: "open-keyboard-shortcuts",
+      id: "open_keyboard_shortcuts",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.open_keyboard_shortcuts",
@@ -28,7 +28,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "open-plane-documentation",
+      id: "open_plane_documentation",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.open_plane_documentation",
@@ -41,7 +41,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "join-discord",
+      id: "join_discord",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.join_discord",
@@ -54,7 +54,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "report-bug",
+      id: "report_bug",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.report_bug",
@@ -67,7 +67,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "chat-with-us",
+      id: "chat_with_us",
       type: "action",
       group: "help",
       i18n_title: "power_k.help_actions.chat_with_us",
