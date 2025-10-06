@@ -151,7 +151,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
 
   return [
     {
-      id: "change-work-item-state",
+      id: "change_work_item_state",
       i18n_title: "power_k.contextual_actions.work_item.change_state",
       icon: DoubleCircleIcon,
       group: "contextual",
@@ -171,7 +171,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "change-work-item-priority",
+      id: "change_work_item_priority",
       i18n_title: "power_k.contextual_actions.work_item.change_priority",
       icon: Signal,
       group: "contextual",
@@ -191,7 +191,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "change-work-item-assignees",
+      id: "change_work_item_assignees",
       i18n_title: "power_k.contextual_actions.work_item.change_assignees",
       icon: Users,
       group: "contextual",
@@ -208,7 +208,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: false,
     },
     {
-      id: "assign-work-item-to-me",
+      id: "assign_work_item_to_me",
       i18n_title: isCurrentUserAssigned
         ? "power_k.contextual_actions.work_item.unassign_from_me"
         : "power_k.contextual_actions.work_item.assign_to_me",
@@ -226,7 +226,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "change-work-item-estimate",
+      id: "change_work_item_estimate",
       i18n_title: "power_k.contextual_actions.work_item.change_estimate",
       icon: Triangle,
       group: "contextual",
@@ -246,7 +246,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "add-work-item-to-cycle",
+      id: "add_work_item_to_cycle",
       i18n_title: "power_k.contextual_actions.work_item.add_to_cycle",
       icon: ContrastIcon,
       group: "contextual",
@@ -286,7 +286,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "add-work-item-to-modules",
+      id: "add_work_item_to_modules",
       i18n_title: "power_k.contextual_actions.work_item.add_to_modules",
       icon: DiceIcon,
       group: "contextual",
@@ -318,7 +318,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: false,
     },
     {
-      id: "add-work-item-labels",
+      id: "add_work_item_labels",
       i18n_title: "power_k.contextual_actions.work_item.add_labels",
       icon: TagIcon,
       group: "contextual",
@@ -341,7 +341,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: false,
     },
     {
-      id: "subscribe-work-item",
+      id: "subscribe_work_item",
       i18n_title: isSubscribed
         ? "power_k.contextual_actions.work_item.unsubscribe"
         : "power_k.contextual_actions.work_item.subscribe",
@@ -356,7 +356,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "delete-work-item",
+      id: "delete_work_item",
       i18n_title: "power_k.contextual_actions.work_item.delete",
       icon: Trash2,
       group: "contextual",
@@ -369,7 +369,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       closeOnSelect: true,
     },
     {
-      id: "copy-work-item-url",
+      id: "copy_work_item_url",
       i18n_title: "power_k.contextual_actions.work_item.copy_url",
       icon: LinkIcon,
       group: "contextual",

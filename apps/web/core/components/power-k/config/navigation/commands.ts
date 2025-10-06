@@ -19,34 +19,34 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 export type TPowerKNavigationCommandKeys =
-  | "open-workspace"
-  | "nav-home"
-  | "nav-inbox"
-  | "nav-your-work"
-  | "nav-account-settings"
-  | "open-project"
-  | "nav-projects-list"
-  | "nav-all-workspace-work-items"
-  | "nav-assigned-workspace-work-items"
-  | "nav-created-workspace-work-items"
-  | "nav-subscribed-workspace-work-items"
-  | "nav-workspace-analytics"
-  | "nav-workspace-drafts"
-  | "nav-workspace-archives"
-  | "open-workspace-setting"
-  | "nav-workspace-settings"
-  | "nav-project-work-items"
-  | "open-project-cycle"
-  | "nav-project-cycles"
-  | "open-project-module"
-  | "nav-project-modules"
-  | "open-project-view"
-  | "nav-project-views"
-  | "nav-project-pages"
-  | "nav-project-intake"
-  | "nav-project-archives"
-  | "open-project-setting"
-  | "nav-project-settings";
+  | "open_workspace"
+  | "nav_home"
+  | "nav_inbox"
+  | "nav_your_work"
+  | "nav_account_settings"
+  | "open_project"
+  | "nav_projects_list"
+  | "nav_all_workspace_work_items"
+  | "nav_assigned_workspace_work_items"
+  | "nav_created_workspace_work_items"
+  | "nav_subscribed_workspace_work_items"
+  | "nav_workspace_analytics"
+  | "nav_workspace_drafts"
+  | "nav_workspace_archives"
+  | "open_workspace_setting"
+  | "nav_workspace_settings"
+  | "nav_project_work_items"
+  | "open_project_cycle"
+  | "nav_project_cycles"
+  | "open_project_module"
+  | "nav_project_modules"
+  | "open_project_view"
+  | "nav_project_views"
+  | "nav_project_pages"
+  | "nav_project_intake"
+  | "nav_project_archives"
+  | "open_project_setting"
+  | "nav_project_settings";
 
 /**
  * Navigation commands - Navigate to all pages in the app
@@ -78,8 +78,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
   const getContextProject = (ctx: TPowerKContext) => getPartialProjectById(ctx.params.projectId?.toString());
 
   return {
-    "open-workspace": {
-      id: "open-workspace",
+    open_workspace: {
+      id: "open_workspace",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a workspace",
@@ -95,8 +95,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-home": {
-      id: "nav-home",
+    nav_home: {
+      id: "nav_home",
       type: "action",
       group: "navigation",
       i18n_title: "Go to home",
@@ -108,8 +108,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-inbox": {
-      id: "nav-inbox",
+    nav_inbox: {
+      id: "nav_inbox",
       type: "action",
       group: "navigation",
       i18n_title: "Go to inbox",
@@ -121,8 +121,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-your-work": {
-      id: "nav-your-work",
+    nav_your_work: {
+      id: "nav_your_work",
       type: "action",
       group: "navigation",
       i18n_title: "Go to your work",
@@ -134,8 +134,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
-    "nav-account-settings": {
-      id: "nav-account-settings",
+    nav_account_settings: {
+      id: "nav_account_settings",
       type: "action",
       group: "navigation",
       i18n_title: "Go to account settings",
@@ -147,8 +147,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "open-project": {
-      id: "open-project",
+    open_project: {
+      id: "open_project",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a project",
@@ -164,8 +164,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-projects-list": {
-      id: "nav-projects-list",
+    nav_projects_list: {
+      id: "nav_projects_list",
       type: "action",
       group: "navigation",
       i18n_title: "Go to projects list",
@@ -177,8 +177,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-all-workspace-work-items": {
-      id: "nav-all-workspace-work-items",
+    nav_all_workspace_work_items: {
+      id: "nav_all_workspace_work_items",
       type: "action",
       group: "navigation",
       i18n_title: "Go to all workspace work items",
@@ -191,8 +191,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-assigned-workspace-work-items": {
-      id: "nav-assigned-workspace-work-items",
+    nav_assigned_workspace_work_items: {
+      id: "nav_assigned_workspace_work_items",
       type: "action",
       group: "navigation",
       i18n_title: "Go to assigned workspace work items",
@@ -204,8 +204,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-created-workspace-work-items": {
-      id: "nav-created-workspace-work-items",
+    nav_created_workspace_work_items: {
+      id: "nav_created_workspace_work_items",
       type: "action",
       group: "navigation",
       i18n_title: "Go to created workspace work items",
@@ -217,8 +217,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-subscribed-workspace-work-items": {
-      id: "nav-subscribed-workspace-work-items",
+    nav_subscribed_workspace_work_items: {
+      id: "nav_subscribed_workspace_work_items",
       type: "action",
       group: "navigation",
       i18n_title: "Go to subscribed workspace work items",
@@ -231,8 +231,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-workspace-analytics": {
-      id: "nav-workspace-analytics",
+    nav_workspace_analytics: {
+      id: "nav_workspace_analytics",
       type: "action",
       group: "navigation",
       i18n_title: "Go to workspace analytics",
@@ -244,8 +244,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
-    "nav-workspace-drafts": {
-      id: "nav-workspace-drafts",
+    nav_workspace_drafts: {
+      id: "nav_workspace_drafts",
       type: "action",
       group: "navigation",
       i18n_title: "Go to workspace drafts",
@@ -257,8 +257,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
-    "nav-workspace-archives": {
-      id: "nav-workspace-archives",
+    nav_workspace_archives: {
+      id: "nav_workspace_archives",
       type: "action",
       group: "navigation",
       i18n_title: "Go to workspace archives",
@@ -270,8 +270,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
-    "open-workspace-setting": {
-      id: "open-workspace-setting",
+    open_workspace_setting: {
+      id: "open_workspace_setting",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a workspace settings",
@@ -287,8 +287,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-workspace-settings": {
-      id: "nav-workspace-settings",
+    nav_workspace_settings: {
+      id: "nav_workspace_settings",
       type: "action",
       group: "navigation",
       i18n_title: "Go to workspace settings",
@@ -300,8 +300,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-project-work-items": {
-      id: "nav-project-work-items",
+    nav_project_work_items: {
+      id: "nav_project_work_items",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project work items",
@@ -319,8 +319,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx),
       closeOnSelect: true,
     },
-    "open-project-cycle": {
-      id: "open-project-cycle",
+    open_project_cycle: {
+      id: "open_project_cycle",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a project cycle",
@@ -344,8 +344,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
       closeOnSelect: true,
     },
-    "nav-project-cycles": {
-      id: "nav-project-cycles",
+    nav_project_cycles: {
+      id: "nav_project_cycles",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project cycles",
@@ -365,8 +365,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
       closeOnSelect: true,
     },
-    "open-project-module": {
-      id: "open-project-module",
+    open_project_module: {
+      id: "open_project_module",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a project module",
@@ -390,8 +390,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
       closeOnSelect: true,
     },
-    "nav-project-modules": {
-      id: "nav-project-modules",
+    nav_project_modules: {
+      id: "nav_project_modules",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project modules",
@@ -411,8 +411,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
       closeOnSelect: true,
     },
-    "open-project-view": {
-      id: "open-project-view",
+    open_project_view: {
+      id: "open_project_view",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a project view",
@@ -434,8 +434,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
       closeOnSelect: true,
     },
-    "nav-project-views": {
-      id: "nav-project-views",
+    nav_project_views: {
+      id: "nav_project_views",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project views",
@@ -453,8 +453,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
       closeOnSelect: true,
     },
-    "nav-project-pages": {
-      id: "nav-project-pages",
+    nav_project_pages: {
+      id: "nav_project_pages",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project pages",
@@ -472,8 +472,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.page_view,
       closeOnSelect: true,
     },
-    "nav-project-intake": {
-      id: "nav-project-intake",
+    nav_project_intake: {
+      id: "nav_project_intake",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project intake",
@@ -491,8 +491,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.inbox_view,
       closeOnSelect: true,
     },
-    "nav-project-archives": {
-      id: "nav-project-archives",
+    nav_project_archives: {
+      id: "nav_project_archives",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project archives",
@@ -511,8 +511,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
-    "open-project-setting": {
-      id: "open-project-setting",
+    open_project_setting: {
+      id: "open_project_setting",
       type: "change-page",
       group: "navigation",
       i18n_title: "Open a project settings",
@@ -534,8 +534,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       isVisible: (ctx) => baseProjectConditions(ctx),
       closeOnSelect: true,
     },
-    "nav-project-settings": {
-      id: "nav-project-settings",
+    nav_project_settings: {
+      id: "nav_project_settings",
       type: "action",
       group: "navigation",
       i18n_title: "Go to project settings",

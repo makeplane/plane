@@ -12,13 +12,13 @@ import { useUser } from "@/hooks/store/user";
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
 export type TPowerKCreationCommandKeys =
-  | "create-work_item"
-  | "create-page"
-  | "create-view"
-  | "create-cycle"
-  | "create-module"
-  | "create-project"
-  | "create-workspace";
+  | "create_work_item"
+  | "create_page"
+  | "create_view"
+  | "create_cycle"
+  | "create_module"
+  | "create_project"
+  | "create_workspace";
 
 /**
  * Creation commands - Create any entity in the app
@@ -55,8 +55,8 @@ export const usePowerKCreationCommandsRecord = (
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
 
   return {
-    "create-work_item": {
-      id: "create-work-item",
+    create_work_item: {
+      id: "create_work_item",
       type: "action",
       group: "create",
       i18n_title: "New work item",
@@ -68,8 +68,8 @@ export const usePowerKCreationCommandsRecord = (
       isVisible: () => Boolean(canCreateWorkItem),
       closeOnSelect: true,
     },
-    "create-page": {
-      id: "create-page",
+    create_page: {
+      id: "create_page",
       type: "action",
       group: "create",
       i18n_title: "New page",
@@ -82,8 +82,8 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    "create-view": {
-      id: "create-view",
+    create_view: {
+      id: "create_view",
       type: "action",
       group: "create",
       i18n_title: "New view",
@@ -96,8 +96,8 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.issue_views_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    "create-cycle": {
-      id: "create-cycle",
+    create_cycle: {
+      id: "create_cycle",
       type: "action",
       group: "create",
       i18n_title: "New cycle",
@@ -110,8 +110,8 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.cycle_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    "create-module": {
-      id: "create-module",
+    create_module: {
+      id: "create_module",
       type: "action",
       group: "create",
       i18n_title: "New module",
@@ -124,8 +124,8 @@ export const usePowerKCreationCommandsRecord = (
         Boolean(context.params.projectId && currentProjectDetails?.module_view && canPerformProjectActions),
       closeOnSelect: true,
     },
-    "create-project": {
-      id: "create-project",
+    create_project: {
+      id: "create_project",
       type: "action",
       group: "create",
       i18n_title: "New project",
@@ -137,8 +137,8 @@ export const usePowerKCreationCommandsRecord = (
       isVisible: () => Boolean(canCreateProject),
       closeOnSelect: true,
     },
-    "create-workspace": {
-      id: "create-workspace",
+    create_workspace: {
+      id: "create_workspace",
       type: "action",
       group: "create",
       i18n_title: "New workspace",

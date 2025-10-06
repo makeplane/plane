@@ -77,7 +77,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
 
   return [
     {
-      id: "toggle-page-lock",
+      id: "toggle_page_lock",
       i18n_title: isLocked ? "power_k.contextual_actions.page.unlock" : "power_k.contextual_actions.page.lock",
       icon: isLocked ? LockKeyholeOpen : LockKeyhole,
       group: "contextual",
@@ -93,7 +93,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "toggle-page-access",
+      id: "toggle_page_access",
       i18n_title:
         access === EPageAccess.PUBLIC
           ? "power_k.contextual_actions.page.make_private"
@@ -112,7 +112,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "toggle-page-archive",
+      id: "toggle_page_archive",
       i18n_title: archived_at ? "power_k.contextual_actions.page.restore" : "power_k.contextual_actions.page.archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       group: "contextual",
@@ -128,7 +128,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "toggle-page-favorite",
+      id: "toggle_page_favorite",
       i18n_title: isFavorite
         ? "power_k.contextual_actions.page.remove_from_favorites"
         : "power_k.contextual_actions.page.add_to_favorites",
@@ -143,7 +143,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "copy-page-url",
+      id: "copy_page_url",
       i18n_title: "power_k.contextual_actions.page.copy_url",
       icon: LinkIcon,
       group: "contextual",

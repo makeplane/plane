@@ -75,7 +75,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
 
   return [
     {
-      id: "update-interface-theme",
+      id: "update_interface_theme",
       group: "preferences",
       type: "change-page",
       page: "update-theme",
@@ -90,7 +90,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "update-timezone",
+      id: "update_timezone",
       group: "preferences",
       page: "update-timezone",
       type: "change-page",
@@ -105,7 +105,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "update-start-of-week",
+      id: "update_start_of_week",
       group: "preferences",
       page: "update-start-of-week",
       type: "change-page",
@@ -120,7 +120,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "update-interface-language",
+      id: "update_interface_language",
       group: "preferences",
       page: "update-language",
       type: "change-page",

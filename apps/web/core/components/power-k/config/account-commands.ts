@@ -32,7 +32,7 @@ export const usePowerKAccountCommands = (): TPowerKCommandConfig[] => {
 
   return [
     {
-      id: "workspace-invites",
+      id: "workspace_invites",
       type: "action",
       group: "account",
       i18n_title: "power_k.account_actions.workspace_invites",
@@ -43,7 +43,7 @@ export const usePowerKAccountCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "sign-out",
+      id: "sign_out",
       type: "action",
       group: "account",
       i18n_title: "power_k.account_actions.sign_out",
