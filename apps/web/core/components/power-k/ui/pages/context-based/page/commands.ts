@@ -12,6 +12,7 @@ import {
   StarOff,
 } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { EPageAccess } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -45,6 +46,8 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
   } = page ?? {};
   const isFavorite = !!page?.is_favorite;
   const isLocked = !!page?.is_locked;
+  // translation
+  const { t } = useTranslation();
 
   const toggleFavorite = useCallback(() => {
     try {
@@ -58,22 +61,23 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
     }
   }, [addToFavorites, removePageFromFavorites, isFavorite]);
 
-  const copyModuleUrlToClipboard = () => {
+  const copyPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
+          title: t("power_k.contextual_actions.page.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("power_k.contextual_actions.page.copy_url_toast_error"),
         });
       });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return [
     {
@@ -149,7 +153,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       group: "contextual",
       contextType: "page",
       type: "action",
-      action: copyModuleUrlToClipboard,
+      action: copyPageUrlToClipboard,
       modifierShortcut: "cmd+shift+,",
       isEnabled: () => true,
       isVisible: () => true,

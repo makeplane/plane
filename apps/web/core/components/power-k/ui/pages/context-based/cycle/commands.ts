@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { LinkIcon, Star, StarOff } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // components
@@ -26,6 +27,8 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
     !cycleDetails?.archived_at;
+  // translation
+  const { t } = useTranslation();
 
   const toggleFavorite = useCallback(() => {
     if (!workspaceSlug || !cycleDetails || !cycleDetails.project_id) return;
@@ -46,15 +49,16 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
+          title: t("power_k.contextual_actions.cycle.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("power_k.contextual_actions.cycle.copy_url_toast_error"),
         });
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [

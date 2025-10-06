@@ -61,6 +61,7 @@ export type TPowerKCommandGroup =
   | "settings"
   | "help"
   | "account"
+  | "miscellaneous"
   | "preferences";
 
 export type TPowerKCommandConfig = {

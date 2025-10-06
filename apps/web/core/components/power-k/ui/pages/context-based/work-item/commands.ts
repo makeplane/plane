@@ -60,6 +60,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     ? areEstimateEnabledByProjectId(entityDetails?.project_id)
     : false;
   const isSubscribed = Boolean(entityId ? getSubscriptionByIssueId(entityId) : false);
+  // translation
+  const { t } = useTranslation();
   // handlers
   const updateEntity = isEpic ? updateEpic : updateIssue;
   const createEntitySubscription = isEpic ? createEpicSubscription : createSubscription;
@@ -72,8 +74,6 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       workspaceSlug?.toString(),
       entityDetails?.project_id ?? undefined
     ) && !entityDetails?.archived_at;
-  // translation
-  const { t } = useTranslation();
 
   const handleUpdateEntity = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -138,15 +138,16 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
+          title: t("power_k.contextual_actions.work_item.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("power_k.contextual_actions.work_item.copy_url_toast_error"),
         });
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [

@@ -7,8 +7,9 @@ export const POWER_K_GROUP_PRIORITY: Record<TPowerKCommandGroup, number> = {
   general: 7,
   settings: 8,
   account: 9,
-  preferences: 10,
-  help: 11,
+  miscellaneous: 10,
+  preferences: 11,
+  help: 12,
 };
 
 export const POWER_K_GROUP_I18N_TITLES: Record<TPowerKCommandGroup, string> = {
@@ -19,5 +20,6 @@ export const POWER_K_GROUP_I18N_TITLES: Record<TPowerKCommandGroup, string> = {
   settings: "power_k.group_titles.settings",
   help: "power_k.group_titles.help",
   account: "power_k.group_titles.account",
+  miscellaneous: "power_k.group_titles.miscellaneous",
   preferences: "power_k.group_titles.preferences",
 };

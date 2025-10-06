@@ -2430,14 +2430,18 @@
         "subscribe": "Subscribe to notifications",
         "unsubscribe": "Unsubscribe from notifications",
         "delete": "Delete",
-        "copy_url": "Copy URL"
+        "copy_url": "Copy URL",
+        "copy_url_toast_success": "Work item URL copied to clipboard.",
+        "copy_url_toast_error": "Some error occurred while copying the work item URL to clipboard."
       },
       "cycle": {
         "title": "Cycle actions",
         "indicator": "Cycle",
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
-        "copy_url": "Copy URL"
+        "copy_url": "Copy URL",
+        "copy_url_toast_success": "Cycle URL copied to clipboard.",
+        "copy_url_toast_error": "Some error occurred while copying the cycle URL to clipboard."
       },
       "module": {
         "title": "Module actions",
@@ -2446,7 +2450,9 @@
         "change_status": "Change status",
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
-        "copy_url": "Copy URL"
+        "copy_url": "Copy URL",
+        "copy_url_toast_success": "Module URL copied to clipboard.",
+        "copy_url_toast_error": "Some error occurred while copying the module URL to clipboard."
       },
       "page": {
         "title": "Page actions",
@@ -2459,12 +2465,20 @@
         "restore": "Restore",
         "add_to_favorites": "Add to favorites",
         "remove_from_favorites": "Remove from favorites",
-        "copy_url": "Copy URL"
+        "copy_url": "Copy URL",
+        "copy_url_toast_success": "Page URL copied to clipboard.",
+        "copy_url_toast_error": "Some error occurred while copying the page URL to clipboard."
       }
     },
     "account_actions": {
       "sign_out": "Sign out",
       "workspace_invites": "Workspace invites"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Toggle app sidebar",
+      "copy_page_url": "Copy page URL",
+      "copy_page_url_toast_success": "Current page URL copied to clipboard.",
+      "copy_page_url_toast_error": "Some error occurred while copying the current page URL to clipboard."
     },
     "preferences_actions": {
       "update_theme": "Change interface theme",
@@ -2515,9 +2529,10 @@
       "create": "Create",
       "general": "General",
       "settings": "Settings",
-      "help": "Help",
       "account": "Account",
-      "preferences": "Preferences"
+      "miscellaneous": "Miscellaneous",
+      "preferences": "Preferences",
+      "help": "Help"
     }
   }
 }

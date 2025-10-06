@@ -3,7 +3,8 @@ import { useParams } from "next/navigation";
 import { LinkIcon, Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { EUserPermissions, type IModule, type TModuleStatus } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -28,6 +29,8 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
     !moduleDetails?.archived_at;
+  // translation
+  const { t } = useTranslation();
 
   const handleUpdateModule = useCallback(
     async (formData: Partial<IModule>) => {
@@ -77,15 +80,16 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Copied to clipboard",
+          title: t("power_k.contextual_actions.module.copy_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("power_k.contextual_actions.module.copy_url_toast_error"),
         });
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [
