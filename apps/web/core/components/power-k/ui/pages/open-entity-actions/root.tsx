@@ -1,5 +1,3 @@
-// plane web imports
-import { PowerKOpenEntityActionsExtended } from "@/plane-web/components/command-palette/power-k/open-entity-actions";
 // local imports
 import { PowerKOpenProjectCyclesMenu } from "./project-cycles-menu";
 import { PowerKOpenProjectModulesMenu } from "./project-modules-menu";
@@ -32,7 +30,6 @@ export const PowerKOpenEntityActions: React.FC<TPowerKOpenEntityActionsProps> = 
       {activePage === "open-project-view" && (
         <PowerKOpenProjectViewsMenu context={context} handleSelect={handleSelection} />
       )}
-      <PowerKOpenEntityActionsExtended {...props} />
     </>
   );
 };
