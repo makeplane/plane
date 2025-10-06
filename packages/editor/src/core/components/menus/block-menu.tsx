@@ -206,9 +206,10 @@ export const BlockMenu = (props: Props) => {
           ...floatingStyles,
           animationFillMode: "forwards",
           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", // Expo ease out
+          zIndex: 100,
         }}
         className={cn(
-          "z-20 max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}
