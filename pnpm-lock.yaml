@@ -64,8 +64,8 @@ catalogs:
       specifier: 0.15.5
       version: 0.15.5
     uuid:
-      specifier: 10.0.0
-      version: 10.0.0
+      specifier: 13.0.0
+      version: 13.0.0
 
 overrides:
   brace-expansion: 2.0.2
@@ -165,7 +165,7 @@ importers:
         version: 2.2.4(react@18.3.1)
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -262,7 +262,7 @@ importers:
         version: 11.3.0
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
       ws:
         specifier: ^8.18.3
         version: 8.18.3
@@ -425,7 +425,7 @@ importers:
         version: 2.6.0
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -612,7 +612,7 @@ importers:
         version: 1.3.0(react@18.3.1)
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -815,7 +815,7 @@ importers:
         version: 0.9.0(@tiptap/core@3.6.2(@tiptap/pm@3.6.2))
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
       y-indexeddb:
         specifier: ^9.0.12
         version: 9.0.12(yjs@13.6.27)
@@ -847,9 +847,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
-      '@types/uuid':
-        specifier: ^8.3.4
-        version: 8.3.4
       postcss:
         specifier: ^8.4.38
         version: 8.5.6
@@ -1124,7 +1121,7 @@ importers:
         version: 6.0.8(mobx@6.12.0)
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
       zod:
         specifier: ^3.22.2
         version: 3.25.76
@@ -1378,7 +1375,7 @@ importers:
         version: 2.6.0
       uuid:
         specifier: 'catalog:'
-        version: 10.0.0
+        version: 13.0.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -3633,9 +3630,6 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
-
-  '@types/uuid@8.3.4':
-    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
 
   '@types/uuid@9.0.8':
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
@@ -7900,12 +7894,12 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@10.0.0:
-    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
-    hasBin: true
-
   uuid@11.1.0:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
+
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
     hasBin: true
 
   uuid@9.0.1:
@@ -10599,8 +10593,6 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@types/use-sync-external-store@0.0.6': {}
-
-  '@types/uuid@8.3.4': {}
 
   '@types/uuid@9.0.8': {}
 
@@ -15448,9 +15440,9 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@10.0.0: {}
-
   uuid@11.1.0: {}
+
+  uuid@13.0.0: {}
 
   uuid@9.0.1: {}
 

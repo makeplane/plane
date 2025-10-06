@@ -5,6 +5,9 @@
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -81,7 +84,6 @@
     "@types/node": "18.15.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"
@@ -92,8 +94,5 @@
     "markdown",
     "nextjs",
     "react"
-  ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.cts"
+  ]
 }

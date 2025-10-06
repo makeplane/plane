@@ -25,7 +25,7 @@ catalog:
   typescript: 5.8.3
   tsdown: 0.15.5
   vite: 7.0.7
-  uuid: 10.0.0
+  uuid: 13.0.0
   "@tiptap/core": ^3.5.3
   "@tiptap/html": ^3.5.3
 

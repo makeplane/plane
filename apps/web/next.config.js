@@ -8,12 +8,6 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   output: "standalone",
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   async headers() {
     return [
       {
