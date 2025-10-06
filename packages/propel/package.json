@@ -28,6 +28,7 @@
     "./command": "./dist/command/index.js",
     "./context-menu": "./dist/context-menu/index.js",
     "./dialog": "./dist/dialog/index.js",
+    "./empty-state": "./dist/empty-state/index.js",
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
     "./emoji-reaction": "./dist/emoji-reaction/index.js",
     "./emoji-reaction-picker": "./dist/emoji-reaction-picker/index.js",

@@ -14,6 +14,7 @@ export default defineConfig({
     "src/command/index.ts",
     "src/context-menu/index.ts",
     "src/dialog/index.ts",
+    "src/empty-state/index.ts",
     "src/emoji-icon-picker/index.ts",
     "src/emoji-reaction/index.ts",
     "src/emoji-reaction-picker/index.ts",
