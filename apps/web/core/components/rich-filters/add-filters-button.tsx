@@ -2,14 +2,15 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { IFilterInstance } from "@plane/shared-state";
 import { LOGICAL_OPERATOR, TExternalFilter, TFilterProperty } from "@plane/types";
-import { CustomSearchSelect, getButtonStyling, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
+import { CustomSearchSelect, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
 import { cn, getOperatorForPayload } from "@plane/utils";
 
 export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: {
-    label?: string;
+    label: string | null;
     variant?: TButtonVariant;
     className?: string;
     defaultOpen?: boolean;
@@ -27,7 +28,7 @@ export const AddFilterButton = observer(
   <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterButtonProps<P, E>) => {
     const { filter, buttonConfig, onFilterSelect } = props;
     const {
-      label = "Filters",
+      label,
       variant = "link-neutral",
       className,
       defaultOpen = false,

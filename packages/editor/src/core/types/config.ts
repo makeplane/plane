@@ -1,5 +1,6 @@
 // plane imports
 import { TWebhookConnectionQueryParams } from "@plane/types";
+import { TExtendedFileHandler } from "@/plane-editor/types/config";
 
 export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage
@@ -17,7 +18,7 @@ export type TFileHandler = {
      */
     maxFileSize: number;
   };
-};
+} & TExtendedFileHandler;
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 

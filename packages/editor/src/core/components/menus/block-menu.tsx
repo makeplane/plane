@@ -1,9 +1,9 @@
 import {
   useFloating,
+  autoUpdate,
   offset,
   flip,
   shift,
-  autoUpdate,
   useDismiss,
   useInteractions,
   FloatingPortal,
@@ -11,15 +11,16 @@ import {
 import type { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// constants
 import { cn } from "@plane/utils";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-import { IEditorProps } from "@/types";
+// types
+import type { IEditorProps } from "@/types";
 
 type Props = {
+  disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  disabledExtensions?: IEditorProps["disabledExtensions"];
 };
 
 export const BlockMenu = (props: Props) => {
@@ -43,6 +44,20 @@ export const BlockMenu = (props: Props) => {
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
 
+  const openBlockMenu = useCallback(() => {
+    if (!isOpen) {
+      setIsOpen(true);
+      editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
+  const closeBlockMenu = useCallback(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SIDE_MENU);
+    }
+  }, [editor, isOpen]);
+
   // Handle click on drag handle
   const handleClickDragHandle = useCallback(
     (event: MouseEvent) => {
@@ -60,42 +75,35 @@ export const BlockMenu = (props: Props) => {
         // Set the virtual reference as the reference element
         refs.setReference(virtualReferenceRef.current);
 
-        // Ensure the targeted block is selected
-        const rect = dragHandle.getBoundingClientRect();
-        const coords = { left: rect.left + rect.width / 2, top: rect.top + rect.height / 2 };
-        const posAtCoords = editor.view.posAtCoords(coords);
-        if (posAtCoords) {
-          const $pos = editor.state.doc.resolve(posAtCoords.pos);
-          const nodePos = $pos.before($pos.depth);
-          editor.chain().setNodeSelection(nodePos).run();
-        }
         // Show the menu
-        setIsOpen(true);
+        openBlockMenu();
         return;
       }
 
       // If clicking outside and not on a menu item, hide the menu
       if (menuRef.current && !menuRef.current.contains(target)) {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     },
-    [refs]
+    [refs, openBlockMenu, closeBlockMenu]
   );
 
+  // Set up event listeners
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
+        closeBlockMenu();
       }
     };
 
     const handleScroll = () => {
-      setIsOpen(false);
+      closeBlockMenu();
     };
+
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("scroll", handleScroll, true); // Using capture phase
+    document.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
@@ -103,7 +111,7 @@ export const BlockMenu = (props: Props) => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("scroll", handleScroll, true);
     };
-  }, [handleClickDragHandle]);
+  }, [editor.commands, handleClickDragHandle, closeBlockMenu]);
 
   // Animation effect
   useEffect(() => {
@@ -133,14 +141,9 @@ export const BlockMenu = (props: Props) => {
       icon: Trash2,
       key: "delete",
       label: "Delete",
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
-
-        setIsOpen(false);
       },
     },
     {
@@ -150,10 +153,7 @@ export const BlockMenu = (props: Props) => {
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+      onClick: (_e) => {
         try {
           const { state } = editor;
           const { selection } = state;
@@ -187,7 +187,6 @@ export const BlockMenu = (props: Props) => {
             console.error(error.message);
           }
         }
-        setIsOpen(false);
       },
     },
   ];
@@ -195,6 +194,7 @@ export const BlockMenu = (props: Props) => {
   if (!isOpen) {
     return null;
   }
+
   return (
     <FloatingPortal>
       <div
@@ -204,7 +204,6 @@ export const BlockMenu = (props: Props) => {
         }}
         style={{
           ...floatingStyles,
-          zIndex: 99,
           animationFillMode: "forwards",
           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", // Expo ease out
         }}
@@ -213,19 +212,22 @@ export const BlockMenu = (props: Props) => {
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}
-        data-prevent-outside-click
         {...getFloatingProps()}
       >
         {MENU_ITEMS.map((item) => {
-          if (item.isDisabled) {
-            return null;
-          }
+          if (item.isDisabled) return null;
+
           return (
             <button
               key={item.key}
               type="button"
               className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-90"
-              onClick={item.onClick}
+              onClick={(e) => {
+                item.onClick(e);
+                e.preventDefault();
+                e.stopPropagation();
+                closeBlockMenu();
+              }}
               disabled={item.isDisabled}
             >
               <item.icon className="h-3 w-3" />

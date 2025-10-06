@@ -8,7 +8,7 @@ import { ChevronUp } from "lucide-react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   children: React.ReactNode;

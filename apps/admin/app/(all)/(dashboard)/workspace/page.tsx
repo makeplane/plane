@@ -6,8 +6,9 @@ import Link from "next/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TInstanceConfigurationKeys } from "@plane/types";
-import { Button, getButtonStyling, Loader, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { Loader, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceListItem } from "@/components/workspace/list-item";

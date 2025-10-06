@@ -1,8 +1,8 @@
 packages:
-  - apps/*
-  - packages/*
-  - "!apps/api"
-  - "!apps/proxy"
+- apps/*
+- packages/*
+- "!apps/api"
+- "!apps/proxy"
 
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": 1.7.4
@@ -24,8 +24,11 @@ catalog:
   "@types/react-dom": 18.3.1
   typescript: 5.8.3
   tsdown: 0.15.5
+  vite: 7.0.7
   uuid: 10.0.0
+  "@tiptap/core": ^3.5.3
+  "@tiptap/html": ^3.5.3
 
 onlyBuiltDependencies:
-  - turbo
-  - sharp
+- turbo
+- sharp
