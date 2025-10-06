@@ -3,18 +3,12 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.js"
-    }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "tsdown --watch",
@@ -37,5 +31,8 @@
     "@types/react-dom": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
 }

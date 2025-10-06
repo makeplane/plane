@@ -29,7 +29,6 @@
     "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
     "@types/lodash-es": "catalog:",
-    "@types/uuid": "catalog:",
     "typescript": "catalog:"
   }
 }

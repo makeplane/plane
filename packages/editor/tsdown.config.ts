@@ -4,9 +4,13 @@ export default defineConfig({
   entry: ["src/index.ts", "src/lib.ts"],
   outDir: "dist",
   format: ["esm", "cjs"],
-  dts: true,
-  clean: false,
-  sourcemap: true,
-  minify: true,
   copy: ["src/styles"],
+  exports: {
+    customExports: (out) => ({
+      ...out,
+      "./styles": "./dist/styles/index.css",
+    }),
+  },
+  dts: true,
+  clean: true,
 });
