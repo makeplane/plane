@@ -2470,6 +2470,45 @@
         "copy_url_toast_error": "Some error occurred while copying the page URL to clipboard."
       }
     },
+    "creation_actions": {
+      "create_work_item": "New work item",
+      "create_page": "New page",
+      "create_view": "New view",
+      "create_cycle": "New cycle",
+      "create_module": "New module",
+      "create_project": "New project",
+      "create_workspace": "New workspace"
+    },
+    "navigation_actions": {
+      "open_workspace": "Open a workspace",
+      "nav_home": "Go to home",
+      "nav_inbox": "Go to inbox",
+      "nav_your_work": "Go to your work",
+      "nav_account_settings": "Go to account settings",
+      "open_project": "Open a project",
+      "nav_projects_list": "Go to projects list",
+      "nav_all_workspace_work_items": "Go to all workspace work items",
+      "nav_assigned_workspace_work_items": "Go to assigned workspace work items",
+      "nav_created_workspace_work_items": "Go to created workspace work items",
+      "nav_subscribed_workspace_work_items": "Go to subscribed workspace work items",
+      "nav_workspace_analytics": "Go to workspace analytics",
+      "nav_workspace_drafts": "Go to workspace drafts",
+      "nav_workspace_archives": "Go to workspace archives",
+      "open_workspace_setting": "Open a workspace setting",
+      "nav_workspace_settings": "Go to workspace settings",
+      "nav_project_work_items": "Go to project work items",
+      "open_project_cycle": "Open a project cycle",
+      "nav_project_cycles": "Go to project cycles",
+      "open_project_module": "Open a project module",
+      "nav_project_modules": "Go to project modules",
+      "open_project_view": "Open a project view",
+      "nav_project_views": "Go to project views",
+      "nav_project_pages": "Go to project pages",
+      "nav_project_intake": "Go to project intake",
+      "nav_project_archives": "Go to project archives",
+      "open_project_setting": "Open a project setting",
+      "nav_project_settings": "Go to project settings"
+    },
     "account_actions": {
       "sign_out": "Sign out",
       "workspace_invites": "Workspace invites"

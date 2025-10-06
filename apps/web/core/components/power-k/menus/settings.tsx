@@ -8,7 +8,7 @@ import { PowerKMenuBuilder } from "./builder";
 type TSettingItem = {
   key: string;
   icon: React.ComponentType<{ className?: string }>;
-  i18n_label: string;
+  label: string;
   href: string;
 };
 
@@ -22,8 +22,8 @@ export const PowerKSettingsMenu: React.FC<Props> = observer(({ settings, onSelec
     items={settings}
     getKey={(setting) => setting.key}
     getIcon={(setting) => setting.icon}
-    getValue={(setting) => setting.i18n_label}
-    getLabel={(setting) => setting.i18n_label}
+    getValue={(setting) => setting.label}
+    getLabel={(setting) => setting.label}
     onSelect={onSelect}
     emptyText="No settings found"
   />
