@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   handleRemove: (val: string) => void;

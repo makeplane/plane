@@ -1,13 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 // components
-import { BulkDeleteIssuesModal } from "@/components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { BulkDeleteIssuesModal } from "@/components/core/modals/bulk-delete-issues-modal";
+import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
-import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
@@ -19,7 +22,6 @@ export type TIssueLevelModalsProps = {
 export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
   const { projectId, issueId } = props;
   // router
-  const pathname = usePathname();
   const { workspaceSlug, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
@@ -42,7 +44,6 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
   } = useCommandPalette();
   // derived values
   const issueDetails = issueId ? getIssueById(issueId) : undefined;
-  const isDraftIssue = pathname?.includes("draft-issues") || false;
   const { fetchSubIssues: fetchSubWorkItems } = useIssueDetail();
   const { fetchSubIssues: fetchEpicSubWorkItems } = useIssueDetail(EIssueServiceType.EPICS);
 
@@ -78,7 +79,6 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={getCreateIssueModalData()}
-        isDraft={isDraftIssue}
         onSubmit={handleCreateIssueSubmit}
         allowedProjectIds={createWorkItemAllowedProjectIds}
       />

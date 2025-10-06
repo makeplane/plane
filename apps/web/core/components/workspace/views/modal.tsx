@@ -3,18 +3,18 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { IWorkspaceView } from "@plane/types";
-// ui
+import { EIssuesStoreType, IWorkspaceView } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { WorkspaceViewForm } from "@/components/workspace";
-// constants
-// store hooks
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useGlobalView } from "@/hooks/store";
+// hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
+import { WorkspaceViewForm } from "./form";
 
 type Props = {
   data?: IWorkspaceView;
@@ -27,9 +27,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   const { isOpen, onClose, data, preLoadedData } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
+  const { resetExpression } = useWorkItemFilters();
 
   const handleClose = () => {
     onClose();
@@ -40,12 +42,12 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     const payloadData: Partial<IWorkspaceView> = {
       ...payload,
-      filters: {
-        ...payload?.filters,
+      rich_filters: {
+        ...payload?.rich_filters,
       },
     };
 
-    await createGlobalView(workspaceSlug.toString(), payloadData)
+    await createGlobalView(workspaceSlug, payloadData)
       .then((res) => {
         captureSuccess({
           eventName: GLOBAL_VIEW_TRACKER_EVENTS.create,
@@ -80,13 +82,14 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     const payloadData: Partial<IWorkspaceView> = {
       ...payload,
       query: {
-        ...payload?.filters,
+        ...payload?.rich_filters,
       },
     };
 
-    await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
+    await updateGlobalView(workspaceSlug, data.id, payloadData)
       .then((res) => {
         if (res) {
+          resetExpression(EIssuesStoreType.GLOBAL, data.id, res.rich_filters);
           captureSuccess({
             eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
             payload: {
@@ -123,6 +126,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     else await handleUpdateView(formData);
   };
 
+  if (!workspaceSlug) return null;
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <WorkspaceViewForm
@@ -130,6 +134,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         handleClose={handleClose}
         data={data}
         preLoadedData={preLoadedData}
+        workspaceSlug={workspaceSlug}
       />
     </ModalCore>
   );

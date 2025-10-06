@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   EIssueServiceType,
   EIssuesStoreType,
@@ -12,10 +13,9 @@ import {
   TSubIssueOperations,
 } from "@plane/types";
 // hooks
-import { Button, Loader } from "@plane/ui";
-import { SectionEmptyState } from "@/components/empty-state";
+import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 import { SubIssuesListGroup } from "./list-group";
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -41,7 +41,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
     projectId,
     parentIssueId,
     rootIssueId,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -53,7 +53,6 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const {
     subIssues: {
       subIssuesByIssueId,
-      loader,
       filters: { getSubIssueFilters, getGroupedSubWorkItems, getFilteredSubWorkItems, resetFilters },
     },
   } = useIssueDetail(issueServiceType);
@@ -86,16 +85,6 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
 
   const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;
 
-  if (loader === "init-loader") {
-    return (
-      <Loader className="space-y-2">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Loader.Item key={index} height="35px" width="100%" />
-        ))}
-      </Loader>
-    );
-  }
-
   return (
     <div className="relative">
       {isRootLevel && filteredSubWorkItemsCount === 0 ? (
@@ -127,7 +116,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             group={group}
             serviceType={issueServiceType}
-            disabled={disabled}
+            canEdit={canEdit}
             parentIssueId={parentIssueId}
             rootIssueId={rootIssueId}
             handleIssueCrudState={handleIssueCrudState}

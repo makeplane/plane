@@ -4,9 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
-import { CustomMenu, Tooltip } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 //
@@ -14,7 +15,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // helpers
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueAttachmentsListItem = {

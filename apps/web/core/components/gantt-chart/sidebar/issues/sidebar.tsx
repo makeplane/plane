@@ -7,12 +7,12 @@ import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { GanttLayoutLIstItem } from "@/components/ui";
+import { GanttLayoutListItemLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-//
+// local imports
 import { useTimeLineChart } from "../../../../hooks/use-timeline-chart";
 import { ETimeLineTypeType } from "../../contexts";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
@@ -89,7 +89,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
                 horizontalOffset={100}
                 verticalOffset={200}
                 shouldRecordHeights={false}
-                placeholderChildren={<GanttLayoutLIstItem />}
+                placeholderChildren={<GanttLayoutListItemLoader />}
               >
                 <GanttDnDHOC
                   id={block.id}

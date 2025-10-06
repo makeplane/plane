@@ -19,6 +19,7 @@ from plane.db.models import IssueActivity, IssueComment, CommentReaction, Intake
 
 class IssueActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -62,9 +63,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = issue_activities.prefetch_related(
                 Prefetch(
                     "issue__issue_intake",
-                    queryset=IntakeIssue.objects.only(
-                        "source_email", "source", "extra"
-                    ),
+                    queryset=IntakeIssue.objects.only("source_email", "source", "extra"),
                     to_attr="source_data",
                 )
             )

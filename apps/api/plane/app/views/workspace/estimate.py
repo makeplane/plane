@@ -12,12 +12,13 @@ from plane.utils.cache import cache_response
 
 class WorkspaceEstimatesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
+    use_read_replica = True
 
     @cache_response(60 * 60 * 2)
     def get(self, request, slug):
-        estimate_ids = Project.objects.filter(
-            workspace__slug=slug, estimate__isnull=False
-        ).values_list("estimate_id", flat=True)
+        estimate_ids = Project.objects.filter(workspace__slug=slug, estimate__isnull=False).values_list(
+            "estimate_id", flat=True
+        )
         estimates = (
             Estimate.objects.filter(pk__in=estimate_ids, workspace__slug=slug)
             .prefetch_related("points")

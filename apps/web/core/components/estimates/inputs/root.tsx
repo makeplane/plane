@@ -1,8 +1,11 @@
 import { FC } from "react";
+// plane imports
 import { EEstimateSystem, TEstimateSystemKeys } from "@plane/types";
-// components
-import { EstimateNumberInput, EstimateTextInput } from "@/components/estimates/inputs";
+// plane web imports
 import { EstimateTimeInput } from "@/plane-web/components/estimates/inputs";
+// local imports
+import { EstimateNumberInput } from "./number-input";
+import { EstimateTextInput } from "./text-input";
 
 type TEstimateInputRootProps = {
   estimateType: TEstimateSystemKeys;

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // plane internal packages
-import { Tooltip, WorkspaceIcon } from "@plane/ui";
+import { WorkspaceIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";

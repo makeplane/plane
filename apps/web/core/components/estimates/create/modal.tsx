@@ -3,17 +3,17 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
-// types
+// plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
-// ui
-import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/estimates";
+import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
-// plane web constants
+import { useProjectEstimates } from "@/hooks/store/estimates";
+// local imports
+import { EstimatePointCreateRoot } from "../points";
+import { EstimateCreateStageOne } from "./stage-one";
 
 type TCreateEstimateModal = {
   workspaceSlug: string;
@@ -101,7 +101,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           message: t("project_settings.estimates.toasts.created.success.message"),
         });
         handleClose();
-      } catch (error) {
+      } catch {
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -57,6 +57,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
   const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
+  // extension options
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<TCustomImageAttributes>, errorMessage: string) => {
@@ -188,11 +190,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const handleImageMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
+      if (isTouchDevice) {
+        e.preventDefault();
+        editor.commands.blur();
+      }
       const pos = getPos();
+      if (pos === undefined) return;
       const nodeSelection = NodeSelection.create(editor.state.doc, pos);
       editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
     },
-    [editor, getPos]
+    [editor, getPos, isTouchDevice]
   );
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
@@ -254,7 +261,12 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
               if (!resolvedImageSrc) {
                 throw new Error("No resolved image source available");
               }
-              imageRef.current.src = resolvedImageSrc;
+              if (isTouchDevice) {
+                const refreshedSrc = await extension.options.getImageSource?.(imgNodeSrc);
+                imageRef.current.src = refreshedSrc;
+              } else {
+                imageRef.current.src = resolvedImageSrc;
+              }
             } catch {
               // if the image failed to even restore, then show the error state
               setFailedToLoadImage(true);
@@ -280,14 +292,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         {showImageToolbar && (
           <ImageToolbarRoot
             alignment={nodeAlignment ?? "left"}
-            width={size.width}
-            height={size.height}
+            editor={editor}
             aspectRatio={size.aspectRatio === null ? 1 : size.aspectRatio}
-            src={resolvedImageSrc}
             downloadSrc={resolvedDownloadSrc}
             handleAlignmentChange={(alignment) =>
               updateAttributesSafely({ alignment }, "Failed to update attributes while changing alignment:")
             }
+            height={size.height}
+            isTouchDevice={isTouchDevice}
+            width={size.width}
+            src={resolvedImageSrc}
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (

@@ -1,0 +1,40 @@
+name: Build and lint API
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "ready_for_review"
+      - "review_requested"
+      - "reopened"
+    paths:
+      - "apps/api/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-api:
+    name: Lint API
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.requested_reviewers != null
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install Pylint
+        run: python -m pip install ruff
+      - name: Install API Dependencies
+        run: cd apps/api && pip install -r requirements.txt
+      - name: Lint apps/api
+        run: ruff check --fix apps/api

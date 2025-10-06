@@ -1,19 +1,22 @@
 "use client";
 
 import { useState, FC } from "react";
-import range from "lodash/range";
+import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IWebhook } from "@plane/types";
 // ui
-import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
-import { useWebhook, useWorkspace } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // utils

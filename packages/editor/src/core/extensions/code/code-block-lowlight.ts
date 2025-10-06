@@ -3,15 +3,20 @@
 import { CodeBlockOptions, CodeBlock } from "./code-block";
 import { LowlightPlugin } from "./lowlight-plugin";
 
-export interface CodeBlockLowlightOptions extends CodeBlockOptions {
+type CodeBlockLowlightOptions = CodeBlockOptions & {
   lowlight: any;
   defaultLanguage: string | null | undefined;
-}
+};
 
 export const CodeBlockLowlight = CodeBlock.extend<CodeBlockLowlightOptions>({
   addOptions() {
     return {
-      ...this.parent?.(),
+      ...(this.parent?.() ?? {
+        languageClassPrefix: "language-",
+        exitOnTripleEnter: true,
+        exitOnArrowDown: true,
+        HTMLAttributes: {},
+      }),
       lowlight: {},
       defaultLanguage: null,
     };

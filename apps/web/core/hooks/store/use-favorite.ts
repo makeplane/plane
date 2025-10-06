@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-import { IFavoriteStore } from "@/store/favorite.store";
+import type { IFavoriteStore } from "@/store/favorite.store";
 
 export const useFavorite = (): IFavoriteStore => {
   const context = useContext(StoreContext);

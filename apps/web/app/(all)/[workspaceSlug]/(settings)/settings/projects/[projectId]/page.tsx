@@ -4,20 +4,21 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PageHead } from "@/components/core";
-import {
-  ArchiveRestoreProjectModal,
-  ArchiveProjectSelection,
-  DeleteProjectModal,
-  DeleteProjectSection,
-  ProjectDetailsForm,
-  ProjectDetailsFormLoader,
-} from "@/components/project";
+// components
+import { PageHead } from "@/components/core/page-title";
+import { DeleteProjectModal } from "@/components/project/delete-project-modal";
+import { ProjectDetailsForm } from "@/components/project/form";
+import { ProjectDetailsFormLoader } from "@/components/project/form-loader";
+import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
+import { ArchiveProjectSelection } from "@/components/project/settings/archive-project/selection";
+import { DeleteProjectSection } from "@/components/project/settings/delete-project-section";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+
 const ProjectSettingsPage = observer(() => {
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);

@@ -1,4 +1,9 @@
-import { useCycle, useProjectEstimates, useLabel, useMember, useModule, useProjectState } from "./store";
+import { useProjectEstimates } from "./store/estimates";
+import { useCycle } from "./store/use-cycle";
+import { useLabel } from "./store/use-label";
+import { useMember } from "./store/use-member";
+import { useModule } from "./store/use-module";
+import { useProjectState } from "./store/use-project-state";
 
 export const useProjectIssueProperties = () => {
   const { fetchProjectStates } = useProjectState();

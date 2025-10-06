@@ -12,7 +12,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // store hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export type SidebarWorkspaceMenuHeaderProps = {
   isWorkspaceMenuOpen: boolean;

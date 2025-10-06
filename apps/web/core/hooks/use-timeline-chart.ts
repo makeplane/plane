@@ -17,6 +17,8 @@ export const useTimeLineChart = (timeLineType: ETimeLineTypeType): IBaseTimeline
       return context.timelineStore.modulesTimeLineStore as IBaseTimelineStore;
     case ETimeLineTypeType.PROJECT:
       return context.timelineStore.projectTimeLineStore as IBaseTimelineStore;
+    case ETimeLineTypeType.GROUPED:
+      return context.timelineStore.groupedTimeLineStore as IBaseTimelineStore;
   }
 };
 

@@ -4,8 +4,11 @@
     "lib": ["ES2022", "DOM"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ESNext",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
     "sourceMap": true,
+    "target": "ESNext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/core/*"],

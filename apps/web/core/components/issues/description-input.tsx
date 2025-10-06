@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -11,11 +11,12 @@ import { EFileAssetType, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 // hooks
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();

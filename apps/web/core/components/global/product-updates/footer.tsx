@@ -1,11 +1,10 @@
-import Image from "next/image";
+import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
 export const ProductUpdatesFooter = () => {
   const { t } = useTranslation();
@@ -23,6 +22,7 @@ export const ProductUpdatesFooter = () => {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
+          data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
@@ -58,7 +58,7 @@ export const ProductUpdatesFooter = () => {
           "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
         )}
       >
-        <Image src={PlaneLogo} alt="Plane" width={12} height={12} />
+        <PlaneLogo className="h-4 w-auto text-custom-text-100" />
         {t("powered_by_plane_pages")}
       </a>
     </div>

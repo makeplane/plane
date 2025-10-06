@@ -290,7 +290,6 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
-
   async getProjectCoverImages(): Promise<string[]> {
     return this.get(`/api/project-covers/`)
       .then((res) => res?.data)

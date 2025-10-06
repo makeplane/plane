@@ -1,17 +1,30 @@
 // FIXME: fix this!!!
-import { Placement } from "@blueprintjs/popover2";
 import { ICustomSearchSelectOption } from "@plane/types";
+
+type Placement =
+  | "top"
+  | "top-start"
+  | "top-end"
+  | "bottom"
+  | "bottom-start"
+  | "bottom-end"
+  | "left"
+  | "left-start"
+  | "left-end"
+  | "right"
+  | "right-start"
+  | "right-end";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
   customButtonTabIndex?: number;
   buttonClassName?: string;
   className?: string;
-  customButton?: JSX.Element;
+  customButton?: React.ReactNode;
   disabled?: boolean;
   input?: boolean;
-  label?: string | JSX.Element;
-  maxHeight?: "sm" | "rg" | "md" | "lg";
+  label?: string | React.ReactNode;
+  maxHeight?: "sm" | "rg" | "md" | "lg" | "full";
   noChevron?: boolean;
   chevronClassName?: string;
   onOpen?: () => void;
@@ -19,6 +32,7 @@ export interface IDropdownProps {
   placement?: Placement;
   tabIndex?: number;
   useCaptureForOutsideClick?: boolean;
+  defaultOpen?: boolean;
 }
 
 export interface IPortalProps {
@@ -48,7 +62,7 @@ export interface ICustomSelectProps extends IDropdownProps {
 }
 
 interface CustomSearchSelectProps {
-  footerOption?: JSX.Element;
+  footerOption?: React.ReactNode;
   onChange: any;
   onClose?: () => void;
   noResultsMessage?: string;

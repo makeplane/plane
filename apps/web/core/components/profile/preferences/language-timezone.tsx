@@ -4,7 +4,7 @@ import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
 import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { TimezoneSelect } from "@/components/global";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 
 export const LanguageTimezone = observer(() => {
   // store hooks
@@ -126,7 +126,6 @@ export const LanguageTimezone = observer(() => {
                 onChange={handleLanguageChange}
                 buttonClassName={"border-none"}
                 className="rounded-md border !border-custom-border-200"
-                optionsClassName="w-full"
                 input
               >
                 {SUPPORTED_LANGUAGES.map((item) => (

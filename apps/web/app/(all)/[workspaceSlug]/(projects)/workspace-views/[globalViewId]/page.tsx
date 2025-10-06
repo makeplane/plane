@@ -6,11 +6,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
-import { PageHead } from "@/components/core";
-import { AllIssueLayoutRoot, GlobalViewsAppliedFiltersRoot } from "@/components/issues";
-// constants
+import { PageHead } from "@/components/core/page-title";
+import { AllIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/all-issue-layout-root";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const GlobalViewIssuesPage = observer(() => {
   // router
@@ -29,14 +28,7 @@ const GlobalViewIssuesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="h-full overflow-hidden bg-custom-background-100">
-        <div className="flex h-full w-full flex-col border-b border-custom-border-300">
-          {globalViewId && (
-            <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} isLoading={isLoading} />
-          )}
-          <AllIssueLayoutRoot isDefaultView={!!defaultView} isLoading={isLoading} toggleLoading={toggleLoading} />
-        </div>
-      </div>
+      <AllIssueLayoutRoot isDefaultView={!!defaultView} isLoading={isLoading} toggleLoading={toggleLoading} />
     </>
   );
 });

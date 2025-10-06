@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import xor from "lodash/xor";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { cn } from "@plane/utils";
-import { ModuleDropdown } from "@/components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // ui
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
 

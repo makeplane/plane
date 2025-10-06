@@ -1,18 +1,25 @@
 {
   "name": "@plane/logger",
-  "version": "0.27.1",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup --minify",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -21,16 +28,15 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@types/express": "^4.17.21",
-    "express": "^4.21.2",
-    "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "express-winston": "^4.2.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
-    "@types/node": "^22.5.4",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.9",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

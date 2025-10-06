@@ -2,7 +2,10 @@ import useSWR from "swr";
 // plane web imports
 import { useWorkspaceIssuePropertiesExtended } from "@/plane-web/hooks/use-workspace-issue-properties-extended";
 // plane imports
-import { useCycle, useProjectEstimates, useLabel, useModule } from "./store";
+import { useProjectEstimates } from "./store/estimates";
+import { useCycle } from "./store/use-cycle";
+import { useLabel } from "./store/use-label";
+import { useModule } from "./store/use-module";
 
 export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
   const { fetchWorkspaceLabels } = useLabel();

@@ -2,14 +2,14 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Tooltip } from "@plane/ui";
-import { useAppTheme } from "@/hooks/store";
+import { Tooltip } from "@plane/propel/tooltip";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   href: string;
   title: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 };
 
 export const FavoriteItemTitle: FC<Props> = observer((props) => {

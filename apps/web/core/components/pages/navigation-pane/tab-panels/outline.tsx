@@ -1,9 +1,9 @@
 // plane web imports
 import { PageNavigationPaneOutlineTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/outline";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageContentBrowser } from "../../editor";
+import { PageContentBrowser } from "../../editor/summary";
 
 type Props = {
   page: TPageInstance;

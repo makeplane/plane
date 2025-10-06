@@ -5,7 +5,7 @@ import { LinkEditView, LinkPreview } from "@/components/links";
 
 export type LinkViews = "LinkPreview" | "LinkEditView";
 
-export interface LinkViewProps {
+export type LinkViewProps = {
   view?: LinkViews;
   editor: Editor;
   from: number;
@@ -13,7 +13,7 @@ export interface LinkViewProps {
   url: string;
   text?: string;
   closeLinkView: () => void;
-}
+};
 
 export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
   const [currentView, setCurrentView] = useState<LinkViews>(props.view ?? "LinkPreview");
@@ -28,7 +28,7 @@ export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
       setCurrentView("LinkPreview");
       setPrevFrom(props.from);
     }
-  }, []);
+  }, [prevFrom, props.from]);
 
   return (
     <>

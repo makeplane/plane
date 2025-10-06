@@ -8,9 +8,10 @@ import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // services
 import { AIService } from "@/services/ai.service";
 const aiService = new AIService();
@@ -22,7 +23,7 @@ type Props = {
   onError?: (error: any) => void;
   placement?: Placement;
   prompt?: string;
-  button: JSX.Element;
+  button: React.ReactNode;
   className?: string;
   workspaceId: string;
   workspaceSlug: string;

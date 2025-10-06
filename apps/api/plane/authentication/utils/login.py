@@ -17,9 +17,7 @@ def user_login(request, user, is_app=False, is_admin=False, is_space=False):
     device_info = {
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
         "ip_address": get_client_ip(request=request),
-        "domain": base_host(
-            request=request, is_app=is_app, is_admin=is_admin, is_space=is_space
-        ),
+        "domain": base_host(request=request, is_app=is_app, is_admin=is_admin, is_space=is_space),
     }
     request.session["device_info"] = device_info
     request.session.save()

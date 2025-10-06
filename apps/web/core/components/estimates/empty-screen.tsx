@@ -3,10 +3,12 @@
 import { FC } from "react";
 import { useTheme } from "next-themes";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// public images
+// components
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+// helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { DetailedEmptyState } from "../empty-state";
 
 type TEstimateEmptyScreen = {
   onButtonClick: () => void;

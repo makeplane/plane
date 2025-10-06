@@ -1,14 +1,14 @@
 import { X } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { EViewAccess, TViewFilterProps } from "@plane/types";
-// components
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
-// constants
-// helpers
+// components
+import { AppliedDateFilters } from "@/components/common/applied-filters/date";
+import { AppliedMembersFilters } from "@/components/common/applied-filters/members";
+// local imports
 import { AppliedAccessFilters } from "./access";
-// types
 
 type Props = {
   appliedFilters: TViewFilterProps;

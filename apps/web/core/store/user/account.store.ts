@@ -1,11 +1,11 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { makeObservable, observable } from "mobx";
 // types
 import { IUserAccount } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IAccountStore {
   // observables

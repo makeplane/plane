@@ -4,12 +4,16 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@plane/ui";
+// plane imports
+import { Button } from "@plane/propel/button";
 // components
-import { CommentCard, AddComment } from "@/components/issues/peek-overview";
+import { AddComment } from "@/components/issues/peek-overview/comment/add-comment";
+import { CommentCard } from "@/components/issues/peek-overview/comment/comment-detail-card";
 import { Icon } from "@/components/ui";
 // hooks
-import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
 import { IIssue } from "@/types/issue";

@@ -32,8 +32,10 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
       x: undefined,
       y: 10,
     },
+    customTicks,
     legend,
     showTooltip = true,
+    customTooltipContent,
   } = props;
   // states
   const [activeLine, setActiveLine] = useState<string | null>(null);
@@ -100,7 +102,10 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.x || CustomXAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickLine={false}
             axisLine={false}
             label={
@@ -126,7 +131,10 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.y || CustomYAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />
@@ -148,17 +156,20 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
               wrapperStyle={{
                 pointerEvents: "auto",
               }}
-              content={({ active, label, payload }) => (
-                <CustomTooltip
-                  active={active}
-                  activeKey={activeLine}
-                  label={label}
-                  payload={payload}
-                  itemKeys={itemKeys}
-                  itemLabels={itemLabels}
-                  itemDotColors={itemDotColors}
-                />
-              )}
+              content={({ active, label, payload }) => {
+                if (customTooltipContent) return customTooltipContent({ active, label, payload });
+                return (
+                  <CustomTooltip
+                    active={active}
+                    activeKey={activeLine}
+                    label={label}
+                    payload={payload}
+                    itemKeys={itemKeys}
+                    itemLabels={itemLabels}
+                    itemDotColors={itemDotColors}
+                  />
+                );
+              }}
             />
           )}
           {renderLines}

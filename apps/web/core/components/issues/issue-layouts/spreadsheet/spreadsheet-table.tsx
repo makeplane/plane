@@ -1,14 +1,15 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
-import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
-//hooks
+// components
+import { SpreadsheetIssueRowLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
+// hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
-// components
+// local imports
 import { TRenderQuickActions } from "../list/list-view-types";
 import { getDisplayPropertiesCount } from "../utils";
 import { SpreadsheetIssueRow } from "./issue-row";
@@ -103,7 +104,7 @@ export const SpreadsheetTable = observer((props: Props) => {
   const displayPropertiesCount = getDisplayPropertiesCount(displayProperties, ignoreFieldsForCounting);
 
   return (
-    <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
+    <table className="overflow-y-auto bg-custom-background-100 w-full" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayProperties={displayProperties}
         displayFilters={displayFilters}

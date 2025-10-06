@@ -9,7 +9,7 @@ import { ETabIndices } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // components
-import { ProjectDropdown } from "@/components/dropdowns";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -46,7 +46,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
             }}
             multiple={false}
             buttonVariant="border-with-text"
-            renderCondition={(project) => allowedProjectIds.includes(project.id)}
+            renderCondition={(projectId) => allowedProjectIds.includes(projectId)}
             tabIndex={getIndex("project_id")}
             disabled={disabled}
           />

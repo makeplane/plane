@@ -2,9 +2,9 @@ import { FC } from "react";
 import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
+import { getSubscriptionTextColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
-import { getSubscriptionTextColor } from "@/components/workspace/billing/subscription";
 import { TPlanFeatureData } from "@/constants/plans";
 
 type TPlanFeatureDetailProps = {

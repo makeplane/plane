@@ -2,6 +2,7 @@
 
 // types
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
+import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -10,15 +11,14 @@ import {
   IWorkspaceSearchResult,
 } from "@plane/types";
 // ui
-import { ContrastIcon, DiceIcon } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type TCommandGroups = {
   [key: string]: {
-    icon: JSX.Element | null;
+    icon: React.ReactNode | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any, projectId: string | undefined) => string;
     title: string;

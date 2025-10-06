@@ -4,9 +4,9 @@ import { computedFn } from "mobx-utils";
 import { IUserLite } from "@plane/types";
 // plane web imports
 import { IProjectMemberStore, ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace-member.store";
+import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace/workspace-member.store";
 
 export interface IMemberRootStore {
   // observables

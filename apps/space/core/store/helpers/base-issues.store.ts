@@ -1,14 +1,10 @@
-import concat from "lodash/concat";
-import get from "lodash/get";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, get, set, uniq, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ALL_ISSUES } from "@plane/constants";
 import { SitesIssueService } from "@plane/services";
-import {
+import type {
   TIssueGroupByOptions,
   TGroupedIssues,
   TSubGroupedIssues,
@@ -20,8 +16,8 @@ import {
   TPaginationData,
 } from "@plane/types";
 // types
-import { IIssue, TIssuesResponse } from "@/types/issue";
-import { CoreRootStore } from "../root.store";
+import type { IIssue, TIssuesResponse } from "@/types/issue";
+import type { CoreRootStore } from "../root.store";
 // constants
 // helpers
 

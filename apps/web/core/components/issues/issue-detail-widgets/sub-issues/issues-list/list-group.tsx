@@ -13,7 +13,7 @@ interface TSubIssuesListGroupProps {
   workspaceSlug: string;
   group: IGroupByColumn;
   serviceType: TIssueServiceType;
-  disabled: boolean;
+  canEdit: boolean;
   parentIssueId: string;
   rootIssueId: string;
   handleIssueCrudState: (
@@ -30,7 +30,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
   const {
     group,
     serviceType,
-    disabled,
+    canEdit,
     parentIssueId,
     rootIssueId,
     projectId,
@@ -73,25 +73,22 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
         }
         buttonClassName={cn("hidden", !isAllIssues && "block")}
       >
-        {/* Work items list */}
-        <div className="pl-2">
-          {workItemIds?.map((workItemId) => (
-            <SubIssuesListItem
-              key={workItemId}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              parentIssueId={parentIssueId}
-              rootIssueId={rootIssueId}
-              issueId={workItemId}
-              disabled={disabled}
-              handleIssueCrudState={handleIssueCrudState}
-              subIssueOperations={subIssueOperations}
-              issueServiceType={serviceType}
-              spacingLeft={spacingLeft}
-              storeType={storeType}
-            />
-          ))}
-        </div>
+        {workItemIds?.map((workItemId) => (
+          <SubIssuesListItem
+            key={workItemId}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            parentIssueId={parentIssueId}
+            rootIssueId={rootIssueId}
+            issueId={workItemId}
+            canEdit={canEdit}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+            issueServiceType={serviceType}
+            spacingLeft={spacingLeft}
+            storeType={storeType}
+          />
+        ))}
       </Collapsible>
     </>
   );

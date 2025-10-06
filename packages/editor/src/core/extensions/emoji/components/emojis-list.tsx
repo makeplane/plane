@@ -1,27 +1,17 @@
 import { computePosition, flip, shift } from "@floating-ui/dom";
-import { Editor, posToDOMRect } from "@tiptap/react";
+import { type Editor, posToDOMRect } from "@tiptap/react";
 import { SuggestionKeyDownProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 
-export interface EmojiItem {
+export type EmojiItem = {
   name: string;
   emoji: string;
   shortcodes: string[];
   tags: string[];
   fallbackImage?: string;
-}
-
-export interface EmojiListProps {
-  items: EmojiItem[];
-  command: (item: { name: string }) => void;
-  editor: Editor;
-}
-
-export interface EmojiListRef {
-  onKeyDown: (props: SuggestionKeyDownProps) => boolean;
-}
+};
 
 const updatePosition = (editor: Editor, element: HTMLElement) => {
   const virtualElement = {
@@ -42,8 +32,19 @@ const updatePosition = (editor: Editor, element: HTMLElement) => {
   });
 };
 
-export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) => {
-  const { items, command, editor } = props;
+export type EmojiListRef = {
+  onKeyDown: (props: SuggestionKeyDownProps) => boolean;
+};
+
+type Props = {
+  items: EmojiItem[];
+  command: (item: { name: string }) => void;
+  editor: Editor;
+  query: string;
+};
+
+export const EmojiList = forwardRef<EmojiListRef, Props>((props, ref) => {
+  const { items, command, editor, query } = props;
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,6 +61,9 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): boolean => {
+      if (query.length <= 0) {
+        return false;
+      }
       if (event.key === "Escape") {
         event.preventDefault();
         return true;
@@ -85,7 +89,7 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
       return false;
     },
-    [items.length, selectedIndex, selectItem]
+    [query.length, items.length, selectItem, selectedIndex]
   );
 
   // Update position when items change
@@ -140,6 +144,10 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
     }),
     [handleKeyDown]
   );
+
+  if (query.length <= 0) {
+    return null;
+  }
 
   return (
     <div

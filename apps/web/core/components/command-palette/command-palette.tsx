@@ -13,7 +13,10 @@ import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUser, useAppTheme, useCommandPalette, useUserPermissions, useIssueDetail } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import {
@@ -35,7 +38,7 @@ export const CommandPalette: FC = observer(() => {
   const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
-  const { toggleSidebar } = useAppTheme();
+  const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
   const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
@@ -194,6 +197,7 @@ export const CommandPalette: FC = observer(() => {
         } else if (keyPressed === "b") {
           e.preventDefault();
           toggleSidebar();
+          toggleExtendedSidebar(false);
         }
       } else if (!isAnyModalOpen) {
         captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
@@ -239,6 +243,7 @@ export const CommandPalette: FC = observer(() => {
       toggleCommandPaletteModal,
       toggleShortcutModal,
       toggleSidebar,
+      toggleExtendedSidebar,
       workspaceSlug,
     ]
   );

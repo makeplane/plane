@@ -1,5 +1,4 @@
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
+import { isEmpty, set } from "lodash-es";
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -7,9 +6,9 @@ import { v4 as uuidv4 } from "uuid";
 import { SitesFileService, SitesIssueService } from "@plane/services";
 import { EFileAssetType, TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // types
-import { IIssue, IPeekMode, IVote } from "@/types/issue";
+import type { IIssue, IPeekMode, IVote } from "@/types/issue";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -194,7 +193,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.updateComment(anchor, issueID, commentID, data);
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -222,7 +221,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           },
         };
       });
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
     }
   };
@@ -288,7 +287,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       await this.issueService.addCommentReaction(anchor, commentID, {
         reaction: reactionHex,
       });
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -322,7 +321,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeCommentReaction(anchor, commentID, reactionHex);
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -356,7 +355,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       await this.issueService.addReaction(anchor, issueID, {
         reaction: reactionHex,
       });
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
       const issueReactions = await this.issueService.listReactions(anchor, issueID);
       runInAction(() => {
@@ -376,7 +375,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeReaction(anchor, issueID, reactionHex);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to remove issue reaction");
       const reactions = await this.issueService.listReactions(anchor, issueID);
       runInAction(() => {
@@ -408,7 +407,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.addVote(anchor, issueID, data);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
       const issueVotes = await this.issueService.listVotes(anchor, issueID);
 
@@ -429,7 +428,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeVote(anchor, issueID);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to remove issue vote");
       const issueVotes = await this.issueService.listVotes(anchor, issueID);
 

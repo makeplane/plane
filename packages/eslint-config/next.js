@@ -3,6 +3,8 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 module.exports = {
   extends: ["next", "prettier", "plugin:@typescript-eslint/recommended"],
+  parser: "@typescript-eslint/parser",
+  plugins: ["react", "@typescript-eslint", "import"],
   globals: {
     React: "readonly",
     JSX: "readonly",
@@ -11,7 +13,6 @@ module.exports = {
     node: true,
     browser: true,
   },
-  plugins: ["react", "@typescript-eslint", "import"],
   settings: {
     "import/resolver": {
       typescript: {
@@ -39,7 +40,14 @@ module.exports = {
     "react/jsx-no-duplicate-props": "error",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-expressions": "warn",
-    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",

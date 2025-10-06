@@ -9,20 +9,23 @@ import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
-import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { ControlLink, DropIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 // helpers
 // hooks
-import { useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useKanbanView } from "@/hooks/store/use-kanban-view";
+import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { TRenderQuickActions } from "../list/list-view-types";

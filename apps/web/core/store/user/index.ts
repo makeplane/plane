@@ -1,5 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
+import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
 import { EUserPermissions, API_BASE_URL } from "@plane/constants";
@@ -7,7 +6,7 @@ import { IUser, TUserPermissions } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { IUserPermissionStore, UserPermissionStore } from "@/plane-web/store/user/permission.store";
 // services
 import { AuthService } from "@/services/auth.service";

@@ -3,18 +3,18 @@ import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, X } from "lucide-react";
 // plane imports
-import type { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // components
-import { LiteTextEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 
 type Props = {
   activityOperations: TCommentsOperations;
   comment: TIssueComment;
   isEditing: boolean;
   projectId?: string;
-  readOnlyEditorRef: EditorReadOnlyRefApi | null;
+  readOnlyEditorRef: EditorRefApi | null;
   setIsEditing: (isEditing: boolean) => void;
   workspaceId: string;
   workspaceSlug: string;
@@ -75,6 +75,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
         }}
       >
         <LiteTextEditor
+          editable
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
           ref={editorRef}
@@ -92,7 +93,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
-          projectId={projectId?.toString() ?? ""}
+          projectId={projectId}
           parentClassName="p-2"
           displayConfig={{
             fontSize: "small-font",

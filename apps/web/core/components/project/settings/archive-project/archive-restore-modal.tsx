@@ -3,9 +3,10 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

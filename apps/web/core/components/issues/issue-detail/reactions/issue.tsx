@@ -2,14 +2,16 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IUser } from "@plane/types";
 // hooks
 // ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 // types
 import { ReactionSelector } from "./reaction-selector";
 
@@ -83,7 +85,9 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
     const reactionUsers = (reactionIds?.[reaction] || [])
       .map((reactionId) => {
         const reactionDetails = getReactionById(reactionId);
-        return reactionDetails ? getUserDetails(reactionDetails.actor)?.display_name : null;
+        return reactionDetails
+          ? getUserDetails(reactionDetails?.actor)?.display_name || reactionDetails?.display_name
+          : null;
       })
       .filter((displayName): displayName is string => !!displayName);
 

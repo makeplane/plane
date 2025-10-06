@@ -3,10 +3,15 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-import { DiceIcon } from "@plane/ui";
+import {
+  CYCLE_TRACKER_ELEMENTS,
+  MODULE_TRACKER_ELEMENTS,
+  PROJECT_PAGE_TRACKER_ELEMENTS,
+  PROJECT_VIEW_TRACKER_ELEMENTS,
+} from "@plane/constants";
+import { DiceIcon } from "@plane/propel/icons";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // ui
 
 type Props = {
@@ -55,6 +60,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
       </Command.Group>
       <Command.Group heading="View">
         <Command.Item
+          data-ph-element={PROJECT_VIEW_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM}
           onSelect={() => {
             closePalette();
             toggleCreateViewModal(true);

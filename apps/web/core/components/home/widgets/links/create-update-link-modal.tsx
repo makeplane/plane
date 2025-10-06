@@ -6,8 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TLink, TLinkEditableFields } from "@plane/types";
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Input, ModalCore } from "@plane/ui";
 import { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;

@@ -1,9 +1,14 @@
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
+import { isEqual, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // components
-import type { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import type {
+  ChartDataType,
+  IBlockUpdateDependencyData,
+  IGanttBlock,
+  TGanttViews,
+  EGanttBlockType,
+} from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { currentViewDataWithView } from "@/components/gantt-chart/data";
 import {
@@ -13,7 +18,7 @@ import {
 } from "@/components/gantt-chart/views/helpers";
 // helpers
 // store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 // types
 type BlockData = {
@@ -177,7 +182,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
    * @param getDataById
    * @returns
    */
-  updateBlocks(getDataById: (id: string) => BlockData | undefined | null) {
+  updateBlocks(getDataById: (id: string) => BlockData | undefined | null, type?: EGanttBlockType, index?: number) {
     if (!this.blockIds || !Array.isArray(this.blockIds) || this.isDragging) return true;
 
     const updatedBlockMaps: { path: string[]; value: any }[] = [];
@@ -195,7 +200,11 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         sort_order: blockData?.sort_order ?? undefined,
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
-        project_id: blockData?.project_id ?? undefined,
+        meta: {
+          type,
+          index,
+          project_id: blockData?.project_id,
+        },
       };
       if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);
@@ -285,7 +294,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
 
     if (!currBlock?.position || !this.currentViewData) return [];
 
-    const updatePayload: IBlockUpdateDependencyData = { id };
+    const updatePayload: IBlockUpdateDependencyData = { id, meta: currBlock.meta };
 
     // If shouldUpdateHalfBlock or the start date is available then update start date
     if (shouldUpdateHalfBlock || currBlock.start_date) {

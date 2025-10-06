@@ -8,30 +8,30 @@ import { Layers } from "lucide-react";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EIssueLayoutTypes,
   GLOBAL_VIEW_TRACKER_ELEMENTS,
   DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   ICustomSearchSelectOption,
+  EIssueLayoutTypes,
 } from "@plane/types";
-import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-import { isIssueFilterActive } from "@plane/utils";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
-import {
-  CreateUpdateWorkspaceViewModal,
-  WorkspaceViewQuickActions,
-  DefaultWorkspaceViewQuickActions,
-} from "@/components/workspace";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
+import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
+import { DefaultWorkspaceViewQuickActions } from "@/components/workspace/views/default-view-quick-action";
+import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
+import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-action";
 // hooks
-import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useGlobalView } from "@/hooks/store/use-global-view";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
@@ -40,49 +40,19 @@ export const GlobalIssuesHeader = observer(() => {
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, globalViewId } = useParams();
+  const { workspaceSlug, globalViewId: routerGlobalViewId } = useParams();
+  const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
   const { t } = useTranslation();
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const viewDetails = getViewDetailsById(globalViewId.toString());
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !globalViewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        globalViewId.toString()
-      );
-    },
-    [workspaceSlug, issueFilters, updateFilters, globalViewId]
-  );
+  const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -92,7 +62,7 @@ export const GlobalIssuesHeader = observer(() => {
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
-        globalViewId.toString()
+        globalViewId
       );
     },
     [workspaceSlug, updateFilters, globalViewId]
@@ -101,13 +71,7 @@ export const GlobalIssuesHeader = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        globalViewId.toString()
-      );
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -120,7 +84,7 @@ export const GlobalIssuesHeader = observer(() => {
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         { layout: layout },
-        globalViewId.toString()
+        globalViewId
       );
     },
     [workspaceSlug, updateFilters, globalViewId]
@@ -153,7 +117,7 @@ export const GlobalIssuesHeader = observer(() => {
   ) as ICustomSearchSelectOption[];
   const currentLayoutFilters = useMemo(() => {
     const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
-    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues[layout];
+    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions[layout];
   }, [activeLayout]);
 
   return (
@@ -189,41 +153,25 @@ export const GlobalIssuesHeader = observer(() => {
           </Breadcrumbs>
         </Header.LeftItem>
 
-        <Header.RightItem>
-          {!isLocked ? (
-            <>
-              <GlobalViewLayoutSelection
-                onChange={handleLayoutChange}
-                selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-                workspaceSlug={workspaceSlug.toString()}
+        <Header.RightItem className="items-center">
+          {!isLocked && (
+            <GlobalViewLayoutSelection
+              onChange={handleLayoutChange}
+              selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
+              workspaceSlug={workspaceSlug.toString()}
+            />
+          )}
+          {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
+          {!isLocked && (
+            <FiltersDropdown title={t("common.display")} placement="bottom-end">
+              <DisplayFiltersSelection
+                layoutDisplayFiltersOptions={currentLayoutFilters}
+                displayFilters={issueFilters?.displayFilters ?? {}}
+                handleDisplayFiltersUpdate={handleDisplayFilters}
+                displayProperties={issueFilters?.displayProperties ?? {}}
+                handleDisplayPropertiesUpdate={handleDisplayProperties}
               />
-              <FiltersDropdown
-                title={t("common.filters")}
-                placement="bottom-end"
-                isFiltersApplied={isIssueFilterActive(issueFilters)}
-              >
-                <FilterSelection
-                  layoutDisplayFiltersOptions={currentLayoutFilters}
-                  filters={issueFilters?.filters ?? {}}
-                  handleFiltersUpdate={handleFiltersUpdate}
-                  displayFilters={issueFilters?.displayFilters ?? {}}
-                  handleDisplayFiltersUpdate={handleDisplayFilters}
-                  labels={workspaceLabels ?? undefined}
-                  memberIds={workspaceMemberIds ?? undefined}
-                />
-              </FiltersDropdown>
-              <FiltersDropdown title={t("common.display")} placement="bottom-end">
-                <DisplayFiltersSelection
-                  layoutDisplayFiltersOptions={currentLayoutFilters}
-                  displayFilters={issueFilters?.displayFilters ?? {}}
-                  handleDisplayFiltersUpdate={handleDisplayFilters}
-                  displayProperties={issueFilters?.displayProperties ?? {}}
-                  handleDisplayPropertiesUpdate={handleDisplayProperties}
-                />
-              </FiltersDropdown>
-            </>
-          ) : (
-            <></>
+            </FiltersDropdown>
           )}
 
           <Button

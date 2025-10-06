@@ -882,7 +882,8 @@
     "in_progress": "In Bearbeitung",
     "planned": "Geplant",
     "paused": "Pausiert",
-    "no_of": "Anzahl {entity}"
+    "no_of": "Anzahl {entity}",
+    "resolved": "Gelöst"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -916,6 +917,10 @@
     "add": {
       "success": "{entity} erfolgreich hinzugefügt",
       "failed": "Fehler beim Hinzufügen von {entity}"
+    },
+    "remove": {
+      "success": "{entity} erfolgreich entfernt",
+      "failed": "Fehler beim Entfernen von {entity}"
     }
   },
   "epic": {
@@ -2485,7 +2490,6 @@
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane ist nicht gestartet. Dies könnte daran liegen, dass einer oder mehrere Plane-Services nicht starten konnten.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wählen Sie View Logs aus setup.sh und Docker-Logs, um sicherzugehen."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {

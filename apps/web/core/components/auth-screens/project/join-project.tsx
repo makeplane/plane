@@ -4,9 +4,10 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // assets
 import Unauthorized from "@/public/auth/unauthorized.svg";
 

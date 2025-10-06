@@ -1,13 +1,15 @@
 import { FC } from "react";
 import { ChevronDown, ListFilter } from "lucide-react";
-// plane ui
-import { getButtonStyling } from "@plane/ui";
-// plane utils
+// plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // components
-import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "@/components/inbox/inbox-filter";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+// hooks
 import useSize from "@/hooks/use-window-size";
+// local imports
+import { InboxIssueFilterSelection } from "./filters/filter-selection";
+import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 
 const smallButton = <ListFilter className="size-3 " />;
 

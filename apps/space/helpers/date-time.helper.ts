@@ -1,5 +1,5 @@
 import { format, isValid } from "date-fns";
-import isNumber from "lodash/isNumber";
+import { isNumber } from "lodash-es";
 
 export const timeAgo = (time: any) => {
   switch (typeof time) {
@@ -35,7 +35,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
 
     return new Date(year, month - 1, day);
-  } catch (e) {
+  } catch (_err) {
     return undefined;
   }
 };

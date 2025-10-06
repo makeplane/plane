@@ -8,18 +8,22 @@ import { MoreHorizontal } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue } from "@plane/types";
 // ui
-import { Tooltip, ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 // hooks
-import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarStoreType } from "./base-calendar-root";

@@ -1,8 +1,8 @@
 import React from "react";
 // ui
-import { Tooltip } from "../tooltip";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 // types
 import { TAvatarSize, getSizeInfo, isAValidNumber } from "./avatar";
 

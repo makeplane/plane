@@ -38,24 +38,17 @@ def issue_task(updated_issue, issue_id, user_id):
                 updated_current_issue[key] = value
 
         if updated_current_issue:
-            issue_version = (
-                IssueVersion.objects.filter(issue_id=issue_id)
-                .order_by("-last_saved_at")
-                .first()
-            )
+            issue_version = IssueVersion.objects.filter(issue_id=issue_id).order_by("-last_saved_at").first()
 
             if (
                 issue_version
                 and str(issue_version.owned_by) == str(user_id)
-                and (timezone.now() - issue_version.last_saved_at).total_seconds()
-                <= 600
+                and (timezone.now() - issue_version.last_saved_at).total_seconds() <= 600
             ):
                 for key, value in updated_current_issue.items():
                     setattr(issue_version, key, value)
                 issue_version.last_saved_at = timezone.now()
-                issue_version.save(
-                    update_fields=list(updated_current_issue.keys()) + ["last_saved_at"]
-                )
+                issue_version.save(update_fields=list(updated_current_issue.keys()) + ["last_saved_at"])
             else:
                 IssueVersion.log_issue_version(issue, user_id)
 
@@ -88,16 +81,11 @@ def get_owner_id(issue: Issue) -> Optional[int]:
 def get_related_data(issue_ids: List[UUID]) -> Dict:
     """Get related data for the given issue IDs"""
 
-    cycle_issues = {
-        ci.issue_id: ci.cycle_id
-        for ci in CycleIssue.objects.filter(issue_id__in=issue_ids)
-    }
+    cycle_issues = {ci.issue_id: ci.cycle_id for ci in CycleIssue.objects.filter(issue_id__in=issue_ids)}
 
     # Get assignees with proper grouping
     assignee_records = list(
-        IssueAssignee.objects.filter(issue_id__in=issue_ids)
-        .values_list("issue_id", "assignee_id")
-        .order_by("issue_id")
+        IssueAssignee.objects.filter(issue_id__in=issue_ids).values_list("issue_id", "assignee_id").order_by("issue_id")
     )
     assignees = {}
     for issue_id, group in groupby(assignee_records, key=lambda x: x[0]):
@@ -105,9 +93,7 @@ def get_related_data(issue_ids: List[UUID]) -> Dict:
 
     # Get labels with proper grouping
     label_records = list(
-        IssueLabel.objects.filter(issue_id__in=issue_ids)
-        .values_list("issue_id", "label_id")
-        .order_by("issue_id")
+        IssueLabel.objects.filter(issue_id__in=issue_ids).values_list("issue_id", "label_id").order_by("issue_id")
     )
     labels = {}
     for issue_id, group in groupby(label_records, key=lambda x: x[0]):
@@ -115,9 +101,7 @@ def get_related_data(issue_ids: List[UUID]) -> Dict:
 
     # Get modules with proper grouping
     module_records = list(
-        ModuleIssue.objects.filter(issue_id__in=issue_ids)
-        .values_list("issue_id", "module_id")
-        .order_by("issue_id")
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).values_list("issue_id", "module_id").order_by("issue_id")
     )
     modules = {}
     for issue_id, group in groupby(module_records, key=lambda x: x[0]):
@@ -125,9 +109,7 @@ def get_related_data(issue_ids: List[UUID]) -> Dict:
 
     # Get latest activities
     latest_activities = {}
-    activities = IssueActivity.objects.filter(issue_id__in=issue_ids).order_by(
-        "issue_id", "-created_at"
-    )
+    activities = IssueActivity.objects.filter(issue_id__in=issue_ids).order_by("issue_id", "-created_at")
     for issue_id, activities_group in groupby(activities, key=lambda x: x.issue_id):
         first_activity = next(activities_group, None)
         if first_activity:
@@ -147,9 +129,7 @@ def create_issue_version(issue: Issue, related_data: Dict) -> Optional[IssueVers
 
     try:
         if not issue.workspace_id or not issue.project_id:
-            logging.warning(
-                f"Skipping issue {issue.id} - missing workspace_id or project_id"
-            )
+            logging.warning(f"Skipping issue {issue.id} - missing workspace_id or project_id")
             return None
 
         owned_by_id = get_owner_id(issue)
@@ -209,9 +189,7 @@ def sync_issue_version(batch_size=5000, offset=0, countdown=300):
 
             # Get issues batch with optimized queries
             issues_batch = list(
-                base_query.order_by("created_at")
-                .select_related("workspace", "project")
-                .all()[offset:end_offset]
+                base_query.order_by("created_at").select_related("workspace", "project").all()[offset:end_offset]
             )
 
             if not issues_batch:

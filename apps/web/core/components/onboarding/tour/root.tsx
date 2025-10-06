@@ -4,24 +4,23 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
-// ui
+// plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button } from "@plane/ui";
-// components
-import { TourSidebar } from "@/components/onboarding";
-// constants
-// hooks
+import { Button } from "@plane/propel/button";
+import { PlaneLockup } from "@plane/propel/icons";
+// helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUser } from "@/hooks/store";
+// hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUser } from "@/hooks/store/user";
 // assets
 import CyclesTour from "@/public/onboarding/cycles.webp";
 import IssuesTour from "@/public/onboarding/issues.webp";
 import ModulesTour from "@/public/onboarding/modules.webp";
 import PagesTour from "@/public/onboarding/pages.webp";
 import ViewsTour from "@/public/onboarding/views.webp";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal.svg";
-
-// constants
+// local imports
+import { TourSidebar } from "./sidebar";
 
 type Props = {
   onComplete: () => void;
@@ -97,7 +96,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
         <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
             <div className="grid h-3/5 place-items-center bg-custom-primary-100">
-              <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
+              <PlaneLockup className="h-10 w-auto text-custom-text-100" />
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">

@@ -1,7 +1,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value, QuerySet
+from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 
 # Module imports
@@ -14,6 +14,9 @@ from plane.db.models import (
     ProjectMember,
     State,
     WorkspaceMember,
+    IssueAssignee,
+    ModuleIssue,
+    IssueLabel,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
 
@@ -39,33 +42,46 @@ def issue_queryset_grouper(
         if group_key in GROUP_FILTER_MAPPER:
             queryset = queryset.filter(GROUP_FILTER_MAPPER[group_key])
 
+    issue_assignee_subquery = Subquery(
+        IssueAssignee.objects.filter(
+            issue_id=OuterRef("pk"),
+            deleted_at__isnull=True,
+        )
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+        .values("arr")
+    )
+
+    issue_module_subquery = Subquery(
+        ModuleIssue.objects.filter(
+            issue_id=OuterRef("pk"),
+            deleted_at__isnull=True,
+            module__archived_at__isnull=True,
+        )
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("module_id", distinct=True))
+        .values("arr")
+    )
+
+    issue_label_subquery = Subquery(
+        IssueLabel.objects.filter(issue_id=OuterRef("pk"), deleted_at__isnull=True)
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("label_id", distinct=True))
+        .values("arr")
+    )
+
     annotations_map: Dict[str, Tuple[str, Q]] = {
-        "assignee_ids": (
-            "assignees__id",
-            ~Q(assignees__id__isnull=True) & Q(issue_assignee__deleted_at__isnull=True),
-        ),
-        "label_ids": (
-            "labels__id",
-            ~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True),
-        ),
-        "module_ids": (
-            "issue_module__module_id",
-            (
-                ~Q(issue_module__module_id__isnull=True)
-                & Q(issue_module__module__archived_at__isnull=True)
-                & Q(issue_module__deleted_at__isnull=True)
-            ),
-        ),
+        "assignee_ids": Coalesce(issue_assignee_subquery, Value([], output_field=ArrayField(UUIDField()))),
+        "label_ids": Coalesce(issue_label_subquery, Value([], output_field=ArrayField(UUIDField()))),
+        "module_ids": Coalesce(issue_module_subquery, Value([], output_field=ArrayField(UUIDField()))),
     }
 
-    default_annotations: Dict[str, Any] = {
-        key: Coalesce(
-            ArrayAgg(field, distinct=True, filter=condition),
-            Value([], output_field=ArrayField(UUIDField())),
-        )
-        for key, (field, condition) in annotations_map.items()
-        if FIELD_MAPPER.get(key) != group_by or FIELD_MAPPER.get(key) != sub_group_by
-    }
+    default_annotations: Dict[str, Any] = {}
+
+    for key, expression in annotations_map.items():
+        if FIELD_MAPPER.get(key) in {group_by, sub_group_by}:
+            continue
+        default_annotations[key] = expression
 
     return queryset.annotate(**default_annotations)
 
@@ -126,19 +142,16 @@ def issue_group_values(
     slug: str,
     project_id: Optional[str] = None,
     filters: Dict[str, Any] = {},
+    queryset: Optional[QuerySet] = None,
 ) -> List[Union[str, Any]]:
     if field == "state_id":
-        queryset = State.objects.filter(
-            is_triage=False, workspace__slug=slug
-        ).values_list("id", flat=True)
+        queryset = State.objects.filter(is_triage=False, workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id))
         return list(queryset)
 
     if field == "labels__id":
-        queryset = Label.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]
@@ -146,36 +159,28 @@ def issue_group_values(
     if field == "assignees__id":
         if project_id:
             return list(
-                ProjectMember.objects.filter(
-                    workspace__slug=slug, project_id=project_id, is_active=True
-                ).values_list("member_id", flat=True)
+                ProjectMember.objects.filter(workspace__slug=slug, project_id=project_id, is_active=True).values_list(
+                    "member_id", flat=True
+                )
             )
         return list(
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True
-            ).values_list("member_id", flat=True)
+            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True).values_list("member_id", flat=True)
         )
 
     if field == "issue_module__module_id":
-        queryset = Module.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Module.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]
 
     if field == "cycle_id":
-        queryset = Cycle.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]
 
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         return list(queryset)
 
     if field == "priority":
@@ -185,36 +190,24 @@ def issue_group_values(
         return ["backlog", "unstarted", "started", "completed", "cancelled"]
 
     if field == "target_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("target_date", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("target_date", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     if field == "start_date":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("start_date", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("start_date", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     if field == "created_by":
-        queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(**filters)
-            .values_list("created_by", flat=True)
-            .distinct()
-        )
+        queryset = queryset.values_list("created_by", flat=True).distinct()
         if project_id:
             return list(queryset.filter(project_id=project_id))
-        return list(queryset)
+        else:
+            return list(queryset)
 
     return []

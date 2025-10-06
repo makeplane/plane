@@ -1,19 +1,19 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
-  EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  STATE_GROUPS,
-  TIssuePriorities,
   ISSUE_PRIORITY_FILTERS,
+  STATE_GROUPS,
   TIssueFilterPriorityObject,
+  TIssuePriorities,
 } from "@plane/constants";
 import {
+  EIssueLayoutTypes,
+  IGanttBlock,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IGanttBlock,
   TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
@@ -102,27 +102,29 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 
 export const handleIssueQueryParamsByLayout = (
   layout: EIssueLayoutTypes | undefined,
-  viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues" | "team_issues"
+  viewType:
+    | "my_issues"
+    | "issues"
+    | "profile_issues"
+    | "archived_issues"
+    | "draft_issues"
+    | "team_issues"
+    | "team_project_work_items"
 ): TIssueParams[] | null => {
-  const queryParams: TIssueParams[] = [];
+  const queryParams: TIssueParams[] = ["filters"];
 
   if (!layout) return null;
 
-  const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType][layout];
-
-  // add filters query params
-  layoutOptions.filters.forEach((option) => {
-    queryParams.push(option);
-  });
+  const currentViewLayoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE[viewType].layoutOptions[layout];
 
   // add display filters query params
-  Object.keys(layoutOptions.display_filters).forEach((option) => {
+  Object.keys(currentViewLayoutOptions.display_filters).forEach((option) => {
     queryParams.push(option as TIssueParams);
   });
 
   // add extra options query params
-  if (layoutOptions.extra_options.access) {
-    layoutOptions.extra_options.values.forEach((option) => {
+  if (currentViewLayoutOptions.extra_options.access) {
+    currentViewLayoutOptions.extra_options.values.forEach((option) => {
       queryParams.push(option);
     });
   }
@@ -190,7 +192,9 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   sort_order: block?.sort_order,
   start_date: block?.start_date ?? undefined,
   target_date: block?.target_date ?? undefined,
-  project_id: block?.project_id ?? undefined,
+  meta: {
+    project_id: block?.project_id ?? undefined,
+  },
 });
 
 export const formatTextList = (TextArray: string[]): string => {
@@ -277,7 +281,6 @@ export const getComputedDisplayFilters = (
     order_by: filters?.order_by || "sort_order",
     group_by: filters?.group_by || null,
     sub_group_by: filters?.sub_group_by || null,
-    type: filters?.type || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
   };

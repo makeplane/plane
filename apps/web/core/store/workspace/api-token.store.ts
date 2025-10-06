@@ -5,7 +5,7 @@ import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // services
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IApiTokenStore {
   // observables

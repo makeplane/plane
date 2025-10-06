@@ -9,20 +9,14 @@ import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
 // icons
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TCalendarLayouts,
-  TIssueKanbanFilters,
-} from "@plane/types";
+import { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
 import { CALENDAR_LAYOUTS } from "@/constants/calendar";
-import { useCalendarView } from "@/hooks/store";
+import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
@@ -39,8 +33,8 @@ interface ICalendarHeader {
     | IProjectEpicsFilter;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 
@@ -73,9 +67,9 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
-    if (!projectId || !updateFilters) return;
+    if (!updateFilters) return;
 
-    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -93,9 +87,9 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleToggleWeekends = () => {
     const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-    if (!projectId || !updateFilters) return;
+    if (!updateFilters) return;
 
-    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,

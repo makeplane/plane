@@ -2,30 +2,28 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// plane package imports
+// plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle, IIssueFilterOptions } from "@plane/types";
+import { TWorkItemFilterCondition } from "@plane/shared-state";
+import { ICycle } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useProjectState } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
   workspaceSlug: string;
   projectId: string;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
 };
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
   const { handleFiltersUpdate, cycle } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { groupedProjectStates } = useProjectState();
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -68,10 +66,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
                   <div
                     className="flex items-center justify-between gap-2 text-sm cursor-pointer"
                     onClick={() => {
-                      if (groupedProjectStates) {
-                        const states = groupedProjectStates[group].map((state) => state.id);
-                        handleFiltersUpdate("state", states, true);
-                      }
+                      handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
                   >
                     <div className="flex items-center gap-1.5">

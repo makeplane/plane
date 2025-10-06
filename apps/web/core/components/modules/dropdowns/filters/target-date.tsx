@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
 import { isInDateFormat } from "@plane/utils";
-import { DateFilterModal } from "@/components/core";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 
 type Props = {

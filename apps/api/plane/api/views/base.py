@@ -13,13 +13,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Third party imports
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 class TimezoneMixin:
@@ -36,10 +37,12 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
     authentication_classes = [APIKeyAuthentication]
 
     permission_classes = [IsAuthenticated]
+
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -51,9 +54,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
-            service_token = APIToken.objects.filter(
-                token=api_key, is_service=True
-            ).first()
+            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
 
             if service_token:
                 throttle_classes.append(ServiceTokenRateThrottle())
@@ -108,9 +109,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
@@ -146,14 +145,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

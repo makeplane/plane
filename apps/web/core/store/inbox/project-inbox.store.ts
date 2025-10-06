@@ -1,7 +1,4 @@
-import { uniq, update } from "lodash";
-import isEmpty from "lodash/isEmpty";
-import omit from "lodash/omit";
-import set from "lodash/set";
+import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EPastDurationFilters } from "@plane/constants";
@@ -22,7 +19,7 @@ import { getCustomDates } from "@plane/utils";
 import { InboxIssueService } from "@/services/inbox";
 // root store
 import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 type TLoader =
   | "init-loading"

@@ -6,12 +6,13 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
-import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   convertWorkItemDataToSearchResponse,
   getUpdateFormDataForReset,
@@ -28,20 +29,20 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
-import { CreateLabelModal } from "@/components/labels";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web imports
-import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
-import {
-  IssueAdditionalProperties,
-  IssueTypeSelect,
-  WorkItemTemplateSelect,
-} from "@/plane-web/components/issues/issue-modal";
+import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
+import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
+import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
+import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
@@ -95,7 +96,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = props;
 
   // states
-  const [labelModal, setLabelModal] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [isMoving, setIsMoving] = useState<boolean>(false);
 
@@ -360,17 +360,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      {projectId && (
-        <CreateLabelModal
-          isOpen={labelModal}
-          handleClose={() => setLabelModal(false)}
-          projectId={projectId}
-          onSuccess={(response) => {
-            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
-            handleFormChange();
-          }}
-        />
-      )}
       <div className="flex gap-2 bg-transparent">
         <div className="rounded-lg w-full">
           <form
@@ -474,25 +463,19 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   onClose={onClose}
                 />
               </div>
-              <div
-                className={cn(
-                  "px-5",
-                  activeAdditionalPropertiesLength <= 4 &&
-                    "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
-                )}
-              >
-                {projectId && (
-                  <IssueAdditionalProperties
-                    issueId={data?.id ?? data?.sourceIssueId}
-                    issueTypeId={watch("type_id")}
-                    projectId={projectId}
-                    workspaceSlug={workspaceSlug?.toString()}
-                    isDraft={isDraft}
-                  />
-                )}
-              </div>
+              <WorkItemModalAdditionalProperties
+                isDraft={isDraft}
+                workItemId={data?.id ?? data?.sourceIssueId}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug?.toString()}
+              />
             </div>
-            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg bg-custom-background-100">
+            <div
+              className={cn(
+                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
+                activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
+              )}
+            >
               <div className="pb-3 border-b-[0.5px] border-custom-border-200">
                 <IssueDefaultProperties
                   control={control}
@@ -505,7 +488,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   parentId={watch("parent_id")}
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
-                  setLabelModal={setLabelModal}
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>

@@ -1,19 +1,16 @@
 import type { EmojiOptions } from "@tiptap/extension-emoji";
-import { ReactRenderer, Editor } from "@tiptap/react";
-import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
+import { ReactRenderer, type Editor } from "@tiptap/react";
+import type { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
+import { type EmojiItem, EmojiList, type EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
-const emojiSuggestion: EmojiOptions["suggestion"] = {
+export const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
-    const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
-    const { isSupported } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
+    const { emojis, isSupported } = editor.storage.emoji;
     const filteredEmojis = emojis.filter((emoji) => {
       const hasEmoji = !!emoji?.emoji;
       const hasFallbackImage = !!emoji?.fallbackImage;
@@ -27,7 +24,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
 
     if (query.trim() === "") {
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        filteredEmojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+        filteredEmojis.find((emoji) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);
@@ -57,13 +54,14 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
         editor = props.editor;
 
         // Track active dropdown
-        getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
+        editor.storage.utility.activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
 
         component = new ReactRenderer(EmojiList, {
           props: {
             items: props.items,
             command: props.command,
             editor: props.editor,
+            query: props.query,
           },
           editor: props.editor,
         });
@@ -81,6 +79,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
           items: props.items,
           command: props.command,
           editor: props.editor,
+          query: props.query,
         });
       },
 
@@ -99,10 +98,10 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
       onExit: (): void => {
         // Remove from active dropdowns
         if (editor) {
-          const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
-          const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+          const { activeDropbarExtensions } = editor.storage.utility;
+          const index = activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
           if (index > -1) {
-            utilityStorage.activeDropbarExtensions.splice(index, 1);
+            activeDropbarExtensions.splice(index, 1);
           }
         }
 
@@ -114,5 +113,3 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
     };
   },
 };
-
-export default emojiSuggestion;

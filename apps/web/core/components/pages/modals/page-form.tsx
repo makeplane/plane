@@ -1,20 +1,17 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-// types
 import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-import { TPage } from "@plane/types";
-// ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TPage } from "@plane/types";
+import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
 import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
-import { Logo } from "@/components/common";
-// constants
+// components
 import { AccessField } from "@/components/common/access-field";
-// helpers
+import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

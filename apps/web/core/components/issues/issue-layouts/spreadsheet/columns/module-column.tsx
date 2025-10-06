@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
-import xor from "lodash/xor";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // components
-import { ModuleDropdown } from "@/components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // constants
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";

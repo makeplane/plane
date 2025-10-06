@@ -32,9 +32,8 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
   );
   // handle arrow key navigation
   useEffect(() => {
-    const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
     const onKeyDown = (e: KeyboardEvent) => {
-      if (navigationKeys.includes(e.key)) {
+      if (DROPDOWN_NAVIGATION_KEYS.includes(e.key)) {
         e.preventDefault();
         const currentSection = selectedIndex.section;
         const currentItem = selectedIndex.item;

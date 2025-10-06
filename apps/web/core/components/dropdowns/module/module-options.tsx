@@ -3,50 +3,45 @@
 import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-//components
-import { DiceIcon } from "@plane/ui";
-//store
+import { DiceIcon } from "@plane/propel/icons";
+import { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
-import { useModule } from "@/hooks/store";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-//hooks
-//icon
-//types
 
 type DropdownOptions =
   | {
       value: string | null;
       query: string;
-      content: JSX.Element;
+      content: React.ReactNode;
     }[]
   | undefined;
 
 interface Props {
-  projectId: string;
-  referenceElement: HTMLButtonElement | null;
-  placement: Placement | undefined;
+  getModuleById: (moduleId: string) => IModule | null;
   isOpen: boolean;
+  moduleIds?: string[];
   multiple: boolean;
+  onDropdownOpen?: () => void;
+  placement: Placement | undefined;
+  referenceElement: HTMLButtonElement | null;
 }
 
 export const ModuleOptions = observer((props: Props) => {
-  const { projectId, isOpen, referenceElement, placement, multiple } = props;
-  // i18n
-  const { t } = useTranslation();
+  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
+  // refs
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // refs
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
-  const { workspaceSlug } = useParams();
-  const { getProjectModuleIds, fetchModules, getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
 
   useEffect(() => {
@@ -72,10 +67,8 @@ export const ModuleOptions = observer((props: Props) => {
     ],
   });
 
-  const moduleIds = getProjectModuleIds(projectId);
-
   const onOpen = () => {
-    if (workspaceSlug && !moduleIds) fetchModules(workspaceSlug.toString(), projectId);
+    onDropdownOpen?.();
   };
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

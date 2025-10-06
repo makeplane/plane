@@ -1,15 +1,16 @@
 import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import { Editor, useEditorState } from "@tiptap/react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
+
 // components
 import { LinkView, LinkViewProps } from "@/components/links";
 
-interface LinkViewContainerProps {
+type Props = {
   editor: Editor;
   containerRef: React.RefObject<HTMLDivElement>;
-}
+};
 
-export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containerRef }) => {
+export const LinkViewContainer: FC<Props> = ({ editor, containerRef }) => {
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<Element | null>(null);

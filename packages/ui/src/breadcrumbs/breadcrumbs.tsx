@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import * as React from "react";
-import { cn } from "../../helpers";
-import { Tooltip } from "../tooltip";
+import { Tooltip } from "@plane/propel/tooltip";
+import { cn } from "../utils";
 
 type BreadcrumbsProps = {
   className?: string;

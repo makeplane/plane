@@ -1,18 +1,26 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
-import type { TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView } from "../custom-image/components/node-view";
+import { CustomImageNodeView, CustomImageNodeViewProps } from "../custom-image/components/node-view";
 import { ImageExtensionConfig } from "./extension-config";
+
+declare module "@tiptap/core" {
+  interface Storage {
+    [CORE_EXTENSIONS.IMAGE]: ImageExtensionStorage;
+  }
+}
 
 export type ImageExtensionStorage = {
   deletedImageSet: Map<string, boolean>;
 };
 
 type Props = {
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
 };
 
 export const ImageExtension = (props: Props) => {
@@ -47,7 +55,9 @@ export const ImageExtension = (props: Props) => {
 
     // render custom image node
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNodeView);
+      return ReactNodeViewRenderer((props) => (
+        <CustomImageNodeView {...props} node={props.node as CustomImageNodeViewProps["node"]} />
+      ));
     },
   });
 };

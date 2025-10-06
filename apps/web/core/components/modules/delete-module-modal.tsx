@@ -13,7 +13,7 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

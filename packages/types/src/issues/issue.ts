@@ -1,9 +1,17 @@
 import { TIssuePriorities } from "../issues";
+import { TIssuePublicComment } from "./activity/issue_comment";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes } from "./issue_relation";
-import { TIssuePublicComment } from "./activity/issue_comment";
+
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
+}
 
 export enum EIssueServiceType {
   ISSUES = "issues",
@@ -21,10 +29,10 @@ export enum EIssuesStoreType {
   TEAM_VIEW = "TEAM_VIEW",
   PROJECT_VIEW = "PROJECT_VIEW",
   ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
   EPIC = "EPIC",
+  TEAM_PROJECT_WORK_ITEMS = "TEAM_PROJECT_WORK_ITEMS",
 }
 
 export type TBaseIssue = {
@@ -61,6 +69,7 @@ export type TBaseIssue = {
 
   is_draft: boolean;
   is_epic?: boolean;
+  is_intake?: boolean;
 };
 
 export type IssueRelation = {

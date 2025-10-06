@@ -1,7 +1,4 @@
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import update from "lodash/update";
+import { orderBy, isEmpty, update, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
@@ -20,7 +17,7 @@ import { convertToEpoch } from "@plane/utils";
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
 import { Notification, INotification } from "@/store/notifications/notification";
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;

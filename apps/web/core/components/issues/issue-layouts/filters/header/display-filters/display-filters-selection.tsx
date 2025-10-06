@@ -1,5 +1,5 @@
 import React from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import {
   IIssueDisplayFilterOptions,
@@ -14,7 +14,7 @@ import {
   FilterGroupBy,
   FilterOrderBy,
   FilterSubGroupBy,
-} from "@/components/issues";
+} from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;

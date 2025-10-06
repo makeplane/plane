@@ -1,36 +1,40 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  TAIMenuProps,
-  TDisplayConfig,
-  TFileHandler,
-  TRealtimeConfig,
-  TServerHandler,
+  type EditorRefApi,
+  type TAIMenuProps,
+  type TDisplayConfig,
+  type TFileHandler,
+  type TRealtimeConfig,
+  type TServerHandler,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
-// helpers
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace, useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
+// plane web imports
 import { EditorAIMenu } from "@/plane-web/components/pages";
-// plane web hooks
+import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
+import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
+import { PageContentBrowser } from "./summary";
+import { PageEditorTitle } from "./title";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -38,6 +42,7 @@ export type TEditorBodyConfig = {
 
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+  getRedirectionLink: (pageId?: string) => string;
 };
 
 type Props = {
@@ -51,7 +56,11 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId: string;
   workspaceSlug: string;
+  storeType: EPageStoreType;
+
+  extendedEditorProps: TExtendedEditorExtensionsConfig;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -64,8 +73,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handlers,
     isNavigationPaneOpen,
     page,
+    storeType,
     webhookConnectionParams,
+    projectId,
     workspaceSlug,
+    extendedEditorProps,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -80,17 +92,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     editor: { editorRef, updateAssetsList },
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
-    fetchEmbedSuggestions: handlers.fetchEntity,
-    workspaceSlug,
-  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug,
+    storeType,
+  });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation
@@ -112,7 +122,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         isOpen={isOpen}
         onClose={onClose}
         workspaceId={workspaceId}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        workspaceSlug={workspaceSlug}
       />
     ),
     [editorRef, workspaceId, workspaceSlug]
@@ -199,7 +209,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         )}
         <div className="page-header-container group/page-header">
           <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot page={page} />
+            <PageEditorHeaderRoot page={page} projectId={projectId} />
             <PageEditorTitle
               editorRef={editorRef}
               readOnly={!isContentEditable}
@@ -225,9 +235,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             renderComponent: (props) => <EditorMentionsRoot {...props} />,
             getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
           }}
-          embedHandler={{
-            issue: issueEmbedProps,
-          }}
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}
           user={userConfig}
@@ -237,6 +244,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             menu: getAIMenu,
           }}
           onAssetChange={updateAssetsList}
+          extendedEditorProps={extendedEditorProps}
         />
       </div>
     </Row>

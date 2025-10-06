@@ -5,33 +5,26 @@ import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane types
+// plane imports
+import { Button } from "@plane/propel/button";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
-// plane ui
-import {
-  Button,
-  CustomSelect,
-  Input,
-  TextArea,
-  TOAST_TYPE,
-  setToast,
-  CustomEmojiIconPicker,
-  EmojiIconPickerTypes,
-  Tooltip,
-} from "@plane/ui";
-import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { ImagePickerPopover } from "@/components/core";
+import { Logo } from "@/components/common/logo";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
-import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+// local imports
+import { ProjectNetworkIcon } from "./project-network-icon";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -91,7 +84,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
-      .then((res) => {
+      .then(() => {
         captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {
@@ -104,18 +97,53 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           message: t("project_settings.general.toast.success"),
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: projectId,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: error?.error ?? t("project_settings.general.toast.error"),
-        });
+      .catch((err) => {
+        try {
+          captureError({
+            eventName: PROJECT_TRACKER_EVENTS.update,
+            payload: {
+              id: projectId,
+            },
+          });
+
+          // Handle the new error format where codes are nested in arrays under field names
+          const errorData = err ?? {};
+
+          const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
+          const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+
+          if (nameError || identifierError) {
+            if (nameError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_already_taken"),
+              });
+            }
+
+            if (identifierError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_identifier_already_taken"),
+              });
+            }
+          } else {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("toast.error"),
+              message: t("something_went_wrong"),
+            });
+          }
+        } catch (error) {
+          // Fallback error handling if the error processing fails
+          console.error("Error processing API error:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("something_went_wrong"),
+          });
+        }
       });
   };
 
@@ -168,20 +196,21 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               control={control}
               name="logo_props"
               render={({ field: { value, onChange } }) => (
-                <CustomEmojiIconPicker
+                <EmojiPicker
+                  iconType="material"
                   closeOnSelect={false}
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
                   buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
-                  onChange={(val) => {
+                  // TODO: fix types
+                  onChange={(val: any) => {
                     let logoValue = {};
 
                     if (val?.type === "emoji")
                       logoValue = {
-                        value: convertHexEmojiToDecimal(val.value.unified),
-                        url: val.value.imageUrl,
+                        value: val.value,
                       };
                     else if (val?.type === "icon") logoValue = val.value;
 
@@ -317,7 +346,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 isMobile={isMobile}
                 tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
-                position="right-top"
+                position="right-start"
               >
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
               </Tooltip>

@@ -7,13 +7,16 @@ import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
-import { useInstance, useUserPermissions } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useUserPermissions } from "@/hooks/store/user";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services

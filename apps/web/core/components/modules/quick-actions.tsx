@@ -14,14 +14,16 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule, useUserPermissions } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

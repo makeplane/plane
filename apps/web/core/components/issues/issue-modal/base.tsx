@@ -8,8 +8,6 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -23,9 +21,11 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
-// local components
+// local imports
+import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { type IssueFormProps, IssueFormRoot } from "./form";
+import type { IssuesModalProps } from "./modal";
 
 export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
   const {
@@ -68,7 +68,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
-  const { allowedProjectIds, handleCreateUpdatePropertyValues } = useIssueModal();
+  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
@@ -86,12 +86,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      issueId,
-      isDraft ? "DRAFT" : "DEFAULT"
-    );
+    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
     if (response) setDescription(response?.description_html || "<p></p>");
   };
 
@@ -221,6 +216,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           projectId: response.project_id,
           workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
+        });
+
+        // create sub work item
+        await handleCreateSubWorkItem({
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: response.project_id,
+          parentId: response.id,
         });
       }
 
