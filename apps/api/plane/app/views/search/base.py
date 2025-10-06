@@ -120,7 +120,9 @@ class GlobalSearchEndpoint(BaseAPIView):
         if workspace_search == "false" and project_id:
             cycles = cycles.filter(project_id=project_id)
 
-        return cycles.distinct().values("name", "id", "project_id", "project__identifier", "workspace__slug")
+        return cycles.distinct().values(
+            "name", "id", "project_id", "project__identifier", "workspace__slug"
+        )
 
     def filter_modules(self, query, slug, project_id, workspace_search):
         fields = ["name"]
@@ -139,7 +141,9 @@ class GlobalSearchEndpoint(BaseAPIView):
         if workspace_search == "false" and project_id:
             modules = modules.filter(project_id=project_id)
 
-        return modules.distinct().values("name", "id", "project_id", "project__identifier", "workspace__slug")
+        return modules.distinct().values(
+            "name", "id", "project_id", "project__identifier", "workspace__slug"
+        )
 
     def filter_pages(self, query, slug, project_id, workspace_search):
         fields = ["name"]
@@ -157,7 +161,9 @@ class GlobalSearchEndpoint(BaseAPIView):
             )
             .annotate(
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg(
+                        "projects__id", distinct=True, filter=~Q(projects__id=True)
+                    ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
@@ -174,13 +180,17 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
         if workspace_search == "false" and project_id:
-            project_subquery = ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=project_id).values_list(
-                "project_id", flat=True
-            )[:1]
+            project_subquery = ProjectPage.objects.filter(
+                page_id=OuterRef("id"), project_id=project_id
+            ).values_list("project_id", flat=True)[:1]
 
-            pages = pages.annotate(project_id=Subquery(project_subquery)).filter(project_id=project_id)
+            pages = pages.annotate(project_id=Subquery(project_subquery)).filter(
+                project_id=project_id
+            )
 
-        return pages.distinct().values("name", "id", "project_ids", "project_identifiers", "workspace__slug")
+        return pages.distinct().values(
+            "name", "id", "project_ids", "project_identifiers", "workspace__slug"
+        )
 
     def filter_views(self, query, slug, project_id, workspace_search):
         fields = ["name"]
@@ -199,28 +209,49 @@ class GlobalSearchEndpoint(BaseAPIView):
         if workspace_search == "false" and project_id:
             issue_views = issue_views.filter(project_id=project_id)
 
-        return issue_views.distinct().values("name", "id", "project_id", "project__identifier", "workspace__slug")
+        return issue_views.distinct().values(
+            "name", "id", "project_id", "project__identifier", "workspace__slug"
+        )
+
+    def filter_intakes(self, query, slug, project_id, workspace_search):
+        fields = ["name", "sequence_id", "project__identifier"]
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                # Match whole integers only (exclude decimal numbers)
+                sequences = re.findall(r"\b\d+\b", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
+
+        issues = Issue.objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        ).filter(models.Q(issue_intake__status=0) | models.Q(issue_intake__status=-2))
+
+        if workspace_search == "false" and project_id:
+            issues = issues.filter(project_id=project_id)
+
+        return issues.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+        )[:100]
 
     def get(self, request, slug):
         query = request.query_params.get("search", False)
+        # Optional: clients can send which entities to search across
+        # Default to all entities
+        entities_param = request.query_params.get("entities")
         workspace_search = request.query_params.get("workspace_search", "false")
         project_id = request.query_params.get("project_id", False)
-
-        if not query:
-            return Response(
-                {
-                    "results": {
-                        "workspace": [],
-                        "project": [],
-                        "issue": [],
-                        "cycle": [],
-                        "module": [],
-                        "issue_view": [],
-                        "page": [],
-                    }
-                },
-                status=status.HTTP_200_OK,
-            )
 
         MODELS_MAPPER = {
             "workspace": self.filter_workspaces,
@@ -230,13 +261,28 @@ class GlobalSearchEndpoint(BaseAPIView):
             "module": self.filter_modules,
             "issue_view": self.filter_views,
             "page": self.filter_pages,
+            "intake": self.filter_intakes,
         }
 
-        results = {}
+        if entities_param:
+            requested_entities = [e.strip() for e in entities_param.split(",") if e.strip()]
+            requested_entities = [e for e in requested_entities if e in MODELS_MAPPER]
+        else:
+            requested_entities = list(MODELS_MAPPER.keys())
 
-        for model in MODELS_MAPPER.keys():
-            func = MODELS_MAPPER.get(model, None)
-            results[model] = func(query, slug, project_id, workspace_search)
+        # If no query, return empty lists for requested entities
+        if not query:
+            return Response(
+                {"results": {entity: [] for entity in requested_entities}},
+                status=status.HTTP_200_OK,
+            )
+
+        results = {}
+        for entity in requested_entities:
+            func = MODELS_MAPPER.get(entity)
+            if func:
+                results[entity] = func(query, slug, project_id, workspace_search)
+
         return Response({"results": results}, status=status.HTTP_200_OK)
 
 
@@ -296,7 +342,9 @@ class SearchEndpoint(BaseAPIView):
 
                     if issue_id:
                         issue_created_by = (
-                            Issue.objects.filter(id=issue_id).values_list("created_by_id", flat=True).first()
+                            Issue.objects.filter(id=issue_id)
+                            .values_list("created_by_id", flat=True)
+                            .first()
                         )
                         users = (
                             users.filter(Q(role__gt=10) | Q(member_id=issue_created_by))
@@ -330,12 +378,15 @@ class SearchEndpoint(BaseAPIView):
                     projects = (
                         Project.objects.filter(
                             q,
-                            Q(project_projectmember__member=self.request.user) | Q(network=2),
+                            Q(project_projectmember__member=self.request.user)
+                            | Q(network=2),
                             workspace__slug=slug,
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values("name", "id", "identifier", "logo_props", "workspace__slug")[:count]
+                        .values(
+                            "name", "id", "identifier", "logo_props", "workspace__slug"
+                        )[:count]
                     )
                     response_data["project"] = list(projects)
 
@@ -394,16 +445,20 @@ class SearchEndpoint(BaseAPIView):
                         .annotate(
                             status=Case(
                                 When(
-                                    Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
+                                    Q(start_date__lte=timezone.now())
+                                    & Q(end_date__gte=timezone.now()),
                                     then=Value("CURRENT"),
                                 ),
                                 When(
                                     start_date__gt=timezone.now(),
                                     then=Value("UPCOMING"),
                                 ),
-                                When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
                                 When(
-                                    Q(start_date__isnull=True) & Q(end_date__isnull=True),
+                                    end_date__lt=timezone.now(), then=Value("COMPLETED")
+                                ),
+                                When(
+                                    Q(start_date__isnull=True)
+                                    & Q(end_date__isnull=True),
                                     then=Value("DRAFT"),
                                 ),
                                 default=Value("DRAFT"),
@@ -521,7 +576,9 @@ class SearchEndpoint(BaseAPIView):
                             )
                         )
                         .order_by("-created_at")
-                        .values("member__avatar_url", "member__display_name", "member__id")[:count]
+                        .values(
+                            "member__avatar_url", "member__display_name", "member__id"
+                        )[:count]
                     )
                     response_data["user_mention"] = list(users)
 
@@ -535,12 +592,15 @@ class SearchEndpoint(BaseAPIView):
                     projects = (
                         Project.objects.filter(
                             q,
-                            Q(project_projectmember__member=self.request.user) | Q(network=2),
+                            Q(project_projectmember__member=self.request.user)
+                            | Q(network=2),
                             workspace__slug=slug,
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values("name", "id", "identifier", "logo_props", "workspace__slug")[:count]
+                        .values(
+                            "name", "id", "identifier", "logo_props", "workspace__slug"
+                        )[:count]
                     )
                     response_data["project"] = list(projects)
 
@@ -597,16 +657,20 @@ class SearchEndpoint(BaseAPIView):
                         .annotate(
                             status=Case(
                                 When(
-                                    Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
+                                    Q(start_date__lte=timezone.now())
+                                    & Q(end_date__gte=timezone.now()),
                                     then=Value("CURRENT"),
                                 ),
                                 When(
                                     start_date__gt=timezone.now(),
                                     then=Value("UPCOMING"),
                                 ),
-                                When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
                                 When(
-                                    Q(start_date__isnull=True) & Q(end_date__isnull=True),
+                                    end_date__lt=timezone.now(), then=Value("COMPLETED")
+                                ),
+                                When(
+                                    Q(start_date__isnull=True)
+                                    & Q(end_date__isnull=True),
                                     then=Value("DRAFT"),
                                 ),
                                 default=Value("DRAFT"),
