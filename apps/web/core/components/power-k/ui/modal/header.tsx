@@ -14,12 +14,13 @@ type Props = {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   activeContext: TPowerKContextType | null;
+  showContextBasedActions: boolean;
   handleClearContext: () => void;
   activePage: TPowerKPageType | null;
 };
 
 export const PowerKModalHeader: React.FC<Props> = (props) => {
-  const { activeContext, searchTerm, onSearchChange, handleClearContext, activePage } = props;
+  const { activeContext, searchTerm, onSearchChange, showContextBasedActions, handleClearContext, activePage } = props;
   // translation
   const { t } = useTranslation();
   // derived values
@@ -30,7 +31,9 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
   return (
     <div className="border-b border-custom-border-200">
       {/* Context Indicator */}
-      <PowerKModalContextIndicator activeContext={activeContext} handleClearContext={handleClearContext} />
+      {showContextBasedActions && (
+        <PowerKModalContextIndicator activeContext={activeContext} handleClearContext={handleClearContext} />
+      )}
 
       {/* Search Input */}
       <div className="flex items-center gap-2 px-4 py-3">

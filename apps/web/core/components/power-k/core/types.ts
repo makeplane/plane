@@ -16,6 +16,8 @@ export type TPowerKContext = {
   activeCommand: TPowerKCommandConfig | null;
   // Active context
   activeContext: TPowerKContextType | null;
+  shouldShowContextBasedActions: boolean;
+  setShouldShowContextBasedActions: (shouldShowContextBasedActions: boolean) => void;
   // Router for navigation
   router: AppRouterProgressInstance;
   // UI control

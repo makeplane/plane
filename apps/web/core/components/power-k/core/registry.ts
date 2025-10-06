@@ -149,6 +149,10 @@ export class PowerKCommandRegistry implements IPowerKCommandRegistry {
       if (!ctx.activeContext || ctx.activeContext !== command.contextType) {
         return false;
       }
+
+      if (!ctx.shouldShowContextBasedActions) {
+        return false;
+      }
     }
 
     return true;

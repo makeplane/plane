@@ -25,7 +25,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const [searchTerm, setSearchTerm] = useState("");
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
-  const { activePage, setActivePage, setActiveContext } = useCommandPalette();
+  const { activePage, setActivePage } = useCommandPalette();
 
   // Handle command selection
   const handleCommandSelect = useCallback(
@@ -88,6 +88,9 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
           // Go back from selection page
           setActivePage(null);
           context.setActiveCommand(null);
+        } else {
+          // Hide context based actions
+          context.setShouldShowContextBasedActions(false);
         }
         return;
       }
@@ -102,6 +105,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
         setSearchTerm("");
         setActivePage(null);
         context.setActiveCommand(null);
+        context.setShouldShowContextBasedActions(true);
       }, 200);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +153,8 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
                     activeContext={context.activeContext}
-                    handleClearContext={() => setActiveContext(null)}
+                    showContextBasedActions={context.shouldShowContextBasedActions}
+                    handleClearContext={() => context.setShouldShowContextBasedActions(false)}
                     activePage={activePage}
                   />
                   <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll">

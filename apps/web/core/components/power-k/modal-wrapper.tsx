@@ -26,6 +26,7 @@ export const CommandPaletteProvider = observer(() => {
   const params = useParams();
   // states
   const [activeCommand, setActiveCommand] = useState<TPowerKCommandConfig | null>(null);
+  const [shouldShowContextBasedActions, setShouldShowContextBasedActions] = useState(true);
   // store hooks
   const commandPaletteStore = useCommandPalette();
   const { data: currentUser } = useUser();
@@ -39,13 +40,15 @@ export const CommandPaletteProvider = observer(() => {
       currentUserId: currentUser?.id,
       activeCommand,
       activeContext: activeContext,
+      shouldShowContextBasedActions,
+      setShouldShowContextBasedActions,
       params,
       router,
       closePalette: () => commandPaletteStore.toggleCommandPaletteModal(false),
       setActiveCommand,
       setActivePage: (page) => commandPaletteStore.setActivePage(page),
     }),
-    [currentUser?.id, activeContext, commandPaletteStore, router, params, activeCommand]
+    [currentUser?.id, activeContext, commandPaletteStore, router, params, activeCommand, shouldShowContextBasedActions]
   );
 
   return (
