@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import { PowerKModalPagesList } from "../pages";
@@ -27,8 +26,6 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
   const { activePage, setActivePage, setActiveContext } = useCommandPalette();
-  // empty state
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   // Handle command selection
   const handleCommandSelect = useCallback(
@@ -138,53 +135,52 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex w-full max-w-2xl transform flex-col items-center justify-center divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                <div className="w-full max-w-2xl">
-                  <Command
-                    filter={(i18nValue: string, search: string) => {
-                      if (i18nValue.toLowerCase().includes(search.toLowerCase())) return 1;
-                      return 0;
-                    }}
-                    shouldFilter={searchTerm.length > 0}
-                    onKeyDown={handleKeyDown}
-                    className="w-full"
-                  >
-                    <PowerKModalHeader
-                      searchTerm={searchTerm}
-                      onSearchChange={setSearchTerm}
-                      activeContext={context.activeContext}
-                      handleClearContext={() => setActiveContext(null)}
+                <Command
+                  filter={(i18nValue: string, search: string) => {
+                    if (i18nValue === "no-results") return 1;
+                    if (i18nValue.toLowerCase().includes(search.toLowerCase())) return 1;
+                    return 0;
+                  }}
+                  shouldFilter={searchTerm.length > 0}
+                  onKeyDown={handleKeyDown}
+                  className="w-full"
+                >
+                  <PowerKModalHeader
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    activeContext={context.activeContext}
+                    handleClearContext={() => setActiveContext(null)}
+                    activePage={activePage}
+                  />
+                  <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll">
+                    <PowerKModalSearchMenu
                       activePage={activePage}
+                      isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
+                      searchTerm={searchTerm}
+                      updateSearchTerm={setSearchTerm}
                     />
-                    <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll p-2">
-                      <PowerKModalSearchMenu
-                        searchTerm={searchTerm}
-                        isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
-                        activePage={activePage}
-                        resolvedPath={resolvedPath}
-                      />
-                      <PowerKContextBasedActions
-                        activeContext={context.activeContext}
-                        activePage={activePage}
-                        handleClose={context.closePalette}
-                        handleSelection={handlePageDataSelection}
-                        handleUpdateSearchTerm={setSearchTerm}
-                        handleUpdatePage={context.setActivePage}
-                      />
-                      <PowerKModalPagesList
-                        activePage={activePage}
-                        context={context}
-                        onPageDataSelect={handlePageDataSelection}
-                        onCommandSelect={handleCommandSelect}
-                      />
-                    </Command.List>
-                    {/* Footer hints */}
-                    <PowerKModalFooter
-                      isWorkspaceLevel={isWorkspaceLevel}
-                      projectId={context.params.projectId?.toString()}
-                      onWorkspaceLevelChange={setIsWorkspaceLevel}
+                    <PowerKContextBasedActions
+                      activeContext={context.activeContext}
+                      activePage={activePage}
+                      handleClose={context.closePalette}
+                      handleSelection={handlePageDataSelection}
+                      handleUpdateSearchTerm={setSearchTerm}
+                      handleUpdatePage={context.setActivePage}
                     />
-                  </Command>
-                </div>
+                    <PowerKModalPagesList
+                      activePage={activePage}
+                      context={context}
+                      onPageDataSelect={handlePageDataSelection}
+                      onCommandSelect={handleCommandSelect}
+                    />
+                  </Command.List>
+                  {/* Footer hints */}
+                  <PowerKModalFooter
+                    isWorkspaceLevel={isWorkspaceLevel}
+                    projectId={context.params.projectId?.toString()}
+                    onWorkspaceLevelChange={setIsWorkspaceLevel}
+                  />
+                </Command>
               </Dialog.Panel>
             </Transition.Child>
           </div>

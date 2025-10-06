@@ -1,11 +1,16 @@
-[cmdk-group]:not(:first-child) {
+[cmdk-group] {
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
   margin-top: 0.5rem;
 }
 
 [cmdk-group-heading] {
-  color: rgb(var(--color-text-secondary));
+  color: rgba(var(--color-text-300));
   font-size: 0.75rem;
-  margin: 0 0 0.25rem 0.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
 }
 
 [cmdk-item] {

@@ -2491,6 +2491,13 @@
       "update_work_item_labels": "Add labels",
       "update_module_member": "Change members",
       "update_module_status": "Change status"
+    },
+    "search_menu": {
+      "no_results": "No results found",
+      "clear_search": "Clear search"
+    },
+    "footer": {
+      "workspace_level": "Workspace level"
     }
   }
 }
