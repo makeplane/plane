@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
+from django.db.models import QuerySet
+
 
 @dataclass
 class ExportField:
@@ -168,10 +170,25 @@ class ExportSchemaMeta(type):
 
 
 class ExportSchema(metaclass=ExportSchemaMeta):
+    """Base schema for exporting data in various formats.
+
+    Subclasses should define fields as class attributes and can override:
+    - prepare_<field_name> methods for custom field serialization
+    - get_context_data() class method to pre-fetch related data for the queryset
+    """
+
     def __init__(self, context: Optional[Dict[str, Any]] = None) -> None:
         self.context = context or {}
 
     def serialize(self, obj: Any) -> Dict[str, Any]:
+        """Serialize a single object.
+
+        Args:
+            obj: The object to serialize
+
+        Returns:
+            Dictionary of serialized data
+        """
         output: Dict[str, Any] = {}
         for field_name, export_field in self._declared_fields.items():
             # Prefer explicit preparer methods if present
@@ -185,3 +202,43 @@ class ExportSchema(metaclass=ExportSchemaMeta):
 
             output[field_name] = export_field.get_value(obj, self.context)
         return output
+
+    @classmethod
+    def get_context_data(cls, queryset: QuerySet) -> Dict[str, Any]:
+        """Get context data for serialization. Override in subclasses to pre-fetch related data.
+
+        Args:
+            queryset: QuerySet of objects to be serialized
+
+        Returns:
+            Dictionary of context data to be passed to the schema instance
+        """
+        return {}
+
+    @classmethod
+    def serialize_queryset(cls, queryset: QuerySet, fields: List[str] = None) -> List[Dict[str, Any]]:
+        """Serialize a queryset of objects to export data.
+
+        Args:
+            queryset: QuerySet of objects to serialize
+            fields: Optional list of field names to include. Defaults to all fields.
+
+        Returns:
+            List of dictionaries containing serialized data
+        """
+        # Get context data (can be extended by subclasses)
+        context = cls.get_context_data(queryset)
+
+        # Determine which fields to extract
+        fields_to_extract = set(fields) if fields else set(cls._declared_fields.keys())
+
+        # Serialize each object
+        schema = cls(context=context)
+        data = []
+        for obj in queryset:
+            obj_data = schema.serialize(obj)
+            # Filter to only requested fields
+            filtered_data = {field: obj_data.get(field, "") for field in fields_to_extract if field in obj_data}
+            data.append(filtered_data)
+
+        return data

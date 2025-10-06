@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List, Type, Union
+
+from django.db.models import QuerySet
 
 from .formatters import CSVFormatter, JSONFormatter, XLSXFormatter
 
@@ -32,17 +34,26 @@ class Exporter:
     def export(
         self,
         filename: str,
-        records: List[dict],
+        data: Union[QuerySet, List[dict]],
+        fields: List[str] = None,
     ) -> tuple[str, str | bytes]:
-        """Export records using the configured formatter and return (filename, content).
+        """Export data using the configured formatter and return (filename, content).
 
         Args:
             filename: The filename for the export (without extension)
-            records: List of data dictionaries
+            data: Either a Django QuerySet or a list of already-serialized dicts
+            fields: Optional list of field names to include in export
 
         Returns:
             Tuple of (filename_with_extension, content)
         """
+        # Serialize the queryset if needed
+        if isinstance(data, QuerySet):
+            records = self.schema_class.serialize_queryset(data, fields=fields)
+        else:
+            # Already serialized data
+            records = data
+
         return self.formatter.format(filename, records, self.schema_class, self.options)
 
     @classmethod

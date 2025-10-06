@@ -86,6 +86,8 @@ class IssueExportSchema(ExportSchema):
     cycle_name = StringField(label="Cycle Name")
     cycle_start_date = DateField(label="Cycle Start Date")
     cycle_end_date = DateField(label="Cycle End Date")
+    parent = StringField(label="Parent")
+    relations = JSONField(label="Relations")
 
     def prepare_id(self, i):
         return f"{i.project.identifier}-{i.sequence_id}"
@@ -100,7 +102,7 @@ class IssueExportSchema(ExportSchema):
         return self._get_created_by(i)
 
     def prepare_labels(self, i):
-        return [label.name for label in i.label_details]
+        return [label.name for label in i.labels.all()]
 
     def prepare_comments(self, i):
         return [
@@ -119,7 +121,7 @@ class IssueExportSchema(ExportSchema):
         return [link.url for link in i.issue_link.all()]
 
     def prepare_assignees(self, i):
-        return [f"{u.first_name} {u.last_name}" for u in i.assignee_details]
+        return [f"{u.first_name} {u.last_name}" for u in i.assignees.all()]
 
     def prepare_subscribers_count(self, i):
         return i.issue_subscribers.count()
@@ -142,30 +144,30 @@ class IssueExportSchema(ExportSchema):
     def prepare_cycle_end_date(self, i):
         return i.issue_cycle.last().cycle.end_date if i.issue_cycle.last() else None
 
+    def prepare_parent(self, i):
+        if not i.parent:
+            return ""
+        return f"{i.parent.project.identifier}-{i.parent.sequence_id}"
+
+    def prepare_relations(self, i):
+        # Should show reverse relation as well
+        from plane.db.models.issue import IssueRelationChoices
+
+        relations = {
+            r.relation_type: f"{r.related_issue.project.identifier}-{r.related_issue.sequence_id}"
+            for r in i.issue_relation.all()
+        }
+        reverse_relations = {}
+        for relation in i.issue_related.all():
+            reverse_relations[IssueRelationChoices._REVERSE_MAPPING[relation.relation_type]] = (
+                f"{relation.issue.project.identifier}-{relation.issue.sequence_id}"
+            )
+        relations.update(reverse_relations)
+        return relations
+
     @classmethod
-    def serialize_issues(cls, issues_queryset: QuerySet, fields: List[str] = None) -> List[Dict[str, Any]]:
-        """Serialize a queryset of issues to export data.
-
-        Args:
-            issues_queryset: Queryset of Issue objects
-            fields: Optional list of field names to include. Defaults to all fields.
-
-        Returns:
-            List of dictionaries containing serialized issue data
-        """
-        # Get attachments for all issues
-        attachments_dict = get_issue_attachments_dict(issues_queryset)
-
-        # Determine which fields to extract
-        fields_to_extract = set(fields) if fields else set(cls._declared_fields.keys())
-
-        # Serialize each issue
-        schema = cls(context={"attachments_dict": attachments_dict})
-        issues_data = []
-        for issue in issues_queryset:
-            issue_data = schema.serialize(issue)
-            # Filter to only requested fields
-            filtered_data = {field: issue_data.get(field, "") for field in fields_to_extract if field in issue_data}
-            issues_data.append(filtered_data)
-
-        return issues_data
+    def get_context_data(cls, queryset: QuerySet) -> Dict[str, Any]:
+        """Get context data for issue serialization."""
+        return {
+            "attachments_dict": get_issue_attachments_dict(queryset),
+        }

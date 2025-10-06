@@ -28,7 +28,7 @@ class UserExportSchema(ExportSchema):
     def prepare_posts_count(self, obj):
         return obj.posts.count()
 
-# Export data
+# Export data - just pass the queryset!
 users = User.objects.all()
 exporter = Exporter(format_type="csv", schema_class=UserExportSchema)
 filename, content = exporter.export("users_export", users)
@@ -47,17 +47,24 @@ issues = Issue.objects.filter(project_id=project_id).prefetch_related(
     # ... other relations
 )
 
-# Export as XLSX
+# Export as XLSX - pass the queryset directly!
 exporter = Exporter(format_type="xlsx", schema_class=IssueExportSchema)
 filename, content = exporter.export("issues", issues)
 
 # Export with custom fields only
-issues_data = IssueExportSchema.serialize_issues(
-    issues,
-    fields=["id", "name", "state_name", "assignees"]
-)
 exporter = Exporter(format_type="json", schema_class=IssueExportSchema)
-filename, content = exporter.export("issues_filtered", issues_data)
+filename, content = exporter.export("issues_filtered", issues, fields=["id", "name", "state_name", "assignees"])
+```
+
+### Exporting Multiple Projects Separately
+
+```python
+# Export each project to a separate file
+for project_id in project_ids:
+    project_issues = issues.filter(project_id=project_id)
+    exporter = Exporter(format_type="csv", schema_class=IssueExportSchema)
+    filename, content = exporter.export(f"issues-{project_id}", project_issues)
+    # Save or upload the file
 ```
 
 ## 📝 Schema Definition
@@ -225,9 +232,9 @@ filename, content = exporter.export("data", records)
 
 ## 🔧 Advanced Usage
 
-### 📦 Using Context
+### 📦 Using Context for Pre-fetched Data
 
-Pass context data to schemas for additional information:
+Pass context data to schemas to avoid N+1 queries. Override `get_context_data()` in your schema:
 
 ```python
 class MySchema(ExportSchema):
@@ -237,12 +244,16 @@ class MySchema(ExportSchema):
         attachments_dict = self.context.get("attachments_dict", {})
         return len(attachments_dict.get(obj.id, []))
 
-# Create schema with context
-attachments_dict = get_attachments_dict(queryset)
-schema = MySchema(context={"attachments_dict": attachments_dict})
+    @classmethod
+    def get_context_data(cls, queryset):
+        """Pre-fetch all attachments in one query."""
+        attachments_dict = get_attachments_dict(queryset)
+        return {"attachments_dict": attachments_dict}
 
-# Serialize
-data = [schema.serialize(obj) for obj in queryset]
+# The Exporter automatically uses get_context_data() when serializing
+queryset = MyModel.objects.all()
+exporter = Exporter(format_type="csv", schema_class=MySchema)
+filename, content = exporter.export("data", queryset)
 ```
 
 ### 🔌 Registering Custom Formatters
@@ -273,25 +284,52 @@ formats = Exporter.get_available_formats()
 
 ### 🔍 Filtering Fields
 
-Use the `serialize_issues` class method pattern to filter fields:
+Pass a `fields` parameter to export only specific fields:
 
 ```python
-@classmethod
-def serialize_records(cls, queryset, fields=None):
-    fields_to_extract = set(fields) if fields else set(cls._declared_fields.keys())
+# Export only specific fields
+exporter = Exporter(format_type="csv", schema_class=MySchema)
+filename, content = exporter.export(
+    "filtered_data",
+    queryset,
+    fields=["id", "name", "email"]
+)
+```
 
-    schema = cls()
-    records_data = []
-    for record in queryset:
-        record_data = schema.serialize(record)
-        filtered_data = {
-            field: record_data.get(field, "")
-            for field in fields_to_extract
-            if field in record_data
-        }
-        records_data.append(filtered_data)
+### 🎯 Extending Schemas
 
-    return records_data
+Create extended schemas by inheriting from existing ones and overriding `get_context_data()`:
+
+```python
+class ExtendedIssueExportSchema(IssueExportSchema):
+    custom_field = JSONField(label="Custom Data")
+
+    def prepare_custom_field(self, obj):
+        # Use pre-fetched data from context
+        return self.context.get("custom_data", {}).get(obj.id, {})
+
+    @classmethod
+    def get_context_data(cls, queryset):
+        # Get parent context (attachments, etc.)
+        context = super().get_context_data(queryset)
+
+        # Add your custom pre-fetched data
+        context["custom_data"] = fetch_custom_data(queryset)
+
+        return context
+```
+
+### 💾 Manual Serialization
+
+If you need to serialize data without exporting, you can use the schema directly:
+
+```python
+# Serialize a queryset to a list of dicts
+data = MySchema.serialize_queryset(queryset, fields=["id", "name"])
+
+# Or serialize a single object
+schema = MySchema()
+obj_data = schema.serialize(obj)
 ```
 
 ## 💡 Example: IssueExportSchema
@@ -299,33 +337,46 @@ def serialize_records(cls, queryset, fields=None):
 The `IssueExportSchema` demonstrates a complete implementation:
 
 ```python
-from plane.utils.exporters import IssueExportSchema
+from plane.utils.exporters import Exporter, IssueExportSchema
 
-# Serialize issues
-issues_data = IssueExportSchema.serialize_issues(
-    issues_queryset,
+# Simple export - just pass the queryset!
+issues = Issue.objects.filter(project_id=project_id)
+exporter = Exporter(format_type="csv", schema_class=IssueExportSchema)
+filename, content = exporter.export("issues", issues)
+
+# Export specific fields only
+filename, content = exporter.export(
+    "issues_filtered",
+    issues,
     fields=["id", "name", "state_name", "assignees", "labels"]
 )
 
-# Export as CSV
-exporter = Exporter(format_type="csv", schema_class=IssueExportSchema)
-filename, content = exporter.export("issues", issues_data)
+# Export multiple projects to separate files
+for project_id in project_ids:
+    project_issues = issues.filter(project_id=project_id)
+    filename, content = exporter.export(f"issues-{project_id}", project_issues)
+    # Save or upload each file
 ```
 
 Key features:
 
 - 🔗 Access to related models via dotted paths
 - 🎯 Custom preparers for complex fields
-- 📎 Context-based attachment handling
+- 📎 Context-based attachment handling via `get_context_data()`
 - 📋 List and JSON field handling
 - 📅 Date/datetime formatting
 
 ## ✨ Best Practices
 
-1. **🚄 Prefetch Relations**: Always prefetch related data before exporting to avoid N+1 queries:
+1. **🚄 Avoid N+1 Queries**: Override `get_context_data()` to pre-fetch related data:
 
    ```python
-   issues = Issue.objects.prefetch_related('assignee_details', 'label_details')
+   @classmethod
+   def get_context_data(cls, queryset):
+       return {
+           "attachments": get_attachments_dict(queryset),
+           "comments": get_comments_dict(queryset),
+       }
    ```
 
 2. **🏷️ Use Labels**: Provide descriptive labels for better export headers:
@@ -347,9 +398,30 @@ Key features:
        return [f"{u.first_name} {u.last_name}" for u in obj.assignee_details]
    ```
 
-5. **⚡ Context for Expensive Operations**: Use context to pass pre-computed data and avoid redundant queries:
+5. **⚡ Pass QuerySets Directly**: Let the Exporter handle serialization:
+
    ```python
-   schema = MySchema(context={"computed_data": precomputed_dict})
+   # Good - Exporter handles serialization
+   exporter.export("data", queryset)
+
+   # Avoid - Manual serialization unless needed
+   data = MySchema.serialize_queryset(queryset)
+   exporter.export("data", data)
+   ```
+
+6. **📦 Filter QuerySets, Not Data**: For multiple exports, filter the queryset instead of the serialized data:
+
+   ```python
+   # Good - efficient, only serializes what's needed
+   for project_id in project_ids:
+       project_issues = issues.filter(project_id=project_id)
+       exporter.export(f"project-{project_id}", project_issues)
+
+   # Avoid - serializes all data upfront
+   all_data = MySchema.serialize_queryset(issues)
+   for project_id in project_ids:
+       project_data = [d for d in all_data if d['project_id'] == project_id]
+       exporter.export(f"project-{project_id}", project_data)
    ```
 
 ## 📚 API Reference
@@ -362,8 +434,11 @@ Key features:
 - `schema_class`: Schema class defining fields
 - `options`: Optional dict of format-specific options
 
-**`export(filename, records)`**
+**`export(filename, data, fields=None)`**
 
+- `filename`: Filename without extension
+- `data`: Django QuerySet or list of dicts
+- `fields`: Optional list of field names to include
 - Returns: `(filename_with_extension, content)`
 - `content` is str for CSV/JSON, bytes for XLSX
 
@@ -383,7 +458,18 @@ Key features:
 
 **`serialize(obj)`**
 
-- Returns: Dict of serialized field values
+- Returns: Dict of serialized field values for a single object
+
+**`serialize_queryset(queryset, fields=None)`** (class method)
+
+- `queryset`: QuerySet of objects to serialize
+- `fields`: Optional list of field names to include
+- Returns: List of dicts with serialized data
+
+**`get_context_data(queryset)`** (class method)
+
+- Override to pre-fetch related data for the queryset
+- Returns: Dict of context data
 
 ### 🔧 ExportField
 
@@ -400,14 +486,19 @@ Base class for all field types. Subclass to create custom field types.
 ## 🧪 Testing
 
 ```python
-# Test schema serialization
-schema = MySchema()
-result = schema.serialize(obj)
-assert result["field_name"] == expected_value
-
-# Test export
+# Test exporting a queryset
+queryset = MyModel.objects.all()
 exporter = Exporter(format_type="json", schema_class=MySchema)
-filename, content = exporter.export("test", [{"data": "value"}])
+filename, content = exporter.export("test", queryset)
 assert filename == "test.json"
 assert isinstance(content, str)
+
+# Test with field filtering
+filename, content = exporter.export("test", queryset, fields=["id", "name"])
+data = json.loads(content)
+assert all(set(item.keys()) == {"id", "name"} for item in data)
+
+# Test manual serialization
+data = MySchema.serialize_queryset(queryset)
+assert len(data) == queryset.count()
 ```

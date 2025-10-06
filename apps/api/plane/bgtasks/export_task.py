@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.db.models import Prefetch
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, Label, User
+from plane.db.models import ExporterHistory, Issue, IssueRelation
 from plane.utils.exception_logger import log_exception
 from plane.utils.exporters import Exporter, IssueExportSchema
 
@@ -153,7 +153,6 @@ def issue_export_task(
                 "project",
                 "workspace",
                 "state",
-                "parent",
                 "created_by",
                 "estimate_point",
             )
@@ -163,24 +162,22 @@ def issue_export_task(
                 "issue_module__module",
                 "issue_comments",
                 "assignees",
-                Prefetch(
-                    "assignees",
-                    queryset=User.objects.only("first_name", "last_name").distinct(),
-                    to_attr="assignee_details",
-                ),
-                Prefetch(
-                    "labels",
-                    queryset=Label.objects.only("name").distinct(),
-                    to_attr="label_details",
-                ),
                 "issue_subscribers",
                 "issue_link",
+                Prefetch(
+                    "issue_relation",
+                    queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
+                ),
+                Prefetch(
+                    "issue_related",
+                    queryset=IssueRelation.objects.select_related("issue", "issue__project"),
+                ),
+                Prefetch(
+                    "parent",
+                    queryset=Issue.objects.select_related("type", "project"),
+                ),
             )
         )
-
-        # Serialize issues using the schema
-        # TODO: Add support for custom field selection from request/settings
-        issues_data = IssueExportSchema.serialize_issues(workspace_issues)
 
         # Create exporter for the specified format
         try:
@@ -199,23 +196,16 @@ def issue_export_task(
 
         files = []
         if multiple:
-            project_dict = defaultdict(list)
-            for issue in issues_data:
-                project_dict[str(issue["project_id"])].append(issue)
-
+            # Export each project separately with its own queryset
             for project_id in project_ids:
-                issues = project_dict.get(str(project_id), [])
-
-                if issues:  # Only export if there are issues for this project
-                    # Generate filename for each project export
-                    export_filename = f"{slug}-{project_id}"
-                    filename, content = exporter.export(export_filename, issues)
-                    files.append((filename, content))
-
+                project_issues = workspace_issues.filter(project_id=project_id)
+                export_filename = f"{slug}-{project_id}"
+                filename, content = exporter.export(export_filename, project_issues)
+                files.append((filename, content))
         else:
-            # Generate filename for workspace export
+            # Export all issues in a single file
             export_filename = f"{slug}-{workspace_id}"
-            filename, content = exporter.export(export_filename, issues_data)
+            filename, content = exporter.export(export_filename, workspace_issues)
             files.append((filename, content))
 
         zip_buffer = create_zip_file(files)
