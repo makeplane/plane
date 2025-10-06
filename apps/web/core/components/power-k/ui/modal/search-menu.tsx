@@ -1,22 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Command } from "cmdk";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
 // plane imports
 import { WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceSearchResults } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import useDebounce from "@/hooks/use-debounce";
 // plane web imports
+import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
 import type { TPowerKPageType } from "../../core/types";
-import { PowerKModalCommandItem } from "./command-item";
 import { PowerKModalSearchResults } from "./search-results";
 // services init
 const workspaceService = new WorkspaceService();
@@ -39,8 +36,6 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCommandPaletteModal } = useCommandPalette();
-  // plane hooks
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
@@ -92,19 +87,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
 
       {/* Show empty state only when not loading and no results */}
       {!isSearching && resultsCount === 0 && searchTerm.trim() !== "" && debouncedSearchTerm.trim() !== "" && (
-        <Command.Group>
-          <PowerKModalCommandItem
-            icon={Search}
-            value="no-results"
-            label={
-              <p className="flex items-center gap-2">
-                {t("power_k.search_menu.no_results")}{" "}
-                <span className="shrink-0 text-sm text-custom-text-300">{t("power_k.search_menu.clear_search")}</span>
-              </p>
-            }
-            onSelect={() => updateSearchTerm("")}
-          />
-        </Command.Group>
+        <PowerKModalNoSearchResultsCommand updateSearchTerm={updateSearchTerm} />
       )}
 
       {searchTerm.trim() !== "" && (
