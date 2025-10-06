@@ -16,7 +16,7 @@ type Props = {
   closePalette: () => void;
 };
 
-export const CommandPaletteThemeActions: React.FC<Props> = observer((props) => {
+export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
   const { closePalette } = props;
   const { setTheme } = useTheme();
   // hooks

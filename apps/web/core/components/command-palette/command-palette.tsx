@@ -9,10 +9,10 @@ import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLev
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
-import { ShortcutsModal } from "@/components/command-palette";
+import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -32,11 +32,10 @@ import {
   getWorkspaceShortcutsList,
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
-import { PowerKModal } from "./power-k/modal";
 
 export const CommandPalette: FC = observer(() => {
   // router params
-  const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
+  const { workspaceSlug, projectId: paramsProjectId, workItem: workItemIdentifier } = useParams();
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
   const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
@@ -46,12 +45,12 @@ export const CommandPalette: FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
+  const projectIdentifier = workItemIdentifier?.toString().split("-")[0];
+  const sequence_id = workItemIdentifier?.toString().split("-")[1];
 
   const { data: issueDetails } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
+    workspaceSlug && workItemIdentifier ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItemIdentifier
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
@@ -76,7 +75,7 @@ export const CommandPalette: FC = observer(() => {
   );
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!workItem) return;
+    if (!workItemIdentifier) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -92,7 +91,7 @@ export const CommandPalette: FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [workItem]);
+  }, [workItemIdentifier]);
 
   // auth
   const performProjectCreateActions = useCallback(
@@ -173,15 +172,11 @@ export const CommandPalette: FC = observer(() => {
         toggleCommandPaletteModal(true);
       }
 
-      // if on input, textarea, editor, or clickable elements, don't do anything
+      // if on input, textarea or editor, don't do anything
       if (
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLInputElement ||
-        (e.target as Element)?.classList?.contains("ProseMirror") ||
-        (e.target as Element)?.tagName === "A" ||
-        (e.target as Element)?.tagName === "BUTTON" ||
-        (e.target as Element)?.closest("a") ||
-        (e.target as Element)?.closest("button")
+        (e.target as Element)?.classList?.contains("ProseMirror")
       )
         return;
 
@@ -266,8 +261,8 @@ export const CommandPalette: FC = observer(() => {
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals workItemIdentifier={workItem?.toString()} />
-      <PowerKModal />
+      <IssueLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
+      <CommandModal />
     </>
   );
 });
