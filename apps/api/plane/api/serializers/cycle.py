@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import Cycle, CycleIssue
+from plane.db.models import Cycle, CycleIssue, User
 from plane.utils.timezone_converter import convert_to_utc
 
 
@@ -15,6 +15,13 @@ class CycleCreateSerializer(BaseSerializer):
     Manages cycle creation including project timezone conversion, date range validation,
     and UTC normalization for time-bound iteration planning and sprint management.
     """
+
+    owned_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text="User who owns the cycle. If not provided, defaults to the current user.",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -77,6 +84,10 @@ class CycleCreateSerializer(BaseSerializer):
                 date=str(data.get("end_date", None).date()),
                 project_id=project_id,
             )
+
+        if not data.get("owned_by"):
+            data["owned_by"] = self.context["request"].user
+
         return data
 
 

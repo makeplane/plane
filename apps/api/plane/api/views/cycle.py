@@ -316,12 +316,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             and request.data.get("end_date", None) is not None
         ):
 
-            # If owned_by is not provided, set it to the current user
-            data = request.data
-            if not data.get("owned_by"):
-                data["owned_by"] = request.user.id
-
-            serializer = CycleCreateSerializer(data=data)
+            serializer = CycleCreateSerializer(data=request.data, context={"request": request})
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -346,7 +341,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id)
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -540,7 +535,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
