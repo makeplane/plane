@@ -42,11 +42,14 @@ export const AddFilterButton = observer(
     const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
       value: config.id,
       content: (
-        <div className="flex items-center gap-2 text-custom-text-200 transition-all duration-200 ease-in-out">
-          {config.icon && (
-            <config.icon className="size-4 text-custom-text-300 transition-transform duration-200 ease-in-out" />
-          )}
-          <span>{config.label}</span>
+        <div className="flex items-center justify-between gap-2 text-custom-text-200 transition-all duration-200 ease-in-out">
+          <div className="flex items-center gap-2">
+            {config.icon && (
+              <config.icon className="size-4 text-custom-text-300 transition-transform duration-200 ease-in-out" />
+            )}
+            <span>{config.label}</span>
+          </div>
+          {config.rightContent}
         </div>
       ),
       query: config.label.toLowerCase(),
@@ -97,7 +100,7 @@ export const AddFilterButton = observer(
           onChange={handleFilterSelect}
           options={displayOptions}
           optionsClassName="w-56"
-          maxHeight="full"
+          maxHeight="2xl"
           placement="bottom-start"
           disabled={isDisabled}
           customButtonClassName={cn(getButtonStyling(variant, "sm"), "py-[5px]", className)}

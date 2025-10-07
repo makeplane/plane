@@ -45,6 +45,7 @@ import {
   getStateGroupFilterConfig,
   getSubscriberFilterConfig,
   getTargetDateFilterConfig,
+  isLoaderReady,
 } from "@plane/utils";
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -72,18 +73,20 @@ export type TUseWorkItemFiltersConfigProps = {
 } & TWorkItemFiltersEntityProps;
 
 export type TWorkItemFiltersConfig = {
+  areAllConfigsInitialized: boolean;
   configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
   configMap: {
     [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
+  members: IUserLite[];
 };
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
   const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
     props;
   // store hooks
-  const { getProjectById } = useProject();
+  const { loader: projectLoader, getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getLabelById } = useLabel();
   const { getModuleById } = useModule();
@@ -128,6 +131,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         : [],
     [projectIds, getProjectById]
   );
+  const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
 
   /**
    * Checks if a filter is enabled based on the filters to show.
@@ -331,6 +335,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   );
 
   return {
+    areAllConfigsInitialized,
     configs: [
       stateFilterConfig,
       stateGroupFilterConfig,
@@ -362,5 +367,6 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       target_date: targetDateFilterConfig,
     },
     isFilterEnabled,
+    members: members ?? [],
   };
 };

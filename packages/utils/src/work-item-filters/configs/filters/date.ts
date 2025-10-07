@@ -1,8 +1,12 @@
 // plane imports
 import { TFilterProperty } from "@plane/types";
 // local imports
-import { createFilterConfig, TCreateFilterConfig, TCreateDateFilterParams } from "../../../rich-filters";
-import { getSupportedDateOperators } from "./shared";
+import {
+  createFilterConfig,
+  TCreateFilterConfig,
+  TCreateDateFilterParams,
+  getSupportedDateOperators,
+} from "../../../rich-filters";
 
 // ------------ Date filters ------------
 
@@ -18,8 +22,8 @@ export const getStartDateFilterConfig =
     createFilterConfig<P, Date>({
       id: key,
       label: "Start date",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       allowMultipleFilters: true,
       supportedOperatorConfigsMap: getSupportedDateOperators(params),
     });
@@ -36,8 +40,8 @@ export const getTargetDateFilterConfig =
     createFilterConfig<P, Date>({
       id: key,
       label: "Target date",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       allowMultipleFilters: true,
       supportedOperatorConfigsMap: getSupportedDateOperators(params),
     });

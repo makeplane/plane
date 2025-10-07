@@ -106,7 +106,7 @@ export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[nu
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
 export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string;
+  [K in TWorkItemFilterConditionKey]: string | boolean | number;
 }>;
 
 export type TWorkItemFilterAndGroup = {

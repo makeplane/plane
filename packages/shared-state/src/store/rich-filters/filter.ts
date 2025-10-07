@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -410,9 +410,20 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       // If the expression is not valid, return
       if (!this.expression) return;
 
+      // Get the condition before update
+      const conditionBeforeUpdate = cloneDeep(findNodeById(this.expression, conditionId));
+
+      // If the condition is not valid, return
+      if (!conditionBeforeUpdate || conditionBeforeUpdate.type !== FILTER_NODE_TYPE.CONDITION) return;
+
       // If the value is not valid, remove the condition
       if (!hasValidValue(value)) {
         this.removeCondition(conditionId);
+        return;
+      }
+
+      // If the value is the same as the condition before update, return
+      if (isEqual(conditionBeforeUpdate.value, value)) {
         return;
       }
 
