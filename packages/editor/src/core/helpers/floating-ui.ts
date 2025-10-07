@@ -11,6 +11,19 @@ export const updateFloatingUIFloaterPosition = (
     strategy?: Strategy;
   }
 ) => {
+  const editorElement = editor.options.element;
+  let container: Element | HTMLElement = document.body;
+
+  if (editorElement instanceof Element) {
+    container = editorElement;
+  } else if (editorElement && typeof editorElement === "object" && "mount" in editorElement) {
+    container = editorElement.mount;
+  } else if (typeof editorElement === "function") {
+    container = document.body;
+  }
+
+  container.appendChild(element);
+
   const virtualElement = {
     getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
   };
