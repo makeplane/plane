@@ -176,7 +176,8 @@
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.3.1",
-    "use-font-face-observer": "^1.3.0"
+    "use-font-face-observer": "^1.3.0",
+    "vite": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
