@@ -191,9 +191,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                       nestedItem.action();
                     }}
@@ -229,9 +227,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                 item.action();
               }}

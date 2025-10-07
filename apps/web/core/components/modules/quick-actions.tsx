@@ -197,9 +197,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: MODULE_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

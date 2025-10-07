@@ -71,9 +71,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });
