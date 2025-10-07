@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // assets
 import EmptyWebhook from "@/public/empty-state/web-hook.svg";
 

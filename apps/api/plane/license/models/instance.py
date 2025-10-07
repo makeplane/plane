@@ -22,9 +22,7 @@ class Instance(BaseModel):
     instance_id = models.CharField(max_length=255, unique=True)
     current_version = models.CharField(max_length=255)
     latest_version = models.CharField(max_length=255, null=True, blank=True)
-    edition = models.CharField(
-        max_length=255, default=InstanceEdition.PLANE_COMMUNITY.value
-    )
+    edition = models.CharField(max_length=255, default=InstanceEdition.PLANE_COMMUNITY.value)
     domain = models.TextField(blank=True)
     # Instance specifics
     last_checked_at = models.DateTimeField()
@@ -38,6 +36,8 @@ class Instance(BaseModel):
     is_signup_screen_visited = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     is_test = models.BooleanField(default=False)
+    # field for validating if the current version is deprecated
+    is_current_version_deprecated = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance"
@@ -53,9 +53,7 @@ class InstanceAdmin(BaseModel):
         null=True,
         related_name="instance_owner",
     )
-    instance = models.ForeignKey(
-        Instance, on_delete=models.CASCADE, related_name="admins"
-    )
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
     is_verified = models.BooleanField(default=False)
 

@@ -33,7 +33,7 @@
     "date-fns": "^4.1.0",
     "dompurify": "^3.0.11",
     "dotenv": "^16.3.1",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "lowlight": "^2.9.0",
     "lucide-react": "catalog:",
     "mobx": "catalog:",
@@ -56,12 +56,11 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "catalog:",
+    "@types/lodash-es": "catalog:",
     "@types/node": "18.14.1",
     "@types/nprogress": "^0.2.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^9.0.1",
     "typescript": "catalog:"
   }
 }

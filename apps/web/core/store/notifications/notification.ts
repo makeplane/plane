@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { IUserLite, TNotification, TNotificationData } from "@plane/types";
 // services

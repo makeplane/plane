@@ -126,7 +126,6 @@ export const LanguageTimezone = observer(() => {
                 onChange={handleLanguageChange}
                 buttonClassName={"border-none"}
                 className="rounded-md border !border-custom-border-200"
-                optionsClassName="w-full"
                 input
               >
                 {SUPPORTED_LANGUAGES.map((item) => (

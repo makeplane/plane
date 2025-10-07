@@ -122,7 +122,7 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
           parentIssueId={parentIssueId}
           rootIssueId={parentIssueId}
           spacingLeft={6}
-          disabled={!disabled}
+          canEdit={!disabled}
           handleIssueCrudState={handleIssueCrudState}
           subIssueOperations={subIssueOperations}
           issueServiceType={issueServiceType}

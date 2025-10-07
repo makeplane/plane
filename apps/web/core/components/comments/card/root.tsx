@@ -66,6 +66,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
           isEditing
           readOnlyEditorRef={readOnlyEditorRef.current}
           setIsEditing={setIsEditing}
+          projectId={projectId}
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
         />

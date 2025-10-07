@@ -10,7 +10,6 @@ from plane.utils.content_validator import (
 )
 from plane.db.models import (
     Page,
-    PageLog,
     PageLabel,
     Label,
     ProjectPage,
@@ -130,32 +129,6 @@ class PageDetailSerializer(PageSerializer):
         fields = PageSerializer.Meta.fields + ["description_html"]
 
 
-class SubPageSerializer(BaseSerializer):
-    entity_details = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PageLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "page"]
-
-    def get_entity_details(self, obj):
-        entity_name = obj.entity_name
-        if entity_name == "forward_link" or entity_name == "back_link":
-            try:
-                page = Page.objects.get(pk=obj.entity_identifier)
-                return PageSerializer(page).data
-            except Page.DoesNotExist:
-                return None
-        return None
-
-
-class PageLogSerializer(BaseSerializer):
-    class Meta:
-        model = PageLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "page"]
-
-
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion
@@ -212,9 +185,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
             # Validate the binary data
             is_valid, error_message = validate_binary_data(binary_data)
             if not is_valid:
-                raise serializers.ValidationError(
-                    f"Invalid binary data: {error_message}"
-                )
+                raise serializers.ValidationError(f"Invalid binary data: {error_message}")
 
             return binary_data
         except Exception as e:
@@ -234,7 +205,6 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
 
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
-
 
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""

@@ -1,6 +1,4 @@
-import differenceWith from "lodash/differenceWith";
-import isEqual from "lodash/isEqual";
-import remove from "lodash/remove";
+import { differenceWith, remove, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // hooks

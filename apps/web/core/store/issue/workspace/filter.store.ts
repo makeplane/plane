@@ -1,15 +1,10 @@
-import isArray from "lodash/isArray";
-import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
-import set from "lodash/set";
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// plane constants
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType } from "@plane/constants";
-// base class
+// plane imports
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import {
   EIssuesStoreType,
-  IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -18,27 +13,34 @@ import {
   TStaticViewTypes,
   IssuePaginationOptions,
   EIssueLayoutTypes,
+  TWorkItemFilterExpression,
+  STATIC_VIEW_TYPES,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
-// services
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
-import { WorkspaceService } from "@/plane-web/services";
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
-// types
-import { IIssueRootStore } from "../root.store";
-// constants
 // services
+import { WorkspaceService } from "@/plane-web/services";
+// local imports
+import {
+  IBaseIssueFilterStore,
+  IIssueFilterHelperStore,
+  IssueFilterHelperStore,
+} from "../helpers/issue-filter-helper.store";
+import { IIssueRootStore } from "../root.store";
 
-type TWorkspaceFilters = "all-issues" | "assigned" | "created" | "subscribed" | string;
+type TWorkspaceFilters = TStaticViewTypes | string;
 
-export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
+export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
+
+export interface IWorkspaceIssuesFilter extends TBaseFilterStore {
   // fetch action
   fetchFilters: (workspaceSlug: string, viewId: string) => Promise<void>;
+  updateFilterExpression: (workspaceSlug: string, viewId: string, filters: TWorkItemFilterExpression) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
     projectId: string | undefined,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate,
     viewId: string
   ) => Promise<void>;
   //helper action
@@ -100,8 +102,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     if (!filteredParams) return undefined;
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
-      userFilters?.filters as IIssueFilterOptions,
-      userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      userFilters?.richFilters,
+      userFilters?.displayFilters,
       filteredParams
     );
 
@@ -126,7 +128,19 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.getAppliedFilters(viewId);
+      let filterParams = this.getAppliedFilters(viewId);
+
+      if (!filterParams) {
+        filterParams = {};
+      }
+
+      if (STATIC_VIEW_TYPES.includes(viewId)) {
+        const currentUserId = this.rootIssueStore.currentUserId;
+        const paramForStaticView = this.getFilterConditionBasedOnViews(currentUserId, viewId as TStaticViewTypes);
+        if (paramForStaticView) {
+          filterParams = { ...filterParams, ...paramForStaticView };
+        }
+      }
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -134,7 +148,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   );
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
-    let filters: IIssueFilterOptions;
+    let richFilters: TWorkItemFilterExpression;
     let displayFilters: IIssueDisplayFilterOptions;
     let displayProperties: IIssueDisplayProperties;
     let kanbanFilters: TIssueKanbanFilters = {
@@ -153,12 +167,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
     };
 
-    if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
-      const currentUserId = this.rootIssueStore.currentUserId;
-      filters = this.getComputedFiltersBasedOnViews(currentUserId, viewId as TStaticViewTypes);
-    } else {
+    // Get the view details if the view is not a static view
+    if (STATIC_VIEW_TYPES.includes(viewId) === false) {
       const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
-      filters = this.computedFilters(_filters?.filters);
+      richFilters = _filters?.rich_filters;
       displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
         layout: EIssueLayoutTypes.SPREADSHEET,
         order_by: "-created_at",
@@ -172,51 +184,45 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     }
 
     runInAction(() => {
-      set(this.filters, [viewId, "filters"], filters);
+      set(this.filters, [viewId, "richFilters"], richFilters);
       set(this.filters, [viewId, "displayFilters"], displayFilters);
       set(this.filters, [viewId, "displayProperties"], displayProperties);
       set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
     });
   };
 
-  updateFilters = async (
-    workspaceSlug: string,
-    projectId: string | undefined,
-    type: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    viewId: string
-  ) => {
+  /**
+   * NOTE: This method is designed as a fallback function for the work item filter store.
+   * Only use this method directly when initializing filter instances.
+   * For regular filter updates, use this method as a fallback function for the work item filter store methods instead.
+   */
+  updateFilterExpression: IWorkspaceIssuesFilter["updateFilterExpression"] = async (workspaceSlug, viewId, filters) => {
+    try {
+      runInAction(() => {
+        set(this.filters, [viewId, "richFilters"], filters);
+      });
+
+      this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+    } catch (error) {
+      console.log("error while updating rich filters", error);
+      throw error;
+    }
+  };
+
+  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters, viewId) => {
     try {
       const issueFilters = this.getIssueFilters(viewId);
 
-      if (!issueFilters || isEmpty(filters)) return;
+      if (!issueFilters) return;
 
       const _filters = {
-        filters: issueFilters.filters as IIssueFilterOptions,
+        richFilters: issueFilters.richFilters as TWorkItemFilterExpression,
         displayFilters: issueFilters.displayFilters as IIssueDisplayFilterOptions,
         displayProperties: issueFilters.displayProperties as IIssueDisplayProperties,
         kanbanFilters: issueFilters.kanbanFilters as TIssueKanbanFilters,
       };
 
       switch (type) {
-        case EIssueFilterType.FILTERS: {
-          const updatedFilters = filters as IIssueFilterOptions;
-          _filters.filters = { ..._filters.filters, ...updatedFilters };
-
-          runInAction(() => {
-            Object.keys(updatedFilters).forEach((_key) => {
-              set(this.filters, [viewId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-            });
-          });
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            viewId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
-          break;
-        }
         case EIssueFilterType.DISPLAY_FILTERS: {
           const updatedDisplayFilters = filters as IIssueDisplayFilterOptions;
           _filters.displayFilters = { ..._filters.displayFilters, ...updatedDisplayFilters };

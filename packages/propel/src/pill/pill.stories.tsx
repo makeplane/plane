@@ -1,33 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Pill, EPillVariant, EPillSize } from "./pill";
 
-const meta: Meta<typeof Pill> = {
+const meta = {
   title: "Components/Pill",
   component: Pill,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    variant: {
-      control: "select",
-      options: Object.values(EPillVariant),
-    },
-    size: {
-      control: "select",
-      options: Object.values(EPillSize),
-    },
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof Pill>;
-
-export const Default: Story = {
   args: {
     children: "Default",
   },
-};
+} satisfies Meta<typeof Pill>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 export const Primary: Story = {
   args: {
@@ -86,58 +75,66 @@ export const Large: Story = {
 };
 
 export const AllVariants: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Pill variant={EPillVariant.DEFAULT}>Default</Pill>
-        <Pill variant={EPillVariant.PRIMARY}>Primary</Pill>
-        <Pill variant={EPillVariant.SUCCESS}>Success</Pill>
-        <Pill variant={EPillVariant.WARNING}>Warning</Pill>
-        <Pill variant={EPillVariant.ERROR}>Error</Pill>
-        <Pill variant={EPillVariant.INFO}>Info</Pill>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <Pill variant={EPillVariant.DEFAULT}>Default</Pill>
+          <Pill variant={EPillVariant.PRIMARY}>Primary</Pill>
+          <Pill variant={EPillVariant.SUCCESS}>Success</Pill>
+          <Pill variant={EPillVariant.WARNING}>Warning</Pill>
+          <Pill variant={EPillVariant.ERROR}>Error</Pill>
+          <Pill variant={EPillVariant.INFO}>Info</Pill>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Pill size={EPillSize.SM}>Small</Pill>
-        <Pill size={EPillSize.MD}>Medium</Pill>
-        <Pill size={EPillSize.LG}>Large</Pill>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Pill size={EPillSize.SM}>Small</Pill>
+          <Pill size={EPillSize.MD}>Medium</Pill>
+          <Pill size={EPillSize.LG}>Large</Pill>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const WithNumbers: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <Pill variant={EPillVariant.PRIMARY}>3</Pill>
-        <Pill variant={EPillVariant.SUCCESS}>12</Pill>
-        <Pill variant={EPillVariant.WARNING}>99+</Pill>
-        <Pill variant={EPillVariant.ERROR}>!</Pill>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <Pill variant={EPillVariant.PRIMARY}>3</Pill>
+          <Pill variant={EPillVariant.SUCCESS}>12</Pill>
+          <Pill variant={EPillVariant.WARNING}>99+</Pill>
+          <Pill variant={EPillVariant.ERROR}>!</Pill>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const StatusExamples: Story = {
-  render: () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">Task Status</h3>
-        <div className="flex flex-wrap gap-2">
-          <Pill variant={EPillVariant.DEFAULT}>Draft</Pill>
-          <Pill variant={EPillVariant.WARNING}>In Progress</Pill>
-          <Pill variant={EPillVariant.INFO}>In Review</Pill>
-          <Pill variant={EPillVariant.SUCCESS}>Completed</Pill>
-          <Pill variant={EPillVariant.ERROR}>Blocked</Pill>
+  render() {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium">Task Status</h3>
+          <div className="flex flex-wrap gap-2">
+            <Pill variant={EPillVariant.DEFAULT}>Draft</Pill>
+            <Pill variant={EPillVariant.WARNING}>In Progress</Pill>
+            <Pill variant={EPillVariant.INFO}>In Review</Pill>
+            <Pill variant={EPillVariant.SUCCESS}>Completed</Pill>
+            <Pill variant={EPillVariant.ERROR}>Blocked</Pill>
+          </div>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };

@@ -54,9 +54,7 @@ def validate_binary_data(data):
     # Check for suspicious text patterns (HTML/JS)
     try:
         decoded_text = binary_data.decode("utf-8", errors="ignore")[:200]
-        if any(
-            pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS
-        ):
+        if any(pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS):
             return False, "Binary data contains suspicious content patterns"
     except Exception:
         pass  # Binary data might not be decodable as text, which is fine
@@ -86,6 +84,7 @@ ATTRIBUTES = {
         "style",
         "start",
         "type",
+        "xmlns",
         # common editor data-* attributes seen in stored HTML
         # (wildcards like data-* are NOT supported by nh3; we add known keys
         # here and dynamically include all data-* seen in the input below)

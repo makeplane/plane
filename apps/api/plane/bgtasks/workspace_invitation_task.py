@@ -21,12 +21,12 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
         user = User.objects.get(email=inviter)
 
         workspace = Workspace.objects.get(pk=workspace_id)
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            token=token, email=email
-        )
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(token=token, email=email)
 
         # Relative link
-        relative_link = f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"  # noqa: E501
+        relative_link = (
+            f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"  # noqa: E501
+        )
 
         # The complete url including the domain
         abs_url = str(current_site) + relative_link
@@ -51,9 +51,7 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
             "abs_url": abs_url,
         }
 
-        html_content = render_to_string(
-            "emails/invitations/workspace_invitation.html", context
-        )
+        html_content = render_to_string("emails/invitations/workspace_invitation.html", context)
 
         text_content = strip_tags(html_content)
 

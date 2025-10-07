@@ -2,21 +2,21 @@ import * as React from "react";
 import { Accordion as BaseAccordion } from "@base-ui-components/react";
 import { PlusIcon } from "lucide-react";
 
-interface AccordionRootProps {
+export interface AccordionRootProps {
   defaultValue?: string[];
   allowMultiple?: boolean;
   className?: string;
   children: React.ReactNode;
 }
 
-interface AccordionItemProps {
+export interface AccordionItemProps {
   value: string;
   disabled?: boolean;
   className?: string;
   children: React.ReactNode;
 }
 
-interface AccordionTriggerProps {
+export interface AccordionTriggerProps {
   className?: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
@@ -24,7 +24,7 @@ interface AccordionTriggerProps {
   iconClassName?: string;
 }
 
-interface AccordionContentProps {
+export interface AccordionContentProps {
   className?: string;
   contentWrapperClassName?: string;
   children: React.ReactNode;

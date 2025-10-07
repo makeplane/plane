@@ -12,9 +12,10 @@ import {
 } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -268,7 +269,6 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-300 !shadow-none !rounded-md"
                   input
-                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>

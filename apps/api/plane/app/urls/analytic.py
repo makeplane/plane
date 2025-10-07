@@ -30,9 +30,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
-        AnalyticViewViewset.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        AnalyticViewViewset.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="analytic-view",
     ),
     path(

@@ -2,12 +2,7 @@
 
 import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
+import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
@@ -24,9 +19,7 @@ import {
   TIssueGroupByOptions,
   IIssueFilterOptions,
   IIssueFilters,
-  IProjectView,
   TGroupedIssues,
-  IWorkspaceView,
   IIssueDisplayFilterOptions,
   TGetColumns,
 } from "@plane/types";
@@ -591,27 +584,6 @@ export const handleGroupDragDrop = async (
   if (updatedIssue && sourceIssue?.project_id) {
     return await updateIssueOnDrop(sourceIssue?.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
-};
-
-/**
- * This Method compares filters and returns a boolean based on which and updateView button is shown
- * @param appliedFilters
- * @param issueFilters
- * @param viewDetails
- * @returns
- */
-export const getAreFiltersEqual = (
-  appliedFilters: IIssueFilterOptions | undefined,
-  issueFilters: IIssueFilters | undefined,
-  viewDetails: IProjectView | IWorkspaceView | null
-) => {
-  if (isNil(appliedFilters) || isNil(issueFilters) || isNil(viewDetails)) return true;
-
-  return (
-    isEqual(appliedFilters, viewDetails.filters) &&
-    isEqual(issueFilters.displayFilters, viewDetails.display_filters) &&
-    isEqual(removeNillKeys(issueFilters.displayProperties), removeNillKeys(viewDetails.display_properties))
-  );
 };
 
 /**

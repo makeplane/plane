@@ -2,10 +2,6 @@ import { NodeSelection } from "@tiptap/pm/state";
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 // plane imports
 import { cn } from "@plane/utils";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
 import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
 import { ensurePixelString, getImageBlockId } from "../utils";
@@ -62,7 +58,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
   const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
   // extension options
-  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<TCustomImageAttributes>, errorMessage: string) => {
@@ -199,6 +195,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         editor.commands.blur();
       }
       const pos = getPos();
+      if (pos === undefined) return;
       const nodeSelection = NodeSelection.create(editor.state.doc, pos);
       editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
     },

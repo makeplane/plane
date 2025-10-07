@@ -1,5 +1,4 @@
-import { difference } from "lodash";
-import { API_BASE_URL } from "@plane/constants";
+import { difference } from "lodash-es";
 import { IEstimate, IEstimatePoint, IWorkspaceMember, TIssue } from "@plane/types";
 import { EstimateService } from "@/plane-web/services/project/estimate.service";
 import { CycleService } from "@/services/cycle.service";
@@ -99,7 +98,7 @@ export const getEstimatePoints = async (workspaceSlug: string) => {
 };
 
 export const getMembers = async (workspaceSlug: string) => {
-  const workspaceService = new WorkspaceService(API_BASE_URL);
+  const workspaceService = new WorkspaceService();
   const members = await workspaceService.fetchWorkspaceMembers(workspaceSlug);
   const objects = members.map((member: IWorkspaceMember) => member.member);
   return objects;
