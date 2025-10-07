@@ -238,7 +238,7 @@ export class StateStore implements IStateStore {
   };
 
   /**
-   * deletes the state from the store, incase of failure reverts back to original state
+   * deletes the state from the store, in case of failure reverts back to original state
    * @param workspaceSlug
    * @param projectId
    * @param stateId
