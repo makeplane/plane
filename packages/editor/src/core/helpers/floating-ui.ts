@@ -11,6 +11,8 @@ export const updateFloatingUIFloaterPosition = (
     strategy?: Strategy;
   }
 ) => {
+  ((editor.options.element || document.body) as Element).appendChild(element);
+
   const virtualElement = {
     getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
   };
