@@ -103,16 +103,16 @@ def save_webhook_log(
     mongo_collection = MongoConnection.get_collection("webhook_logs")
     
     log_data = {
-            "workspace_id":str(webhook.workspace_id),
-            "webhook":str(webhook.id),
-            "event_type":str(event_type),
-            "request_method":str(request_method),
-            "request_headers":str(request_headers),
-            "request_body":str(request_body),
-            "response_status":str(response_status),
-            "response_headers":str(response_headers),
-            "response_body":str(response_body),
-            "retry_count":str(retry_count),
+        "workspace_id": str(webhook.workspace_id),
+        "webhook": str(webhook.id),
+        "event_type": str(event_type),
+        "request_method": str(request_method),
+        "request_headers": str(request_headers),
+        "request_body": str(request_body),
+        "response_status": str(response_status),
+        "response_headers": str(response_headers),
+        "response_body": str(response_body),
+        "retry_count": str(retry_count),
     }
 
     mongo_save_success = False
