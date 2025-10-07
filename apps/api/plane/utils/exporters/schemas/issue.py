@@ -37,7 +37,7 @@ def get_issue_attachments_dict(issues_queryset: QuerySet) -> Dict[str, List[str]
     return attachment_dict
 
 
-def get_issue_last_cycles_dict(issues_queryset: QuerySet) -> Dict[str, Optional["CycleIssue"]]:
+def get_issue_last_cycles_dict(issues_queryset: QuerySet) -> Dict[str, Optional[CycleIssue]]:
     """Get the last cycle for each issue in the given queryset.
 
     Args:
