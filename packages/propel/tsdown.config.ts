@@ -18,6 +18,7 @@ export default defineConfig({
     "src/emoji-reaction/index.ts",
     "src/emoji-reaction-picker/index.ts",
     "src/icons/index.ts",
+    "src/input/index.ts",
     "src/menu/index.ts",
     "src/pill/index.ts",
     "src/popover/index.ts",

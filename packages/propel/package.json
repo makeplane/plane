@@ -100,6 +100,10 @@
       "import": "./dist/icons/index.mjs",
       "require": "./dist/icons/index.js"
     },
+    "./input": {
+      "import": "./dist/input/index.mjs",
+      "require": "./dist/input/index.js"
+    },
     "./menu": {
       "import": "./dist/menu/index.mjs",
       "require": "./dist/menu/index.js"
