@@ -88,10 +88,6 @@
       "import": "./dist/dialog/index.mjs",
       "require": "./dist/dialog/index.js"
     },
-    "./empty-state": {
-      "import": "./dist/empty-state/index.mjs",
-      "require": "./dist/empty-state/index.js"
-    },
     "./emoji-icon-picker": {
       "import": "./dist/emoji-icon-picker/index.mjs",
       "require": "./dist/emoji-icon-picker/index.js"
@@ -99,6 +95,10 @@
     "./emoji-reaction": {
       "import": "./dist/emoji-reaction/index.mjs",
       "require": "./dist/emoji-reaction/index.js"
+    },
+    "./empty-state": {
+      "import": "./dist/empty-state/index.mjs",
+      "require": "./dist/empty-state/index.js"
     },
     "./icons": {
       "import": "./dist/icons/index.mjs",
