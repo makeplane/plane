@@ -99,3 +99,5 @@ dev-editor
 *.rdb.gz
 
 storybook-static
+
+CLAUDE.md
