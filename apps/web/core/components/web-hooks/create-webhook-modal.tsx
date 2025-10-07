@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 // types
 import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { csvDownload } from "@plane/utils";
 // hooks

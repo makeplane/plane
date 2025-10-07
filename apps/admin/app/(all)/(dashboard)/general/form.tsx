@@ -5,9 +5,10 @@ import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IInstance, IInstanceAdmin } from "@plane/types";
 // ui
-import { Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 import { useInstance } from "@/hooks/store";

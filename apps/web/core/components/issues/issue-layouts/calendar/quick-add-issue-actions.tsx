@@ -7,8 +7,9 @@ import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { ISearchIssueResponse, TIssue, EIssueLayoutTypes } from "@plane/types";
-import { CustomMenu, setPromiseToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";

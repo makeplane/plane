@@ -11,9 +11,9 @@ import {
   PROJECT_PAGE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserProjectRoles, TPage, TPageNavigationTabs } from "@plane/types";
 // components
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";

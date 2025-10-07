@@ -8,9 +8,10 @@ import { Dialog, Transition } from "@headlessui/react";
 // types
 import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 // ui
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

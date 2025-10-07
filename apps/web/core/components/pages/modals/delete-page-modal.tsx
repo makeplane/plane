@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

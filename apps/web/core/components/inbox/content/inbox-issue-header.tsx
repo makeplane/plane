@@ -19,8 +19,9 @@ import {
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EInboxIssueStatus, TNameDescriptionLoader } from "@plane/types";
-import { ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
+import { ControlLink, CustomMenu, Row } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
