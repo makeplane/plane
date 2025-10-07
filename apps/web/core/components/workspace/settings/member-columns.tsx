@@ -10,7 +10,7 @@ import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu } from "@plane/ui";
+import { CustomSelect, PopoverMenu, cn } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
