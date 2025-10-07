@@ -1,5 +1,4 @@
-import clone from "lodash/clone";
-import set from "lodash/set";
+import { clone, set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";

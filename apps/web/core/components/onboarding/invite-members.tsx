@@ -21,13 +21,12 @@ import { Listbox } from "@headlessui/react";
 import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
-// constants
+import { Input, Spinner } from "@plane/ui";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";

@@ -1,6 +1,5 @@
 import pytest
 from rest_framework import status
-from django.db import IntegrityError
 from uuid import uuid4
 
 from plane.db.models import Label, Project, ProjectMember
@@ -104,9 +103,7 @@ class TestLabelListCreateAPIEndpoint:
         assert created_label.external_source == "github"
 
     @pytest.mark.django_db
-    def test_create_label_duplicate_external_id(
-        self, api_key_client, workspace, project
-    ):
+    def test_create_label_duplicate_external_id(self, api_key_client, workspace, project):
         """Test creating label with duplicate external ID"""
         url = self.get_label_url(workspace.slug, project.id)
 
@@ -132,19 +129,13 @@ class TestLabelListCreateAPIEndpoint:
         assert "same external id" in response.data["error"]
 
     @pytest.mark.django_db
-    def test_list_labels_success(
-        self, api_key_client, workspace, project, create_label
-    ):
+    def test_list_labels_success(self, api_key_client, workspace, project, create_label):
         """Test successful label listing"""
         url = self.get_label_url(workspace.slug, project.id)
 
         # Create additional labels
-        Label.objects.create(
-            name="Label 2", project=project, workspace=workspace, color="#00FF00"
-        )
-        Label.objects.create(
-            name="Label 3", project=project, workspace=workspace, color="#0000FF"
-        )
+        Label.objects.create(name="Label 2", project=project, workspace=workspace, color="#00FF00")
+        Label.objects.create(name="Label 3", project=project, workspace=workspace, color="#0000FF")
 
         response = api_key_client.get(url)
 
@@ -185,9 +176,7 @@ class TestLabelDetailAPIEndpoint:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.django_db
-    def test_update_label_success(
-        self, api_key_client, workspace, project, create_label
-    ):
+    def test_update_label_success(self, api_key_client, workspace, project, create_label):
         """Test successful label update"""
         url = self.get_label_detail_url(workspace.slug, project.id, create_label.id)
 
@@ -203,9 +192,7 @@ class TestLabelDetailAPIEndpoint:
         assert create_label.name == update_data["name"]
 
     @pytest.mark.django_db
-    def test_update_label_invalid_data(
-        self, api_key_client, workspace, project, create_label
-    ):
+    def test_update_label_invalid_data(self, api_key_client, workspace, project, create_label):
         """Test label update with invalid data"""
         url = self.get_label_detail_url(workspace.slug, project.id, create_label.id)
 
@@ -216,9 +203,7 @@ class TestLabelDetailAPIEndpoint:
         assert response.status_code in [status.HTTP_400_BAD_REQUEST, status.HTTP_200_OK]
 
     @pytest.mark.django_db
-    def test_delete_label_success(
-        self, api_key_client, workspace, project, create_label
-    ):
+    def test_delete_label_success(self, api_key_client, workspace, project, create_label):
         """Test successful label deletion"""
         url = self.get_label_detail_url(workspace.slug, project.id, create_label.id)
 

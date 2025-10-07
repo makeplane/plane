@@ -6,9 +6,10 @@ import Link from "next/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 import { TInstanceConfigurationKeys } from "@plane/types";
-import { Button, getButtonStyling, Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 
 import { cn } from "@plane/utils";
 // components

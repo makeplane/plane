@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";

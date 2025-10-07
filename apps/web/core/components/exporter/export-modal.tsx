@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import intersection from "lodash/intersection";
+import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IImporterService } from "@plane/types";
 // ui
-import { Button, CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";

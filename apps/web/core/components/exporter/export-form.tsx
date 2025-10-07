@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { intersection } from "lodash";
+import { intersection } from "lodash-es";
 import { Controller, useForm } from "react-hook-form";
 import {
   EUserPermissions,
@@ -9,8 +9,9 @@ import {
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Button, CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

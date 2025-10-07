@@ -16,36 +16,145 @@
     "build-storybook": "storybook build"
   },
   "exports": {
-    "./accordion": "./dist/accordion/index.js",
-    "./animated-counter": "./dist/animated-counter/index.js",
-    "./avatar": "./dist/avatar/index.js",
-    "./button": "./dist/button/index.js",
-    "./calendar": "./dist/calendar/index.js",
-    "./card": "./dist/card/index.js",
-    "./charts/*": "./dist/charts/*/index.js",
-    "./collapsible": "./dist/collapsible/index.js",
-    "./combobox": "./dist/combobox/index.js",
-    "./command": "./dist/command/index.js",
-    "./context-menu": "./dist/context-menu/index.js",
-    "./dialog": "./dist/dialog/index.js",
-    "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
-    "./emoji-reaction": "./dist/emoji-reaction/index.js",
-    "./emoji-reaction-picker": "./dist/emoji-reaction-picker/index.js",
-    "./icons": "./dist/icons/index.js",
-    "./menu": "./dist/menu/index.js",
-    "./pill": "./dist/pill/index.js",
-    "./popover": "./dist/popover/index.js",
-    "./scrollarea": "./dist/scrollarea/index.js",
-    "./skeleton": "./dist/skeleton/index.js",
+    "./accordion": {
+      "import": "./dist/accordion/index.mjs",
+      "require": "./dist/accordion/index.js"
+    },
+    "./animated-counter": {
+      "import": "./dist/animated-counter/index.mjs",
+      "require": "./dist/animated-counter/index.js"
+    },
+    "./avatar": {
+      "import": "./dist/avatar/index.mjs",
+      "require": "./dist/avatar/index.js"
+    },
+    "./button": {
+      "import": "./dist/button/index.mjs",
+      "require": "./dist/button/index.js"
+    },
+    "./calendar": {
+      "import": "./dist/calendar/index.mjs",
+      "require": "./dist/calendar/index.js"
+    },
+    "./card": {
+      "import": "./dist/card/index.mjs",
+      "require": "./dist/card/index.js"
+    },
+    "./charts/area-chart": {
+      "import": "./dist/charts/area-chart/index.mjs",
+      "require": "./dist/charts/area-chart/index.js"
+    },
+    "./charts/bar-chart": {
+      "import": "./dist/charts/bar-chart/index.mjs",
+      "require": "./dist/charts/bar-chart/index.js"
+    },
+    "./charts/line-chart": {
+      "import": "./dist/charts/line-chart/index.mjs",
+      "require": "./dist/charts/line-chart/index.js"
+    },
+    "./charts/pie-chart": {
+      "import": "./dist/charts/pie-chart/index.mjs",
+      "require": "./dist/charts/pie-chart/index.js"
+    },
+    "./charts/radar-chart": {
+      "import": "./dist/charts/radar-chart/index.mjs",
+      "require": "./dist/charts/radar-chart/index.js"
+    },
+    "./charts/scatter-chart": {
+      "import": "./dist/charts/scatter-chart/index.mjs",
+      "require": "./dist/charts/scatter-chart/index.js"
+    },
+    "./charts/tree-map": {
+      "import": "./dist/charts/tree-map/index.mjs",
+      "require": "./dist/charts/tree-map/index.js"
+    },
+    "./collapsible": {
+      "import": "./dist/collapsible/index.mjs",
+      "require": "./dist/collapsible/index.js"
+    },
+    "./combobox": {
+      "import": "./dist/combobox/index.mjs",
+      "require": "./dist/combobox/index.js"
+    },
+    "./command": {
+      "import": "./dist/command/index.mjs",
+      "require": "./dist/command/index.js"
+    },
+    "./context-menu": {
+      "import": "./dist/context-menu/index.mjs",
+      "require": "./dist/context-menu/index.js"
+    },
+    "./dialog": {
+      "import": "./dist/dialog/index.mjs",
+      "require": "./dist/dialog/index.js"
+    },
+    "./emoji-icon-picker": {
+      "import": "./dist/emoji-icon-picker/index.mjs",
+      "require": "./dist/emoji-icon-picker/index.js"
+    },
+    "./emoji-reaction": {
+      "import": "./dist/emoji-reaction/index.mjs",
+      "require": "./dist/emoji-reaction/index.js"
+    },
+    "./icons": {
+      "import": "./dist/icons/index.mjs",
+      "require": "./dist/icons/index.js"
+    },
+    "./menu": {
+      "import": "./dist/menu/index.mjs",
+      "require": "./dist/menu/index.js"
+    },
+    "./pill": {
+      "import": "./dist/pill/index.mjs",
+      "require": "./dist/pill/index.js"
+    },
+    "./popover": {
+      "import": "./dist/popover/index.mjs",
+      "require": "./dist/popover/index.js"
+    },
+    "./portal": {
+      "import": "./dist/portal/index.mjs",
+      "require": "./dist/portal/index.js"
+    },
+    "./scrollarea": {
+      "import": "./dist/scrollarea/index.mjs",
+      "require": "./dist/scrollarea/index.js"
+    },
+    "./skeleton": {
+      "import": "./dist/skeleton/index.mjs",
+      "require": "./dist/skeleton/index.js"
+    },
+    "./switch": {
+      "import": "./dist/switch/index.mjs",
+      "require": "./dist/switch/index.js"
+    },
+    "./table": {
+      "import": "./dist/table/index.mjs",
+      "require": "./dist/table/index.js"
+    },
+    "./tabs": {
+      "import": "./dist/tabs/index.mjs",
+      "require": "./dist/tabs/index.js"
+    },
+    "./toast": {
+      "import": "./dist/toast/index.mjs",
+      "require": "./dist/toast/index.js"
+    },
+    "./toolbar": {
+      "import": "./dist/toolbar/index.mjs",
+      "require": "./dist/toolbar/index.js"
+    },
+    "./tooltip": {
+      "import": "./dist/tooltip/index.mjs",
+      "require": "./dist/tooltip/index.js"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.js"
+    },
+    "./package.json": "./package.json",
     "./styles/fonts": "./dist/styles/fonts/index.css",
-    "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
-    "./switch": "./dist/switch/index.js",
-    "./table": "./dist/table/index.js",
-    "./tabs": "./dist/tabs/index.js",
-    "./toast": "./dist/toast/index.js",
-    "./toolbar": "./dist/toolbar/index.js",
-    "./tooltip": "./dist/tooltip/index.js",
-    "./utils": "./dist/utils/index.js"
+    "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.2",
@@ -54,8 +163,8 @@
     "@plane/types": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
-    "cmdk": "^1.1.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
     "react": "catalog:",
@@ -70,12 +179,12 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@storybook/addon-designs": "10.0.2",
-    "@storybook/addon-docs": "9.1.2",
-    "@storybook/react-vite": "9.1.2",
+    "@storybook/addon-docs": "9.1.10",
+    "@storybook/react-vite": "9.1.10",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "eslint-plugin-storybook": "9.1.2",
-    "storybook": "9.1.2",
+    "eslint-plugin-storybook": "9.1.10",
+    "storybook": "9.1.10",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

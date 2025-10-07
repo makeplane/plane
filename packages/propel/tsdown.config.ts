@@ -21,6 +21,7 @@ export default defineConfig({
     "src/menu/index.ts",
     "src/pill/index.ts",
     "src/popover/index.ts",
+    "src/portal/index.ts",
     "src/scrollarea/index.ts",
     "src/skeleton/index.ts",
     "src/switch/index.ts",
@@ -33,6 +34,15 @@ export default defineConfig({
   ],
   outDir: "dist",
   format: ["esm", "cjs"],
-  dts: true,
+  exports: {
+    customExports: (out) => ({
+      ...out,
+      "./styles/fonts": "./dist/styles/fonts/index.css",
+      "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
+    }),
+  },
   copy: ["src/styles"],
+  dts: true,
+  clean: true,
+  sourcemap: false,
 });

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // layouts
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { useAppRouter } from "@/hooks/use-app-router";
 import DefaultLayout from "@/layouts/default-layout";
 // images

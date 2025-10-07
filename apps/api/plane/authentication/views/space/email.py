@@ -31,9 +31,7 @@ class SignInAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -44,17 +42,13 @@ class SignInAuthSpaceEndpoint(View):
         ## Raise exception if any of the above are missing
         if not email or not password:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_IN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -70,9 +64,7 @@ class SignInAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -87,16 +79,12 @@ class SignInAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
         try:
-            provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=False
-            )
+            provider = EmailProvider(request=request, key=email, code=password, is_signup=False)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
@@ -110,9 +98,7 @@ class SignInAuthSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -130,9 +116,7 @@ class SignUpAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -142,17 +126,13 @@ class SignUpAuthSpaceEndpoint(View):
         if not email or not password:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_UP"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_UP"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_UP",
                 payload={"email": str(email)},
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -168,9 +148,7 @@ class SignUpAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -185,16 +163,12 @@ class SignUpAuthSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
         try:
-            provider = EmailProvider(
-                request=request, key=email, code=password, is_signup=True
-            )
+            provider = EmailProvider(request=request, key=email, code=password, is_signup=True)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
@@ -208,8 +182,6 @@ class SignUpAuthSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_space=True),
-                next_path=next_path,
-                params=params
+                base_url=base_host(request=request, is_space=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)

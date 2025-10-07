@@ -102,12 +102,8 @@ class CycleIssue(ProjectBaseModel):
     Cycle Issues
     """
 
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="issue_cycle"
-    )
-    cycle = models.ForeignKey(
-        Cycle, on_delete=models.CASCADE, related_name="issue_cycle"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_cycle")
+    cycle = models.ForeignKey(Cycle, on_delete=models.CASCADE, related_name="issue_cycle")
 
     class Meta:
         unique_together = ["issue", "cycle", "deleted_at"]
@@ -128,9 +124,7 @@ class CycleIssue(ProjectBaseModel):
 
 
 class CycleUserProperties(ProjectBaseModel):
-    cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties"
-    )
+    cycle = models.ForeignKey("db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties")
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

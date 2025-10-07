@@ -32,9 +32,8 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
   );
   // handle arrow key navigation
   useEffect(() => {
-    const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
     const onKeyDown = (e: KeyboardEvent) => {
-      if (navigationKeys.includes(e.key)) {
+      if (DROPDOWN_NAVIGATION_KEYS.includes(e.key)) {
         e.preventDefault();
         const currentSection = selectedIndex.section;
         const currentItem = selectedIndex.item;
@@ -91,12 +90,12 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return;
+      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
       event.preventDefault();
 
       if (event.key === "Enter") {
         selectItem(selectedIndex.section, selectedIndex.item);
-        return;
+        return true;
       }
 
       const newIndex = getNextValidIndex({
@@ -104,9 +103,12 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
+
       if (newIndex) {
         setSelectedIndex(newIndex);
       }
+
+      return true;
     },
   }));
 

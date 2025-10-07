@@ -58,7 +58,7 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   filterConfigs: IFilterConfigManager<P>["filterConfigs"];
   configOptions: IFilterConfigManager<P>["configOptions"];
   // parent filter instance
-  _filterInstance: IFilterInstance<P, E>;
+  private _filterInstance: IFilterInstance<P, E>;
 
   /**
    * Creates a new FilterConfigManager instance.

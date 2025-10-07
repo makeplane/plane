@@ -8,9 +8,10 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IIssueLabel } from "@plane/types";
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 export type TLabelOperationsCallbacks = {

@@ -3,9 +3,8 @@
 import React from "react";
 // ui
 import { Copy } from "lucide-react";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Button } from "@plane/ui";
-// icons
 
 type Props = {
   label: string;

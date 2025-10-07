@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Minimize2 } from "lucide-react";
 // plane types

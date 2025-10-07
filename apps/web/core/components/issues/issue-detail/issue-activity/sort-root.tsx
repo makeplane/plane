@@ -4,7 +4,7 @@ import { FC, memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 export type TActivitySortRoot = {

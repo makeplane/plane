@@ -8,8 +8,9 @@ import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // services

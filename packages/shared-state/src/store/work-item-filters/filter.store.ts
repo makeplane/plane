@@ -6,10 +6,12 @@ import { EIssuesStoreType, LOGICAL_OPERATOR, TWorkItemFilterExpression, TWorkIte
 import { getOperatorForPayload } from "@plane/utils";
 // local imports
 import { buildWorkItemFilterExpressionFromConditions, TWorkItemFilterCondition } from "../../utils";
-import { FilterInstance, IFilterInstance } from "../rich-filters/filter";
+import { FilterInstance } from "../rich-filters/filter";
 import { workItemFiltersAdapter } from "./adapter";
+import { IWorkItemFilterInstance, TWorkItemFilterKey } from "./shared";
 
 type TGetOrCreateFilterParams = {
+  showOnMount?: boolean;
   entityId: string;
   entityType: EIssuesStoreType;
   expressionOptions?: TExpressionOptions<TWorkItemFilterExpression>;
@@ -17,17 +19,10 @@ type TGetOrCreateFilterParams = {
   onExpressionChange?: (expression: TWorkItemFilterExpression) => void;
 };
 
-type TWorkItemFilterKey = `${EIssuesStoreType}-${string}`;
-
 export interface IWorkItemFilterStore {
-  filters: Map<TWorkItemFilterKey, IFilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>>; // key is the entity id (project, cycle, workspace, teamspace, etc)
-  getFilter: (
-    entityType: EIssuesStoreType,
-    entityId: string
-  ) => IFilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression> | undefined;
-  getOrCreateFilter: (
-    params: TGetOrCreateFilterParams
-  ) => IFilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>;
+  filters: Map<TWorkItemFilterKey, IWorkItemFilterInstance>; // key is the entity id (project, cycle, workspace, teamspace, etc)
+  getFilter: (entityType: EIssuesStoreType, entityId: string) => IWorkItemFilterInstance | undefined;
+  getOrCreateFilter: (params: TGetOrCreateFilterParams) => IWorkItemFilterInstance;
   resetExpression: (entityType: EIssuesStoreType, entityId: string, expression: TWorkItemFilterExpression) => void;
   updateFilterExpressionFromConditions: (
     entityType: EIssuesStoreType,
@@ -48,7 +43,7 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
   filters: IWorkItemFilterStore["filters"];
 
   constructor() {
-    this.filters = new Map<TWorkItemFilterKey, IFilterInstance<TWorkItemFilterProperty, TWorkItemFilterExpression>>();
+    this.filters = new Map<TWorkItemFilterKey, IWorkItemFilterInstance>();
     makeObservable(this, {
       filters: observable,
       getOrCreateFilter: action,
@@ -87,12 +82,17 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       if (params.onExpressionChange) {
         existingFilter.onExpressionChange = params.onExpressionChange;
       }
+      // Update visibility if provided
+      if (params.showOnMount !== undefined) {
+        existingFilter.toggleVisibility(params.showOnMount);
+      }
       return existingFilter;
     }
 
     // create new filter instance
     const newFilter = this._initializeFilterInstance(params);
-    this.filters.set(this._getFilterKey(params.entityType, params.entityId), newFilter);
+    const filterKey = this._getFilterKey(params.entityType, params.entityId);
+    this.filters.set(filterKey, newFilter);
 
     return newFilter;
   });
@@ -210,6 +210,9 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       onExpressionChange: params.onExpressionChange,
       options: {
         expression: params.expressionOptions,
+        visibility: params.showOnMount
+          ? { autoSetVisibility: false, isVisibleOnMount: true }
+          : { autoSetVisibility: true },
       },
     });
 }

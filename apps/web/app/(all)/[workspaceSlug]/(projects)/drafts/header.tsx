@@ -6,8 +6,9 @@ import { PenSquare } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
