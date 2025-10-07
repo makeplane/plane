@@ -112,7 +112,7 @@ def save_webhook_log(
         "response_status": str(response_status),
         "response_headers": str(response_headers),
         "response_body": str(response_body),
-        "retry_count": str(retry_count),
+        "retry_count": retry_count,
     }
 
     mongo_save_success = False
