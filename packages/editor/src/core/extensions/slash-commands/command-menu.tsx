@@ -90,12 +90,12 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return;
+      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
       event.preventDefault();
 
       if (event.key === "Enter") {
         selectItem(selectedIndex.section, selectedIndex.item);
-        return;
+        return true;
       }
 
       const newIndex = getNextValidIndex({
@@ -103,9 +103,12 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
+
       if (newIndex) {
         setSelectedIndex(newIndex);
       }
+
+      return true;
     },
   }));
 
