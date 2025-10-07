@@ -7,8 +7,6 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   mode?: "primary" | "transparent" | "true-transparent";
   inputSize?: "xs" | "sm" | "md";
   hasError?: boolean;
-  className?: string;
-  autoComplete?: "on" | "off";
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -44,6 +42,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         },
         className
       )}
+      aria-invalid={hasError || undefined}
       autoComplete={autoComplete}
       {...rest}
     />
