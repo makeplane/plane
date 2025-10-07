@@ -88,6 +88,10 @@
       "import": "./dist/dialog/index.mjs",
       "require": "./dist/dialog/index.js"
     },
+    "./empty-state": {
+      "import": "./dist/empty-state/index.mjs",
+      "require": "./dist/empty-state/index.js"
+    },
     "./emoji-icon-picker": {
       "import": "./dist/emoji-icon-picker/index.mjs",
       "require": "./dist/emoji-icon-picker/index.js"
