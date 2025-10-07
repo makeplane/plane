@@ -42,6 +42,67 @@ def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[s
     return {str(x) for x in data.get(fallback_key, [])}
 
 
+def _deserialize_for_broadcast(raw_value):
+    if raw_value is None:
+        return None
+    if isinstance(raw_value, (dict, list)):
+        return raw_value
+    if isinstance(raw_value, str):
+        try:
+            return json.loads(raw_value)
+        except ValueError:
+            return raw_value
+    return str(raw_value)
+
+
+def broadcast_issue_event(
+    *,
+    project_id,
+    issue_id,
+    event_type,
+    actor_id,
+    epoch,
+    requested_data,
+    current_instance,
+):
+    if not issue_id or not project_id:
+        return
+
+    try:
+        redis_client = redis_instance()
+    except Exception as redis_error:  # pragma: no cover - defensive guard
+        log_exception(redis_error)
+        return
+
+    if not redis_client:
+        return
+
+    channel_id = str(project_id)
+    payload = {
+        "type": event_type,
+        "issue_id": str(issue_id),
+        "project_id": channel_id,
+        "actor_id": str(actor_id) if actor_id else None,
+        "timestamp": int(epoch) if isinstance(epoch, (int, float)) else None,
+    }
+
+    requested_payload = _deserialize_for_broadcast(requested_data)
+    if requested_payload is not None:
+        payload["requested_data"] = requested_payload
+
+    current_payload = _deserialize_for_broadcast(current_instance)
+    if current_payload is not None:
+        payload["current_instance"] = current_payload
+
+    try:
+        redis_client.publish(
+            f"issue_events:{channel_id}",
+            json.dumps(payload, default=str),
+        )
+    except Exception as publish_error:  # pragma: no cover - defensive guard
+        log_exception(publish_error)
+
+
 # Track Changes in name
 def track_name(
     requested_data,
@@ -1578,6 +1639,17 @@ def issue_activity(
 
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+
+        # Broadcast project issue updates for realtime listeners
+        broadcast_issue_event(
+            project_id=project_id,
+            issue_id=issue_id,
+            event_type=type,
+            actor_id=actor_id,
+            epoch=epoch,
+            requested_data=requested_data,
+            current_instance=current_instance,
+        )
 
         if notification:
             notifications.delay(

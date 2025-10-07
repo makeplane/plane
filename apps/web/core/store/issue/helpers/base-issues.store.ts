@@ -85,7 +85,7 @@ export interface IBaseIssuesStore {
   removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
   addIssueToList: (issueId: string) => void;
-  removeIssueFromList: (issueId: string) => void;
+  removeIssueFromList: (issueId: string, issueBeforeUpdate?: TIssue) => void;
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
@@ -1196,9 +1196,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * This will only work if the issue already exists in the main issue map
    * @param issueId
    */
-  removeIssueFromList(issueId: string) {
-    const issue = this.rootIssueStore.issues.getIssueById(issueId);
-    this.updateIssueList(undefined, issue, EIssueGroupedAction.DELETE);
+  removeIssueFromList(issueId: string, issueBeforeUpdate?: TIssue) {
+    const referenceIssue = issueBeforeUpdate ?? this.rootIssueStore.issues.getIssueById(issueId);
+    if (!referenceIssue) return;
+    this.updateIssueList(undefined, referenceIssue, EIssueGroupedAction.DELETE);
   }
 
   /**

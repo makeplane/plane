@@ -27,6 +27,7 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
+import { useIssueChannel } from "@/hooks/use-issue-channel";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
@@ -59,6 +60,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+
+  useIssueChannel(workspaceSlug?.toString(), projectId?.toString());
 
   // derived values
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
