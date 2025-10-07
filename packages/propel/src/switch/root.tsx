@@ -2,7 +2,7 @@ import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui-components/react/switch";
 import { cn } from "../utils/classname";
 
-interface IToggleSwitchProps {
+export interface IToggleSwitchProps {
   value: boolean;
   onChange: (value: boolean) => void;
   label?: string;

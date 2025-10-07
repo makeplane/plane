@@ -4,7 +4,8 @@ export default defineConfig({
   entry: ["src/index.ts"],
   outDir: "dist",
   format: ["esm", "cjs"],
+  exports: true,
   dts: true,
-  external: ["react", "lodash", "mobx", "mobx-react", "intl-messageformat"],
+  clean: true,
   sourcemap: true,
 });
