@@ -133,8 +133,7 @@ comments = JSONField(label="Comments")
 
 All field types support these parameters:
 
-- **`source`**: Dotted path to the attribute (e.g., `"project.name"`) or a callable
-- **`transform`**: Custom transformation function
+- **`source`**: Dotted path string to the attribute (e.g., `"project.name"`)
 - **`default`**: Default value when field is None
 - **`label`**: Display name in export headers
 
@@ -161,29 +160,22 @@ class MySchema(ExportSchema):
 
 Preparers take precedence over field definitions.
 
-### 🔄 Using Callables
+### ⚡ Custom Transformations with Preparer Methods
 
-Use callable sources for dynamic values:
-
-```python
-class MySchema(ExportSchema):
-    status = StringField(
-        source=lambda obj: "Active" if obj.is_active else "Inactive",
-        label="Status"
-    )
-```
-
-### ⚡ Transform Functions
-
-Apply transformations to values:
+For any custom logic or transformations, use `prepare_<field_name>` methods:
 
 ```python
 class MySchema(ExportSchema):
-    name = StringField(
-        source="name",
-        transform=lambda val: val.upper(),
-        label="Name (Uppercase)"
-    )
+    name = StringField(source="name", label="Name (Uppercase)")
+    status = StringField(label="Status")
+
+    def prepare_name(self, obj):
+        """Transform the name field to uppercase."""
+        return obj.name.upper() if obj.name else ""
+
+    def prepare_status(self, obj):
+        """Compute status based on model state."""
+        return "Active" if obj.is_active else "Inactive"
 ```
 
 ## 📦 Export Formats
@@ -454,9 +446,9 @@ Key features:
 
 **`__init__(context=None)`**
 
-- `context`: Optional dict passed to field transformations and preparers
+- `context`: Optional dict accessible in preparer methods via `self.context` for pre-fetched data
 
-**`serialize(obj)`**
+**`serialize(obj, fields=None)`**
 
 - Returns: Dict of serialized field values for a single object
 

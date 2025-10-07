@@ -54,7 +54,12 @@ class Exporter:
             # Already serialized data
             records = data
 
-        return self.formatter.format(filename, records, self.schema_class, self.options)
+        # Merge fields into options for the formatter
+        format_options = {**self.options}
+        if fields:
+            format_options["fields"] = fields
+
+        return self.formatter.format(filename, records, self.schema_class, format_options)
 
     @classmethod
     def get_available_formats(cls) -> List[str]:

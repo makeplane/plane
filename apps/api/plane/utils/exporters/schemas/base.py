@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from django.db.models import QuerySet
 
@@ -8,28 +8,16 @@ from django.db.models import QuerySet
 class ExportField:
     """Base export field class for generic fields."""
 
-    source: Optional[str | Callable[[Any, Dict[str, Any]], Any]] = None
-    transform: Optional[Callable[[Any, Dict[str, Any]], Any]] = None
+    source: Optional[str] = None
     default: Any = ""
     label: Optional[str] = None  # Display name for export headers
 
     def get_value(self, obj: Any, context: Dict[str, Any]) -> Any:
         raw: Any
-        if callable(self.source):
-            try:
-                raw = self.source(obj, context)
-            except TypeError:
-                raw = self.source(obj)
-        elif isinstance(self.source, str) and self.source:
+        if self.source:
             raw = self._resolve_dotted_path(obj, self.source)
         else:
             raw = obj
-
-        if self.transform is not None:
-            try:
-                return self.transform(raw, context)
-            except TypeError:
-                return self.transform(raw)
 
         return self._format_value(raw)
 
@@ -180,24 +168,31 @@ class ExportSchema(metaclass=ExportSchemaMeta):
     def __init__(self, context: Optional[Dict[str, Any]] = None) -> None:
         self.context = context or {}
 
-    def serialize(self, obj: Any) -> Dict[str, Any]:
+    def serialize(self, obj: Any, fields: Optional[List[str]] = None) -> Dict[str, Any]:
         """Serialize a single object.
 
         Args:
             obj: The object to serialize
+            fields: Optional list of field names to include. If None, all fields are serialized.
 
         Returns:
             Dictionary of serialized data
         """
         output: Dict[str, Any] = {}
-        for field_name, export_field in self._declared_fields.items():
+        # Determine which fields to process
+        fields_to_process = fields if fields else list(self._declared_fields.keys())
+
+        for field_name in fields_to_process:
+            # Skip if field doesn't exist in schema
+            if field_name not in self._declared_fields:
+                continue
+
+            export_field = self._declared_fields[field_name]
+
             # Prefer explicit preparer methods if present
             preparer = getattr(self, f"prepare_{field_name}", None)
             if callable(preparer):
-                try:
-                    output[field_name] = preparer(obj)
-                except TypeError:
-                    output[field_name] = preparer(obj, self.context)
+                output[field_name] = preparer(obj)
                 continue
 
             output[field_name] = export_field.get_value(obj, self.context)
@@ -229,16 +224,11 @@ class ExportSchema(metaclass=ExportSchemaMeta):
         # Get context data (can be extended by subclasses)
         context = cls.get_context_data(queryset)
 
-        # Determine which fields to extract
-        fields_to_extract = set(fields) if fields else set(cls._declared_fields.keys())
-
-        # Serialize each object
+        # Serialize each object, passing fields to only process requested fields
         schema = cls(context=context)
         data = []
         for obj in queryset:
-            obj_data = schema.serialize(obj)
-            # Filter to only requested fields
-            filtered_data = {field: obj_data.get(field, "") for field in fields_to_extract if field in obj_data}
-            data.append(filtered_data)
+            obj_data = schema.serialize(obj, fields=fields)
+            data.append(obj_data)
 
         return data

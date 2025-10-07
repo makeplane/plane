@@ -1,9 +1,9 @@
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from django.db.models import F, QuerySet
 
-from plane.db.models import FileAsset
+from plane.db.models import CycleIssue, FileAsset
 
 from .base import (
     DateField,
@@ -35,6 +35,32 @@ def get_issue_attachments_dict(issues_queryset: QuerySet) -> Dict[str, List[str]
         attachment_dict[asset.work_item_id].append(asset.asset_id)
 
     return attachment_dict
+
+
+def get_issue_last_cycles_dict(issues_queryset: QuerySet) -> Dict[str, Optional["CycleIssue"]]:
+    """Get the last cycle for each issue in the given queryset.
+
+    Args:
+        issues_queryset: Queryset of Issue objects
+
+    Returns:
+        Dictionary mapping issue IDs to their last CycleIssue object
+    """
+    # Fetch all cycle issues for the given issues, ordered by created_at descending
+    # select_related is used to fetch cycle data in the same query
+    cycle_issues = (
+        CycleIssue.objects.filter(issue_id__in=issues_queryset.values_list("id", flat=True))
+        .select_related("cycle")
+        .order_by("issue_id", "-created_at")
+    )
+
+    # Keep only the last (most recent) cycle for each issue
+    last_cycles_dict = {}
+    for cycle_issue in cycle_issues:
+        if cycle_issue.issue_id not in last_cycles_dict:
+            last_cycles_dict[cycle_issue.issue_id] = cycle_issue
+
+    return last_cycles_dict
 
 
 class IssueExportSchema(ExportSchema):
@@ -136,13 +162,19 @@ class IssueExportSchema(ExportSchema):
         ]
 
     def prepare_cycle_name(self, i):
-        return i.issue_cycle.last().cycle.name if i.issue_cycle.last() else ""
+        cycles_dict = self.context.get("cycles_dict") or {}
+        last_cycle = cycles_dict.get(i.id)
+        return last_cycle.cycle.name if last_cycle else ""
 
     def prepare_cycle_start_date(self, i):
-        return i.issue_cycle.last().cycle.start_date if i.issue_cycle.last() else None
+        cycles_dict = self.context.get("cycles_dict") or {}
+        last_cycle = cycles_dict.get(i.id)
+        return last_cycle.cycle.start_date if last_cycle else None
 
     def prepare_cycle_end_date(self, i):
-        return i.issue_cycle.last().cycle.end_date if i.issue_cycle.last() else None
+        cycles_dict = self.context.get("cycles_dict") or {}
+        last_cycle = cycles_dict.get(i.id)
+        return last_cycle.cycle.end_date if last_cycle else None
 
     def prepare_parent(self, i):
         if not i.parent:
@@ -170,4 +202,5 @@ class IssueExportSchema(ExportSchema):
         """Get context data for issue serialization."""
         return {
             "attachments_dict": get_issue_attachments_dict(queryset),
+            "cycles_dict": get_issue_last_cycles_dict(queryset),
         }

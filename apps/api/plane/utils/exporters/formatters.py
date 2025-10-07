@@ -90,6 +90,13 @@ class CSVFormatter(BaseFormatter):
 
         # Get field order and labels from schema
         field_order, field_labels = self._get_field_info(schema_class)
+
+        # Filter to requested fields if specified
+        opts = options or {}
+        requested_fields = opts.get("fields")
+        if requested_fields:
+            field_order = [f for f in field_order if f in requested_fields]
+
         header = [field_labels[field] for field in field_order]
 
         rows = [header]
@@ -118,6 +125,12 @@ class JSONFormatter(BaseFormatter):
 
         # Get field order and labels from schema
         field_order, field_labels = self._get_field_info(schema_class)
+
+        # Filter to requested fields if specified
+        opts = options or {}
+        requested_fields = opts.get("fields")
+        if requested_fields:
+            field_order = [f for f in field_order if f in requested_fields]
 
         rows: List[dict] = []
         for record in records:
@@ -169,6 +182,13 @@ class XLSXFormatter(BaseFormatter):
 
         # Get field order and labels from schema
         field_order, field_labels = self._get_field_info(schema_class)
+
+        # Filter to requested fields if specified
+        opts = options or {}
+        requested_fields = opts.get("fields")
+        if requested_fields:
+            field_order = [f for f in field_order if f in requested_fields]
+
         header = [field_labels[field] for field in field_order]
 
         rows = [header]
