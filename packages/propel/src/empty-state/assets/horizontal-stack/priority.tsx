@@ -1,4 +1,4 @@
-import { TIllustrationAssetProps, ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import { type TIllustrationAssetProps, ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
 
 export const PriorityHorizontalStackIllustration = ({ className }: TIllustrationAssetProps) => (
   <svg width="72" height="81" viewBox="0 0 72 81" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -7,17 +7,17 @@ export const PriorityHorizontalStackIllustration = ({ className }: TIllustration
         d="M42.4518 2.93859C41.651 2.53126 40.6222 2.5658 39.5038 3.13193L8.67038 18.8454C6.1366 20.1365 4.0792 23.6852 4.0792 26.7644V64.2878C4.0792 66.0069 4.71437 67.2151 5.71546 67.7329L2.63626 66.1657C1.63517 65.6548 1 64.4397 1 62.7206V25.1972C1 22.1111 3.0574 18.5693 5.59118 17.2783L36.4246 1.5647C37.5499 0.991664 38.5787 0.964028 39.3726 1.37137L42.4518 2.93859Z"
         fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
         stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-        stroke-width="0.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M42.4519 2.9385C43.4529 3.4494 44.0881 4.66451 44.0881 6.38361V43.907C44.0881 46.9931 42.0307 50.5349 39.4969 51.8259L8.6635 67.5395C7.53814 68.1125 6.50945 68.1402 5.71548 67.7328C4.7144 67.2219 4.07922 66.0068 4.07922 64.2877V26.7643C4.07922 23.6782 6.13663 20.1364 8.67041 18.8453L39.5038 3.13184C40.6292 2.5588 41.6579 2.53117 42.4519 2.9385Z"
         fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
         stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-        stroke-width="0.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <g opacity="0.6">
@@ -25,34 +25,34 @@ export const PriorityHorizontalStackIllustration = ({ className }: TIllustration
         d="M55.9078 8.88293C55.1069 8.47559 54.0782 8.51013 52.9598 9.07626L22.1264 24.7899C19.5926 26.0809 17.5352 29.6296 17.5352 32.7088V70.2322C17.5352 71.9513 18.1704 73.1595 19.1715 73.6773L16.0923 72.11C15.0912 71.5991 14.456 70.384 14.456 68.6649V31.1415C14.456 28.0554 16.5134 24.5137 19.0472 23.2226L49.8806 7.50903C51.006 6.936 52.0347 6.90836 52.8286 7.3157L55.9078 8.88293Z"
         fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
         stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-        stroke-width="0.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M55.9079 8.88284C56.909 9.39374 57.5441 10.6088 57.5441 12.3279V49.8514C57.5441 52.9375 55.4867 56.4792 52.9529 57.7703L22.1195 73.4838C20.9942 74.0569 19.9655 74.0845 19.1715 73.6772C18.1704 73.1663 17.5352 71.9512 17.5352 70.2321V32.7087C17.5352 29.6226 19.5926 26.0808 22.1264 24.7898L52.9598 9.07617C54.0852 8.50314 55.1139 8.4755 55.9079 8.88284Z"
         fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
         stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-        stroke-width="0.25"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <path
       d="M69.3638 14.8343C68.5629 14.427 67.5342 14.4615 66.4158 15.0277L35.5823 30.7413C33.0486 32.0323 30.9912 35.581 30.9912 38.6602V76.1836C30.9912 77.9027 31.6263 79.1109 32.6274 79.6287L29.5482 78.0615C28.5471 77.5506 27.912 76.3355 27.912 74.6163V37.0929C27.912 34.0068 29.9694 30.4651 32.5031 29.174L63.3366 13.4605C64.4619 12.8874 65.4906 12.8598 66.2846 13.2671L69.3638 14.8343Z"
       fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.secondary}
       stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-      stroke-width="0.25"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M69.3638 14.8343C70.3649 15.3452 71.0001 16.5603 71.0001 18.2794V55.8028C71.0001 58.8889 68.9427 62.4306 66.4089 63.7217L35.5755 79.4353C34.4501 80.0083 33.4214 80.0359 32.6275 79.6286C31.6264 79.1177 30.9912 77.9026 30.9912 76.1835V38.6601C30.9912 35.574 33.0486 32.0322 35.5824 30.7412L66.4158 15.0276C67.5412 14.4546 68.5699 14.4269 69.3638 14.8343Z"
       fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
       stroke={ILLUSTRATION_COLOR_TOKEN_MAP.stroke.secondary}
-      stroke-width="0.25"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M41.9065 64.3778C41.1954 64.7369 40.6154 64.3364 40.6154 63.4734C40.6154 62.6104 41.1816 61.6162 41.8927 61.2572H41.9065C42.6176 60.8913 43.1906 61.2987 43.1906 62.1617C43.1906 63.0247 42.6176 64.0188 41.9065 64.3778Z"

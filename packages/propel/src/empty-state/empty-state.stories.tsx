@@ -3,8 +3,7 @@ import { WorkItemHorizontalStackIllustration } from "./assets/horizontal-stack";
 import { HorizontalStackAssetsMap } from "./assets/horizontal-stack/constant";
 import { WorkItemVerticalStackIllustration } from "./assets/vertical-stack";
 import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
-import type { EmptyStateProps } from "./empty-state";
-import { EmptyState } from "./empty-state";
+import { EmptyState, type EmptyStateProps } from "./empty-state";
 
 const meta: Meta<EmptyStateProps> = {
   title: "Components/EmptyState",
