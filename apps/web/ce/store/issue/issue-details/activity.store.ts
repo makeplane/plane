@@ -11,7 +11,6 @@ import {
   TIssueActivityIdMap,
   TIssueServiceType,
 } from "@plane/types";
-// plane web constants
 // services
 import { IssueActivityService } from "@/services/issue";
 // store
@@ -34,10 +33,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
+  sortOrder: E_SORT_ORDER;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
   getActivityAndCommentsByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
+  toggleSortOrder: () => void;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
@@ -45,7 +46,7 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-
+  sortOrder: E_SORT_ORDER = E_SORT_ORDER.ASC;
   // services
   serviceType;
   issueActivityService;
@@ -67,6 +68,14 @@ export class IssueActivityStore implements IIssueActivityStore {
     this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
+  toggleSortOrder = () => {
+    if (this.sortOrder === E_SORT_ORDER.ASC) {
+      this.sortOrder = E_SORT_ORDER.DESC;
+    } else {
+      this.sortOrder = E_SORT_ORDER.ASC;
+    }
+  };
+
   // helper methods
   getActivitiesByIssueId = (issueId: string) => {
     if (!issueId) return undefined;
@@ -78,10 +87,10 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+  protected buildActivityAndCommentItems(issueId: string): TIssueActivityComment[] | undefined {
     if (!issueId) return undefined;
 
-    let activityComments: TIssueActivityComment[] = [];
+    const activityComments: TIssueActivityComment[] = [];
 
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
@@ -91,17 +100,25 @@ export class IssueActivityStore implements IIssueActivityStore {
 
     if (!activities || !comments) return undefined;
 
-    activities?.forEach((activityId) => {
+    activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
+      const type =
+        activity.field === "state"
+          ? EActivityFilterType.STATE
+          : activity.field === "assignees"
+            ? EActivityFilterType.ASSIGNEE
+            : activity.field === null
+              ? EActivityFilterType.DEFAULT
+              : EActivityFilterType.ACTIVITY;
       activityComments.push({
         id: activity.id,
-        activity_type: EActivityFilterType.ACTIVITY,
+        activity_type: type,
         created_at: activity.created_at,
       });
     });
 
-    comments?.forEach((commentId) => {
+    comments.forEach((commentId) => {
       const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
@@ -111,9 +128,17 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
-
     return activityComments;
+  }
+
+  protected sortActivityComments(items: TIssueActivityComment[], sortOrder: E_SORT_ORDER): TIssueActivityComment[] {
+    return orderBy(items, (e) => new Date(e.created_at || 0), sortOrder);
+  }
+
+  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+    const baseItems = this.buildActivityAndCommentItems(issueId);
+    if (!baseItems) return undefined;
+    return this.sortActivityComments(baseItems, sortOrder);
   });
 
   // actions
