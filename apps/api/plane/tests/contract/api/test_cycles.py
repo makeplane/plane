@@ -75,7 +75,7 @@ class TestCycleListCreateAPIEndpoint:
 
         response = api_key_client.post(url, cycle_data, format="json")
 
-        response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED
 
         assert Cycle.objects.count() == 1
 
