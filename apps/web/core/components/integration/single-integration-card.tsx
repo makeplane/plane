@@ -8,11 +8,10 @@ import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks

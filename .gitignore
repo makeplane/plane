@@ -99,5 +99,8 @@ dev-editor
 *.rdb.gz
 
 storybook-static
-
-CLAUDE.md
+.venv
+venv
+.venv_bak
+.gitignore
+.trae/rules/project_rules.md

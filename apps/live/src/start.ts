@@ -18,26 +18,26 @@ startServer();
 
 // Graceful shutdown on unhandled rejection
 process.on("unhandledRejection", async (err: Error) => {
-  logger.error(`UNHANDLED REJECTION!`, err);
+  logger.error(`UNHANDLED REJECTION! 💥 Shutting down...`, err);
   try {
-    // if (server) {
-    //   await server.destroy();
-    // }
+    if (server) {
+      await server.destroy();
+    }
   } finally {
-    // logger.info("Exiting process...");
-    // process.exit(1);
+    logger.info("Exiting process...");
+    process.exit(1);
   }
 });
 
 // Graceful shutdown on uncaught exception
 process.on("uncaughtException", async (err: Error) => {
-  logger.error(`UNCAUGHT EXCEPTION!`, err);
+  logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`, err);
   try {
-    // if (server) {
-    //   await server.destroy();
-    // }
+    if (server) {
+      await server.destroy();
+    }
   } finally {
-    // logger.info("Exiting process...");
-    // process.exit(1);
+    logger.info("Exiting process...");
+    process.exit(1);
   }
 });

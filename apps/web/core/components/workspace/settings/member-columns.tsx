@@ -7,10 +7,10 @@ import { Disclosure } from "@headlessui/react";
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu, cn } from "@plane/ui";
+import { CustomSelect, PopoverMenu, TOAST_TYPE, cn, setToast } from "@plane/ui";
+// constants
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

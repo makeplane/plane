@@ -84,6 +84,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

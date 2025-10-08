@@ -1,9 +1,8 @@
 import json
 
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.http import QueryDict
-from django_filters.utils import translate_validation
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 
@@ -39,6 +38,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             # Propagate validation errors unchanged
             raise
         except Exception as e:
+            raise
             # Convert unexpected errors to ValidationError to keep response consistent
             raise ValidationError(f"Filter error: {str(e)}")
 
@@ -58,7 +58,7 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             raise ValidationError(f"Invalid JSON for '{source_label}'. Expected a valid JSON object.")
 
     def _apply_json_filter(self, queryset, filter_data, view):
-        """Process a JSON filter structure using Q object composition."""
+        """Process a JSON filter structure using OR/AND/NOT set operations."""
         if not filter_data:
             return queryset
 
@@ -69,13 +69,11 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         # Validate against the view's FilterSet (only declared filters are allowed)
         self._validate_fields(filter_data, view)
 
-        # Build combined Q object from the filter tree
-        combined_q = self._evaluate_node(filter_data, view, queryset)
-        if combined_q is None:
+        # Build combined queryset using FilterSet-driven leaf evaluation
+        combined_qs = self._evaluate_node(filter_data, queryset, view)
+        if combined_qs is None:
             return queryset
-
-        # Apply the combined Q object to the queryset once
-        return queryset.filter(combined_q)
+        return combined_qs
 
     def _validate_fields(self, filter_data, view):
         """Validate that filtered fields are defined in the view's FilterSet."""
@@ -117,76 +115,108 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             return fields
         return []
 
-    def _evaluate_node(self, node, view, queryset):
+    def _evaluate_node(self, node, base_queryset, view):
         """
-        Recursively evaluate a JSON node into a combined Q object.
+        Recursively evaluate a JSON node into a combined queryset using branch-based filtering.
 
         Rules:
-        - leaf dict → evaluated through FilterSet to produce a Q object
-        - {"or": [...]} → Q() | Q() | ... (OR of children)
-        - {"and": [...]} → Q() & Q() & ... (AND of children)
-        - {"not": {...}} → ~Q() (negation of child)
-
-        Returns a Q object that can be applied to a queryset.
+        - leaf dict → evaluated through DjangoFilterBackend as a mini-querystring
+        - {"or": [...]} → union (|) of children
+        - {"and": [...]} → collect field conditions per branch and apply together
+        - {"not": {...}} → exclude child's rows from the base queryset
+          (complement within base scope)
         """
         if not isinstance(node, dict):
             return None
 
-        # 'or' combination - OR of child Q objects
+        # 'or' combination - requires set operations between children
         if "or" in node:
             children = node["or"]
             if not isinstance(children, list) or not children:
                 return None
-            combined_q = Q()
+            combined = None
             for child in children:
-                child_q = self._evaluate_node(child, view, queryset)
-                if child_q is None:
+                child_qs = self._evaluate_node(child, base_queryset, view)
+                if child_qs is None:
                     continue
-                combined_q |= child_q
-            return combined_q
+                combined = child_qs if combined is None else (combined | child_qs)
+            return combined
 
-        # 'and' combination - AND of child Q objects
+        # 'and' combination - collect field conditions per branch
         if "and" in node:
             children = node["and"]
             if not isinstance(children, list) or not children:
                 return None
-            combined_q = Q()
-            for child in children:
-                child_q = self._evaluate_node(child, view, queryset)
-                if child_q is None:
-                    continue
-                combined_q &= child_q
-            return combined_q
+            return self._evaluate_and_branch(children, base_queryset, view)
 
-        # 'not' negation - negate the child Q object
+        # 'not' negation
         if "not" in node:
             child = node["not"]
             if not isinstance(child, dict):
                 return None
-            child_q = self._evaluate_node(child, view, queryset)
-            if child_q is None:
+            child_qs = self._evaluate_node(child, base_queryset, view)
+            if child_qs is None:
                 return None
-            return ~child_q
+            # Use subquery instead of pk__in for better performance
+            # This avoids evaluating child_qs and creating large IN clauses
+            return base_queryset.exclude(pk__in=child_qs.values("pk"))
 
-        # Leaf dict: evaluate via FilterSet to get a Q object
-        return self._build_leaf_q(node, view, queryset)
+        # Leaf dict: evaluate via DjangoFilterBackend using FilterSet
+        return self._filter_leaf_via_backend(node, base_queryset, view)
 
-    def _build_leaf_q(self, leaf_conditions, view, queryset):
-        """Build a Q object from leaf filter conditions using the view's FilterSet.
+    def _evaluate_and_branch(self, children, base_queryset, view):
+        """
+        Evaluate an AND branch by collecting field conditions and applying them together.
 
-        We serialize the leaf dict into a QueryDict and let the view's
-        filterset_class perform validation and build a combined Q object
-        from all the field filters.
+        This approach is more efficient than individual leaf evaluation because:
+        - Field conditions within the same AND branch are collected and applied together
+        - Only logical operation children require separate evaluation and set intersection
+        - Reduces the number of intermediate querysets and database queries
+        """
+        collected_conditions = {}
+        logical_querysets = []
 
-        Returns a Q object representing all the field conditions in the leaf.
+        # Separate field conditions from logical operations
+        for child in children:
+            if not isinstance(child, dict):
+                continue
+
+            # Check if this child contains logical operators
+            has_logical = any(k.lower() in ("or", "and", "not") for k in child.keys() if isinstance(k, str))
+
+            if has_logical:
+                # This child has logical operators, evaluate separately
+                child_qs = self._evaluate_node(child, base_queryset, view)
+                if child_qs is not None:
+                    logical_querysets.append(child_qs)
+            else:
+                # This is a leaf with field conditions, collect them
+                collected_conditions.update(child)
+
+        # Start with base queryset
+        result_qs = base_queryset
+
+        # Apply collected field conditions together if any exist
+        if collected_conditions:
+            result_qs = self._filter_leaf_via_backend(collected_conditions, result_qs, view)
+            if result_qs is None:
+                return None
+
+        # Intersect with any logical operation results
+        for logical_qs in logical_querysets:
+            result_qs = result_qs & logical_qs
+
+        return result_qs
+
+    def _filter_leaf_via_backend(self, leaf_conditions, base_queryset, view):
+        """Evaluate a leaf dict by delegating to DjangoFilterBackend once.
+
+        We serialize the leaf dict into a mini querystring and let the view's
+        filterset_class perform validation, conversion, and filtering. This returns
+        a lazy queryset suitable for set-operations with siblings.
         """
         if not leaf_conditions:
-            return Q()
-
-        # Get the filterset class from the view
-        filterset_class = getattr(view, "filterset_class", None)
-        if not filterset_class:
-            raise ValidationError("Filtering requires a filterset_class to be defined on the view")
+            return None
 
         # Build a QueryDict from the leaf conditions
         qd = QueryDict(mutable=True)
@@ -201,18 +231,17 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         qd = qd.copy()
         qd._mutable = False
 
-        # Instantiate the filterset with the actual queryset
-        # Custom filter methods may need access to the queryset for filtering
-        fs = filterset_class(data=qd, queryset=queryset)
-
-        if not fs.is_valid():
-            raise translate_validation(fs.errors)
-
-        # Build and return the combined Q object
-        if not hasattr(fs, "build_combined_q"):
-            raise ValidationError("FilterSet must have build_combined_q method for complex filtering")
-
-        return fs.build_combined_q()
+        # Temporarily patch request.GET and delegate to DjangoFilterBackend
+        backend = DjangoFilterBackend()
+        request = view.request
+        original_get = request._request.GET if hasattr(request, "_request") else None
+        try:
+            if hasattr(request, "_request"):
+                request._request.GET = qd
+            return backend.filter_queryset(request, base_queryset, view)
+        finally:
+            if hasattr(request, "_request") and original_get is not None:
+                request._request.GET = original_get
 
     def _get_max_depth(self, view):
         """Return the maximum allowed nesting depth for complex filters.

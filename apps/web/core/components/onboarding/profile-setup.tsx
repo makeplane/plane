@@ -13,10 +13,9 @@ import {
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";

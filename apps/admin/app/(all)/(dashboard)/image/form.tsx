@@ -2,8 +2,8 @@
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks

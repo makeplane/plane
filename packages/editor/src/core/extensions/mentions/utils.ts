@@ -11,42 +11,49 @@ import { TMentionHandler } from "@/types";
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
 
 export const renderMentionsDropdown =
-  (args: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
+  (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
+  // @ts-expect-error - Tiptap types are incorrect
   () => {
-    const { searchCallback } = args;
+    const { searchCallback } = props;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
 
     return {
-      onStart: (props) => {
+      onStart: ({ clientRect, editor }) => {
         if (!searchCallback) return;
+        if (!clientRect) return;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
           props: {
             ...props,
             searchCallback,
           },
-          editor: props.editor,
+          editor: editor,
         });
-        if (!props.clientRect) return;
-        props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
-        element.style.zIndex = "100";
-        updateFloatingUIFloaterPosition(props.editor, element);
+        document.body.appendChild(element);
+        updateFloatingUIFloaterPosition(editor, element);
       },
-      onUpdate: (props) => {
-        if (!component || !component.element) return;
-        component.updateProps(props);
-        if (!props.clientRect) return;
-        updateFloatingUIFloaterPosition(props.editor, component.element);
+      onUpdate: ({ clientRect, editor }) => {
+        component?.updateProps(props);
+        if (!clientRect) return;
+        if (component?.element) {
+          updateFloatingUIFloaterPosition(editor, component?.element as HTMLElement);
+        }
       },
       onKeyDown: ({ event }) => {
         if (event.key === "Escape") {
           component?.destroy();
-          component = null;
           return true;
         }
 
-        return component?.ref?.onKeyDown({ event }) ?? false;
+        const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
+
+        if (navigationKeys.includes(event.key)) {
+          event?.stopPropagation();
+          return component?.ref?.onKeyDown({ event });
+        }
+        return component?.ref?.onKeyDown({ event });
       },
       onExit: ({ editor }) => {
         editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);

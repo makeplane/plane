@@ -4,13 +4,9 @@
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
@@ -32,13 +28,10 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/node": "^22.5.4",
     "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts"
+  }
 }

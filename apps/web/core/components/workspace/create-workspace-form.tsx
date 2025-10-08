@@ -10,11 +10,12 @@ import {
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+// constants
+// types
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspace } from "@plane/types";
 // ui
-import { CustomSelect, Input } from "@plane/ui";
+import { CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";

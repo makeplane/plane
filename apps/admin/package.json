@@ -46,9 +46,10 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/lodash-es": "catalog:",
-    "@types/node": "catalog:",
+    "@types/node": "18.16.1",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/uuid": "^9.0.8",
     "typescript": "catalog:"
   }
 }

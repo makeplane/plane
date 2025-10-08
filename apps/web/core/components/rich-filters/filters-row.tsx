@@ -68,6 +68,7 @@ export const FiltersRow = observer(
               shouldShowIcon: true,
               iconComponent: ListFilterPlus,
             },
+            defaultOpen: buttonConfig?.defaultOpen ?? !hasAnyConditions,
             ...buttonConfig,
             isDisabled: disabledAllOperations,
           }}

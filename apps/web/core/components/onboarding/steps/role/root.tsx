@@ -7,8 +7,8 @@ import { Box, Check, PenTool, Rocket, Monitor, RefreshCw, Layers } from "lucide-
 // plane imports
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps, TUserProfile } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks

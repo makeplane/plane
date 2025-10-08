@@ -21,7 +21,7 @@ export abstract class PageCoreService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -35,7 +35,7 @@ export abstract class PageCoreService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 

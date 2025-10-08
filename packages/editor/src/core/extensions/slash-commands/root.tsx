@@ -54,22 +54,33 @@ const Command = Extension.create<SlashCommandOptions>({
           return {
             onStart: (props) => {
               // Track active dropdown
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
                 props,
                 editor: props.editor,
               });
-              if (!props.clientRect) return;
-              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+
+              if (!props.clientRect) {
+                return;
+              }
+
               const element = component.element as HTMLElement;
               element.style.position = "absolute";
               element.style.zIndex = "100";
+              document.body.appendChild(element);
+
               updateFloatingUIFloaterPosition(props.editor, element);
             },
 
             onUpdate: (props) => {
               if (!component || !component.element) return;
+
               component.updateProps(props);
-              if (!props.clientRect) return;
+
+              if (!props.clientRect) {
+                return;
+              }
+
               const element = component.element as HTMLElement;
               updateFloatingUIFloaterPosition(props.editor, element);
             },

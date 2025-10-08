@@ -7,11 +7,10 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks

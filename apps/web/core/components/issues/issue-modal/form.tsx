@@ -10,10 +10,9 @@ import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
-import { ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import {
   convertWorkItemDataToSearchResponse,
   getUpdateFormDataForReset,

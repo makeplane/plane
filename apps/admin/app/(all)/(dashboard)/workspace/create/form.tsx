@@ -5,11 +5,10 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
 import { IWorkspace } from "@plane/types";
 // components
-import { CustomSelect, Input } from "@plane/ui";
+import { CustomSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 
