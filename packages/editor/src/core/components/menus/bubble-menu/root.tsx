@@ -29,9 +29,7 @@ import type { TEditorCommands } from "@/types";
 import { TextAlignmentSelector } from "./alignment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children" | "editor"> & {
-  editor: Editor;
-};
+type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export type EditorStateType = {
   code: boolean;

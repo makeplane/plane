@@ -3,7 +3,6 @@
   "include": ["src"],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
-    "noEmit": true,
-    "esModuleInterop": true
+    "noEmit": true
   }
 }

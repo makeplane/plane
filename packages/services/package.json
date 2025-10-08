@@ -6,9 +6,6 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
