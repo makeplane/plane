@@ -79,7 +79,14 @@ export const FilterItem = observer(
     return (
       <FilterItemContainer conditionValue={condition.value} showTransition={showTransition}>
         {/* Property section */}
-        <FilterItemProperty icon={filterConfig.icon} label={filterConfig.label} tooltipContent={filterConfig.tooltipContent} />
+        <FilterItemProperty
+          conditionId={condition.id}
+          filter={filter}
+          icon={filterConfig.icon}
+          isDisabled={isDisabled}
+          label={filterConfig.label}
+          tooltipContent={filterConfig.tooltipContent}
+        />
 
         {/* Operator section */}
         <CustomSearchSelect

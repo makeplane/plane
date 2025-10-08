@@ -1,42 +1,26 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { ListFilter } from "lucide-react";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
 import { IFilterInstance } from "@plane/shared-state";
-import { LOGICAL_OPERATOR, TExternalFilter, TFilterProperty } from "@plane/types";
-import { CustomSearchSelect, setToast, TButtonVariant, TOAST_TYPE } from "@plane/ui";
-import { cn, getOperatorForPayload } from "@plane/utils";
+import { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
+import { CustomSearchSelect, setToast, TOAST_TYPE } from "@plane/ui";
+import { getOperatorForPayload } from "@plane/utils";
 
-export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternalFilter> = {
+export type TAddFilterDropdownProps<P extends TFilterProperty, E extends TExternalFilter> = {
+  customButton: React.ReactNode;
   buttonConfig?: {
-    label: string | null;
-    variant?: TButtonVariant;
     className?: string;
     defaultOpen?: boolean;
-    iconConfig?: {
-      shouldShowIcon: boolean;
-      iconComponent?: React.ElementType;
-    };
     isDisabled?: boolean;
   };
   filter: IFilterInstance<P, E>;
-  onFilterSelect?: (id: string) => void;
+  handleFilterSelect: (property: P, operator: TSupportedOperators, isNegation: boolean) => void;
 };
 
-export const AddFilterButton = observer(
-  <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterButtonProps<P, E>) => {
-    const { filter, buttonConfig, onFilterSelect } = props;
-    const {
-      label,
-      variant = "link-neutral",
-      className,
-      defaultOpen = false,
-      iconConfig = { shouldShowIcon: true },
-      isDisabled = false,
-    } = buttonConfig || {};
-    // derived values
-    const FilterIcon = iconConfig.iconComponent || ListFilter;
+export const AddFilterDropdown = observer(
+  <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterDropdownProps<P, E>) => {
+    const { filter, customButton, buttonConfig } = props;
+    const { className, defaultOpen = false, isDisabled = false } = buttonConfig || {};
 
     // Transform available filter configs to CustomSearchSelect options format
     const filterOptions = filter.configManager.allAvailableConfigs.map((config) => ({
@@ -72,16 +56,7 @@ export const AddFilterButton = observer(
       const config = filter.configManager.getConfigByProperty(property);
       if (config?.firstOperator) {
         const { operator, isNegation } = getOperatorForPayload(config.firstOperator);
-        filter.addCondition(
-          LOGICAL_OPERATOR.AND,
-          {
-            property: config.id,
-            operator,
-            value: undefined,
-          },
-          isNegation
-        );
-        onFilterSelect?.(property);
+        props.handleFilterSelect(property, operator, isNegation);
       } else {
         setToast({
           title: "Filter configuration error",
@@ -91,7 +66,6 @@ export const AddFilterButton = observer(
       }
     };
 
-    if (isDisabled) return null;
     return (
       <div className="relative transition-all duration-200 ease-in-out">
         <CustomSearchSelect
@@ -103,13 +77,8 @@ export const AddFilterButton = observer(
           maxHeight="2xl"
           placement="bottom-start"
           disabled={isDisabled}
-          customButtonClassName={cn(getButtonStyling(variant, "sm"), "py-[5px]", className)}
-          customButton={
-            <div className="flex items-center gap-1">
-              {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
-              {label}
-            </div>
-          }
+          customButtonClassName={className}
+          customButton={customButton}
         />
       </div>
     );

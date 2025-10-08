@@ -101,6 +101,12 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
     condition: TFilterConditionPayload<P, V>,
     isNegation: boolean
   ) => void;
+  updateConditionProperty: (
+    conditionId: string,
+    property: P,
+    operator: TSupportedOperators,
+    isNegation: boolean
+  ) => void;
   updateConditionOperator: (conditionId: string, operator: TSupportedOperators, isNegation: boolean) => void;
   updateConditionValue: <V extends TFilterValue>(conditionId: string, value: SingleOrArray<V>) => void;
   removeCondition: (conditionId: string) => void;
@@ -359,6 +365,33 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       this._notifyExpressionChange();
     }
   });
+
+  /**
+   * Updates the property of a condition in the filter expression.
+   * @param conditionId - The id of the condition to update.
+   * @param property - The new property for the condition.
+   */
+  updateConditionProperty: IFilterInstance<P, E>["updateConditionProperty"] = action(
+    (conditionId: string, property: P, operator: TSupportedOperators, isNegation: boolean) => {
+      if (!this.expression) return;
+      const conditionBeforeUpdate = cloneDeep(findNodeById(this.expression, conditionId));
+      if (!conditionBeforeUpdate || conditionBeforeUpdate.type !== FILTER_NODE_TYPE.CONDITION) return;
+
+      // Update the condition property
+      const updatedExpression = this.helper.handleConditionPropertyUpdate(
+        this.expression,
+        conditionId,
+        property,
+        operator,
+        isNegation
+      );
+
+      if (updatedExpression) {
+        this.expression = updatedExpression;
+        this._notifyExpressionChange();
+      }
+    }
+  );
 
   /**
    * Updates the operator of a condition in the filter expression.

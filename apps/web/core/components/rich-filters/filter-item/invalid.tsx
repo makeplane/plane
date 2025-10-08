@@ -21,7 +21,13 @@ export const InvalidFilterItem = observer(
         tooltipContent="This filter condition is no longer valid. The property may have been deleted or your access to it may have changed."
       >
         {/* Property section */}
-        <FilterItemProperty icon={CircleAlert} label="Invalid filter" />
+        <FilterItemProperty
+          conditionId={condition.id}
+          icon={CircleAlert}
+          label="Invalid filter"
+          filter={filter}
+          isDisabled={isDisabled}
+        />
         {/* Remove button */}
         {!isDisabled && <FilterItemCloseButton conditionId={condition.id} filter={filter} />}
       </FilterItemContainer>
