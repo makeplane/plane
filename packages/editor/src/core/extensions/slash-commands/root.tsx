@@ -51,16 +51,18 @@ const Command = Extension.create<SlashCommandOptions>({
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
           let cleanup: () => void = () => {};
+          let editorRef: Editor | null = null;
 
           const handleClose = (editor?: Editor) => {
             component?.destroy();
             component = null;
-            editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+            (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
             cleanup();
           };
 
           return {
             onStart: (props) => {
+              editorRef = props.editor;
               // React renderer component, which wraps the actual dropdown component
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
                 props: {

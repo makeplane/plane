@@ -48,16 +48,18 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
   render: () => {
     let component: ReactRenderer<CommandListInstance, EmojisListDropdownProps> | null = null;
     let cleanup: () => void = () => {};
+    let editorRef: Editor | null = null;
 
     const handleClose = (editor?: Editor) => {
       component?.destroy();
       component = null;
-      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+      (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
       cleanup();
     };
 
     return {
       onStart: (props) => {
+        editorRef = props.editor;
         component = new ReactRenderer<CommandListInstance, EmojisListDropdownProps>(EmojisListDropdown, {
           props: {
             ...props,

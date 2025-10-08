@@ -16,17 +16,19 @@ export const renderMentionsDropdown =
     const { searchCallback } = args;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
     let cleanup: () => void = () => {};
+    let editorRef: Editor | null = null;
 
     const handleClose = (editor?: Editor) => {
       component?.destroy();
       component = null;
-      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+      (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
       cleanup();
     };
 
     return {
       onStart: (props) => {
         if (!searchCallback) return;
+        editorRef = props.editor;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
           props: {
             ...props,
