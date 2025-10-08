@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -17,9 +17,16 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LayersIcon } from "@plane/propel/icons";
-import { IWorkspaceSearchResults } from "@plane/types";
+import {
+  IWorkspaceSearchResults,
+  ICycle,
+  TActivityEntityData,
+  TIssueEntityData,
+  TIssueSearchResponse,
+  TPartialProject,
+} from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
-import { cn, getTabIndex } from "@plane/utils";
+import { cn, getTabIndex, generateWorkItemLink } from "@plane/utils";
 // components
 import {
   ChangeIssueAssignee,
@@ -33,12 +40,20 @@ import {
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import {
+  CommandPaletteProjectSelector,
+  CommandPaletteCycleSelector,
+  CommandPaletteEntityList,
+  useKeySequence,
+} from "@/components/command-palette";
+import { COMMAND_CONFIG } from "@/components/command-palette";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -48,6 +63,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import type { CommandPaletteEntity } from "@/store/base-command-palette.store";
 
 const workspaceService = new WorkspaceService();
 
@@ -65,6 +81,10 @@ export const CommandModal: React.FC = observer(() => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
+  const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
+  const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
+  const [projectSelectionAction, setProjectSelectionAction] = useState<"navigate" | "cycle" | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -72,11 +92,18 @@ export const CommandModal: React.FC = observer(() => {
     issue: { getIssueById },
     fetchIssueWithIdentifier,
   } = useIssueDetail();
-  const { workspaceProjectIds } = useProject();
+  const { workspaceProjectIds, joinedProjectIds, getPartialProjectById } = useProject();
+  const { getProjectCycleIds, getCycleById, fetchAllCycles } = useCycle();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
-  const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
-    useCommandPalette();
+  const {
+    isCommandPaletteOpen,
+    toggleCommandPaletteModal,
+    toggleCreateIssueModal,
+    toggleCreateProjectModal,
+    activeEntity,
+    clearActiveEntity,
+  } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
@@ -101,6 +128,106 @@ export const CommandModal: React.FC = observer(() => {
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
+  const openProjectSelection = useCallback(
+    (action: "navigate" | "cycle") => {
+      if (!workspaceSlug) return;
+      setPlaceholder("Search projects...");
+      setSearchTerm("");
+      setProjectSelectionAction(action);
+      setSelectedProjectId(null);
+      setPages((p) => [...p, "open-project"]);
+    },
+    [workspaceSlug]
+  );
+
+  const openProjectList = useCallback(() => openProjectSelection("navigate"), [openProjectSelection]);
+
+  const openCycleList = useCallback(() => {
+    if (!workspaceSlug) return;
+    const currentProject = projectId ? getPartialProjectById(projectId.toString()) : null;
+    if (currentProject && currentProject.cycle_view) {
+      setSelectedProjectId(projectId.toString());
+      setPlaceholder("Search cycles...");
+      setSearchTerm("");
+      setPages((p) => [...p, "open-cycle"]);
+      fetchAllCycles(workspaceSlug.toString(), projectId.toString());
+    } else {
+      openProjectSelection("cycle");
+    }
+  }, [workspaceSlug, projectId, getPartialProjectById, fetchAllCycles, openProjectSelection]);
+
+  const openIssueList = useCallback(() => {
+    if (!workspaceSlug) return;
+    setPlaceholder("Search issues...");
+    setSearchTerm("");
+    setPages((p) => [...p, "open-issue"]);
+    workspaceService
+      .fetchWorkspaceRecents(workspaceSlug.toString(), "issue")
+      .then((res) =>
+        setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
+      )
+      .catch(() => setRecentIssues([]));
+  }, [workspaceSlug]);
+
+  const entityHandlers = useMemo<
+    Partial<Record<CommandPaletteEntity, () => void>>
+  >(
+    () => ({
+      project: openProjectList,
+      cycle: openCycleList,
+      issue: openIssueList,
+    }),
+    [openProjectList, openCycleList, openIssueList]
+  );
+
+  const sequenceHandlers = useMemo(() => {
+    const handlers: Record<string, () => void> = {};
+    COMMAND_CONFIG.forEach((cmd) => {
+      if (!cmd.enabled || cmd.enabled()) {
+        const handler = entityHandlers[cmd.entity];
+        if (handler) handlers[cmd.sequence] = handler;
+      }
+    });
+    return handlers;
+  }, [entityHandlers]);
+
+  const handleKeySequence = useKeySequence(sequenceHandlers);
+
+  useEffect(() => {
+    if (!isCommandPaletteOpen || !activeEntity) return;
+
+    const handler = entityHandlers[activeEntity];
+    if (handler) handler();
+    clearActiveEntity();
+  }, [isCommandPaletteOpen, activeEntity, clearActiveEntity, entityHandlers]);
+
+  const projectOptions = useMemo(() => {
+    const list: TPartialProject[] = [];
+    joinedProjectIds.forEach((id) => {
+      const project = getPartialProjectById(id);
+      if (project) list.push(project);
+    });
+    return list.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
+  }, [joinedProjectIds, getPartialProjectById]);
+
+  const cycleOptions = useMemo(() => {
+    const cycles: ICycle[] = [];
+    if (selectedProjectId) {
+      const cycleIds = getProjectCycleIds(selectedProjectId) || [];
+      cycleIds.forEach((cid) => {
+        const cycle = getCycleById(cid);
+        const status = cycle?.status ? cycle.status.toLowerCase() : "";
+        if (cycle && ["current", "upcoming"].includes(status)) cycles.push(cycle);
+      });
+    }
+    return cycles.sort((a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime());
+  }, [selectedProjectId, getProjectCycleIds, getCycleById]);
+
+  useEffect(() => {
+    if (page !== "open-cycle" || !workspaceSlug || !selectedProjectId) return;
+    fetchAllCycles(workspaceSlug.toString(), selectedProjectId);
+  }, [page, workspaceSlug, selectedProjectId, fetchAllCycles]);
+
   useEffect(() => {
     if (issueDetails && isCommandPaletteOpen) {
       setSearchInIssue(true);
@@ -117,6 +244,10 @@ export const CommandModal: React.FC = observer(() => {
 
   const closePalette = () => {
     toggleCommandPaletteModal(false);
+    setPages([]);
+    setPlaceholder("Type a command or search...");
+    setProjectSelectionAction(null);
+    setSelectedProjectId(null);
   };
 
   const createNewWorkspace = () => {
@@ -124,14 +255,30 @@ export const CommandModal: React.FC = observer(() => {
     router.push("/create-workspace");
   };
 
-  useEffect(
-    () => {
-      if (!workspaceSlug) return;
+  useEffect(() => {
+    if (!workspaceSlug) return;
 
-      setIsLoading(true);
+    setIsLoading(true);
 
-      if (debouncedSearchTerm) {
-        setIsSearching(true);
+    if (debouncedSearchTerm) {
+      setIsSearching(true);
+      if (page === "open-issue") {
+        workspaceService
+          .searchEntity(workspaceSlug.toString(), {
+            count: 10,
+            query: debouncedSearchTerm,
+            query_type: ["issue"],
+            ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
+          })
+          .then((res) => {
+            setIssueResults(res.issue || []);
+            setResultsCount(res.issue?.length || 0);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setIsSearching(false);
+          });
+      } else {
         workspaceService
           .searchWorkspace(workspaceSlug.toString(), {
             ...(projectId ? { project_id: projectId.toString() } : {}),
@@ -150,14 +297,14 @@ export const CommandModal: React.FC = observer(() => {
             setIsLoading(false);
             setIsSearching(false);
           });
-      } else {
-        setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
-        setIsLoading(false);
-        setIsSearching(false);
       }
-    },
-    [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
-  );
+    } else {
+      setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
+      setIssueResults([]);
+      setIsLoading(false);
+      setIsSearching(false);
+    }
+  }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, page]);
 
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
@@ -203,7 +350,11 @@ export const CommandModal: React.FC = observer(() => {
                     }}
                     shouldFilter={searchTerm.length > 0}
                     onKeyDown={(e: any) => {
-                      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                      const key = e.key.toLowerCase();
+                      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && !page && searchTerm === "") {
+                        handleKeySequence(e);
+                      }
+                      if ((e.metaKey || e.ctrlKey) && key === "k") {
                         e.preventDefault();
                         e.stopPropagation();
                         closePalette();
@@ -235,20 +386,23 @@ export const CommandModal: React.FC = observer(() => {
                         }
                       }
 
-                      if (e.key === "Escape" && searchTerm) {
+                      if (e.key === "Escape") {
                         e.preventDefault();
-                        setSearchTerm("");
+                        if (searchTerm) setSearchTerm("");
+                        else closePalette();
+                        return;
                       }
 
-                      if (e.key === "Escape" && !page && !searchTerm) {
+                      if (e.key === "Backspace" && !searchTerm && page) {
                         e.preventDefault();
-                        closePalette();
-                      }
-
-                      if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
-                        e.preventDefault();
-                        setPages((pages) => pages.slice(0, -1));
-                        setPlaceholder("Type a command or search...");
+                        const newPages = pages.slice(0, -1);
+                        const newPage = newPages[newPages.length - 1];
+                        setPages(newPages);
+                        if (!newPage) setPlaceholder("Type a command or search...");
+                        else if (newPage === "open-project") setPlaceholder("Search projects...");
+                        else if (newPage === "open-cycle") setPlaceholder("Search cycles...");
+                        if (page === "open-cycle") setSelectedProjectId(null);
+                        if (page === "open-project" && !newPage) setProjectSelectionAction(null);
                       }
                     }}
                   >
@@ -324,7 +478,7 @@ export const CommandModal: React.FC = observer(() => {
                         </Command.Loading>
                       )}
 
-                      {debouncedSearchTerm !== "" && (
+                      {debouncedSearchTerm !== "" && page !== "open-issue" && (
                         <CommandPaletteSearchResults closePalette={closePalette} results={results} />
                       )}
 
@@ -340,6 +494,27 @@ export const CommandModal: React.FC = observer(() => {
                               setPlaceholder={(newPlaceholder) => setPlaceholder(newPlaceholder)}
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
+                          )}
+                          {workspaceSlug && joinedProjectIds.length > 0 && (
+                            <Command.Group heading="Navigate">
+                              {COMMAND_CONFIG.filter((cmd) => !cmd.enabled || cmd.enabled()).map((cmd) => (
+                                <Command.Item
+                                  key={cmd.id}
+                                  onSelect={() => entityHandlers[cmd.entity]?.()}
+                                  className="focus:outline-none"
+                                >
+                                  <div className="flex items-center gap-2 text-custom-text-200">
+                                    <Search className="h-3.5 w-3.5" />
+                                    {cmd.title}
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    {cmd.keys.map((k) => (
+                                      <kbd key={k}>{k}</kbd>
+                                    ))}
+                                  </div>
+                                </Command.Item>
+                              ))}
+                            </Command.Group>
                           )}
                           {workspaceSlug &&
                             workspaceProjectIds &&
@@ -428,6 +603,120 @@ export const CommandModal: React.FC = observer(() => {
 
                           {/* help options */}
                           <CommandPaletteHelpActions closePalette={closePalette} />
+                        </>
+                      )}
+
+                      {page === "open-project" && workspaceSlug && (
+                        <CommandPaletteProjectSelector
+                          projects={projectOptions.filter((p) =>
+                            projectSelectionAction === "cycle" ? p.cycle_view : true
+                          )}
+                          onSelect={(project) => {
+                            if (projectSelectionAction === "navigate") {
+                              closePalette();
+                              router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+                            } else if (projectSelectionAction === "cycle") {
+                              setSelectedProjectId(project.id);
+                              setPages((p) => [...p, "open-cycle"]);
+                              setPlaceholder("Search cycles...");
+                              fetchAllCycles(workspaceSlug.toString(), project.id);
+                            }
+                          }}
+                        />
+                      )}
+
+                      {page === "open-cycle" && workspaceSlug && selectedProjectId && (
+                        <CommandPaletteCycleSelector
+                          cycles={cycleOptions}
+                          onSelect={(cycle) => {
+                            closePalette();
+                            router.push(`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}`);
+                          }}
+                        />
+                      )}
+
+                      {page === "open-issue" && workspaceSlug && (
+                        <>
+                          {searchTerm === "" ? (
+                            recentIssues.length > 0 ? (
+                              <CommandPaletteEntityList
+                                heading="Issues"
+                                items={recentIssues}
+                                getKey={(issue) => issue.id}
+                                getLabel={(issue) => `${issue.project_identifier}-${issue.sequence_id} ${issue.name}`}
+                                renderItem={(issue) => (
+                                  <div className="flex items-center gap-2">
+                                    <IssueIdentifier
+                                      projectId={issue.project_id}
+                                      projectIdentifier={issue.project_identifier}
+                                      issueSequenceId={issue.sequence_id}
+                                      textContainerClassName="text-sm text-custom-text-200"
+                                    />
+                                    <span className="truncate">{issue.name}</span>
+                                  </div>
+                                )}
+                                onSelect={(issue) => {
+                                  closePalette();
+                                  router.push(
+                                    generateWorkItemLink({
+                                      workspaceSlug: workspaceSlug.toString(),
+                                      projectId: issue.project_id,
+                                      issueId: issue.id,
+                                      projectIdentifier: issue.project_identifier,
+                                      sequenceId: issue.sequence_id,
+                                      isEpic: issue.is_epic,
+                                    })
+                                  );
+                                }}
+                                emptyText="Search for issue id or issue title"
+                              />
+                            ) : (
+                              <div className="px-3 py-8 text-center text-sm text-custom-text-300">
+                                Search for issue id or issue title
+                              </div>
+                            )
+                          ) : issueResults.length > 0 ? (
+                            <CommandPaletteEntityList
+                              heading="Issues"
+                              items={issueResults}
+                              getKey={(issue) => issue.id}
+                              getLabel={(issue) => `${issue.project__identifier}-${issue.sequence_id} ${issue.name}`}
+                              renderItem={(issue) => (
+                                <div className="flex items-center gap-2">
+                                  <IssueIdentifier
+                                    projectId={issue.project_id ?? ""}
+                                    projectIdentifier={issue.project__identifier}
+                                    issueSequenceId={issue.sequence_id}
+                                    textContainerClassName="text-sm text-custom-text-200"
+                                  />
+                                  <span className="truncate">{issue.name}</span>
+                                </div>
+                              )}
+                              onSelect={(issue) => {
+                                closePalette();
+                                router.push(
+                                  generateWorkItemLink({
+                                    workspaceSlug: workspaceSlug.toString(),
+                                    projectId: issue.project_id,
+                                    issueId: issue.id,
+                                    projectIdentifier: issue.project__identifier,
+                                    sequenceId: issue.sequence_id,
+                                  })
+                                );
+                              }}
+                              emptyText={t("command_k.empty_state.search.title") as string}
+                            />
+                          ) : (
+                            !isLoading &&
+                            !isSearching && (
+                              <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+                                <SimpleEmptyState
+                                  title={t("command_k.empty_state.search.title")}
+                                  assetPath={resolvedPath}
+                                />
+                              </div>
+                            )
+                          )}
                         </>
                       )}
 

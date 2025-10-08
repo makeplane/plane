@@ -8,6 +8,8 @@ import {
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 
+export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
+
 export interface ModalData {
   store: EIssuesStoreType;
   viewId: string;
@@ -30,6 +32,9 @@ export interface IBaseCommandPaletteStore {
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
+  activeEntity: CommandPaletteEntity | null;
+  activateEntity: (entity: CommandPaletteEntity) => void;
+  clearActiveEntity: () => void;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -61,6 +66,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
+  activeEntity: CommandPaletteEntity | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -79,6 +85,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
+      activeEntity: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -93,6 +100,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      activateEntity: action,
+      clearActiveEntity: action,
     });
   }
 
@@ -125,6 +134,22 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
+  };
+
+  /**
+   * Opens the command palette with a specific entity pre-selected
+   * @param entity
+   */
+  activateEntity = (entity: CommandPaletteEntity) => {
+    this.isCommandPaletteOpen = true;
+    this.activeEntity = entity;
+  };
+
+  /**
+   * Clears the active entity trigger
+   */
+  clearActiveEntity = () => {
+    this.activeEntity = null;
   };
 
   /**
