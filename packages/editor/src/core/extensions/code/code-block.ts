@@ -70,6 +70,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
         default: null,
         parseHTML: (element) => {
           const { languageClassPrefix } = this.options;
+          // @ts-expect-error element is a DOM element
           const classNames = [...(element.firstElementChild?.classList || [])];
           const languages = classNames
             .filter((className) => className.startsWith(languageClassPrefix))
