@@ -49,17 +49,19 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
     let component: ReactRenderer<CommandListInstance, EmojisListDropdownProps> | null = null;
     let cleanup: () => void = () => {};
 
+    const handleClose = (editor?: Editor) => {
+      component?.destroy();
+      component = null;
+      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+      cleanup();
+    };
+
     return {
       onStart: (props) => {
         component = new ReactRenderer<CommandListInstance, EmojisListDropdownProps>(EmojisListDropdown, {
           props: {
             ...props,
-            onClose: () => {
-              component?.destroy();
-              component = null;
-              props.editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
-              cleanup();
-            },
+            onClose: () => handleClose(props.editor),
           } satisfies EmojisListDropdownProps,
           editor: props.editor,
           className: "fixed z-[100]",
@@ -74,22 +76,20 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
         if (!component || !component.element) return;
         component.updateProps(props);
         if (!props.clientRect) return;
+        cleanup();
         cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
       onKeyDown: ({ event }) => {
         if (event.key === "Escape") {
-          component?.destroy();
-          component = null;
+          handleClose();
           return true;
         }
         return component?.ref?.onKeyDown({ event }) || false;
       },
 
       onExit: ({ editor }) => {
-        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
         component?.element.remove();
-        component?.destroy();
-        cleanup();
+        handleClose(editor);
       },
     };
   },

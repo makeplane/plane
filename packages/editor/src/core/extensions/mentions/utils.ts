@@ -1,4 +1,4 @@
-import { ReactRenderer } from "@tiptap/react";
+import { type Editor, ReactRenderer } from "@tiptap/react";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -17,6 +17,13 @@ export const renderMentionsDropdown =
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
     let cleanup: () => void = () => {};
 
+    const handleClose = (editor?: Editor) => {
+      component?.destroy();
+      component = null;
+      editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+      cleanup();
+    };
+
     return {
       onStart: (props) => {
         if (!searchCallback) return;
@@ -24,12 +31,7 @@ export const renderMentionsDropdown =
           props: {
             ...props,
             searchCallback,
-            onClose: () => {
-              component?.destroy();
-              component = null;
-              props.editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
-              cleanup();
-            },
+            onClose: () => handleClose(props.editor),
           } satisfies MentionsListDropdownProps,
           editor: props.editor,
           className: "fixed z-[100]",
@@ -43,22 +45,20 @@ export const renderMentionsDropdown =
         if (!component || !component.element) return;
         component.updateProps(props);
         if (!props.clientRect) return;
+        cleanup();
         cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
       onKeyDown: ({ event }) => {
         if (event.key === "Escape") {
-          component?.destroy();
-          component = null;
+          handleClose();
           return true;
         }
 
         return component?.ref?.onKeyDown({ event }) ?? false;
       },
       onExit: ({ editor }) => {
-        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         component?.element.remove();
-        component?.destroy();
-        cleanup();
+        handleClose(editor);
       },
     };
   };
