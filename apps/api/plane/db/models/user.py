@@ -34,6 +34,20 @@ def get_mobile_default_onboarding():
         "workspace_join": False,
     }
 
+def get_default_tour_completed_features():
+    return {
+        "workspace_features": {
+            "projects": False
+        },
+        "project_features": {
+            "workitems": False,
+            "cycles": False,
+            "modules": False,
+            "views": False,
+            "pages": False,
+        },
+    }
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
@@ -213,6 +227,9 @@ class Profile(TimeAuditModel):
     start_of_the_week = models.PositiveSmallIntegerField(choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY)
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
+
+    # product tour features
+    tour_completed_features = models.JSONField(default=get_default_tour_completed_features)
 
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)

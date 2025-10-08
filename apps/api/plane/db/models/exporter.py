@@ -42,7 +42,7 @@ class ExporterHistory(BaseModel):
     )
     reason = models.TextField(blank=True)
     key = models.TextField(blank=True)
-    url = models.URLField(max_length=800, blank=True, null=True)
+    url = models.TextField(blank=True, null=True)
     token = models.CharField(max_length=255, default=generate_token, unique=True)
     initiated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -4,7 +4,7 @@ from rest_framework import serializers
 # Module import
 from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
 from plane.utils.url import contains_url
-
+from plane.db.models.user import get_default_tour_completed_features 
 from .base import BaseSerializer
 
 
@@ -194,6 +194,37 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(BaseSerializer):
+
+    def validate_tour_completed_features(self, value):
+        """
+        Clean tour_completed_features by removing invalid keys and keeping only
+        the keys present in get_default_tour_completed_features function.
+        """
+        if not isinstance(value, dict):
+            return get_default_tour_completed_features()
+        
+        expected_structure = get_default_tour_completed_features()
+        
+        # Use dict comprehension for cleaner, more efficient code
+        cleaned_data = {}
+        
+        # Process valid top-level keys
+        for key in expected_structure:
+            if key in value:
+                val = value[key]
+                if isinstance(val, dict) and key in ['workspace_features', 'project_features']:
+                    # Clean nested structure using intersection
+                    expected_nested = expected_structure[key]
+                    cleaned_data[key] = {k: v for k, v in val.items() if k in expected_nested}
+                else:
+                    cleaned_data[key] = val
+            else:
+                # Add missing key with default
+                default_value = expected_structure[key]
+                cleaned_data[key] = default_value.copy() if isinstance(default_value, dict) else default_value
+        
+        return cleaned_data
+
     class Meta:
         model = Profile
         fields = "__all__"
