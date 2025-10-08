@@ -1,4 +1,4 @@
-import { type Editor, type Range, Extension } from "@tiptap/core";
+import { type Editor, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
@@ -27,7 +27,7 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
@@ -50,20 +50,28 @@ const Command = Extension.create<SlashCommandOptions>({
         editor: this.editor,
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+          let cleanup: () => void = () => {};
 
           return {
             onStart: (props) => {
-              // Track active dropdown
+              // React renderer component, which wraps the actual dropdown component
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
-                props,
+                props: {
+                  ...props,
+                  onClose: () => {
+                    component?.destroy();
+                    component = null;
+                    props.editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+                    cleanup();
+                  },
+                } satisfies SlashCommandsMenuProps,
                 editor: props.editor,
+                className: "fixed z-[100]",
               });
               if (!props.clientRect) return;
               props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
-              element.style.position = "absolute";
-              element.style.zIndex = "100";
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onUpdate: (props) => {
@@ -71,7 +79,7 @@ const Command = Extension.create<SlashCommandOptions>({
               component.updateProps(props);
               if (!props.clientRect) return;
               const element = component.element as HTMLElement;
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onKeyDown: (props) => {
@@ -89,6 +97,7 @@ const Command = Extension.create<SlashCommandOptions>({
               editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               component?.destroy();
               component = null;
+              cleanup();
             },
           };
         },

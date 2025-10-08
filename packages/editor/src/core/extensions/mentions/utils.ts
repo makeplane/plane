@@ -15,6 +15,7 @@ export const renderMentionsDropdown =
   () => {
     const { searchCallback } = args;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
+    let cleanup: () => void = () => {};
 
     return {
       onStart: (props) => {
@@ -23,21 +24,26 @@ export const renderMentionsDropdown =
           props: {
             ...props,
             searchCallback,
-          },
+            onClose: () => {
+              component?.destroy();
+              component = null;
+              props.editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
+              cleanup();
+            },
+          } satisfies MentionsListDropdownProps,
           editor: props.editor,
+          className: "fixed z-[100]",
         });
         if (!props.clientRect) return;
         props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         const element = component.element as HTMLElement;
-        element.style.position = "absolute";
-        element.style.zIndex = "100";
-        updateFloatingUIFloaterPosition(props.editor, element);
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
       },
       onUpdate: (props) => {
         if (!component || !component.element) return;
         component.updateProps(props);
         if (!props.clientRect) return;
-        updateFloatingUIFloaterPosition(props.editor, component.element);
+        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
       onKeyDown: ({ event }) => {
         if (event.key === "Escape") {
@@ -52,6 +58,7 @@ export const renderMentionsDropdown =
         editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.MENTION);
         component?.element.remove();
         component?.destroy();
+        cleanup();
       },
     };
   };

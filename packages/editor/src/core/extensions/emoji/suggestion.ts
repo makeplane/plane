@@ -1,10 +1,12 @@
 import type { EmojiOptions } from "@tiptap/extension-emoji";
 import { ReactRenderer, type Editor } from "@tiptap/react";
-import type { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
+import { CommandListInstance } from "@/helpers/tippy";
 // local imports
-import { type EmojiItem, EmojiList, type EmojiListRef } from "./components/emojis-list";
+import { type EmojiItem, EmojisListDropdown, EmojisListDropdownProps } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
@@ -44,71 +46,50 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
   allowSpaces: false,
 
   render: () => {
-    let component: ReactRenderer<EmojiListRef>;
-    let editor: Editor;
+    let component: ReactRenderer<CommandListInstance, EmojisListDropdownProps> | null = null;
+    let cleanup: () => void = () => {};
 
     return {
-      onStart: (props: SuggestionProps): void => {
-        if (!props.clientRect) return;
-
-        editor = props.editor;
-
-        // Track active dropdown
-        editor.storage.utility.activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
-
-        component = new ReactRenderer(EmojiList, {
+      onStart: (props) => {
+        component = new ReactRenderer<CommandListInstance, EmojisListDropdownProps>(EmojisListDropdown, {
           props: {
-            items: props.items,
-            command: props.command,
-            editor: props.editor,
-            query: props.query,
-          },
+            ...props,
+            onClose: () => {
+              component?.destroy();
+              component = null;
+              props.editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+              cleanup();
+            },
+          } satisfies EmojisListDropdownProps,
           editor: props.editor,
+          className: "fixed z-[100]",
         });
-
-        // Append to editor container
-        const targetElement =
-          (props.editor.options.element as HTMLElement) || props.editor.view.dom.parentElement || document.body;
-        targetElement.appendChild(component.element);
+        if (!props.clientRect) return;
+        props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+        const element = component.element as HTMLElement;
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
       },
 
-      onUpdate: (props: SuggestionProps): void => {
-        if (!component) return;
-
-        component.updateProps({
-          items: props.items,
-          command: props.command,
-          editor: props.editor,
-          query: props.query,
-        });
+      onUpdate: (props) => {
+        if (!component || !component.element) return;
+        component.updateProps(props);
+        if (!props.clientRect) return;
+        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
-
-      onKeyDown: (props: SuggestionKeyDownProps): boolean => {
-        if (props.event.key === "Escape") {
-          if (component) {
-            component.destroy();
-          }
+      onKeyDown: ({ event }) => {
+        if (event.key === "Escape") {
+          component?.destroy();
+          component = null;
           return true;
         }
-
-        // Delegate to EmojiList
-        return component?.ref?.onKeyDown(props) || false;
+        return component?.ref?.onKeyDown({ event }) || false;
       },
 
-      onExit: (): void => {
-        // Remove from active dropdowns
-        if (editor) {
-          const { activeDropbarExtensions } = editor.storage.utility;
-          const index = activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
-          if (index > -1) {
-            activeDropbarExtensions.splice(index, 1);
-          }
-        }
-
-        // Cleanup
-        if (component) {
-          component.destroy();
-        }
+      onExit: ({ editor }) => {
+        editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+        component?.element.remove();
+        component?.destroy();
+        cleanup();
       },
     };
   },
