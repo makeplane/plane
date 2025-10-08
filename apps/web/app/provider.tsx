@@ -8,7 +8,7 @@ import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
 import { TranslationProvider } from "@plane/i18n";
-import { Toast } from "@plane/ui";
+import { Toast } from "@plane/propel/toast";
 //helpers
 import { resolveGeneralTheme } from "@plane/utils";
 // polyfills

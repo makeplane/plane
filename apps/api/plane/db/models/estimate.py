@@ -33,12 +33,8 @@ class Estimate(ProjectBaseModel):
 
 
 class EstimatePoint(ProjectBaseModel):
-    estimate = models.ForeignKey(
-        "db.Estimate", on_delete=models.CASCADE, related_name="points"
-    )
-    key = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
+    estimate = models.ForeignKey("db.Estimate", on_delete=models.CASCADE, related_name="points")
+    key = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     description = models.TextField(blank=True)
     value = models.CharField(max_length=255)
 

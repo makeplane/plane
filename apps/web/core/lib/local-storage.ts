@@ -1,4 +1,4 @@
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 
 export const storage = {
   set: (key: string, value: object | string | boolean): void => {

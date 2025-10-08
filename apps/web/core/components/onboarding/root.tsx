@@ -4,6 +4,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { USER_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import {
   EOnboardingSteps,
   IWorkspaceMemberInvitation,
@@ -11,7 +12,6 @@ import {
   TOnboardingSteps,
   TUserProfile,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -132,7 +132,7 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* Header with progress */}
       <OnboardingHeader
         currentStep={currentStep}
@@ -142,6 +142,6 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
 
       {/* Main content area */}
       <OnboardingStepRoot currentStep={currentStep} invitations={invitations} handleStepChange={handleStepChange} />
-    </>
+    </div>
   );
 });

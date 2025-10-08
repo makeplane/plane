@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import {
   IGroupByColumn,
   TIssueMap,
@@ -17,7 +18,7 @@ import {
   TIssueKanbanFilters,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { Row, setToast, TOAST_TYPE } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
@@ -240,7 +241,7 @@ export const ListGroup = observer((props: Props) => {
     isWorkflowDropDisabled,
   ]);
 
-  const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
+  const isDragAllowed = group_by ? DRAG_ALLOWED_GROUPS.includes(group_by) : true;
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
   const isDropDisabled = isWorkflowDropDisabled || !!group.isDropDisabled;
 

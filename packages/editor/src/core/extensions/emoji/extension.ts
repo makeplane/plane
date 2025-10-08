@@ -8,6 +8,7 @@ import { emojiSuggestion } from "./suggestion";
 export const EmojiExtension = Emoji.extend({
   addStorage() {
     const extensionOptions = this.options;
+
     return {
       ...this.parent?.(),
       markdown: {

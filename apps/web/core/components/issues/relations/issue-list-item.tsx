@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { ControlLink, CustomMenu } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -122,7 +123,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
+          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-custom-background-90">
             <span className="size-5 flex-shrink-0" />
             <div className="flex w-full truncate cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">

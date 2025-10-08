@@ -20,7 +20,8 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
@@ -216,9 +217,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action?.();
               }}
               className={cn("flex items-center gap-2", item.className)}

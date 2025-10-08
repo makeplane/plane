@@ -83,7 +83,6 @@ export const InvitationFields = observer((props: TInvitationFieldsProps) => {
                     value={value}
                     label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                     onChange={onChange}
-                    optionsClassName="w-full"
                     className="flex-grow w-24"
                     input
                   >

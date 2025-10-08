@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -21,7 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -134,7 +134,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.MODULE}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
@@ -192,9 +191,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                       nestedItem.action();
                     }}
@@ -230,9 +227,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                 item.action();
               }}

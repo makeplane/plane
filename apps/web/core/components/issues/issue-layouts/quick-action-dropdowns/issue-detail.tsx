@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
@@ -21,7 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -88,13 +88,10 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
 
   const isDeletingAllowed = isEditingAllowed;
 
-  const isDraftIssue = pathname?.includes("draft-issues") || false;
-
   const duplicateIssuePayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
-      is_draft: isDraftIssue ? false : issue.is_draft,
       sourceIssueId: issue.id,
     },
     ["id"]
@@ -137,7 +134,6 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
     isRestoringAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
-    isDraftIssue,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal: customDeleteAction,
@@ -220,7 +216,6 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.PROJECT}
-        isDraft={isDraftIssue}
         fetchIssueDetails={false}
       />
       {issue.project_id && workspaceSlug && (
@@ -281,9 +276,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                       nestedItem.action();
                     }}
@@ -319,9 +312,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                 item.action();
               }}

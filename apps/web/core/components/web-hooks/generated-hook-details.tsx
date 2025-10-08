@@ -3,8 +3,8 @@
 // components
 // ui
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IWebhook } from "@plane/types";
-import { Button } from "@plane/ui";
 // types
 import { WebhookSecretKey } from "./form";
 

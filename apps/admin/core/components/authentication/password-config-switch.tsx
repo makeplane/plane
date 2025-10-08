@@ -25,9 +25,8 @@ export const PasswordLoginConfiguration: React.FC<Props> = observer((props) => {
     <ToggleSwitch
       value={Boolean(parseInt(enableEmailPassword))}
       onChange={() => {
-        Boolean(parseInt(enableEmailPassword)) === true
-          ? updateConfig("ENABLE_EMAIL_PASSWORD", "0")
-          : updateConfig("ENABLE_EMAIL_PASSWORD", "1");
+        const newEnableEmailPassword = Boolean(parseInt(enableEmailPassword)) === true ? "0" : "1";
+        updateConfig("ENABLE_EMAIL_PASSWORD", newEnableEmailPassword);
       }}
       size="sm"
       disabled={disabled}

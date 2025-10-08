@@ -6,8 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps, IUser } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";

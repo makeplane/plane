@@ -1,10 +1,14 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
     "noEmit": true,
-    "target": "ESNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/core/*"],

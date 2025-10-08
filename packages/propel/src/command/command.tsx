@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 
 function CommandComponent({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return <CommandPrimitive data-slot="command" className={cn("", className)} {...props} />;
@@ -19,7 +19,7 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
   );
 }
 
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+function CommandList({ ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
   return <CommandPrimitive.List data-slot="command-list" {...props} />;
 }
 
@@ -27,7 +27,7 @@ function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive
   return <CommandPrimitive.Empty data-slot="command-empty" {...props} />;
 }
 
-function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
+function CommandItem({ ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   return <CommandPrimitive.Item data-slot="command-item" {...props} />;
 }
 

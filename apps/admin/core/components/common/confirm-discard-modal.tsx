@@ -5,7 +5,7 @@ import Link from "next/link";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 
 type Props = {
   isOpen: boolean;

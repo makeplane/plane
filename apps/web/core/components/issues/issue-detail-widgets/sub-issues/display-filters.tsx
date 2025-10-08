@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
 // plane imports
@@ -13,7 +13,6 @@ import {
   FiltersDropdown,
 } from "@/components/issues/issue-layouts/filters";
 import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
-
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;

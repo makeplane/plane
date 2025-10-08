@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // plane internal packages
 import { EInstanceStatus, TInstanceStatus } from "@plane/constants";
@@ -209,7 +209,7 @@ export class InstanceStore implements IInstanceStore {
         });
       });
       await this.instanceService.disableEmail();
-    } catch (error) {
+    } catch (_error) {
       console.error("Error disabling the email");
       this.instanceConfigurations = instanceConfigurations;
     }

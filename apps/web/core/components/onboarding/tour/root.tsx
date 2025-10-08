@@ -6,7 +6,8 @@ import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, PlaneLockup } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { PlaneLockup } from "@plane/propel/icons";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks

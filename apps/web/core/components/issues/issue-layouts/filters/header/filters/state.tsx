@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
 // components
-import { Loader, StateGroupIcon } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // ui
 // types

@@ -9,15 +9,9 @@ import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
 // icons
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TCalendarLayouts,
-  TIssueKanbanFilters,
-} from "@plane/types";
+import { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
@@ -39,8 +33,8 @@ interface ICalendarHeader {
     | IProjectEpicsFilter;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 

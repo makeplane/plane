@@ -1,5 +1,4 @@
-import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
+import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
 import { EUserPermissions, API_BASE_URL } from "@plane/constants";
@@ -257,7 +256,7 @@ export class UserStore implements IUserStore {
 
   // helper actions
   /**
-   * @description fetches the prjects with write permissions
+   * @description fetches the projects with write permissions
    * @returns {{[projectId: string]: number} || null}
    */
   fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {

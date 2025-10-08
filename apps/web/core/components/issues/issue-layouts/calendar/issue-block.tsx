@@ -8,9 +8,10 @@ import { MoreHorizontal } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue } from "@plane/types";
 // ui
-import { Tooltip, ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 // hooks

@@ -9,6 +9,7 @@ export const MarkdownClipboardPlugin = (editor: Editor): Plugin =>
     key: new PluginKey("markdownClipboard"),
     props: {
       clipboardTextSerializer: (slice) => {
+        // @ts-expect-error tiptap-markdown types are not updated
         const markdownSerializer = editor.storage.markdown.serializer;
         const isTableRow = slice.content.firstChild?.type?.name === CORE_EXTENSIONS.TABLE_ROW;
         const nodeSelect = slice.openStart === 0 && slice.openEnd === 0;

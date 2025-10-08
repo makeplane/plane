@@ -2,7 +2,7 @@
 import React from "react";
 // plane imports
 import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn } from "../../utils/classname";
 
 // Constants
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height required to show text inside bar
@@ -23,7 +23,7 @@ interface TShapeProps {
 }
 
 interface TBarProps extends TShapeProps {
-  fill: string | ((payload: any) => string);
+  fill: string;
   stackKeys: string[];
   textClassName?: string;
   showPercentage?: boolean;
@@ -108,7 +108,7 @@ const CustomBar = React.memo((props: TBarProps) => {
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
         className="transition-opacity duration-200"
-        fill={typeof fill === "function" ? fill(payload) : fill}
+        fill={fill}
         opacity={opacity}
       />
       {showText && (
@@ -130,18 +130,12 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         y1={y + height}
         x2={x + width / 2}
         y2={y}
-        stroke={typeof fill === "function" ? fill(payload) : fill}
+        stroke={fill}
         strokeWidth={DEFAULT_LOLLIPOP_LINE_WIDTH}
         strokeLinecap="round"
         strokeDasharray={dotted ? "4 4" : "0"}
       />
-      <circle
-        cx={x + width / 2}
-        cy={y}
-        r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
-        fill={typeof fill === "function" ? fill(payload) : fill}
-        stroke="none"
-      />
+      <circle cx={x + width / 2} cy={y} r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS} fill={fill} stroke="none" />
       {showPercentage && (
         <PercentageText x={x + width / 2} y={y} percentage={currentBarPercentage} className={textClassName} />
       )}

@@ -1,8 +1,8 @@
 "use client";
 
 // components
+import { Button } from "@plane/propel/button";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
-import { Button } from "@plane/ui";
 import { GithubAuth, TIntegrationSteps } from "@/components/integration";
 // types
 

@@ -3,7 +3,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Breadcrumbs, Button, Header, RecentStickyIcon } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { RecentStickyIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { StickySearch } from "@/components/stickies/modal/search";

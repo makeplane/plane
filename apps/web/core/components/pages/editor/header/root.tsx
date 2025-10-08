@@ -11,6 +11,7 @@ import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
   page: TPageInstance;
+  projectId: string;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {

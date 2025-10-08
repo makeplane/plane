@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
-import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { CustomSelect } from "@plane/ui";
 import { TimezoneSelect } from "@/components/global";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -126,7 +127,6 @@ export const LanguageTimezone = observer(() => {
                 onChange={handleLanguageChange}
                 buttonClassName={"border-none"}
                 className="rounded-md border !border-custom-border-200"
-                optionsClassName="w-full"
                 input
               >
                 {SUPPORTED_LANGUAGES.map((item) => (

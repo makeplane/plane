@@ -1,11 +1,10 @@
 import IntlMessageFormat from "intl-messageformat";
-import get from "lodash/get";
-import merge from "lodash/merge";
+import { get, merge } from "lodash-es";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
-import coreEn from "../locales/en/core.json";
+import { enCore, locales } from "../locales";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
 
@@ -17,7 +16,7 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
 export class TranslationStore {
   // Core translations that are always loaded
   private coreTranslations: ITranslations = {
-    en: coreEn,
+    en: enCore,
   };
   // List of translations for each language
   private translations: ITranslations = {};
@@ -138,10 +137,24 @@ export class TranslationStore {
    */
   private async importAndMergeFiles(language: TLanguage, files: string[]) {
     try {
-      const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
+      const localeData = locales[language as keyof typeof locales];
+      if (!localeData) {
+        throw new Error(`Locale data not found for language: ${language}`);
+      }
+
+      // Filter out files that don't exist for this language
+      const availableFiles = files.filter((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return fileKey in localeData;
+      });
+
+      const importPromises = availableFiles.map((file) => {
+        const fileKey = file as keyof typeof localeData;
+        return localeData[fileKey]();
+      });
 
       const modules = await Promise.all(importPromises);
-      const merged = modules.reduce((acc, module) => merge(acc, module.default), {});
+      const merged = modules.reduce((acc: any, module: any) => merge(acc, module.default), {});
       return { default: merged };
     } catch (error) {
       throw new Error(`Failed to import and merge files for ${language}: ${error}`);

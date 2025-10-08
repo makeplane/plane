@@ -12,7 +12,7 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
@@ -20,8 +20,10 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { FavoriteFolderIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -179,7 +181,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         tooltipContent={
                           favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
                         }
-                        position="top-right"
+                        position="top-end"
                         disabled={isDragging}
                       >
                         <button

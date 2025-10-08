@@ -5,10 +5,12 @@ import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { SuspendedUserIcon } from "@plane/propel/icons";
+import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
+import { CustomSelect, PopoverMenu, cn } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -19,6 +21,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 export interface RowData {
   member: IWorkspaceMember;
   role: EUserPermissions;
+  is_active: boolean;
 }
 
 type NameProps = {
@@ -38,6 +41,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
+  const isSuspended = rowData.is_active === false;
 
   return (
     <Disclosure>
@@ -48,24 +52,39 @@ export const NameColumn: React.FC<NameProps> = (props) => {
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex h-6 w-6 items-center justify-center rounded-full capitalize text-white">
-                    <img
-                      src={getFileURL(avatar_url)}
-                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
-                      alt={display_name || email}
-                    />
+                    {isSuspended ? (
+                      <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
+                    ) : (
+                      <img
+                        src={getFileURL(avatar_url)}
+                        className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                        alt={display_name || email}
+                      />
+                    )}
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-4 w-4 text-xs items-center justify-center rounded-full bg-gray-700 capitalize text-white">
-                    {(email ?? display_name ?? "?")[0]}
+                  <span
+                    className={cn(
+                      "relative flex h-4 w-4 text-xs items-center justify-center rounded-full  capitalize text-white",
+                      isSuspended ? "bg-custom-background-80" : "bg-gray-700"
+                    )}
+                  >
+                    {isSuspended ? (
+                      <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
+                    ) : (
+                      (email ?? display_name ?? "?")[0]
+                    )}
                   </span>
                 </Link>
               )}
-              {first_name} {last_name}
+              <span className={isSuspended ? "text-custom-text-400" : ""}>
+                {first_name} {last_name}
+              </span>
             </div>
 
-            {(isAdmin || id === currentUser?.id) && (
+            {!isSuspended && (isAdmin || id === currentUser?.id) && (
               <PopoverMenu
                 data={[""]}
                 keyExtractor={(item) => item}
@@ -108,10 +127,17 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isAdminRole = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const isRoleNonEditable = isCurrentUser || !isAdminRole;
+  const isSuspended = rowData.is_active === false;
 
   return (
     <>
-      {isRoleNonEditable ? (
+      {isSuspended ? (
+        <div className="w-32 flex ">
+          <Pill variant={EPillVariant.DEFAULT} size={EPillSize.SM} className="border-none">
+            Suspended
+          </Pill>
+        </div>
+      ) : isRoleNonEditable ? (
         <div className="w-32 flex ">
           <span>{ROLE[rowData.role]}</span>
         </div>
@@ -146,7 +172,6 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
-              optionsClassName="w-full"
               input
             >
               {Object.keys(ROLE).map((item) => (

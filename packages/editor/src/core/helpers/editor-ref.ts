@@ -1,5 +1,5 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Editor } from "@tiptap/core";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
 // components
@@ -11,7 +11,6 @@ import { CORE_EDITOR_META } from "@/constants/meta";
 import type { EditorRefApi, TEditorCommands } from "@/types";
 // local imports
 import { getParagraphCount } from "./common";
-import { getExtensionStorage } from "./get-extension-storage";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
@@ -72,21 +71,36 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       };
     },
     getDocumentInfo: () => ({
-      characters: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.characters?.() : 0,
+      characters: editor?.storage.characterCount?.characters?.() ?? 0,
       paragraphs: getParagraphCount(editor?.state),
-      words: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.words?.() : 0,
+      words: editor?.storage.characterCount?.words?.() ?? 0,
     }),
-    getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
+    getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.();
+      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.() ?? "";
       return markdownOutput;
+    },
+    isAnyDropbarOpen: () => {
+      if (!editor) return false;
+      const utilityStorage = editor.storage.utility;
+      return utilityStorage.activeDropbarExtensions.length > 0;
     },
     scrollSummary: (marking) => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
     setEditorValue: (content, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .setContent(content, {
+          emitUpdate,
+          parseOptions: {
+            preserveWhitespace: true,
+          },
+        })
+        .run();
     },
     emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
@@ -143,8 +157,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
       }
     },
-    isEditorReadyToDiscard: () =>
-      !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
+    isEditorReadyToDiscard: () => editor?.storage?.utility?.uploadInProgress === false,
     isMenuItemActive: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
@@ -158,11 +171,11 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     onDocumentInfoChange: (callback) => {
       const handleDocumentInfoChange = () => {
-        if (!editor) return;
+        if (!editor?.storage) return;
         callback({
-          characters: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.characters?.() : 0,
+          characters: editor.storage.characterCount?.characters?.() ?? 0,
           paragraphs: getParagraphCount(editor?.state),
-          words: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.words?.() : 0,
+          words: editor.storage.characterCount?.words?.() ?? 0,
         });
       };
 
@@ -178,7 +191,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     onHeadingChange: (callback) => {
       const handleHeadingChange = () => {
         if (!editor) return;
-        const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
+        const headings = editor.storage.headingsList?.headings;
         if (headings) {
           callback(headings);
         }

@@ -1,4 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
+import type { Content, JSONContent } from "@plane/types";
 
 /**
  * @description Adds space between camelCase words
@@ -161,14 +162,89 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
 };
 
 /**
- * @description this function returns whether a comment is empty or not by checking for the following conditions-
- * 1. If comment is undefined
- * 2. If comment is an empty string
- * 3. If comment is "<p></p>"
- * @param {string | undefined} comment
+ * @description
+ * Check if a JSONContent object is empty
+ * @param {JSONContent} content
  * @returns {boolean}
  */
-export const isCommentEmpty = (comment: string | undefined): boolean => {
+export const isJSONContentEmpty = (content: JSONContent | undefined): boolean => {
+  // If it has text, check if text is meaningful
+  if (!content) {
+    return true;
+  }
+  if (content.text !== undefined) {
+    return !content.text || content.text.trim() === "";
+  }
+
+  // If it has no content array, consider it empty
+  if (!content.content || content.content.length === 0) {
+    // Special case: empty paragraph nodes should be considered empty
+    if (content.type === "paragraph" || content.type === "doc") {
+      return true;
+    }
+    // For other node types without content (like hard breaks), check if they're meaningful
+    return (
+      content.type !== "hardBreak" &&
+      content.type !== "image" &&
+      content.type !== "mention-component" &&
+      content.type !== "image-component"
+    );
+  }
+
+  // Check if all nested content is empty
+  return content.content.every(isJSONContentEmpty);
+};
+
+/**
+ * @description
+ * This function will check if the comment is empty or not.
+ * It returns true if comment is empty.
+ * Now supports TipTap Content types (HTMLContent, JSONContent, JSONContent[], null)
+ *
+ * For HTML content:
+ * 1. If comment is undefined/null
+ * 2. If comment is an empty string
+ * 3. If comment is "<p></p>"
+ * 4. If comment contains only empty HTML tags
+ *
+ * For JSON content:
+ * 1. If content is null/undefined
+ * 2. If content has no meaningful text or nested content
+ * 3. If all nested content is empty
+ *
+ * @param {Content} comment - TipTap Content type
+ * @returns {boolean}
+ */
+export const isCommentEmpty = (comment: Content | undefined): boolean => {
+  // Handle null/undefined
+  if (!comment) return true;
+
+  // Handle HTMLContent (string)
+  if (typeof comment === "string") {
+    return (
+      comment.trim() === "" ||
+      comment === "<p></p>" ||
+      isEmptyHtmlString(comment, ["img", "mention-component", "image-component"])
+    );
+  }
+
+  // Handle JSONContent[] (array)
+  if (Array.isArray(comment)) {
+    return comment.length === 0 || comment.every(isJSONContentEmpty);
+  }
+
+  // Handle JSONContent (object)
+  return isJSONContentEmpty(comment);
+};
+
+/**
+ * @description
+ * Legacy function for backward compatibility with string comments
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ * @deprecated Use isCommentEmpty with Content type instead
+ */
+export const isStringCommentEmpty = (comment: string | undefined): boolean => {
   // return true if comment is undefined
   if (!comment) return true;
   return (
@@ -317,7 +393,7 @@ export const joinUrlPath = (...segments: string[]): string => {
   if (validSegments.length === 0) return "";
 
   // Process segments to normalize slashes
-  const processedSegments = validSegments.map((segment) => {
+  const processedSegments = validSegments.map((segment, index) => {
     let processed = segment;
 
     // Remove leading slashes from all segments except the first
@@ -326,8 +402,10 @@ export const joinUrlPath = (...segments: string[]): string => {
     }
 
     // Remove trailing slashes from all segments except the last
-    while (processed.endsWith("/")) {
-      processed = processed.substring(0, processed.length - 1);
+    if (index < validSegments.length - 1) {
+      while (processed.endsWith("/")) {
+        processed = processed.substring(0, processed.length - 1);
+      }
     }
 
     return processed;

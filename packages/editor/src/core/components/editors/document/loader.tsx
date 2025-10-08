@@ -10,7 +10,7 @@ export const DocumentContentLoader = (props: Props) => {
   const { className } = props;
 
   return (
-    <div className={cn("size-full", className)}>
+    <div className={cn("document-editor-loader", className)}>
       <Loader className="relative space-y-4">
         <div className="space-y-2">
           <div className="py-2">

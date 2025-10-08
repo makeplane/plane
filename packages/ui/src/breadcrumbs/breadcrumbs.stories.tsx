@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Home, Settings, Briefcase, GridIcon, Layers2, FileIcon } from "lucide-react";
 import * as React from "react";
-import { ContrastIcon, EpicIcon, LayersIcon } from "../icons";
+import { ContrastIcon, EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { Breadcrumbs } from "./breadcrumbs";
 import { BreadcrumbNavigationDropdown } from "./navigation-dropdown";
 
@@ -9,16 +9,6 @@ const meta: Meta<typeof Breadcrumbs> = {
   title: "UI/Breadcrumbs",
   component: Breadcrumbs,
   tags: ["autodocs"],
-  argTypes: {
-    isLoading: {
-      control: "boolean",
-      description: "Shows loading state of breadcrumbs",
-    },
-    onBack: {
-      action: "onBack",
-      description: "Callback function when back button is clicked",
-    },
-  },
 };
 
 type TBreadcrumbBlockProps = {

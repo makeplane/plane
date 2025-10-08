@@ -1,4 +1,4 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { TLink, TLinkIdMap, TLinkMap } from "@plane/types";

@@ -1,9 +1,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueDisplayProperties } from "@plane/types";
 // ui
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

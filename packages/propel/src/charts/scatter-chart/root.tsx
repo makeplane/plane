@@ -28,6 +28,7 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
     xAxis,
     yAxis,
     className,
+    customTicks,
     tickCount = {
       x: undefined,
       y: 10,
@@ -85,7 +86,10 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.x || CustomXAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickLine={false}
             axisLine={false}
             label={
@@ -111,7 +115,10 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.y || CustomYAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />

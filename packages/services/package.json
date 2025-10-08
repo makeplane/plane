@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "0.28.0",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
   "main": "./dist/index.js",
@@ -9,9 +9,16 @@
   "files": [
     "dist/**"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "build": "tsc && tsup",
-    "dev": "tsup --watch",
+    "build": "tsc && tsdown",
+    "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 62",
     "check:types": "tsc",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -22,12 +29,12 @@
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
-    "axios": "1.11.0"
+    "axios": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "tsup": "8.4.0",
-    "typescript": "5.8.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   }
 }

@@ -1,36 +1,35 @@
-import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ProjectArchivedEmptyState: React.FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const userFilters = issuesFilter?.issueFilters?.filters;
+  const archivedWorkItemFilter = projectId
+    ? useWorkItemFilterInstance(EIssuesStoreType.ARCHIVED, projectId)
+    : undefined;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-  const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
+  const additionalPath = archivedWorkItemFilter?.hasActiveFilters ? (activeLayout ?? "list") : undefined;
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -43,27 +42,16 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
     basePath: "/empty-state/archived/empty-issues",
   });
 
-  const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
-    });
-    issuesFilter.updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, {
-      ...newFilters,
-    });
-  };
-
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      {issueFilterCount > 0 ? (
+      {archivedWorkItemFilter?.hasActiveFilters ? (
         <DetailedEmptyState
           title={t("project_issues.empty_state.issues_empty_filter.title")}
           assetPath={emptyFilterResolvedPath}
           secondaryButton={{
             text: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),
-            onClick: handleClearAllFilters,
-            disabled: !canPerformEmptyStateActions,
+            onClick: archivedWorkItemFilter?.clearFilters,
+            disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
           }}
         />
       ) : (

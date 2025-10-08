@@ -58,46 +58,75 @@
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     --color-shadow-2xs:
-      0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+      0px 0px 1px 0px rgba(23, 23, 23, 0.06),
+      0px 1px 2px 0px rgba(23, 23, 23, 0.06),
       0px 1px 2px 0px rgba(23, 23, 23, 0.14);
     --color-shadow-xs:
-      0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 2px 0px rgba(0, 0, 0, 0.16),
+      0px 2px 4px 0px rgba(16, 24, 40, 0.12),
       0px 1px 8px -1px rgba(16, 24, 40, 0.1);
     --color-shadow-sm:
-      0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12);
+      0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02),
+      0px 1px 12px 0px rgba(0, 0, 0, 0.12);
     --color-shadow-rg:
-      0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
+      0px 3px 6px 0px rgba(0, 0, 0, 0.1),
+      0px 4px 4px 0px rgba(16, 24, 40, 0.08),
       0px 1px 12px 0px rgba(16, 24, 40, 0.04);
     --color-shadow-md:
-      0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
+      0px 4px 8px 0px rgba(0, 0, 0, 0.12),
+      0px 6px 12px 0px rgba(16, 24, 40, 0.12),
       0px 1px 16px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-lg:
-      0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+      0px 6px 12px 0px rgba(0, 0, 0, 0.12),
+      0px 8px 16px 0px rgba(0, 0, 0, 0.12),
       0px 1px 24px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-xl:
-      0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
+      0px 0px 18px 0px rgba(0, 0, 0, 0.16),
+      0px 0px 24px 0px rgba(16, 24, 40, 0.16),
       0px 0px 52px 0px rgba(16, 24, 40, 0.16);
     --color-shadow-2xl:
-      0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+      0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+      0px 12px 24px 0px rgba(16, 24, 40, 0.12),
       0px 1px 32px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-3xl:
-      0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
+      0px 12px 24px 0px rgba(0, 0, 0, 0.12),
+      0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+    --color-shadow-4xl:
+      0px 8px 40px 0px rgba(0, 0, 61, 0.05),
+      0px 12px 32px -16px rgba(0, 0, 0, 0.05);
 
-    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
-    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
-    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+    --color-sidebar-background-100: var(
+      --color-background-100
+    ); /* primary sidebar bg */
+    --color-sidebar-background-90: var(
+      --color-background-90
+    ); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(
+      --color-background-80
+    ); /* tertiary sidebar bg */
 
     --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
-    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-200: var(
+      --color-text-200
+    ); /* secondary sidebar text */
     --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
-    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+    --color-sidebar-text-400: var(
+      --color-text-400
+    ); /* sidebar placeholder text */
 
-    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
-    --color-sidebar-border-200: var(--color-border-100); /* subtle sidebar border- 2 */
-    --color-sidebar-border-300: var(--color-border-100); /* strong sidebar border- 1 */
-    --color-sidebar-border-400: var(--color-border-100); /* strong sidebar border- 2 */
+    --color-sidebar-border-100: var(
+      --color-border-100
+    ); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(
+      --color-border-100
+    ); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(
+      --color-border-100
+    ); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(
+      --color-border-100
+    ); /* strong sidebar border- 2 */
 
     --color-sidebar-shadow-2xs: var(--color-shadow-2xs);
     --color-sidebar-shadow-xs: var(--color-shadow-xs);
@@ -160,10 +189,26 @@
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     /* onboarding colors */
-    --gradient-onboarding-100: linear-gradient(106deg, #f2f6ff 29.8%, #e1eaff 99.34%);
-    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
-    --gradient-onboarding-300: linear-gradient(164deg, #fff 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
-    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+    --gradient-onboarding-100: linear-gradient(
+      106deg,
+      #f2f6ff 29.8%,
+      #e1eaff 99.34%
+    );
+    --gradient-onboarding-200: linear-gradient(
+      129deg,
+      rgba(255, 255, 255, 0) -22.23%,
+      rgba(255, 255, 255, 0.8) 62.98%
+    );
+    --gradient-onboarding-300: linear-gradient(
+      164deg,
+      #fff 4.25%,
+      rgba(255, 255, 255, 0.06) 93.5%
+    );
+    --gradient-onboarding-400: linear-gradient(
+      129deg,
+      rgba(255, 255, 255, 0) -22.23%,
+      rgba(255, 255, 255, 0.8) 62.98%
+    );
 
     --color-onboarding-text-100: 23, 23, 23;
     --color-onboarding-text-200: 58, 58, 58;
@@ -244,15 +289,24 @@
     --color-background-90: 32, 32, 32; /* secondary bg */
     --color-background-80: 44, 44, 44; /* tertiary bg */
 
-    --color-shadow-2xs: 0px 0px 1px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
-    --color-shadow-xs: 0px 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
-    --color-shadow-sm: 0px 0px 4px 0px rgba(0, 0, 0, 0.2), 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
-    --color-shadow-rg: 0px 0px 6px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
-    --color-shadow-md: 0px 2px 8px 0px rgba(0, 0, 0, 0.2), 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
-    --color-shadow-lg: 0px 4px 12px 0px rgba(0, 0, 0, 0.25), 0px 4px 10px 0px rgba(0, 0, 0, 0.55);
-    --color-shadow-xl: 0px 0px 14px 0px rgba(0, 0, 0, 0.25), 0px 6px 10px 0px rgba(0, 0, 0, 0.55);
-    --color-shadow-2xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.25), 0px 8px 12px 0px rgba(0, 0, 0, 0.6);
-    --color-shadow-3xl: 0px 4px 24px 0px rgba(0, 0, 0, 0.3), 0px 12px 40px 0px rgba(0, 0, 0, 0.65);
+    --color-shadow-2xs:
+      0px 0px 1px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-xs:
+      0px 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-sm:
+      0px 0px 4px 0px rgba(0, 0, 0, 0.2), 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-rg:
+      0px 0px 6px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-md:
+      0px 2px 8px 0px rgba(0, 0, 0, 0.2), 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-lg:
+      0px 4px 12px 0px rgba(0, 0, 0, 0.25), 0px 4px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-xl:
+      0px 0px 14px 0px rgba(0, 0, 0, 0.25), 0px 6px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-2xl:
+      0px 0px 18px 0px rgba(0, 0, 0, 0.25), 0px 8px 12px 0px rgba(0, 0, 0, 0.6);
+    --color-shadow-3xl:
+      0px 4px 24px 0px rgba(0, 0, 0, 0.3), 0px 12px 40px 0px rgba(0, 0, 0, 0.65);
     /* pi */
     --color-pi-50: var(--color-background-90);
     --color-pi-100: var(--color-background-90);
@@ -281,9 +335,21 @@
     --color-border-400: 58, 58, 58; /* strong border- 2 */
 
     /* onboarding colors */
-    --gradient-onboarding-100: linear-gradient(106deg, #18191b 25.17%, #18191b 99.34%);
-    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.8) -22.23%, rgba(33, 34, 37, 0.8) 62.98%);
-    --gradient-onboarding-300: linear-gradient(167deg, rgba(47, 49, 53, 0.45) 19.22%, #212225 98.48%);
+    --gradient-onboarding-100: linear-gradient(
+      106deg,
+      #18191b 25.17%,
+      #18191b 99.34%
+    );
+    --gradient-onboarding-200: linear-gradient(
+      129deg,
+      rgba(47, 49, 53, 0.8) -22.23%,
+      rgba(33, 34, 37, 0.8) 62.98%
+    );
+    --gradient-onboarding-300: linear-gradient(
+      167deg,
+      rgba(47, 49, 53, 0.45) 19.22%,
+      #212225 98.48%
+    );
 
     --color-onboarding-text-100: 237, 238, 240;
     --color-onboarding-text-200: 176, 180, 187;
@@ -341,19 +407,37 @@
   [data-theme="dark"],
   [data-theme="light-contrast"],
   [data-theme="dark-contrast"] {
-    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
-    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
-    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+    --color-sidebar-background-100: var(
+      --color-background-100
+    ); /* primary sidebar bg */
+    --color-sidebar-background-90: var(
+      --color-background-90
+    ); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(
+      --color-background-80
+    ); /* tertiary sidebar bg */
 
     --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
-    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-200: var(
+      --color-text-200
+    ); /* secondary sidebar text */
     --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
-    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+    --color-sidebar-text-400: var(
+      --color-text-400
+    ); /* sidebar placeholder text */
 
-    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
-    --color-sidebar-border-200: var(--color-border-200); /* subtle sidebar border- 2 */
-    --color-sidebar-border-300: var(--color-border-300); /* strong sidebar border- 1 */
-    --color-sidebar-border-400: var(--color-border-400); /* strong sidebar border- 2 */
+    --color-sidebar-border-100: var(
+      --color-border-100
+    ); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(
+      --color-border-200
+    ); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(
+      --color-border-300
+    ); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(
+      --color-border-400
+    ); /* strong sidebar border- 2 */
   }
 }
 
@@ -693,4 +777,57 @@ div.web-view-spinner div.bar12 {
 .disable-autofill-style:-webkit-autofill:focus,
 .disable-autofill-style:-webkit-autofill:active {
   -webkit-background-clip: text;
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

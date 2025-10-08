@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks

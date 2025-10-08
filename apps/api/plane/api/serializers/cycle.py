@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import Cycle, CycleIssue
+from plane.db.models import Cycle, CycleIssue, User
 from plane.utils.timezone_converter import convert_to_utc
 
 
@@ -15,6 +15,13 @@ class CycleCreateSerializer(BaseSerializer):
     Manages cycle creation including project timezone conversion, date range validation,
     and UTC normalization for time-bound iteration planning and sprint management.
     """
+
+    owned_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text="User who owns the cycle. If not provided, defaults to the current user.",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,14 +62,9 @@ class CycleCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed end date")
 
-        if (
-            data.get("start_date", None) is not None
-            and data.get("end_date", None) is not None
-        ):
+        if data.get("start_date", None) is not None and data.get("end_date", None) is not None:
             project_id = self.initial_data.get("project_id") or (
-                self.instance.project_id
-                if self.instance and hasattr(self.instance, "project_id")
-                else None
+                self.instance.project_id if self.instance and hasattr(self.instance, "project_id") else None
             )
 
             if not project_id:
@@ -77,6 +79,10 @@ class CycleCreateSerializer(BaseSerializer):
                 date=str(data.get("end_date", None).date()),
                 project_id=project_id,
             )
+
+        if not data.get("owned_by"):
+            data["owned_by"] = self.context["request"].user
+
         return data
 
 
@@ -166,9 +172,7 @@ class CycleIssueRequestSerializer(serializers.Serializer):
     cycle assignment and sprint planning workflows.
     """
 
-    issues = serializers.ListField(
-        child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle"
-    )
+    issues = serializers.ListField(child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle")
 
 
 class TransferCycleIssueRequestSerializer(serializers.Serializer):
@@ -179,6 +183,4 @@ class TransferCycleIssueRequestSerializer(serializers.Serializer):
     and relationship updates for sprint reallocation workflows.
     """
 
-    new_cycle_id = serializers.UUIDField(
-        help_text="ID of the target cycle to transfer issues to"
-    )
+    new_cycle_id = serializers.UUIDField(help_text="ID of the target cycle to transfer issues to")

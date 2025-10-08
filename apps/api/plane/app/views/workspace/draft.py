@@ -49,9 +49,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .prefetch_related("assignees", "labels", "draft_issue_module__module")
             .annotate(
                 cycle_id=Subquery(
-                    DraftIssueCycle.objects.filter(
-                        draft_issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    DraftIssueCycle.objects.filter(draft_issue=OuterRef("id"), deleted_at__isnull=True).values(
+                        "cycle_id"
+                    )[:1]
                 )
             )
             .annotate(
@@ -59,10 +59,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & (Q(draft_label_issue__deleted_at__isnull=True))
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & (Q(draft_label_issue__deleted_at__isnull=True))),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -94,14 +91,10 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
-        issues = (
-            self.get_queryset().filter(created_by=request.user).order_by("-created_at")
-        )
+        issues = self.get_queryset().filter(created_by=request.user).order_by("-created_at")
 
         issues = issues.filter(**filters)
         # List Paginate
@@ -111,9 +104,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             on_results=lambda issues: DraftIssueSerializer(issues, many=True).data,
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -168,16 +159,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         issue = self.get_queryset().filter(pk=pk, created_by=request.user).first()
 
         if not issue:
-            return Response(
-                {"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        project_id = request.data.get("project_id", issue.project_id)
 
         serializer = DraftIssueCreateSerializer(
             issue,
             data=request.data,
             partial=True,
             context={
-                "project_id": request.data.get("project_id", None),
+                "project_id": project_id,
                 "cycle_id": request.data.get("cycle_id", "not_provided"),
             },
         )
@@ -188,9 +179,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=Issue, level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue, level="WORKSPACE")
     def retrieve(self, request, slug, pk=None):
         issue = self.get_queryset().filter(pk=pk, created_by=request.user).first()
 
@@ -203,9 +192,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         serializer = DraftIssueDetailSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=DraftIssue, level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=DraftIssue, level="WORKSPACE")
     def destroy(self, request, slug, pk=None):
         draft_issue = DraftIssue.objects.get(workspace__slug=slug, pk=pk)
         draft_issue.delete()
@@ -264,9 +251,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     current_instance=json.dumps(
                         {
                             "updated_cycle_issues": None,
-                            "created_cycle_issues": serializers.serialize(
-                                "json", [created_records]
-                            ),
+                            "created_cycle_issues": serializers.serialize("json", [created_records]),
                         }
                     ),
                     epoch=int(timezone.now().timestamp()),

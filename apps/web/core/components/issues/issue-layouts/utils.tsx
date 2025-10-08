@@ -2,16 +2,12 @@
 
 import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
+import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon, ISvgIcons } from "@plane/propel/icons";
 import {
   EIssuesStoreType,
   GroupByColumnTypes,
@@ -23,14 +19,12 @@ import {
   TIssueGroupByOptions,
   IIssueFilterOptions,
   IIssueFilters,
-  IProjectView,
   TGroupedIssues,
-  IWorkspaceView,
   IIssueDisplayFilterOptions,
   TGetColumns,
 } from "@plane/types";
 // plane ui
-import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -521,7 +515,7 @@ export const handleGroupDragDrop = async (
   subGroupBy: TIssueGroupByOptions | undefined,
   shouldAddIssueAtTop = false
 ) => {
-  if (!source.id || !groupBy || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
+  if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
   let updatedIssue: Partial<TIssue> = {};
   const issueUpdates: IssueUpdates = {};
@@ -549,7 +543,7 @@ export const handleGroupDragDrop = async (
   };
 
   // update updatedIssue values based on the source and destination groupIds
-  if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {
+  if (source.groupId && destination.groupId && source.groupId !== destination.groupId && groupBy) {
     const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
     let groupValue: any = clone(sourceIssue[groupKey]);
 
@@ -590,27 +584,6 @@ export const handleGroupDragDrop = async (
   if (updatedIssue && sourceIssue?.project_id) {
     return await updateIssueOnDrop(sourceIssue?.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
-};
-
-/**
- * This Method compares filters and returns a boolean based on which and updateView button is shown
- * @param appliedFilters
- * @param issueFilters
- * @param viewDetails
- * @returns
- */
-export const getAreFiltersEqual = (
-  appliedFilters: IIssueFilterOptions | undefined,
-  issueFilters: IIssueFilters | undefined,
-  viewDetails: IProjectView | IWorkspaceView | null
-) => {
-  if (isNil(appliedFilters) || isNil(issueFilters) || isNil(viewDetails)) return true;
-
-  return (
-    isEqual(appliedFilters, viewDetails.filters) &&
-    isEqual(issueFilters.displayFilters, viewDetails.display_filters) &&
-    isEqual(removeNillKeys(issueFilters.displayProperties), removeNillKeys(viewDetails.display_properties))
-  );
 };
 
 /**

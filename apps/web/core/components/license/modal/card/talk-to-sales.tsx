@@ -4,8 +4,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 // plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
+import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
@@ -107,7 +108,6 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
       extraFeatures={extraFeatures}
       renderPriceContent={renderPriceContent}
       renderActionButton={renderActionButton}
-      isSelfHosted={isSelfHosted}
     />
   );
 });

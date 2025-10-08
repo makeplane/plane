@@ -3,8 +3,10 @@
   "extends": "./base.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "sourceMap": true
+    "sourceMap": true,
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
   },
   "exclude": ["dist", "build", "node_modules"]
 }

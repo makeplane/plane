@@ -6,8 +6,8 @@ import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 import { ICustomSearchSelectProps } from "./helper";
 
@@ -162,6 +162,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                         "max-h-48": maxHeight === "md",
                         "max-h-36": maxHeight === "rg",
                         "max-h-28": maxHeight === "sm",
+                        "max-h-full": maxHeight === "full",
                       })}
                     >
                       {filteredOptions ? (

@@ -10,11 +10,11 @@ import {
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// constants
-// types
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspace } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -228,7 +228,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
-                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>

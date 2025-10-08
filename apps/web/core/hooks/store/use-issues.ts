@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { EIssuesStoreType, TIssueMap } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
@@ -11,7 +11,6 @@ import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/i
 import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/issue/archived";
 import type { ICycleIssues, ICycleIssuesFilter } from "@/store/issue/cycle";
-import type { IDraftIssues, IDraftIssuesFilter } from "@/store/issue/draft";
 import type { IModuleIssues, IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProfileIssues, IProfileIssuesFilter } from "@/store/issue/profile";
 import type { IProjectIssues, IProjectIssuesFilter } from "@/store/issue/project";
@@ -64,10 +63,6 @@ export type TStoreIssues = {
   [EIssuesStoreType.ARCHIVED]: defaultIssueStore & {
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
-  };
-  [EIssuesStoreType.DRAFT]: defaultIssueStore & {
-    issues: IDraftIssues;
-    issuesFilter: IDraftIssuesFilter;
   };
   [EIssuesStoreType.DEFAULT]: defaultIssueStore & {
     issues: IProjectIssues;
@@ -141,11 +136,6 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.archivedIssues,
         issuesFilter: context.issue.archivedIssuesFilter,
-      }) as TStoreIssues[T];
-    case EIssuesStoreType.DRAFT:
-      return merge(defaultStore, {
-        issues: context.issue.draftIssues,
-        issuesFilter: context.issue.draftIssuesFilter,
       }) as TStoreIssues[T];
     case EIssuesStoreType.EPIC:
       return merge(defaultStore, {

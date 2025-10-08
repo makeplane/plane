@@ -12,8 +12,10 @@ import {
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspace } from "@plane/types";
-import { Button, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

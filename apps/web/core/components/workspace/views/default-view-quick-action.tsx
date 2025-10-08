@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import { TStaticViewTypes } from "@plane/types";
-import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 type Props = {
@@ -61,9 +62,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action();
               }}
               className={cn(

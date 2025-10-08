@@ -18,16 +18,12 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
         def _wrapped_view(instance, request, *args, **kwargs):
             # Check for creator if required
             if creator and model:
-                obj = model.objects.filter(
-                    id=kwargs["pk"], created_by=request.user
-                ).exists()
+                obj = model.objects.filter(id=kwargs["pk"], created_by=request.user).exists()
                 if obj:
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members
-            allowed_role_values = [
-                role.value if isinstance(role, ROLE) else role for role in allowed_roles
-            ]
+            allowed_role_values = [role.value if isinstance(role, ROLE) else role for role in allowed_roles]
 
             # Check role permissions
             if level == "WORKSPACE":
@@ -39,13 +35,31 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                 ).exists():
                     return view_func(instance, request, *args, **kwargs)
             else:
-                if ProjectMember.objects.filter(
+                is_user_has_allowed_role = ProjectMember.objects.filter(
                     member=request.user,
                     workspace__slug=kwargs["slug"],
                     project_id=kwargs["project_id"],
                     role__in=allowed_role_values,
                     is_active=True,
-                ).exists():
+                ).exists()
+
+                # Return if the user has the allowed role else if they are workspace admin and part of the project regardless of the role # noqa: E501
+                if is_user_has_allowed_role:
+                    return view_func(instance, request, *args, **kwargs)
+                elif (
+                    ProjectMember.objects.filter(
+                        member=request.user,
+                        workspace__slug=kwargs["slug"],
+                        project_id=kwargs["project_id"],
+                        is_active=True,
+                    ).exists()
+                    and WorkspaceMember.objects.filter(
+                        member=request.user,
+                        workspace__slug=kwargs["slug"],
+                        role=ROLE.ADMIN.value,
+                        is_active=True,
+                    ).exists()
+                ):
                     return view_func(instance, request, *args, **kwargs)
 
             # Return permission denied if no conditions are met

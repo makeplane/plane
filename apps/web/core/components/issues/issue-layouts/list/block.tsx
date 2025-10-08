@@ -7,9 +7,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { Spinner, ControlLink, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -264,7 +266,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             <Tooltip
               tooltipContent={issue.name}
               isMobile={isMobile}
-              position="top-left"
+              position="top-start"
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >

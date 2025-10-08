@@ -8,8 +8,10 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Button, Input, TOAST_TYPE, getButtonStyling, setPromiseToast, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";

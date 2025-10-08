@@ -1,9 +1,8 @@
 import { Extensions } from "@tiptap/core";
-import CharacterCount from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import TextStyle from "@tiptap/extension-text-style";
-import TiptapUnderline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { CharacterCount } from "@tiptap/extensions";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -29,7 +28,7 @@ import {
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import type { IEditorProps, TEmbedConfig } from "@/types";
+import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -45,11 +44,10 @@ type TArguments = Pick<
   | "mentionHandler"
   | "placeholder"
   | "tabIndex"
-  | "embedHandler"
+  | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
-  embedHandler?: TEmbedConfig;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -62,8 +60,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     mentionHandler,
     placeholder,
     tabIndex,
-    embedHandler,
     editable,
+    extendedEditorProps,
   } = args;
 
   const extensions = [
@@ -77,7 +75,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ListKeymap({ tabIndex }),
     CustomLinkExtension,
     CustomTypographyExtension,
-    TiptapUnderline,
     TextStyle,
     TaskList.configure({
       HTMLAttributes: {
@@ -118,7 +115,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
-      embedHandler,
+      extendedEditorProps,
     }),
   ];
 

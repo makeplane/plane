@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -135,7 +135,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.CYCLE}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
@@ -193,9 +192,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                       nestedItem.action();
                     }}
@@ -231,9 +228,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                 item.action();
               }}

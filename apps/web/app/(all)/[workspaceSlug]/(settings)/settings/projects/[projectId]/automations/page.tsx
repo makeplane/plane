@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IProject } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";

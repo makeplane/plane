@@ -13,7 +13,7 @@ VALID_KEY_CHARS = string.ascii_lowercase + string.digits
 class Session(AbstractBaseSession):
     device_info = models.JSONField(null=True, blank=True, default=None)
     session_key = models.CharField(max_length=128, primary_key=True)
-    user_id = models.CharField(null=True, max_length=50)
+    user_id = models.CharField(null=True, max_length=50, db_index=True)
 
     @classmethod
     def get_session_store_class(cls):

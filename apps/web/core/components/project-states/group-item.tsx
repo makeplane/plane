@@ -6,8 +6,8 @@ import { ChevronDown, Plus } from "lucide-react";
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { StateList, StateCreate } from "@/components/project-states";
