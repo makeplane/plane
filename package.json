@@ -34,7 +34,7 @@
       "@types/express": "4.17.23",
       "typescript": "catalog:",
       "sharp": "catalog:",
-      "vite": "7.0.7"
+      "vite": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@swc/core",
