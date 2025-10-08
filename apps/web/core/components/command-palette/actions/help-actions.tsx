@@ -5,7 +5,7 @@ import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // ui
 import { DiscordIcon } from "@plane/propel/icons";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useTransient } from "@/hooks/store/use-transient";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 export const CommandPaletteHelpActions: React.FC<Props> = observer((props) => {
   const { closePalette } = props;
   // hooks
-  const { toggleShortcutModal } = useCommandPalette();
+  const { toggleShortcutsListModal } = usePowerK();
   const { toggleIntercom } = useTransient();
 
   return (
@@ -23,7 +23,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = observer((props) => {
       <Command.Item
         onSelect={() => {
           closePalette();
-          toggleShortcutModal(true);
+          toggleShortcutsListModal(true);
         }}
         className="focus:outline-none"
       >

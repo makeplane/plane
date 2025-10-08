@@ -10,6 +10,7 @@ import { generateWorkItemLink } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
@@ -44,7 +45,7 @@ export const IssueSelectionPage: React.FC<Props> = (props) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { toggleCommandPaletteModal } = useCommandPalette();
+  const { togglePowerKModal } = usePowerK();
   // states
   const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
   const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
@@ -107,7 +108,7 @@ export const IssueSelectionPage: React.FC<Props> = (props) => {
             )}
             onSelect={(issue) => {
               if (!issue.project_id) return;
-              toggleCommandPaletteModal(false);
+              togglePowerKModal(false);
               router.push(
                 generateWorkItemLink({
                   workspaceSlug: workspaceSlug.toString(),
@@ -145,7 +146,7 @@ export const IssueSelectionPage: React.FC<Props> = (props) => {
           )}
           onSelect={(issue) => {
             if (!issue.project_id) return;
-            toggleCommandPaletteModal(false);
+            togglePowerKModal(false);
             router.push(
               generateWorkItemLink({
                 workspaceSlug: workspaceSlug.toString(),

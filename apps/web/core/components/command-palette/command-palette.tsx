@@ -16,6 +16,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -41,7 +42,8 @@ export const CommandPalette: FC = observer(() => {
   const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
+  const { togglePowerKModal, isShortcutsListModalOpen, toggleShortcutsListModal } = usePowerK();
+  const { isAnyModalOpen } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
@@ -169,7 +171,7 @@ export const CommandPalette: FC = observer(() => {
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
-        toggleCommandPaletteModal(true);
+        togglePowerKModal(true);
       }
 
       // if on input, textarea or editor, don't do anything
@@ -182,7 +184,7 @@ export const CommandPalette: FC = observer(() => {
 
       if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
         e.preventDefault();
-        toggleShortcutModal(true);
+        toggleShortcutsListModal(true);
       }
 
       if (deleteKey) {
@@ -239,8 +241,8 @@ export const CommandPalette: FC = observer(() => {
       performWorkspaceCreateActions,
       projectId,
       shortcutsList,
-      toggleCommandPaletteModal,
-      toggleShortcutModal,
+      togglePowerKModal,
+      toggleShortcutsListModal,
       toggleSidebar,
       toggleExtendedSidebar,
       workspaceSlug,
@@ -256,7 +258,7 @@ export const CommandPalette: FC = observer(() => {
 
   return (
     <>
-      <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
+      <ShortcutsModal isOpen={isShortcutsListModalOpen} onClose={() => toggleShortcutsListModal(false)} />
       {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />

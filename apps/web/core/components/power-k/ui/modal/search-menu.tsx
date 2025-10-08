@@ -7,7 +7,7 @@ import { WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import type { IWorkspaceSearchResults } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import useDebounce from "@/hooks/use-debounce";
 // plane web imports
 import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
@@ -36,7 +36,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
   // navigation
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { toggleCommandPaletteModal } = useCommandPalette();
+  const { togglePowerKModal } = usePowerK();
 
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
@@ -96,7 +96,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
       )}
 
       {searchTerm.trim() !== "" && (
-        <PowerKModalSearchResults closePalette={() => toggleCommandPaletteModal(false)} results={results} />
+        <PowerKModalSearchResults closePalette={() => togglePowerKModal(false)} results={results} />
       )}
     </>
   );

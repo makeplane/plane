@@ -4,7 +4,7 @@ import { DiscordIcon } from "@plane/propel/icons";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useTransient } from "@/hooks/store/use-transient";
 
 /**
@@ -12,7 +12,7 @@ import { useTransient } from "@/hooks/store/use-transient";
  */
 export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
   // store
-  const { toggleShortcutModal } = useCommandPalette();
+  const { toggleShortcutsListModal } = usePowerK();
   const { toggleIntercom } = useTransient();
 
   return [
@@ -22,7 +22,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       group: "help",
       i18n_title: "power_k.help_actions.open_keyboard_shortcuts",
       icon: Rocket,
-      action: () => toggleShortcutModal(true),
+      action: () => toggleShortcutsListModal(true),
       isEnabled: () => true,
       isVisible: () => true,
       closeOnSelect: true,

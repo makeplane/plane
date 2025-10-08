@@ -10,8 +10,8 @@ import { CustomMenu } from "@plane/ui";
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useInstance } from "@/hooks/store/use-instance";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useTransient } from "@/hooks/store/use-transient";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
@@ -19,7 +19,7 @@ import { PlaneVersionNumber } from "@/plane-web/components/global";
 export const HelpMenuRoot = observer(() => {
   // store hooks
   const { t } = useTranslation();
-  const { toggleShortcutModal } = useCommandPalette();
+  const { toggleShortcutsListModal } = usePowerK();
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
   // states
@@ -87,7 +87,7 @@ export const HelpMenuRoot = observer(() => {
         <CustomMenu.MenuItem>
           <button
             type="button"
-            onClick={() => toggleShortcutModal(true)}
+            onClick={() => toggleShortcutsListModal(true)}
             className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
           >
             <span className="text-xs">{t("keyboard_shortcuts")}</span>

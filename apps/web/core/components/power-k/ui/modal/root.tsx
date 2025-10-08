@@ -5,7 +5,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import { PowerKModalPagesList } from "../pages";
@@ -25,7 +25,7 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
   const [searchTerm, setSearchTerm] = useState("");
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   // store hooks
-  const { activePage, setActivePage } = useCommandPalette();
+  const { activePage, setActivePage } = usePowerK();
 
   // Handle command selection
   const handleCommandSelect = useCallback(

@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
-import { usePowerKCommands } from "./config/commands";
 import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
-import type { TPowerKContext } from "./core/types";
+import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { ShortcutsModal } from "./ui/modal/shortcuts-root";
 
 type GlobalShortcutsProps = {
   context: TPowerKContext;
+  commands: TPowerKCommandConfig[];
 };
 
 /**
@@ -22,15 +22,13 @@ type GlobalShortcutsProps = {
  * Should be mounted once at the app root level
  */
 export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) => {
-  const { context } = props;
+  const { context, commands } = props;
   // router
   const router = useAppRouter();
   const params = useParams();
   // store hooks
-  const { getCommandRegistry, isShortcutModalOpen, setActiveContext, toggleCommandPaletteModal, toggleShortcutModal } =
-    useCommandPalette();
-  // derived values
-  const commands = usePowerKCommands(context);
+  const { commandRegistry, isShortcutsListModalOpen, setActiveContext, togglePowerKModal, toggleShortcutsListModal } =
+    usePowerK();
 
   // Detect context from URL and update store
   useEffect(() => {
@@ -40,19 +38,16 @@ export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) =>
 
   // Register commands on mount
   useEffect(() => {
-    const registry = getCommandRegistry();
-    registry.clear();
-    registry.registerMultiple(commands);
-  }, [getCommandRegistry, context, commands]);
+    commandRegistry.clear();
+    commandRegistry.registerMultiple(commands);
+  }, [commandRegistry, commands]);
 
   // Setup global shortcut handler
   useEffect(() => {
-    const registry = getCommandRegistry();
-
     const handler = new ShortcutHandler(
-      registry,
+      commandRegistry,
       () => context,
-      () => toggleCommandPaletteModal(true)
+      () => togglePowerKModal(true)
     );
 
     document.addEventListener("keydown", handler.handleKeyDown);
@@ -61,7 +56,7 @@ export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) =>
       document.removeEventListener("keydown", handler.handleKeyDown);
       handler.destroy();
     };
-  }, [context, router, getCommandRegistry, toggleCommandPaletteModal]);
+  }, [context, router, commandRegistry, togglePowerKModal]);
 
-  return <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />;
+  return <ShortcutsModal isOpen={isShortcutsListModalOpen} onClose={() => toggleShortcutsListModal(false)} />;
 });

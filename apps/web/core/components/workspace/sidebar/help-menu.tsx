@@ -12,8 +12,8 @@ import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useInstance } from "@/hooks/store/use-instance";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useTransient } from "@/hooks/store/use-transient";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -26,7 +26,7 @@ export interface WorkspaceHelpSectionProps {
 export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store hooks
   const { t } = useTranslation();
-  const { toggleShortcutModal } = useCommandPalette();
+  const { toggleShortcutsListModal } = usePowerK();
   const { isMobile } = usePlatformOS();
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
@@ -100,7 +100,7 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
           <CustomMenu.MenuItem>
             <button
               type="button"
-              onClick={() => toggleShortcutModal(true)}
+              onClick={() => toggleShortcutsListModal(true)}
               className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
             >
               <span className="text-xs">{t("keyboard_shortcuts")}</span>

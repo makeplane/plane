@@ -38,6 +38,7 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -75,8 +76,8 @@ export const CommandModal: React.FC = observer(() => {
   const { workspaceProjectIds } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
-  const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
-    useCommandPalette();
+  const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();
+  const { isPowerKModalOpen, togglePowerKModal } = usePowerK();
   const { allowPermissions } = useUserPermissions();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
@@ -102,10 +103,10 @@ export const CommandModal: React.FC = observer(() => {
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
 
   useEffect(() => {
-    if (issueDetails && isCommandPaletteOpen) {
+    if (issueDetails && isPowerKModalOpen) {
       setSearchInIssue(true);
     }
-  }, [issueDetails, isCommandPaletteOpen]);
+  }, [issueDetails, isPowerKModalOpen]);
 
   useEffect(() => {
     if (!projectId && !isWorkspaceLevel) {
@@ -116,7 +117,7 @@ export const CommandModal: React.FC = observer(() => {
   }, [projectId]);
 
   const closePalette = () => {
-    toggleCommandPaletteModal(false);
+    togglePowerKModal(false);
   };
 
   const createNewWorkspace = () => {
@@ -160,7 +161,7 @@ export const CommandModal: React.FC = observer(() => {
   );
 
   return (
-    <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
+    <Transition.Root show={isPowerKModalOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
       <Dialog
         as="div"
         className="relative z-30"

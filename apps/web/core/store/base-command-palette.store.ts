@@ -8,9 +8,7 @@ import {
   TCreatePageModal,
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-// components
-import { IPowerKCommandRegistry, PowerKCommandRegistry } from "@/components/power-k/core/registry";
-import type { TPowerKContextType, TPowerKPageType } from "@/components/power-k/core/types";
+import { store } from "@/lib/store-context";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -19,8 +17,6 @@ export interface ModalData {
 
 export interface IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean;
-  isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
   isCreateCycleModalOpen: boolean;
   isCreateModuleModalOpen: boolean;
@@ -33,16 +29,8 @@ export interface IBaseCommandPaletteStore {
   createWorkItemAllowedProjectIds: string[] | undefined;
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
-  commandRegistry: IPowerKCommandRegistry;
-  activeContext: TPowerKContextType | null;
-  activePage: TPowerKPageType | null;
-  setActiveContext: (entity: TPowerKContextType | null) => void;
-  setActivePage: (page: TPowerKPageType | null) => void;
-  getCommandRegistry: () => IPowerKCommandRegistry;
   getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
-  toggleCommandPaletteModal: (value?: boolean) => void;
-  toggleShortcutModal: (value?: boolean) => void;
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
@@ -57,8 +45,6 @@ export interface IBaseCommandPaletteStore {
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean = false;
-  isShortcutModalOpen: boolean = false;
   isCreateProjectModalOpen: boolean = false;
   isCreateCycleModalOpen: boolean = false;
   isCreateModuleModalOpen: boolean = false;
@@ -71,15 +57,10 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
-  commandRegistry: IPowerKCommandRegistry = new PowerKCommandRegistry();
-  activeContext: TPowerKContextType | null = null;
-  activePage: TPowerKPageType | null = null;
 
   constructor() {
     makeObservable(this, {
       // observable
-      isCommandPaletteOpen: observable.ref,
-      isShortcutModalOpen: observable.ref,
       isCreateProjectModalOpen: observable.ref,
       isCreateCycleModalOpen: observable.ref,
       isCreateModuleModalOpen: observable.ref,
@@ -92,12 +73,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      commandRegistry: observable.ref,
-      activeContext: observable,
-      activePage: observable,
       // toggle actions
-      toggleCommandPaletteModal: action,
-      toggleShortcutModal: action,
       toggleCreateProjectModal: action,
       toggleCreateCycleModal: action,
       toggleCreateViewModal: action,
@@ -108,9 +84,6 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
-      setActiveContext: action,
-      setActivePage: action,
-      getCommandRegistry: action,
     });
   }
 
@@ -125,7 +98,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
         this.isCreateProjectModalOpen ||
         this.isCreateModuleModalOpen ||
         this.isCreateViewModalOpen ||
-        this.isShortcutModalOpen ||
+        store.powerK.isShortcutsListModalOpen ||
         this.isBulkDeleteIssueModalOpen ||
         this.isDeleteIssueModalOpen ||
         this.createPageModal.isOpen ||
@@ -143,53 +116,6 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
-  };
-
-  /**
-   * Sets the active context entity
-   * @param entity
-   */
-  setActiveContext = (entity: TPowerKContextType | null) => {
-    this.activeContext = entity;
-  };
-
-  /**
-   * Sets the active page
-   * @param page
-   */
-  setActivePage = (page: TPowerKPageType | null) => {
-    this.activePage = page;
-  };
-
-  /**
-   * Get the command registry instance
-   */
-  getCommandRegistry = (): IPowerKCommandRegistry => this.commandRegistry;
-
-  /**
-   * Toggles the command palette modal
-   * @param value
-   * @returns
-   */
-  toggleCommandPaletteModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isCommandPaletteOpen = value;
-    } else {
-      this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
-    }
-  };
-
-  /**
-   * Toggles the shortcut modal
-   * @param value
-   * @returns
-   */
-  toggleShortcutModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isShortcutModalOpen = value;
-    } else {
-      this.isShortcutModalOpen = !this.isShortcutModalOpen;
-    }
   };
 
   /**

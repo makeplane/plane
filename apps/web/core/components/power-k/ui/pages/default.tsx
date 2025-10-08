@@ -2,7 +2,7 @@
 
 import React from "react";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
 import { CommandRenderer } from "../renderer/command";
@@ -15,9 +15,7 @@ type Props = {
 export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
   const { context, onCommandSelect } = props;
   // store hooks
-  const { getCommandRegistry } = useCommandPalette();
-  // Get registry and commands from store
-  const commandRegistry = getCommandRegistry();
+  const { commandRegistry } = usePowerK();
   // Get commands to display
   const commands = commandRegistry.getVisibleCommands(context);
 

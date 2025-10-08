@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { Input } from "@plane/ui";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
 import { ShortcutRenderer } from "../renderer/shortcut";
 
@@ -20,10 +20,9 @@ export const ShortcutsModal: FC<Props> = (props) => {
   // states
   const [query, setQuery] = useState("");
   // store hooks
-  const { getCommandRegistry } = useCommandPalette();
+  const { commandRegistry } = usePowerK();
 
   // Get all commands from registry
-  const commandRegistry = getCommandRegistry();
   const allCommandsWithShortcuts = commandRegistry.getAllCommandsWithShortcuts();
 
   const handleClose = () => {
