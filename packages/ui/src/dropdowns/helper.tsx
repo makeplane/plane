@@ -59,6 +59,7 @@ export interface ICustomSelectProps extends IDropdownProps {
   children: React.ReactNode;
   value: any;
   onChange: any;
+  closeOnSelect?: boolean;
 }
 
 interface CustomSearchSelectProps {

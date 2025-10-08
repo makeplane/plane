@@ -29,6 +29,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
     optionsClassName = "",
     value,
     tabIndex,
+    closeOnSelect = true,
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -62,7 +63,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
       value={value}
       onChange={(val) => {
         onChange?.(val);
-        closeDropdown();
+        if (closeOnSelect) closeDropdown();
       }}
       className={cn("relative flex-shrink-0 text-left", className)}
       onKeyDown={handleKeyDown}
