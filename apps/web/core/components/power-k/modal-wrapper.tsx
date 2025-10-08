@@ -33,6 +33,7 @@ export const CommandPaletteProvider = observer(() => {
   const { data: currentUser } = useUser();
   // derived values
   const { workspaceSlug, projectId, workItem: workItemIdentifier } = params;
+  const commands = usePowerKCommands();
   // Build command context from props and store
   const context: TPowerKContext = useMemo(
     () => ({
@@ -58,8 +59,6 @@ export const CommandPaletteProvider = observer(() => {
       setActivePage,
     ]
   );
-  // derived values
-  const commands = usePowerKCommands(context);
 
   return (
     <>

@@ -3,6 +3,7 @@ import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // components
+import { EUserProjectRoles } from "@plane/types";
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -23,9 +24,7 @@ export type TPowerKCreationCommandKeys =
 /**
  * Creation commands - Create any entity in the app
  */
-export const usePowerKCreationCommandsRecord = (
-  context: TPowerKContext
-): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
+export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
   // store
   const {
     canPerformAnyCreateAction,
@@ -46,12 +45,13 @@ export const usePowerKCreationCommandsRecord = (
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const canPerformProjectActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    context.params.workspaceSlug?.toString(),
-    context.params.projectId?.toString()
-  );
+  const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
+    allowPermissions(
+      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      ctx.params.workspaceSlug?.toString(),
+      ctx.params.projectId?.toString()
+    );
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
 
   return {
@@ -75,9 +75,9 @@ export const usePowerKCreationCommandsRecord = (
       icon: FileText,
       shortcut: "d",
       action: () => toggleCreatePageModal({ isOpen: true }),
-      isEnabled: () => Boolean(currentProjectDetails?.page_view && canPerformProjectActions),
-      isVisible: (context) =>
-        Boolean(context.params.projectId && currentProjectDetails?.page_view && canPerformProjectActions),
+      isEnabled: (ctx) => Boolean(currentProjectDetails?.page_view && hasProjectMemberLevelPermissions(ctx)),
+      isVisible: (ctx) =>
+        Boolean(ctx.params.projectId && currentProjectDetails?.page_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_view: {
@@ -88,9 +88,11 @@ export const usePowerKCreationCommandsRecord = (
       icon: Layers,
       shortcut: "v",
       action: () => toggleCreateViewModal(true),
-      isEnabled: () => Boolean(currentProjectDetails?.issue_views_view && canPerformProjectActions),
-      isVisible: (context) =>
-        Boolean(context.params.projectId && currentProjectDetails?.issue_views_view && canPerformProjectActions),
+      isEnabled: (ctx) => Boolean(currentProjectDetails?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
+      isVisible: (ctx) =>
+        Boolean(
+          ctx.params.projectId && currentProjectDetails?.issue_views_view && hasProjectMemberLevelPermissions(ctx)
+        ),
       closeOnSelect: true,
     },
     create_cycle: {
@@ -101,9 +103,9 @@ export const usePowerKCreationCommandsRecord = (
       icon: ContrastIcon,
       shortcut: "q",
       action: () => toggleCreateCycleModal(true),
-      isEnabled: () => Boolean(currentProjectDetails?.cycle_view && canPerformProjectActions),
-      isVisible: (context) =>
-        Boolean(context.params.projectId && currentProjectDetails?.cycle_view && canPerformProjectActions),
+      isEnabled: (ctx) => Boolean(currentProjectDetails?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
+      isVisible: (ctx) =>
+        Boolean(ctx.params.projectId && currentProjectDetails?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_module: {
@@ -114,9 +116,9 @@ export const usePowerKCreationCommandsRecord = (
       icon: DiceIcon,
       shortcut: "m",
       action: () => toggleCreateModuleModal(true),
-      isEnabled: () => Boolean(currentProjectDetails?.module_view && canPerformProjectActions),
-      isVisible: (context) =>
-        Boolean(context.params.projectId && currentProjectDetails?.module_view && canPerformProjectActions),
+      isEnabled: (ctx) => Boolean(currentProjectDetails?.module_view && hasProjectMemberLevelPermissions(ctx)),
+      isVisible: (ctx) =>
+        Boolean(ctx.params.projectId && currentProjectDetails?.module_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_project: {
@@ -137,7 +139,7 @@ export const usePowerKCreationCommandsRecord = (
       group: "create",
       i18n_title: "power_k.creation_actions.create_workspace",
       icon: SquarePlus,
-      action: (context) => context.router.push("/create-workspace"),
+      action: (ctx) => ctx.router.push("/create-workspace"),
       isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
       isVisible: () => Boolean(!isWorkspaceCreationDisabled),
       closeOnSelect: true,

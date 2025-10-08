@@ -1,5 +1,5 @@
 // local imports
-import type { TPowerKCommandConfig, TPowerKContext } from "../core/types";
+import type { TPowerKCommandConfig } from "../core/types";
 import { usePowerKContextBasedActions } from "../ui/pages/context-based";
 import { usePowerKAccountCommands } from "./account-commands";
 import { usePowerKCreationCommands } from "./creation/root";
@@ -8,9 +8,9 @@ import { usePowerKMiscellaneousCommands } from "./miscellaneous-commands";
 import { usePowerKNavigationCommands } from "./navigation/root";
 import { usePowerKPreferencesCommands } from "./preferences-commands";
 
-export const usePowerKCommands = (context: TPowerKContext): TPowerKCommandConfig[] => {
+export const usePowerKCommands = (): TPowerKCommandConfig[] => {
   const navigationCommands = usePowerKNavigationCommands();
-  const creationCommands = usePowerKCreationCommands(context);
+  const creationCommands = usePowerKCreationCommands();
   const contextualCommands = usePowerKContextBasedActions();
   const accountCommands = usePowerKAccountCommands();
   const miscellaneousCommands = usePowerKMiscellaneousCommands();
