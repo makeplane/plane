@@ -7,6 +7,8 @@ import {
   autoUpdate,
   useClick,
   useRole,
+  type UseInteractionsReturn,
+  type UseFloatingReturn,
 } from "@floating-ui/react";
 import { useState } from "react";
 
@@ -14,7 +16,13 @@ type TArgs = {
   handleOpenChange?: (open: boolean) => void;
 };
 
-export const useFloatingMenu = (args: TArgs) => {
+type TReturn = {
+  options: UseFloatingReturn;
+  getReferenceProps: UseInteractionsReturn["getReferenceProps"];
+  getFloatingProps: UseInteractionsReturn["getFloatingProps"];
+};
+
+export const useFloatingMenu = (args: TArgs): TReturn => {
   const { handleOpenChange } = args;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

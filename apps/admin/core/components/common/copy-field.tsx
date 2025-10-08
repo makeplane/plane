@@ -4,8 +4,7 @@ import React from "react";
 // ui
 import { Copy } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// icons
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 type Props = {
   label: string;

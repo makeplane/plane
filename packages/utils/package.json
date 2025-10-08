@@ -4,12 +4,14 @@
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -30,7 +32,6 @@
     "lucide-react": "catalog:",
     "react": "catalog:",
     "tailwind-merge": "^2.5.5",
-    "tlds": "1.259.0",
     "uuid": "catalog:"
   },
   "devDependencies": {
@@ -39,8 +40,10 @@
     "@types/lodash-es": "catalog:",
     "@types/node": "^22.5.4",
     "@types/react": "catalog:",
-    "@types/uuid": "^9.0.8",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts"
 }

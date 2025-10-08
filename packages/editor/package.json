@@ -4,22 +4,20 @@
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./lib": {
-      "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
-      "import": "./dist/lib.mjs"
+      "import": "./dist/lib.js",
+      "require": "./dist/lib.cjs"
     },
+    "./package.json": "./package.json",
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
@@ -86,7 +84,6 @@
     "@types/node": "18.15.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

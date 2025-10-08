@@ -13,9 +13,8 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";

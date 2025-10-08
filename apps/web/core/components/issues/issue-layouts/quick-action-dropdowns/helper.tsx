@@ -3,8 +3,9 @@ import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle, ArchiveRestoreIcon }
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-import { TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";

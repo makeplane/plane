@@ -50,9 +50,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
         return (
           <CustomMenu.MenuItem
             key={index}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               handleOnClick(item.key as TIssueRelationTypes);
             }}
           >

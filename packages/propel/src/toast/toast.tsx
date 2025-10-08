@@ -11,6 +11,7 @@ export enum TOAST_TYPE {
   INFO = "info",
   WARNING = "warning",
   LOADING = "loading",
+  LOADING_TOAST = "loading-toast",
 }
 
 type SetToastProps =
@@ -83,6 +84,12 @@ const TOAST_DATA = {
     borderColorClassName: "border-toast-border-info",
   },
   [TOAST_TYPE.LOADING]: {
+    icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
+    textColorClassName: "text-toast-text-loading",
+    backgroundColorClassName: "bg-toast-background-loading",
+    borderColorClassName: "border-toast-border-loading",
+  },
+  [TOAST_TYPE.LOADING_TOAST]: {
     icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
     textColorClassName: "text-toast-text-loading",
     backgroundColorClassName: "bg-toast-background-loading",
@@ -229,4 +236,8 @@ export const setPromiseToast = <ToastData,>(
       },
     }),
   });
+};
+
+export const dismissToast = (tId: string) => {
+  toastManager.close(tId);
 };

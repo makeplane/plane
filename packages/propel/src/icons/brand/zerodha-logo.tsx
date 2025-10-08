@@ -17,8 +17,8 @@ export const ZerodhaLogo: React.FC<ISvgIcons> = ({
     className={className}
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M7.46267 8.1456C7.92616 8.74901 8.31095 9.42239 8.60828 10.157V6.29163H5.32886C6.11592 6.72014 6.84177 7.34104 7.46267 8.1456ZM2.7403 6.70265C2.13689 6.70265 1.55094 6.83382 1 7.06994V13.8999H8.27596C8.22349 9.91211 5.75737 6.6939 2.73155 6.6939"
       fill={color}
     />

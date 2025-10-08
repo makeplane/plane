@@ -1,105 +1,105 @@
 // Export all locale files to make them accessible from the package root
-export { default as enCore } from "./en/core.json";
-export { default as enTranslations } from "./en/translations.json";
-export { default as enAccessibility } from "./en/accessibility.json";
-export { default as enEditor } from "./en/editor.json";
+export { default as enCore } from "./en/core";
+export { default as enTranslations } from "./en/translations";
+export { default as enAccessibility } from "./en/accessibility";
+export { default as enEditor } from "./en/editor";
 
 // Export locale data for all supported languages
 export const locales = {
   en: {
-    core: () => import("./en/core.json"),
-    translations: () => import("./en/translations.json"),
-    accessibility: () => import("./en/accessibility.json"),
-    editor: () => import("./en/editor.json"),
+    core: () => import("./en/core"),
+    translations: () => import("./en/translations"),
+    accessibility: () => import("./en/accessibility"),
+    editor: () => import("./en/editor"),
   },
   fr: {
-    translations: () => import("./fr/translations.json"),
-    accessibility: () => import("./fr/accessibility.json"),
-    editor: () => import("./fr/editor.json"),
+    translations: () => import("./fr/translations"),
+    accessibility: () => import("./fr/accessibility"),
+    editor: () => import("./fr/editor"),
   },
   es: {
-    translations: () => import("./es/translations.json"),
-    accessibility: () => import("./es/accessibility.json"),
-    editor: () => import("./es/editor.json"),
+    translations: () => import("./es/translations"),
+    accessibility: () => import("./es/accessibility"),
+    editor: () => import("./es/editor"),
   },
   ja: {
-    translations: () => import("./ja/translations.json"),
-    accessibility: () => import("./ja/accessibility.json"),
-    editor: () => import("./ja/editor.json"),
+    translations: () => import("./ja/translations"),
+    accessibility: () => import("./ja/accessibility"),
+    editor: () => import("./ja/editor"),
   },
   "zh-CN": {
-    translations: () => import("./zh-CN/translations.json"),
-    accessibility: () => import("./zh-CN/accessibility.json"),
-    editor: () => import("./zh-CN/editor.json"),
+    translations: () => import("./zh-CN/translations"),
+    accessibility: () => import("./zh-CN/accessibility"),
+    editor: () => import("./zh-CN/editor"),
   },
   "zh-TW": {
-    translations: () => import("./zh-TW/translations.json"),
-    accessibility: () => import("./zh-TW/accessibility.json"),
-    editor: () => import("./zh-TW/editor.json"),
+    translations: () => import("./zh-TW/translations"),
+    accessibility: () => import("./zh-TW/accessibility"),
+    editor: () => import("./zh-TW/editor"),
   },
   ru: {
-    translations: () => import("./ru/translations.json"),
-    accessibility: () => import("./ru/accessibility.json"),
-    editor: () => import("./ru/editor.json"),
+    translations: () => import("./ru/translations"),
+    accessibility: () => import("./ru/accessibility"),
+    editor: () => import("./ru/editor"),
   },
   it: {
-    translations: () => import("./it/translations.json"),
-    accessibility: () => import("./it/accessibility.json"),
-    editor: () => import("./it/editor.json"),
+    translations: () => import("./it/translations"),
+    accessibility: () => import("./it/accessibility"),
+    editor: () => import("./it/editor"),
   },
   cs: {
-    translations: () => import("./cs/translations.json"),
-    accessibility: () => import("./cs/accessibility.json"),
-    editor: () => import("./cs/editor.json"),
+    translations: () => import("./cs/translations"),
+    accessibility: () => import("./cs/accessibility"),
+    editor: () => import("./cs/editor"),
   },
   sk: {
-    translations: () => import("./sk/translations.json"),
-    accessibility: () => import("./sk/accessibility.json"),
-    editor: () => import("./sk/editor.json"),
+    translations: () => import("./sk/translations"),
+    accessibility: () => import("./sk/accessibility"),
+    editor: () => import("./sk/editor"),
   },
   de: {
-    translations: () => import("./de/translations.json"),
-    accessibility: () => import("./de/accessibility.json"),
-    editor: () => import("./de/editor.json"),
+    translations: () => import("./de/translations"),
+    accessibility: () => import("./de/accessibility"),
+    editor: () => import("./de/editor"),
   },
   ua: {
-    translations: () => import("./ua/translations.json"),
-    accessibility: () => import("./ua/accessibility.json"),
-    editor: () => import("./ua/editor.json"),
+    translations: () => import("./ua/translations"),
+    accessibility: () => import("./ua/accessibility"),
+    editor: () => import("./ua/editor"),
   },
   pl: {
-    translations: () => import("./pl/translations.json"),
-    accessibility: () => import("./pl/accessibility.json"),
-    editor: () => import("./pl/editor.json"),
+    translations: () => import("./pl/translations"),
+    accessibility: () => import("./pl/accessibility"),
+    editor: () => import("./pl/editor"),
   },
   ko: {
-    translations: () => import("./ko/translations.json"),
-    accessibility: () => import("./ko/accessibility.json"),
-    editor: () => import("./ko/editor.json"),
+    translations: () => import("./ko/translations"),
+    accessibility: () => import("./ko/accessibility"),
+    editor: () => import("./ko/editor"),
   },
   "pt-BR": {
-    translations: () => import("./pt-BR/translations.json"),
-    accessibility: () => import("./pt-BR/accessibility.json"),
-    editor: () => import("./pt-BR/editor.json"),
+    translations: () => import("./pt-BR/translations"),
+    accessibility: () => import("./pt-BR/accessibility"),
+    editor: () => import("./pt-BR/editor"),
   },
   id: {
-    translations: () => import("./id/translations.json"),
-    accessibility: () => import("./id/accessibility.json"),
-    editor: () => import("./id/editor.json"),
+    translations: () => import("./id/translations"),
+    accessibility: () => import("./id/accessibility"),
+    editor: () => import("./id/editor"),
   },
   ro: {
-    translations: () => import("./ro/translations.json"),
-    accessibility: () => import("./ro/accessibility.json"),
-    editor: () => import("./ro/editor.json"),
+    translations: () => import("./ro/translations"),
+    accessibility: () => import("./ro/accessibility"),
+    editor: () => import("./ro/editor"),
   },
   "vi-VN": {
-    translations: () => import("./vi-VN/translations.json"),
-    accessibility: () => import("./vi-VN/accessibility.json"),
-    editor: () => import("./vi-VN/editor.json"),
+    translations: () => import("./vi-VN/translations"),
+    accessibility: () => import("./vi-VN/accessibility"),
+    editor: () => import("./vi-VN/editor"),
   },
   "tr-TR": {
-    translations: () => import("./tr-TR/translations.json"),
-    accessibility: () => import("./tr-TR/accessibility.json"),
-    editor: () => import("./tr-TR/editor.json"),
+    translations: () => import("./tr-TR/translations"),
+    accessibility: () => import("./tr-TR/accessibility"),
+    editor: () => import("./tr-TR/editor"),
   },
 };
