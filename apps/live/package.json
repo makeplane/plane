@@ -55,7 +55,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.23",
     "@types/express-ws": "^3.0.5",
-    "@types/node": "^20.14.9",
+    "@types/node": "catalog:",
     "@types/pino-http": "^5.8.4",
     "@types/uuid": "^9.0.1",
     "@types/ws": "^8.18.1",
