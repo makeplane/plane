@@ -7,9 +7,9 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { isEmptyHtmlString } from "@plane/utils";
 // helpers

@@ -9,8 +9,9 @@ import { ChevronDown, CirclePlus, LogOut, Mails } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspace } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";

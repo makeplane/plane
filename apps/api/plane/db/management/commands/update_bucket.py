@@ -70,7 +70,7 @@ class Command(BaseCommand):
         try:
             s3_client.delete_object(Bucket=bucket_name, Key="test_permission_check.txt")
         except ClientError:
-            self.stdout.write("Coudn't delete test object")
+            self.stdout.write("Couldn't delete test object")
 
         # 4. Test s3:PutBucketPolicy (attempt to put a bucket policy)
         try:

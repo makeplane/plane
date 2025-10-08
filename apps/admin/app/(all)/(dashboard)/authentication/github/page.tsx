@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";

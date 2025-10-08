@@ -8,9 +8,10 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes } from "@plane/ui";
+import { CustomSelect, Input, TextArea, EmojiIconPickerTypes } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

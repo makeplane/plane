@@ -4,8 +4,8 @@ import { FC } from "react";
 // hooks
 // ui
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // icons
 // types

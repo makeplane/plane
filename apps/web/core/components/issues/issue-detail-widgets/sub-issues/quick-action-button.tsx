@@ -86,9 +86,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
       {optionItems.map((item, index) => (
         <CustomMenu.MenuItem
           key={index}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             item.onClick();
           }}
         >

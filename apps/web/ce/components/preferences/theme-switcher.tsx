@@ -6,8 +6,8 @@ import { useTheme } from "next-themes";
 // plane imports
 import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { IUserTheme } from "@plane/types";
-import { setPromiseToast } from "@plane/ui";
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";

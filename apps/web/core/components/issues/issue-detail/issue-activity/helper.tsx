@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType, type TCommentsOperations } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
