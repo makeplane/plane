@@ -1,5 +1,5 @@
 // local imports
-import { TPowerKContextTypeExtended } from "../types";
+import type { TPowerKContextTypeExtended } from "../types";
 
 type TArgs = {
   activeContext: TPowerKContextTypeExtended | null;
