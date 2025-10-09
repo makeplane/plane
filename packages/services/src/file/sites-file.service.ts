@@ -74,7 +74,7 @@ export class SitesFileService extends FileService {
    * @throws {Error} If the request fails
    */
   async uploadAsset(anchor: string, data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/public/assets/v2/anchor/${anchor}/`, {
       ...data,
       ...fileMetaData,
