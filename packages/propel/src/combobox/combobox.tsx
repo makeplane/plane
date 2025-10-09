@@ -96,7 +96,6 @@ const ComboboxButton = React.forwardRef<HTMLButtonElement, ComboboxButtonProps>(
   )
 );
 
-
 // Options popup component
 function ComboboxOptions({
   children,
@@ -106,7 +105,7 @@ function ComboboxOptions({
   className,
   inputClassName,
   optionsContainerClassName,
-  emptyMessage,
+  emptyMessage = "No results found",
   positionerClassName,
   searchQuery: controlledSearchQuery,
   onSearchQueryChange,
@@ -133,6 +132,9 @@ function ComboboxOptions({
 
     return React.Children.toArray(children).filter((child) => {
       if (!React.isValidElement(child)) return true;
+
+      // Only filter ComboboxOption components, leave other elements (like additional content) unfiltered
+      if (child.type !== ComboboxOption) return true;
 
       // Extract text content from child to search against
       const getTextContent = (node: React.ReactNode): string => {
@@ -181,9 +183,13 @@ function ComboboxOptions({
               className={cn("overflow-auto outline-none", MAX_HEIGHT_CLASSES[maxHeight], optionsContainerClassName)}
             >
               {filteredChildren}
-              {showSearch && React.Children.count(filteredChildren) === 0 && (
-                <div className="px-2 py-1.5 text-sm text-custom-text-400">{emptyMessage || "No results found"}</div>
-              )}
+              {showSearch &&
+                emptyMessage &&
+                React.Children.count(
+                  React.Children.toArray(filteredChildren).filter(
+                    (child) => React.isValidElement(child) && child.type === ComboboxOption
+                  )
+                ) === 0 && <div className="px-2 py-1.5 text-sm text-custom-text-400">{emptyMessage}</div>}
             </BaseCombobox.List>
           </div>
         </BaseCombobox.Popup>
@@ -198,10 +204,7 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     <BaseCombobox.Item
       value={value}
       disabled={disabled}
-      className={cn(
-        "cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors",
-        className
-      )}
+      className={cn("cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors", className)}
     >
       {children}
     </BaseCombobox.Item>
