@@ -96,7 +96,6 @@ const ComboboxButton = React.forwardRef<HTMLButtonElement, ComboboxButtonProps>(
   )
 );
 
-
 // Options popup component
 function ComboboxOptions({
   children,
@@ -198,10 +197,7 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     <BaseCombobox.Item
       value={value}
       disabled={disabled}
-      className={cn(
-        "cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors",
-        className
-      )}
+      className={cn("cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors", className)}
     >
       {children}
     </BaseCombobox.Item>
