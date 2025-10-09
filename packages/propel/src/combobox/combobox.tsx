@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { cn } from "../utils/classname";
 
 // Type definitions
-type MaxHeight = "lg" | "md" | "rg" | "sm";
+type TMaxHeight = "lg" | "md" | "rg" | "sm";
 
 export interface ComboboxProps {
   value?: string | string[];
@@ -22,6 +22,7 @@ export interface ComboboxButtonProps {
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export interface ComboboxOptionsProps {
@@ -30,10 +31,12 @@ export interface ComboboxOptionsProps {
   showSearch?: boolean;
   className?: string;
   children?: React.ReactNode;
-  maxHeight?: MaxHeight;
+  maxHeight?: TMaxHeight;
   inputClassName?: string;
   optionsContainerClassName?: string;
   positionerClassName?: string;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
 }
 
 export interface ComboboxOptionProps {
@@ -44,7 +47,7 @@ export interface ComboboxOptionProps {
 }
 
 // Constants
-const MAX_HEIGHT_CLASSES: Record<MaxHeight, string> = {
+const MAX_HEIGHT_CLASSES: Record<TMaxHeight, string> = {
   lg: "max-h-60",
   md: "max-h-48",
   rg: "max-h-36",
@@ -85,13 +88,14 @@ function ComboboxRoot({
 }
 
 // Trigger button component
-function ComboboxButton({ className, children, disabled = false }: ComboboxButtonProps) {
-  return (
-    <BaseCombobox.Trigger disabled={disabled} className={className}>
+const ComboboxButton = React.forwardRef<HTMLButtonElement, ComboboxButtonProps>(
+  ({ className, children, disabled = false }, ref) => (
+    <BaseCombobox.Trigger ref={ref} disabled={disabled} className={className}>
       {children}
     </BaseCombobox.Trigger>
-  );
-}
+  )
+);
+
 
 // Options popup component
 function ComboboxOptions({
@@ -104,8 +108,24 @@ function ComboboxOptions({
   optionsContainerClassName,
   emptyMessage,
   positionerClassName,
+  searchQuery: controlledSearchQuery,
+  onSearchQueryChange,
 }: ComboboxOptionsProps) {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  // const [searchQuery, setSearchQuery] = React.useState("");
+  const [internalSearchQuery, setInternalSearchQuery] = React.useState("");
+
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+
+  const setSearchQuery = React.useCallback(
+    (query: string) => {
+      if (onSearchQueryChange) {
+        onSearchQueryChange(query);
+      } else {
+        setInternalSearchQuery(query);
+      }
+    },
+    [onSearchQueryChange]
+  );
 
   // Filter children based on search query
   const filteredChildren = React.useMemo(() => {
@@ -158,7 +178,7 @@ function ComboboxOptions({
               </div>
             )}
             <BaseCombobox.List
-              className={cn("overflow-auto", MAX_HEIGHT_CLASSES[maxHeight], optionsContainerClassName)}
+              className={cn("overflow-auto outline-none", MAX_HEIGHT_CLASSES[maxHeight], optionsContainerClassName)}
             >
               {filteredChildren}
               {showSearch && React.Children.count(filteredChildren) === 0 && (
@@ -180,9 +200,6 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
       disabled={disabled}
       className={cn(
         "cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors",
-        "data-[highlighted]:bg-custom-background-80",
-        "data-[selected]:bg-custom-primary-100/10 data-[selected]:text-custom-primary-100",
-        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className
       )}
     >
