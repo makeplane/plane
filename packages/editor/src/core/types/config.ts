@@ -42,7 +42,6 @@ export type TUserDetails = {
 
 export type TRealtimeConfig = {
   url: string;
-  queryParams: TWebhookConnectionQueryParams;
 };
 
 export type IMarking = {
