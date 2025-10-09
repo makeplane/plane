@@ -4,7 +4,7 @@ import { ReactRenderer, type Editor } from "@tiptap/react";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance } from "@/helpers/tippy";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
 import { type EmojiItem, EmojisListDropdown, EmojisListDropdownProps } from "./components/emojis-list";
 
@@ -82,11 +82,17 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
         cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
       onKeyDown: ({ event }) => {
+        if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         if (event.key === "Escape") {
           handleClose();
           return true;
         }
-        return component?.ref?.onKeyDown({ event }) || false;
+
+        return component?.ref?.onKeyDown({ event }) ?? false;
       },
 
       onExit: ({ editor }) => {
