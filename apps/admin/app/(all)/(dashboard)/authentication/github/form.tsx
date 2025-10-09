@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -9,14 +9,16 @@ import { Monitor } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
+import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
 
 import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
-import { CopyField, TCopyField } from "@/components/common/copy-field";
+import { ControllerInput } from "@/components/common/controller-input";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { CopyField } from "@/components/common/copy-field";
+import type { TCopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -26,7 +28,7 @@ type Props = {
 
 type GithubConfigFormValues = Record<TInstanceGithubAuthenticationConfigurationKeys, string>;
 
-export const InstanceGithubConfigForm: FC<Props> = (props) => {
+export const InstanceGithubConfigForm: React.FC<Props> = (props) => {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);

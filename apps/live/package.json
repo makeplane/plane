@@ -53,7 +53,7 @@
     "@plane/typescript-config": "workspace:*",
     "@types/compression": "1.8.1",
     "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.23",
+    "@types/express": "4.17.23",
     "@types/express-ws": "^3.0.5",
     "@types/node": "catalog:",
     "@types/ws": "^8.18.1",

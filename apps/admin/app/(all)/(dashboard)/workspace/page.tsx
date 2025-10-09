@@ -8,7 +8,7 @@ import { Loader as LoaderIcon } from "lucide-react";
 // types
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
-import { TInstanceConfigurationKeys } from "@plane/types";
+import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 
 import { cn } from "@plane/utils";
@@ -16,8 +16,9 @@ import { cn } from "@plane/utils";
 import { WorkspaceListItem } from "@/components/workspace/list-item";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
+import type { Route } from "./+types/page";
 
-const WorkspaceManagementPage = observer(() => {
+const WorkspaceManagementPage = observer<React.FC<Route.ComponentProps>>(() => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
@@ -166,5 +167,7 @@ const WorkspaceManagementPage = observer(() => {
     </div>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Workspace Management - God Mode" }];
 
 export default WorkspaceManagementPage;

@@ -5,7 +5,7 @@ import { PreloadResources } from "./layout.preload";
 // styles
 import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
-import "@plane/propel/styles/react-day-picker";
+import "@plane/propel/styles/react-day-picker.css";
 
 export const metadata: Metadata = {
   robots: {

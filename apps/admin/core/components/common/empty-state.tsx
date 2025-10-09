@@ -7,7 +7,7 @@ import { Button } from "@plane/propel/button";
 type Props = {
   title: string;
   description?: React.ReactNode;
-  image?: any;
+  image?: string;
   primaryButton?: {
     icon?: any;
     text: string;

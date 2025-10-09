@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@plane/propel/button";
@@ -19,7 +19,7 @@ enum ESendEmailSteps {
 
 const instanceService = new InstanceService();
 
-export const SendTestEmailModal: FC<Props> = (props) => {
+export const SendTestEmailModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose } = props;
 
   // state
@@ -61,10 +61,10 @@ export const SendTestEmailModal: FC<Props> = (props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -77,7 +77,7 @@ export const SendTestEmailModal: FC<Props> = (props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="my-10 flex justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

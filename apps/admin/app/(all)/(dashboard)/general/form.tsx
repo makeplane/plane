@@ -1,12 +1,11 @@
 "use client";
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IInstance, IInstanceAdmin } from "@plane/types";
+import type { IInstance, IInstanceAdmin } from "@plane/types";
 // ui
 import { Input, ToggleSwitch } from "@plane/ui";
 // components
@@ -20,7 +19,7 @@ export interface IGeneralConfigurationForm {
   instanceAdmins: IInstanceAdmin[];
 }
 
-export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer((props) => {
+export const GeneralConfigurationForm: React.FC<IGeneralConfigurationForm> = observer((props) => {
   const { instance, instanceAdmins } = props;
   // hooks
   const { instanceConfigurations, updateInstanceInfo, updateInstanceConfigurations } = useInstance();

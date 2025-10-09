@@ -1,0 +1,33 @@
+"use client";
+
+import { useMemo } from "react";
+import { useLocation, useNavigate, useSearchParams as useSearchParamsRR } from "react-router";
+
+export function useRouter() {
+  const navigate = useNavigate();
+  return useMemo(
+    () => ({
+      push: (to: string) => navigate(to),
+      replace: (to: string) => navigate(to, { replace: true }),
+      back: () => navigate(-1),
+      forward: () => navigate(1),
+      refresh: () => {
+        location.reload();
+      },
+      prefetch: async (_to: string) => {
+        // no-op in this shim
+      },
+    }),
+    [navigate]
+  );
+}
+
+export function usePathname(): string {
+  const { pathname } = useLocation();
+  return pathname;
+}
+
+export function useSearchParams(): URLSearchParams {
+  const [searchParams] = useSearchParamsRR();
+  return searchParams;
+}
