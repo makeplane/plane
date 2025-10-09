@@ -29,6 +29,8 @@
     "@plane/editor": "workspace:*",
     "@plane/logger": "workspace:*",
     "@plane/types": "workspace:*",
+    "@sentry/node": "^10.5.0",
+    "@sentry/profiling-node": "^10.5.0",
     "@tiptap/core": "catalog:",
     "@tiptap/html": "catalog:",
     "axios": "catalog:",
