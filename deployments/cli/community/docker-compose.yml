@@ -180,7 +180,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   plane-redis:
-    image: valkey/valkey:7.2.5-alpine
+    image: valkey/valkey:7.2.11-alpine
     deploy:
       replicas: 1
       restart_policy:
