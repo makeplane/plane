@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // local imports
 import type { TPowerKContextType } from "../../core/types";
+import { useContextIndicator } from "../../hooks/use-context-indicator";
 import { CONTEXT_ENTITY_MAP } from "../pages/context-based";
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
 
 export const PowerKModalContextIndicator: React.FC<Props> = (props) => {
   const { activeContext, handleClearContext } = props;
+  // context indicator
+  const contextIndicator = useContextIndicator({ activeContext });
   // translation
   const { t } = useTranslation();
   // derived values
@@ -21,11 +24,11 @@ export const PowerKModalContextIndicator: React.FC<Props> = (props) => {
 
   return (
     <div className="w-full px-4 pt-3 pb-2">
-      <div className="max-w-full bg-custom-background-80 px-2 py-0.5 rounded inline-flex items-center gap-1 truncate">
+      <div className="max-w-full bg-custom-background-80 pl-2 pr-1 py-0.5 rounded inline-flex items-center gap-1 truncate">
         <div className="flex items-center gap-1.5 text-xs font-medium truncate">
           <span className="shrink-0 text-custom-text-200">{t(contextEntity.i18n_indicator)}</span>
           <span className="shrink-0 bg-custom-text-200 size-1 rounded-full" />
-          <p className="truncate">Some random name here</p>
+          <p className="truncate">{contextIndicator}</p>
         </div>
         <button
           type="button"
