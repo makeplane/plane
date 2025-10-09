@@ -70,7 +70,7 @@ export class ProjectService extends APIService {
   }
 
   async getProjectAnalyze(workspaceSlug: string, projectId: string): Promise<any[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/advance-analytics/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/analytics/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
