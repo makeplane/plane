@@ -1,6 +1,6 @@
 services:
   plane-redis:
-    image: valkey/valkey:7.2.5-alpine
+    image: valkey/valkey:7.2.11-alpine
     restart: unless-stopped
     networks:
       - dev_env
