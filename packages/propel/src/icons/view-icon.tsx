@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const ViewIcon: React.FC<ISvgIcons> = ({
+export const ViewsIcon: React.FC<ISvgIcons> = ({
   width = "16",
   height = "16",
   className = "text-current",

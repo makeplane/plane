@@ -2,7 +2,13 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const InboxIcon: React.FC<ISvgIcons> = ({ width = "16", height = "16", className, color = "currentColor", ...rest }) => (
+export const InboxIcon: React.FC<ISvgIcons> = ({
+  width = "16",
+  height = "16",
+  className,
+  color = "currentColor",
+  ...rest
+}) => (
   <svg
     width={width}
     height={height}

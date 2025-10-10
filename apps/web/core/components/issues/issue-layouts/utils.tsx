@@ -7,7 +7,7 @@ import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon, ISvgIcons } from "@plane/propel/icons";
+import { CycleGroupIcon, ISvgIcons, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import {
   EIssuesStoreType,
   GroupByColumnTypes,
@@ -192,14 +192,14 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
     modules.push({
       id: module.id,
       name: module.name,
-      icon: <DiceIcon className="h-3.5 w-3.5" />,
+      icon: <ModuleIcon className="h-3.5 w-3.5" />,
       payload: { module_ids: [module.id] },
     });
   });
   modules.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return modules;
