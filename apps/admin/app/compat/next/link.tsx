@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Link as RRLink } from "react-router";
+import { ensureTrailingSlash } from "./helper";
 
 type NextLinkProps = React.ComponentProps<"a"> & {
   href: string;
@@ -18,6 +19,6 @@ const Link: React.FC<NextLinkProps> = ({
   scroll: _scroll,
   shallow: _shallow,
   ...rest
-}) => <RRLink to={href} replace={replace} {...rest} />;
+}) => <RRLink to={ensureTrailingSlash(href)} replace={replace} {...rest} />;
 
 export default Link;
