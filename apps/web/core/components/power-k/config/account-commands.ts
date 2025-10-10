@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { LogOut, Mails } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -28,6 +28,7 @@ export const usePowerKAccountCommands = (): TPowerKCommandConfig[] => {
         message: t("sign_out.toast.error.message"),
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signOut]);
 
   return [

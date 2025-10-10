@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
