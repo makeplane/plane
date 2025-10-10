@@ -25,6 +25,8 @@ from plane.db.models import (
     IssueLabel,
     IssueSequence,
     IssueActivity,
+    Page,
+    ProjectPage,
 )
 
 logger = logging.getLogger("plane.worker")
@@ -272,6 +274,47 @@ def create_project_issues(
     return
 
 
+def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+    """Creates pages for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+    """
+    page_seeds = read_seed_file("pages.json")
+
+    if not page_seeds:
+        return
+
+    for page_seed in page_seeds:
+        page_id = page_seed.pop("id")
+
+        page = Page.objects.create(
+            workspace_id=workspace.id,
+            is_global=False,
+            name=page_seed.get("name"),
+            description=page_seed.get("description", {}),
+            description_html=page_seed.get("description_html", "<p></p>"),
+            description_binary=page_seed.get("description_binary", None),
+            description_stripped=page_seed.get("description_stripped", None),
+            created_by_id=workspace.created_by_id,
+            updated_by_id=workspace.created_by_id,
+            owned_by_id=workspace.created_by_id,
+        )
+
+        logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
+        if page_seed.get("project_id") and page_seed.get("type") == "project":
+            ProjectPage.objects.create(
+                workspace_id=workspace.id,
+                project_id=project_map[page_seed.get("project_id")],
+                page_id=page.id,
+                created_by_id=workspace.created_by_id,
+                updated_by_id=workspace.created_by_id,
+            )
+
+            logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
+    return
+
 @shared_task
 def workspace_seed(workspace_id: uuid.UUID) -> None:
     """Seeds a new workspace with initial project data.
@@ -301,6 +344,9 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
 
         # create project issues
         create_project_issues(workspace, project_map, state_map, label_map)
+
+        # create project pages
+        create_pages(workspace, project_map)
 
         logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
         return
