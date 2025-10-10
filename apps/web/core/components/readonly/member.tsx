@@ -47,14 +47,6 @@ export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) =
   }
 
   const member = members[0];
-  if (!member) {
-    return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
-        {<ButtonAvatars showTooltip={false} userIds={value} icon={Icon} />}
-        <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
-      </div>
-    );
-  }
 
   return (
     <div className={cn("flex items-center gap-1 text-sm", className)}>

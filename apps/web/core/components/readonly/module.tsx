@@ -42,7 +42,7 @@ export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) =
     if (moduleIds.length > 0 && projectId) {
       fetchModules(workspaceSlug, projectId);
     }
-  }, [projectId, workspaceSlug]);
+  }, [value, projectId, workspaceSlug]);
 
   if (modules.length === 0) {
     return (

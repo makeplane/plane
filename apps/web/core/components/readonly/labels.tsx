@@ -14,8 +14,6 @@ export type TReadonlyLabelsProps = {
   hideIcon?: boolean;
   value: string[];
   placeholder?: string;
-  showCount?: boolean;
-  length?: number;
   projectId: string | undefined;
   workspaceSlug: string;
 };
@@ -33,7 +31,7 @@ export const ReadonlyLabels: React.FC<TReadonlyLabelsProps> = observer((props) =
     if (projectId) {
       fetchProjectLabels(workspaceSlug?.toString(), projectId);
     }
-  }, [value, projectId, workspaceSlug]);
+  }, [projectId, workspaceSlug]);
 
   return (
     <div className={cn("flex items-center gap-2 text-sm", className)}>
