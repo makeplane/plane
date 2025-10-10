@@ -57,7 +57,6 @@ class GiteaCallbackSpaceEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
         state = request.GET.get("state")
-        base_host = request.session.get("host")
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):

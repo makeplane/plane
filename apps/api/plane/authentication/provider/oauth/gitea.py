@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 import pytz
@@ -92,9 +92,7 @@ class GiteaOAuthProvider(OauthAdapter):
                 "access_token": token_response.get("access_token"),
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("expires_in"), tz=pytz.utc
-                    )
+                    datetime.now(tz=pytz.utc) + timedelta(seconds=token_response.get("expires_in"))
                     if token_response.get("expires_in")
                     else None
                 ),
