@@ -1,5 +1,6 @@
 import * as dotenv from "@dotenvx/dotenvx";
 import { z } from "zod";
+import { logger } from "@plane/logger";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ const envSchema = z.object({
 const validateEnv = () => {
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    console.error("❌ Invalid environment variables:", JSON.stringify(result.error.format(), null, 4));
+    logger.error("❌ Invalid environment variables:", JSON.stringify(result.error.format(), null, 4));
     process.exit(1);
   }
   return result.data;
