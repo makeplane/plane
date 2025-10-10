@@ -28,7 +28,7 @@ export class ConvertDocumentController {
         description_binary,
       });
     } catch (error) {
-      logger.error("Error in /convert-document endpoint:", error);
+      logger.error("DOCUMENT_CONTROLLER: Failed to convert document", error);
       res.status(500).json({
         message: `Internal server error.`,
       });

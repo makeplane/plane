@@ -19,12 +19,12 @@ export class RedisManager {
 
   public async initialize(): Promise<void> {
     if (this.redisClient && this.isConnected) {
-      logger.info("Redis client already initialized and connected");
+      logger.info("REDIS_MANAGER: Redis client already initialized and connected");
       return;
     }
 
     if (this.connectionPromise) {
-      logger.info("Redis connection already in progress, waiting...");
+      logger.info("REDIS_MANAGER: Redis connection already in progress, waiting...");
       await this.connectionPromise;
       return;
     }
@@ -54,7 +54,7 @@ export class RedisManager {
       const redisUrl = this.getRedisUrl();
 
       if (!redisUrl) {
-        logger.warn("No Redis URL provided, Redis functionality will be disabled");
+        logger.warn("REDIS_MANAGER: No Redis URL provided, Redis functionality will be disabled");
         this.isConnected = false;
         return;
       }
@@ -70,27 +70,27 @@ export class RedisManager {
 
       // Set up event listeners
       this.redisClient.on("connect", () => {
-        logger.info("Redis client connected");
+        logger.info("REDIS_MANAGER: Redis client connected");
         this.isConnected = true;
       });
 
       this.redisClient.on("ready", () => {
-        logger.info("Redis client ready");
+        logger.info("REDIS_MANAGER: Redis client ready");
         this.isConnected = true;
       });
 
       this.redisClient.on("error", (error) => {
-        logger.error("Redis client error:", error);
+        logger.error("REDIS_MANAGER: Redis client error:", error);
         this.isConnected = false;
       });
 
       this.redisClient.on("close", () => {
-        logger.warn("Redis client connection closed");
+        logger.warn("REDIS_MANAGER: Redis client connection closed");
         this.isConnected = false;
       });
 
       this.redisClient.on("reconnecting", () => {
-        logger.info("Redis client reconnecting...");
+        logger.info("REDIS_MANAGER: Redis client reconnecting...");
         this.isConnected = false;
       });
 
@@ -99,9 +99,9 @@ export class RedisManager {
 
       // Test the connection
       await this.redisClient.ping();
-      logger.info("Redis connection test successful");
+      logger.info("REDIS_MANAGER: Redis connection test successful");
     } catch (error) {
-      logger.error("Failed to initialize Redis client:", error);
+      logger.error("REDIS_MANAGER: Failed to initialize Redis client:", error);
       this.isConnected = false;
       throw error;
     } finally {
@@ -111,7 +111,7 @@ export class RedisManager {
 
   public getClient(): Redis | null {
     if (!this.redisClient || !this.isConnected) {
-      logger.warn("Redis client not available or not connected");
+      logger.warn("REDIS_MANAGER: Redis client not available or not connected");
       return null;
     }
     return this.redisClient;
@@ -125,9 +125,9 @@ export class RedisManager {
     if (this.redisClient) {
       try {
         await this.redisClient.quit();
-        logger.info("Redis client disconnected gracefully");
+        logger.info("REDIS_MANAGER: Redis client disconnected gracefully");
       } catch (error) {
-        logger.error("Error disconnecting Redis client:", error);
+        logger.error("REDIS_MANAGER: Error disconnecting Redis client:", error);
         // Force disconnect if quit fails
         this.redisClient.disconnect();
       } finally {
@@ -150,7 +150,7 @@ export class RedisManager {
       }
       return true;
     } catch (error) {
-      logger.error(`Error setting Redis key ${key}:`, error);
+      logger.error(`REDIS_MANAGER: Error setting Redis key ${key}:`, error);
       return false;
     }
   }
@@ -162,7 +162,7 @@ export class RedisManager {
     try {
       return await client.get(key);
     } catch (error) {
-      logger.error(`Error getting Redis key ${key}:`, error);
+      logger.error(`REDIS_MANAGER: Error getting Redis key ${key}:`, error);
       return null;
     }
   }
@@ -175,7 +175,7 @@ export class RedisManager {
       await client.del(key);
       return true;
     } catch (error) {
-      logger.error(`Error deleting Redis key ${key}:`, error);
+      logger.error(`REDIS_MANAGER: Error deleting Redis key ${key}:`, error);
       return false;
     }
   }
@@ -188,7 +188,7 @@ export class RedisManager {
       const result = await client.exists(key);
       return result === 1;
     } catch (error) {
-      logger.error(`Error checking Redis key ${key}:`, error);
+      logger.error(`REDIS_MANAGER: Error checking Redis key ${key}:`, error);
       return false;
     }
   }
@@ -201,7 +201,7 @@ export class RedisManager {
       const result = await client.expire(key, ttl);
       return result === 1;
     } catch (error) {
-      logger.error(`Error setting expiry for Redis key ${key}:`, error);
+      logger.error(`REDIS_MANAGER: Error setting expiry for Redis key ${key}:`, error);
       return false;
     }
   }
