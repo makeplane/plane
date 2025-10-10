@@ -19,7 +19,7 @@ export class RedisManager {
 
   public async initialize(): Promise<void> {
     if (this.redisClient && this.isConnected) {
-      logger.info("REDIS_MANAGER: Redis client already initialized and connected");
+      logger.info("REDIS_MANAGER: client already initialized and connected");
       return;
     }
 

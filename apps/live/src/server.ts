@@ -89,7 +89,7 @@ export class Server {
   public listen() {
     this.httpServer = this.app
       .listen(this.app.get("port"), () => {
-        logger.info(`SERVER: Plane Live server has started at port ${this.app.get("port")}`);
+        logger.info(`SERVER: Express server has started at port ${this.app.get("port")}`);
       })
       .on("error", (err) => {
         logger.error("SERVER: Failed to start server:", err);

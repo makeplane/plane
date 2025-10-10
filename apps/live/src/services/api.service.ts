@@ -14,6 +14,10 @@ export abstract class APIService {
       withCredentials: true,
       timeout: 20000,
     });
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors() {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
