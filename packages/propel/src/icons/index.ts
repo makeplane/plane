@@ -57,3 +57,16 @@ export * from "./plane-icon";
 export * from "./wiki-icon";
 export * from "./brand";
 export * from "./suspended-user";
+
+export * from "./analytics-icon";
+export * from "./cycle-icon";
+export * from "./draft-icon";
+export * from "./home-icon";
+export * from "./inbox-icon";
+export * from "./intake-icon";
+export * from "./module-icon";
+export * from "./page-icon";
+export * from "./project-icon";
+export * from "./view-icon";
+export * from "./work-items-icon";
+export * from "./your-work-icon";
