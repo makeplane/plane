@@ -9,6 +9,7 @@ export * from "./calendar-after-icon";
 export * from "./calendar-before-icon";
 export * from "./center-panel-icon";
 export * from "./comment-fill-icon";
+export * from "./dashboard-icon";
 export * from "./create-icon";
 export * from "./dice-icon";
 export * from "./discord-icon";
