@@ -55,3 +55,11 @@ export const meta: Route.MetaFunction = () => [
 export default function Root() {
   return <Outlet />;
 }
+
+export function ErrorBoundary() {
+  return (
+    <div>
+      <p>Something went wrong.</p>
+    </div>
+  );
+}
