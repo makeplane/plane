@@ -6,7 +6,10 @@ import { PenSquare } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
+// utils
+import { getKeyboardShortcutTooltip } from "@/utils/keyboard-shortcut-display";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
@@ -74,25 +77,27 @@ export const SidebarQuickActions = observer(() => {
         isDraft
       />
       <div className={cn("flex items-center justify-between gap-1 cursor-pointer", {})}>
-        <button
-          type="button"
-          className={cn(
-            "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90 px-3 border-[0.5px] border-custom-sidebar-border-300",
-            {
-              "cursor-not-allowed opacity-50 ": disabled,
-            }
-          )}
-          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
-          onClick={() => {
-            toggleCreateIssueModal(true);
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          disabled={disabled}
-        >
-          <PenSquare className="size-4" />
-          <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
-        </button>
+        <Tooltip tooltipContent={getKeyboardShortcutTooltip()}>
+          <button
+            type="button"
+            className={cn(
+              "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90 px-3 border-[0.5px] border-custom-sidebar-border-300",
+              {
+                "cursor-not-allowed opacity-50 ": disabled,
+              }
+            )}
+            data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
+            onClick={() => {
+              toggleCreateIssueModal(true);
+            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            disabled={disabled}
+          >
+            <PenSquare className="size-4" />
+            <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+          </button>
+        </Tooltip>
         <AppSearch />
       </div>
     </>

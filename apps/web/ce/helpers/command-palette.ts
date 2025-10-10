@@ -114,6 +114,10 @@ export const getCommonShortcutsList = (platform: string): TCommandPaletteShortcu
   { keys: "Delete", description: "Bulk delete work items" },
   { keys: "Shift,/", description: "Open shortcuts guide" },
   {
+    keys: platform === "MacOS" ? "Cmd,I" : "Ctrl,I",
+    description: "Create new work item (alternative shortcut)",
+  },
+  {
     keys: platform === "MacOS" ? "Ctrl,control,C" : "Ctrl,Alt,C",
     description: "Copy work item URL from the work item details page",
   },
