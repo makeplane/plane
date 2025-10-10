@@ -39,7 +39,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
   const {
     peekIssue,
     setPeekIssue,
-    issue: { fetchIssue, getIsFetchingIssueDetails },
+    issue: { fetchIssue },
     fetchActivities,
   } = useIssueDetail();
   const issueStoreType = useIssueStoreType();
