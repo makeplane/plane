@@ -291,7 +291,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
 
         page = Page.objects.create(
             workspace_id=workspace.id,
-            is_global=page_seed.get("type") == "WORKSPACE",
+            is_global=False,
             name=page_seed.get("name"),
             description=page_seed.get("description", {}),
             description_html=page_seed.get("description_html", "<p></p>"),
@@ -303,7 +303,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
         )
 
         logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
-        if page_seed.get("project_id") and page_seed.get("type") == "PROJECT":
+        if page_seed.get("project_id") and page_seed.get("type") == "project":
             ProjectPage.objects.create(
                 workspace_id=workspace.id,
                 project_id=project_map[page_seed.get("project_id")],
