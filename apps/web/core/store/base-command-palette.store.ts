@@ -7,6 +7,9 @@ import {
   TCreatePageModal,
 } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
+import { CommandRegistry } from "@/components/command-palette/command-registry";
+
+export type CommandPaletteEntity = "project" | "cycle" | "module" | "issue";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -30,6 +33,11 @@ export interface IBaseCommandPaletteStore {
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
+  activeEntity: CommandPaletteEntity | null;
+  commandRegistry: CommandRegistry;
+  activateEntity: (entity: CommandPaletteEntity) => void;
+  clearActiveEntity: () => void;
+  getCommandRegistry: () => CommandRegistry;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -61,6 +69,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
+  activeEntity: CommandPaletteEntity | null = null;
+  commandRegistry: CommandRegistry = new CommandRegistry();
 
   constructor() {
     makeObservable(this, {
@@ -79,7 +89,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      // projectPages: computed,
+      activeEntity: observable,
+      commandRegistry: observable.ref,
       // toggle actions
       toggleCommandPaletteModal: action,
       toggleShortcutModal: action,
@@ -93,6 +104,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      activateEntity: action,
+      clearActiveEntity: action,
+      getCommandRegistry: action,
     });
   }
 
@@ -126,6 +140,27 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
   };
+
+  /**
+   * Opens the command palette with a specific entity pre-selected
+   * @param entity
+   */
+  activateEntity = (entity: CommandPaletteEntity) => {
+    this.isCommandPaletteOpen = true;
+    this.activeEntity = entity;
+  };
+
+  /**
+   * Clears the active entity trigger
+   */
+  clearActiveEntity = () => {
+    this.activeEntity = null;
+  };
+
+  /**
+   * Get the command registry instance
+   */
+  getCommandRegistry = (): CommandRegistry => this.commandRegistry;
 
   /**
    * Toggles the command palette modal
