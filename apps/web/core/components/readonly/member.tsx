@@ -54,10 +54,10 @@ export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) =
       <div className="flex items-center gap-2">
         <div className="size-4 rounded-full bg-custom-background-80 flex items-center justify-center">
           <span className="text-sm font-medium">
-            {member.display_name?.charAt(0) ?? member.email?.charAt(0) ?? "?"}
+            {member?.display_name?.charAt(0) ?? member?.email?.charAt(0) ?? "?"}
           </span>
         </div>
-        <span className="flex-grow truncate">{member.display_name ?? member.email}</span>
+        <span className="flex-grow truncate">{member?.display_name ?? member?.email}</span>
       </div>
     </div>
   );
