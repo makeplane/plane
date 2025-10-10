@@ -93,7 +93,6 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
-      event.preventDefault();
 
       if (event.key === "Enter") {
         selectItem(selectedIndex.section, selectedIndex.item);
@@ -135,6 +134,12 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         className="relative max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
         style={{
           zIndex: 100,
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
       >
         {sections.map((section, sectionIndex) => (

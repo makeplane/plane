@@ -50,7 +50,6 @@ export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
-      event.preventDefault();
 
       if (event.key === "Enter") {
         selectItem(selectedIndex.section, selectedIndex.item);

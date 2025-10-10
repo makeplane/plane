@@ -44,25 +44,18 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
       if (query.length <= 0) {
         return false;
       }
-      if (event.key === "Escape") {
-        event.preventDefault();
-        return true;
-      }
 
       if (event.key === "ArrowUp") {
-        event.preventDefault();
         setSelectedIndex((prev) => (prev + items.length - 1) % items.length);
         return true;
       }
 
       if (event.key === "ArrowDown") {
-        event.preventDefault();
         setSelectedIndex((prev) => (prev + 1) % items.length);
         return true;
       }
 
       if (event.key === "Enter") {
-        event.preventDefault();
         selectItem(selectedIndex);
         return true;
       }
@@ -129,6 +122,12 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
         )}
         style={{
           zIndex: 100,
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
       >
         {items.length ? (

@@ -1,3 +1,7 @@
+import { setupSentry } from "./instrument";
+setupSentry();
+
+// eslint-disable-next-line import/order
 import { logger } from "@plane/logger";
 import { Server } from "./server";
 

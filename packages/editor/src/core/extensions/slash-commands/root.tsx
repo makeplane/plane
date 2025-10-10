@@ -5,7 +5,7 @@ import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance } from "@/helpers/tippy";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
@@ -88,6 +88,11 @@ const Command = Extension.create<SlashCommandOptions>({
             },
 
             onKeyDown: ({ event }) => {
+              if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
               if (event.key === "Escape") {
                 handleClose(this.editor);
                 return true;

@@ -4,7 +4,7 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance } from "@/helpers/tippy";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
 import { TMentionHandler } from "@/types";
 // local components
@@ -51,6 +51,11 @@ export const renderMentionsDropdown =
         cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
       },
       onKeyDown: ({ event }) => {
+        if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         if (event.key === "Escape") {
           handleClose();
           return true;
