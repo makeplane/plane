@@ -152,10 +152,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       const isSecureEnvironment = window.location.protocol === "https:";
       WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
       WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+
+      // Append query parameters to the URL
+      Object.entries(webhookConnectionParams)
+        .filter(([_, value]) => value !== undefined && value !== null)
+        .forEach(([key, value]) => {
+          WS_LIVE_URL.searchParams.set(key, String(value));
+        });
+
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);

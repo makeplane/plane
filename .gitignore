@@ -16,9 +16,10 @@ node_modules
 /out/
 
 # Production
-/build
 dist/
 out/
+build/
+.react-router/
 
 # Misc
 .DS_Store

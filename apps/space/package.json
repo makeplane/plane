@@ -57,7 +57,7 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/lodash-es": "catalog:",
-    "@types/node": "18.14.1",
+    "@types/node": "catalog:",
     "@types/nprogress": "^0.2.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

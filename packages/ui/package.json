@@ -73,7 +73,7 @@
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
     "@types/lodash-es": "catalog:",
-    "@types/node": "^20.5.2",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "catalog:",
