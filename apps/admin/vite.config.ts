@@ -32,6 +32,21 @@ export default defineConfig(({ isSsrBuild }) => {
     define: {
       "process.env": JSON.stringify(publicEnv),
     },
+    optimizeDeps: {
+      include: [
+        "mobx",
+        "mobx-react",
+        "next-themes",
+        "swr",
+        "lodash-es",
+        "@plane/utils",
+        "@plane/propel/toast",
+        "@plane/constants",
+        "@plane/services",
+        "ms",
+        "debug",
+      ],
+    },
     build: {
       assetsInlineLimit: 0,
       rollupOptions:

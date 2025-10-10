@@ -1,9 +1,9 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import compression from "compression";
+import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import dotenv from "dotenv";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -38,7 +38,7 @@ async function start() {
       vite.createServer({
         server: { middlewareMode: true },
         appType: "custom",
-      }),
+      })
     );
 
     app.use(vite.middlewares);
