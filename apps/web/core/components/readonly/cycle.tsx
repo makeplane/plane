@@ -27,7 +27,7 @@ export const ReadonlyCycle: React.FC<TReadonlyCycleProps> = observer((props) => 
 
   useEffect(() => {
     if (projectId) {
-      fetchAllCycles(workspaceSlug?.toString(), projectId);
+      fetchAllCycles(workspaceSlug, projectId);
     }
   }, [projectId, workspaceSlug]);
 

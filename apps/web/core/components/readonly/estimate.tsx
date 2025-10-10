@@ -40,7 +40,7 @@ export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((prop
 
   useEffect(() => {
     if (projectId) {
-      getProjectEstimates(workspaceSlug?.toString(), projectId);
+      getProjectEstimates(workspaceSlug, projectId);
     }
   }, [projectId, workspaceSlug]);
 

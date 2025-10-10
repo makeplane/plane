@@ -40,7 +40,7 @@ export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) =
 
   useEffect(() => {
     if (moduleIds.length > 0 && projectId) {
-      fetchModules(workspaceSlug.toString(), projectId);
+      fetchModules(workspaceSlug, projectId);
     }
   }, [projectId, workspaceSlug]);
 

@@ -34,8 +34,11 @@ export const ReadonlyState: React.FC<TReadonlyStateProps> = observer((props) => 
   const fetchStates = async () => {
     if ((stateIds === undefined || stateIds.length === 0) && projectId) {
       setStateLoader(true);
-      await fetchProjectStates(workspaceSlug, projectId);
-      setStateLoader(false);
+      try {
+        await fetchProjectStates(workspaceSlug, projectId);
+      } finally {
+        setStateLoader(false);
+      }
     }
   };
 
