@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "apps/admin/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "apps/admin/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "buildCommand": "pnpm turbo run build --filter=admin",
+  "outputDirectory": "apps/admin/.next",
+  "installCommand": "pnpm install"
+}

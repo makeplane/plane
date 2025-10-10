@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "mock-api.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "mock-api.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
